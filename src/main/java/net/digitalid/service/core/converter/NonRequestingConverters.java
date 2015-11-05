@@ -17,7 +17,7 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public final class NonRequestingConverters<O, E> extends Converters<O, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     @Pure
     @Override
@@ -25,7 +25,7 @@ public final class NonRequestingConverters<O, E> extends Converters<O, E> {
         return (AbstractNonRequestingXDFConverter<O, E>) super.getXDFConverter();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new object with the given converters.
@@ -50,7 +50,7 @@ public final class NonRequestingConverters<O, E> extends Converters<O, E> {
         return new NonRequestingConverters<>(XDFConverter, SQLConverter);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subtyping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Subtyping -------------------------------------------------- */
     
     @Pure
     @Override

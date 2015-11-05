@@ -35,7 +35,7 @@ import net.digitalid.utility.database.configuration.Database;
 public final class OutgoingRole extends Agent {
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Aspects -------------------------------------------------- */
     
     /**
      * Stores the aspect of the relation being changed at the observed outgoing role.
@@ -48,7 +48,7 @@ public final class OutgoingRole extends Agent {
     public static final @Nonnull Aspect CONTEXT = new Aspect(OutgoingRole.class, "context changed");
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Issuance –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Issuance -------------------------------------------------- */
     
     /**
      * Issues this outgoing role to the given contacts.
@@ -78,7 +78,7 @@ public final class OutgoingRole extends Agent {
         issue(getContext().getAllContacts());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Revocation –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Revocation -------------------------------------------------- */
     
     /**
      * Revokes this outgoing role from the given contacts.
@@ -108,7 +108,7 @@ public final class OutgoingRole extends Agent {
         revoke(getContext().getAllContacts());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Relation –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Relation -------------------------------------------------- */
     
     /**
      * Stores the relation between the issuing and the receiving identity.
@@ -166,7 +166,7 @@ public final class OutgoingRole extends Agent {
         notify(RELATION);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Context –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Context -------------------------------------------------- */
     
     /**
      * Stores the context to which this outgoing role is assigned.
@@ -228,7 +228,7 @@ public final class OutgoingRole extends Agent {
         notify(CONTEXT);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Restrictable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Restrictable -------------------------------------------------- */
     
     /**
      * Stores whether this outgoing role can be restricted.
@@ -285,7 +285,7 @@ public final class OutgoingRole extends Agent {
         getRestrictions().checkCover(restrictions);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Agent -------------------------------------------------- */
     
     @Override
     public void reset() throws AbortException {
@@ -300,7 +300,7 @@ public final class OutgoingRole extends Agent {
         return false;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Creation -------------------------------------------------- */
     
     /**
      * Creates a new outgoing role with the given context.
@@ -337,7 +337,7 @@ public final class OutgoingRole extends Agent {
         notify(Agent.CREATED);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Indexing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Indexing -------------------------------------------------- */
     
     /**
      * Caches outgoing roles given their entity and number.
@@ -364,7 +364,7 @@ public final class OutgoingRole extends Agent {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new outgoing role with the given entity and number.
@@ -403,7 +403,7 @@ public final class OutgoingRole extends Agent {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQLizable -------------------------------------------------- */
     
     /**
      * Returns the given column of the result set as an instance of this class.

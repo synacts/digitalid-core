@@ -34,7 +34,7 @@ import net.digitalid.utility.database.annotations.OnlyForHosts;
 @Immutable
 public abstract class ConceptPropertyInternalAction extends InternalAction {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code old.time@core.digitalid.net}.
@@ -46,7 +46,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
      */
     public static final @Nonnull SemanticType NEW_TIME = SemanticType.map("new.time@core.digitalid.net").load(Time.TYPE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Service –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Service -------------------------------------------------- */
     
     private final @Nonnull Service service;
     
@@ -56,7 +56,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
         return service;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Public Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Public Key -------------------------------------------------- */
 
     /**
      * Stores the active public key of the recipient.
@@ -73,7 +73,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
         return publicKey;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     @OnlyForClients
     protected ConceptPropertyInternalAction(@Nonnull Role role, @Nonnull Service service) throws AbortException {
@@ -91,7 +91,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
         this.publicKey = Cache.getPublicKey(getRecipient(), signature.getNonNullableTime());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Executing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Executing -------------------------------------------------- */
     
     /**
      * Executes this internal action on both the host and client.
@@ -138,7 +138,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
         executeOnBoth();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Requirements –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Requirements -------------------------------------------------- */
     
     /**
      * Returns the agent required for this internal action of the core service.

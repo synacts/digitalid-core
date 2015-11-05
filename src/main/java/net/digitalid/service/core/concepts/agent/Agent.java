@@ -44,7 +44,7 @@ import net.digitalid.utility.database.converter.SQL;
 public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Aspects -------------------------------------------------- */
     
     /**
      * Stores the aspect of the observed agent being created in the database.
@@ -74,7 +74,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     public static final @Nonnull Aspect RESTRICTIONS = new Aspect(Agent.class, "restrictions changed");
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code number.agent@core.digitalid.net}.
@@ -97,7 +97,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     public static final @Nonnull SemanticType TYPE = SemanticType.map("agent@core.digitalid.net").load(TupleWrapper.TYPE, NUMBER, CLIENT, REMOVED);
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Number –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Number -------------------------------------------------- */
     
     /**
      * Stores the number that references this agent in the database.
@@ -114,7 +114,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
         return number;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Removed –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Removed -------------------------------------------------- */
     
     /**
      * Stores whether this agent has been removed.
@@ -191,7 +191,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
         notify(CREATED);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Permissions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Permissions -------------------------------------------------- */
     
     /**
      * Stores the permissions of this agent or null if not yet loaded.
@@ -261,7 +261,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
         notify(PERMISSIONS);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Restrictions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Restrictions -------------------------------------------------- */
     
     /**
      * Stores the restrictions of this agent or null if not yet loaded.
@@ -317,7 +317,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
         notify(RESTRICTIONS);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Abstract –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Abstract -------------------------------------------------- */
     
     /**
      * Resets this agent.
@@ -337,7 +337,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @Pure
     public abstract boolean isClient();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Covering –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Covering -------------------------------------------------- */
     
     /**
      * Returns the agents that are weaker than this agent.
@@ -393,7 +393,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
         if (!covers(agent)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "This agent does not cover the other agent.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new agent with the given entity and number.
@@ -422,7 +422,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
         return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed, false);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Blockable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Blockable -------------------------------------------------- */
     
     @Pure
     @Override
@@ -461,7 +461,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
         return get(entity, number, client, removed);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQLizable -------------------------------------------------- */
     
     /**
      * Stores the data type used to store instances of this class in the database.
@@ -540,7 +540,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
         else agent.set(preparedStatement, parameterIndex);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casting -------------------------------------------------- */
     
     /**
      * Returns this agent as a {@link ClientAgent}.
@@ -568,7 +568,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
         throw new InvalidEncodingException("This agent cannot be cast to OutgoingRole.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override

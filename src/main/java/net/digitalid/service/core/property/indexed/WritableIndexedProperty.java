@@ -18,7 +18,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyMap;
  */
 public abstract class WritableIndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extends FreezableMap<K, V>> extends ReadOnlyIndexedProperty<K, V, R> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new writable indexed property with the given validators.
@@ -30,7 +30,7 @@ public abstract class WritableIndexedProperty<K, V, R extends ReadOnlyMap<K, V>,
         super(keyValidator, valueValidator);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Modifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Modifiers -------------------------------------------------- */
     
     /**
      * Adds a new indexed value to the map.
@@ -50,7 +50,7 @@ public abstract class WritableIndexedProperty<K, V, R extends ReadOnlyMap<K, V>,
      */
     public abstract void remove(@Nonnull K key);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Notification –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Notification -------------------------------------------------- */
     
     /**
      * Notifies the observers that a key-value pair was added.

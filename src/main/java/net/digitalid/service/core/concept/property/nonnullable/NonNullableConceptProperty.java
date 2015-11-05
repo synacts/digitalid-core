@@ -24,7 +24,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  */
 public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends WritableNonNullableProperty<V> implements ConceptProperty<V, C, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * Stores the property setup that contains the required information.
@@ -35,7 +35,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         return this.propertySetup;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concept -------------------------------------------------- */
     
     /**
      * Stores the concept to which this property belongs.
@@ -48,7 +48,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         return concept;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new non-nullable concept property with the given parameters.
@@ -76,7 +76,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         return new NonNullableConceptProperty<>(propertySetup, concept);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Loading –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Loading -------------------------------------------------- */
     
     /**
      * Loads the time and value of this property from the database.
@@ -90,7 +90,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         this.value = pair.getNonNullableElement1();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Time –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Time -------------------------------------------------- */
     
     /**
      * Stores the time of the last modification.
@@ -107,7 +107,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         return time;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this property.
@@ -136,7 +136,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Action –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Action -------------------------------------------------- */
     
     /**
      * Replaces the time and value of this property from the {@link NonNullableConceptPropertyInternalAction}.

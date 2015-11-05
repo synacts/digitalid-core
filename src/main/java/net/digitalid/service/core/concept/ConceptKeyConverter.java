@@ -17,7 +17,7 @@ import net.digitalid.utility.annotations.state.Pure;
 @Immutable
 public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Entity<E>, K> extends AbstractNonRequestingKeyConverter<C, E, K> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concept Index -------------------------------------------------- */
     
     /**
      * Stores the index that caches existing concepts.
@@ -34,7 +34,7 @@ public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Ent
         return index;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new concept-key converter with the given index.
@@ -57,7 +57,7 @@ public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Ent
         return new ConceptKeyConverter<>(index);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Conversions -------------------------------------------------- */
     
     @Pure
     @Override

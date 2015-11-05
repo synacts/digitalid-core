@@ -14,7 +14,7 @@ import net.digitalid.utility.annotations.state.Pure;
  */
 public final class CoreService extends Service {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new core service.
@@ -23,14 +23,14 @@ public final class CoreService extends Service {
         super("core", Identity.IDENTIFIER, "Core Service", "1.0");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Singleton –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Singleton -------------------------------------------------- */
     
     /**
      * Stores the single instance of this service.
      */
     public static final @Nonnull CoreService SERVICE = new CoreService();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Recipient –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
     @Pure
     @Override

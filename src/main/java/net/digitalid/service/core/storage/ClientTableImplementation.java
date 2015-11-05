@@ -23,7 +23,7 @@ import net.digitalid.utility.database.site.Site;
 @Immutable
 abstract class ClientTableImplementation<M extends DelegatingClientStorageImplementation> implements ClientStorage {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Module -------------------------------------------------- */
     
     /**
      * Stores the module to which this table belongs.
@@ -40,7 +40,7 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
         return module;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Service –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Service -------------------------------------------------- */
     
     @Pure
     @Override
@@ -48,7 +48,7 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
         return module.getService();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Name -------------------------------------------------- */
     
     /**
      * Returns whether the given name is valid.
@@ -79,7 +79,7 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
         return client + name;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new table implementation with the given module and name.
@@ -94,7 +94,7 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
         assert isValidName(this.name) : "The name is valid.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Tables –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Tables -------------------------------------------------- */
     
     @Locked
     @Override

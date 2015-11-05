@@ -21,7 +21,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public interface NonHostIdentifier extends Identifier {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     @Pure
     @Override
@@ -33,7 +33,7 @@ public interface NonHostIdentifier extends Identifier {
     @NonCommitting
     public @Nonnull NonHostIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.

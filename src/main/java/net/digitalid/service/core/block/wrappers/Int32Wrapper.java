@@ -29,7 +29,7 @@ import net.digitalid.utility.database.column.SQLType;
 @Immutable
 public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code int32@core.digitalid.net}.
@@ -42,7 +42,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this wrapper.
@@ -59,7 +59,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new wrapper with the given type and value.
@@ -73,7 +73,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
         this.value = value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
 
     /**
      * Encodes the given value into a new block of the given type.
@@ -100,7 +100,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
         return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * The byte length of an int32.
@@ -122,7 +122,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
         block.encodeValue(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -155,7 +155,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -205,7 +205,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
         return String.valueOf(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for this wrapper.
@@ -232,7 +232,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
     
     /**
      * Returns the value XDF converter of this wrapper.

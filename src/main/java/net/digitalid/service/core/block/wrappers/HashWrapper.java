@@ -32,7 +32,7 @@ import net.digitalid.utility.database.column.SQLType;
 @Immutable
 public final class HashWrapper extends ValueWrapper<HashWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code hash@core.digitalid.net}.
@@ -45,7 +45,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this wrapper.
@@ -64,7 +64,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new wrapper with the given type and value.
@@ -83,7 +83,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         this.value = value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given non-nullable value into a new block of the given type.
@@ -143,7 +143,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         return block == null ? null : decodeNonNullable(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * The byte length of a hash.
@@ -167,7 +167,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         block.setBytes(LENGTH - bytes.length + offset, bytes, offset, bytes.length - offset);
     }
 
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -200,7 +200,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -250,7 +250,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         return Block.toString(value.toByteArray());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for the value type of this wrapper.
@@ -285,7 +285,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
     
     /**
      * Returns the value XDF converter of this wrapper.

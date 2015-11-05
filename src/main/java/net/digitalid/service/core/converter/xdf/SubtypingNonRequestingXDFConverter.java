@@ -18,7 +18,7 @@ import net.digitalid.utility.annotations.state.Pure;
 @Immutable
 public final class SubtypingNonRequestingXDFConverter<O, E> extends ChainingNonRequestingXDFConverter<O, E, O> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new subtyping XDF converter with the given parameters.

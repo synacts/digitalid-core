@@ -20,7 +20,7 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public class Converters<O, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the XDF converter.
@@ -37,7 +37,7 @@ public class Converters<O, E> {
         return XDFConverter;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter.
@@ -54,7 +54,7 @@ public class Converters<O, E> {
         return SQLConverter;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new object with the given converters.
@@ -80,7 +80,7 @@ public class Converters<O, E> {
         return new Converters<>(XDFConverter, SQLConverter);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subtyping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Subtyping -------------------------------------------------- */
     
     /**
      * Returns converters with the XDF converter subtyping to the given type.

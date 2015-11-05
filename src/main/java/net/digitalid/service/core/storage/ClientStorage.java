@@ -17,7 +17,7 @@ import net.digitalid.utility.database.site.Site;
  */
 public interface ClientStorage {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
      * Returns the service to which this storage belongs.
@@ -45,7 +45,7 @@ public interface ClientStorage {
     @Pure
     public @Nonnull @Validated String getName(@Nonnull Site site);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Tables –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Tables -------------------------------------------------- */
     
     /**
      * Creates the database tables of this storage for the given site.

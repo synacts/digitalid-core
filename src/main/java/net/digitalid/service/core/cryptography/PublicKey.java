@@ -28,7 +28,7 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code composite.group.public.key.host@core.digitalid.net}.
@@ -157,7 +157,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
      */
     public static final @Nonnull SemanticType VERIFIABLE_ENCRYPTION = SemanticType.map("verifiable.encryption@core.digitalid.net").load(TupleWrapper.TYPE, W1, W2);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Composite Group –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Composite Group -------------------------------------------------- */
     
     /**
      * Stores the composite group for encryption and signing.
@@ -174,7 +174,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return compositeGroup;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encryption Exponent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encryption Exponent -------------------------------------------------- */
     
     /**
      * Stores the encryption and verification exponent.
@@ -191,7 +191,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return e;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Base for Blinding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Base for Blinding -------------------------------------------------- */
     
     /**
      * Stores the base for blinding.
@@ -208,7 +208,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return ab;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Base for Secret –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Base for Secret -------------------------------------------------- */
     
     /**
      * Stores the base of the client's secret.
@@ -225,7 +225,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return au;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Base for Serial –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Base for Serial -------------------------------------------------- */
     
     /**
      * Stores the base of the serial number.
@@ -242,7 +242,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return ai;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Base for Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Base for Identifier -------------------------------------------------- */
     
     /**
      * Stores the base of the hashed identifier.
@@ -259,7 +259,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return av;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Base for Arguments –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Base for Arguments -------------------------------------------------- */
     
     /**
      * Stores the base of the exposed arguments.
@@ -276,7 +276,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return ao;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subgroup Proof –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Subgroup Proof -------------------------------------------------- */
     
     /**
      * Stores the hash of the temporary commitments in the subgroup proof.
@@ -319,7 +319,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return t.getValue().equals(TupleWrapper.encode(TUPLE, elements.freeze()).getHash());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Square Group –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Square Group -------------------------------------------------- */
     
     /**
      * Stores the square group for verifiable encryption.
@@ -336,7 +336,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return squareGroup;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Group Generator –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Group Generator -------------------------------------------------- */
     
     /**
      * Stores the generator of the square group.
@@ -353,7 +353,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return g;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encryption Element –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encryption Element -------------------------------------------------- */
     
     /**
      * Stores the encryption element of the square group.
@@ -370,7 +370,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return y;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encryption Base –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encryption Base -------------------------------------------------- */
     
     /**
      * Stores the encryption base of the square group.
@@ -387,7 +387,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return zPlus1;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
 
     /**
      * Creates a new public key with the given groups, bases and exponents.
@@ -495,7 +495,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return new PublicKey(compositeGroup, e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup, g, y, zPlus1);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Verifiable Encryption –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Verifiable Encryption -------------------------------------------------- */
     
     /**
      * Returns the verifiable encryption of the given value m with the random value r.
@@ -513,7 +513,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return TupleWrapper.encode(VERIFIABLE_ENCRYPTION, elements.freeze());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -568,7 +568,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return "Public Key [n = " + compositeGroup.getModulus() + ", e = " + e + ", z^2 = " + squareGroup.getModulus() + ", g = " + g + ", y = " + y + "]";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -652,7 +652,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -665,7 +665,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

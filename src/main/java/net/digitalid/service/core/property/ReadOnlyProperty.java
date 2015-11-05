@@ -24,7 +24,7 @@ import net.digitalid.utility.system.logger.Log;
  */
 public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validator –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validator -------------------------------------------------- */
     
     /**
      * Stores the value validator used to validate the value(s) of this property.
@@ -41,7 +41,7 @@ public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
         return valueValidator;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new read-only property with the given value validator.
@@ -52,7 +52,7 @@ public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
         this.valueValidator = valueValidator;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Observers –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Observers -------------------------------------------------- */
     
     /**
      * Stores null until the first observer registers and then the list of observers.

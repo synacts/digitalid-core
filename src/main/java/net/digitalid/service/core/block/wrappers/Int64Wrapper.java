@@ -30,7 +30,7 @@ import net.digitalid.utility.database.column.SQLType;
 @Immutable
 public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code int64@core.digitalid.net}.
@@ -48,7 +48,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this wrapper.
@@ -65,7 +65,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new wrapper with the given type and value.
@@ -79,7 +79,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         this.value = value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Stores a static XDF converter for performance reasons.
@@ -111,7 +111,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * The byte length of an int64.
@@ -133,7 +133,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         block.encodeValue(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -166,7 +166,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -211,7 +211,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         return String.valueOf(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for this wrapper.
@@ -238,7 +238,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
     
     /**
      * Returns the value XDF converter of this wrapper.

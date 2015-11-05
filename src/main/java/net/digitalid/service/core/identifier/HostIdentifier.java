@@ -22,14 +22,14 @@ import net.digitalid.utility.database.configuration.Database;
 @Immutable
 public final class HostIdentifier extends InternalIdentifier {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Identifier -------------------------------------------------- */
     
     /**
      * Stores the host identifier {@code core.digitalid.net}.
      */
     public final static @Nonnull HostIdentifier DIGITALID = new HostIdentifier("core.digitalid.net");
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
      * Returns whether the given string is a valid host identifier.
@@ -43,7 +43,7 @@ public final class HostIdentifier extends InternalIdentifier {
         return InternalIdentifier.isConforming(string) && !string.contains("@");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a host identifier with the given string.
@@ -68,7 +68,7 @@ public final class HostIdentifier extends InternalIdentifier {
         return new HostIdentifier(string);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     @Pure
     @Override
@@ -88,7 +88,7 @@ public final class HostIdentifier extends InternalIdentifier {
         return Mapper.getIdentity(this).toHostIdentity();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Host Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Host Identifier -------------------------------------------------- */
     
     @Pure
     @Override
@@ -96,7 +96,7 @@ public final class HostIdentifier extends InternalIdentifier {
         return this;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Host Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Host Name -------------------------------------------------- */
     
     /**
      * Returns this host identifier as a host name which can be used as a {@link Site#toString() prefix} in {@link Database database} tables.
@@ -112,7 +112,7 @@ public final class HostIdentifier extends InternalIdentifier {
         return (Character.isDigit(string.charAt(0)) ? "_" : "") + string.replace(".", "_").replace("-", "$");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.

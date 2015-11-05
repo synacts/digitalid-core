@@ -48,7 +48,7 @@ import net.digitalid.utility.database.site.Site;
 public final class Context extends NonHostConcept implements Blockable, SQLizable {
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Aspects -------------------------------------------------- */
     
     /**
      * Stores the aspect of the name being changed at the observed context.
@@ -96,7 +96,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     public static final @Nonnull Aspect RESET = new Aspect(Context.class, "reset");
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code context@core.digitalid.net}.
@@ -114,7 +114,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     public static final @Nonnull SemanticType NAME_TYPE = SemanticType.map("name.context@core.digitalid.net").load(StringWrapper.TYPE);
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Number –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Number -------------------------------------------------- */
     
     /**
      * Stores the number that denotes the context.
@@ -131,7 +131,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         return number;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Root –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Root -------------------------------------------------- */
     
     /**
      * Stores the number of the root context.
@@ -148,7 +148,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         return number == ROOT;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Name -------------------------------------------------- */
     
     /**
      * Stores the name of this context.
@@ -224,9 +224,9 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         notify(NAME);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Preferences –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Preferences -------------------------------------------------- */
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Permissions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Permissions -------------------------------------------------- */
     
     /**
      * Stores the permissions of this context.
@@ -306,7 +306,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         notify(PERMISSIONS);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Authentications –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Authentications -------------------------------------------------- */
     
     /**
      * Returns the authentications of this context.
@@ -338,7 +338,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subcontexts –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Subcontexts -------------------------------------------------- */
     
     /**
      * Returns a list of the subcontexts in the specified sequence.
@@ -399,7 +399,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         throw new SQLException();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Supercontexts –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Supercontexts -------------------------------------------------- */
     
     /**
      * Returns a set with the subcontexts of this context.
@@ -426,7 +426,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         return context.isSupercontextOf(this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Contacts –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Contacts -------------------------------------------------- */
     
     /**
      * Stores the contacts of this context or null if not yet loaded.
@@ -515,7 +515,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         return getAllContacts().contains(contact);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Creation -------------------------------------------------- */
     
     /**
      * Creates a new context at the given role.
@@ -538,7 +538,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         notify(CREATED);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Indexing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Indexing -------------------------------------------------- */
     
     /**
      * Caches contexts given their entity and number.
@@ -577,7 +577,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new context with the given entity and number.
@@ -635,7 +635,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         try { return get(entity, Long.parseLong(string)); } catch (@Nonnull NumberFormatException exception) { throw new InvalidEncodingException("Could not parse the given string.", exception); }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Blockable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Blockable -------------------------------------------------- */
     
     @Pure
     @Override
@@ -664,7 +664,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         return get(entity, new Int64Wrapper(block).getValue());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQLizable -------------------------------------------------- */
     
     /**
      * Stores the data type used to reference instances of this class.
@@ -735,7 +735,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         else context.set(preparedStatement, parameterIndex);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override

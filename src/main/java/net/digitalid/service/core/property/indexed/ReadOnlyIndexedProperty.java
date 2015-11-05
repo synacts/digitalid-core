@@ -19,7 +19,7 @@ public abstract class ReadOnlyIndexedProperty<K, V, R extends ReadOnlyMap<K, V>>
      */
     private final @Nonnull ValueValidator<? super K> keyValidator;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new read-only indexed property with the given validators.
@@ -33,7 +33,7 @@ public abstract class ReadOnlyIndexedProperty<K, V, R extends ReadOnlyMap<K, V>>
         this.keyValidator = keyValidator;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Getter -------------------------------------------------- */
     
     /**
      * Returns the value for a given key.

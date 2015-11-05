@@ -50,7 +50,7 @@ import net.digitalid.utility.database.site.Site;
 @Stateless
 public final class AttributeModule implements StateModule {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Module Initialization -------------------------------------------------- */
     
     /**
      * Stores an instance of this module.
@@ -63,7 +63,7 @@ public final class AttributeModule implements StateModule {
         return CoreService.SERVICE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Table Creation and Deletion -------------------------------------------------- */
     
     @Override
     @NonCommitting
@@ -83,7 +83,7 @@ public final class AttributeModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Module Export and Import -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code entry.value.attribute.module@core.digitalid.net}.
@@ -186,7 +186,7 @@ public final class AttributeModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Getter and Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- State Getter and Setter -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code entry.value.attribute.state@core.digitalid.net}.
@@ -311,7 +311,7 @@ public final class AttributeModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Attribute Retrieval –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Attribute Retrieval -------------------------------------------------- */
     
     /**
      * Returns all the attributes of the given entity.
@@ -335,7 +335,7 @@ public final class AttributeModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Attribute Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Attribute Value -------------------------------------------------- */
     
     /**
      * Returns the value of the given attribute or null if no value is found.
@@ -431,7 +431,7 @@ public final class AttributeModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Attribute Visibility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Attribute Visibility -------------------------------------------------- */
     
     /**
      * Returns the visibility of the given attribute or null if no visibility is found.

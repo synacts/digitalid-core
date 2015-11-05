@@ -31,7 +31,7 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, SQL<W, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Semantic Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Semantic Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type of this wrapper.
@@ -52,7 +52,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
         return semanticType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntactic Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
     
     /**
      * Returns the syntactic type that corresponds to this class.
@@ -62,7 +62,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
     @Pure
     public abstract @Nonnull @Loaded SyntacticType getSyntacticType();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new wrapper with the given semantic type.
@@ -77,7 +77,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
         this.semanticType = semanticType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * Determines the length of the encoding block.
@@ -101,7 +101,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
      */
     public abstract void encode(@Encoding @Nonnull Block block);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -120,7 +120,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
         return ConvertToXDF.nonNullable((W) this).hashCode();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for wrappers.
@@ -179,7 +179,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
     @Override
     public abstract @Nonnull XDFConverter<W> getXDFConverter();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for wrappers.

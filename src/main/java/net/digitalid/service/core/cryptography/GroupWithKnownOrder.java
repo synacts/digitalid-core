@@ -23,7 +23,7 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code modulus.group@core.digitalid.net}.
@@ -40,7 +40,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("known.group@core.digitalid.net").load(TupleWrapper.TYPE, MODULUS, ORDER);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Order –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Order -------------------------------------------------- */
     
     /**
      * Stores the order of this group.
@@ -71,7 +71,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         return GroupWithUnknownOrder.get(getModulus());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new multiplicative group with the given modulus and order.
@@ -104,7 +104,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         return new GroupWithKnownOrder(modulus, order);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -157,7 +157,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         return XDF_CONVERTER;
     }
 
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -170,7 +170,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

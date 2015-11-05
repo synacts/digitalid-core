@@ -28,7 +28,7 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new value wrapper with the given semantic type.
@@ -41,13 +41,13 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
         super(semanticType);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     @Pure
     @Override
     public abstract @Nonnull Wrapper.NonRequestingXDFConverter<W> getXDFConverter();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for wrappers.
@@ -90,7 +90,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
         
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value XDF Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value XDF Converter -------------------------------------------------- */
     
     /**
      * The factory for encoding and decoding values.
@@ -139,7 +139,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
         
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value SQL Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value SQL Converter -------------------------------------------------- */
     
     /**
      * The factory for storing and restoring values.

@@ -14,7 +14,7 @@ import net.digitalid.utility.annotations.state.Stateless;
 @Stateless
 public final class ConvertToXDF {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Normal Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Normal Encoding -------------------------------------------------- */
     
     /**
      * Returns the given non-nullable object as a block.
@@ -70,7 +70,7 @@ public final class ConvertToXDF {
         return object == null ? null : nonNullable(object).setType(type);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casted Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casted Encoding -------------------------------------------------- */
     
     /**
      * Returns the given non-null object as a block.

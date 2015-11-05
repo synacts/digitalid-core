@@ -31,7 +31,7 @@ import net.digitalid.utility.database.site.Site;
 @Stateless
 public final class ContactModule implements StateModule {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Module Initialization -------------------------------------------------- */
     
     /**
      * Stores an instance of this module.
@@ -44,7 +44,7 @@ public final class ContactModule implements StateModule {
         return CoreService.SERVICE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Table Creation and Deletion -------------------------------------------------- */
     
     @Override
     @NonCommitting
@@ -70,7 +70,7 @@ public final class ContactModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Module Export and Import -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code entry.contacts.module@core.digitalid.net}.
@@ -110,7 +110,7 @@ public final class ContactModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Getter and Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- State Getter and Setter -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code entry.contacts.state@core.digitalid.net}.

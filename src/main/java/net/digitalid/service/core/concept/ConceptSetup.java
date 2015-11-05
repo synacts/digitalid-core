@@ -18,7 +18,7 @@ import net.digitalid.utility.database.site.Site;
 @Immutable
 public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>, K> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Service –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concept Service -------------------------------------------------- */
     
     /**
      * Stores the service to which the concept belongs.
@@ -35,7 +35,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return service;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concept Name -------------------------------------------------- */
     
     /**
      * Stores the name of the concept (unique within the service).
@@ -52,7 +52,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return conceptName;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept ConceptIndex –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concept ConceptIndex -------------------------------------------------- */
     
     /**
      * Stores the index used to cache instances of the concept.
@@ -69,7 +69,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return conceptIndex;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Key Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Key Converters -------------------------------------------------- */
     
     /**
      * Stores the converters to convert and recover the key.
@@ -86,7 +86,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return keyConverters;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entity Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Entity Converters -------------------------------------------------- */
     
     /**
      * Stores the converters to convert and recover the entity.
@@ -103,7 +103,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return entityConverters;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- State Module -------------------------------------------------- */
     
     /**
      * Stores the module to which the property table belongs.
@@ -120,7 +120,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return siteModule;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concept Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type to encode the concept.
@@ -137,7 +137,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return conceptType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the factory used to encode and decode the concept.
@@ -154,7 +154,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return XDFConverter;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the factory used to store and restore the concept.
@@ -171,7 +171,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return SQLConverter;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concept Converters -------------------------------------------------- */
     
     /**
      * Stores the converters to convert and recover the concept.
@@ -188,7 +188,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return conceptConverters;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new concept setup with the given parameters.

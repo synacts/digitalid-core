@@ -24,7 +24,7 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code item.private.key.chain.host@core.digitalid.net}.
@@ -36,7 +36,7 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain>
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("private.key.chain.host@core.digitalid.net").load(ListWrapper.TYPE, ITEM);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new key chain with the given items.
@@ -82,7 +82,7 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain>
         return new PrivateKeyChain(items.freeze());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -116,7 +116,7 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain>
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -129,7 +129,7 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain>
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

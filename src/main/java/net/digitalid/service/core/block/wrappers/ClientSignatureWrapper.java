@@ -46,7 +46,7 @@ import net.digitalid.utility.system.logger.Log;
 @Immutable
 public final class ClientSignatureWrapper extends SignatureWrapper {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code hash.client.signature@core.digitalid.net}.
@@ -58,7 +58,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
      */
     static final @Nonnull SemanticType SIGNATURE = SemanticType.map("client.signature@core.digitalid.net").load(TupleWrapper.TYPE, Commitment.TYPE, HASH, Exponent.TYPE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Commitment –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Commitment -------------------------------------------------- */
     
     /**
      * Stores the commitment of this client signature.
@@ -75,7 +75,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         return commitment;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new client signature wrapper with the given parameters.
@@ -115,7 +115,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         this.commitment = new Commitment(elements.getNonNullable(0));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the element with a new client signature wrapper and signs it according to the arguments.
@@ -137,7 +137,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         return new ClientSignatureWrapper(type, ConvertToXDF.nullable(element), subject, audit, commitment);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Checks -------------------------------------------------- */
     
     @Pure
     @Override
@@ -145,7 +145,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         return super.isSignedLike(signature) && commitment.equals(((ClientSignatureWrapper) signature).commitment);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Verifying –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Verifying -------------------------------------------------- */
     
     @Pure
     @Override
@@ -171,7 +171,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         setVerified();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Signing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Signing -------------------------------------------------- */
     
     @Override
     void sign(@Nonnull @NonFrozen FreezableArray<Block> elements) {
@@ -191,7 +191,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         Log.verbose("Element signed in " + start.ago().getValue() + " ms.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Agent -------------------------------------------------- */
     
     @Pure
     @Locked

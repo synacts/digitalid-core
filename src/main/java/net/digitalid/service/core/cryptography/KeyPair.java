@@ -17,7 +17,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 @Immutable
 public final class KeyPair {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Private Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Private Key -------------------------------------------------- */
     
     /**
      * Stores the private key of this key pair.
@@ -34,7 +34,7 @@ public final class KeyPair {
         return privateKey;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Public Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Public Key -------------------------------------------------- */
     
     /**
      * Stores the public key of this key pair.
@@ -51,7 +51,7 @@ public final class KeyPair {
         return publicKey;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new key pair with random values.
@@ -139,7 +139,7 @@ public final class KeyPair {
         return new KeyPair();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Returns a safe prime with the given bit-length.

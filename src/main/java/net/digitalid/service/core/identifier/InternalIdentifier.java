@@ -25,7 +25,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public abstract class InternalIdentifier extends IdentifierImplementation {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
      * The pattern that valid internal identifiers have to match.
@@ -57,7 +57,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
         return string.contains("@") ? InternalNonHostIdentifier.isValid(string) : HostIdentifier.isValid(string);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates an internal identifier with the given string.
@@ -82,7 +82,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
         return string.contains("@") ? InternalNonHostIdentifier.get(string) : HostIdentifier.get(string);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     @Pure
     @Override
@@ -94,7 +94,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     @NonCommitting
     public abstract @Nonnull InternalIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Existence -------------------------------------------------- */
     
     /**
      * Returns whether an identity with this internal identifier exists.
@@ -112,7 +112,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Host Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Host Identifier -------------------------------------------------- */
     
     /**
      * Returns the host part of this internal identifier.
@@ -122,7 +122,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     @Pure
     public abstract @Nonnull HostIdentifier getHostIdentifier();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.

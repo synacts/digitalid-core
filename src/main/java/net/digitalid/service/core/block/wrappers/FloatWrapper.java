@@ -29,7 +29,7 @@ import net.digitalid.utility.database.column.SQLType;
 @Immutable
 public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code float@core.digitalid.net}.
@@ -42,7 +42,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this wrapper.
@@ -59,7 +59,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new wrapper with the given type and value.
@@ -73,7 +73,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         this.value = value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given value into a new block of the given type.
@@ -100,7 +100,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * The byte length of a float.
@@ -122,7 +122,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         block.encodeValue(Float.floatToRawIntBits(value));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -155,7 +155,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -206,7 +206,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         return String.valueOf(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for the value type of this wrapper.
@@ -233,7 +233,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
     
     /**
      * Returns the value XDF converter of this wrapper.

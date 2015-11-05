@@ -33,7 +33,7 @@ import net.digitalid.utility.system.logger.Log;
 @Immutable
 public final class CharWrapper extends ValueWrapper<CharWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code char@core.digitalid.net}.
@@ -46,7 +46,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this wrapper.
@@ -63,7 +63,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new wrapper with the given type and value.
@@ -77,7 +77,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         this.value = value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given value into a new block of the given type.
@@ -104,7 +104,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * The byte length of a char.
@@ -126,7 +126,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         block.encodeValue(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -159,7 +159,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -210,7 +210,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         return "'" + value + "'";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for the value type of this wrapper.
@@ -237,7 +237,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
         
     /**
      * Returns the value XDF converter of this wrapper.

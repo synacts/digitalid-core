@@ -16,7 +16,7 @@ import net.digitalid.utility.database.annotations.Locked;
  */
 public abstract class WritableNonNullableProperty<V> extends ReadOnlyNonNullableProperty<V> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new non-nullable replaceable property with the given validator.
@@ -27,7 +27,7 @@ public abstract class WritableNonNullableProperty<V> extends ReadOnlyNonNullable
         super(validator);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Setter -------------------------------------------------- */
     
     /**
      * Sets the value of this property to the given new value.
@@ -40,7 +40,7 @@ public abstract class WritableNonNullableProperty<V> extends ReadOnlyNonNullable
     @Committing
     public abstract void set(@Nonnull @Validated V newValue) throws AbortException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Notification –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Notification -------------------------------------------------- */
     
     /**
      * Notifies the observers that the value of this property has changed.

@@ -28,7 +28,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 @Immutable
 public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code list@core.digitalid.net}.
@@ -58,7 +58,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         return true;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Elements –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Elements -------------------------------------------------- */
     
     /**
      * Stores the nullable elements of this list wrapper.
@@ -95,7 +95,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         return elements;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new list wrapper with the given type and elements.
@@ -114,7 +114,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         this.elements = elements;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given elements into a new block of the given type.
@@ -188,7 +188,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).getNonNullableElements();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     @Pure
     @Override
@@ -233,7 +233,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         assert offset == block.getLength() : "The whole block should now be encoded.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -287,7 +287,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     }
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     @Pure
     @Override

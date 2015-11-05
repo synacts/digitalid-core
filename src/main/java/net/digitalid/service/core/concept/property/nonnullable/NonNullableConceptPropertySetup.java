@@ -22,7 +22,7 @@ import net.digitalid.utility.annotations.state.Validated;
 @Immutable
 public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends ConceptPropertySetup<V, C, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Old Value Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Old Value Type -------------------------------------------------- */
     
     /**
      * Stores the type of the old value in the internal action.
@@ -39,7 +39,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
         return oldValueType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– New Value Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- New Value Type -------------------------------------------------- */
     
     /**
      * Stores the type of the new value in the internal action.
@@ -56,7 +56,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
         return newValueType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Action Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Action Type -------------------------------------------------- */
     
     /**
      * Stores the type of the concept property internal action.
@@ -69,7 +69,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
         return actionType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Default Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Default Value -------------------------------------------------- */
     
     /**
      * Stores the default value for the properties created by this factory.
@@ -86,7 +86,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
         return defaultValue;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Property Table –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
     /**
      * Stores the database table that stores the value of the property.
@@ -99,7 +99,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
         return propertyTable;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new concept property factory with the given parameters.

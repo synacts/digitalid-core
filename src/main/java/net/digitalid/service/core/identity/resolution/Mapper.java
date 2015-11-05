@@ -69,7 +69,7 @@ import net.digitalid.utility.system.logger.Log;
 @Stateless
 public final class Mapper {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Key -------------------------------------------------- */
     
     /**
      * The key class with a private constructor. (Methods of other classes can require a non-nullable parameter of this type to give exclusive access to this class.)
@@ -81,7 +81,7 @@ public final class Mapper {
      */
     private static final @Nonnull Key KEY = new Key();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Reference –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Reference -------------------------------------------------- */
     
     /**
      * Stores the data type used to store identities in the database.

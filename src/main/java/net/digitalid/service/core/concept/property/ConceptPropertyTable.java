@@ -37,7 +37,7 @@ import net.digitalid.utility.database.configuration.Database;
 @Immutable
 public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends SiteTable {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type Mappings –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type Mappings -------------------------------------------------- */
     
     /**
      * Maps the dump type of this table by deriving the identifier from the property name.
@@ -69,7 +69,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
         return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Property Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Property Factory -------------------------------------------------- */
     
     /**
      * Stores the property factory that contains the required information.
@@ -87,7 +87,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
         return propertySetup;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new concept property table with the given property factory.
@@ -100,7 +100,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
         this.propertySetup = propertySetup;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Generic State –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Generic State -------------------------------------------------- */
     
     // Remark: The following methods are only necessary because Java does not allow lower bounds on type parameters.
     
@@ -148,7 +148,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Non-Generic State –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Non-Generic State -------------------------------------------------- */
     
     @Pure
     @Locked

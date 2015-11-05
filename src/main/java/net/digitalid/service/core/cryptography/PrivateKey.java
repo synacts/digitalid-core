@@ -29,7 +29,7 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code composite.group.private.key.host@core.digitalid.net}.
@@ -66,7 +66,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("private.key.host@core.digitalid.net").load(TupleWrapper.TYPE, COMPOSITE_GROUP, P, Q, D, SQUARE_GROUP, X);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Composite Group –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Composite Group -------------------------------------------------- */
     
     /**
      * Stores the composite group of this private key.
@@ -83,7 +83,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         return compositeGroup;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Prime Factors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Prime Factors -------------------------------------------------- */
     
     /**
      * Stores the first prime factor of the composite group's modulus.
@@ -95,7 +95,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
      */
     private final @Nonnull BigInteger q;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decryption Exponent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Decryption Exponent -------------------------------------------------- */
     
     /**
      * Stores the decryption exponent d of this private key.
@@ -158,7 +158,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         return powD(c.getValue());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Square Group –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Square Group -------------------------------------------------- */
     
     /**
      * Stores the square group of this private key.
@@ -175,7 +175,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         return squareGroup;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decryption Exponent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Decryption Exponent -------------------------------------------------- */
     
     /**
      * Stores the decryption exponent x of this private key.
@@ -192,7 +192,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         return x;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new private key with the given groups and exponents.
@@ -241,7 +241,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         return new PrivateKey(compositeGroup, p, q, d, squareGroup, x);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -276,7 +276,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         return "Private Key [n = " + compositeGroup.getModulus() + ", p = " + p + ", q = " + q + ", d = " + d + ", z^2 = " + squareGroup.getModulus() + ", x = " + x + "]";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -335,7 +335,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -348,7 +348,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

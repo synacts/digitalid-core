@@ -18,7 +18,7 @@ import net.digitalid.utility.annotations.state.Pure;
 @Immutable
 public abstract class IdentityImplementation implements Identity {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database ID –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Database ID -------------------------------------------------- */
     
     /**
      * Stores the database ID that represents and indexes this identity.
@@ -41,7 +41,7 @@ public abstract class IdentityImplementation implements Identity {
         this.databaseID = databaseID;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new identity with the given database ID.
@@ -52,7 +52,7 @@ public abstract class IdentityImplementation implements Identity {
         this.databaseID = databaseID;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -75,7 +75,7 @@ public abstract class IdentityImplementation implements Identity {
         return String.valueOf(databaseID);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casting -------------------------------------------------- */
     
     @Pure
     @Override
@@ -184,7 +184,7 @@ public abstract class IdentityImplementation implements Identity {
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobilePerson.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     @Pure
     @Override
@@ -192,7 +192,7 @@ public abstract class IdentityImplementation implements Identity {
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     @Pure
     @Override

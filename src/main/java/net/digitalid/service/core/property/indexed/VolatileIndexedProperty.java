@@ -28,7 +28,7 @@ import net.digitalid.utility.database.annotations.Locked;
  */
 public class VolatileIndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extends FreezableMap<K, V>> extends WritableIndexedProperty<K, V, R, F> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Map –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Map -------------------------------------------------- */
     
     /**
      * Stores the indexed value of the property.
@@ -42,7 +42,7 @@ public class VolatileIndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extend
         return (R) map;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Values –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Values -------------------------------------------------- */
     
     @Pure
     @Override
@@ -56,7 +56,7 @@ public class VolatileIndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extend
         return map.values();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Modifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Modifiers -------------------------------------------------- */
     
     @Locked
     @Committing
@@ -80,7 +80,7 @@ public class VolatileIndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extend
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new volatile indexed property object, which is used to store indexed property values in the given map.
@@ -125,7 +125,7 @@ public class VolatileIndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extend
         return get(ValueValidator.DEFAULT, ValueValidator.DEFAULT, map);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validator Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validator Checks -------------------------------------------------- */
     
     /**
      * Validates that the contents of the map are valid by checking whether the keys and values can be validated with the given

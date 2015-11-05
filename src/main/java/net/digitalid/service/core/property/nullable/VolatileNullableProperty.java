@@ -13,7 +13,7 @@ import net.digitalid.utility.annotations.state.Validated;
  */
 public class VolatileNullableProperty<V> extends WritableNullableProperty<V> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this property.
@@ -38,7 +38,7 @@ public class VolatileNullableProperty<V> extends WritableNullableProperty<V> {
         if (!newValue.equals(oldValue)) notify(oldValue, newValue);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     private VolatileNullableProperty(@Nonnull ValueValidator<? super V> validator, @Nullable @Validated V value) {
         super(validator);

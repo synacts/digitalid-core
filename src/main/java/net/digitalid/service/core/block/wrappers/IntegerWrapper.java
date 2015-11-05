@@ -30,7 +30,7 @@ import net.digitalid.utility.database.column.SQLType;
 @Immutable
 public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code integer@core.digitalid.net}.
@@ -43,7 +43,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value as a byte array.
@@ -65,7 +65,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new wrapper with the given type and value.
@@ -81,7 +81,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         this.value = value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given value into a new non-nullable block of the given type.
@@ -133,7 +133,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         return block == null ? null : decodeNonNullable(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     @Pure
     @Override
@@ -150,7 +150,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         block.setBytes(0, bytes);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -182,7 +182,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -232,7 +232,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         return Block.toString(bytes);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for this wrapper.
@@ -259,7 +259,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
     
     /**
      * Returns the value XDF converter of this wrapper.

@@ -29,7 +29,7 @@ import net.digitalid.utility.database.column.SQLType;
 @Immutable
 public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code empty@core.digitalid.net}.
@@ -42,7 +42,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new empty wrapper with the given type.
@@ -53,7 +53,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         super(type);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes nothing into a new block of the given type.
@@ -67,7 +67,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         return new XDFConverter(type).encodeNonNullable(new EmptyWrapper(type));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * The byte length of nothing.
@@ -88,7 +88,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -121,7 +121,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -173,7 +173,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         return "empty";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for this wrapper.
@@ -200,7 +200,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
     
     /**
      * Returns the value XDF converter of this wrapper.

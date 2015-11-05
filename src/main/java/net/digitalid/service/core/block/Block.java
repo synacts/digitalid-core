@@ -60,7 +60,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 @Immutable
 public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>, Cloneable {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Invariant –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Invariant -------------------------------------------------- */
     
     /**
      * Asserts that the class invariant still holds.
@@ -75,7 +75,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return true;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
      * Stores the semantic type of this block.
@@ -111,7 +111,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     private boolean encoded = false;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Eager Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Eager Constructors -------------------------------------------------- */
     
     /**
      * Creates a new block with the given parameters.
@@ -186,7 +186,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return Block.get(type, block.encodeIfNotYetEncoded(), 0, block.getLength());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Lazy Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Lazy Constructors -------------------------------------------------- */
     
     /**
      * Allocates a new block of the given type with the given wrapper.
@@ -222,7 +222,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return new Block(type, wrapper);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
      * Returns the semantic type of this block.
@@ -270,7 +270,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return this;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Get Bytes –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Get Bytes -------------------------------------------------- */
     
     /**
      * Returns the byte at the given index of this block.
@@ -350,7 +350,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return result;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Set Bytes –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Set Bytes -------------------------------------------------- */
     
     /**
      * Sets the byte at the given index of this block to the given value.
@@ -402,7 +402,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         System.arraycopy(values, offset, bytes, this.offset + index, length);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Decodes the value in this block.
@@ -439,7 +439,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Length –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Length -------------------------------------------------- */
     
     /**
      * Returns the length of this block.
@@ -458,7 +458,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return length;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * Returns whether this block is allocated.
@@ -576,7 +576,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         assert invariant();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Hash –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Hash -------------------------------------------------- */
     
     /**
      * Returns the SHA-256 hash of this block.
@@ -601,7 +601,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Cloneable -------------------------------------------------- */
     
     @Pure
     @Override
@@ -609,7 +609,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return Block.get(type, this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -694,7 +694,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return toString(bytes, offset, length);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -731,7 +731,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return new XDFConverter(type);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -786,7 +786,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cryptography –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Cryptography -------------------------------------------------- */
     
     /**
      * Encrypts this block with the given symmetric key.
@@ -826,7 +826,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return Block.get(type, symmetricKey.decrypt(initializationVector, bytes, offset, length));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Write –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Write -------------------------------------------------- */
     
     /**
      * Writes this block to the given output stream and optionally closes the output stream afterwards.
@@ -879,7 +879,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Input Stream –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Input Stream -------------------------------------------------- */
     
     /**
      * Returns an input stream to read directly from this block.
@@ -1035,7 +1035,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Output Stream –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Output Stream -------------------------------------------------- */
     
     /**
      * Returns an output stream to write directly into this block.

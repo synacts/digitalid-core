@@ -19,7 +19,7 @@ import net.digitalid.utility.annotations.state.Validated;
 @Immutable
 public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E extends Entity<E>> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Property Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Property Name -------------------------------------------------- */
     
     /**
      * Stores the name of the property (unique within the module).
@@ -36,7 +36,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         return propertyName;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
     
     /**
      * Stores the converters to convert and recover the value of the property.
@@ -53,7 +53,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         return valueConverters;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Required Authorization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Required Authorization -------------------------------------------------- */
     
     /**
      * Stores the required authorization to set the property and see its changes.
@@ -70,7 +70,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         return requiredAuthorization;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Validator –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Validator -------------------------------------------------- */
     
     /**
      * Stores the value validator that checks whether the value of the property is valid.
@@ -87,7 +87,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         return valueValidator;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Setup –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concept Setup -------------------------------------------------- */
     
     /**
      * Stores the setup of a concept.
@@ -104,7 +104,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         return conceptSetup;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concept Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type to encode the value of the property.
@@ -121,7 +121,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         return propertyType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new concept property factory with the given parameters.
@@ -145,7 +145,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         this.propertyType = SemanticType.map(propertyName + conceptSetup.getConceptType().getAddress().getStringWithDot()).load(valueConverters.getXDFConverter().getType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Action Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Action Type -------------------------------------------------- */
     
     /**
      * Returns the type of the concept property internal action.
@@ -155,7 +155,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
     @Pure
     public abstract @Nonnull @Loaded SemanticType getActionType();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Property Table –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
     /**
      * Returns the database table that stores the value of the property.

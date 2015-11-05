@@ -30,7 +30,7 @@ import net.digitalid.utility.system.logger.Log;
 @Immutable
 public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code compression@core.digitalid.net}.
@@ -43,7 +43,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Element –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Element -------------------------------------------------- */
     
     /**
      * Stores the element of this wrapper.
@@ -64,7 +64,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         return element;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new compression wrapper with the given type and element.
@@ -82,7 +82,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         this.element = element;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Compresses the given element into a new non-nullable block of the given type.
@@ -138,7 +138,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         return block == null ? null : decompressNonNullable(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * Stores the compression of the element.
@@ -184,7 +184,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -225,7 +225,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     @Pure
     @Override

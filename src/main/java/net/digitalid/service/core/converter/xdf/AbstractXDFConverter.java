@@ -30,7 +30,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public abstract class AbstractXDFConverter<O, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type that corresponds to the class that implements XDF.
@@ -59,7 +59,7 @@ public abstract class AbstractXDFConverter<O, E> {
         return SubtypingXDFConverter.get(type, this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * Encodes the given non-nullable object as a new block.
@@ -87,7 +87,7 @@ public abstract class AbstractXDFConverter<O, E> {
         return object == null ? null : encodeNonNullable(object);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding with Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding with Casting -------------------------------------------------- */
     
     /**
      * Encodes the given non-nullable object as a new block.
@@ -121,7 +121,7 @@ public abstract class AbstractXDFConverter<O, E> {
         return encodeNullable((O) object);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Decoding -------------------------------------------------- */
     
     /**
      * Decodes the given non-nullable block.
@@ -156,7 +156,7 @@ public abstract class AbstractXDFConverter<O, E> {
         else return null;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new abstract XDF converter with the given type.

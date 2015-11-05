@@ -20,14 +20,14 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public final class Exponent extends Number<Exponent> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code exponent.group@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("exponent.group@core.digitalid.net").load(IntegerWrapper.TYPE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new exponent with the given value.
@@ -62,7 +62,7 @@ public final class Exponent extends Number<Exponent> {
         return new Exponent(IntegerWrapper.decodeNonNullable(block));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Operations -------------------------------------------------- */
     
     /**
      * Adds the given exponent to this exponent.
@@ -130,7 +130,7 @@ public final class Exponent extends Number<Exponent> {
         return new Exponent(next);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -172,7 +172,7 @@ public final class Exponent extends Number<Exponent> {
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -185,7 +185,7 @@ public final class Exponent extends Number<Exponent> {
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

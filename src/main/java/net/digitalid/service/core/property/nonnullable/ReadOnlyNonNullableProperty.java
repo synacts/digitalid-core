@@ -16,7 +16,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  */
 public abstract class ReadOnlyNonNullableProperty<V> extends ReadOnlyProperty<V, NonNullablePropertyObserver<V>> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new read-only non-nullable replaceable property with the given validator.
@@ -27,7 +27,7 @@ public abstract class ReadOnlyNonNullableProperty<V> extends ReadOnlyProperty<V,
         super(validator);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Getter -------------------------------------------------- */
     
     /**
      * Returns the value of this replaceable property.

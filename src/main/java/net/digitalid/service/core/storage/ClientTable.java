@@ -21,7 +21,7 @@ import net.digitalid.utility.database.site.Site;
 @Immutable
 public abstract class ClientTable extends ClientTableImplementation<ClientModule> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new client table with the given module and name.
@@ -35,7 +35,7 @@ public abstract class ClientTable extends ClientTableImplementation<ClientModule
         module.registerClientStorage(this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Tables –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Tables -------------------------------------------------- */
     
     /**
      * Creates the database tables of this storage for the given client.
@@ -61,7 +61,7 @@ public abstract class ClientTable extends ClientTableImplementation<ClientModule
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Overrides –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Overrides -------------------------------------------------- */
     
     @Locked
     @Override

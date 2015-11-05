@@ -10,7 +10,7 @@ import net.digitalid.utility.annotations.state.Validated;
  */
 public final class VolatileNonNullableProperty<V> extends WritableNonNullableProperty<V> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this property.
@@ -33,7 +33,7 @@ public final class VolatileNonNullableProperty<V> extends WritableNonNullablePro
         if (!newValue.equals(oldValue)) notify(oldValue, newValue);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new non-nullable replaceable property with the given initial value.

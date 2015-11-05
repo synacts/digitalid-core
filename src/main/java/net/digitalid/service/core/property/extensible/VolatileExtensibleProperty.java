@@ -23,7 +23,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlySet;
  */
 public class VolatileExtensibleProperty<V, R extends ReadOnlySet<V>, F extends FreezableSet<V>> extends WritableExtensibleProperty<V, R, F> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Map –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Map -------------------------------------------------- */
     
     /**
      * A freezable set containing the values of this property.
@@ -37,7 +37,7 @@ public class VolatileExtensibleProperty<V, R extends ReadOnlySet<V>, F extends F
         return (R) set;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Values –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Values -------------------------------------------------- */
     
     @Override
     public void add(@Nonnull V value) {
@@ -53,7 +53,7 @@ public class VolatileExtensibleProperty<V, R extends ReadOnlySet<V>, F extends F
         if (didExist) notifyRemoved(set, value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new volatile extensible property with the given value validator and set.
@@ -96,7 +96,7 @@ public class VolatileExtensibleProperty<V, R extends ReadOnlySet<V>, F extends F
         return get(ValueValidator.DEFAULT, set);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validator Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validator Checks -------------------------------------------------- */
     
     /**
      * Validates that the contents of the map are valid by checking whether the keys and values can be validated with the given

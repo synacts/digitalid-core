@@ -31,7 +31,7 @@ import net.digitalid.utility.database.configuration.Database;
 @Immutable
 abstract class SiteTableImplementation<M extends DelegatingSiteStorageImplementation> extends HostTableImplementation<M> implements SiteStorage {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- State Type -------------------------------------------------- */
     
     /**
      * Stores the state type of this table.
@@ -44,7 +44,7 @@ abstract class SiteTableImplementation<M extends DelegatingSiteStorageImplementa
         return stateType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new site table with the given parameters.
@@ -62,7 +62,7 @@ abstract class SiteTableImplementation<M extends DelegatingSiteStorageImplementa
         Storage.register(this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- State -------------------------------------------------- */
     
     @Pure
     @Locked

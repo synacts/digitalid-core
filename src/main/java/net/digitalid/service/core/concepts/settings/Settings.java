@@ -29,7 +29,7 @@ import net.digitalid.utility.database.configuration.Database;
  */
 public final class Settings extends Concept<Settings, NonHostEntity, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new password that belongs to the given entity.
@@ -40,7 +40,7 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
         super(entity, None.OBJECT, SETUP);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for this class.
@@ -56,7 +56,7 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
         
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– ConceptIndex –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- ConceptIndex -------------------------------------------------- */
     
     /**
      * Stores the index of this concept.
@@ -80,14 +80,14 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
         return INDEX.get(entity, None.OBJECT);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Setup –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Setup -------------------------------------------------- */
     
     /**
      * Stores the setup of this concept.
      */
     public static final @Nonnull ConceptSetup<Settings, NonHostEntity, Object> SETUP = ConceptSetup.get(CoreService.SERVICE, "settings", INDEX, EmptyWrapper.getValueConverters(EmptyWrapper.SEMANTIC), NonHostEntity.CONVERTERS);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Required Authorization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Required Authorization -------------------------------------------------- */
     
     /**
      * Stores the required authorization to set the property and see its changes.
@@ -108,7 +108,7 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
         
     };
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Validator –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Validator -------------------------------------------------- */
     
     /**
      * Stores the value validator of the password property.
@@ -121,7 +121,7 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
         }
     };
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Property –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Property -------------------------------------------------- */
     
     /**
      * Stores the setup of the password property.

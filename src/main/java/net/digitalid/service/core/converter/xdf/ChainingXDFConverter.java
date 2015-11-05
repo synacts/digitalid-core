@@ -25,7 +25,7 @@ import net.digitalid.utility.annotations.state.Pure;
 @Immutable
 public class ChainingXDFConverter<O, E, K> extends AbstractXDFConverter<O, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the key converter used to convert and recover the object.
@@ -37,7 +37,7 @@ public class ChainingXDFConverter<O, E, K> extends AbstractXDFConverter<O, E> {
      */
     private final @Nonnull AbstractXDFConverter<K, E> XDFConverter;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new chaining XDF converter with the given parameters.
@@ -70,7 +70,7 @@ public class ChainingXDFConverter<O, E, K> extends AbstractXDFConverter<O, E> {
         return new ChainingXDFConverter<>(XDFConverter.getType(), keyConverter, XDFConverter);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Methods -------------------------------------------------- */
     
     @Pure
     @Override

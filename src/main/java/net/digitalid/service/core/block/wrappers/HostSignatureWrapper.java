@@ -49,7 +49,7 @@ import net.digitalid.utility.system.logger.Log;
 @Immutable
 public final class HostSignatureWrapper extends SignatureWrapper {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code signer.host.signature@core.digitalid.net}.
@@ -66,7 +66,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      */
     static final @Nonnull SemanticType SIGNATURE = SemanticType.map("host.signature@core.digitalid.net").load(TupleWrapper.TYPE, SIGNER, VALUE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Signer –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Signer -------------------------------------------------- */
     
     /**
      * Stores the identifier of the internal identity that is signing as a host.
@@ -84,7 +84,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         return signer;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new host signature wrapper with the given parameters.
@@ -124,7 +124,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         this.signer = InternalIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, TupleWrapper.decode(hostSignature).getNonNullableElement(0));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the element with a new host signature wrapper and signs it according to the arguments.
@@ -147,7 +147,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         return new HostSignatureWrapper(type, ConvertToXDF.nullable(element), subject, audit, signer);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Checks -------------------------------------------------- */
     
     @Pure
     @Override
@@ -155,7 +155,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         return super.isSignedLike(signature) && signer.equals(((HostSignatureWrapper) signature).signer);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Verifying –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Verifying -------------------------------------------------- */
     
     @Pure
     @Locked
@@ -186,7 +186,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         setVerified();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Signing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Signing -------------------------------------------------- */
     
     @Override
     void sign(@Nonnull @NullableElements @NonFrozen FreezableArray<Block> elements) {

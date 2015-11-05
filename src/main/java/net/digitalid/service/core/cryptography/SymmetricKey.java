@@ -44,14 +44,14 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 @Immutable
 public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<SymmetricKey, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code symmetric.key@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("symmetric.key@core.digitalid.net").load(IntegerWrapper.TYPE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Circumvent Cryptographic Restrictions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Circumvent Cryptographic Restrictions -------------------------------------------------- */
     
     static {
         try {
@@ -97,7 +97,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Parameters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Parameters -------------------------------------------------- */
     
     /**
      * Stores the length of symmetric keys in bytes.
@@ -109,7 +109,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
      */
     private static final @Nonnull String mode = "AES/CBC/PKCS5Padding";
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this symmetric key.
@@ -126,14 +126,14 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Key -------------------------------------------------- */
     
     /**
      * Stores the key of this symmetric key.
      */
     private final @Nonnull Key key;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new symmetric key with the given value.
@@ -170,7 +170,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
         return new SymmetricKey(new BigInteger(Parameters.ENCRYPTION_KEY, new SecureRandom()));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encryption and Decryption –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encryption and Decryption -------------------------------------------------- */
     
     /**
      * Encrypts the indicated section in the given byte array with this symmetric key.
@@ -226,7 +226,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -243,7 +243,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
         return this.value.hashCode();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -285,7 +285,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -298,7 +298,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

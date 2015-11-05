@@ -42,14 +42,14 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code @core.digitalid.net}.
      */
     public static final @Nonnull SemanticType IDENTIFIER = SyntacticType.IDENTITY_IDENTIFIER;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database ID –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Database ID -------------------------------------------------- */
     
     /**
      * Returns the database ID of this identity.
@@ -59,7 +59,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     @Pure
     public long getDatabaseID();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Address –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Address -------------------------------------------------- */
     
     /**
      * Returns the address of this identity.
@@ -69,7 +69,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     @Pure
     public @Nonnull Identifier getAddress();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Category –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Category -------------------------------------------------- */
     
     /**
      * Returns the category of this identity.
@@ -79,7 +79,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     @Pure
     public @Nonnull Category getCategory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Merging –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Merging -------------------------------------------------- */
     
     /**
      * Returns whether this identity has been merged and updates the internal number and the identifier.
@@ -91,7 +91,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     @NonCommitting
     public boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casting -------------------------------------------------- */
     
     /**
      * Returns this identity as an {@link InternalIdentity}.
@@ -245,7 +245,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     @Pure
     public @Nonnull MobilePerson toMobilePerson() throws InvalidEncodingException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Caster –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
     
     /**
      * This class allows to cast identities to the right subclass.
@@ -296,7 +296,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
         }
     };
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -344,7 +344,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
      */
     public static final @Nonnull XDFConverter<Identity> XDF_CONVERTER = new XDFConverter<>(Identity.IDENTIFIER, CASTER);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -400,7 +400,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
      */
     public static final @Nonnull SQLConverter<Identity> SQL_CONVERTER = new SQLConverter<>(CASTER);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

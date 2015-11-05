@@ -24,7 +24,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 abstract class HostTableImplementation<M extends DelegatingHostStorageImplementation> extends ClientTableImplementation<M> implements HostStorage {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Dump Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Dump Type -------------------------------------------------- */
     
     /**
      * Stores the dump type of this host table.
@@ -37,7 +37,7 @@ abstract class HostTableImplementation<M extends DelegatingHostStorageImplementa
         return dumpType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new host table implementation with the given parameters.
@@ -52,7 +52,7 @@ abstract class HostTableImplementation<M extends DelegatingHostStorageImplementa
         this.dumpType = dumpType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Dumps –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Dumps -------------------------------------------------- */
     
     @Pure
     @Locked

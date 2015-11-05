@@ -37,7 +37,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code selfcontained@core.digitalid.net}.
@@ -60,7 +60,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Element –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Element -------------------------------------------------- */
     
     /**
      * Stores the tuple of this wrapper.
@@ -82,7 +82,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         return element;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new selfcontained wrapper with the given type and element.
@@ -114,7 +114,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         element.setType(identifier.getIdentity().toSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given element into a new non-nullable selfcontained block of the given type.
@@ -189,7 +189,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     @Pure
     @Override
@@ -206,7 +206,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         tuple.writeTo(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -239,7 +239,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     @Pure
     @Override
@@ -247,7 +247,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         return new SQLConverter<>(getXDFConverter());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Reading –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Reading -------------------------------------------------- */
     
     /**
      * Reads a selfcontained block from the given input stream and optionally closes the input stream afterwards.

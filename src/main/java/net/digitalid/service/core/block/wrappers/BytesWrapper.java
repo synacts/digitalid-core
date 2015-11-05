@@ -36,7 +36,7 @@ import net.digitalid.utility.database.configuration.Database;
 @Immutable
 public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code bytes@core.digitalid.net}.
@@ -49,7 +49,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Bytes –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Bytes -------------------------------------------------- */
     
     /**
      * Stores the bytes of this wrapper.
@@ -91,7 +91,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new wrapper with the given type and bytes.
@@ -118,7 +118,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         this.block = block;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given non-nullable bytes into a new block of the given type.
@@ -194,7 +194,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         return block == null ? null : decodeNonNullableAsInputStream(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     @Pure
     @Override
@@ -221,7 +221,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -252,7 +252,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -312,7 +312,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for this wrapper.
@@ -339,7 +339,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
     
     /**
      * Returns the value XDF converter of this wrapper.

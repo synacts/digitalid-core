@@ -15,7 +15,7 @@ import net.digitalid.utility.annotations.state.Stateless;
 @Stateless
 public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKeyConverter<O, Object, O> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new non-converting key converter.
@@ -32,7 +32,7 @@ public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKey
         return new NonConvertingKeyConverter<>();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Methods -------------------------------------------------- */
     
     @Pure
     @Override

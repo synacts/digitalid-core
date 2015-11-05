@@ -30,7 +30,7 @@ import net.digitalid.utility.database.configuration.Database;
 @Immutable
 public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code boolean@core.digitalid.net}.
@@ -43,7 +43,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this wrapper.
@@ -60,7 +60,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new wrapper with the given type and value.
@@ -74,7 +74,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         this.value = value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given value into a new block of the given type.
@@ -101,7 +101,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * The byte length of a boolean.
@@ -123,7 +123,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         block.setByte(0, (byte) (value ? 1 : 0));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -156,7 +156,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -207,7 +207,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         return Database.getConfiguration().BOOLEAN(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for this wrapper.
@@ -234,7 +234,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
    
     /**
      * Returns the value XDF converter of this wrapper.

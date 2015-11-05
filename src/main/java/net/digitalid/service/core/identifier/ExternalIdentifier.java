@@ -27,7 +27,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 @Immutable
 public abstract class ExternalIdentifier extends IdentifierImplementation implements NonHostIdentifier {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
      * Returns whether the given string conforms to the criteria of this class.
@@ -60,7 +60,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates an external identifier with the given string.
@@ -90,7 +90,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     @Pure
     @Override
@@ -108,7 +108,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     @NonCommitting
     public abstract @Nonnull Person getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Category –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Category -------------------------------------------------- */
     
     /**
      * Returns the category of this external identifier.
@@ -120,7 +120,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     @Pure
     public abstract @Nonnull Category getCategory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.

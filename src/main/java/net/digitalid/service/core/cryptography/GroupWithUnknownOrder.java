@@ -21,14 +21,14 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code unknown.group@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("unknown.group@core.digitalid.net").load(IntegerWrapper.TYPE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new multiplicative group with the given modulus.
@@ -51,7 +51,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
         return new GroupWithUnknownOrder(modulus);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -95,7 +95,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
         return XDF_CONVERTER;
     }
 
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -108,7 +108,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

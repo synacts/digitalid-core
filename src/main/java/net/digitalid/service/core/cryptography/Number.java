@@ -17,7 +17,7 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 public abstract class Number<E extends Number<E>> implements XDF<E, Object>, SQL<E, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this number.
@@ -44,7 +44,7 @@ public abstract class Number<E extends Number<E>> implements XDF<E, Object>, SQL
         return value.bitLength();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new number with the given value.
@@ -55,7 +55,7 @@ public abstract class Number<E extends Number<E>> implements XDF<E, Object>, SQL
         this.value = value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override

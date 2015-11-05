@@ -48,7 +48,7 @@ import net.digitalid.utility.database.site.Site;
 @Immutable
 public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends ConceptPropertyTable<V, C, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new non-nullable property table with the given configuration from the property setup.
@@ -60,7 +60,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
         super(propertySetup);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– ClientTable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- ClientTable -------------------------------------------------- */
     
     @Locked
     @Override
@@ -89,7 +89,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– HostTable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- HostTable -------------------------------------------------- */
     
     @Pure
     @Locked
@@ -156,7 +156,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– StateTable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- StateTable -------------------------------------------------- */
     
     @Pure
     @Locked
@@ -224,7 +224,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
         getPropertyFactory().getConceptSetup().getConceptIndex().reset(entity, this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Methods -------------------------------------------------- */
     
     @Pure
     @Nonnull @NonNullableElements @Frozen ReadOnlyPair<Time, V> load(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup) throws AbortException {

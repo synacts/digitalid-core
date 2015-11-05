@@ -31,7 +31,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 @Immutable
 public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code tuple@core.digitalid.net}.
@@ -63,7 +63,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         return true;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Elements –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Elements -------------------------------------------------- */
     
     /**
      * Stores the nullable elements of this tuple wrapper.
@@ -233,7 +233,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         return element;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new tuple wrapper with the given type and elements.
@@ -252,7 +252,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         this.elements = elements;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given elements into a new block of the given type.
@@ -313,7 +313,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     @Pure
     @Override
@@ -356,7 +356,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         assert offset == block.getLength() : "The whole block should now be encoded.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -406,7 +406,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     @Pure
     @Override

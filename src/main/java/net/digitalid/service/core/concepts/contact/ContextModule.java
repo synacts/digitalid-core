@@ -55,7 +55,7 @@ import net.digitalid.utility.database.site.Site;
 @Stateless
 public final class ContextModule implements StateModule {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Module Initialization -------------------------------------------------- */
     
     /**
      * Initializes this class.
@@ -73,7 +73,7 @@ public final class ContextModule implements StateModule {
         return CoreService.SERVICE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Table Creation and Deletion -------------------------------------------------- */
     
     /**
      * Creates the table which is referenced for the given site.
@@ -115,7 +115,7 @@ public final class ContextModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Module Export and Import -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code entry.context.module@core.digitalid.net}.
@@ -155,7 +155,7 @@ public final class ContextModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Getter and Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- State Getter and Setter -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code entry.name.context.state@core.digitalid.net}.
@@ -280,7 +280,7 @@ public final class ContextModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Creation -------------------------------------------------- */
     
     /**
      * Creates the given context.
@@ -302,7 +302,7 @@ public final class ContextModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Contacts –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Contacts -------------------------------------------------- */
     
     /**
      * Returns the contacts of the given context.
@@ -354,7 +354,7 @@ public final class ContextModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Legacy Code –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Legacy Code -------------------------------------------------- */
     
 //    /**
 //     * Returns whether the given context at the given identity exists.

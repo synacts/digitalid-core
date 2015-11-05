@@ -25,7 +25,7 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code item.public.key.chain.host@core.digitalid.net}.
@@ -37,7 +37,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("public.key.chain.host@core.digitalid.net").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, ListWrapper.TYPE, ITEM);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new key chain with the given items.
@@ -83,7 +83,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
         return new PublicKeyChain(items.freeze());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -117,7 +117,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -130,7 +130,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

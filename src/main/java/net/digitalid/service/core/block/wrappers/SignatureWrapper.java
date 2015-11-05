@@ -54,7 +54,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code signature@core.digitalid.net}.
@@ -82,7 +82,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Element –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Element -------------------------------------------------- */
     
     /**
      * Stores the element of this wrapper.
@@ -114,7 +114,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         return element;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Signed –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Signed -------------------------------------------------- */
     
     /**
      * Returns whether the element is signed.
@@ -126,7 +126,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         return this instanceof HostSignatureWrapper || this instanceof ClientSignatureWrapper || this instanceof CredentialsSignatureWrapper;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subject –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Subject -------------------------------------------------- */
     
     /**
      * Stores the identifier of the identity about which a statement is made or null in case of unsigned attributes.
@@ -169,7 +169,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         return subject;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Time –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Time -------------------------------------------------- */
     
     /**
      * Stores the time of the signature generation or null if this signature has no subject.
@@ -201,7 +201,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         return time;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Audit –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Audit -------------------------------------------------- */
     
     /**
      * Stores the audit or null if no audit is or shall be appended.
@@ -218,7 +218,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         return audit;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Verified –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Verified -------------------------------------------------- */
     
     /**
      * Stores whether this signature is verified.
@@ -260,7 +260,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         setVerified();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new signature wrapper with the given type, element, subject and audit.
@@ -309,7 +309,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         this.verified = verified;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given element with a new signature wrapper without signing.
@@ -373,7 +373,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         throw new InvalidEncodingException("The element may only be signed either by a host, by a client, with credentials or not at all.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Checks -------------------------------------------------- */
     
     /**
      * Returns whether this signature is signed like the given signature.
@@ -395,7 +395,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         if (time == null || time.isLessThan(Time.HALF_HOUR.ago())) throw new InactiveSignatureException("The signature was signed more than half an hour ago.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Signing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Signing -------------------------------------------------- */
     
     /**
      * Signs the element. (This method should be overridden in the subclasses.)
@@ -406,7 +406,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      */
     void sign(@Nonnull @NullableElements @NonFrozen FreezableArray<Block> elements) {}
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * Stores the signed element.
@@ -450,7 +450,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         getCache().writeTo(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -481,7 +481,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     @Pure
     @Override
@@ -489,7 +489,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         return new SQLConverter<>(getXDFConverter());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casting -------------------------------------------------- */
     
     /**
      * Returns this signature wrapper as a {@link HostSignatureWrapper}.
@@ -530,7 +530,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         throw new PacketException(PacketErrorCode.SIGNATURE, "The element was not signed with credentials.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Agent -------------------------------------------------- */
     
     /**
      * Returns the agent that signed the element or null if no such agent is found.

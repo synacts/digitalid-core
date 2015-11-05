@@ -20,7 +20,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public abstract class IdentifierImplementation implements Identifier {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
      * Returns whether the given string conforms to the criteria of this class.
@@ -48,7 +48,7 @@ public abstract class IdentifierImplementation implements Identifier {
         return string.contains(":") ? ExternalIdentifier.isValid(string) : InternalIdentifier.isValid(string);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– String –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- String -------------------------------------------------- */
     
     /**
      * Stores the string of this identifier.
@@ -61,7 +61,7 @@ public abstract class IdentifierImplementation implements Identifier {
         return string;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates an identifier with the given string.
@@ -86,7 +86,7 @@ public abstract class IdentifierImplementation implements Identifier {
         return string.contains(":") ? ExternalIdentifier.get(string) : InternalIdentifier.get(string);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     @Pure
     @Locked
@@ -96,7 +96,7 @@ public abstract class IdentifierImplementation implements Identifier {
         return Mapper.isMapped(this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to Non-Host Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casting to Non-Host Identifier -------------------------------------------------- */
     
     @Pure
     @Override
@@ -105,7 +105,7 @@ public abstract class IdentifierImplementation implements Identifier {
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostIdentifier.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to Internal Identifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casting to Internal Identifiers -------------------------------------------------- */
     
     @Pure
     @Override
@@ -128,7 +128,7 @@ public abstract class IdentifierImplementation implements Identifier {
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalNonHostIdentifier.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to External Identifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casting to External Identifiers -------------------------------------------------- */
     
     @Pure
     @Override
@@ -151,7 +151,7 @@ public abstract class IdentifierImplementation implements Identifier {
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobileIdentifier.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -174,7 +174,7 @@ public abstract class IdentifierImplementation implements Identifier {
         return "'" + string + "'";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     @Pure
     @Override
@@ -182,7 +182,7 @@ public abstract class IdentifierImplementation implements Identifier {
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     @Pure
     @Override

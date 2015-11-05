@@ -19,7 +19,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlySet;
  */
 public abstract class WritableExtensibleProperty<V, R extends ReadOnlySet<V>, F extends FreezableSet<V>> extends ReadOnlyExtensibleProperty<V, R> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new writable extensible property with the given validators.
@@ -30,7 +30,7 @@ public abstract class WritableExtensibleProperty<V, R extends ReadOnlySet<V>, F 
         super(valueValidator);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Modifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Modifiers -------------------------------------------------- */
     
     /**
      * Adds a new value to the set.
@@ -46,7 +46,7 @@ public abstract class WritableExtensibleProperty<V, R extends ReadOnlySet<V>, F 
      */
     public abstract void remove(@Nonnull @Frozen V value);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Notification –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Notification -------------------------------------------------- */
     
     /**
      * Notifies the observers that a value was added.

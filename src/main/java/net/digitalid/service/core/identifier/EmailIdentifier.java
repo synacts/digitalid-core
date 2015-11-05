@@ -27,7 +27,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public final class EmailIdentifier extends ExternalIdentifier {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
      * The pattern that valid email identifiers have to match.
@@ -46,7 +46,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
         return ExternalIdentifier.isConforming(string) && pattern.matcher(string).matches();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates an email identifier with the given string.
@@ -71,7 +71,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
         return new EmailIdentifier(string);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     @Pure
     @Override
@@ -81,7 +81,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
         return Mapper.getIdentity(this).toPerson();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Category –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Category -------------------------------------------------- */
     
     @Pure
     @Override
@@ -89,7 +89,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
         return Category.EMAIL_PERSON;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Existence -------------------------------------------------- */
     
     /**
      * Returns the host of this email address.
@@ -117,7 +117,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.

@@ -25,7 +25,7 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Comparable<Time> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constants –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constants -------------------------------------------------- */
     
     /**
      * Stores the time of a decade (10 tropical years).
@@ -92,7 +92,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
      */
     public static final @Nonnull Time SECOND = new Time(1000l);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Boundaries –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Boundaries -------------------------------------------------- */
     
     /**
      * Stores the earliest possible time.
@@ -104,7 +104,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
      */
     public static final @Nonnull Time MAX = new Time(Long.MAX_VALUE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the time in milliseconds.
@@ -121,7 +121,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new time with the given value.
@@ -154,7 +154,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return new Time(System.currentTimeMillis());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Relative Time –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Relative Time -------------------------------------------------- */
     
     /**
      * Returns this interval ago now.
@@ -176,7 +176,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return new Time(System.currentTimeMillis() + value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Arithmetic Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Arithmetic Operations -------------------------------------------------- */
     
     /**
      * Adds the given time to this time.
@@ -262,7 +262,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return this.value % interval.value == 0;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Sign Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Sign Checks -------------------------------------------------- */
     
     /**
      * Returns whether this time is negative.
@@ -304,7 +304,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return this.value <= 0;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Comparisons –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Comparisons -------------------------------------------------- */
     
     /**
      * Returns whether this time is equal to the given time.
@@ -372,7 +372,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return Long.compare(this.value, time.value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Retrievals –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Retrievals -------------------------------------------------- */
     
     /**
      * Returns the number of calendar years in this time.
@@ -454,7 +454,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return this.value % SECOND.value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Formatting –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Formatting -------------------------------------------------- */
     
     /**
      * Stores the date formatter.
@@ -531,7 +531,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return isGreaterThan(DECADE) ? asDate() : asInterval();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -554,7 +554,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return String.valueOf(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Key Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
      * Stores the key converter for this class.
@@ -575,7 +575,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         
     };
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code time@core.digitalid.net}.
@@ -593,7 +593,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -606,7 +606,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

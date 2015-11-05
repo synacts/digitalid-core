@@ -35,7 +35,7 @@ import net.digitalid.utility.database.converter.SQL;
  */
 public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K> implements XDF<C, E>, SQL<C, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Entity -------------------------------------------------- */
     
     /**
      * Stores the entity to which this concept belongs.
@@ -52,7 +52,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         return entity;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– On Host –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- On Host -------------------------------------------------- */
     
     /**
      * Returns whether this concept is on a host.
@@ -77,7 +77,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         return (Account) entity;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– On Client –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- On Client -------------------------------------------------- */
     
     /**
      * Returns whether this concept is on a client.
@@ -102,7 +102,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         return (Role) entity;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Key -------------------------------------------------- */
     
     /**
      * Stores the key which identifies this concept.
@@ -119,7 +119,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         return key;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Setup –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Setup -------------------------------------------------- */
     
     /**
      * Stores the setup of this concept.
@@ -136,7 +136,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         return setup;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new concept with the given entity, key and setup.
@@ -151,7 +151,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         this.setup = setup;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Properties –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Properties -------------------------------------------------- */
     
     /**
      * Stores the properties of this concept.
@@ -214,7 +214,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         for (final @Nonnull ConceptProperty<?, C, E> property : properties) property.reset();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for concepts.
@@ -235,7 +235,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
         
     @Pure
     @Override
@@ -243,7 +243,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         return setup.getXDFConverter();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     @Pure
     @Override
@@ -251,7 +251,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         return setup.getSQLConverter();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override

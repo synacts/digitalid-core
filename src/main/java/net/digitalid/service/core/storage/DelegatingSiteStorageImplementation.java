@@ -41,7 +41,7 @@ import net.digitalid.utility.database.annotations.OnMainThread;
 @Immutable
 abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorageImplementation implements SiteStorage {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code table.state@core.digitalid.net}.
@@ -53,7 +53,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
      */
     private static final @Nonnull SemanticType STATE = SemanticType.map("state@core.digitalid.net").load(ListWrapper.TYPE, TABLE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- State Type -------------------------------------------------- */
     
     /**
      * Stores the state type of this module.
@@ -66,7 +66,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
         return stateType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new site storage with the given service and name.
@@ -89,7 +89,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
         Storage.register(this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Substorages –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Substorages -------------------------------------------------- */
     
     /**
      * Stores the substorages of this storage.
@@ -106,7 +106,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
         super.registerHostStorage(substorage);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- State Methods -------------------------------------------------- */
     
     @Pure
     @Locked

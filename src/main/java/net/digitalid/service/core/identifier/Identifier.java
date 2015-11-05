@@ -42,7 +42,7 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– String –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- String -------------------------------------------------- */
     
     /**
      * Returns the string of this identifier.
@@ -52,7 +52,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     @Pure
     public @Nonnull @Validated String getString();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     /**
      * Returns whether this identifier is mapped.
@@ -87,7 +87,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     @NonCommitting
     public @Nonnull Identity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to Non-Host Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casting to Non-Host Identifier -------------------------------------------------- */
     
     /**
      * Returns this identifier as a {@link NonHostIdentifier}.
@@ -99,7 +99,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     @Pure
     public @Nonnull NonHostIdentifier toNonHostIdentifier() throws InvalidEncodingException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to Internal Identifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casting to Internal Identifiers -------------------------------------------------- */
     
     /**
      * Returns this identifier as an {@link InternalIdentifier}.
@@ -131,7 +131,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     @Pure
     public @Nonnull InternalNonHostIdentifier toInternalNonHostIdentifier() throws InvalidEncodingException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to External Identifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Casting to External Identifiers -------------------------------------------------- */
     
     /**
      * Returns this identifier as an {@link ExternalIdentifier}.
@@ -163,7 +163,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     @Pure
     public @Nonnull MobileIdentifier toMobileIdentifier() throws InvalidEncodingException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Caster –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
     
     /**
      * This class allows to cast identifiers to the right subclass.
@@ -214,7 +214,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
         }
     };
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -264,7 +264,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
      */
     public static final @Nonnull XDFConverter<Identifier> XDF_CONVERTER = new XDFConverter<>(Identity.IDENTIFIER, CASTER);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -317,7 +317,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
      */
     public static final @Nonnull SQLConverter<Identifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

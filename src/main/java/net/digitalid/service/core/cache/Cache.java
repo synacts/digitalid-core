@@ -62,7 +62,7 @@ import net.digitalid.utility.system.logger.Log;
 @Stateless
 public final class Cache {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
     static {
         assert Database.isMainThread() : "This static block is called in the main thread.";
@@ -113,7 +113,7 @@ public final class Cache {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database Access –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Database Access -------------------------------------------------- */
     
     /**
      * Invalidates all the cached attribute values of the given identity.
@@ -205,7 +205,7 @@ public final class Cache {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Attribute Retrieval –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Attribute Retrieval -------------------------------------------------- */
     
     /**
      * Returns the expiration time of the given attribute value.
@@ -446,7 +446,7 @@ public final class Cache {
         return getPublicKeyChain(identifier.getIdentity()).getKey(time);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Host Lookup –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Host Lookup -------------------------------------------------- */
     
     /**
      * Establishes the identity of the given host identifier by checking its existence and requesting its public key chain.

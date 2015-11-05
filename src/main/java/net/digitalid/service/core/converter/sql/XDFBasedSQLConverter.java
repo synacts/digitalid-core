@@ -35,21 +35,21 @@ import net.digitalid.utility.database.converter.ConvertToSQL;
 @Immutable
 public final class XDFBasedSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Column –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Column -------------------------------------------------- */
     
     /**
      * Stores the column of this SQL converter.
      */
     private static final @Nonnull Column COLUMN = Column.get("block", SQLType.BLOB);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Field –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Field -------------------------------------------------- */
     
     /**
      * Stores the XDF converter used to encode and decode the block.
      */
     private final @Nonnull AbstractXDFConverter<O, E> XDFConverter;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new XDF-based SQL converter with the given XDF converter.
@@ -74,7 +74,7 @@ public final class XDFBasedSQLConverter<O, E> extends AbstractSQLConverter<O, E>
         return new XDFBasedSQLConverter<>(XDFConverter);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Storing -------------------------------------------------- */
     
     @Pure
     @Override
@@ -88,7 +88,7 @@ public final class XDFBasedSQLConverter<O, E> extends AbstractSQLConverter<O, E>
         ConvertToSQL.nonNullable(XDFConverter.encodeNonNullable(object), preparedStatement, parameterIndex);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Retrieving –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Retrieving -------------------------------------------------- */
     
     @Pure
     @Override

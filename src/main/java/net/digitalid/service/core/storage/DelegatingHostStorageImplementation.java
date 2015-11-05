@@ -36,7 +36,7 @@ import net.digitalid.utility.database.annotations.OnMainThread;
 @Immutable
 abstract class DelegatingHostStorageImplementation extends DelegatingClientStorageImplementation implements HostStorage {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code table.module@core.digitalid.net}.
@@ -48,7 +48,7 @@ abstract class DelegatingHostStorageImplementation extends DelegatingClientStora
      */
     private static final @Nonnull SemanticType MODULE = SemanticType.map("module@core.digitalid.net").load(ListWrapper.TYPE, TABLE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Dump Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Dump Type -------------------------------------------------- */
     
     /**
      * Stores the dump type of this host storage.
@@ -61,7 +61,7 @@ abstract class DelegatingHostStorageImplementation extends DelegatingClientStora
         return dumpType;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new host storage with the given service and name.
@@ -82,7 +82,7 @@ abstract class DelegatingHostStorageImplementation extends DelegatingClientStora
         this.dumpType = SemanticType.map(identifier).load(MODULE);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Substorages –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Substorages -------------------------------------------------- */
     
     /**
      * Stores the substorages of this storage.
@@ -99,7 +99,7 @@ abstract class DelegatingHostStorageImplementation extends DelegatingClientStora
         super.registerClientStorage(substorage);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Export and Import -------------------------------------------------- */
     
     @Pure
     @Locked

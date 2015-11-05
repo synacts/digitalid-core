@@ -49,7 +49,7 @@ import net.digitalid.utility.system.logger.Log;
 @Immutable
 public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code encryption@core.digitalid.net}.
@@ -77,7 +77,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cache –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Cache -------------------------------------------------- */
     
     /**
      * Caches the encrypted key for a given pair of public key and symmetric key.
@@ -130,7 +130,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         return symmetricKey;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Time –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Time -------------------------------------------------- */
     
     /**
      * Stores the time of encryption.
@@ -147,7 +147,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         return time;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Element –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Element -------------------------------------------------- */
     
     /**
      * Stores the element of this wrapper.
@@ -168,7 +168,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         return element;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Recipient –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
     /**
      * Stores the identifier of the host for which the element is encrypted or null if the recipient is not known.
@@ -186,7 +186,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         return recipient;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Symmetric Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Symmetric Key -------------------------------------------------- */
     
     /**
      * Stores the symmetric key that is used for the encryption or decryption of the element or null if no encryption is used.
@@ -213,7 +213,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         return symmetricKey != null;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Initialization Vector –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Initialization Vector -------------------------------------------------- */
     
     /**
      * Stores the initialization vector that is used for the encryption of the element or null if no encryption is used.
@@ -230,14 +230,14 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         return initializationVector;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Public Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Public Key -------------------------------------------------- */
     
     /**
      * Stores the public key that is used for the encryption of the symmetric key or null if the block is decoded.
      */
     private final @Nullable PublicKey publicKey;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new encryption wrapper with the given type and element.
@@ -323,7 +323,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         this.publicKey = null;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encrypts the given element with a new encryption wrapper.
@@ -357,7 +357,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         return new EncryptionWrapper(block, symmetricKey);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
      * Stores the encryption of the element.
@@ -411,7 +411,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         getCache().writeTo(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -442,7 +442,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     @Pure
     @Override

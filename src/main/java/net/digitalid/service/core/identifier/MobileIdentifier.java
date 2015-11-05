@@ -23,7 +23,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public final class MobileIdentifier extends ExternalIdentifier {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
      * The pattern that valid mobile identifiers have to match.
@@ -42,7 +42,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
         return ExternalIdentifier.isConforming(string) && pattern.matcher(string).matches();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a mobile identifier with the given string.
@@ -67,7 +67,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
         return new MobileIdentifier(string);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     @Pure
     @Override
@@ -76,7 +76,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
         return Mapper.getIdentity(this).toPerson();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Category –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Category -------------------------------------------------- */
     
     @Pure
     @Override
@@ -84,7 +84,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
         return Category.MOBILE_PERSON;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.

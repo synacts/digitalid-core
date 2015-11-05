@@ -14,7 +14,7 @@ import net.digitalid.utility.annotations.state.Pure;
  */
 public class NullableConceptProperty<V, C extends Concept> extends NullableConceptProperty<V> implements ConceptProperty<C> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concept -------------------------------------------------- */
     
     /**
      * Stores the concept to which this property belongs.
@@ -27,12 +27,12 @@ public class NullableConceptProperty<V, C extends Concept> extends NullableConce
         return concept;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Table -------------------------------------------------- */
     
     // TODO: Introduce a reference to the database module/methods to load and change the value (or make this generic as well; usually either a column within a row or aggregating several rows)
     private final @Nonnull NonNullableConceptPropertyTable<V> table; // TODO: Change to nullable table.
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     private NullableConceptProperty(@Nonnull ValueValidator<? super V> validator, @Nonnull C concept, @Nonnull NonNullableConceptPropertyTable<V> table) {
         super(validator);
@@ -41,7 +41,7 @@ public class NullableConceptProperty<V, C extends Concept> extends NullableConce
         this.table = table;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Loading –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Loading -------------------------------------------------- */
     
     // TODO: Make the value loadable.
     

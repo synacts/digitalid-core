@@ -13,7 +13,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlySet;
  */
 public abstract class ReadOnlyExtensibleProperty<V, R extends ReadOnlySet<V>> extends ReadOnlyProperty<V, ExtensiblePropertyObserver<V, R>> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new read-only extensible property with the given validator.
@@ -24,7 +24,7 @@ public abstract class ReadOnlyExtensibleProperty<V, R extends ReadOnlySet<V>> ex
         super(valueValidator);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Getter -------------------------------------------------- */
     
     /**
      * Returns a read-only representation of the map.

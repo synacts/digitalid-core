@@ -26,7 +26,7 @@ import net.digitalid.utility.database.converter.ConvertToSQL;
 @Immutable
 public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends Wrapper<W> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new block-based wrapper with the given semantic type.
@@ -39,7 +39,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
         super(semanticType);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for block-based wrappers.

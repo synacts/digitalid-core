@@ -37,7 +37,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 @Immutable
 public class Service extends DelegatingSiteStorageImplementation implements SQL<Service, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Services –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Services -------------------------------------------------- */
     
     /**
      * Maps the services that are installed on this server from their type.
@@ -68,7 +68,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
         return service;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
      * Stores the type of this service.
@@ -85,7 +85,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
         return type;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Title –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Title -------------------------------------------------- */
     
     /**
      * Stores the title of this service.
@@ -102,7 +102,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
         return title;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Version –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Version -------------------------------------------------- */
     
     /**
      * Stores the version of this service.
@@ -129,7 +129,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
         return title + " (" + version + ")";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new service with the given name, title and version.
@@ -147,7 +147,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
         services.put(getType(), this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Recipient –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
     /**
      * Returns the recipient of internal methods for the given role.
@@ -182,7 +182,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
         return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -190,7 +190,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
         return getType().toString();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

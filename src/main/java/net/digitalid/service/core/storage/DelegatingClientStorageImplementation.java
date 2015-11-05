@@ -26,7 +26,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 @Immutable
 abstract class DelegatingClientStorageImplementation implements ClientStorage {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Service –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Service -------------------------------------------------- */
     
     /**
      * Stores the service to which this storage belongs.
@@ -39,7 +39,7 @@ abstract class DelegatingClientStorageImplementation implements ClientStorage {
         return service;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Name -------------------------------------------------- */
     
     /**
      * Returns whether the given name is valid.
@@ -70,7 +70,7 @@ abstract class DelegatingClientStorageImplementation implements ClientStorage {
         return site + name;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
 
     /**
      * Creates a new client storage with the given service and name.
@@ -92,7 +92,7 @@ abstract class DelegatingClientStorageImplementation implements ClientStorage {
         assert isValidName(this.name) : "The name is valid.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Substorages –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Substorages -------------------------------------------------- */
     
     /**
      * Stores the substorages of this storage.
@@ -118,7 +118,7 @@ abstract class DelegatingClientStorageImplementation implements ClientStorage {
         substorages.add(substorage);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Creation and Deletion -------------------------------------------------- */
     
     @Locked
     @Override

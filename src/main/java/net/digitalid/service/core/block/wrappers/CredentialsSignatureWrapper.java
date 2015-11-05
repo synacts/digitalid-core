@@ -83,7 +83,7 @@ import net.digitalid.utility.system.logger.Log;
 @Immutable
 public final class CredentialsSignatureWrapper extends SignatureWrapper {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code t.credentials.signature@core.digitalid.net}.
@@ -178,7 +178,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     static final @Nonnull SemanticType SIGNATURE = SemanticType.map("credentials.signature@core.digitalid.net").load(TupleWrapper.TYPE, T, SU, Restrictions.TYPE, SV, CREDENTIALS, AttributeValue.LIST, F_PRIME, SB_PRIME);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Credentials –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Credentials -------------------------------------------------- */
     
     /**
      * Returns whether the given credentials are valid.
@@ -259,7 +259,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         return true;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Certificates –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Certificates -------------------------------------------------- */
     
     /**
      * Returns whether the given certificates are valid (given the given credentials).
@@ -304,7 +304,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         return certificates;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Lodged –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Lodged -------------------------------------------------- */
     
     /**
      * Stores whether the hidden content of the credentials is verifiably encrypted to achieve liability.
@@ -329,7 +329,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         if (!isLodged()) throw new PacketException(PacketErrorCode.SIGNATURE, "The credentials signature has to be lodged.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores either the value b' for clients or the value f' for hosts or null if the credentials are not shortened.
@@ -346,7 +346,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Public Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Public Key -------------------------------------------------- */
     
     /**
      * Stores the public key of the receiving host or null if the credentials are not shortened.
@@ -355,7 +355,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     private final @Nullable PublicKey publicKey;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new credentials signature wrapper with the given parameters.
@@ -463,7 +463,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         this.publicKey = value == null ? null : Cache.getPublicKey(getNonNullableSubject().getHostIdentifier(), getNonNullableTime());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the element with a new credentials signature wrapper and signs it according to the arguments.
@@ -488,7 +488,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         return new CredentialsSignatureWrapper(type, ConvertToXDF.nullable(element), subject, audit, credentials, certificates, lodged, value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Checks -------------------------------------------------- */
     
     @Pure
     @Override
@@ -512,7 +512,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Based –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Based -------------------------------------------------- */
     
     /**
      * Returns whether this authentication is identity-based.
@@ -544,7 +544,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         return credentials.getNonNullable(0).isRoleBased();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Issuer –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Issuer -------------------------------------------------- */
     
     /**
      * Returns the issuer of the first and only credential.
@@ -572,7 +572,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         if (!isIdentityBased() || isRoleBased() || !issuer.equals(getIssuer())) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The credential was not issued by " + issuer.getAddress() + ".");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Attribute Content –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Attribute Content -------------------------------------------------- */
     
     /**
      * Returns the attribute content with the given type from the credentials and certificates or null if no such attribute can be found.
@@ -603,7 +603,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         return null;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Covering –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Covering -------------------------------------------------- */
     
     /**
      * Returns whether each credential allows to read the given type.
@@ -683,7 +683,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         if (!cover(permissions)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "Not all credentials cover " + permissions + ".");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Verifying –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Verifying -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code twi.array.credential.credentials.signature@core.digitalid.net}.
@@ -815,7 +815,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         setVerified();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Signing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Signing -------------------------------------------------- */
     
     @Override
     void sign(@Nonnull @NonFrozen FreezableArray<Block> elements) {
@@ -951,7 +951,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         Log.verbose("Element signed in " + start.ago().getValue() + " ms.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Agent -------------------------------------------------- */
     
     @Pure
     @Locked

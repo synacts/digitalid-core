@@ -30,7 +30,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 public final class FreezableContacts extends FreezableLinkedHashSet<Contact> implements ReadOnlyContacts {
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code list.contact@core.digitalid.net}.
@@ -38,7 +38,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
     public static final @Nonnull SemanticType TYPE = SemanticType.map("list.contact@core.digitalid.net").load(ListWrapper.TYPE, Contact.TYPE);
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates an empty set of contacts.
@@ -63,7 +63,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
         addAll(contacts);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Blockable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Blockable -------------------------------------------------- */
     
     @Pure
     @Override
@@ -95,7 +95,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
         for (final @Nonnull Block element : elements) add(Contact.get(entity, element));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Freezable -------------------------------------------------- */
     
     @Override
     public @Nonnull @Frozen ReadOnlyContacts freeze() {
@@ -109,7 +109,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
         return new FreezableContacts(this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Editing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Editing -------------------------------------------------- */
     
     /**
      * Adds the given contacts to these contacts.
@@ -131,7 +131,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
         super.removeAll((FreezableContacts) contacts);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQLizable -------------------------------------------------- */
     
     /**
      * Returns the given column of the result set as an instance of this class.
@@ -165,7 +165,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     /**
      * Stores the converter that converts a contact to the desired string.

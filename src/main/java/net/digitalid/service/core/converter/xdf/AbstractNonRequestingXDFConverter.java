@@ -17,7 +17,7 @@ import net.digitalid.utility.annotations.state.Pure;
 @Immutable
 public abstract class AbstractNonRequestingXDFConverter<O, E> extends AbstractXDFConverter<O, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     @Pure
     @Override
@@ -25,7 +25,7 @@ public abstract class AbstractNonRequestingXDFConverter<O, E> extends AbstractXD
         return SubtypingNonRequestingXDFConverter.get(type, this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Decoding -------------------------------------------------- */
     
     @Pure
     @Override
@@ -37,7 +37,7 @@ public abstract class AbstractNonRequestingXDFConverter<O, E> extends AbstractXD
         return block == null ? null : decodeNonNullable(external, block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new abstract non-requesting XDF converter with the given type.

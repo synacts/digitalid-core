@@ -23,7 +23,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public final class InternalNonHostIdentifier extends InternalIdentifier implements NonHostIdentifier {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
      * Returns whether the given string is a valid non-host identifier.
@@ -37,7 +37,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         return InternalIdentifier.isConforming(string) && string.contains("@");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a non-host identifier with the given string.
@@ -62,7 +62,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         return new InternalNonHostIdentifier(string);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     @Pure
     @Locked
@@ -87,7 +87,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         return identity;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Host Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Host Identifier -------------------------------------------------- */
     
     @Pure
     @Override
@@ -95,7 +95,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         return HostIdentifier.get(getString().substring(getString().indexOf("@") + 1));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– String with Dot –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- String with Dot -------------------------------------------------- */
     
     /**
      * Returns the string of this identifier with a leading dot or @.
@@ -109,7 +109,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         return (string.startsWith("@") ? "" : ".") + string;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.

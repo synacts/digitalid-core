@@ -56,7 +56,7 @@ import net.digitalid.utility.database.site.Site;
 @Stateless
 public final class AgentModule implements StateModule {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Module Initialization -------------------------------------------------- */
     
     static { ContextModule.initialize(); }
     
@@ -71,7 +71,7 @@ public final class AgentModule implements StateModule {
         return CoreService.SERVICE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Table Creation and Deletion -------------------------------------------------- */
     
     /**
      * Creates the table which is referenced for the given site.
@@ -123,7 +123,7 @@ public final class AgentModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Module Export and Import -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code entry.agent.agent.module@core.digitalid.net}.
@@ -458,7 +458,7 @@ public final class AgentModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Getter and Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- State Getter and Setter -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code entry.agent.agents.state@core.digitalid.net}.
@@ -738,7 +738,7 @@ public final class AgentModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Agent -------------------------------------------------- */
     
     /**
      * Returns whether the given agent is removed.
@@ -794,7 +794,7 @@ public final class AgentModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Permissions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Permissions -------------------------------------------------- */
     
     /**
      * Returns the permissions of the given agent.
@@ -845,7 +845,7 @@ public final class AgentModule implements StateModule {
         redeterminePermissionsOrder(agent);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Permissions Order –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Permissions Order -------------------------------------------------- */
     
     /**
      * Redetermines which agents have stronger and weaker permissions than the given agent or, if that one is null, all agents at the given entity.
@@ -875,7 +875,7 @@ public final class AgentModule implements StateModule {
         redeterminePermissionsOrder(agent.getEntity(), agent);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Restrictions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Restrictions -------------------------------------------------- */
     
     /**
      * Returns the restrictions of the given agent.
@@ -950,7 +950,7 @@ public final class AgentModule implements StateModule {
         redetermineRestrictionsOrder(agent);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Restrictions Order –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Restrictions Order -------------------------------------------------- */
     
     /**
      * Redetermines which agents have stronger and weaker restrictions than the given agent or, if that one is null, all agents at the given entity.
@@ -993,7 +993,7 @@ public final class AgentModule implements StateModule {
         redetermineRestrictionsOrder(entity, null);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Covering –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Covering -------------------------------------------------- */
     
     /**
      * Returns the agents that are weaker than the given agent.
@@ -1062,7 +1062,7 @@ public final class AgentModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Client Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Client Agent -------------------------------------------------- */
     
     /**
      * Adds the client agent with the given parameters to the database.
@@ -1120,7 +1120,7 @@ public final class AgentModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Commitment –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Commitment -------------------------------------------------- */
     
     /**
      * Returns the commitment of the given client agent.
@@ -1156,7 +1156,7 @@ public final class AgentModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Name -------------------------------------------------- */
     
     /**
      * Returns the name of the given client agent.
@@ -1203,7 +1203,7 @@ public final class AgentModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Outgoing Role –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Outgoing Role -------------------------------------------------- */
     
     /**
      * Adds the outgoing role with the given parameters to the database.
@@ -1254,7 +1254,7 @@ public final class AgentModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Relation –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Relation -------------------------------------------------- */
     
     /**
      * Returns the relation of the given outgoing role.
@@ -1298,7 +1298,7 @@ public final class AgentModule implements StateModule {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Context –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Context -------------------------------------------------- */
     
     /**
      * Returns the context of the given outgoing role.
@@ -1341,7 +1341,7 @@ public final class AgentModule implements StateModule {
         redetermineRestrictionsOrder(outgoingRole);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Incoming Role –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Incoming Role -------------------------------------------------- */
     
     /**
      * Adds the incoming role with the given issuer, relation and agent number to the given entity.

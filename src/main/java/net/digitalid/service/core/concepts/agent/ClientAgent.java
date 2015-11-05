@@ -27,7 +27,7 @@ import net.digitalid.utility.database.configuration.Database;
 public final class ClientAgent extends Agent {
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Aspects -------------------------------------------------- */
     
     /**
      * Stores the aspect of the commitment being changed at the observed client agent.
@@ -40,7 +40,7 @@ public final class ClientAgent extends Agent {
     public static final @Nonnull Aspect NAME = new Aspect(ClientAgent.class, "name changed");
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Commitment –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Commitment -------------------------------------------------- */
     
     /**
      * Stores the commitment of this client agent.
@@ -88,7 +88,7 @@ public final class ClientAgent extends Agent {
         notify(COMMITMENT);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Name -------------------------------------------------- */
     
 //    private static final @Nonnull NonNullableReplaceableConceptPropertyTable<String> nameTable = NonNullableReplaceableConceptPropertyTable<String>.get();
     
@@ -148,7 +148,7 @@ public final class ClientAgent extends Agent {
         notify(NAME);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Agent -------------------------------------------------- */
     
     @Override
     public void reset() throws AbortException {
@@ -163,7 +163,7 @@ public final class ClientAgent extends Agent {
         return true;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Creation -------------------------------------------------- */
     
     /**
      * Creates this client agent in the database.
@@ -187,7 +187,7 @@ public final class ClientAgent extends Agent {
         notify(Agent.CREATED);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Indexing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Indexing -------------------------------------------------- */
     
     /**
      * Caches client agents given their entity and number.
@@ -214,7 +214,7 @@ public final class ClientAgent extends Agent {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new client agent with the given entity and number.
@@ -249,7 +249,7 @@ public final class ClientAgent extends Agent {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQLizable -------------------------------------------------- */
     
     /**
      * Returns the given column of the result set as an instance of this class.

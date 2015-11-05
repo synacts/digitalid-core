@@ -41,7 +41,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends ConceptPropertyInternalAction {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Immutable Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Immutable Fields -------------------------------------------------- */
     
     /**
      * The setup which contains the configuration needed for this action.
@@ -73,7 +73,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
      */
     private final @Nonnull V newValue;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new non-nullable concept property internal action for a given property using the property setup and the given old and new values.
@@ -120,7 +120,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         if (newValue.equals(oldValue)) throw new InvalidEncodingException("The old and new value may not be equal.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Methods -------------------------------------------------- */
     
     @Override
     protected void executeOnBoth() throws AbortException {
@@ -172,7 +172,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         return new FreezableAgentPermissions(setup.getPropertyType(), true).freeze();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -199,7 +199,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         return hash;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -254,7 +254,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         return new XDFConverter<>(setup.getActionType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory class for this method.

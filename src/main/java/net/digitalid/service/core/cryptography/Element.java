@@ -23,14 +23,14 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public final class Element extends Number<Element> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code element.group@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("element.group@core.digitalid.net").load(IntegerWrapper.TYPE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Group –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Group -------------------------------------------------- */
     
     /**
      * Stores the group of this element.
@@ -59,7 +59,7 @@ public final class Element extends Number<Element> {
         return getGroup().equals(group);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new element in the given group with the given value.
@@ -102,7 +102,7 @@ public final class Element extends Number<Element> {
         return new Element(group, IntegerWrapper.decodeNonNullable(block));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Operations -------------------------------------------------- */
     
     /**
      * Adds the given element to this element.
@@ -184,7 +184,7 @@ public final class Element extends Number<Element> {
         return new Element(getGroup(), getValue().modPow(exponent, getGroup().getModulus()));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Conditions -------------------------------------------------- */
     
     /**
      * Returns whether the element is relatively prime to the group modulus.
@@ -206,7 +206,7 @@ public final class Element extends Number<Element> {
         return getValue().equals(BigInteger.ONE);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -248,7 +248,7 @@ public final class Element extends Number<Element> {
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -261,7 +261,7 @@ public final class Element extends Number<Element> {
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

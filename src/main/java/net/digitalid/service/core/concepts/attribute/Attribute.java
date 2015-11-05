@@ -31,14 +31,14 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code published.attribute@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType PUBLISHED = SemanticType.map("published.attribute@core.digitalid.net").load(BooleanWrapper.TYPE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Semantic Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Semantic Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type of this attribute.
@@ -47,7 +47,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      */
     private final @Nonnull SemanticType type;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Published Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Published Value -------------------------------------------------- */
     
     private static final @Nonnull NullableConceptPropertyTable<AttributeValue> table = NullableConceptPropertyTable.get("attribute_value", Attribute.FACTORY);
     
@@ -60,7 +60,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      */
     private @Nullable AttributeValue value;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Unpublished Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Unpublished Value -------------------------------------------------- */
     
     /**
      * Stores whether the unpublished value has already been loaded from the database.
@@ -74,7 +74,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      */
     private @Nullable AttributeValue unpublished;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Visibility Expression –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Visibility Expression -------------------------------------------------- */
     
     /**
      * Stores whether the visibility has already been loaded from the database.
@@ -375,7 +375,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override

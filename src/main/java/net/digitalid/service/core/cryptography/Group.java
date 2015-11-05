@@ -23,7 +23,7 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 public abstract class Group<G extends Group<G>> implements XDF<G, Object>, SQL<G, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Modulus –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Modulus -------------------------------------------------- */
     
     /**
      * Stores the modulus of this group.
@@ -40,7 +40,7 @@ public abstract class Group<G extends Group<G>> implements XDF<G, Object>, SQL<G
         return modulus;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new multiplicative group with the given modulus.
@@ -53,7 +53,7 @@ public abstract class Group<G extends Group<G>> implements XDF<G, Object>, SQL<G
         this.modulus = modulus;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Element –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Element -------------------------------------------------- */
     
     /**
      * Returns a new element with the given value in this group.
@@ -98,7 +98,7 @@ public abstract class Group<G extends Group<G>> implements XDF<G, Object>, SQL<G
         return Element.get(this, value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Exponent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Exponent -------------------------------------------------- */
     
     /**
      * Returns a random exponent in this group.
@@ -121,7 +121,7 @@ public abstract class Group<G extends Group<G>> implements XDF<G, Object>, SQL<G
         return Exponent.get(new BigInteger(bitLength, random));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override

@@ -39,7 +39,7 @@ import net.digitalid.utility.database.configuration.Database;
 public final class Contact extends NonHostConcept implements Blockable, SQLizable {
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code contact@core.digitalid.net}.
@@ -47,7 +47,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     public static final @Nonnull SemanticType TYPE = SemanticType.map("contact@core.digitalid.net").load(Person.IDENTIFIER);
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Person –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Person -------------------------------------------------- */
     
     /**
      * Stores the person of this contact.
@@ -107,7 +107,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
         return (ExternalPerson) person;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Permissions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Permissions -------------------------------------------------- */
     
     /**
      * Returns the permissions of this contact.
@@ -119,7 +119,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
         return FreezableContactPermissions.NONE; // TODO
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Authentications –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Authentications -------------------------------------------------- */
     
     /**
      * Returns the authentications of this contact.
@@ -133,7 +133,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     
     // TODO: Include methods to aggregate the permissions and authentications over the contexts.
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Indexing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Indexing -------------------------------------------------- */
     
     /**
      * Caches contacts given their entity and person.
@@ -148,7 +148,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new contact with the given entity and person.
@@ -183,7 +183,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Blockable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Blockable -------------------------------------------------- */
     
     @Pure
     @Override
@@ -213,7 +213,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
         return get(entity, IdentifierImplementation.create(block).getIdentity().toPerson());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQLizable -------------------------------------------------- */
     
     /**
      * Stores the data type used to reference instances of this class.
@@ -279,7 +279,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
         else contact.set(preparedStatement, parameterIndex);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override

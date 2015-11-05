@@ -35,7 +35,7 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> implements XDF<C, Object>, SQL<C, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Items –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Items -------------------------------------------------- */
     
     /**
      * Stores the items of this key chain in chronological order with the newest one first.
@@ -114,7 +114,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
         return getXDFConverter().createKeyChain(copy.freeze());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new key chain with the given items.
@@ -127,7 +127,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
         this.items = items;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -135,7 +135,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
         return items.toString();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.

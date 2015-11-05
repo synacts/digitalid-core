@@ -34,14 +34,14 @@ import net.digitalid.utility.database.converter.SQL;
 @Immutable
 public final class InitializationVector extends IvParameterSpec implements XDF<InitializationVector, Object>, SQL<InitializationVector, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code initialization.vector@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("initialization.vector@core.digitalid.net").load(BytesWrapper.TYPE);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Generator –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Generator -------------------------------------------------- */
     
     /**
      * Returns an array of 16 random bytes.
@@ -57,7 +57,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         return bytes;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new initialization vector with the given bytes.
@@ -96,7 +96,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         return get(getRandomBytes());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -139,7 +139,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -187,7 +187,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         return SQL_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

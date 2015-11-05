@@ -23,7 +23,7 @@ import net.digitalid.utility.database.site.Site;
 @Immutable
 public abstract class HostTable extends HostTableImplementation<HostModule> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new host table with the given parameters.
@@ -38,7 +38,7 @@ public abstract class HostTable extends HostTableImplementation<HostModule> {
         module.registerHostStorage(this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Tables –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Tables -------------------------------------------------- */
     
     /**
      * Creates the database tables of this storage for the given host.
@@ -64,7 +64,7 @@ public abstract class HostTable extends HostTableImplementation<HostModule> {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Overrides –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Overrides -------------------------------------------------- */
     
     @Locked
     @Override

@@ -27,7 +27,7 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public final class ChainingSQLConverter<O, E, K> extends AbstractSQLConverter<O, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the key converter used to convert and recover the object.
@@ -39,7 +39,7 @@ public final class ChainingSQLConverter<O, E, K> extends AbstractSQLConverter<O,
      */
     private final @Nonnull AbstractSQLConverter<K, E> SQLConverter;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new chaining SQL converter with the given converters.
@@ -67,7 +67,7 @@ public final class ChainingSQLConverter<O, E, K> extends AbstractSQLConverter<O,
         return new ChainingSQLConverter<>(keyConverter, SQLConverter);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Methods -------------------------------------------------- */
     
     @Pure
     @Override

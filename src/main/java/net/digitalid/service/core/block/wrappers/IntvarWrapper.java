@@ -31,7 +31,7 @@ import net.digitalid.utility.database.column.SQLType;
 @Immutable
 public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Types -------------------------------------------------- */
     
     /**
      * Stores the syntactic type {@code intvar@core.digitalid.net}.
@@ -44,7 +44,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the maximum value an intvar can have.
@@ -70,7 +70,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new wrapper with the given type and value.
@@ -89,7 +89,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         this.value = value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
      * Encodes the given value into a new block of the given type.
@@ -120,7 +120,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     @Pure
     @Override
@@ -137,7 +137,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         encode(block, 0, block.getLength(), value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decode Length –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Decode Length -------------------------------------------------- */
     
     /**
      * Decodes the length of the intvar as indicated in the first two bits of the byte at the given offset.
@@ -174,7 +174,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         return 1 << ((bytes[0] & 0xFF) >>> 6);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decode Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Decode Value -------------------------------------------------- */
     
     /**
      * Decodes the value of the intvar that is stored in the indicated section of the given block.
@@ -236,7 +236,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         return result;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Static Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Static Encoding -------------------------------------------------- */
     
     /**
      * Determines the length of the given value when encoded as an intvar.
@@ -291,7 +291,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         block.setByte(offset, (byte) (shifter | (Integer.numberOfTrailingZeros(length) << 6)));
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -327,7 +327,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -379,7 +379,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         return String.valueOf(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * The factory for this wrapper.
@@ -414,7 +414,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value Converters -------------------------------------------------- */
       
     /**
      * Returns the value XDF converter of this wrapper.

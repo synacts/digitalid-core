@@ -36,7 +36,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 @Immutable
 public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Categories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Categories -------------------------------------------------- */
     
     /**
      * The category for a host.
@@ -73,7 +73,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
      */
     MOBILE_PERSON(6);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Empty List –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Empty List -------------------------------------------------- */
     
     /**
      * Stores an empty list of categories that can be shared among semantic types.
@@ -81,7 +81,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
      */
     public static final @Nonnull @Frozen ReadOnlyList<Category> NONE = FreezableArrayList.<Category>getWithCapacity(0).freeze();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
      * Returns whether the given value is a valid category.
@@ -95,7 +95,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         return value >= 0 && value <= 6;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the byte representation of this category.
@@ -112,7 +112,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         return value;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new category with the given value.
@@ -141,7 +141,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         throw new ShouldNeverHappenError("The value '" + value + "' does not encode a category.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Queries –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Queries -------------------------------------------------- */
     
     /**
      * Returns whether this category denotes a type.
@@ -203,7 +203,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         return this == HOST || isInternalNonHostIdentity();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code category@core.digitalid.net}.
@@ -252,7 +252,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         return XDF_CONVERTER;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
@@ -308,7 +308,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         return String.valueOf(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

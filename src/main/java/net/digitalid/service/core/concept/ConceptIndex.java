@@ -23,7 +23,7 @@ import net.digitalid.utility.database.configuration.Database;
 @Immutable
 public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity<E>, K> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Removal –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Removal -------------------------------------------------- */
     
     /**
      * Stores a list of all the indexes that were created.
@@ -44,14 +44,14 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity<E>,
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
      * Stores the factory that can produce a new concept instance with a given entity and key.
      */
     private final @Nonnull Concept.Factory<C, E, K> factory;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new index with the given concept factory.
@@ -75,7 +75,7 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity<E>,
         return new ConceptIndex<>(factory);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concepts –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Concepts -------------------------------------------------- */
     
     /**
      * Stores the concepts of this index.
@@ -103,7 +103,7 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity<E>,
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Resetting –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Resetting -------------------------------------------------- */
     
     /**
      * Resets the concepts of the given entity.

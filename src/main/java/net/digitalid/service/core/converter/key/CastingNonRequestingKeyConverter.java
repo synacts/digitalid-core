@@ -18,14 +18,14 @@ import net.digitalid.utility.annotations.state.Validated;
 @Immutable
 public abstract class CastingNonRequestingKeyConverter<O extends S, E, K, S> extends AbstractNonRequestingKeyConverter<O, E, K> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Caster –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
     
     /**
      * Stores the caster that allows to cast objects to the specified subtype.
      */
     private final @Nonnull Caster<S, O> caster;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new casting non-requesting key converter with the given caster.
@@ -36,7 +36,7 @@ public abstract class CastingNonRequestingKeyConverter<O extends S, E, K, S> ext
         this.caster = caster;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Abstract –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Abstract -------------------------------------------------- */
     
     /**
      * Returns the object of the supertype with the given key.
@@ -49,7 +49,7 @@ public abstract class CastingNonRequestingKeyConverter<O extends S, E, K, S> ext
     @Pure
     protected abstract @Nonnull S recoverSupertype(@Nonnull E external, @Nonnull @Validated K key) throws InvalidEncodingException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Method –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Method -------------------------------------------------- */
     
     @Pure
     @Override
