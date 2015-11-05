@@ -72,14 +72,14 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Key Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories to convert and reconstruct the key.
+     * Stores the factories to convert and recover the key.
      */
     private final @Nonnull Converters<K, E> keyFactories;
     
     /**
-     * Returns the factories to convert and reconstruct the key.
+     * Returns the factories to convert and recover the key.
      * 
-     * @return the factories to convert and reconstruct the key.
+     * @return the factories to convert and recover the key.
      */
     @Pure
     public @Nonnull Converters<K, E> getKeyFactories() {
@@ -89,14 +89,14 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entity Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories to convert and reconstruct the entity.
+     * Stores the factories to convert and recover the entity.
      */
     private final @Nonnull Converters<E, Site> entityFactories;
     
     /**
-     * Returns the factories to convert and reconstruct the entity.
+     * Returns the factories to convert and recover the entity.
      * 
-     * @return the factories to convert and reconstruct the entity.
+     * @return the factories to convert and recover the entity.
      */
     @Pure
     public @Nonnull Converters<E, Site> getEntityFactories() {
@@ -174,14 +174,14 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories to convert and reconstruct the concept.
+     * Stores the factories to convert and recover the concept.
      */
     private final @Nonnull ConceptFactories<C, E> conceptFactories;
     
     /**
-     * Returns the factories to convert and reconstruct the concept.
+     * Returns the factories to convert and recover the concept.
      * 
-     * @return the factories to convert and reconstruct the concept.
+     * @return the factories to convert and recover the concept.
      */
     @Pure
     public @Nonnull ConceptFactories<C, E> getConceptFactories() {
@@ -196,8 +196,8 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
      * @param service the service to which the concept belongs.
      * @param conceptName the name of the concept (unique within the service).
      * @param conceptIndex the index used to cache instances of the concept.
-     * @param keyFactories the factories to convert and reconstruct the key.
-     * @param entityFactories the factories to convert and reconstruct the entity.
+     * @param keyFactories the factories to convert and recover the key.
+     * @param entityFactories the factories to convert and recover the entity.
      */
     private ConceptSetup(@Nonnull Service service, @Nonnull @Validated String conceptName, @Nonnull ConceptIndex<C, E, K> conceptIndex, @Nonnull Converters<K, E> keyFactories, @Nonnull Converters<E, Site> entityFactories) {
         this.service = service;
@@ -207,10 +207,10 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         this.entityFactories = entityFactories;
         
         this.siteModule = SiteModule.get(service, conceptName);
-        this.conceptType = SemanticType.map(conceptName + service.getType().getAddress().getStringWithDot()).load(keyFactories.getEncodingFactory().getType());
+        this.conceptType = SemanticType.map(conceptName + service.getType().getAddress().getStringWithDot()).load(keyFactories.getXDFConverter().getType());
         
-        this.encodingFactory = ConceptEncodingFactory.get(keyFactories.getEncodingFactory().setType(conceptType), conceptIndex);
-        this.storingFactory = ConceptStoringFactory.get(keyFactories.getStoringFactory(), conceptIndex);
+        this.encodingFactory = ConceptEncodingFactory.get(keyFactories.getXDFConverter().setType(conceptType), conceptIndex);
+        this.storingFactory = ConceptStoringFactory.get(keyFactories.getSQLConverter(), conceptIndex);
         this.conceptFactories = ConceptFactories.get(encodingFactory, storingFactory);
     }
     
@@ -220,8 +220,8 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
      * @param service the service to which the concept belongs.
      * @param conceptName the name of the concept (unique within the service).
      * @param conceptIndex the index used to cache instances of the concept.
-     * @param keyFactories the factories to convert and reconstruct the key.
-     * @param entityFactories the factories to convert and reconstruct the entity.
+     * @param keyFactories the factories to convert and recover the key.
+     * @param entityFactories the factories to convert and recover the entity.
      * 
      * @return a new concept setup with the given parameters.
      */

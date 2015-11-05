@@ -12,7 +12,7 @@ import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * This class is like {@link AbstractXDFConverter} except that the decoding of {@link Block blocks} throws less exceptions.
- * This factory does not allow file, network and database requests during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.block.Block) decoding}.
+ * This converter does not allow file, network and database requests during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.block.Block) decoding}.
  */
 @Immutable
 public abstract class AbstractNonRequestingXDFConverter<O, E> extends AbstractXDFConverter<O, E> {
@@ -29,20 +29,20 @@ public abstract class AbstractNonRequestingXDFConverter<O, E> extends AbstractXD
     
     @Pure
     @Override
-    public abstract @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws InvalidEncodingException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull @NonEncoding Block block) throws InvalidEncodingException;
     
     @Pure
     @Override
-    public final @Nullable O decodeNullable(@Nonnull E entity, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
-        return block == null ? null : decodeNonNullable(entity, block);
+    public final @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
+        return block == null ? null : decodeNonNullable(external, block);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new abstract non-requesting encoding factory with the given type.
+     * Creates a new abstract non-requesting XDF converter with the given type.
      * 
-     * @param type the semantic type that corresponds to the encodable class.
+     * @param type the semantic type that corresponds to the class that implements XDF.
      */
     protected AbstractNonRequestingXDFConverter(@Nonnull @Loaded SemanticType type) {
         super(type);

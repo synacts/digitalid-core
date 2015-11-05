@@ -1,97 +1,97 @@
 package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
- * This class allows to store several factories in a single object.
+ * This class allows to store several converters in a single object.
  * 
- * @param <O> the type of the objects that the factories can convert, which is typically the surrounding class.
- * @param <E> the type of the external object that is needed to reconstruct an object, which is quite often an {@link Entity}.
- *            In case no external information is needed for the reconstruction of an object, declare it as an {@link Object}.
+ * @param <O> the type of the objects that the converters can convert, which is typically the surrounding class.
+ * @param <E> the type of the external object that is needed to recover an object, which is quite often an {@link Entity}.
+ *            In case no external information is needed for the recovery of an object, declare it as an {@link Object}.
  * 
- * @see NonRequestingFactories
+ * @see NonRequestingConverters
  */
 @Immutable
 public class Converters<O, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the encoding factory.
+     * Stores the XDF converter.
      */
-    private final @Nonnull AbstractXDFConverter<O, E> encodingFactory;
+    private final @Nonnull AbstractXDFConverter<O, E> XDFConverter;
     
     /**
-     * Returns the encoding factory.
+     * Returns the XDF converter.
      * 
-     * @return the encoding factory.
+     * @return the XDF converter.
      */
     @Pure
-    public @Nonnull AbstractXDFConverter<O, E> getEncodingFactory() {
-        return encodingFactory;
+    public @Nonnull AbstractXDFConverter<O, E> getXDFConverter() {
+        return XDFConverter;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the storing factory.
+     * Stores the SQL converter.
      */
-    private final @Nonnull AbstractSQLConverter<O, E> storingFactory;
+    private final @Nonnull AbstractSQLConverter<O, E> SQLConverter;
     
     /**
-     * Returns the storing factory.
+     * Returns the SQL converter.
      * 
-     * @return the storing factory.
+     * @return the SQL converter.
      */
     @Pure
-    public final @Nonnull AbstractSQLConverter<O, E> getStoringFactory() {
-        return storingFactory;
+    public final @Nonnull AbstractSQLConverter<O, E> getSQLConverter() {
+        return SQLConverter;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new object with the given factories.
+     * Creates a new object with the given converters.
      * 
-     * @param encodingFactory the encoding factory.
-     * @param storingFactory the storing factory.
+     * @param XDFConverter the XDF converter.
+     * @param SQLConverter the SQL converter.
      */
-    protected Converters(@Nonnull AbstractXDFConverter<O, E> encodingFactory, @Nonnull AbstractSQLConverter<O, E> storingFactory) {
-        this.encodingFactory = encodingFactory;
-        this.storingFactory = storingFactory;
+    protected Converters(@Nonnull AbstractXDFConverter<O, E> XDFConverter, @Nonnull AbstractSQLConverter<O, E> SQLConverter) {
+        this.XDFConverter = XDFConverter;
+        this.SQLConverter = SQLConverter;
     }
     
     /**
-     * Creates a new object with the given factories.
+     * Creates a new object with the given converters.
      * 
-     * @param encodingFactory the encoding factory.
-     * @param storingFactory the storing factory.
+     * @param XDFConverter the XDF converter.
+     * @param SQLConverter the SQL converter.
      * 
-     * @return a new object with the given factories.
+     * @return a new object with the given converters.
      */
     @Pure
-    public static @Nonnull <O, E> Converters<O, E> get(@Nonnull AbstractXDFConverter<O, E> encodingFactory, @Nonnull AbstractSQLConverter<O, E> storingFactory) {
-        return new Converters<>(encodingFactory, storingFactory);
+    public static @Nonnull <O, E> Converters<O, E> get(@Nonnull AbstractXDFConverter<O, E> XDFConverter, @Nonnull AbstractSQLConverter<O, E> SQLConverter) {
+        return new Converters<>(XDFConverter, SQLConverter);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subtyping –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns factories with the encoding factory subtyping to the given type.
+     * Returns converters with the XDF converter subtyping to the given type.
      * 
-     * @return factories with the encoding factory subtyping to the given type.
+     * @return converters with the XDF converter subtyping to the given type.
      * 
-     * @require type.isBasedOn(getEncodingFactory().getType()) : "The given type is based on the type of the encoding factory.";
+     * @require type.isBasedOn(getXDFConverter().getType()) : "The given type is based on the type of the XDF converter.";
      */
     @Pure
     public @Nonnull Converters<O, E> setType(@Nonnull SemanticType type) {
-        return new Converters<>(getEncodingFactory().setType(type), getStoringFactory());
+        return new Converters<>(getXDFConverter().setType(type), getSQLConverter());
     }
     
 }

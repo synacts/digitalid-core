@@ -16,16 +16,16 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
- * A factory allows to encode and decode objects into and from {@link Block blocks}.
- * This factory allows file, network and database requests during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.block.Block) decoding}.
+ * An XDF converter allows to encode and decode objects into and from {@link Block blocks}.
+ * This converter allows file, network and database requests during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.block.Block) decoding}.
  * 
- * @param <O> the type of the objects that this factory can encode and decode, which is typically the surrounding class.
+ * @param <O> the type of the objects that this converter can encode and decode, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to decode a block, which is quite often an {@link Entity}.
  *            In case no external information is needed for the decoding of a block, declare it as an {@link Object}.
  * 
- * @see Encodable
- * @see NonRequestingEncodingFactory
- * @see FactoryBasedEncodingFactory
+ * @see XDF
+ * @see ChainingXDFConverter
+ * @see AbstractNonRequestingXDFConverter
  */
 @Immutable
 public abstract class AbstractXDFConverter<O, E> {
@@ -33,14 +33,14 @@ public abstract class AbstractXDFConverter<O, E> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the semantic type that corresponds to the encodable class.
+     * Stores the semantic type that corresponds to the class that implements XDF.
      */
     private final @Nonnull SemanticType type;
     
     /**
-     * Returns the semantic type that corresponds to the encodable class.
+     * Returns the semantic type that corresponds to the class that implements XDF.
      * 
-     * @return the semantic type that corresponds to the encodable class.
+     * @return the semantic type that corresponds to the class that implements XDF.
      */
     @Pure
     public final @Nonnull SemanticType getType() {
@@ -48,11 +48,11 @@ public abstract class AbstractXDFConverter<O, E> {
     }
     
     /**
-     * Returns an abstract encoding factory with the given type based on this factory.
+     * Returns an abstract XDF converter with the given type based on this converter.
      * 
-     * @return an abstract encoding factory with the given type based on this factory.
+     * @return an abstract XDF converter with the given type based on this converter.
      * 
-     * @require type.isBasedOn(getType()) : "The given type is based on the type of this factory.";
+     * @require type.isBasedOn(getType()) : "The given type is based on the type of this converter.";
      */
     @Pure
     public @Nonnull AbstractXDFConverter<O, E> setType(@Nonnull SemanticType type) {
@@ -91,7 +91,7 @@ public abstract class AbstractXDFConverter<O, E> {
     
     /**
      * Encodes the given non-nullable object as a new block.
-     * The object is casted to the type that this factory encodes.
+     * The object is casted to the type that this converter encodes.
      * 
      * @param object the non-nullable object to encode as a block.
      * 
@@ -107,7 +107,7 @@ public abstract class AbstractXDFConverter<O, E> {
     
     /**
      * Encodes the given nullable object as a new block.
-     * The object is casted to the type that this factory encodes.
+     * The object is casted to the type that this converter encodes.
      * 
      * @param object the nullable object to encode as a block.
      * 
@@ -126,22 +126,22 @@ public abstract class AbstractXDFConverter<O, E> {
     /**
      * Decodes the given non-nullable block.
      * 
-     * @param entity the entity needed to reconstruct the object.
+     * @param external the external object needed to recover the object.
      * @param block the non-nullable block which is to be decoded.
      * 
      * @return the object that was encoded in the non-nullable block.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
+     * @require block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
      */
     @Pure
     @Locked
     @NonCommitting
-    public abstract @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException;
     
     /**
      * Decodes the given nullable block.
      * 
-     * @param entity the entity needed to reconstruct the object.
+     * @param external the external object needed to recover the object.
      * @param block the nullable block which is to be decoded.
      * 
      * @return the object that was encoded in the nullable block.
@@ -151,17 +151,17 @@ public abstract class AbstractXDFConverter<O, E> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nullable O decodeNullable(@Nonnull E entity, @Nullable @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        if (block != null) return decodeNonNullable(entity, block);
+    public @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        if (block != null) return decodeNonNullable(external, block);
         else return null;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new abstract encoding factory with the given type.
+     * Creates a new abstract XDF converter with the given type.
      * 
-     * @param type the semantic type that corresponds to the encodable class.
+     * @param type the semantic type that corresponds to the class that implements XDF.
      */
     protected AbstractXDFConverter(@Nonnull @Loaded SemanticType type) {
         this.type = type;

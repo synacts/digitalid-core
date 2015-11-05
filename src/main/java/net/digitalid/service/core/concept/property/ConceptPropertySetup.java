@@ -39,14 +39,14 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories to convert and reconstruct the value of the property.
+     * Stores the factories to convert and recover the value of the property.
      */
     private final @Nonnull Converters<V, ? super E> valueFactories;
     
     /**
-     * Returns the factories to convert and reconstruct the value of the property.
+     * Returns the factories to convert and recover the value of the property.
      * 
-     * @return the factories to convert and reconstruct the value of the property.
+     * @return the factories to convert and recover the value of the property.
      */
     @Pure
     public final @Nonnull Converters<V, ? super E> getValueFactories() {
@@ -128,9 +128,9 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
      * 
      * @param stateModule the module to which the property table belongs.
      * @param propertyName the name of the property (unique within the module).
-     * @param entityFactories the factories to convert and reconstruct the entity.
-     * @param conceptFactories the factories to convert and reconstruct the concept.
-     * @param valueFactories the factories to convert and reconstruct the value of the property.
+     * @param entityFactories the factories to convert and recover the entity.
+     * @param conceptFactories the factories to convert and recover the concept.
+     * @param valueFactories the factories to convert and recover the value of the property.
      * @param requiredAuthorization the required authorization to set the property and see its changes.
      * @param valueValidator the value validator that checks whether the value of the property is valid.
      */
@@ -142,7 +142,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         
         this.conceptSetup = conceptSetup;
         
-        this.propertyType = SemanticType.map(propertyName + conceptSetup.getConceptType().getAddress().getStringWithDot()).load(valueFactories.getEncodingFactory().getType());
+        this.propertyType = SemanticType.map(propertyName + conceptSetup.getConceptType().getAddress().getStringWithDot()).load(valueFactories.getXDFConverter().getType());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Action Type –––––––––––––––––––––––––––––––––––––––––––––––––– */

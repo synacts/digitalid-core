@@ -27,7 +27,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     /**
      * Stores the type of the old value in the internal action.
      */
-    private final @Nonnull @Loaded SemanticType oldValueType = SemanticType.map("old" + getPropertyType().getAddress().getStringWithDot()).load(getValueFactories().getEncodingFactory().getType());
+    private final @Nonnull @Loaded SemanticType oldValueType = SemanticType.map("old" + getPropertyType().getAddress().getStringWithDot()).load(getValueFactories().getXDFConverter().getType());
     
     /**
      * Returns the type of the old value in the internal action.
@@ -44,7 +44,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     /**
      * Stores the type of the new value in the internal action.
      */
-    private final @Nonnull @Loaded SemanticType newValueType = SemanticType.map("new" + getPropertyType().getAddress().getStringWithDot()).load(getValueFactories().getEncodingFactory().getType());
+    private final @Nonnull @Loaded SemanticType newValueType = SemanticType.map("new" + getPropertyType().getAddress().getStringWithDot()).load(getValueFactories().getXDFConverter().getType());
     
     /**
      * Returns the type of the new value in the internal action.
@@ -106,7 +106,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
      * 
      * @param conceptSetup the concept setup which is shared among concept properties.
      * @param propertyName the name of the property (unique within the module).
-     * @param valueFactories the factories to convert and reconstruct the value of the property.
+     * @param valueFactories the factories to convert and recover the value of the property.
      * @param requiredAuthorization the required authorization to set the property and see its changes.
      * @param valueValidator the value validator that checks whether the value of the property is valid.
      * @param defaultValue the default value for the properties created by this factory.
@@ -123,7 +123,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
      * 
      * @param conceptSetup the concept setup which is shared among concept properties.
      * @param propertyName the name of the property (unique within the module).
-     * @param valueFactories the factories to convert and reconstruct the value of the property.
+     * @param valueFactories the factories to convert and recover the value of the property.
      * @param requiredAuthorization the required authorization to set the property and see its changes.
      * @param valueValidator the value validator that checks whether the value of the property is valid.
      * @param defaultValue the default value for the properties created by this factory.

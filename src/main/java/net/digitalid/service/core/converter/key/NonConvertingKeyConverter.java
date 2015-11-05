@@ -6,9 +6,9 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 
 /**
- * This class implements an object factory that uses the object itself as its key.
+ * This class implements a key converter that uses the object itself as its key.
  * 
- * @param <O> the type of the objects that this factory can transform and reconstruct.
+ * @param <O> the type of the objects that this converter can convert and recover.
  * 
  * @see SubtypingXDFConverter
  */
@@ -18,14 +18,14 @@ public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKey
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new object-based object factory.
+     * Creates a new non-converting key factory.
      */
     private NonConvertingKeyConverter() {}
     
     /**
-     * Returns a new object-based object factory.
+     * Returns a new non-converting key factory.
      * 
-     * @return a new object-based object factory.
+     * @return a new non-converting key factory.
      */
     @Pure
     public static @Nonnull <O> NonConvertingKeyConverter<O> get() {
@@ -36,13 +36,13 @@ public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKey
     
     @Pure
     @Override
-    public @Nonnull O getKey(@Nonnull O object) {
+    public @Nonnull O convert(@Nonnull O object) {
         return object;
     }
     
     @Pure
     @Override
-    public @Nonnull O getObject(@Nonnull Object none, @Nonnull O key) {
+    public @Nonnull O recover(@Nonnull Object none, @Nonnull O key) {
         return key;
     }
     

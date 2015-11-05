@@ -12,14 +12,14 @@ import net.digitalid.utility.annotations.state.Stateless;
  * @param <O> the subtype to which the objects are downcast and returned.
  */
 @Stateless
-public abstract class ObjectCaster<S, O extends S> {
+public abstract class Caster<S, O extends S> {
     
     /**
      * Casts the given object from the supertype to the specified subtype.
      * 
      * @param object the object of the supertype which is to be downcast.
      * 
-     * @return the given object cast from the supertype to the specified type.
+     * @return the given object cast from the supertype to the specified subtype.
      * 
      * @throws InvalidEncodingException if the given object is not an instance of the specified subtype.
      */

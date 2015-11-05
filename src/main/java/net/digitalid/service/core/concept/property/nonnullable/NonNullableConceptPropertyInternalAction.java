@@ -115,8 +115,8 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         this.property = (NonNullableConceptProperty<V, C, E>) concept.getProperty(setup.getPropertyTable()); // TODO: Find a better alternative than casting here (e.g. a toNonNullableConceptProperty() with some kind of exception).
         this.oldTime = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
         this.newTime = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
-        this.oldValue = setup.getValueFactories().getEncodingFactory().decodeNonNullable(entity, elements.getNonNullable(3));
-        this.newValue = setup.getValueFactories().getEncodingFactory().decodeNonNullable(entity, elements.getNonNullable(4));
+        this.oldValue = setup.getValueFactories().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
+        this.newValue = setup.getValueFactories().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
         if (newValue.equals(oldValue)) throw new InvalidEncodingException("The old and new value may not be equal.");
     }
     
@@ -218,7 +218,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @Pure
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull NonNullableConceptPropertyInternalAction<V, C, E> internalAction) {
-            return TupleWrapper.encode(internalAction.getType(), internalAction.property.getConcept(), ConvertToXDF.nonNullable(internalAction.oldTime, OLD_TIME), ConvertToXDF.nonNullable(internalAction.newTime, NEW_TIME), internalAction.setup.getValueFactories().getEncodingFactory().encodeNonNullable(internalAction.oldValue).setType(internalAction.setup.getOldValueType()), internalAction.setup.getValueFactories().getEncodingFactory().encodeNonNullable(internalAction.newValue).setType(internalAction.setup.getNewValueType()));
+            return TupleWrapper.encode(internalAction.getType(), internalAction.property.getConcept(), ConvertToXDF.nonNullable(internalAction.oldTime, OLD_TIME), ConvertToXDF.nonNullable(internalAction.newTime, NEW_TIME), internalAction.setup.getValueFactories().getXDFConverter().encodeNonNullable(internalAction.oldValue).setType(internalAction.setup.getOldValueType()), internalAction.setup.getValueFactories().getXDFConverter().encodeNonNullable(internalAction.newValue).setType(internalAction.setup.getNewValueType()));
         }
         
         @Pure
@@ -236,8 +236,8 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
                 final NonNullableConceptProperty<V, C, E> property = (NonNullableConceptProperty<V, C, E>) concept.getProperty(setup.getPropertyTable()); // TODO: Find a better alternative than casting here (e.g. a toNonNullableConceptProperty() with some kind of exception).
                 final Time oldTime = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
                 final Time newTime = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
-                final V oldValue = setup.getValueFactories().getEncodingFactory().decodeNonNullable(entity, elements.getNonNullable(3));
-                final V newValue = setup.getValueFactories().getEncodingFactory().decodeNonNullable(entity, elements.getNonNullable(4));
+                final V oldValue = setup.getValueFactories().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
+                final V newValue = setup.getValueFactories().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
                 if (newValue.equals(oldValue)) throw new InvalidEncodingException("The old and new value may not be equal.");
                 // TODO: call other constructor. This constructor is reserved for clients that do not have or need a signature. For methods executed on the host, the signature must be stored.
                 return new NonNullableConceptPropertyInternalAction<V, C, E>(setup, property, oldTime, newTime, oldValue, newValue);

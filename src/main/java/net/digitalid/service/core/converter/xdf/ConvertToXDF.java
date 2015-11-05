@@ -9,7 +9,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 
 /**
- * This is a utility class to encode encodable objects.
+ * This is a utility class to encode objects that implement {@link XDF}.
  */
 @Stateless
 public final class ConvertToXDF {
@@ -17,121 +17,121 @@ public final class ConvertToXDF {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Normal Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns the given non-nullable encodable as a block.
+     * Returns the given non-nullable object as a block.
      * 
-     * @param encodable the non-nullable object to convert.
+     * @param object the non-nullable object to convert.
      * 
-     * @return the given non-nullable encodable as a block.
+     * @return the given non-nullable object as a block.
      */
     @Pure
-    public static @Nonnull <O extends XDF<O, ?>> Block nonNullable(@Nonnull O encodable) {
-        return encodable.getXDFConverter().encodeNonNullable(encodable);
+    public static @Nonnull <O extends XDF<O, ?>> Block nonNullable(@Nonnull O object) {
+        return object.getXDFConverter().encodeNonNullable(object);
     }
     
     /**
-     * Returns the given nullable encodable as a block.
+     * Returns the given nullable object as a block.
      * 
-     * @param encodable the nullable object to convert.
+     * @param object the nullable object to convert.
      * 
-     * @return the given nullable encodable as a block.
+     * @return the given nullable object as a block.
      */
     @Pure
-    public static @Nullable <O extends XDF<O, ?>> Block nullable(@Nullable O encodable) {
-        return encodable == null ? null : nonNullable(encodable);
+    public static @Nullable <O extends XDF<O, ?>> Block nullable(@Nullable O object) {
+        return object == null ? null : nonNullable(object);
     }
     
     /**
-     * Returns the given non-nullable encodable as a block of the given type.
+     * Returns the given non-nullable object as a block of the given type.
      * 
-     * @param encodable the non-nullable object to be converted to a block.
+     * @param object the non-nullable object to be converted to a block.
      * @param type the type which is to be set for the returned block.
      * 
-     * @return the given non-nullable encodable as a block of the given type.
+     * @return the given non-nullable object as a block of the given type.
      * 
-     * @require type.isBasedOn(encodable.getFactory().getType()) : "The given type is based on the type of the encodable object.";
+     * @require type.isBasedOn(object.getFactory().getType()) : "The given type is based on the type of the object object.";
      */
     @Pure
-    public static @Nonnull <O extends XDF<O, ?>> Block nonNullable(@Nonnull O encodable, @Nonnull @Loaded SemanticType type) {
-        return nonNullable(encodable).setType(type);
+    public static @Nonnull <O extends XDF<O, ?>> Block nonNullable(@Nonnull O object, @Nonnull @Loaded SemanticType type) {
+        return nonNullable(object).setType(type);
     }
     
     /**
-     * Returns the given nullable encodable as a block of the given type.
+     * Returns the given nullable object as a block of the given type.
      * 
-     * @param encodable the nullable object to be converted to a block.
+     * @param object the nullable object to be converted to a block.
      * @param type the type which is to be set for the returned block.
      * 
-     * @return the given nullable encodable as a block of the given type.
+     * @return the given nullable object as a block of the given type.
      * 
-     * @require encodable == null || type.isBasedOn(encodable.getFactory().getType()) : "If the encodable object is not null, the given type is based on its type.";
+     * @require object == null || type.isBasedOn(object.getFactory().getType()) : "If the object object is not null, the given type is based on its type.";
      */
     @Pure
-    public static @Nullable <O extends XDF<O, ?>> Block nullable(@Nullable O encodable, @Nonnull @Loaded SemanticType type) {
-        return encodable == null ? null : nonNullable(encodable).setType(type);
+    public static @Nullable <O extends XDF<O, ?>> Block nullable(@Nullable O object, @Nonnull @Loaded SemanticType type) {
+        return object == null ? null : nonNullable(object).setType(type);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casted Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns the given non-null encodable as a block.
-     * This method should be used if the generic types of the encodable cannot be inferred, e.g. if we are handing an encodable instance using its supertype as a parameter.
-     * The method will use the correct encoding factory and cast the encodable to the generic type of this encoding factory before encoding it into a block.
+     * Returns the given non-null object as a block.
+     * This method should be used if the generic types of the object cannot be inferred, e.g. if we are handing an object using its supertype as a parameter.
+     * The method will use the correct XDF converter and cast the object to the generic type of this XDF converter before encoding it into a block.
      * 
-     * @param encodable the encodable object that lost the information about its generic types.
+     * @param object the object object that lost the information about its generic types.
      * 
-     * @return the given non-null encodable as a block.
+     * @return the given non-null object as a block.
      */
     @Pure
-    public static @Nonnull <O extends XDF<?, ?>> Block nonNullableWithCast(@Nonnull O encodable) {
-        return encodable.getXDFConverter().encodeNonNullableWithCast(encodable);
+    public static @Nonnull <O extends XDF<?, ?>> Block nonNullableWithCast(@Nonnull O object) {
+        return object.getXDFConverter().encodeNonNullableWithCast(object);
     }
     
     /**
-     * Returns the given nullable encodable as a block.
-     * This method should be used if the generic types of the encodable cannot be inferred, e.g. if we are handing an encodable instance using its supertype as a parameter.
-     * The method will use the correct encoding factory and cast the encodable to the generic type of this encoding factory before encoding it into a block.
+     * Returns the given nullable object as a block.
+     * This method should be used if the generic types of the object cannot be inferred, e.g. if we are handing an object using its supertype as a parameter.
+     * The method will use the correct XDF converter and cast the object to the generic type of this XDF converter before encoding it into a block.
      * 
-     * @param encodable the encodable object that lost the information about its generic types.
+     * @param object the object object that lost the information about its generic types.
      * 
-     * @return the given nullable encodable as a block or null if the encodable was null.
+     * @return the given nullable object as a block or null if the object was null.
      */
     @Pure
-    public static @Nullable <O extends XDF<?, ?>> Block nullableWithCast(@Nullable O encodable) {
-        return encodable == null ? null : nonNullableWithCast(encodable);
+    public static @Nullable <O extends XDF<?, ?>> Block nullableWithCast(@Nullable O object) {
+        return object == null ? null : nonNullableWithCast(object);
     }
 
     /**
-     * Returns the given non-null encodable as a block set to a given semantic type.
-     * This method should be used if the generic types of the encodable cannot be inferred, e.g. if we are handing an encodable instance using its supertype as a parameter.
-     * The method will use the correct encoding factory and cast the encodable to the generic type of this encoding factory before encoding it into a block.
+     * Returns the given non-null object as a block set to a given semantic type.
+     * This method should be used if the generic types of the object cannot be inferred, e.g. if we are handing an object using its supertype as a parameter.
+     * The method will use the correct XDF converter and cast the object to the generic type of this XDF converter before encoding it into a block.
      * 
-     * @param encodable the encodable object that lost the information about its generic types.
+     * @param object the object object that lost the information about its generic types.
      * @param type the type which is to be set for the returned block.
      * 
-     * @return the given non-null encodable as a block of the given type.
+     * @return the given non-null object as a block of the given type.
      * 
-     * @require type.isBasedOn(encodable.getFactory().getType()) : "The given type is based on the type of the encodable object.";
+     * @require type.isBasedOn(object.getFactory().getType()) : "The given type is based on the type of the object object.";
      */
     @Pure
-    public static @Nonnull <O extends XDF<?, ?>> Block nonNullableWithCast(@Nonnull O encodable, @Nonnull @Loaded SemanticType type) {
-        return nonNullableWithCast(encodable).setType(type);
+    public static @Nonnull <O extends XDF<?, ?>> Block nonNullableWithCast(@Nonnull O object, @Nonnull @Loaded SemanticType type) {
+        return nonNullableWithCast(object).setType(type);
     }
     
     /**
-     * Returns the given nullable encodable as a block set to a given semantic type.
-     * This method should be used if the generic types of the encodable cannot be inferred, e.g. if we are handing an encodable instance using its supertype as a parameter.
-     * The method will use the correct encoding factory and cast the encodable to the generic type of this encoding factory before encoding it into a block.
+     * Returns the given nullable object as a block set to a given semantic type.
+     * This method should be used if the generic types of the object cannot be inferred, e.g. if we are handing an object using its supertype as a parameter.
+     * The method will use the correct XDF converter and cast the object to the generic type of this XDF converter before encoding it into a block.
      * 
-     * @param encodable the encodable object that lost the information about its generic types.
+     * @param object the object object that lost the information about its generic types.
      * @param type the type which is to be set for the returned block.
      * 
-     * @return the given nullable encodable as a block of the given type or null if the encodable was null.
+     * @return the given nullable object as a block of the given type or null if the object was null.
      * 
-     * @require encodable == null || type.isBasedOn(encodable.getFactory().getType()) : "If the encodable object is not null, the given type is based on its type.";
+     * @require object == null || type.isBasedOn(object.getFactory().getType()) : "If the object object is not null, the given type is based on its type.";
      */
     @Pure
-    public static @Nullable <O extends XDF<?, ?>> Block nullableWithCast(@Nullable O encodable, @Nonnull @Loaded SemanticType type) {
-        return encodable == null ? null : nonNullableWithCast(encodable, type);
+    public static @Nullable <O extends XDF<?, ?>> Block nullableWithCast(@Nullable O object, @Nonnull @Loaded SemanticType type) {
+        return object == null ? null : nonNullableWithCast(object, type);
     }
     
 }
