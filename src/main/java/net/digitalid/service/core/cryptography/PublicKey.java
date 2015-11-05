@@ -661,7 +661,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<PublicKey, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<PublicKey, Object> getSQLConverter() {
         return STORING_FACTORY;
     }
     

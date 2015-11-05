@@ -240,7 +240,7 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

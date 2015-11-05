@@ -104,7 +104,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<GroupWithUnknownOrder, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<GroupWithUnknownOrder, Object> getSQLConverter() {
         return STORING_FACTORY;
     }
     

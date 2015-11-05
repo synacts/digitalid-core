@@ -446,7 +446,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<EncryptionWrapper> getStoringFactory() {
+    public @Nonnull StoringFactory<EncryptionWrapper> getSQLConverter() {
         return new StoringFactory<>(getEncodingFactory());
     }
     

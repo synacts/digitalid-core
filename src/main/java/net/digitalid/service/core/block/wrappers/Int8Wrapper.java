@@ -196,7 +196,7 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

@@ -294,7 +294,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<SymmetricKey, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<SymmetricKey, Object> getSQLConverter() {
         return STORING_FACTORY;
     }
     

@@ -243,7 +243,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<SelfcontainedWrapper> getStoringFactory() {
+    public @Nonnull StoringFactory<SelfcontainedWrapper> getSQLConverter() {
         return new StoringFactory<>(getEncodingFactory());
     }
     

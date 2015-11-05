@@ -166,7 +166,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
         Converters<E, Site> entityFactories = getPropertyFactory().getConceptSetup().getEntityFactories();
         ConceptFactories<C, E> conceptFactories = getPropertyFactory().getConceptSetup().getConceptFactories();
         // TODO: String SQL = select(getConceptFactories(), Time.FACTORIES, getPropertyFactory().getValueFactories()).from(entity).where(factory, object).and().and().toSQL();
-        // TODO: Instead of conceptFactories.getStoringFactory().storeNonNullable and conceptFactories.getStoringFactory().restoreNonNullable, one could define a store and restore method that also takes a GeneralFactories as a parameter.
+        // TODO: Instead of conceptFactories.getSQLConverter().storeNonNullable and conceptFactories.getSQLConverter().restoreNonNullable, one could define a store and restore method that also takes a GeneralFactories as a parameter.
         final @Nonnull String SQL = "SELECT " + conceptFactories.getStoringFactory().getSelection() + ", " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getSelection() + " FROM " + getName(entity.getSite()) + " WHERE " + entityFactories.getStoringFactory().getConditionForStatement(entity) + " AND " + getPropertyFactory().getRequiredAuthorization().getStateFilter(permissions, restrictions, agent);
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<Block> entries = FreezableLinkedList.get();

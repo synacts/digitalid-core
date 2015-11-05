@@ -163,7 +163,7 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

@@ -199,7 +199,7 @@ public final class CharWrapper extends Wrapper<CharWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

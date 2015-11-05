@@ -126,7 +126,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<PublicKeyChain, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<PublicKeyChain, Object> getSQLConverter() {
         return STORING_FACTORY;
     }
     

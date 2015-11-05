@@ -195,7 +195,7 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

@@ -247,7 +247,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
     
     @Pure
     @Override
-    public final @Nonnull ConceptStoringFactory<C, E, K> getStoringFactory() {
+    public final @Nonnull ConceptStoringFactory<C, E, K> getSQLConverter() {
         return setup.getStoringFactory();
     }
     

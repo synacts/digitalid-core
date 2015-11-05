@@ -196,7 +196,7 @@ public final class DoubleWrapper extends Wrapper<DoubleWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

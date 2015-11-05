@@ -369,7 +369,7 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

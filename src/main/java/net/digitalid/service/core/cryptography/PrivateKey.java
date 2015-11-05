@@ -344,7 +344,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<PrivateKey, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<PrivateKey, Object> getSQLConverter() {
         return STORING_FACTORY;
     }
     

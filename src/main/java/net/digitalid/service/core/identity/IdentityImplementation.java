@@ -196,7 +196,7 @@ public abstract class IdentityImplementation implements Identity {
     
     @Pure
     @Override
-    public final @Nonnull StoringFactory<Identity> getStoringFactory() {
+    public final @Nonnull StoringFactory<Identity> getSQLConverter() {
         return STORING_FACTORY;
     }
     

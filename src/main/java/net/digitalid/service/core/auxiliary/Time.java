@@ -654,7 +654,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return STORING_FACTORY;
     }
     

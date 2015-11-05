@@ -195,7 +195,7 @@ public final class Int32Wrapper extends Wrapper<Int32Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

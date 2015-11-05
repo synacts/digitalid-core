@@ -485,7 +485,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<SignatureWrapper> getStoringFactory() {
+    public @Nonnull StoringFactory<SignatureWrapper> getSQLConverter() {
         return new StoringFactory<>(getEncodingFactory());
     }
     

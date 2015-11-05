@@ -298,7 +298,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return STORING_FACTORY;
     }
     

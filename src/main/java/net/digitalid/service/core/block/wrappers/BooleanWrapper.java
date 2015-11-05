@@ -197,7 +197,7 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

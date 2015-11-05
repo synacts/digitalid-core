@@ -181,7 +181,7 @@ public final class Exponent extends Number<Exponent> {
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<Exponent, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<Exponent, Object> getSQLConverter() {
         return STORING_FACTORY;
     }
     

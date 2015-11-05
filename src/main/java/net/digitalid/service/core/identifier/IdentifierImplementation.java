@@ -186,7 +186,7 @@ public abstract class IdentifierImplementation implements Identifier {
     
     @Pure
     @Override
-    public final @Nonnull StoringFactory<Identifier> getStoringFactory() {
+    public final @Nonnull StoringFactory<Identifier> getSQLConverter() {
         return STORING_FACTORY;
     }
     

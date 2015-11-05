@@ -192,7 +192,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

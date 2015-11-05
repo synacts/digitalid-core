@@ -220,7 +220,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
     
     @Pure
     @Override
-    public abstract @Nonnull StoringFactory<W> getStoringFactory();
+    public abstract @Nonnull StoringFactory<W> getSQLConverter();
     
     /**
      * Returns the value of this wrapper for SQL.

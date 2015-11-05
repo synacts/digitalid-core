@@ -410,7 +410,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<TupleWrapper> getStoringFactory() {
+    public @Nonnull StoringFactory<TupleWrapper> getSQLConverter() {
         return new StoringFactory<>(getEncodingFactory());
     }
     

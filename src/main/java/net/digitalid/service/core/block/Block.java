@@ -782,7 +782,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return STORING_FACTORY;
     }
     

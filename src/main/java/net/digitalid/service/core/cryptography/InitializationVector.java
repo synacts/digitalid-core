@@ -183,7 +183,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return STORING_FACTORY;
     }
     

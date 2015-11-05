@@ -222,7 +222,7 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public @Nonnull StoringFactory getSQLConverter() {
         return new StoringFactory(getSemanticType());
     }
     

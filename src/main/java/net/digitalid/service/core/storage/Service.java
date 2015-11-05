@@ -230,7 +230,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
     
     @Pure
     @Override
-    public final @Nonnull StoringFactory getStoringFactory() {
+    public final @Nonnull StoringFactory getSQLConverter() {
         return STORING_FACTORY;
     }
     

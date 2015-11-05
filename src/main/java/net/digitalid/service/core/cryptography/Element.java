@@ -257,7 +257,7 @@ public final class Element extends Number<Element> {
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<Element, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<Element, Object> getSQLConverter() {
         return STORING_FACTORY;
     }
     

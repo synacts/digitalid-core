@@ -229,7 +229,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<CompressionWrapper> getStoringFactory() {
+    public @Nonnull StoringFactory<CompressionWrapper> getSQLConverter() {
         return new StoringFactory<>(getEncodingFactory());
     }
     

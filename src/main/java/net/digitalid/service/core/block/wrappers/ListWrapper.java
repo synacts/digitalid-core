@@ -291,7 +291,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<ListWrapper> getStoringFactory() {
+    public @Nonnull StoringFactory<ListWrapper> getSQLConverter() {
         return new StoringFactory<>(getEncodingFactory());
     }
     

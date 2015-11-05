@@ -90,7 +90,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
     
     @Pure
     @Override
-    public abstract @Nonnull StoringFactory<W> getStoringFactory();
+    public abstract @Nonnull StoringFactory<W> getSQLConverter();
     
     @Pure
     @Override

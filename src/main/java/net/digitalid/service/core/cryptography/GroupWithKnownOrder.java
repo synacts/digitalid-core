@@ -166,7 +166,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<GroupWithKnownOrder, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<GroupWithKnownOrder, Object> getSQLConverter() {
         return STORING_FACTORY;
     }
     
