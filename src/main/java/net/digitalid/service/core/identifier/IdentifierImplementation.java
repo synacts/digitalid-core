@@ -2,6 +2,7 @@ package net.digitalid.service.core.identifier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -10,6 +11,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class models identifiers.
@@ -178,7 +180,7 @@ public abstract class IdentifierImplementation implements Identifier {
     
     @Pure
     @Override
-    public final @Nonnull XDFConverter<Identifier> getXDFConverter() {
+    public final @Nonnull AbstractNonRequestingXDFConverter<Identifier, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -186,7 +188,7 @@ public abstract class IdentifierImplementation implements Identifier {
     
     @Pure
     @Override
-    public final @Nonnull SQLConverter<Identifier> getSQLConverter() {
+    public final @Nonnull AbstractSQLConverter<Identifier, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

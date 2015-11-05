@@ -1,12 +1,17 @@
 package net.digitalid.service.core.identifier;
 
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.Caster;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.Type;
@@ -16,6 +21,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class models internal non-host identifiers.
@@ -109,12 +115,12 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         return (string.startsWith("@") ? "" : ".") + string;
     }
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.
      */
-    private static final @Nonnull Caster<InternalNonHostIdentifier> CASTER = new Caster<InternalNonHostIdentifier>() {
+    public static final @Nonnull Caster<Identifier, InternalNonHostIdentifier> CASTER = new Caster<Identifier, InternalNonHostIdentifier>() {
         @Pure
         @Override
         protected @Nonnull InternalNonHostIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
@@ -122,19 +128,26 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         }
     };
     
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    /**
+     * Stores the key converter of this class.
+     */
+    public static final @Nonnull Identifier.StringConverter<InternalNonHostIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
+    
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter<InternalNonHostIdentifier> XDF_CONVERTER = new XDFConverter<>(InternalNonHostIdentity.IDENTIFIER, CASTER);
+    public static final @Nonnull AbstractNonRequestingXDFConverter<InternalNonHostIdentifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(InternalNonHostIdentity.IDENTIFIER));
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter<InternalNonHostIdentifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
+    public static final @Nonnull AbstractSQLConverter<InternalNonHostIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("internal_non_host_identifier"));
     
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<InternalNonHostIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<InternalNonHostIdentifier, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

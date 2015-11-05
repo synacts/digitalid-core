@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
@@ -557,7 +557,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
-     * Stores the key converter for this class.
+     * Stores the key converter of this class.
      */
     private static final @Nonnull AbstractNonRequestingKeyConverter<Time, Object, Long> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Time, Object, Long>() {
         
@@ -611,6 +611,6 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<Time, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<Time, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }
