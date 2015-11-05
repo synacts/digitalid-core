@@ -211,15 +211,15 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     public static final @Nonnull SemanticType TYPE = SemanticType.map("category@core.digitalid.net").load(Int8Wrapper.TYPE);
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<Category, Object> {
+    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<Category, Object> {
         
         /**
-         * Creates a new encoding factory.
+         * Creates a new XDF converter.
          */
-        private EncodingFactory() {
+        private XDFConverter() {
             super(TYPE);
         }
         
@@ -232,7 +232,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         @Pure
         @Override
         public @Nonnull Category decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("category@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
+            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
             
             final byte value = Int8Wrapper.decode(block);
             if (!isValid(value)) throw new InvalidEncodingException("The value '" + value + "' does not encode a category.");
@@ -242,28 +242,28 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     }
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
+    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return ENCODING_FACTORY;
+    public @Nonnull XDFConverter getXDFConverter() {
+        return XDF_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for this class.
+     * The SQL converter for this class.
      */
     @Immutable
-    public static class StoringFactory extends AbstractSQLConverter<Category, Object> {
+    public static class SQLConverter extends AbstractSQLConverter<Category, Object> {
         
         /**
-         * Creates a new storing factory.
+         * Creates a new SQL converter.
          */
-        private StoringFactory() {
+        private SQLConverter() {
             super(Column.get("category", SQLType.TINYINT));
         }
         
@@ -292,14 +292,14 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     }
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
+    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getSQLConverter() {
-        return STORING_FACTORY;
+    public @Nonnull SQLConverter getSQLConverter() {
+        return SQL_CONVERTER;
     }
     
     @Pure
@@ -311,8 +311,8 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<Category, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<Category, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

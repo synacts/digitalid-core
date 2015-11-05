@@ -123,17 +123,17 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for wrappers.
+     * The XDF converter for wrappers.
      */
     @Immutable
-    public abstract static class EncodingFactory<W extends Wrapper<W>> extends AbstractXDFConverter<W, Object> {
+    public abstract static class XDFConverter<W extends Wrapper<W>> extends AbstractXDFConverter<W, Object> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        protected EncodingFactory(@Nonnull @Loaded SemanticType type) {
+        protected XDFConverter(@Nonnull @Loaded SemanticType type) {
             super(type);
         }
         
@@ -146,17 +146,17 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
     }
     
     /**
-     * The non-requesting encoding factory for wrappers.
+     * The non-requesting XDF converter for wrappers.
      */
     @Immutable
-    public abstract static class NonRequestingEncodingFactory<W extends Wrapper<W>> extends EncodingFactory<W> {
+    public abstract static class NonRequestingXDFConverter<W extends Wrapper<W>> extends XDFConverter<W> {
         
         /**
-         * Creates a new non-requesting encoding factory with the given type.
+         * Creates a new non-requesting XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        protected NonRequestingEncodingFactory(@Nonnull @Loaded SemanticType type) {
+        protected NonRequestingXDFConverter(@Nonnull @Loaded SemanticType type) {
             super(type);
         }
         
@@ -174,15 +174,15 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
     
     @Pure
     @Override
-    public abstract @Nonnull EncodingFactory<W> getXDFConverter();
+    public abstract @Nonnull XDFConverter<W> getXDFConverter();
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for wrappers.
+     * The SQL converter for wrappers.
      */
     @Immutable
-    public abstract static class StoringFactory<W extends Wrapper<W>> extends AbstractSQLConverter<W, Object> {
+    public abstract static class SQLConverter<W extends Wrapper<W>> extends AbstractSQLConverter<W, Object> {
         
         /**
          * Stores the semantic type of the restored wrappers.
@@ -199,12 +199,12 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
         }
         
         /**
-         * Creates a new storing factory with the given column.
+         * Creates a new SQL converter with the given column.
          * 
          * @param column the column used to store objects of the wrapper.
          * @param type the semantic type of the restored wrappers.
          */
-        protected StoringFactory(@Nonnull @NonNullableElements Column column, @Nonnull @Loaded SemanticType type) {
+        protected SQLConverter(@Nonnull @NonNullableElements Column column, @Nonnull @Loaded SemanticType type) {
             super(column);
             
             this.type = type;
@@ -220,7 +220,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
     
     @Pure
     @Override
-    public abstract @Nonnull StoringFactory<W> getSQLConverter();
+    public abstract @Nonnull SQLConverter<W> getSQLConverter();
     
     /**
      * Returns the value of this wrapper for SQL.

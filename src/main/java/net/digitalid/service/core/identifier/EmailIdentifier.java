@@ -131,18 +131,18 @@ public final class EmailIdentifier extends ExternalIdentifier {
     };
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory<EmailIdentifier> ENCODING_FACTORY = new EncodingFactory<>(EmailPerson.IDENTIFIER, CASTER);
+    public static final @Nonnull XDFConverter<EmailIdentifier> XDF_CONVERTER = new XDFConverter<>(EmailPerson.IDENTIFIER, CASTER);
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull StoringFactory<EmailIdentifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    public static final @Nonnull SQLConverter<EmailIdentifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<EmailIdentifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<EmailIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

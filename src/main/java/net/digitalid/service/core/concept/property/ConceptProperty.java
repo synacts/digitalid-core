@@ -24,9 +24,9 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 public interface ConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity<E>> {
     
     /**
-     * Returns the property setup that contains the property and value factories, the required authorization and the value validator.
+     * Returns the property setup that contains the property and value converters, the required authorization and the value validator.
      * 
-     * @return the property setup that contains the property and value factories, the required authorization and the value validator.
+     * @return the property setup that contains the property and value converters, the required authorization and the value validator.
      */
     @Pure
     public @Nonnull ConceptPropertySetup<V, C, E> getConceptPropertySetup();

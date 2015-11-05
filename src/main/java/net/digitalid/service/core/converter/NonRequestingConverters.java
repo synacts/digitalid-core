@@ -30,8 +30,8 @@ public final class NonRequestingConverters<O, E> extends Converters<O, E> {
     /**
      * Creates a new object with the given converters.
      * 
-     * @param XDFConverter the XDF factory.
-     * @param SQLConverter the SQL factory.
+     * @param XDFConverter the XDF converter.
+     * @param SQLConverter the SQL converter.
      */
     private NonRequestingConverters(@Nonnull AbstractNonRequestingXDFConverter<O, E> XDFConverter, @Nonnull AbstractSQLConverter<O, E> SQLConverter) {
         super(XDFConverter, SQLConverter);
@@ -40,8 +40,8 @@ public final class NonRequestingConverters<O, E> extends Converters<O, E> {
     /**
      * Creates a new object with the given converters.
      * 
-     * @param XDFConverter the XDF factory.
-     * @param SQLConverter the SQL factory.
+     * @param XDFConverter the XDF converter.
+     * @param SQLConverter the SQL converter.
      * 
      * @return a new object with the given converters.
      */

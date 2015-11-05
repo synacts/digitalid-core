@@ -571,15 +571,15 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     public static final @Nonnull SemanticType TYPE = SemanticType.map("time@core.digitalid.net").load(Int64Wrapper.TYPE);
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<Time, Object> {
+    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<Time, Object> {
         
         /**
-         * Creates a new encoding factory.
+         * Creates a new XDF converter.
          */
-        private EncodingFactory() {
+        private XDFConverter() {
             super(TYPE);
         }
         
@@ -592,7 +592,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         @Pure
         @Override
         public @Nonnull Time decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("time@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
+            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
             
             return new Time(Int64Wrapper.decode(block));
         }
@@ -600,28 +600,28 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     }
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
+    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return ENCODING_FACTORY;
+    public @Nonnull XDFConverter getXDFConverter() {
+        return XDF_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for this class.
+     * The SQL converter for this class.
      */
     @Immutable
-    public static class StoringFactory extends AbstractSQLConverter<Time, Object> {
+    public static class SQLConverter extends AbstractSQLConverter<Time, Object> {
         
         /**
-         * Creates a new storing factory.
+         * Creates a new SQL converter.
          */
-        private StoringFactory() {
+        private SQLConverter() {
             super(Column.get("time", SQLType.BIGINT));
         }
         
@@ -648,21 +648,21 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     }
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
+    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getSQLConverter() {
-        return STORING_FACTORY;
+    public @Nonnull SQLConverter getSQLConverter() {
+        return SQL_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<Time, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<Time, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

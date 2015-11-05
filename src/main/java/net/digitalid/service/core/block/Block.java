@@ -697,17 +697,17 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static class EncodingFactory extends AbstractNonRequestingXDFConverter<Block, Object> {
+    public static class XDFConverter extends AbstractNonRequestingXDFConverter<Block, Object> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new XDF converter with the given type.
          * 
          * @param type the type of the blocks which are returned.
          */
-        private EncodingFactory(@Nonnull @Loaded SemanticType type) {
+        private XDFConverter(@Nonnull @Loaded SemanticType type) {
             super(type);
         }
         
@@ -727,17 +727,17 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return new EncodingFactory(type);
+    public @Nonnull XDFConverter getXDFConverter() {
+        return new XDFConverter(type);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for this class.
+     * The SQL converter for this class.
      */
     @Immutable
-    public static class StoringFactory extends AbstractSQLConverter<Block, SemanticType> {
+    public static class SQLConverter extends AbstractSQLConverter<Block, SemanticType> {
         
         /**
          * Stores the column for blocks.
@@ -745,9 +745,9 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         private static final @Nonnull Column COLUMN = Column.get("block", SQLType.BLOB);
         
         /**
-         * Creates a new storing factory.
+         * Creates a new SQL converter.
          */
-        private StoringFactory() {
+        private SQLConverter() {
             super(COLUMN);
         }
         
@@ -776,14 +776,14 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     }
     
     /**
-     * Stores the storing factory which is used to store and restore blocks.
+     * Stores the SQL converter which is used to store and restore blocks.
      */
-    public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
+    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getSQLConverter() {
-        return STORING_FACTORY;
+    public @Nonnull SQLConverter getSQLConverter() {
+        return SQL_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cryptography –––––––––––––––––––––––––––––––––––––––––––––––––– */

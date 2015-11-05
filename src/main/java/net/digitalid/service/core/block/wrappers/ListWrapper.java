@@ -128,7 +128,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull @NullableElements @Frozen ReadOnlyList<Block> elements) {
-        return new EncodingFactory(type).encodeNonNullable(new ListWrapper(type, elements));
+        return new XDFConverter(type).encodeNonNullable(new ListWrapper(type, elements));
     }
     
     /**
@@ -173,7 +173,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      */
     @Pure
     public static @Nonnull @NullableElements @Frozen ReadOnlyList<Block> decodeNullableElements(@Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).getNullableElements();
+        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).getNullableElements();
     }
     
     /**
@@ -185,7 +185,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      */
     @Pure
     public static @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> decodeNonNullableElements(@Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).getNonNullableElements();
+        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).getNonNullableElements();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -236,17 +236,17 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends Wrapper.EncodingFactory<ListWrapper> {
+    public static final class XDFConverter extends Wrapper.XDFConverter<ListWrapper> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private EncodingFactory(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
@@ -282,8 +282,8 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return new EncodingFactory(getSemanticType());
+    public @Nonnull XDFConverter getXDFConverter() {
+        return new XDFConverter(getSemanticType());
     }
     
     
@@ -291,8 +291,8 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<ListWrapper> getSQLConverter() {
-        return new StoringFactory<>(getXDFConverter());
+    public @Nonnull SQLConverter<ListWrapper> getSQLConverter() {
+        return new SQLConverter<>(getXDFConverter());
     }
     
 }

@@ -188,16 +188,16 @@ public abstract class IdentityImplementation implements Identity {
     
     @Pure
     @Override
-    public final @Nonnull EncodingFactory<Identity> getXDFConverter() {
-        return ENCODING_FACTORY;
+    public final @Nonnull XDFConverter<Identity> getXDFConverter() {
+        return XDF_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public final @Nonnull StoringFactory<Identity> getSQLConverter() {
-        return STORING_FACTORY;
+    public final @Nonnull SQLConverter<Identity> getSQLConverter() {
+        return SQL_CONVERTER;
     }
     
 }

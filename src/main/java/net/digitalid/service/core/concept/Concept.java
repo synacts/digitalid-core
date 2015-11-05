@@ -239,16 +239,16 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         
     @Pure
     @Override
-    public final @Nonnull ConceptEncodingFactory<C, E, K> getXDFConverter() {
-        return setup.getEncodingFactory();
+    public final @Nonnull ConceptXDFConverter<C, E, K> getXDFConverter() {
+        return setup.getXDFConverter();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public final @Nonnull ConceptStoringFactory<C, E, K> getSQLConverter() {
-        return setup.getStoringFactory();
+    public final @Nonnull ConceptSQLConverter<C, E, K> getSQLConverter() {
+        return setup.getSQLConverter();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

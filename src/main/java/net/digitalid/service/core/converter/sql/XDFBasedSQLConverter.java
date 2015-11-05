@@ -95,7 +95,7 @@ public final class XDFBasedSQLConverter<O, E> extends AbstractSQLConverter<O, E>
     @NonCommitting
     public @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
-            final @Nullable Block block = Block.STORING_FACTORY.restoreNullable(XDFConverter.getType(), resultSet, columnIndex);
+            final @Nullable Block block = Block.SQL_CONVERTER.restoreNullable(XDFConverter.getType(), resultSet, columnIndex);
             return block == null ? null : XDFConverter.decodeNonNullable(external, block);
         } catch (@Nonnull AbortException | PacketException | ExternalException | NetworkException exception) {
             throw new SQLException("Could not decode a block from the database.", exception);

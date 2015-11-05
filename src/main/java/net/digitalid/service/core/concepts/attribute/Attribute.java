@@ -335,7 +335,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      */
     @Pure
     public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull SemanticType type) {
-        // TODO: Make the checkIsAttributeFor(entity) here? No, rather during decoding in the encoding factory!
+        // TODO: Make the checkIsAttributeFor(entity) here? No, rather during decoding in the XDF converter!
         // Attribute.get(entity, IdentifierClass.create(tuple.getNonNullableElement(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity))
         
         if (Database.isSingleAccess()) {

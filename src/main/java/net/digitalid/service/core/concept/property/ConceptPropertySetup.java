@@ -14,7 +14,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 
 /**
- * This factory creates a new property for each concept instance and stores the required factories and methods.
+ * This factory creates a new property for each concept instance and stores the required converters and methods.
  */
 @Immutable
 public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E extends Entity<E>> {
@@ -39,18 +39,18 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories to convert and recover the value of the property.
+     * Stores the converters to convert and recover the value of the property.
      */
-    private final @Nonnull Converters<V, ? super E> valueFactories;
+    private final @Nonnull Converters<V, ? super E> valueConverters;
     
     /**
-     * Returns the factories to convert and recover the value of the property.
+     * Returns the converters to convert and recover the value of the property.
      * 
-     * @return the factories to convert and recover the value of the property.
+     * @return the converters to convert and recover the value of the property.
      */
     @Pure
-    public final @Nonnull Converters<V, ? super E> getValueFactories() {
-        return valueFactories;
+    public final @Nonnull Converters<V, ? super E> getValueConverters() {
+        return valueConverters;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Required Authorization –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -128,21 +128,21 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
      * 
      * @param stateModule the module to which the property table belongs.
      * @param propertyName the name of the property (unique within the module).
-     * @param entityFactories the factories to convert and recover the entity.
-     * @param conceptFactories the factories to convert and recover the concept.
-     * @param valueFactories the factories to convert and recover the value of the property.
+     * @param entityConverters the converters to convert and recover the entity.
+     * @param conceptConverters the converters to convert and recover the concept.
+     * @param valueConverters the converters to convert and recover the value of the property.
      * @param requiredAuthorization the required authorization to set the property and see its changes.
      * @param valueValidator the value validator that checks whether the value of the property is valid.
      */
-    protected ConceptPropertySetup(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator) {
+    protected ConceptPropertySetup(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueConverters, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator) {
         this.propertyName = propertyName;
-        this.valueFactories = valueFactories;
+        this.valueConverters = valueConverters;
         this.requiredAuthorization = requiredAuthorization;
         this.valueValidator = valueValidator;
         
         this.conceptSetup = conceptSetup;
         
-        this.propertyType = SemanticType.map(propertyName + conceptSetup.getConceptType().getAddress().getStringWithDot()).load(valueFactories.getXDFConverter().getType());
+        this.propertyType = SemanticType.map(propertyName + conceptSetup.getConceptType().getAddress().getStringWithDot()).load(valueConverters.getXDFConverter().getType());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Action Type –––––––––––––––––––––––––––––––––––––––––––––––––– */

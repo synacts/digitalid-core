@@ -571,15 +571,15 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<PublicKey, Object> {
+    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<PublicKey, Object> {
         
         /**
-         * Creates a new encoding factory.
+         * Creates a new XDF converter.
          */
-        private EncodingFactory() {
+        private XDFConverter() {
             super(TYPE);
         }
         
@@ -612,7 +612,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
             assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
             
             final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(16);
-            final @Nonnull GroupWithUnknownOrder compositeGroup = GroupWithUnknownOrder.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(0));
+            final @Nonnull GroupWithUnknownOrder compositeGroup = GroupWithUnknownOrder.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(0));
             final @Nonnull Exponent e = Exponent.get(elements.getNonNullable(1));
             final @Nonnull Element ab = compositeGroup.getElement(elements.getNonNullable(2));
             final @Nonnull Element au = compositeGroup.getElement(elements.getNonNullable(3));
@@ -624,7 +624,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
             final @Nonnull Exponent si = Exponent.get(elements.getNonNullable(9));
             final @Nonnull Exponent sv = Exponent.get(elements.getNonNullable(10));
             final @Nonnull Exponent so = Exponent.get(elements.getNonNullable(11));
-            final @Nonnull GroupWithUnknownOrder squareGroup = GroupWithUnknownOrder.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(12));
+            final @Nonnull GroupWithUnknownOrder squareGroup = GroupWithUnknownOrder.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(12));
             final @Nonnull Element g = squareGroup.getElement(elements.getNonNullable(13));
             final @Nonnull Element y = squareGroup.getElement(elements.getNonNullable(14));
             final @Nonnull Element zPlus1 = squareGroup.getElement(elements.getNonNullable(15));
@@ -642,34 +642,34 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     }
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
+    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return ENCODING_FACTORY;
+    public @Nonnull XDFConverter getXDFConverter() {
+        return XDF_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PublicKey, Object> STORING_FACTORY = XDFBasedSQLConverter.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractSQLConverter<PublicKey, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(XDF_CONVERTER);
     
     @Pure
     @Override
     public @Nonnull AbstractSQLConverter<PublicKey, Object> getSQLConverter() {
-        return STORING_FACTORY;
+        return SQL_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<PublicKey, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<PublicKey, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

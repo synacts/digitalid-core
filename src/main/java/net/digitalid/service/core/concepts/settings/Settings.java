@@ -85,7 +85,7 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
     /**
      * Stores the setup of this concept.
      */
-    public static final @Nonnull ConceptSetup<Settings, NonHostEntity, Object> SETUP = ConceptSetup.get(CoreService.SERVICE, "settings", INDEX, EmptyWrapper.getValueFactories(EmptyWrapper.SEMANTIC), NonHostEntity.FACTORIES);
+    public static final @Nonnull ConceptSetup<Settings, NonHostEntity, Object> SETUP = ConceptSetup.get(CoreService.SERVICE, "settings", INDEX, EmptyWrapper.getValueConverters(EmptyWrapper.SEMANTIC), NonHostEntity.CONVERTERS);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Required Authorization –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -126,7 +126,7 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
     /**
      * Stores the setup of the password property.
      */
-    private static final @Nonnull NonNullableConceptPropertySetup<String, Settings, NonHostEntity> VALUE_PROPERTY_SETUP = NonNullableConceptPropertySetup.get(SETUP, "password", StringWrapper.getValueFactories(StringWrapper.SEMANTIC), REQUIRED_AUTHORIZATION, VALUE_VALIDATOR, "");
+    private static final @Nonnull NonNullableConceptPropertySetup<String, Settings, NonHostEntity> VALUE_PROPERTY_SETUP = NonNullableConceptPropertySetup.get(SETUP, "password", StringWrapper.getValueConverters(StringWrapper.SEMANTIC), REQUIRED_AUTHORIZATION, VALUE_VALIDATOR, "");
     
     /**
      * Stores the password of these settings.

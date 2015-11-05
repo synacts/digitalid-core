@@ -10,8 +10,8 @@ import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueEncodingFactory;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueStoringFactory;
+import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
+import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.converter.Converters;
@@ -97,7 +97,7 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type, @Nonnull @NonNegative BigInteger value) {
-        return new EncodingFactory(type).encodeNonNullable(new HashWrapper(type, value));
+        return new XDFConverter(type).encodeNonNullable(new HashWrapper(type, value));
     }
     
     /**
@@ -126,7 +126,7 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
      */
     @Pure
     public static @Nonnull @NonNegative BigInteger decodeNonNullable(@Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).value;
+        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
     }
     
     /**
@@ -170,17 +170,17 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends Wrapper.NonRequestingEncodingFactory<HashWrapper> {
+    public static final class XDFConverter extends Wrapper.NonRequestingXDFConverter<HashWrapper> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private EncodingFactory(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
@@ -196,17 +196,17 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return new EncodingFactory(getSemanticType());
+    public @Nonnull XDFConverter getXDFConverter() {
+        return new XDFConverter(getSemanticType());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for this class.
+     * The SQL converter for this class.
      */
     @Immutable
-    public static final class StoringFactory extends Wrapper.StoringFactory<HashWrapper> {
+    public static final class SQLConverter extends Wrapper.SQLConverter<HashWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -214,11 +214,11 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
         private static final @Nonnull Column COLUMN = Column.get("value", SQLType.HASH);
         
         /**
-         * Creates a new storing factory with the given type.
+         * Creates a new SQL converter with the given type.
          * 
          * @param type the semantic type of the restored wrappers.
          */
-        private StoringFactory(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type) {
+        private SQLConverter(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type) {
             super(COLUMN, type);
         }
         
@@ -240,8 +240,8 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getSQLConverter() {
-        return new StoringFactory(getSemanticType());
+    public @Nonnull SQLConverter getSQLConverter() {
+        return new SQLConverter(getSemanticType());
     }
     
     @Pure
@@ -288,39 +288,39 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns the value encoding factory of this wrapper.
+     * Returns the value XDF converter of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
      * 
-     * @return the value encoding factory of this wrapper.
+     * @return the value XDF converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueEncodingFactory<BigInteger, HashWrapper> getValueEncodingFactory(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
-        return new ValueEncodingFactory<>(FACTORY, new EncodingFactory(type));
+    public static @Nonnull ValueXDFConverter<BigInteger, HashWrapper> getValueXDFConverter(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
+        return new ValueXDFConverter<>(FACTORY, new XDFConverter(type));
     }
     
     /**
-     * Returns the value storing factory of this wrapper.
+     * Returns the value SQL converter of this wrapper.
      * 
      * @param type any semantic type that is based on the syntactic type of this wrapper.
      * 
-     * @return the value storing factory of this wrapper.
+     * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueStoringFactory<BigInteger, HashWrapper> getValueStoringFactory(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
-        return new ValueStoringFactory<>(FACTORY, new StoringFactory(type));
+    public static @Nonnull ValueSQLConverter<BigInteger, HashWrapper> getValueSQLConverter(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
+        return new ValueSQLConverter<>(FACTORY, new SQLConverter(type));
     }
     
     /**
-     * Returns the value factories of this wrapper.
+     * Returns the value converters of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
      * 
-     * @return the value factories of this wrapper.
+     * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull Converters<BigInteger, Object> getValueFactories(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
-        return Converters.get(getValueEncodingFactory(type), getValueStoringFactory(type));
+    public static @Nonnull Converters<BigInteger, Object> getValueConverters(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
+        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(type));
     }
     
 }

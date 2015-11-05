@@ -18,14 +18,14 @@ public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKey
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new non-converting key factory.
+     * Creates a new non-converting key converter.
      */
     private NonConvertingKeyConverter() {}
     
     /**
-     * Returns a new non-converting key factory.
+     * Returns a new non-converting key converter.
      * 
-     * @return a new non-converting key factory.
+     * @return a new non-converting key converter.
      */
     @Pure
     public static @Nonnull <O> NonConvertingKeyConverter<O> get() {

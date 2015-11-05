@@ -99,15 +99,15 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<InitializationVector, Object> {
+    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<InitializationVector, Object> {
         
         /**
-         * Creates a new encoding factory.
+         * Creates a new XDF converter.
          */
-        private EncodingFactory() {
+        private XDFConverter() {
             super(TYPE);
         }
         
@@ -120,7 +120,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         @Pure
         @Override
         public @Nonnull InitializationVector decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("initialization.vector@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
+            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
             
             if (block.getLength() != 17) throw new InvalidEncodingException("An initialization vector has to be 16 bytes long.");
             return new InitializationVector(BytesWrapper.decodeNonNullable(block));
@@ -129,28 +129,28 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     }
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
+    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return ENCODING_FACTORY;
+    public @Nonnull XDFConverter getXDFConverter() {
+        return XDF_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for this class.
+     * The SQL converter for this class.
      */
     @Immutable
-    public static final class StoringFactory extends AbstractSQLConverter<InitializationVector, Object> {
+    public static final class SQLConverter extends AbstractSQLConverter<InitializationVector, Object> {
         
         /**
-         * Creates a new storing factory.
+         * Creates a new SQL converter.
          */
-        private StoringFactory() {
+        private SQLConverter() {
             super(Column.get("vector", SQLType.VECTOR));
         }
         
@@ -177,21 +177,21 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     }
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
+    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getSQLConverter() {
-        return STORING_FACTORY;
+    public @Nonnull SQLConverter getSQLConverter() {
+        return SQL_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<InitializationVector, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<InitializationVector, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

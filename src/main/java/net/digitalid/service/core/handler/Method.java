@@ -446,7 +446,7 @@ public abstract class Method extends Handler {
     /**
      * Maps method types to the factory that creates handlers for that type.
      */
-    private static final @Nonnull Map<SemanticType, Factory> factories = new ConcurrentHashMap<>();
+    private static final @Nonnull Map<SemanticType, Factory> converters = new ConcurrentHashMap<>();
     
     /**
      * Adds the given factory that creates handlers for the given type.
@@ -455,7 +455,7 @@ public abstract class Method extends Handler {
      * @param factory the factory to add.
      */
     protected static void add(@Nonnull SemanticType type, @Nonnull Factory factory) {
-        factories.put(type, factory);
+        converters.put(type, factory);
     }
     
     /**
@@ -478,7 +478,7 @@ public abstract class Method extends Handler {
     @Pure
     @NonCommitting
     public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        final @Nullable Method.Factory factory = factories.get(block.getType());
+        final @Nullable Method.Factory factory = converters.get(block.getType());
         if (factory == null) throw new PacketException(PacketErrorCode.METHOD, "No method could be found for the type " + block.getType().getAddress() + ".");
         else return factory.create(entity, signature, recipient, block);
     }

@@ -134,18 +134,18 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     };
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory<ExternalIdentifier> ENCODING_FACTORY = new EncodingFactory<>(ExternalIdentity.IDENTIFIER, CASTER);
+    public static final @Nonnull XDFConverter<ExternalIdentifier> XDF_CONVERTER = new XDFConverter<>(ExternalIdentity.IDENTIFIER, CASTER);
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull StoringFactory<ExternalIdentifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    public static final @Nonnull SQLConverter<ExternalIdentifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<ExternalIdentifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<ExternalIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

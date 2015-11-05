@@ -82,7 +82,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type, short value) {
-        return new EncodingFactory(type).encodeNonNullable(new Int16Wrapper(type, value));
+        return new XDFConverter(type).encodeNonNullable(new Int16Wrapper(type, value));
     }
     
     /**
@@ -94,7 +94,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      */
     @Pure
     public static short decode(@Nonnull @NonEncoding @BasedOn("int16@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).value;
+        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -122,17 +122,17 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends Wrapper.NonRequestingEncodingFactory<Int16Wrapper> {
+    public static final class XDFConverter extends Wrapper.NonRequestingXDFConverter<Int16Wrapper> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private EncodingFactory(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
@@ -148,17 +148,17 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return new EncodingFactory(getSemanticType());
+    public @Nonnull XDFConverter getXDFConverter() {
+        return new XDFConverter(getSemanticType());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for this class.
+     * The SQL converter for this class.
      */
     @Immutable
-    public static final class StoringFactory extends Wrapper.StoringFactory<Int16Wrapper> {
+    public static final class SQLConverter extends Wrapper.SQLConverter<Int16Wrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -166,11 +166,11 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
         private static final @Nonnull Column COLUMN = Column.get("value", SQLType.SMALLINT);
         
         /**
-         * Creates a new storing factory with the given type.
+         * Creates a new SQL converter with the given type.
          * 
          * @param type the semantic type of the restored wrappers.
          */
-        private StoringFactory(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
+        private SQLConverter(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
             super(COLUMN, type);
         }
         
@@ -192,8 +192,8 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getSQLConverter() {
-        return new StoringFactory(getSemanticType());
+    public @Nonnull SQLConverter getSQLConverter() {
+        return new SQLConverter(getSemanticType());
     }
     
     @Pure
@@ -232,39 +232,39 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns the value encoding factory of this wrapper.
+     * Returns the value XDF converter of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
      * 
-     * @return the value encoding factory of this wrapper.
+     * @return the value XDF converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueEncodingFactory<Short, Int16Wrapper> getValueEncodingFactory(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
-        return new ValueEncodingFactory<>(FACTORY, new EncodingFactory(type));
+    public static @Nonnull ValueXDFConverter<Short, Int16Wrapper> getValueXDFConverter(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
+        return new ValueXDFConverter<>(FACTORY, new XDFConverter(type));
     }
     
     /**
-     * Returns the value storing factory of this wrapper.
+     * Returns the value SQL converter of this wrapper.
      * 
      * @param type any semantic type that is based on the syntactic type of this wrapper.
      * 
-     * @return the value storing factory of this wrapper.
+     * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueStoringFactory<Short, Int16Wrapper> getValueStoringFactory(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
-        return new ValueStoringFactory<>(FACTORY, new StoringFactory(type));
+    public static @Nonnull ValueSQLConverter<Short, Int16Wrapper> getValueSQLConverter(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
+        return new ValueSQLConverter<>(FACTORY, new SQLConverter(type));
     }
     
     /**
-     * Returns the value factories of this wrapper.
+     * Returns the value converters of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
      * 
-     * @return the value factories of this wrapper.
+     * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull Converters<Short, Object> getValueFactories(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
-        return Converters.get(getValueEncodingFactory(type), getValueStoringFactory(type));
+    public static @Nonnull Converters<Short, Object> getValueConverters(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
+        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(type));
     }
     
 }

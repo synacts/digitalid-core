@@ -126,18 +126,18 @@ public final class HostIdentifier extends InternalIdentifier {
     };
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory<HostIdentifier> ENCODING_FACTORY = new EncodingFactory<>(HostIdentity.IDENTIFIER, CASTER);
+    public static final @Nonnull XDFConverter<HostIdentifier> XDF_CONVERTER = new XDFConverter<>(HostIdentity.IDENTIFIER, CASTER);
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull StoringFactory<HostIdentifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    public static final @Nonnull SQLConverter<HostIdentifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<HostIdentifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<HostIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

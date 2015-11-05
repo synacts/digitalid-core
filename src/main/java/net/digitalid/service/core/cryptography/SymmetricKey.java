@@ -246,15 +246,15 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<SymmetricKey, Object> {
+    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<SymmetricKey, Object> {
         
         /**
-         * Creates a new encoding factory.
+         * Creates a new XDF converter.
          */
-        private EncodingFactory() {
+        private XDFConverter() {
             super(TYPE);
         }
         
@@ -275,34 +275,34 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     }
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
+    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return ENCODING_FACTORY;
+    public @Nonnull XDFConverter getXDFConverter() {
+        return XDF_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<SymmetricKey, Object> STORING_FACTORY = XDFBasedSQLConverter.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractSQLConverter<SymmetricKey, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(XDF_CONVERTER);
     
     @Pure
     @Override
     public @Nonnull AbstractSQLConverter<SymmetricKey, Object> getSQLConverter() {
-        return STORING_FACTORY;
+        return SQL_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<SymmetricKey, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<SymmetricKey, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

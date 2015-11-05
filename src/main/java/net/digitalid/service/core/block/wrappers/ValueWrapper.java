@@ -45,7 +45,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
     
     @Pure
     @Override
-    public abstract @Nonnull Wrapper.NonRequestingEncodingFactory<W> getXDFConverter();
+    public abstract @Nonnull Wrapper.NonRequestingXDFConverter<W> getXDFConverter();
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -90,13 +90,13 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
         
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Encoding Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value XDF Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The factory for encoding and decoding values.
      */
     @Immutable
-    public final static class ValueEncodingFactory<V, W extends Wrapper<W>> extends AbstractNonRequestingXDFConverter<V, Object> {
+    public final static class ValueXDFConverter<V, W extends Wrapper<W>> extends AbstractNonRequestingXDFConverter<V, Object> {
         
         /**
          * Stores the factory to wrap and unwrap the values.
@@ -104,27 +104,27 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
         private final @Nonnull Factory<V, W> factory;
         
         /**
-         * Stores the encoding factory to encode and decode the wrapped values.
+         * Stores the XDF converter to encode and decode the wrapped values.
          */
-        private final @Nonnull NonRequestingEncodingFactory<W> encodingFactory;
+        private final @Nonnull NonRequestingXDFConverter<W> XDFConverter;
         
         /**
-         * Creates a new value encoding factory with the given parameters.
+         * Creates a new value XDF converter with the given parameters.
          * 
          * @param factory the factory that allows to wrap and unwrap the values.
-         * @param encodingFactory the encoding factory that allows to encode and decode the wrapped values.
+         * @param XDFConverter the XDF converter that allows to encode and decode the wrapped values.
          */
-        protected ValueEncodingFactory(@Nonnull Factory<V, W> factory, @Nonnull NonRequestingEncodingFactory<W> encodingFactory) {
-            super(encodingFactory.getType());
+        protected ValueXDFConverter(@Nonnull Factory<V, W> factory, @Nonnull NonRequestingXDFConverter<W> XDFConverter) {
+            super(XDFConverter.getType());
             
             this.factory = factory;
-            this.encodingFactory = encodingFactory;
+            this.XDFConverter = XDFConverter;
         }
         
         @Pure
         @Override
         public final @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull V value) {
-            return encodingFactory.encodeNonNullable(factory.wrap(encodingFactory.getType(), value));
+            return XDFConverter.encodeNonNullable(factory.wrap(XDFConverter.getType(), value));
         }
         
         @Pure
@@ -132,20 +132,20 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
         @Override
         @NonCommitting
         public final @Nonnull V decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
+            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
             
-            return factory.unwrap(encodingFactory.decodeNonNullable(none, block));
+            return factory.unwrap(XDFConverter.decodeNonNullable(none, block));
         }
         
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Storing Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value SQL Converter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The factory for storing and restoring values.
      */
     @Immutable
-    public final static class ValueStoringFactory<V, W extends Wrapper<W>> extends AbstractSQLConverter<V, Object> {
+    public final static class ValueSQLConverter<V, W extends Wrapper<W>> extends AbstractSQLConverter<V, Object> {
         
         /**
          * Stores the factory to wrap and unwrap the values.
@@ -153,40 +153,40 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
         private final @Nonnull Factory<V, W> factory;
         
         /**
-         * Stores the storing factory to store and restore the wrapped values.
+         * Stores the SQL converter to store and restore the wrapped values.
          */
-        private final @Nonnull StoringFactory<W> storingFactory;
+        private final @Nonnull SQLConverter<W> SQLConverter;
         
         /**
-         * Creates a new storing factory with the given parameters.
+         * Creates a new SQL converter with the given parameters.
          * 
          * @param factory the factory that allows to wrap and unwrap the values.
-         * @param storingFactory the storing factory that allows to store and restore the wrapped values.
+         * @param SQLConverter the SQL converter that allows to store and restore the wrapped values.
          */
-        protected ValueStoringFactory(@Nonnull Factory<V, W> factory, @Nonnull StoringFactory<W> storingFactory) {
-            super(storingFactory.getColumns());
+        protected ValueSQLConverter(@Nonnull Factory<V, W> factory, @Nonnull SQLConverter<W> SQLConverter) {
+            super(SQLConverter.getColumns());
             
             this.factory = factory;
-            this.storingFactory = storingFactory;
+            this.SQLConverter = SQLConverter;
         }
         
         @Pure
         @Override
         public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull V value) {
-            return FreezableArray.getNonNullable(factory.wrap(storingFactory.getType(), value).toString());
+            return FreezableArray.getNonNullable(factory.wrap(SQLConverter.getType(), value).toString());
         }
         
         @Override
         @NonCommitting
         public final void storeNonNullable(@Nonnull V value, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            storingFactory.storeNonNullable(factory.wrap(storingFactory.getType(), value), preparedStatement, parameterIndex);
+            SQLConverter.storeNonNullable(factory.wrap(SQLConverter.getType(), value), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
         public final @Nullable V restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-            final @Nullable W wrapper = storingFactory.restoreNullable(none, resultSet, columnIndex);
+            final @Nullable W wrapper = SQLConverter.restoreNullable(none, resultSet, columnIndex);
             return wrapper == null ? null : factory.unwrap(wrapper);
         }
         

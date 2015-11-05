@@ -96,7 +96,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      */
     @Pure
     public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block compressNonNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return new EncodingFactory(type).encodeNonNullable(new CompressionWrapper(type, ConvertToXDF.nonNullable(element)));
+        return new XDFConverter(type).encodeNonNullable(new CompressionWrapper(type, ConvertToXDF.nonNullable(element)));
     }
     
     /**
@@ -123,7 +123,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      */
     @Pure
     public static @Nonnull @NonEncoding Block decompressNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).element;
+        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).element;
     }
     
     /**
@@ -187,17 +187,17 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends Wrapper.EncodingFactory<CompressionWrapper> {
+    public static final class XDFConverter extends Wrapper.XDFConverter<CompressionWrapper> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private EncodingFactory(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
@@ -221,16 +221,16 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return new EncodingFactory(getSemanticType());
+    public @Nonnull XDFConverter getXDFConverter() {
+        return new XDFConverter(getSemanticType());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<CompressionWrapper> getSQLConverter() {
-        return new StoringFactory<>(getXDFConverter());
+    public @Nonnull SQLConverter<CompressionWrapper> getSQLConverter() {
+        return new SQLConverter<>(getXDFConverter());
     }
     
 }

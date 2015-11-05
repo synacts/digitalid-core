@@ -217,10 +217,10 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory<I extends Identifier> extends AbstractNonRequestingXDFConverter<I, Object> {
+    public static final class XDFConverter<I extends Identifier> extends AbstractNonRequestingXDFConverter<I, Object> {
         
         /**
          * Stores the caster that casts identifiers to the right subclass.
@@ -228,12 +228,12 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
         private final @Nonnull Caster<I> caster;
         
         /**
-         * Creates a new encoding factory with the given type and caster.
+         * Creates a new XDF converter with the given type and caster.
          * 
          * @param type the semantic type that corresponds to the encodable class.
          * @param caster the caster that casts identifiers to the right subclass.
          */
-        EncodingFactory(@Nonnull @BasedOn("@core.digitalid.net") SemanticType type, @Nonnull Caster<I> caster) {
+        XDFConverter(@Nonnull @BasedOn("@core.digitalid.net") SemanticType type, @Nonnull Caster<I> caster) {
             super(type);
             
             assert type.isBasedOn(Identity.IDENTIFIER) : "The given type is based on the identifier type.";
@@ -250,7 +250,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
         @Pure
         @Override
         public @Nonnull I decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
+            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
             
             final @Nonnull String string = StringWrapper.decodeNonNullable(block);
             if (!IdentifierImplementation.isValid(string)) { throw new InvalidEncodingException("'" + string + "' is not a valid identifier."); }
@@ -260,17 +260,17 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     }
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory<Identifier> ENCODING_FACTORY = new EncodingFactory<>(Identity.IDENTIFIER, CASTER);
+    public static final @Nonnull XDFConverter<Identifier> XDF_CONVERTER = new XDFConverter<>(Identity.IDENTIFIER, CASTER);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for this class.
+     * The SQL converter for this class.
      */
     @Immutable
-    public static final class StoringFactory<I extends Identifier> extends AbstractSQLConverter<I, Object> {
+    public static final class SQLConverter<I extends Identifier> extends AbstractSQLConverter<I, Object> {
         
         /**
          * Stores the caster that casts identifiers to the right subclass.
@@ -278,11 +278,11 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
         private final @Nonnull Caster<I> caster;
         
         /**
-         * Creates a new storing factory with the given caster.
+         * Creates a new SQL converter with the given caster.
          * 
          * @param caster the caster that casts identifiers to the right subclass.
          */
-        StoringFactory(@Nonnull Caster<I> caster) {
+        SQLConverter(@Nonnull Caster<I> caster) {
             super(Column.get("identifier", SQLType.VARCHAR));
             
             this.caster = caster;
@@ -313,15 +313,15 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     }
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull StoringFactory<Identifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    public static final @Nonnull SQLConverter<Identifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<Identifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<Identifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

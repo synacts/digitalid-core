@@ -131,7 +131,7 @@ public abstract class Reply extends Handler implements SQLizable {
     /**
      * Maps reply types to the factory that creates handlers for that type.
      */
-    private static final @Nonnull Map<SemanticType, Factory> factories = new ConcurrentHashMap<>();
+    private static final @Nonnull Map<SemanticType, Factory> converters = new ConcurrentHashMap<>();
     
     /**
      * Adds the given factory that creates handlers for the given type.
@@ -140,7 +140,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @param factory the factory to add.
      */
     protected static void add(@Nonnull SemanticType type, @Nonnull Factory factory) {
-        factories.put(type, factory);
+        converters.put(type, factory);
     }
     
     /**
@@ -160,7 +160,7 @@ public abstract class Reply extends Handler implements SQLizable {
     @Pure
     @NonCommitting
     private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        final @Nullable Reply.Factory factory = factories.get(block.getType());
+        final @Nullable Reply.Factory factory = converters.get(block.getType());
         if (factory == null) throw new PacketException(PacketErrorCode.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true);
         else return factory.create(entity, signature, number, block);
     }

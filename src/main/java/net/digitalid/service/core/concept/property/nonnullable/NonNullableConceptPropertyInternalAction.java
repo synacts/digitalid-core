@@ -111,12 +111,12 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         
         this.setup = setup;
         final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> elements = TupleWrapper.decode(content).getNonNullableElements(5);
-        final @Nonnull C concept = setup.getConceptSetup().getConceptFactories().getEncodingFactory().decodeNonNullable(entity, elements.getNonNullable(0));
+        final @Nonnull C concept = setup.getConceptSetup().getConceptConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(0));
         this.property = (NonNullableConceptProperty<V, C, E>) concept.getProperty(setup.getPropertyTable()); // TODO: Find a better alternative than casting here (e.g. a toNonNullableConceptProperty() with some kind of exception).
-        this.oldTime = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
-        this.newTime = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
-        this.oldValue = setup.getValueFactories().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
-        this.newValue = setup.getValueFactories().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
+        this.oldTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
+        this.newTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
+        this.oldValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
+        this.newValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
         if (newValue.equals(oldValue)) throw new InvalidEncodingException("The old and new value may not be equal.");
     }
     
@@ -202,23 +202,23 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     // TODO: must be re-done and merged with Method.Factory.
     @Immutable
-    public static final class EncodingFactory<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends AbstractNonRequestingXDFConverter<NonNullableConceptPropertyInternalAction<V, C, E>, ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>>> {
+    public static final class XDFConverter<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends AbstractNonRequestingXDFConverter<NonNullableConceptPropertyInternalAction<V, C, E>, ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>>> {
         
         /**
-         * Creates a new encoding factory.
+         * Creates a new XDF converter.
          */
-        private EncodingFactory(@Nonnull SemanticType type) {
+        private XDFConverter(@Nonnull SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull NonNullableConceptPropertyInternalAction<V, C, E> internalAction) {
-            return TupleWrapper.encode(internalAction.getType(), internalAction.property.getConcept(), ConvertToXDF.nonNullable(internalAction.oldTime, OLD_TIME), ConvertToXDF.nonNullable(internalAction.newTime, NEW_TIME), internalAction.setup.getValueFactories().getXDFConverter().encodeNonNullable(internalAction.oldValue).setType(internalAction.setup.getOldValueType()), internalAction.setup.getValueFactories().getXDFConverter().encodeNonNullable(internalAction.newValue).setType(internalAction.setup.getNewValueType()));
+            return TupleWrapper.encode(internalAction.getType(), internalAction.property.getConcept(), ConvertToXDF.nonNullable(internalAction.oldTime, OLD_TIME), ConvertToXDF.nonNullable(internalAction.newTime, NEW_TIME), internalAction.setup.getValueConverters().getXDFConverter().encodeNonNullable(internalAction.oldValue).setType(internalAction.setup.getOldValueType()), internalAction.setup.getValueConverters().getXDFConverter().encodeNonNullable(internalAction.newValue).setType(internalAction.setup.getNewValueType()));
         }
         
         @Pure
@@ -231,13 +231,13 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
             
             try {
                 final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(5);
-                final @Nonnull C concept = setup.getConceptSetup().getConceptFactories().getEncodingFactory().decodeNonNullable(entity, elements.getNonNullable(0));
+                final @Nonnull C concept = setup.getConceptSetup().getConceptConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(0));
                 
                 final NonNullableConceptProperty<V, C, E> property = (NonNullableConceptProperty<V, C, E>) concept.getProperty(setup.getPropertyTable()); // TODO: Find a better alternative than casting here (e.g. a toNonNullableConceptProperty() with some kind of exception).
-                final Time oldTime = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
-                final Time newTime = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
-                final V oldValue = setup.getValueFactories().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
-                final V newValue = setup.getValueFactories().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
+                final Time oldTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
+                final Time newTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
+                final V oldValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
+                final V newValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
                 if (newValue.equals(oldValue)) throw new InvalidEncodingException("The old and new value may not be equal.");
                 // TODO: call other constructor. This constructor is reserved for clients that do not have or need a signature. For methods executed on the host, the signature must be stored.
                 return new NonNullableConceptPropertyInternalAction<V, C, E>(setup, property, oldTime, newTime, oldValue, newValue);
@@ -250,8 +250,8 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory<V, C, E> getXDFConverter() {
-        return new EncodingFactory<>(setup.getActionType());
+    public @Nonnull XDFConverter<V, C, E> getXDFConverter() {
+        return new XDFConverter<>(setup.getActionType());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */

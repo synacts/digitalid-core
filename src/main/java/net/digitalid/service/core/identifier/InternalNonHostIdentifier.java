@@ -123,18 +123,18 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     };
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory<InternalNonHostIdentifier> ENCODING_FACTORY = new EncodingFactory<>(InternalNonHostIdentity.IDENTIFIER, CASTER);
+    public static final @Nonnull XDFConverter<InternalNonHostIdentifier> XDF_CONVERTER = new XDFConverter<>(InternalNonHostIdentity.IDENTIFIER, CASTER);
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull StoringFactory<InternalNonHostIdentifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    public static final @Nonnull SQLConverter<InternalNonHostIdentifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<InternalNonHostIdentifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<InternalNonHostIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

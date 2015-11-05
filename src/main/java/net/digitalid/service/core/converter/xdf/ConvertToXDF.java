@@ -48,7 +48,7 @@ public final class ConvertToXDF {
      * 
      * @return the given non-nullable object as a block of the given type.
      * 
-     * @require type.isBasedOn(object.getFactory().getType()) : "The given type is based on the type of the object object.";
+     * @require type.isBasedOn(object.getXDFConverter().getType()) : "The given type is based on the type of the object object.";
      */
     @Pure
     public static @Nonnull <O extends XDF<O, ?>> Block nonNullable(@Nonnull O object, @Nonnull @Loaded SemanticType type) {
@@ -63,7 +63,7 @@ public final class ConvertToXDF {
      * 
      * @return the given nullable object as a block of the given type.
      * 
-     * @require object == null || type.isBasedOn(object.getFactory().getType()) : "If the object object is not null, the given type is based on its type.";
+     * @require object == null || type.isBasedOn(object.getXDFConverter().getType()) : "If the object object is not null, the given type is based on its type.";
      */
     @Pure
     public static @Nullable <O extends XDF<O, ?>> Block nullable(@Nullable O object, @Nonnull @Loaded SemanticType type) {
@@ -110,7 +110,7 @@ public final class ConvertToXDF {
      * 
      * @return the given non-null object as a block of the given type.
      * 
-     * @require type.isBasedOn(object.getFactory().getType()) : "The given type is based on the type of the object object.";
+     * @require type.isBasedOn(object.getXDFConverter().getType()) : "The given type is based on the type of the object object.";
      */
     @Pure
     public static @Nonnull <O extends XDF<?, ?>> Block nonNullableWithCast(@Nonnull O object, @Nonnull @Loaded SemanticType type) {
@@ -127,7 +127,7 @@ public final class ConvertToXDF {
      * 
      * @return the given nullable object as a block of the given type or null if the object was null.
      * 
-     * @require object == null || type.isBasedOn(object.getFactory().getType()) : "If the object object is not null, the given type is based on its type.";
+     * @require object == null || type.isBasedOn(object.getXDFConverter().getType()) : "If the object object is not null, the given type is based on its type.";
      */
     @Pure
     public static @Nullable <O extends XDF<?, ?>> Block nullableWithCast(@Nullable O object, @Nonnull @Loaded SemanticType type) {

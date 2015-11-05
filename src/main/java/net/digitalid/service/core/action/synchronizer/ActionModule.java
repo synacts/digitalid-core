@@ -233,10 +233,10 @@ public final class ActionModule implements StateModule {
         
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL.toString())) {
             if (resultSet.next()) {
-                final @Nonnull Time thisTime = Time.STORING_FACTORY.restoreNonNullable(None.OBJECT, resultSet, 1);
+                final @Nonnull Time thisTime = Time.SQL_CONVERTER.restoreNonNullable(None.OBJECT, resultSet, 1);
                 final @Nonnull FreezableList<Block> trail = FreezableLinkedList.get();
                 while (resultSet.next()) {
-                    trail.add(Block.STORING_FACTORY.restoreNonNullable(Packet.SIGNATURE, resultSet, 2));
+                    trail.add(Block.SQL_CONVERTER.restoreNonNullable(Packet.SIGNATURE, resultSet, 2));
                 }
                 return new ResponseAudit(lastTime, thisTime, trail.freeze());
             } else throw new SQLException("This should never happen.");

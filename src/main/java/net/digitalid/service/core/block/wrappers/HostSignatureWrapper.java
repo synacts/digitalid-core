@@ -121,7 +121,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
-        this.signer = InternalIdentifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, TupleWrapper.decode(hostSignature).getNonNullableElement(0));
+        this.signer = InternalIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, TupleWrapper.decode(hostSignature).getNonNullableElement(0));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -173,7 +173,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull PublicKey publicKey;
         if (signer.getHostIdentifier().equals(HostIdentifier.DIGITALID)) {
-            publicKey = PublicKeyChain.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(HostIdentity.DIGITALID, null, PublicKeyChain.TYPE)).getKey(getNonNullableTime());
+            publicKey = PublicKeyChain.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(HostIdentity.DIGITALID, null, PublicKeyChain.TYPE)).getKey(getNonNullableTime());
         } else {
             publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getNonNullableTime());
         }

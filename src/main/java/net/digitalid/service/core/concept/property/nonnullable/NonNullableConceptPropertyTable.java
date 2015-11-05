@@ -21,7 +21,7 @@ import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.ConceptFactories;
+import net.digitalid.service.core.factory.ConceptConverters;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.property.ReadOnlyProperty;
 import net.digitalid.service.core.site.host.Host;
@@ -67,10 +67,10 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @NonCommitting
     public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            Converters<E, Site> entityFactories = getPropertyFactory().getConceptSetup().getEntityFactories();
-            ConceptFactories<C, E> conceptFactories = getPropertyFactory().getConceptSetup().getConceptFactories();
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + getName(site) + " (" + entityFactories.getSQLConverter().getDeclaration() + ", " + conceptFactories.getStoringFactory().getDeclaration() + ", " + Time.STORING_FACTORY.getDeclaration() + ", " + getPropertyFactory().getValueFactories().getSQLConverter().getDeclaration() + ", PRIMARY KEY (" + entityFactories.getSQLConverter().getSelection() + ", " + conceptFactories.getStoringFactory().getSelection() + ")" + entityFactories.getSQLConverter().getForeignKeys(site) + conceptFactories.getStoringFactory().getForeignKeys(site) + getPropertyFactory().getValueFactories().getSQLConverter().getForeignKeys(site) + ")");
-            Database.onInsertIgnore(statement, getName(site), entityFactories.getSQLConverter().getSelection(), conceptFactories.getStoringFactory().getSelection()); // TODO: There is a problem when the entity or the concept uses more than one column because the onInsertIgnore-method expects the arguments differently.
+            Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
+            ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + getName(site) + " (" + entityConverters.getSQLConverter().getDeclaration() + ", " + conceptConverters.getSQLConverter().getDeclaration() + ", " + Time.SQL_CONVERTER.getDeclaration() + ", " + getPropertyFactory().getValueConverters().getSQLConverter().getDeclaration() + ", PRIMARY KEY (" + entityConverters.getSQLConverter().getSelection() + ", " + conceptConverters.getSQLConverter().getSelection() + ")" + entityConverters.getSQLConverter().getForeignKeys(site) + conceptConverters.getSQLConverter().getForeignKeys(site) + getPropertyFactory().getValueConverters().getSQLConverter().getForeignKeys(site) + ")");
+            Database.onInsertIgnore(statement, getName(site), entityConverters.getSQLConverter().getSelection(), conceptConverters.getSQLConverter().getSelection()); // TODO: There is a problem when the entity or the concept uses more than one column because the onInsertIgnore-method expects the arguments differently.
             // TODO: Shouldn't we detect here whether we need to call Mapper.addReference?
         } catch (@Nonnull SQLException exception) {
             throw AbortException.get(exception);
@@ -96,21 +96,21 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Override
     @NonCommitting
     public @Nonnull Block exportAll(@Nonnull Host host) throws AbortException {
-        Converters<E, Site> entityFactories = getPropertyFactory().getConceptSetup().getEntityFactories();
-        ConceptFactories<C, E> conceptFactories = getPropertyFactory().getConceptSetup().getConceptFactories();
-        final @Nonnull String SQL = "SELECT " + entityFactories.getSQLConverter().getSelection() + ", " + conceptFactories.getStoringFactory().getSelection() + ", " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getSQLConverter().getSelection() + " FROM " + getName(host);
+        Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
+        ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
+        final @Nonnull String SQL = "SELECT " + entityConverters.getSQLConverter().getSelection() + ", " + conceptConverters.getSQLConverter().getSelection() + ", " + Time.SQL_CONVERTER.getSelection() + ", " + getPropertyFactory().getValueConverters().getSQLConverter().getSelection() + " FROM " + getName(host);
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<Block> entries = FreezableLinkedList.get();
             while (resultSet.next()) {
                 int startIndex = 0;
-                final @Nonnull E entity = entityFactories.getSQLConverter().restoreNonNullable(host, resultSet, startIndex);
-                startIndex += entityFactories.getSQLConverter().getNumberOfColumns();
-                final @Nonnull C concept = conceptFactories.getStoringFactory().restoreNonNullable(entity, resultSet, startIndex);
-                startIndex += conceptFactories.getStoringFactory().getNumberOfColumns();
-                final @Nonnull Time time = Time.STORING_FACTORY.restoreNonNullable(None.OBJECT, resultSet, startIndex);
-                startIndex += Time.STORING_FACTORY.getNumberOfColumns();
-                final @Nonnull V value = getPropertyFactory().getValueFactories().getSQLConverter().restoreNonNullable(entity, resultSet, startIndex);
-                entries.add(TupleWrapper.encode(getDumpType().getParameters().getNonNullable(0), entity, concept, time, getPropertyFactory().getValueFactories().getXDFConverter().encodeNonNullable(value)));
+                final @Nonnull E entity = entityConverters.getSQLConverter().restoreNonNullable(host, resultSet, startIndex);
+                startIndex += entityConverters.getSQLConverter().getNumberOfColumns();
+                final @Nonnull C concept = conceptConverters.getSQLConverter().restoreNonNullable(entity, resultSet, startIndex);
+                startIndex += conceptConverters.getSQLConverter().getNumberOfColumns();
+                final @Nonnull Time time = Time.SQL_CONVERTER.restoreNonNullable(None.OBJECT, resultSet, startIndex);
+                startIndex += Time.SQL_CONVERTER.getNumberOfColumns();
+                final @Nonnull V value = getPropertyFactory().getValueConverters().getSQLConverter().restoreNonNullable(entity, resultSet, startIndex);
+                entries.add(TupleWrapper.encode(getDumpType().getParameters().getNonNullable(0), entity, concept, time, getPropertyFactory().getValueConverters().getXDFConverter().encodeNonNullable(value)));
             }
             return ListWrapper.encode(getDumpType(), entries.freeze());
         } catch (SQLException exception) {
@@ -124,29 +124,29 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     public void importAll(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getDumpType()) : "The block is based on the dump type of this data collection.";
         
-        Converters<E, Site> entityFactories = getPropertyFactory().getConceptSetup().getEntityFactories();
-        ConceptFactories<C, E> conceptFactories = getPropertyFactory().getConceptSetup().getConceptFactories();
-        final @Nonnull String SQL = "INSERT INTO " + getName(host) + " (" + entityFactories.getSQLConverter().getSelection() + ", " + conceptFactories.getStoringFactory().getSelection() + ", " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getSQLConverter().getSelection() + ") VALUES (" + entityFactories.getSQLConverter().getInsertForPreparedStatement() + ", " + conceptFactories.getStoringFactory().getInsertForPreparedStatement() + ", " + Time.STORING_FACTORY.getInsertForPreparedStatement() + ", " + getPropertyFactory().getValueFactories().getSQLConverter().getInsertForPreparedStatement() + ")";
+        Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
+        ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
+        final @Nonnull String SQL = "INSERT INTO " + getName(host) + " (" + entityConverters.getSQLConverter().getSelection() + ", " + conceptConverters.getSQLConverter().getSelection() + ", " + Time.SQL_CONVERTER.getSelection() + ", " + getPropertyFactory().getValueConverters().getSQLConverter().getSelection() + ") VALUES (" + entityConverters.getSQLConverter().getInsertForPreparedStatement() + ", " + conceptConverters.getSQLConverter().getInsertForPreparedStatement() + ", " + Time.SQL_CONVERTER.getInsertForPreparedStatement() + ", " + getPropertyFactory().getValueConverters().getSQLConverter().getInsertForPreparedStatement() + ")";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             final @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(4);
                 int startIndex = 0;
                 
-                final @Nonnull E entity = entityFactories.getXDFConverter().decodeNonNullable(host, elements.getNonNullable(0));
-                entityFactories.getSQLConverter().storeNonNullable(entity, preparedStatement, startIndex);
-                startIndex += entityFactories.getSQLConverter().getNumberOfColumns();
+                final @Nonnull E entity = entityConverters.getXDFConverter().decodeNonNullable(host, elements.getNonNullable(0));
+                entityConverters.getSQLConverter().storeNonNullable(entity, preparedStatement, startIndex);
+                startIndex += entityConverters.getSQLConverter().getNumberOfColumns();
                 
-                final @Nonnull C concept = conceptFactories.getEncodingFactory().decodeNonNullable(entity, elements.getNonNullable(1));
-                conceptFactories.getStoringFactory().storeNonNullable(concept, preparedStatement, startIndex);
-                startIndex += conceptFactories.getStoringFactory().getNumberOfColumns();
+                final @Nonnull C concept = conceptConverters.getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(1));
+                conceptConverters.getSQLConverter().storeNonNullable(concept, preparedStatement, startIndex);
+                startIndex += conceptConverters.getSQLConverter().getNumberOfColumns();
                 
-                final @Nonnull Time time = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
-                Time.STORING_FACTORY.storeNonNullable(time, preparedStatement, startIndex);
-                startIndex += Time.STORING_FACTORY.getNumberOfColumns();
+                final @Nonnull Time time = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
+                Time.SQL_CONVERTER.storeNonNullable(time, preparedStatement, startIndex);
+                startIndex += Time.SQL_CONVERTER.getNumberOfColumns();
                 
-                final @Nonnull V value = getPropertyFactory().getValueFactories().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
-                getPropertyFactory().getValueFactories().getSQLConverter().storeNonNullable(value, preparedStatement, startIndex);
+                final @Nonnull V value = getPropertyFactory().getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
+                getPropertyFactory().getValueConverters().getSQLConverter().storeNonNullable(value, preparedStatement, startIndex);
                 
                 preparedStatement.addBatch();
             }
@@ -163,21 +163,21 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Override
     @NonCommitting
     public @Nonnull Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
-        Converters<E, Site> entityFactories = getPropertyFactory().getConceptSetup().getEntityFactories();
-        ConceptFactories<C, E> conceptFactories = getPropertyFactory().getConceptSetup().getConceptFactories();
-        // TODO: String SQL = select(getConceptFactories(), Time.FACTORIES, getPropertyFactory().getValueFactories()).from(entity).where(factory, object).and().and().toSQL();
-        // TODO: Instead of conceptFactories.getSQLConverter().storeNonNullable and conceptFactories.getSQLConverter().restoreNonNullable, one could define a store and restore method that also takes a GeneralFactories as a parameter.
-        final @Nonnull String SQL = "SELECT " + conceptFactories.getStoringFactory().getSelection() + ", " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getSQLConverter().getSelection() + " FROM " + getName(entity.getSite()) + " WHERE " + entityFactories.getSQLConverter().getConditionForStatement(entity) + " AND " + getPropertyFactory().getRequiredAuthorization().getStateFilter(permissions, restrictions, agent);
+        Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
+        ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
+        // TODO: String SQL = select(getConceptConverters(), Time.CONVERTERS, getPropertyFactory().getValueConverters()).from(entity).where(factory, object).and().and().toSQL();
+        // TODO: Instead of conceptConverters.getSQLConverter().storeNonNullable and conceptConverters.getSQLConverter().restoreNonNullable, one could define a store and restore method that also takes a GeneralConverters as a parameter.
+        final @Nonnull String SQL = "SELECT " + conceptConverters.getSQLConverter().getSelection() + ", " + Time.SQL_CONVERTER.getSelection() + ", " + getPropertyFactory().getValueConverters().getSQLConverter().getSelection() + " FROM " + getName(entity.getSite()) + " WHERE " + entityConverters.getSQLConverter().getConditionForStatement(entity) + " AND " + getPropertyFactory().getRequiredAuthorization().getStateFilter(permissions, restrictions, agent);
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<Block> entries = FreezableLinkedList.get();
             while (resultSet.next()) {
                 int startIndex = 0;
-                final @Nonnull C concept = conceptFactories.getStoringFactory().restoreNonNullable(entity, resultSet, startIndex);
-                startIndex += conceptFactories.getStoringFactory().getNumberOfColumns();
-                final @Nonnull Time time = Time.STORING_FACTORY.restoreNonNullable(None.OBJECT, resultSet, startIndex);
-                startIndex += Time.STORING_FACTORY.getNumberOfColumns();
-                final @Nonnull V value = getPropertyFactory().getValueFactories().getSQLConverter().restoreNonNullable(entity, resultSet, startIndex);
-                entries.add(TupleWrapper.encode(getStateType().getParameters().getNonNullable(0), concept, time, getPropertyFactory().getValueFactories().getXDFConverter().encodeNonNullable(value)));
+                final @Nonnull C concept = conceptConverters.getSQLConverter().restoreNonNullable(entity, resultSet, startIndex);
+                startIndex += conceptConverters.getSQLConverter().getNumberOfColumns();
+                final @Nonnull Time time = Time.SQL_CONVERTER.restoreNonNullable(None.OBJECT, resultSet, startIndex);
+                startIndex += Time.SQL_CONVERTER.getNumberOfColumns();
+                final @Nonnull V value = getPropertyFactory().getValueConverters().getSQLConverter().restoreNonNullable(entity, resultSet, startIndex);
+                entries.add(TupleWrapper.encode(getStateType().getParameters().getNonNullable(0), concept, time, getPropertyFactory().getValueConverters().getXDFConverter().encodeNonNullable(value)));
             }
             return ListWrapper.encode(getStateType(), entries.freeze());
         } catch (SQLException exception) {
@@ -191,28 +191,28 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     public void addState(@Nonnull E entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getStateType()) : "The block is based on the state type of this data collection.";
         
-        Converters<E, Site> entityFactories = getPropertyFactory().getConceptSetup().getEntityFactories();
-        ConceptFactories<C, E> conceptFactories = getPropertyFactory().getConceptSetup().getConceptFactories();
-        final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + getName(entity.getSite()) + " (" + entityFactories.getSQLConverter().getSelection() + ", " + conceptFactories.getStoringFactory().getSelection() + ", " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getSQLConverter().getSelection() + ") VALUES (" + entityFactories.getSQLConverter().getInsertForPreparedStatement() + ", " + conceptFactories.getStoringFactory().getInsertForPreparedStatement() + ", " + Time.STORING_FACTORY.getInsertForPreparedStatement() + ", " + getPropertyFactory().getValueFactories().getSQLConverter().getInsertForPreparedStatement() + ")";
+        Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
+        ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
+        final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + getName(entity.getSite()) + " (" + entityConverters.getSQLConverter().getSelection() + ", " + conceptConverters.getSQLConverter().getSelection() + ", " + Time.SQL_CONVERTER.getSelection() + ", " + getPropertyFactory().getValueConverters().getSQLConverter().getSelection() + ") VALUES (" + entityConverters.getSQLConverter().getInsertForPreparedStatement() + ", " + conceptConverters.getSQLConverter().getInsertForPreparedStatement() + ", " + Time.SQL_CONVERTER.getInsertForPreparedStatement() + ", " + getPropertyFactory().getValueConverters().getSQLConverter().getInsertForPreparedStatement() + ")";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             final @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
                 int startIndex = 0;
                 
-                entityFactories.getSQLConverter().storeNonNullable(entity, preparedStatement, startIndex);
-                startIndex += entityFactories.getSQLConverter().getNumberOfColumns();
+                entityConverters.getSQLConverter().storeNonNullable(entity, preparedStatement, startIndex);
+                startIndex += entityConverters.getSQLConverter().getNumberOfColumns();
                 
-                final @Nonnull C concept = conceptFactories.getEncodingFactory().decodeNonNullable(entity, elements.getNonNullable(0));
-                conceptFactories.getStoringFactory().storeNonNullable(concept, preparedStatement, startIndex);
-                startIndex += conceptFactories.getStoringFactory().getNumberOfColumns();
+                final @Nonnull C concept = conceptConverters.getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(0));
+                conceptConverters.getSQLConverter().storeNonNullable(concept, preparedStatement, startIndex);
+                startIndex += conceptConverters.getSQLConverter().getNumberOfColumns();
                 
-                final @Nonnull Time time = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
-                Time.STORING_FACTORY.storeNonNullable(time, preparedStatement, startIndex);
-                startIndex += Time.STORING_FACTORY.getNumberOfColumns();
+                final @Nonnull Time time = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
+                Time.SQL_CONVERTER.storeNonNullable(time, preparedStatement, startIndex);
+                startIndex += Time.SQL_CONVERTER.getNumberOfColumns();
                 
-                final @Nonnull V value = getPropertyFactory().getValueFactories().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(2));
-                getPropertyFactory().getValueFactories().getSQLConverter().storeNonNullable(value, preparedStatement, startIndex);
+                final @Nonnull V value = getPropertyFactory().getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(2));
+                getPropertyFactory().getValueConverters().getSQLConverter().storeNonNullable(value, preparedStatement, startIndex);
                 
                 preparedStatement.addBatch();
             }
@@ -228,16 +228,16 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     
     @Pure
     @Nonnull @NonNullableElements @Frozen ReadOnlyPair<Time, V> load(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup) throws AbortException {
-        Converters<E, Site> entityFactories = getPropertyFactory().getConceptSetup().getEntityFactories();
-        ConceptFactories<C, E> conceptFactories = getPropertyFactory().getConceptSetup().getConceptFactories();
+        Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
+        ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
         final @Nonnull E entity = property.getConcept().getEntity();
-        final @Nonnull String SQL = "SELECT " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getSQLConverter().getSelection() + " FROM " + getName(entity.getSite()) + " WHERE " + entityFactories.getSQLConverter().getConditionForStatement(entity) + " AND " + conceptFactories.getStoringFactory().getConditionForStatement(property.getConcept());
+        final @Nonnull String SQL = "SELECT " + Time.SQL_CONVERTER.getSelection() + ", " + getPropertyFactory().getValueConverters().getSQLConverter().getSelection() + " FROM " + getName(entity.getSite()) + " WHERE " + entityConverters.getSQLConverter().getConditionForStatement(entity) + " AND " + conceptConverters.getSQLConverter().getConditionForStatement(property.getConcept());
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
                 int startIndex = 0;
-                final @Nonnull Time time = Time.STORING_FACTORY.restoreNonNullable(None.OBJECT, resultSet, startIndex);
-                startIndex += Time.STORING_FACTORY.getNumberOfColumns();
-                final @Nonnull V value = getPropertyFactory().getValueFactories().getSQLConverter().restoreNonNullable(entity, resultSet, startIndex);
+                final @Nonnull Time time = Time.SQL_CONVERTER.restoreNonNullable(None.OBJECT, resultSet, startIndex);
+                startIndex += Time.SQL_CONVERTER.getNumberOfColumns();
+                final @Nonnull V value = getPropertyFactory().getValueConverters().getSQLConverter().restoreNonNullable(entity, resultSet, startIndex);
                 if (!property.getValueValidator().isValid(value)) throw new SQLException("The value of the given property is invalid.");
                 return FreezablePair.get(time, value).freeze();
             } else {
@@ -250,15 +250,15 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     }
     
     void replace(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws AbortException {
-        Converters<E, Site> entityFactories = getPropertyFactory().getConceptSetup().getEntityFactories();
-        ConceptFactories<C, E> conceptFactories = getPropertyFactory().getConceptSetup().getConceptFactories();
+        Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
+        ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
         final @Nonnull E entity = property.getConcept().getEntity();
-        final @Nonnull String SQL = "UPDATE " + getName(entity.getSite()) + " SET " + Time.STORING_FACTORY.getUpdateForStatement(newTime) + ", " + getPropertyFactory().getValueFactories().getSQLConverter().getUpdateForPreparedStatement() + " WHERE " + entityFactories.getSQLConverter().getConditionForStatement(entity) + " AND " + conceptFactories.getStoringFactory().getConditionForStatement(property.getConcept()) + " AND " + Time.STORING_FACTORY.getConditionForStatement(oldTime) + " AND " + getPropertyFactory().getValueFactories().getSQLConverter().getConditionForPreparedStatement();
+        final @Nonnull String SQL = "UPDATE " + getName(entity.getSite()) + " SET " + Time.SQL_CONVERTER.getUpdateForStatement(newTime) + ", " + getPropertyFactory().getValueConverters().getSQLConverter().getUpdateForPreparedStatement() + " WHERE " + entityConverters.getSQLConverter().getConditionForStatement(entity) + " AND " + conceptConverters.getSQLConverter().getConditionForStatement(property.getConcept()) + " AND " + Time.SQL_CONVERTER.getConditionForStatement(oldTime) + " AND " + getPropertyFactory().getValueConverters().getSQLConverter().getConditionForPreparedStatement();
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             int startIndex = 0;
-            getPropertyFactory().getValueFactories().getSQLConverter().storeNonNullable(newValue, preparedStatement, startIndex);
-            startIndex += getPropertyFactory().getValueFactories().getSQLConverter().getNumberOfColumns();
-            getPropertyFactory().getValueFactories().getSQLConverter().storeNonNullable(oldValue, preparedStatement, startIndex);
+            getPropertyFactory().getValueConverters().getSQLConverter().storeNonNullable(newValue, preparedStatement, startIndex);
+            startIndex += getPropertyFactory().getValueConverters().getSQLConverter().getNumberOfColumns();
+            getPropertyFactory().getValueConverters().getSQLConverter().storeNonNullable(oldValue, preparedStatement, startIndex);
             if (preparedStatement.executeUpdate() == 0) throw new SQLException("The value of the given property could not be replaced.");
         } catch (SQLException exception) {
             throw AbortException.get(exception);

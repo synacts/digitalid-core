@@ -98,18 +98,18 @@ public final class MobileIdentifier extends ExternalIdentifier {
     };
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory<MobileIdentifier> ENCODING_FACTORY = new EncodingFactory<>(MobilePerson.IDENTIFIER, CASTER);
+    public static final @Nonnull XDFConverter<MobileIdentifier> XDF_CONVERTER = new XDFConverter<>(MobilePerson.IDENTIFIER, CASTER);
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull StoringFactory<MobileIdentifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    public static final @Nonnull SQLConverter<MobileIdentifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<MobileIdentifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<MobileIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

@@ -279,15 +279,15 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<PrivateKey, Object> {
+    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<PrivateKey, Object> {
         
         /**
-         * Creates a new encoding factory.
+         * Creates a new XDF converter.
          */
-        private EncodingFactory() {
+        private XDFConverter() {
             super(TYPE);
         }
         
@@ -310,11 +310,11 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
             assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
             
             final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(5);
-            final @Nonnull GroupWithKnownOrder compositeGroup = GroupWithKnownOrder.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(0));
+            final @Nonnull GroupWithKnownOrder compositeGroup = GroupWithKnownOrder.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(0));
             final @Nonnull BigInteger p = IntegerWrapper.decodeNonNullable(elements.getNonNullable(1));
             final @Nonnull BigInteger q = IntegerWrapper.decodeNonNullable(elements.getNonNullable(2));
             final @Nonnull Exponent d = Exponent.get(elements.getNonNullable(3));
-            final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrder.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(4));
+            final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrder.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(4));
             final @Nonnull Exponent x = Exponent.get(elements.getNonNullable(5));
             
             if (!compositeGroup.getModulus().equals(p.multiply(q))) throw new InvalidEncodingException("The modulus of the composite group has to be the product of p and q.");
@@ -325,34 +325,34 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     }
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
+    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return ENCODING_FACTORY;
+    public @Nonnull XDFConverter getXDFConverter() {
+        return XDF_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PrivateKey, Object> STORING_FACTORY = XDFBasedSQLConverter.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractSQLConverter<PrivateKey, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(XDF_CONVERTER);
     
     @Pure
     @Override
     public @Nonnull AbstractSQLConverter<PrivateKey, Object> getSQLConverter() {
-        return STORING_FACTORY;
+        return SQL_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<PrivateKey, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<PrivateKey, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

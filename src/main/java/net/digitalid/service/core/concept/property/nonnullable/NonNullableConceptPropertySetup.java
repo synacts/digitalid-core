@@ -27,7 +27,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     /**
      * Stores the type of the old value in the internal action.
      */
-    private final @Nonnull @Loaded SemanticType oldValueType = SemanticType.map("old" + getPropertyType().getAddress().getStringWithDot()).load(getValueFactories().getXDFConverter().getType());
+    private final @Nonnull @Loaded SemanticType oldValueType = SemanticType.map("old" + getPropertyType().getAddress().getStringWithDot()).load(getValueConverters().getXDFConverter().getType());
     
     /**
      * Returns the type of the old value in the internal action.
@@ -44,7 +44,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     /**
      * Stores the type of the new value in the internal action.
      */
-    private final @Nonnull @Loaded SemanticType newValueType = SemanticType.map("new" + getPropertyType().getAddress().getStringWithDot()).load(getValueFactories().getXDFConverter().getType());
+    private final @Nonnull @Loaded SemanticType newValueType = SemanticType.map("new" + getPropertyType().getAddress().getStringWithDot()).load(getValueConverters().getXDFConverter().getType());
     
     /**
      * Returns the type of the new value in the internal action.
@@ -61,7 +61,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     /**
      * Stores the type of the concept property internal action.
      */
-    private final @Nonnull @Loaded SemanticType actionType = SemanticType.map("action" + getPropertyType().getAddress().getStringWithDot()).load(TupleWrapper.TYPE, getConceptSetup().getConceptFactories().getEncodingFactory().getType(), ConceptPropertyInternalAction.OLD_TIME, ConceptPropertyInternalAction.NEW_TIME, oldValueType, newValueType);
+    private final @Nonnull @Loaded SemanticType actionType = SemanticType.map("action" + getPropertyType().getAddress().getStringWithDot()).load(TupleWrapper.TYPE, getConceptSetup().getConceptConverters().getXDFConverter().getType(), ConceptPropertyInternalAction.OLD_TIME, ConceptPropertyInternalAction.NEW_TIME, oldValueType, newValueType);
     
     @Pure
     @Override
@@ -106,13 +106,13 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
      * 
      * @param conceptSetup the concept setup which is shared among concept properties.
      * @param propertyName the name of the property (unique within the module).
-     * @param valueFactories the factories to convert and recover the value of the property.
+     * @param valueConverters the converters to convert and recover the value of the property.
      * @param requiredAuthorization the required authorization to set the property and see its changes.
      * @param valueValidator the value validator that checks whether the value of the property is valid.
      * @param defaultValue the default value for the properties created by this factory.
      */
-    private NonNullableConceptPropertySetup(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
-        super(conceptSetup, propertyName, valueFactories, requiredAuthorization, valueValidator);
+    private NonNullableConceptPropertySetup(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueConverters, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
+        super(conceptSetup, propertyName, valueConverters, requiredAuthorization, valueValidator);
         
         this.defaultValue = defaultValue;
         this.propertyTable = new NonNullableConceptPropertyTable<V, C, E>(this);
@@ -123,7 +123,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
      * 
      * @param conceptSetup the concept setup which is shared among concept properties.
      * @param propertyName the name of the property (unique within the module).
-     * @param valueFactories the factories to convert and recover the value of the property.
+     * @param valueConverters the converters to convert and recover the value of the property.
      * @param requiredAuthorization the required authorization to set the property and see its changes.
      * @param valueValidator the value validator that checks whether the value of the property is valid.
      * @param defaultValue the default value for the properties created by this factory.
@@ -131,8 +131,8 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
      * @return a new non-nullable concept property factory with the given parameters.
      */
     @Pure
-    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertySetup<V, C, E> get(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
-        return new NonNullableConceptPropertySetup<>(conceptSetup, propertyName, valueFactories, requiredAuthorization, valueValidator, defaultValue);
+    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertySetup<V, C, E> get(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueConverters, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
+        return new NonNullableConceptPropertySetup<>(conceptSetup, propertyName, valueConverters, requiredAuthorization, valueValidator, defaultValue);
     }
     
 }

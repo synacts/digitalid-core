@@ -47,18 +47,18 @@ public interface NonHostIdentifier extends Identifier {
     };
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull IdentifierImplementation.EncodingFactory<NonHostIdentifier> ENCODING_FACTORY = new IdentifierImplementation.EncodingFactory<>(NonHostIdentity.IDENTIFIER, CASTER);
+    public static final @Nonnull IdentifierImplementation.XDFConverter<NonHostIdentifier> XDF_CONVERTER = new IdentifierImplementation.XDFConverter<>(NonHostIdentity.IDENTIFIER, CASTER);
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull IdentifierImplementation.StoringFactory<NonHostIdentifier> STORING_FACTORY = new IdentifierImplementation.StoringFactory<>(CASTER);
+    public static final @Nonnull IdentifierImplementation.SQLConverter<NonHostIdentifier> SQL_CONVERTER = new IdentifierImplementation.SQLConverter<>(CASTER);
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<NonHostIdentifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<NonHostIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

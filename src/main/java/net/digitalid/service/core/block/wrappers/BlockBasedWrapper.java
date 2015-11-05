@@ -42,10 +42,10 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for block-based wrappers.
+     * The SQL converter for block-based wrappers.
      */
     @Immutable
-    public final static class StoringFactory<W extends BlockBasedWrapper<W>> extends Wrapper.StoringFactory<W> {
+    public final static class SQLConverter<W extends BlockBasedWrapper<W>> extends Wrapper.SQLConverter<W> {
         
         /**
          * Stores the column for the block-based wrapper.
@@ -53,19 +53,19 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
         private static final @Nonnull Column COLUMN = Column.get("block", SQLType.BLOB);
         
         /**
-         * Stores the encoding factory used to encode and decode the block.
+         * Stores the XDF converter used to encode and decode the block.
          */
-        private final @Nonnull Wrapper.EncodingFactory<W> encodingFactory;
+        private final @Nonnull Wrapper.XDFConverter<W> XDFConverter;
         
         /**
-         * Creates a new storing factory with the given encoding factory.
+         * Creates a new SQL converter with the given XDF converter.
          * 
-         * @param encodingFactory the encoding factory used to encode and decode the block.
+         * @param XDFConverter the XDF converter used to encode and decode the block.
          */
-        protected StoringFactory(@Nonnull Wrapper.EncodingFactory<W> encodingFactory) {
-            super(COLUMN, encodingFactory.getType());
+        protected SQLConverter(@Nonnull Wrapper.XDFConverter<W> XDFConverter) {
+            super(COLUMN, XDFConverter.getType());
             
-            this.encodingFactory = encodingFactory;
+            this.XDFConverter = XDFConverter;
         }
         
         @Override
@@ -79,8 +79,8 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
         @NonCommitting
         public final @Nullable W restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             try {
-                final @Nullable Block block = Block.STORING_FACTORY.restoreNullable(getType(), resultSet, columnIndex);
-                return block == null ? null : encodingFactory.decodeNonNullable(none, block);
+                final @Nullable Block block = Block.SQL_CONVERTER.restoreNullable(getType(), resultSet, columnIndex);
+                return block == null ? null : XDFConverter.decodeNonNullable(none, block);
             } catch (@Nonnull AbortException | PacketException | ExternalException | NetworkException exception) {
                 throw new SQLException("Could not decode a block from the database.", exception);
             }
@@ -90,7 +90,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
     
     @Pure
     @Override
-    public abstract @Nonnull StoringFactory<W> getSQLConverter();
+    public abstract @Nonnull SQLConverter<W> getSQLConverter();
     
     @Pure
     @Override

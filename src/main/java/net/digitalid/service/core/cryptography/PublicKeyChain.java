@@ -86,16 +86,16 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends KeyChain.EncodingFactory<PublicKey, PublicKeyChain> {
+    public static final class XDFConverter extends KeyChain.XDFConverter<PublicKey, PublicKeyChain> {
         
         /**
-         * Creates a new encoding factory based on the encoding factory of the key.
+         * Creates a new XDF converter based on the XDF converter of the key.
          */
-        protected EncodingFactory() {
-            super(TYPE, ITEM, PublicKey.ENCODING_FACTORY);
+        protected XDFConverter() {
+            super(TYPE, ITEM, PublicKey.XDF_CONVERTER);
         }
         
         @Pure
@@ -107,34 +107,34 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
     }
     
     /**
-     * Stores the encoding factory of this class.
+     * Stores the XDF converter of this class.
      */
-    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
+    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return ENCODING_FACTORY;
+    public @Nonnull XDFConverter getXDFConverter() {
+        return XDF_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PublicKeyChain, Object> STORING_FACTORY = XDFBasedSQLConverter.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractSQLConverter<PublicKeyChain, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(XDF_CONVERTER);
     
     @Pure
     @Override
     public @Nonnull AbstractSQLConverter<PublicKeyChain, Object> getSQLConverter() {
-        return STORING_FACTORY;
+        return SQL_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories of this class.
+     * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<PublicKeyChain, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<PublicKeyChain, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

@@ -298,9 +298,9 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         this.cache = Block.get(IMPLEMENTATION, block);
         final @Nonnull Block content = TupleWrapper.decode(cache).getNonNullableElement(0);
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(content);
-        this.subject = InternalIdentifier.ENCODING_FACTORY.decodeNullable(None.OBJECT, tuple.getNullableElement(0));
+        this.subject = InternalIdentifier.XDF_CONVERTER.decodeNullable(None.OBJECT, tuple.getNullableElement(0));
         if (isSigned() && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
-        this.time = tuple.isElementNull(1) ? null : Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
+        this.time = tuple.isElementNull(1) ? null : Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
         if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");
         if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
         this.element = tuple.getNullableElement(2);
@@ -453,17 +453,17 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends Wrapper.EncodingFactory<SignatureWrapper> {
+    public static final class XDFConverter extends Wrapper.XDFConverter<SignatureWrapper> {
         
         /**
          * Creates a new factory with the given type.
          * 
          * @param type the semantic type of the wrapper.
          */
-        private EncodingFactory(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
@@ -477,16 +477,16 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return new EncodingFactory(getSemanticType());
+    public @Nonnull XDFConverter getXDFConverter() {
+        return new XDFConverter(getSemanticType());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<SignatureWrapper> getSQLConverter() {
-        return new StoringFactory<>(getXDFConverter());
+    public @Nonnull SQLConverter<SignatureWrapper> getSQLConverter() {
+        return new SQLConverter<>(getXDFConverter());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */

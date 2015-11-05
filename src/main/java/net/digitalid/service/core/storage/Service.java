@@ -162,7 +162,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
         final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
         if (attributeValue == null) throw AbortException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + ".");
         try {
-            return HostIdentifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, attributeValue.getContent());
+            return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, attributeValue.getContent());
         } catch (@Nonnull InvalidEncodingException exception) {
             throw AbortException.get("The attribute of type " + getType().getAddress() + " of the role " + role.getIdentity().getAddress() + " does not encode a host identifier.", exception);
         }
@@ -179,7 +179,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
     @Pure
     @NonCommitting
     public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws AbortException, PacketException, ExternalException, NetworkException {
-        return HostIdentifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false));
+        return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -193,16 +193,16 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for this class.
+     * The SQL converter for this class.
      */
     @Immutable
-    public static final class StoringFactory extends ChainingSQLConverter<Service, Object, SemanticType> {
+    public static final class SQLConverter extends ChainingSQLConverter<Service, Object, SemanticType> {
         
         /**
-         * Creates a new storing factory.
+         * Creates a new SQL converter.
          */
-        private StoringFactory() {
-            super(SemanticType.STORING_FACTORY); // TODO: Redo after the identity is made storable.
+        private SQLConverter() {
+            super(SemanticType.SQL_CONVERTER); // TODO: Redo after the identity is made storable.
         }
         
         @Pure
@@ -224,14 +224,14 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
     }
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the SQL converter of this class.
      */
-    public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
+    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
     
     @Pure
     @Override
-    public final @Nonnull StoringFactory getSQLConverter() {
-        return STORING_FACTORY;
+    public final @Nonnull SQLConverter getSQLConverter() {
+        return SQL_CONVERTER;
     }
     
 }

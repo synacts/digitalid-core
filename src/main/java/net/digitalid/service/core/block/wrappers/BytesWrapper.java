@@ -11,8 +11,8 @@ import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueEncodingFactory;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueStoringFactory;
+import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
+import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.SemanticType;
@@ -130,7 +130,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Captured @Nonnull byte[] bytes) {
-        return new EncodingFactory(type).encodeNonNullable(new BytesWrapper(type, bytes));
+        return new XDFConverter(type).encodeNonNullable(new BytesWrapper(type, bytes));
     }
     
     /**
@@ -155,7 +155,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      */
     @Pure
     public static @Capturable @Nonnull byte[] decodeNonNullable(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).getBytes();
+        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).getBytes();
     }
     
     /**
@@ -179,7 +179,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      */
     @Pure
     public static @Capturable @Nonnull InputStream decodeNonNullableAsInputStream(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).getBytesAsInputStream();
+        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).getBytesAsInputStream();
     }
     
     /**
@@ -224,17 +224,17 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends Wrapper.NonRequestingEncodingFactory<BytesWrapper> {
+    public static final class XDFConverter extends Wrapper.NonRequestingXDFConverter<BytesWrapper> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private EncodingFactory(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
@@ -248,17 +248,17 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return new EncodingFactory(getSemanticType());
+    public @Nonnull XDFConverter getXDFConverter() {
+        return new XDFConverter(getSemanticType());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The storing factory for this class.
+     * The SQL converter for this class.
      */
     @Immutable
-    public static final class StoringFactory extends Wrapper.StoringFactory<BytesWrapper> {
+    public static final class SQLConverter extends Wrapper.SQLConverter<BytesWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -270,7 +270,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
          * 
          * @param type the semantic type of the wrapper.
          */
-        private StoringFactory(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type) {
+        private SQLConverter(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type) {
             super(COLUMN, type);
         }
         
@@ -297,8 +297,8 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getSQLConverter() {
-        return new StoringFactory(getSemanticType());
+    public @Nonnull SQLConverter getSQLConverter() {
+        return new SQLConverter(getSemanticType());
     }
     
     @Pure
@@ -342,39 +342,39 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns the value encoding factory of this wrapper.
+     * Returns the value XDF converter of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
      * 
-     * @return the value encoding factory of this wrapper.
+     * @return the value XDF converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueEncodingFactory<byte[], BytesWrapper> getValueEncodingFactory(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
-        return new ValueEncodingFactory<>(FACTORY, new EncodingFactory(type));
+    public static @Nonnull ValueXDFConverter<byte[], BytesWrapper> getValueXDFConverter(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
+        return new ValueXDFConverter<>(FACTORY, new XDFConverter(type));
     }
     
     /**
-     * Returns the value storing factory of this wrapper.
+     * Returns the value SQL converter of this wrapper.
      * 
      * @param type any semantic type that is based on the syntactic type of this wrapper.
      * 
-     * @return the value storing factory of this wrapper.
+     * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueStoringFactory<byte[], BytesWrapper> getValueStoringFactory(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
-        return new ValueStoringFactory<>(FACTORY, new StoringFactory(type));
+    public static @Nonnull ValueSQLConverter<byte[], BytesWrapper> getValueSQLConverter(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
+        return new ValueSQLConverter<>(FACTORY, new SQLConverter(type));
     }
     
     /**
-     * Returns the value factories of this wrapper.
+     * Returns the value converters of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
      * 
-     * @return the value factories of this wrapper.
+     * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull Converters<byte[], Object> getValueFactories(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
-        return Converters.get(getValueEncodingFactory(type), getValueStoringFactory(type));
+    public static @Nonnull Converters<byte[], Object> getValueConverters(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
+        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(type));
     }
     
 }

@@ -277,9 +277,9 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(cache);
         
-        this.time = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0));
+        this.time = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0));
         
-        this.initializationVector = InitializationVector.ENCODING_FACTORY.decodeNullable(None.OBJECT, tuple.getNullableElement(3));
+        this.initializationVector = InitializationVector.XDF_CONVERTER.decodeNullable(None.OBJECT, tuple.getNullableElement(3));
         final @Nullable Block encryptedKey = tuple.getNullableElement(2);
         
         if (tuple.isElementNull(1)) {
@@ -295,7 +295,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
             }
         } else {
             // The encryption is part of a request.
-            this.recipient = HostIdentifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
+            this.recipient = HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
             if (!Server.hasHost(recipient)) throw new InvalidEncodingException(recipient + " does not run on this server.");
             if (symmetricKey != null) throw new InvalidEncodingException("A response may not include a recipient.");
             if (encryptedKey != null) {
@@ -414,17 +414,17 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends Wrapper.EncodingFactory<EncryptionWrapper> {
+    public static final class XDFConverter extends Wrapper.XDFConverter<EncryptionWrapper> {
         
         /**
          * Creates a new factory with the given type.
          * 
          * @param type the semantic type of the wrapper.
          */
-        private EncodingFactory(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
@@ -438,16 +438,16 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return new EncodingFactory(getSemanticType());
+    public @Nonnull XDFConverter getXDFConverter() {
+        return new XDFConverter(getSemanticType());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<EncryptionWrapper> getSQLConverter() {
-        return new StoringFactory<>(getXDFConverter());
+    public @Nonnull SQLConverter<EncryptionWrapper> getSQLConverter() {
+        return new SQLConverter<>(getXDFConverter());
     }
     
 }

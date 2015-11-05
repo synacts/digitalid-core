@@ -109,7 +109,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         
         this.tuple = Block.get(IMPLEMENTATION, block);
         final @Nonnull @NonNullableElements ReadOnlyArray<Block> elements = TupleWrapper.decode(tuple).getNonNullableElements(2);
-        final @Nonnull Identifier identifier = Identifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(0));
+        final @Nonnull Identifier identifier = Identifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(0));
         this.element = elements.getNonNullable(1);
         element.setType(identifier.getIdentity().toSemanticType());
     }
@@ -126,7 +126,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      */
     @Pure
     public static @Nonnull @NonEncoding <V extends XDF<V, Object>> Block encodeNonNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return new EncodingFactory(type).encodeNonNullable(new SelfcontainedWrapper(type, ConvertToXDF.nonNullable(element)));
+        return new XDFConverter(type).encodeNonNullable(new SelfcontainedWrapper(type, ConvertToXDF.nonNullable(element)));
     }
     
     /**
@@ -153,7 +153,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Locked
     @NonCommitting
     public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).element;
+        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).element;
     }
     
     /**
@@ -209,17 +209,17 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends Wrapper.EncodingFactory<SelfcontainedWrapper> {
+    public static final class XDFConverter extends Wrapper.XDFConverter<SelfcontainedWrapper> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private EncodingFactory(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
@@ -235,16 +235,16 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getXDFConverter() {
-        return new EncodingFactory(getSemanticType());
+    public @Nonnull XDFConverter getXDFConverter() {
+        return new XDFConverter(getSemanticType());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Nonnull StoringFactory<SelfcontainedWrapper> getSQLConverter() {
-        return new StoringFactory<>(getXDFConverter());
+    public @Nonnull SQLConverter<SelfcontainedWrapper> getSQLConverter() {
+        return new SQLConverter<>(getXDFConverter());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Reading –––––––––––––––––––––––––––––––––––––––––––––––––– */

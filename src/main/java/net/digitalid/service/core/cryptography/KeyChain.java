@@ -138,10 +138,10 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The encoding factory for this class.
+     * The XDF converter for this class.
      */
     @Immutable
-    public static abstract class EncodingFactory<K extends XDF<K, Object>, C extends KeyChain<K, C>> extends AbstractNonRequestingXDFConverter<C, Object> {
+    public static abstract class XDFConverter<K extends XDF<K, Object>, C extends KeyChain<K, C>> extends AbstractNonRequestingXDFConverter<C, Object> {
         
         /**
          * Stores the type of the key chain items.
@@ -154,13 +154,13 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
         private final @Nonnull AbstractNonRequestingXDFConverter<K, Object> factory;
         
         /**
-         * Creates a new encoding factory with the given parameters.
+         * Creates a new XDF converter with the given parameters.
          * 
          * @param chainType the type of the key chain.
          * @param itemType the type of the key chain items.
          * @param factory the factory that retrieves a key from a block.
          */
-        protected EncodingFactory(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull AbstractNonRequestingXDFConverter<K, Object> factory) {
+        protected XDFConverter(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull AbstractNonRequestingXDFConverter<K, Object> factory) {
             super(chainType);
             
             this.itemType = itemType;
@@ -204,7 +204,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
             
             for (final @Nonnull Block element : elements) {
                 final @Nonnull ReadOnlyArray<Block> pair = TupleWrapper.decode(element).getNonNullableElements(2);
-                final @Nonnull Time time = Time.ENCODING_FACTORY.decodeNonNullable(none, pair.getNonNullable(0));
+                final @Nonnull Time time = Time.XDF_CONVERTER.decodeNonNullable(none, pair.getNonNullable(0));
                 final @Nonnull K key = factory.decodeNonNullable(none, pair.getNonNullable(1));
                 items.add(FreezablePair.get(time, key).freeze());
             }
@@ -217,6 +217,6 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
     
     @Pure
     @Override
-    public abstract @Nonnull EncodingFactory<K, C> getXDFConverter();
+    public abstract @Nonnull XDFConverter<K, C> getXDFConverter();
     
 }

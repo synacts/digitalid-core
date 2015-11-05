@@ -178,16 +178,16 @@ public abstract class IdentifierImplementation implements Identifier {
     
     @Pure
     @Override
-    public final @Nonnull EncodingFactory<Identifier> getXDFConverter() {
-        return ENCODING_FACTORY;
+    public final @Nonnull XDFConverter<Identifier> getXDFConverter() {
+        return XDF_CONVERTER;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public final @Nonnull StoringFactory<Identifier> getSQLConverter() {
-        return STORING_FACTORY;
+    public final @Nonnull SQLConverter<Identifier> getSQLConverter() {
+        return SQL_CONVERTER;
     }
     
 }
