@@ -220,7 +220,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         
     };
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code category@core.digitalid.net}.
@@ -238,7 +238,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         return XDF_CONVERTER;
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.

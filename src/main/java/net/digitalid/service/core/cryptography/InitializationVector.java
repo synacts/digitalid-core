@@ -107,7 +107,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         
     };
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code initialization.vector@core.digitalid.net}.
@@ -125,7 +125,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         return XDF_CONVERTER;
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.

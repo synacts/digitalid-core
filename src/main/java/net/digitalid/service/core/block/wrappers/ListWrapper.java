@@ -233,7 +233,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         assert offset == block.getLength() : "The whole block should now be encoded.";
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -287,7 +287,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     }
     
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     @Pure
     @Override

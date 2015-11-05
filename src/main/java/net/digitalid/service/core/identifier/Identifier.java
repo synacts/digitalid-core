@@ -209,14 +209,14 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
      */
     public static final @Nonnull Identifier.StringConverter<Identifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the XDF converter of this class.
      */
     public static final @Nonnull AbstractNonRequestingXDFConverter<Identifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(Identity.IDENTIFIER));
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.

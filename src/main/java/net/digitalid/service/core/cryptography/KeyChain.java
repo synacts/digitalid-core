@@ -135,7 +135,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
         return items.toString();
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.

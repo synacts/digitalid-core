@@ -184,7 +184,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         }
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -225,7 +225,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     @Pure
     @Override

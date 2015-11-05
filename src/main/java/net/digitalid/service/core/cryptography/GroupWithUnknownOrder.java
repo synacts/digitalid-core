@@ -51,7 +51,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
         return new GroupWithUnknownOrder(modulus);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -95,7 +95,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
         return XDF_CONVERTER;
     }
 
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.

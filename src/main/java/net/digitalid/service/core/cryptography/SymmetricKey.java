@@ -243,7 +243,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
         return this.value.hashCode();
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -285,7 +285,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
         return XDF_CONVERTER;
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.

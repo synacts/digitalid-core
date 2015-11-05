@@ -41,7 +41,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
         super(semanticType);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     @Pure
     @Override

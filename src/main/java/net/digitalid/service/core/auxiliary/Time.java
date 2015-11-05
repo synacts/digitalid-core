@@ -575,7 +575,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         
     };
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code time@core.digitalid.net}.
@@ -593,7 +593,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
         return XDF_CONVERTER;
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.

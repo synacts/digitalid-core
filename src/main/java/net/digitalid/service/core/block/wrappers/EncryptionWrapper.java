@@ -411,7 +411,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         getCache().writeTo(block);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -442,7 +442,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     @Pure
     @Override

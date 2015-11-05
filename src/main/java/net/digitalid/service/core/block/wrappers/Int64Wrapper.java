@@ -133,7 +133,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         block.encodeValue(value);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -166,7 +166,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

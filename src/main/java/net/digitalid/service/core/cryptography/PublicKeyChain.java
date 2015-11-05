@@ -83,7 +83,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
         return new PublicKeyChain(items.freeze());
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -117,7 +117,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
         return XDF_CONVERTER;
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.

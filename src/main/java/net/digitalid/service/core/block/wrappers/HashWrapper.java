@@ -167,7 +167,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         block.setBytes(LENGTH - bytes.length + offset, bytes, offset, bytes.length - offset);
     }
 
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -200,7 +200,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

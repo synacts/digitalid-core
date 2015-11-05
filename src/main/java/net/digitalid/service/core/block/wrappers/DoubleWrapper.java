@@ -122,7 +122,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
         block.encodeValue(Double.doubleToRawLongBits(value));
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -155,7 +155,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

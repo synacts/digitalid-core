@@ -122,7 +122,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
         block.encodeValue(value);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -155,7 +155,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

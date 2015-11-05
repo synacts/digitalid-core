@@ -356,7 +356,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         assert offset == block.getLength() : "The whole block should now be encoded.";
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -406,7 +406,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     @Pure
     @Override

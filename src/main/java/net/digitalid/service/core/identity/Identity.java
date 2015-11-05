@@ -296,7 +296,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
         }
     };
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -344,7 +344,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
      */
     public static final @Nonnull XDFConverter<Identity> XDF_CONVERTER = new XDFConverter<>(Identity.IDENTIFIER, CASTER);
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

@@ -176,7 +176,7 @@ public abstract class IdentifierImplementation implements Identifier {
         return "'" + string + "'";
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     @Pure
     @Override
@@ -184,7 +184,7 @@ public abstract class IdentifierImplementation implements Identifier {
         return XDF_CONVERTER;
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     @Pure
     @Override

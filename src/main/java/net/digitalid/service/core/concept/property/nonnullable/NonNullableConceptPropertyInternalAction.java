@@ -199,7 +199,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         return hash;
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
