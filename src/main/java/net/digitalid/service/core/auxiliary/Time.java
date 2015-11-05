@@ -559,18 +559,18 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the key converter for this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<Time, Object, Long> keyConverter = new AbstractNonRequestingKeyConverter<Time, Object, Long>() {
+    private static final @Nonnull AbstractNonRequestingKeyConverter<Time, Object, Long> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Time, Object, Long>() {
         
         @Pure
         @Override
         public @Nonnull Long convert(@Nonnull Time time) {
-            return time.getValue();
+            return time.value;
         }
         
         @Pure
         @Override
         public @Nonnull Time recover(@Nonnull Object none, @Nonnull Long value) throws InvalidEncodingException {
-            return Time.get(value);
+            return new Time(value);
         }
         
     };
@@ -585,7 +585,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractNonRequestingXDFConverter<Time, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(keyConverter, Int64Wrapper.getValueXDFConverter(TYPE));
+    public static final @Nonnull AbstractNonRequestingXDFConverter<Time, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, Int64Wrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
@@ -598,7 +598,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Time, Object> SQL_CONVERTER = ChainingSQLConverter.get(keyConverter, Int64Wrapper.getValueSQLConverter("time"));
+    public static final @Nonnull AbstractSQLConverter<Time, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int64Wrapper.getValueSQLConverter("time"));
     
     @Pure
     @Override

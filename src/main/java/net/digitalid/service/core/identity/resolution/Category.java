@@ -1,31 +1,21 @@
 package net.digitalid.service.core.identity.resolution;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
-import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.Column;
-import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
@@ -203,6 +193,33 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         return this == HOST || isInternalNonHostIdentity();
     }
     
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the key converter for this class.
+     */
+    private static final @Nonnull AbstractNonRequestingKeyConverter<Category, Object, Byte> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Category, Object, Byte>() {
+        
+        @Pure
+        @Override
+        public boolean isValid(@Nonnull Byte value) {
+            return Category.isValid(value);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Byte convert(@Nonnull Category category) {
+            return category.value;
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Category recover(@Nonnull Object none, @Nonnull Byte value) throws InvalidEncodingException {
+            return Category.get(value);
+        }
+        
+    };
+    
     /* -------------------------------------------------- XDF -------------------------------------------------- */
     
     /**
@@ -211,94 +228,26 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     public static final @Nonnull SemanticType TYPE = SemanticType.map("category@core.digitalid.net").load(Int8Wrapper.TYPE);
     
     /**
-     * The XDF converter for this class.
-     */
-    @Immutable
-    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<Category, Object> {
-        
-        /**
-         * Creates a new XDF converter.
-         */
-        private XDFConverter() {
-            super(TYPE);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull Category category) {
-            return Int8Wrapper.encode(TYPE, category.value);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Category decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("category@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
-            
-            final byte value = Int8Wrapper.decode(block);
-            if (!isValid(value)) throw new InvalidEncodingException("The value '" + value + "' does not encode a category.");
-            return get(value);
-        }
-        
-    }
-    
-    /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
+    public static final @Nonnull AbstractNonRequestingXDFConverter<Category, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, Int8Wrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull XDFConverter getXDFConverter() {
+    public @Nonnull AbstractNonRequestingXDFConverter<Category, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
     /* -------------------------------------------------- SQL -------------------------------------------------- */
     
     /**
-     * The SQL converter for this class.
-     */
-    @Immutable
-    public static class SQLConverter extends AbstractSQLConverter<Category, Object> {
-        
-        /**
-         * Creates a new SQL converter.
-         */
-        private SQLConverter() {
-            super(Column.get("category", SQLType.TINYINT));
-        }
-        
-        @Pure
-        @Override
-        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Category category) {
-            return FreezableArray.getNonNullable(category.toString());
-        }
-        
-        @Override
-        @NonCommitting
-        public void storeNonNullable(@Nonnull Category category, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            preparedStatement.setByte(parameterIndex, category.value);
-        }
-        
-        @Pure
-        @Override
-        @NonCommitting
-        public @Nullable Category restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-            final byte value = resultSet.getByte(columnIndex);
-            if (resultSet.wasNull()) { return null; }
-            if (!isValid(value)) { throw new SQLException("'" + value + "' is not a valid category."); }
-            return get(value);
-        }
-        
-    }
-    
-    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
+    public static final @Nonnull AbstractSQLConverter<Category, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int8Wrapper.getValueSQLConverter("category"));
     
     @Pure
     @Override
-    public @Nonnull SQLConverter getSQLConverter() {
+    public @Nonnull AbstractSQLConverter<Category, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     
