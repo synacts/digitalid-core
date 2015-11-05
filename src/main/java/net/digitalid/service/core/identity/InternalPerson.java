@@ -2,6 +2,7 @@ package net.digitalid.service.core.identity;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
@@ -45,7 +46,8 @@ public abstract class InternalPerson extends Person implements InternalNonHostId
     }
     
     @Override
-    final void setAddress(@Nonnull InternalNonHostIdentifier address) {
+    public final void setAddress(@Nonnull Mapper.Key key, @Nonnull InternalNonHostIdentifier address) {
+        key.hashCode();
         this.address = address;
     }
     

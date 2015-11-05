@@ -2,9 +2,11 @@ package net.digitalid.service.core.identity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class models a digital identity, which can change identifiers and hosts.
@@ -12,8 +14,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * 
  * @see HostIdentity
  * @see NonHostIdentity
- * 
- * @see Mapper
  */
 @Immutable
 public abstract class IdentityImplementation implements Identity {
@@ -37,7 +37,7 @@ public abstract class IdentityImplementation implements Identity {
      * 
      * @param databaseID the new database ID of this identity.
      */
-    final void setDatabaseID(long databaseID) {
+    public final void setDatabaseID(long databaseID) {
         this.databaseID = databaseID;
     }
     
@@ -75,7 +75,7 @@ public abstract class IdentityImplementation implements Identity {
         return String.valueOf(databaseID);
     }
     
-    /* -------------------------------------------------- Casting -------------------------------------------------- */
+    /* -------------------------------------------------- Casting to Internal vs. External Identity -------------------------------------------------- */
     
     @Pure
     @Override
@@ -91,6 +91,7 @@ public abstract class IdentityImplementation implements Identity {
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ExternalIdentity.");
     }
     
+    /* -------------------------------------------------- Casting to Host vs. Non-Host Identity -------------------------------------------------- */
     
     @Pure
     @Override
@@ -113,6 +114,8 @@ public abstract class IdentityImplementation implements Identity {
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalNonHostIdentity.");
     }
     
+    /* -------------------------------------------------- Casting to Type -------------------------------------------------- */
+    
     @Pure
     @Override
     public final @Nonnull Type toType() throws InvalidEncodingException {
@@ -134,6 +137,7 @@ public abstract class IdentityImplementation implements Identity {
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to SemanticType.");
     }
     
+    /* -------------------------------------------------- Casting to Person -------------------------------------------------- */
     
     @Pure
     @Override
@@ -188,7 +192,7 @@ public abstract class IdentityImplementation implements Identity {
     
     @Pure
     @Override
-    public final @Nonnull XDFConverter<Identity> getXDFConverter() {
+    public final @Nonnull AbstractXDFConverter<Identity, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -196,7 +200,7 @@ public abstract class IdentityImplementation implements Identity {
     
     @Pure
     @Override
-    public final @Nonnull SQLConverter<Identity> getSQLConverter() {
+    public final @Nonnull AbstractSQLConverter<Identity, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

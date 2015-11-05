@@ -1,34 +1,27 @@
 package net.digitalid.service.core.identity;
 
-import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.service.core.identity.resolution.Category;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.key.Caster;
+import net.digitalid.service.core.converter.key.CastingKeyConverter;
+import net.digitalid.service.core.converter.key.CastingNonRequestingKeyConverter;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.Identifier;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.service.core.identity.resolution.Category;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
-import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.Column;
-import net.digitalid.utility.database.column.GeneralReference;
-import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 
@@ -38,6 +31,8 @@ import net.digitalid.utility.database.converter.SQL;
  * @see IdentityImplementation
  * @see InternalIdentity
  * @see ExternalIdentity
+ * 
+ * @see Mapper
  */
 @Immutable
 public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
@@ -91,7 +86,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     @NonCommitting
     public boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException;
     
-    /* -------------------------------------------------- Casting -------------------------------------------------- */
+    /* -------------------------------------------------- Casting to Internal vs. External Identity -------------------------------------------------- */
     
     /**
      * Returns this identity as an {@link InternalIdentity}.
@@ -113,6 +108,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     @Pure
     public @Nonnull ExternalIdentity toExternalIdentity() throws InvalidEncodingException;
     
+    /* -------------------------------------------------- Casting to Host vs. Non-Host Identity -------------------------------------------------- */
     
     /**
      * Returns this identity as a {@link HostIdentity}.
@@ -144,6 +140,8 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     @Pure
     public @Nonnull InternalNonHostIdentity toInternalNonHostIdentity() throws InvalidEncodingException;
     
+    /* -------------------------------------------------- Casting to Type -------------------------------------------------- */
+    
     /**
      * Returns this identity as a {@link Type}.
      * 
@@ -174,6 +172,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     @Pure
     public @Nonnull SemanticType toSemanticType() throws InvalidEncodingException;
     
+    /* -------------------------------------------------- Casting to Person -------------------------------------------------- */
     
     /**
      * Returns this identity as a {@link Person}.
@@ -245,50 +244,76 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     @Pure
     public @Nonnull MobilePerson toMobilePerson() throws InvalidEncodingException;
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
+    /* -------------------------------------------------- Key Converters -------------------------------------------------- */
     
     /**
-     * This class allows to cast identities to the right subclass.
+     * This class allows to convert an identity to its address and recover it again by downcasting the identity returned by the overridden method with the given caster.
      */
     @Immutable
-    public static abstract class Caster<I extends Identity> {
+    public static final class IdentifierConverter<I extends Identity> extends CastingKeyConverter<I, Object, Identifier, Identity> {
         
         /**
-         * Casts the given identity to the generic type.
+         * Creates a new identity-identifier converter with the given caster.
          * 
-         * @param identity the identity which is to be casted.
-         * 
-         * @return the given identity casted to the generic type.
-         * 
-         * @throws InvalidEncodingException if the identity is not an instance of the generic type.
+         * @param caster the caster that allows to cast objects to the specified subtype.
          */
-        @Pure
-        protected abstract @Nonnull I cast(@Nonnull Identity identity) throws InvalidEncodingException;
+        protected IdentifierConverter(@Nonnull Caster<Identity, I> caster) {
+            super(caster);
+        }
         
-        /**
-         * Casts the given identity to the generic type.
-         * 
-         * @param identity the identity which is to be casted.
-         * 
-         * @return the given identity casted to the generic type.
-         * 
-         * @throws SQLException if the identity is not an instance of the generic type.
-         */
         @Pure
-        final @Nonnull I castWithSQLException(@Nonnull Identity identity) throws SQLException {
-            try {
-                return cast(identity);
-            } catch (@Nonnull InvalidEncodingException exception) {
-                throw new SQLException(exception);
-            }
+        @Override
+        public @Nonnull Identifier convert(@Nonnull I identity) {
+            return identity.getAddress();
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Identifier identifier) throws AbortException, PacketException, ExternalException, NetworkException {
+            return identifier.getIdentity();
         }
         
     }
     
     /**
-     * Stores the caster that casts identities to this subclass.
+     * This class allows to convert an identity to its database ID and recover it again by downcasting the identity returned by the overridden method with the given caster.
      */
-    public static final @Nonnull Caster<Identity> CASTER = new Caster<Identity>() {
+    @Immutable
+    public static final class LongConverter<I extends Identity> extends CastingNonRequestingKeyConverter<I, Object, Long, Identity> {
+        
+        /**
+         * Creates a new identity-identifier converter with the given caster.
+         * 
+         * @param caster the caster that allows to cast objects to the specified subtype.
+         */
+        protected LongConverter(@Nonnull Caster<Identity, I> caster) {
+            super(caster);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Long convert(@Nonnull I identity) {
+            return identity.getDatabaseID();
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Long databaseID) throws InvalidEncodingException {
+            try {
+                return Mapper.getIdentity(databaseID);
+            } catch (@Nonnull AbortException exception) {
+                throw new InvalidEncodingException(exception);
+            }
+        }
+        
+    }
+    
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
+    
+    /**
+     * Stores the caster that casts identifiers to this subclass.
+     */
+    public static final @Nonnull Caster<Identity, Identity> CASTER = new Caster<Identity, Identity>() {
         @Pure
         @Override
         protected @Nonnull Identity cast(@Nonnull Identity identity) throws InvalidEncodingException {
@@ -299,106 +324,16 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
-     * The XDF converter for this class.
-     */
-    @Immutable
-    public static final class XDFConverter<I extends Identity> extends AbstractXDFConverter<I, Object> {
-        
-        /**
-         * Stores the caster that casts identities to the right subclass.
-         */
-        private final @Nonnull Caster<I> caster;
-        
-        /**
-         * Creates a new XDF converter with the given type and caster.
-         * 
-         * @param type the semantic type that corresponds to the encodable class.
-         * @param caster the caster that casts identifiers to the right subclass.
-         */
-        XDFConverter(@Nonnull @BasedOn("@core.digitalid.net") SemanticType type, @Nonnull Caster<I> caster) {
-            super(type);
-            
-            assert type.isBasedOn(Identity.IDENTIFIER) : "The given type is based on the identifier type.";
-            
-            this.caster = caster;
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull I identity) {
-            return ConvertToXDF.nonNullable(identity.getAddress(), getType());
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull I decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
-            
-            return caster.cast(Identifier.XDF_CONVERTER.decodeNonNullable(none, block).getIdentity());
-        }
-        
-    }
-    
-    /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter<Identity> XDF_CONVERTER = new XDFConverter<>(Identity.IDENTIFIER, CASTER);
+    public static final @Nonnull AbstractXDFConverter<Identity, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER);
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
-     * The SQL converter for this class.
-     */
-    @Immutable
-    public static final class SQLConverter<I extends Identity> extends AbstractSQLConverter<I, Object> {
-        
-        /**
-         * Stores the column of this SQL converter.
-         */
-        private static final @Nonnull Column COLUMN = Column.get("identity", SQLType.BIGINT, false, GeneralReference.get("REFERENCES general_identity (identity) ON DELETE RESTRICT ON UPDATE RESTRICT"));
-        
-        /**
-         * Stores the caster that casts identities to the right subclass.
-         */
-        private final @Nonnull Caster<I> caster;
-        
-        /**
-         * Creates a new SQL converter with the given caster.
-         * 
-         * @param caster the caster that casts identities to the right subclass.
-         */
-        SQLConverter(@Nonnull Caster<I> caster) {
-            super(COLUMN);
-            
-            this.caster = caster;
-        }
-        
-        @Pure
-        @Override
-        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull I identity) {
-            return FreezableArray.getNonNullable(String.valueOf(identity.getDatabaseID()));
-        }
-        
-        @Override
-        @NonCommitting
-        public void storeNonNullable(@Nonnull I identity, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            preparedStatement.setLong(parameterIndex, identity.getDatabaseID());
-        }
-        
-        @Pure
-        @Override
-        @NonCommitting
-        public @Nullable I restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-            final long databaseID = resultSet.getLong(columnIndex);
-            return resultSet.wasNull() ? null : caster.castWithSQLException(Mapper.getIdentity(databaseID));
-        }
-        
-    }
-    
-    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter<Identity> SQL_CONVERTER = new SQLConverter<>(CASTER);
+    public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter("identity")); // TODO: Add GeneralReference.get("REFERENCES general_identity (identity) ON DELETE RESTRICT ON UPDATE RESTRICT")
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

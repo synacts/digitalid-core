@@ -1,11 +1,13 @@
 package net.digitalid.service.core.identity;
 
-import net.digitalid.service.core.identity.resolution.Mapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -54,7 +56,8 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
      * 
      * @param address the new address of this type.
      */
-    final void setAddress(@Nonnull InternalNonHostIdentifier address) {
+    public final void setAddress(@Nonnull Mapper.Key key, @Nonnull InternalNonHostIdentifier address) {
+        key.hashCode();
         this.address = address;
     }
     

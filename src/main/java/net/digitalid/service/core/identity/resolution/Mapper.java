@@ -1,6 +1,5 @@
 package net.digitalid.service.core.identity.resolution;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -282,12 +281,12 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    static @Nonnull Identity getIdentity(long number) throws SQLException {
+    public static @Nonnull Identity getIdentity(long number) throws AbortException {
         @Nullable Identity identity = numbers.get(number);
         if (identity == null) identity = loadIdentity(number);
         try {
             if (identity instanceof Type) ((Type) identity).ensureLoaded();
-        } catch (@Nonnull IOException | PacketException | ExternalException  exception) {
+        } catch (@Nonnull PacketException | ExternalException | NetworkException exception) {
             throw new ShouldNeverHappenError("The type declaration and the referenced identities should already be cached.", exception);
         }
         return identity;
