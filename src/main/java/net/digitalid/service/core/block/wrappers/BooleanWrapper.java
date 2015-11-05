@@ -36,7 +36,12 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
      * Stores the syntactic type {@code boolean@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("boolean@core.digitalid.net").load(0);
-    
+
+    /**
+     * Stores the syntactic type {@code semantic.boolean@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.boolean@core.digitalid.net").load(TYPE);
+
     @Pure
     @Override
     public @Nonnull SyntacticType getSyntacticType() {

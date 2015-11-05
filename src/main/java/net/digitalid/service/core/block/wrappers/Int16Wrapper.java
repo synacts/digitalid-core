@@ -32,7 +32,12 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * Stores the syntactic type {@code int16@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("int16@core.digitalid.net").load(0);
-    
+
+    /**
+     * Stores the syntactic type {@code semantic.int16@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int16@core.digitalid.net").load(TYPE);
+
     @Pure
     @Override
     public @Nonnull SyntacticType getSyntacticType() {

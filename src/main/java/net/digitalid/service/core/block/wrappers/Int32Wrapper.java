@@ -9,8 +9,6 @@ import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -19,6 +17,7 @@ import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
@@ -35,7 +34,12 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
      * Stores the syntactic type {@code int32@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("int32@core.digitalid.net").load(0);
-    
+
+    /**
+     * Stores the syntactic type {@code semantic.int32@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int32@core.digitalid.net").load(TYPE);
+
     @Pure
     @Override
     public @Nonnull SyntacticType getSyntacticType() {
@@ -74,7 +78,12 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
     }
     
     /* -------------------------------------------------- Utility -------------------------------------------------- */
-
+    
+    /**
+     * Stores a static XDF converter for performance reasons.
+     */
+    private static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter(SEMANTIC);
+    
     /**
      * Encodes the given value into a new block of the given type.
      * 
@@ -85,7 +94,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("int32@core.digitalid.net") SemanticType type, int value) {
-        return new XDFConverter(type).encodeNonNullable(new Int32Wrapper(type, value));
+        return XDF_CONVERTER.encodeNonNullable(new Int32Wrapper(type, value));
     }
     
     /**
@@ -97,7 +106,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
      */
     @Pure
     public static int decode(@Nonnull @NonEncoding @BasedOn("int32@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
+        return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
@@ -164,17 +173,12 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
     public static final class SQLConverter extends Wrapper.SQLConverter<Int32Wrapper> {
         
         /**
-         * Stores the column for the wrapper.
+         * Creates a new SQL converter with the given column name.
+         *
+         * @param columnName the name of the database column.
          */
-        private static final @Nonnull Column COLUMN = Column.get("value", SQLType.INT);
-        
-        /**
-         * Creates a new SQL converter with the given type.
-         * 
-         * @param type the semantic type of the restored wrappers.
-         */
-        private SQLConverter(@Nonnull @BasedOn("int32@core.digitalid.net") SemanticType type) {
-            super(COLUMN, type);
+        private SQLConverter(@Nonnull @Validated String columnName) {
+            super(Column.get(columnName, SQLType.BIGINT), SEMANTIC);
         }
         
         @Override
@@ -196,7 +200,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
     @Pure
     @Override
     public @Nonnull SQLConverter getSQLConverter() {
-        return new SQLConverter(getSemanticType());
+        return new SQLConverter("value");
     }
     
     @Pure
@@ -249,25 +253,26 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
     /**
      * Returns the value SQL converter of this wrapper.
      * 
-     * @param type any semantic type that is based on the syntactic type of this wrapper.
+     * @param columnName the name of the database column.
      * 
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<Integer, Int32Wrapper> getValueSQLConverter(@Nonnull @BasedOn("int32@core.digitalid.net") SemanticType type) {
-        return new ValueSQLConverter<>(FACTORY, new SQLConverter(type));
+    public static @Nonnull ValueSQLConverter<Integer, Int32Wrapper> getValueSQLConverter(@Nonnull @Validated String columnName) {
+        return new ValueSQLConverter<>(FACTORY, new SQLConverter(columnName));
     }
     
     /**
      * Returns the value converters of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
+     * @param columnName the name of the database column.
      * 
      * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull Converters<Integer, Object> getValueConverters(@Nonnull @BasedOn("int32@core.digitalid.net") SemanticType type) {
-        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(type));
+    public static @Nonnull Converters<Integer, Object> getValueConverters(@Nonnull @BasedOn("int32@core.digitalid.net") SemanticType type, @Nonnull @Validated String columnName) {
+        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(columnName));
     }
     
 }

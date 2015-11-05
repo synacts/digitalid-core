@@ -35,7 +35,12 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * Stores the syntactic type {@code double@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("double@core.digitalid.net").load(0);
-    
+
+    /**
+     * Stores the syntactic type {@code semantic.int64@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int64@core.digitalid.net").load(TYPE);
+
     @Pure
     @Override
     public @Nonnull SyntacticType getSyntacticType() {

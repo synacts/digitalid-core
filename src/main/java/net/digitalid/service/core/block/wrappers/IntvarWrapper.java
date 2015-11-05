@@ -37,7 +37,12 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * Stores the syntactic type {@code intvar@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("intvar@core.digitalid.net").load(0);
-    
+
+    /**
+     * Stores the syntactic type {@code semantic.intvar@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.intvar@core.digitalid.net").load(TYPE);
+
     @Pure
     @Override
     public @Nonnull SyntacticType getSyntacticType() {

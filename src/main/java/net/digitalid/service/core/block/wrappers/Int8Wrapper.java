@@ -35,7 +35,12 @@ public final class Int8Wrapper extends ValueWrapper<Int8Wrapper> {
      * Stores the syntactic type {@code int8@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("int8@core.digitalid.net").load(0);
-    
+
+    /**
+     * Stores the syntactic type {@code semantic.int64@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int64@core.digitalid.net").load(TYPE);
+
     @Pure
     @Override
     public @Nonnull SyntacticType getSyntacticType() {
