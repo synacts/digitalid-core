@@ -6,13 +6,15 @@ import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.Blockable;
 import net.digitalid.service.core.block.wrappers.BooleanWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.concepts.contact.Context;
-import net.digitalid.service.core.database.SQLizable;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -21,12 +23,18 @@ import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -37,37 +45,7 @@ import net.digitalid.utility.database.site.Site;
  * @invariant getContext() == null || getContact() == null : "The context or the contact is null.";
  */
 @Immutable
-public final class Restrictions implements Blockable, SQLizable {
-    
-    /**
-     * Stores the semantic type {@code client.restrictions.agent@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType CLIENT_TYPE = SemanticType.map("client.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
-    
-    /**
-     * Stores the semantic type {@code role.restrictions.agent@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType ROLE_TYPE = SemanticType.map("role.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
-    
-    /**
-     * Stores the semantic type {@code writing.restrictions.agent@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType WRITING_TYPE = SemanticType.map("writing.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
-    
-    /**
-     * Stores the semantic type {@code context.restrictions.agent@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType CONTEXT_TYPE = SemanticType.map("context.restrictions.agent@core.digitalid.net").load(Context.TYPE);
-    
-    /**
-     * Stores the semantic type {@code contact.restrictions.agent@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType CONTACT_TYPE = SemanticType.map("contact.restrictions.agent@core.digitalid.net").load(Contact.TYPE);
-    
-    /**
-     * Stores the semantic type {@code restrictions.agent@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("restrictions.agent@core.digitalid.net").load(TupleWrapper.TYPE, CLIENT_TYPE, ROLE_TYPE, WRITING_TYPE, CONTEXT_TYPE, CONTACT_TYPE);
+public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL<Restrictions, NonHostEntity> {
     
     
     /**
@@ -176,46 +154,6 @@ public final class Restrictions implements Blockable, SQLizable {
         this.writing = writing;
         this.context = context;
         this.contact = contact;
-    }
-    
-    /**
-     * Creates new restrictions from the given block.
-     * 
-     * @param entity the entity to which the restrictions belongs.
-     * @param block the block containing the restrictions.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     */
-    @NonCommitting
-    public Restrictions(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
-        final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.client = new BooleanWrapper(tuple.getNonNullableElement(0)).getValue();
-        this.role = new BooleanWrapper(tuple.getNonNullableElement(1)).getValue();
-        this.writing = new BooleanWrapper(tuple.getNonNullableElement(2)).getValue();
-        this.context = tuple.isElementNull(3) ? null : Context.get(entity, tuple.getNonNullableElement(3));
-        this.contact = tuple.isElementNull(4) ? null : Contact.get(entity, tuple.getNonNullableElement(4));
-        
-        if (context != null && contact != null) throw new InvalidEncodingException("The context and the contact are not null.");
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(5);
-        elements.set(0, new BooleanWrapper(CLIENT_TYPE, client).toBlock());
-        elements.set(1, new BooleanWrapper(ROLE_TYPE, role).toBlock());
-        elements.set(2, new BooleanWrapper(WRITING_TYPE, writing).toBlock());
-        elements.set(3, Block.toBlock(CONTEXT_TYPE, context));
-        elements.set(4, Block.toBlock(CONTACT_TYPE, contact));
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     
     
@@ -414,6 +352,7 @@ public final class Restrictions implements Blockable, SQLizable {
         return new Restrictions(client && restrictions.client, role && restrictions.role, writing && restrictions.writing, context, contact);
     }
     
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -444,6 +383,183 @@ public final class Restrictions implements Blockable, SQLizable {
     @Pure
     public @Nonnull String toFormattedString() {
         return "(Client: " + client + ", Role: " + role + ", Writing: " + writing + ", Context: " + context + ", Contact: " + contact + ")";
+    }
+    
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code client.restrictions.agent@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType CLIENT_TYPE = SemanticType.map("client.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code role.restrictions.agent@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType ROLE_TYPE = SemanticType.map("role.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code writing.restrictions.agent@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType WRITING_TYPE = SemanticType.map("writing.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code context.restrictions.agent@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType CONTEXT_TYPE = SemanticType.map("context.restrictions.agent@core.digitalid.net").load(Context.TYPE);
+    
+    /**
+     * Stores the semantic type {@code contact.restrictions.agent@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType CONTACT_TYPE = SemanticType.map("contact.restrictions.agent@core.digitalid.net").load(Contact.TYPE);
+    
+    /**
+     * Stores the semantic type {@code restrictions.agent@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("restrictions.agent@core.digitalid.net").load(TupleWrapper.TYPE, CLIENT_TYPE, ROLE_TYPE, WRITING_TYPE, CONTEXT_TYPE, CONTACT_TYPE);
+    
+    /**
+     * The XDF converter for this class.
+     */
+    @Immutable
+    public static final class XDFConverter extends AbstractXDFConverter<Restrictions, NonHostEntity> {
+        
+        /**
+         * Creates a new XDF converter.
+         */
+        private XDFConverter() {
+            super(TYPE);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Block encodeNonNullable(@Nonnull Restrictions restrictions) {
+            final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
+            elements.set(0, BooleanWrapper.encode(CLIENT_TYPE, restrictions.client));
+            elements.set(1, BooleanWrapper.encode(ROLE_TYPE, restrictions.role));
+            elements.set(2, BooleanWrapper.encode(WRITING_TYPE, restrictions.writing));
+            elements.set(3, ConvertToXDF.nullable(restrictions.context, CONTEXT_TYPE));
+            elements.set(4, ConvertToXDF.nullable(restrictions.contact, CONTACT_TYPE));
+            return TupleWrapper.encode(TYPE, elements.freeze());
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @BasedOn("restrictions.agent@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
+            
+            final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
+            final boolean client = BooleanWrapper.decode(tuple.getNonNullableElement(0));
+            final boolean role = BooleanWrapper.decode(tuple.getNonNullableElement(1));
+            final boolean writing = BooleanWrapper.decode(tuple.getNonNullableElement(2));
+            final @Nullable Context context = Context.XDF_CONVERTER.decodeNullable(entity, tuple.getNullableElement(3));
+            final @Nullable Contact contact = Contact.XDF_CONVERTER.decodeNullable(entity, tuple.getNullableElement(4));
+            
+            if (context != null && contact != null) throw new InvalidEncodingException("The context and the contact are not null.");
+            
+            return new Restrictions(client, role, writing, context, contact);
+        }
+        
+    }
+    
+    /**
+     * Stores the XDF converter of this class.
+     */
+    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
+    
+    @Pure
+    @Override
+    public @Nonnull XDFConverter getXDFConverter() {
+        return XDF_CONVERTER;
+    }
+    
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * The SQL converter for this class.
+     */
+    @Immutable
+    public static final class SQLConverter extends AbstractSQLConverter<Restrictions, NonHostEntity> {
+        
+        /**
+         * Stores the SQL converter for the client field.
+         */
+        private final @Nonnull AbstractSQLConverter<Boolean, Object> clientSQLConverter = BooleanWrapper.getValueSQLConverter("client");
+        
+        /**
+         * Stores the SQL converter for the role field.
+         */
+        private final @Nonnull AbstractSQLConverter<Boolean, Object> roleSQLConverter = BooleanWrapper.getValueSQLConverter("role");
+        
+        /**
+         * Stores the SQL converter for the writing field.
+         */
+        private final @Nonnull AbstractSQLConverter<Boolean, Object> contextWritingSQLConverter = BooleanWrapper.getValueSQLConverter("context_writing");
+        
+        /**
+         * Creates a new SQL converter.
+         */
+        private SQLConverter() {
+            super(clientSQLConverter, roleSQLConverter, contextWritingSQLConverter, Context.SQL_CONVERTER, Contact.SQL_CONVERTER);
+        }
+        
+        @Pure
+        @Override
+        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Restrictions restrictions) {
+            return FreezableArray.getNonNullable(clientSQLConverter.getValues(restrictions.client), roleSQLConverter.getValues(restrictions.role), contextWritingSQLConverter.getValues(restrictions.writing), Context.SQL_CONVERTER.getValuesOrNulls(restrictions.context), Contact.SQL_CONVERTER.getValuesOrNulls(restrictions.contact));
+        }
+        
+        @Override
+        @NonCommitting
+        @SuppressWarnings("AssignmentToMethodParameter")
+        public void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+            clientSQLConverter.storeNonNullable(restrictions.client, preparedStatement, parameterIndex);
+            // TODO: replace with self-advancing parameter index.
+            parameterIndex += clientSQLConverter.getNumberOfColumns();
+            roleSQLConverter.storeNonNullable(restrictions.role, preparedStatement, parameterIndex);
+            parameterIndex += roleSQLConverter.getNumberOfColumns();
+            contextWritingSQLConverter.storeNonNullable(restrictions.writing, preparedStatement, parameterIndex);
+            parameterIndex += contextWritingSQLConverter.getNumberOfColumns();
+            
+            Context.SQL_CONVERTER.storeNullable(restrictions.context, preparedStatement, parameterIndex);
+            parameterIndex += Context.SQL_CONVERTER.getNumberOfColumns();
+            Contact.SQL_CONVERTER.storeNullable(restrictions.contact, preparedStatement, parameterIndex);
+        }
+        
+        @Pure
+        @Override
+        @NonCommitting
+        @SuppressWarnings("AssignmentToMethodParameter")
+        public @Nullable Restrictions restoreNullable(final @Nonnull NonHostEntity entity, final @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+            final @Nullable Boolean client = clientSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
+            // TODO: replace with self-advancing column index.
+            columnIndex += clientSQLConverter.getNumberOfColumns();
+            final @Nullable Boolean role = roleSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
+            columnIndex += roleSQLConverter.getNumberOfColumns();
+            final @Nullable Boolean writing = contextWritingSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
+            columnIndex += contextWritingSQLConverter.getNumberOfColumns();
+            
+            final @Nullable Context context = Context.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
+            columnIndex += Context.SQL_CONVERTER.getNumberOfColumns();
+            
+            final @Nullable Contact contact = Contact.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
+            
+            if (client == null && role == null && writing == null && context == null && contact == null) { return null; }
+            if (client == null || role == null || writing == null) { throw new SQLException("Found inconsistency in restrictions ('client' = '" + client + ", 'role' = '" + role + "', 'writing' = '" + writing + "')."); }
+            
+            return new Restrictions(client, role, writing, context, contact);
+        }
+        
+    }
+    
+    /**
+     * Stores the SQL converter of this class.
+     */
+    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
+    
+    @Pure
+    @Override
+    public @Nonnull SQLConverter getSQLConverter() {
+        return SQL_CONVERTER;
     }
     
     
