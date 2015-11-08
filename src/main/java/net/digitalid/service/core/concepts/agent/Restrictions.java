@@ -26,14 +26,17 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.ColumnIndex;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.ComposingSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.site.Site;
 
@@ -478,47 +481,50 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      * The SQL converter for this class.
      */
     @Immutable
-    public static final class SQLConverter extends AbstractSQLConverter<Restrictions, NonHostEntity> {
+    public static final class SQLConverter extends ComposingSQLConverter<Restrictions, NonHostEntity> {
         
         /**
          * Stores the SQL converter for the client field.
          */
-        private final @Nonnull AbstractSQLConverter<Boolean, Object> clientSQLConverter = BooleanWrapper.getValueSQLConverter("client");
+        private final @Nonnull AbstractSQLConverter<Boolean, Object> clientSQLConverter;
         
         /**
          * Stores the SQL converter for the role field.
          */
-        private final @Nonnull AbstractSQLConverter<Boolean, Object> roleSQLConverter = BooleanWrapper.getValueSQLConverter("role");
+        private final @Nonnull AbstractSQLConverter<Boolean, Object> roleSQLConverter;
         
         /**
          * Stores the SQL converter for the writing field.
          */
-        private final @Nonnull AbstractSQLConverter<Boolean, Object> contextWritingSQLConverter = BooleanWrapper.getValueSQLConverter("context_writing");
+        private final @Nonnull AbstractSQLConverter<Boolean, Object> contextWritingSQLConverter;
         
         /**
          * Creates a new SQL converter.
          */
-        private SQLConverter() {
+        private SQLConverter(@Nonnull AbstractSQLConverter<Boolean, Object> clientSQLConverter, @Nonnull AbstractSQLConverter<Boolean, Object> roleSQLConverter, @Nonnull AbstractSQLConverter<Boolean, Object> contextWritingSQLConverter) {
             super(clientSQLConverter, roleSQLConverter, contextWritingSQLConverter, Context.SQL_CONVERTER, Contact.SQL_CONVERTER);
+            this.clientSQLConverter = clientSQLConverter;
+            this.roleSQLConverter = roleSQLConverter;
+            this.contextWritingSQLConverter = contextWritingSQLConverter;
         }
         
         @Pure
         @Override
-        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Restrictions restrictions) {
-            return FreezableArray.getNonNullable(clientSQLConverter.getValues(restrictions.client), roleSQLConverter.getValues(restrictions.role), contextWritingSQLConverter.getValues(restrictions.writing), Context.SQL_CONVERTER.getValuesOrNulls(restrictions.context), Contact.SQL_CONVERTER.getValuesOrNulls(restrictions.contact));
+        public void getValues(@Nonnull final Restrictions restrictions, @NonCapturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex columnIndex) {
+            clientSQLConverter.getValues(restrictions.client, values, columnIndex);
+            roleSQLConverter.getValues(restrictions.role, values, columnIndex);
+            contextWritingSQLConverter.getValues(restrictions.writing, values, columnIndex);
+            Context.SQL_CONVERTER.getValuesOrNulls(restrictions.context, values, columnIndex);
+            Contact.SQL_CONVERTER.getValuesOrNulls(restrictions.contact, values, columnIndex);
         }
         
         @Override
         @NonCommitting
         @SuppressWarnings("AssignmentToMethodParameter")
-        public void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, ColumnIndex parameterIndex) throws SQLException {
             clientSQLConverter.storeNonNullable(restrictions.client, preparedStatement, parameterIndex);
-            // TODO: replace with self-advancing parameter index.
-            parameterIndex += clientSQLConverter.getNumberOfColumns();
             roleSQLConverter.storeNonNullable(restrictions.role, preparedStatement, parameterIndex);
-            parameterIndex += roleSQLConverter.getNumberOfColumns();
             contextWritingSQLConverter.storeNonNullable(restrictions.writing, preparedStatement, parameterIndex);
-            parameterIndex += contextWritingSQLConverter.getNumberOfColumns();
             
             Context.SQL_CONVERTER.storeNullable(restrictions.context, preparedStatement, parameterIndex);
             parameterIndex += Context.SQL_CONVERTER.getNumberOfColumns();
@@ -529,14 +535,11 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         @Override
         @NonCommitting
         @SuppressWarnings("AssignmentToMethodParameter")
-        public @Nullable Restrictions restoreNullable(final @Nonnull NonHostEntity entity, final @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable Restrictions restoreNullable(final @Nonnull NonHostEntity entity, final @Nonnull ResultSet resultSet, ColumnIndex columnIndex) throws SQLException {
             final @Nullable Boolean client = clientSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
             // TODO: replace with self-advancing column index.
-            columnIndex += clientSQLConverter.getNumberOfColumns();
             final @Nullable Boolean role = roleSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
-            columnIndex += roleSQLConverter.getNumberOfColumns();
             final @Nullable Boolean writing = contextWritingSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
-            columnIndex += contextWritingSQLConverter.getNumberOfColumns();
             
             final @Nullable Context context = Context.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
             columnIndex += Context.SQL_CONVERTER.getNumberOfColumns();
@@ -554,7 +557,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
+    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter(BooleanWrapper.getValueSQLConverter("client"), BooleanWrapper.getValueSQLConverter("role"), BooleanWrapper.getValueSQLConverter("context_writing"));
     
     @Pure
     @Override
