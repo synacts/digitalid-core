@@ -24,6 +24,7 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * @param <K> the type of the objects that the other converter stores and restores (usually as a key for the objects of this converter).
  */
+// TODO: probably will inherit from ComposingSQLConverter.
 @Immutable
 public final class ChainingSQLConverter<O, E, K> extends AbstractSQLConverter<O, E> {
     

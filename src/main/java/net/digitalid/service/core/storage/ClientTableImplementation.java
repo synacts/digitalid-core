@@ -13,6 +13,7 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
+import net.digitalid.utility.database.table.DatabaseTable;
 
 /**
  * This class implements a database table that can be created and deleted on {@link Client clients} and {@link Host hosts}.
@@ -21,7 +22,7 @@ import net.digitalid.utility.database.site.Site;
  * @see HostTableImplementation
  */
 @Immutable
-abstract class ClientTableImplementation<M extends DelegatingClientStorageImplementation> implements ClientStorage {
+abstract class ClientTableImplementation<M extends DelegatingClientStorageImplementation> implements ClientStorage, DatabaseTable {
     
     /* -------------------------------------------------- Module -------------------------------------------------- */
     
@@ -75,8 +76,8 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
     
     @Pure
     @Override
-    public final @Nonnull @Validated String getName(@Nonnull Site client) {
-        return client + name;
+    public final @Nonnull @Validated String getName(@Nonnull Site site) {
+        return site + name;
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
@@ -100,6 +101,17 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
     @Override
     @NonCommitting
     public abstract void createTables(@Nonnull Site site) throws AbortException;
+    
+    @Locked
+    @Override
+    @NonCommitting
+    public final void create(@Nonnull Site site) throws SQLException {
+        try {
+            createTables(site);
+        } catch (@Nonnull AbortException exception) {
+            throw new SQLException(exception);
+        }
+    }
     
     @Locked
     @Override

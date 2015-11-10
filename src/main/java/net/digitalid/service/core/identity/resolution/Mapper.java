@@ -53,6 +53,10 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.converter.ColumnSQLConverter;
+import net.digitalid.utility.database.reference.GeneralColumnReference;
+import net.digitalid.utility.database.reference.ReferenceOption;
+import net.digitalid.utility.database.table.GeneralDatabaseTable;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
@@ -82,10 +86,9 @@ public final class Mapper {
     
     /* -------------------------------------------------- Reference -------------------------------------------------- */
     
-    /**
-     * Stores the data type used to store identities in the database.
-     */
-    public static final @Nonnull String FORMAT = "BIGINT";
+    public static final @Nonnull GeneralDatabaseTable IDENTITY_TABLE = GeneralDatabaseTable.get("general_identity");
+    
+    public static final @Nonnull ColumnSQLConverter<Identity, Object> IDENTITY_COLUMN;
     
     /**
      * Stores the foreign key constraint used to reference identities.
@@ -96,8 +99,7 @@ public final class Mapper {
      * merged! (If the column can only contain {@link Type types}, this is not necessary.)
      * Additionally, it might be a good idea to establish an index on the referencing column.
      */
-    public static final @Nonnull String REFERENCE = new String("REFERENCES general_identity (identity) ON DELETE RESTRICT ON UPDATE RESTRICT");
-    
+    public static final @Nonnull GeneralColumnReference REFERENCE = GeneralColumnReference.get(IDENTITY_TABLE, IDENTITY_COLUMN, ReferenceOption.RESTRICT, ReferenceOption.RESTRICT);
     
     /**
      * Stores the registered triplets of tables, columns and unique constraint that reference a person.
@@ -112,7 +114,7 @@ public final class Mapper {
      * @param uniques the names of all the columns in the same unique constraint or nothing.
      */
     public static void addReference(@Nonnull String table, @Nonnull String column, @Nonnull String... uniques) {
-        references.add(new FreezableTriplet<>(table, column, uniques).freeze());
+        references.add(FreezableTriplet.get(table, column, uniques).freeze());
     }
     
     /**
@@ -123,7 +125,7 @@ public final class Mapper {
      * @param uniques the names of all the columns in the same unique constraint or nothing.
      */
     public static void removeReference(@Nonnull String table, @Nonnull String column, @Nonnull String... uniques) {
-        references.remove(new FreezableTriplet<>(table, column, uniques).freeze());
+        references.remove(FreezableTriplet.get(table, column, uniques).freeze());
     }
     
     /**

@@ -24,21 +24,18 @@ import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.ColumnIndex;
-import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.ComposingSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.database.site.Site;
 
 /**
  * This class models the restrictions of an agent.
@@ -50,32 +47,34 @@ import net.digitalid.utility.database.site.Site;
 @Immutable
 public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL<Restrictions, NonHostEntity> {
     
+    /* -------------------------------------------------- Constants -------------------------------------------------- */
     
     /**
      * Stores the weakest restrictions (without a context and contact).
      */
-    public static final @Nonnull Restrictions MIN = new Restrictions(false, false, false);
+    public static final @Nonnull Restrictions MIN = Restrictions.get(false, false, false);
     
     /**
      * Stores the strongest restrictions (without a context and contact).
      */
-    public static final @Nonnull Restrictions MAX = new Restrictions(true, true, true);
+    public static final @Nonnull Restrictions MAX = Restrictions.get(true, true, true);
     
     /**
      * Stores the restrictions required to modify clients.
      */
-    public static final @Nonnull Restrictions CLIENT = new Restrictions(true, false, false);
+    public static final @Nonnull Restrictions CLIENT = Restrictions.get(true, false, false);
     
     /**
      * Stores the restrictions required to assume incoming roles.
      */
-    public static final @Nonnull Restrictions ROLE = new Restrictions(false, true, false);
+    public static final @Nonnull Restrictions ROLE = Restrictions.get(false, true, false);
     
     /**
      * Stores the restrictions required to write to contexts.
      */
-    public static final @Nonnull Restrictions WRITING = new Restrictions(false, false, true);
+    public static final @Nonnull Restrictions WRITING = Restrictions.get(false, false, true);
     
+    /* -------------------------------------------------- Client -------------------------------------------------- */
     
     /**
      * Stores whether the authorization is restricted to clients.
@@ -83,9 +82,49 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     private final boolean client;
     
     /**
+     * Returns whether the authorization is restricted to clients.
+     * 
+     * @return whether the authorization is restricted to clients.
+     */
+    @Pure
+    public boolean isClient() {
+        return client;
+    }
+    
+    /**
+     * Checks that the authorization is restricted to clients and throws a {@link PacketException} if not.
+     */
+    @Pure
+    public void checkIsClient() throws PacketException {
+        if (!isClient()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to clients.");
+    }
+    
+    /* -------------------------------------------------- Role -------------------------------------------------- */
+    
+    /**
      * Stores whether the authorization is restricted to agents that can assume incoming roles.
      */
     private final boolean role;
+    
+    /**
+     * Returns whether the authorization is restricted to agents that can assume incoming roles.
+     * 
+     * @return whether the authorization is restricted to agents that can assume incoming roles.
+     */
+    @Pure
+    public boolean isRole() {
+        return role;
+    }
+    
+    /**
+     * Checks that the authorization is restricted to agents that can assume incoming roles and throws a {@link PacketException} if not.
+     */
+    @Pure
+    public void checkIsRole() throws PacketException {
+        if (!isRole()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles.");
+    }
+    
+    /* -------------------------------------------------- Writing -------------------------------------------------- */
     
     /**
      * Stores whether the authorization is restricted to agents that can write to contexts.
@@ -93,50 +132,106 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     private final boolean writing;
     
     /**
+     * Returns whether the authorization is restricted to agents that can write to contexts.
+     * 
+     * @return whether the authorization is restricted to agents that can write to contexts.
+     */
+    @Pure
+    public boolean isWriting() {
+        return writing;
+    }
+    
+    /**
+     * Checks that the authorization is restricted to agents that can write to contexts and throws a {@link PacketException} if not.
+     */
+    @Pure
+    public void checkIsWriting() throws PacketException {
+        if (!isWriting()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can write to contexts.");
+    }
+    
+    /* -------------------------------------------------- Context -------------------------------------------------- */
+    
+    /**
      * Stores the context to which the authorization is restricted (or null).
      */
     private final @Nullable Context context;
+    
+    /**
+     * Returns the context to which the authorization is restricted (or null).
+     * 
+     * @return the context to which the authorization is restricted (or null).
+     */
+    @Pure
+    public @Nullable Context getContext() {
+        return context;
+    }
+    
+    /**
+     * Returns whether these restrictions cover the given context.
+     * 
+     * @param otherContext the context that needs to be covered.
+     * 
+     * @return whether these restrictions cover the given context.
+     */
+    @Pure
+    @NonCommitting
+    public boolean cover(@Nonnull Context otherContext) throws AbortException {
+        return context != null && context.isSupercontextOf(otherContext);
+    }
+    
+    /**
+     * Checks that these restrictions cover the given context and throws a {@link PacketException} if not.
+     * 
+     * @param otherContext the context that needs to be covered.
+     */
+    @Pure
+    @NonCommitting
+    public void checkCover(@Nonnull Context otherContext) throws AbortException, PacketException  {
+        if (!cover(otherContext)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context.");
+    }
+    
+    /* -------------------------------------------------- Contact -------------------------------------------------- */
     
     /**
      * Stores the contact to which the authorization is restricted (or null).
      */
     private final @Nullable Contact contact;
     
-    
     /**
-     * Creates new restrictions with the given arguments.
+     * Returns the contact to which the authorization is restricted (or null).
      * 
-     * @param client whether the authorization is restricted to clients.
-     * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can write to contexts.
+     * @return the contact to which the authorization is restricted (or null).
      */
-    public Restrictions(boolean client, boolean role, boolean writing) {
-        this(client, role, writing, null, null);
+    @Pure
+    public @Nullable Contact getContact() {
+        return contact;
     }
     
     /**
-     * Creates new restrictions with the given arguments.
+     * Returns whether these restrictions cover the given contact.
      * 
-     * @param client whether the authorization is restricted to clients.
-     * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can write to contexts.
-     * @param context the context to which the authorization is restricted (or null).
+     * @param otherContact the contact that needs to be covered.
+     * 
+     * @return whether these restrictions cover the given contact.
      */
-    public Restrictions(boolean client, boolean role, boolean writing, @Nullable Context context) {
-        this(client, role, writing, context, null);
+    @Pure
+    @NonCommitting
+    public boolean cover(@Nonnull Contact otherContact) throws AbortException {
+        return context != null && !context.contains(otherContact) || contact != null && !contact.equals(otherContact);
     }
     
     /**
-     * Creates new restrictions with the given arguments.
+     * Checks that these restrictions cover the given contact and throws a {@link PacketException} if not.
      * 
-     * @param client whether the authorization is restricted to clients.
-     * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can write to contexts.
-     * @param contact the contact to which the authorization is restricted (or null).
+     * @param otherContact the contact that needs to be covered.
      */
-    public Restrictions(boolean client, boolean role, boolean writing, @Nullable Contact contact) {
-        this(client, role, writing, null, contact);
+    @Pure
+    @NonCommitting
+    public void checkCover(@Nonnull Contact otherContact) throws AbortException, PacketException {
+        if (!cover(otherContact)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact.");
     }
+    
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates new restrictions with the given arguments.
@@ -159,147 +254,68 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         this.contact = contact;
     }
     
-    
     /**
-     * Returns whether the authorization is restricted to clients.
+     * Creates new restrictions with the given arguments.
      * 
-     * @return whether the authorization is restricted to clients.
-     */
-    @Pure
-    public boolean isClient() {
-        return client;
-    }
-    
-    /**
-     * Returns whether the authorization is restricted to agents that can assume incoming roles.
+     * @param client whether the authorization is restricted to clients.
+     * @param role whether the authorization is restricted to agents that can assume incoming roles.
+     * @param writing whether the authorization is restricted to agents that can write to contexts.
      * 
-     * @return whether the authorization is restricted to agents that can assume incoming roles.
+     * @return new restrictions with the given arguments.
      */
     @Pure
-    public boolean isRole() {
-        return role;
+    public static @Nonnull Restrictions get(boolean client, boolean role, boolean writing) {
+        return new Restrictions(client, role, writing, null, null);
     }
     
     /**
-     * Returns whether the authorization is restricted to agents that can write to contexts.
+     * Creates new restrictions with the given arguments.
      * 
-     * @return whether the authorization is restricted to agents that can write to contexts.
-     */
-    @Pure
-    public boolean isWriting() {
-        return writing;
-    }
-    
-    /**
-     * Returns the context to which the authorization is restricted (or null).
+     * @param client whether the authorization is restricted to clients.
+     * @param role whether the authorization is restricted to agents that can assume incoming roles.
+     * @param writing whether the authorization is restricted to agents that can write to contexts.
+     * @param context the context to which the authorization is restricted (or null).
      * 
-     * @return the context to which the authorization is restricted (or null).
+     * @return new restrictions with the given arguments.
      */
     @Pure
-    public @Nullable Context getContext() {
-        return context;
+    public static @Nonnull Restrictions get(boolean client, boolean role, boolean writing, @Nullable Context context) {
+        return new Restrictions(client, role, writing, context, null);
     }
     
     /**
-     * Returns the contact to which the authorization is restricted (or null).
+     * Creates new restrictions with the given arguments.
      * 
-     * @return the contact to which the authorization is restricted (or null).
-     */
-    @Pure
-    public @Nullable Contact getContact() {
-        return contact;
-    }
-    
-    
-    /**
-     * Checks that the authorization is restricted to clients and throws a {@link PacketException} if not.
-     */
-    @Pure
-    public void checkIsClient() throws PacketException {
-        if (!isClient()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to clients.");
-    }
-    
-    /**
-     * Checks that the authorization is restricted to agents that can assume incoming roles and throws a {@link PacketException} if not.
-     */
-    @Pure
-    public void checkIsRole() throws PacketException {
-        if (!isRole()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles.");
-    }
-    
-    /**
-     * Checks that the authorization is restricted to agents that can write to contexts and throws a {@link PacketException} if not.
-     */
-    @Pure
-    public void checkIsWriting() throws PacketException {
-        if (!isWriting()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can write to contexts.");
-    }
-    
-    
-    /**
-     * Returns whether these restrictions cover the given context.
+     * @param client whether the authorization is restricted to clients.
+     * @param role whether the authorization is restricted to agents that can assume incoming roles.
+     * @param writing whether the authorization is restricted to agents that can write to contexts.
+     * @param contact the contact to which the authorization is restricted (or null).
      * 
-     * @param other the context that needs to be covered.
-     * 
-     * @return whether these restrictions cover the given context.
+     * @return new restrictions with the given arguments.
      */
     @Pure
-    @NonCommitting
-    public boolean cover(@Nonnull Context other) throws AbortException {
-        return context != null && context.isSupercontextOf(other);
+    public static @Nonnull Restrictions get(boolean client, boolean role, boolean writing, @Nullable Contact contact) {
+        return new Restrictions(client, role, writing, null, contact);
     }
     
-    /**
-     * Checks that these restrictions cover the given context and throws a {@link PacketException} if not.
-     * 
-     * @param other the context that needs to be covered.
-     */
-    @Pure
-    @NonCommitting
-    public void checkCover(@Nonnull Context other) throws PacketException, SQLException {
-        if (!cover(other)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context.");
-    }
-    
-    /**
-     * Returns whether these restrictions cover the given contact.
-     * 
-     * @param other the contact that needs to be covered.
-     * 
-     * @return whether these restrictions cover the given contact.
-     */
-    @Pure
-    @NonCommitting
-    public boolean cover(@Nonnull Contact other) throws AbortException {
-        return context != null && !context.contains(other) || contact != null && !contact.equals(other);
-    }
-    
-    /**
-     * Checks that these restrictions cover the given contact and throws a {@link PacketException} if not.
-     * 
-     * @param other the contact that needs to be covered.
-     */
-    @Pure
-    @NonCommitting
-    public void checkCover(@Nonnull Contact other) throws PacketException, SQLException {
-        if (!cover(other)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact.");
-    }
+    /* -------------------------------------------------- Coverage -------------------------------------------------- */
     
     /**
      * Returns whether these restrictions cover the given restrictions.
      * 
-     * @param other the restrictions that need to be covered.
+     * @param restrictions the restrictions that need to be covered.
      * 
      * @return whether these restrictions cover the given restrictions.
      */
     @Pure
     @NonCommitting
-    public boolean cover(@Nonnull Restrictions other) throws AbortException {
-        if (other.client && !client) return false;
-        if (other.role && !role) return false;
-        if (other.writing && !writing) return false;
-        final @Nullable Context context = other.context;
+    public boolean cover(@Nonnull Restrictions restrictions) throws AbortException {
+        if (restrictions.client && !client) return false;
+        if (restrictions.role && !role) return false;
+        if (restrictions.writing && !writing) return false;
+        final @Nullable Context context = restrictions.context;
         if (context != null && !cover(context)) return false;
-        final @Nullable Contact contact = other.contact;
+        final @Nullable Contact contact = restrictions.contact;
         return contact == null || cover(contact);
     }
     
@@ -310,10 +326,11 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     @NonCommitting
-    public void checkCover(@Nonnull Restrictions restrictions) throws PacketException, SQLException {
+    public void checkCover(@Nonnull Restrictions restrictions) throws AbortException, PacketException {
         if (!cover(restrictions)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions.");
     }
     
+    /* -------------------------------------------------- Matching -------------------------------------------------- */
     
     /**
      * Returns whether these restrictions match the given agent.
@@ -342,6 +359,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         return this;
     }
     
+    /* -------------------------------------------------- Restrictions -------------------------------------------------- */
     
     /**
      * Returns these restrictions restricted by the given restrictions (except the context and contact, which are left unaffected).
@@ -378,14 +396,10 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         return hash;
     }
     
-    /**
-     * Returns this context as a formatted string.
-     * 
-     * @return this context as a formatted string.
-     */
     @Pure
-    public @Nonnull String toFormattedString() {
-        return "(Client: " + client + ", Role: " + role + ", Writing: " + writing + ", Context: " + context + ", Contact: " + contact + ")";
+    @Override
+    public @Nonnull String toString() {
+        return "Restrictions (Client: " + client + ", Role: " + role + ", Writing: " + writing + ", Context: " + context + ", Contact: " + contact + ")";
     }
     
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
@@ -496,54 +510,51 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         /**
          * Stores the SQL converter for the writing field.
          */
-        private final @Nonnull AbstractSQLConverter<Boolean, Object> contextWritingSQLConverter;
+        private final @Nonnull AbstractSQLConverter<Boolean, Object> writingSQLConverter;
         
         /**
-         * Creates a new SQL converter.
+         * Creates a new SQL converter with the given converters.
+         * 
+         * @param clientSQLConverter the SQL converter for the client field.
+         * @param roleSQLConverter the SQL converter for the role field.
+         * @param writingSQLConverter the SQL converter for the writing field.
          */
-        private SQLConverter(@Nonnull AbstractSQLConverter<Boolean, Object> clientSQLConverter, @Nonnull AbstractSQLConverter<Boolean, Object> roleSQLConverter, @Nonnull AbstractSQLConverter<Boolean, Object> contextWritingSQLConverter) {
-            super(clientSQLConverter, roleSQLConverter, contextWritingSQLConverter, Context.SQL_CONVERTER, Contact.SQL_CONVERTER);
+        private SQLConverter(@Nonnull AbstractSQLConverter<Boolean, Object> clientSQLConverter, @Nonnull AbstractSQLConverter<Boolean, Object> roleSQLConverter, @Nonnull AbstractSQLConverter<Boolean, Object> writingSQLConverter) {
+            super(FreezablePair.get(clientSQLConverter, false).freeze(), FreezablePair.get(roleSQLConverter, false).freeze(), FreezablePair.get(writingSQLConverter, false).freeze(), FreezablePair.get(Context.SQL_CONVERTER, true).freeze(), FreezablePair.get(Contact.SQL_CONVERTER, true).freeze());
+            
             this.clientSQLConverter = clientSQLConverter;
             this.roleSQLConverter = roleSQLConverter;
-            this.contextWritingSQLConverter = contextWritingSQLConverter;
+            this.writingSQLConverter = writingSQLConverter;
         }
         
         @Pure
         @Override
-        public void getValues(@Nonnull final Restrictions restrictions, @NonCapturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex columnIndex) {
-            clientSQLConverter.getValues(restrictions.client, values, columnIndex);
-            roleSQLConverter.getValues(restrictions.role, values, columnIndex);
-            contextWritingSQLConverter.getValues(restrictions.writing, values, columnIndex);
-            Context.SQL_CONVERTER.getValuesOrNulls(restrictions.context, values, columnIndex);
-            Contact.SQL_CONVERTER.getValuesOrNulls(restrictions.contact, values, columnIndex);
+        public void getValues(@Nonnull Restrictions restrictions, @NonCapturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex index) {
+            clientSQLConverter.getValues(restrictions.client, values, index);
+            roleSQLConverter.getValues(restrictions.role, values, index);
+            writingSQLConverter.getValues(restrictions.writing, values, index);
+            Context.SQL_CONVERTER.getValuesOrNulls(restrictions.context, values, index);
+            Contact.SQL_CONVERTER.getValuesOrNulls(restrictions.contact, values, index);
         }
         
         @Override
         @NonCommitting
-        @SuppressWarnings("AssignmentToMethodParameter")
-        public void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, ColumnIndex parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
             clientSQLConverter.storeNonNullable(restrictions.client, preparedStatement, parameterIndex);
             roleSQLConverter.storeNonNullable(restrictions.role, preparedStatement, parameterIndex);
-            contextWritingSQLConverter.storeNonNullable(restrictions.writing, preparedStatement, parameterIndex);
-            
+            writingSQLConverter.storeNonNullable(restrictions.writing, preparedStatement, parameterIndex);
             Context.SQL_CONVERTER.storeNullable(restrictions.context, preparedStatement, parameterIndex);
-            parameterIndex += Context.SQL_CONVERTER.getNumberOfColumns();
             Contact.SQL_CONVERTER.storeNullable(restrictions.contact, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        @SuppressWarnings("AssignmentToMethodParameter")
-        public @Nullable Restrictions restoreNullable(final @Nonnull NonHostEntity entity, final @Nonnull ResultSet resultSet, ColumnIndex columnIndex) throws SQLException {
+        public @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull ColumnIndex columnIndex) throws SQLException {
             final @Nullable Boolean client = clientSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
-            // TODO: replace with self-advancing column index.
             final @Nullable Boolean role = roleSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
-            final @Nullable Boolean writing = contextWritingSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
-            
+            final @Nullable Boolean writing = writingSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
             final @Nullable Context context = Context.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
-            columnIndex += Context.SQL_CONVERTER.getNumberOfColumns();
-            
             final @Nullable Contact contact = Contact.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
             
             if (client == null && role == null && writing == null && context == null && contact == null) { return null; }
@@ -563,91 +574,6 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     @Override
     public @Nonnull SQLConverter getSQLConverter() {
         return SQL_CONVERTER;
-    }
-    
-    
-    /**
-     * Stores the columns used to store instances of this class in the database.
-     */
-    public static final @Nonnull String FORMAT = "client BOOLEAN NOT NULL, role BOOLEAN NOT NULL, context_writing BOOLEAN NOT NULL, context " + Context.FORMAT + ", contact " + Mapper.FORMAT;
-    
-    /**
-     * Stores the columns used to retrieve instances of this class from the database.
-     */
-    public static final @Nonnull String COLUMNS = "client, role, context_writing, context, contact";
-    
-    /**
-     * Returns the foreign key constraints used by instances of this class.
-     * 
-     * @param site the site at which the foreign key constraint is declared.
-     * 
-     * @return the foreign key constraints used by instances of this class.
-     */
-    @NonCommitting
-    public static @Nonnull String getForeignKeys(@Nonnull Site site) throws AbortException {
-        return "FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + site.getEntityReference();
-    }
-    
-    /**
-     * Returns the given columns of the result set as an instance of this class.
-     * 
-     * @param entity the entity to which the restrictions belong.
-     * @param resultSet the result set to retrieve the data from.
-     * @param startIndex the start index of the columns containing the data.
-     * 
-     * @return the given columns of the result set as an instance of this class.
-     */
-    @Pure
-    @NonCommitting
-    public static @Nonnull Restrictions get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int startIndex) throws AbortException {
-        final boolean client = resultSet.getBoolean(startIndex + 0);
-        final boolean role = resultSet.getBoolean(startIndex + 1);
-        final boolean writing = resultSet.getBoolean(startIndex + 2);
-        final @Nullable Context context = Context.get(entity, resultSet, startIndex + 3);
-        final @Nullable Contact contact = Contact.get(entity, resultSet, startIndex + 4);
-        return new Restrictions(client, role, writing, context, contact);
-     }
-    
-    /**
-     * Sets the parameters at the given start index of the prepared statement to this object.
-     * 
-     * @param preparedStatement the prepared statement whose parameters are to be set.
-     * @param startIndex the start index of the parameters to set.
-     */
-    @Override
-    @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws AbortException {
-        preparedStatement.setBoolean(startIndex + 0, client);
-        preparedStatement.setBoolean(startIndex + 1, role);
-        preparedStatement.setBoolean(startIndex + 2, writing);
-        Context.set(context, preparedStatement, startIndex + 3);
-        Contact.set(contact, preparedStatement, startIndex + 4);
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull String toString() {
-        return Database.toBoolean(client) + ", " + Database.toBoolean(role) + ", " + Database.toBoolean(writing) + ", " + context + ", " + contact;
-    }
-    
-    /**
-     * Returns these restrictions as update values.
-     * 
-     * @return these restrictions as update values.
-     */
-    @Pure
-    public @Nonnull String toUpdateValues() {
-        return "client = " + Database.toBoolean(client) + ", role = " + Database.toBoolean(role) + ", context_writing = " + Database.toBoolean(writing) + ", context = " + context + ", contact = " + contact;
-    }
-    
-    /**
-     * Returns these restrictions as update condition.
-     * 
-     * @return these restrictions as update condition.
-     */
-    @Pure
-    public @Nonnull String toUpdateCondition() {
-        return "client = " + Database.toBoolean(client) + " AND role = " + Database.toBoolean(role) + " AND context_writing = " + Database.toBoolean(writing) + " AND context " + (context == null ? "IS NULL" : "= " + context) + " AND contact " + (contact == null ? "IS NULL" : "= " + contact);
     }
     
 }

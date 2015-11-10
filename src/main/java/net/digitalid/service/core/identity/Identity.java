@@ -333,7 +333,9 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter("identity")); // TODO: Add GeneralReference.get("REFERENCES general_identity (identity) ON DELETE RESTRICT ON UPDATE RESTRICT")
+    public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter("identity", Mapper.REFERENCE));
+    
+    // TODO: Introduce doAfterCreation([pass the other columns of the primary key?]) and doBeforeDeletion() methods in the AbstractSQLConverter, which can be used for Mapper.addReference and Mapper.removeReference and to create an index on the column in case of identities. (Update: Now just make use of this possibility.)
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

@@ -232,7 +232,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         protected @Nonnull Boolean unwrap(@Nonnull BooleanWrapper wrapper) {
             return wrapper.value;
         }
-
+        
     }
     
     /**
