@@ -35,7 +35,7 @@ public class ChainingXDFConverter<O, E, K> extends AbstractXDFConverter<O, E> {
     /**
      * Stores the XDF converter used to encode and decode the object's key.
      */
-    private final @Nonnull AbstractXDFConverter<K, E> XDFConverter;
+    private final @Nonnull AbstractXDFConverter<K, ? super E> XDFConverter;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -48,7 +48,7 @@ public class ChainingXDFConverter<O, E, K> extends AbstractXDFConverter<O, E> {
      * 
      * @require type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
      */
-    protected ChainingXDFConverter(@Nonnull SemanticType type, @Nonnull AbstractKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractXDFConverter<K, E> XDFConverter) {
+    protected ChainingXDFConverter(@Nonnull SemanticType type, @Nonnull AbstractKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractXDFConverter<K, ? super E> XDFConverter) {
         super(type);
         
         assert type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
@@ -66,7 +66,7 @@ public class ChainingXDFConverter<O, E, K> extends AbstractXDFConverter<O, E> {
      * @return a new chaining XDF converter with the given parameters.
      */
     @Pure
-    public static @Nonnull <O, E, K> ChainingXDFConverter<O, E, K> get(@Nonnull AbstractKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractXDFConverter<K, E> XDFConverter) {
+    public static @Nonnull <O, E, K> ChainingXDFConverter<O, E, K> get(@Nonnull AbstractKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractXDFConverter<K, ? super E> XDFConverter) {
         return new ChainingXDFConverter<>(XDFConverter.getType(), keyConverter, XDFConverter);
     }
     

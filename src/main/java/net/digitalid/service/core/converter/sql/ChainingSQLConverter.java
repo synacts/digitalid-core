@@ -7,14 +7,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.ColumnIndex;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.ComposingSQLConverter;
 
 /**
  * This class implements an SQL converter that is based on another SQL converter.
@@ -23,10 +25,11 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
  * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * @param <K> the type of the objects that the other converter stores and restores (usually as a key for the objects of this converter).
+ * 
+ * @see XDFBasedSQLConverter
  */
-// TODO: probably will inherit from ComposingSQLConverter.
 @Immutable
-public final class ChainingSQLConverter<O, E, K> extends AbstractSQLConverter<O, E> {
+public class ChainingSQLConverter<O, E, K> extends ComposingSQLConverter<O, E> {
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
@@ -38,7 +41,7 @@ public final class ChainingSQLConverter<O, E, K> extends AbstractSQLConverter<O,
     /**
      * Stores the SQL converter used to store and restore the object's key.
      */
-    private final @Nonnull AbstractSQLConverter<K, E> SQLConverter;
+    private final @Nonnull AbstractSQLConverter<K, ? super E> SQLConverter;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -48,8 +51,8 @@ public final class ChainingSQLConverter<O, E, K> extends AbstractSQLConverter<O,
      * @param keyConverter the key converter used to convert and recover the object.
      * @param SQLConverter the SQL converter used to store and restore the object's key.
      */
-    private ChainingSQLConverter(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractSQLConverter<K, E> SQLConverter) {
-        super(SQLConverter.getColumns());
+    private ChainingSQLConverter(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractSQLConverter<K, ? super E> SQLConverter) {
+        super(FreezablePair.get(SQLConverter, false).freeze());
         
         this.keyConverter = keyConverter;
         this.SQLConverter = SQLConverter;
@@ -64,28 +67,31 @@ public final class ChainingSQLConverter<O, E, K> extends AbstractSQLConverter<O,
      * @return a new chaining SQL converter with the given converters.
      */
     @Pure
-    public static @Nonnull <O, E, K> ChainingSQLConverter<O, E, K> get(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractSQLConverter<K, E> SQLConverter) {
+    public static @Nonnull <O, E, K> ChainingSQLConverter<O, E, K> get(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractSQLConverter<K, ? super E> SQLConverter) {
         return new ChainingSQLConverter<>(keyConverter, SQLConverter);
     }
     
-    /* -------------------------------------------------- Methods -------------------------------------------------- */
+    /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */
     
-    @Pure
     @Override
-    public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object) {
-        return SQLConverter.getValues(keyConverter.convert(object));
+    public final void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex index) {
+        SQLConverter.getValues(keyConverter.convert(object), values, index);
     }
+    
+    /* -------------------------------------------------- Storing (with PreparedStatement) -------------------------------------------------- */
     
     @Override
     @NonCommitting
-    public final void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public final void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
         SQLConverter.storeNonNullable(keyConverter.convert(object), preparedStatement, parameterIndex);
     }
     
+    /* -------------------------------------------------- Restoring -------------------------------------------------- */
+    
     @Pure
     @Override
     @NonCommitting
-    public final @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public final @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull ColumnIndex columnIndex) throws SQLException {
         final @Nullable K key = SQLConverter.restoreNullable(external, resultSet, columnIndex);
         if (key == null) { return null; }
         try {

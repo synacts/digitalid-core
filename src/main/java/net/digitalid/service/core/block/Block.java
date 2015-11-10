@@ -18,11 +18,11 @@ import net.digitalid.service.core.block.annotations.NonEncoded;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.annotations.NonEncodingRecipient;
 import net.digitalid.service.core.block.wrappers.Wrapper;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.NonNegative;
@@ -31,15 +31,12 @@ import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.reference.Captured;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.annotations.index.ValidIndex;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.database.column.Column;
+import net.digitalid.utility.database.column.ColumnIndex;
 import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.ColumnSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
@@ -737,39 +734,34 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * The SQL converter for this class.
      */
     @Immutable
-    public static class SQLConverter extends AbstractSQLConverter<Block, SemanticType> {
-        
-        /**
-         * Stores the column for blocks.
-         */
-        private static final @Nonnull Column COLUMN = Column.get("block", SQLType.BLOB);
+    public static final class SQLConverter extends ColumnSQLConverter<Block, SemanticType> {
         
         /**
          * Creates a new SQL converter.
          */
         private SQLConverter() {
-            super(COLUMN);
+            super("block", SQLType.BLOB, null);
         }
         
         @Pure
         @Override
-        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Block block) {
-            return FreezableArray.getNonNullable(block.toString());
+        protected @Nonnull String getValue(@Nonnull Block block) {
+            return block.toString();
         }
         
         @Override
-        public void storeNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
             if (Database.getConfiguration().supportsBinaryStream()) {
-                preparedStatement.setBinaryStream(parameterIndex, block.getInputStream(), block.getLength());
+                preparedStatement.setBinaryStream(parameterIndex.getAndIncrementValue(), block.getInputStream(), block.getLength());
             } else {
-                preparedStatement.setBytes(parameterIndex, block.getBytes());
+                preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), block.getBytes());
             }
         }
         
         @Pure
         @Override
-        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-            final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
+        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, @Nonnull ColumnIndex columnIndex) throws SQLException {
+            final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
             return resultSet.wasNull() ? null : Block.get(type, bytes);
         }
         

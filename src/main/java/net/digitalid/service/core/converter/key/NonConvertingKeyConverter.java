@@ -32,7 +32,7 @@ public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKey
         return new NonConvertingKeyConverter<>();
     }
     
-    /* -------------------------------------------------- Methods -------------------------------------------------- */
+    /* -------------------------------------------------- Conversions -------------------------------------------------- */
     
     @Pure
     @Override
@@ -42,8 +42,8 @@ public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKey
     
     @Pure
     @Override
-    public @Nonnull O recover(@Nonnull Object none, @Nonnull O key) {
-        return key;
+    public @Nonnull O recover(@Nonnull Object none, @Nonnull O object) {
+        return object;
     }
     
 }

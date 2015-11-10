@@ -31,7 +31,7 @@ public class ChainingNonRequestingXDFConverter<O, E, K> extends AbstractNonReque
     /**
      * Stores the XDF converter used to encode and decode the object's key.
      */
-    private final @Nonnull AbstractNonRequestingXDFConverter<K, E> XDFConverter;
+    private final @Nonnull AbstractNonRequestingXDFConverter<K, ? super E> XDFConverter;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -44,7 +44,7 @@ public class ChainingNonRequestingXDFConverter<O, E, K> extends AbstractNonReque
      * 
      * @require type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
      */
-    protected ChainingNonRequestingXDFConverter(@Nonnull SemanticType type, @Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractNonRequestingXDFConverter<K, E> XDFConverter) {
+    protected ChainingNonRequestingXDFConverter(@Nonnull SemanticType type, @Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractNonRequestingXDFConverter<K, ? super E> XDFConverter) {
         super(type);
         
         assert type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
@@ -62,7 +62,7 @@ public class ChainingNonRequestingXDFConverter<O, E, K> extends AbstractNonReque
      * @return a new chaining XDF converter with the given parameters.
      */
     @Pure
-    public static @Nonnull <O, E, K> ChainingNonRequestingXDFConverter<O, E, K> get(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractNonRequestingXDFConverter<K, E> XDFConverter) {
+    public static @Nonnull <O, E, K> ChainingNonRequestingXDFConverter<O, E, K> get(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractNonRequestingXDFConverter<K, ? super E> XDFConverter) {
         return new ChainingNonRequestingXDFConverter<>(XDFConverter.getType(), keyConverter, XDFConverter);
     }
     

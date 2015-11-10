@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.converter.key.BlockKeyConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.abort.AbortException;
@@ -19,10 +20,7 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.Column;
-import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.ConvertToSQL;
 
 /**
@@ -33,21 +31,7 @@ import net.digitalid.utility.database.converter.ConvertToSQL;
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  */
 @Immutable
-public final class XDFBasedSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
-    
-    /* -------------------------------------------------- Column -------------------------------------------------- */
-    
-    /**
-     * Stores the column of this SQL converter.
-     */
-    private static final @Nonnull Column COLUMN = Column.get("block", SQLType.BLOB);
-    
-    /* -------------------------------------------------- Field -------------------------------------------------- */
-    
-    /**
-     * Stores the XDF converter used to encode and decode the block.
-     */
-    private final @Nonnull AbstractXDFConverter<O, E> XDFConverter;
+public final class XDFBasedSQLConverter<O, E> extends ChainingSQLConverter<O, E, Block> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -57,9 +41,7 @@ public final class XDFBasedSQLConverter<O, E> extends AbstractSQLConverter<O, E>
      * @param XDFConverter the XDF converter used to encode and decode the block.
      */
     private XDFBasedSQLConverter(@Nonnull AbstractXDFConverter<O, E> XDFConverter) {
-        super(COLUMN);
-        
-        this.XDFConverter = XDFConverter;
+        super(BlockKeyConverter.get(XDFConverter), Block.SQL_CONVERTER);
     }
     
     /**
@@ -88,7 +70,7 @@ public final class XDFBasedSQLConverter<O, E> extends AbstractSQLConverter<O, E>
         ConvertToSQL.nonNullable(XDFConverter.encodeNonNullable(object), preparedStatement, parameterIndex);
     }
     
-    /* -------------------------------------------------- Retrieving -------------------------------------------------- */
+    /* -------------------------------------------------- Restoring -------------------------------------------------- */
     
     @Pure
     @Override
