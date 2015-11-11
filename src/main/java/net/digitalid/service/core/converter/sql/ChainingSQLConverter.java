@@ -28,12 +28,12 @@ import net.digitalid.utility.database.converter.ComposingSQLConverter;
  * @param <D> the type of the external object that is needed to recover the key, which is quite often an {@link Entity}.
  *            In case no external information is needed for the recovery of the key, declare it as an {@link Object}.
  * 
- * @see XDFBasedSQLConverter
+ * @see XDFConverterBasedSQLConverter
  */
 @Immutable
 public class ChainingSQLConverter<O, E, K, D> extends ComposingSQLConverter<O, E> {
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
      * Stores the key converter used to convert and recover the object.
@@ -41,9 +41,31 @@ public class ChainingSQLConverter<O, E, K, D> extends ComposingSQLConverter<O, E
     private final @Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K, D> keyConverter;
     
     /**
+     * Returns the key converter used to convert and recover the object.
+     * 
+     * @return the key converter used to convert and recover the object.
+     */
+    @Pure
+    public final @Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K, D> getKeyConverter() {
+        return keyConverter;
+    }
+    
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
      * Stores the SQL converter used to store and restore the object's key.
      */
     private final @Nonnull AbstractSQLConverter<K, ? super D> SQLConverter;
+    
+    /**
+     * Returns the SQL converter used to store and restore the object's key.
+     * 
+     * @return the SQL converter used to store and restore the object's key.
+     */
+    @Pure
+    public final @Nonnull AbstractSQLConverter<K, ? super D> getSQLConverter() {
+        return SQLConverter;
+    }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

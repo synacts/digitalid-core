@@ -23,6 +23,7 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
+import net.digitalid.utility.database.reference.ColumnReference;
 
 /**
  * This class wraps a {@code long} for encoding and decoding a block of the syntactic type {@code int64@core.digitalid.net}.
@@ -260,8 +261,8 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<Long, Int64Wrapper> getValueSQLConverter(@Nonnull @Validated String columnName) {
-        return new ValueSQLConverter<>(FACTORY, new SQLConverter(columnName));
+    public static @Nonnull ValueSQLConverter<Long, Int64Wrapper> getValueSQLConverter(@Nonnull @Validated String columnName, @Nullable ColumnReference columnReference) {
+        return new ValueSQLConverter<>(FACTORY, new SQLConverter(columnName)); // TODO: Pass on the column reference!
     }
     
     /**
@@ -274,7 +275,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      */
     @Pure
     public static @Nonnull Converters<Long, Object> getValueConverters(@Nonnull @BasedOn("int64@core.digitalid.net") SemanticType type, @Nonnull @Validated String columnName) {
-        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(columnName));
+        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(columnName, null));
     }
     
 }

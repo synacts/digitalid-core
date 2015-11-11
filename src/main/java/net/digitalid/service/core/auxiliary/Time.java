@@ -30,67 +30,67 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the time of a decade (10 tropical years).
      */
-    public static final @Nonnull Time DECADE = new Time(315569251900l);
+    public static final @Nonnull Time DECADE = new Time(315_569_251_900l);
     
     /**
      * Stores the time of two years (2 tropical years).
      */
-    public static final @Nonnull Time TWO_YEARS = new Time(63113850380l);
+    public static final @Nonnull Time TWO_YEARS = new Time(63_113_850_380l);
     
     /**
      * Stores the time of a tropical year (default).
      */
-    public static final @Nonnull Time TROPICAL_YEAR = new Time(31556925190l);
+    public static final @Nonnull Time TROPICAL_YEAR = new Time(31_556_925_190l);
     
     /**
      * Stores the time of a calendar year (365 days).
      */
-    public static final @Nonnull Time CALENDAR_YEAR = new Time(31536000000l);
+    public static final @Nonnull Time CALENDAR_YEAR = new Time(31_536_000_000l);
     
     /**
      * Stores the time of a month (30 days).
      */
-    public static final @Nonnull Time MONTH = new Time(2592000000l);
+    public static final @Nonnull Time MONTH = new Time(2_592_000_000l);
     
     /**
      * Stores the time of a week (7 days).
      */
-    public static final @Nonnull Time WEEK = new Time(604800000l);
+    public static final @Nonnull Time WEEK = new Time(604_800_000l);
     
     /**
      * Stores the time of a day (24 hours).
      */
-    public static final @Nonnull Time DAY = new Time(86400000l);
+    public static final @Nonnull Time DAY = new Time(86_400_000l);
     
     /**
      * Stores the time of a half-day (12 hours).
      */
-    public static final @Nonnull Time HALF_DAY = new Time(43200000l);
+    public static final @Nonnull Time HALF_DAY = new Time(43_200_000l);
     
     /**
      * Stores the time of an hour (60 minutes).
      */
-    public static final @Nonnull Time HOUR = new Time(3600000l);
+    public static final @Nonnull Time HOUR = new Time(3_600_000l);
     
     /**
      * Stores the time of a half-hour (30 minutes).
      */
-    public static final @Nonnull Time HALF_HOUR = new Time(1800000l);
+    public static final @Nonnull Time HALF_HOUR = new Time(1_800_000l);
     
     /**
      * Stores the time of a quarter-hour (15 minutes).
      */
-    public static final @Nonnull Time QUARTER_HOUR = new Time(900000l);
+    public static final @Nonnull Time QUARTER_HOUR = new Time(900_000l);
     
     /**
      * Stores the time of a minute (60 seconds).
      */
-    public static final @Nonnull Time MINUTE = new Time(60000l);
+    public static final @Nonnull Time MINUTE = new Time(60_000l);
     
     /**
      * Stores the time of a second (1000 milliseconds).
      */
-    public static final @Nonnull Time SECOND = new Time(1000l);
+    public static final @Nonnull Time SECOND = new Time(1_000l);
     
     /* -------------------------------------------------- Boundaries -------------------------------------------------- */
     
@@ -598,7 +598,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Time, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int64Wrapper.getValueSQLConverter("time"));
+    public static final @Nonnull AbstractSQLConverter<Time, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int64Wrapper.getValueSQLConverter("time", null));
     
     @Pure
     @Override

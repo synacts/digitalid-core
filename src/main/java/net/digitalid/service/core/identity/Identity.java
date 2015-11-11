@@ -21,9 +21,15 @@ import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.tuples.ReadOnlyPair;
+import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.table.DatabaseTable;
 
 /**
  * This interface models a digital identity.
@@ -331,11 +337,54 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * The SQL converter for this class.
+     */
+    @Immutable
+    public static final class SQLConverter<I extends Identity> extends ChainingSQLConverter<I, Object, Long, Object> {
+        
+        /**
+         * Stores whether the stored identities can be merged.
+         */
+        private final boolean mergeable;
+        
+        /**
+         * Creates a new column SQL converter with the given parameters.
+         * 
+         * @param name the name of the column of the new SQL converter.
+         * @param mergeable whether the stored identities can be merged.
+         */
+        SQLConverter(@Nonnull LongConverter<I> longConverter, @Nonnull @Validated String name, boolean mergeable) {
+            super(longConverter, Int64Wrapper.getValueSQLConverter(name, Mapper.REFERENCE));
+            
+            this.mergeable = mergeable;
+        }
+        
+        @Locked
+        @Override
+        @SafeVarargs
+        @NonCommitting
+        public final void executeAfterCreation(@Nonnull DatabaseTable table, @Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
+            if (mergeable) {
+                Mapper.addReference(table.getName(null), null, uniques);
+            }
+        }
+        
+        @Locked
+        @Override
+        @SafeVarargs
+        @NonCommitting
+        public final void executeBeforeDeletion(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
+            if (mergeable) {
+                
+            }
+        }
+        
+    }
+    
+    /**
      * Stores the SQL converter of this class.
      */
     public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter("identity", Mapper.REFERENCE));
-    
-    // TODO: Introduce doAfterCreation([pass the other columns of the primary key?]) and doBeforeDeletion() methods in the AbstractSQLConverter, which can be used for Mapper.addReference and Mapper.removeReference and to create an index on the column in case of identities. (Update: Now just make use of this possibility.)
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

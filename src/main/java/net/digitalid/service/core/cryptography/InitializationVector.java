@@ -85,7 +85,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /**
      * Stores the key converter of this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<InitializationVector, Object, byte[]> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<InitializationVector, Object, byte[]>() {
+    private static final @Nonnull AbstractNonRequestingKeyConverter<InitializationVector, Object, byte[], Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<InitializationVector, Object, byte[], Object>() {
         
         @Pure
         @Override
