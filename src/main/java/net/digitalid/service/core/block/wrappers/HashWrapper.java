@@ -147,7 +147,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      * 
      * @return the value contained in the given block.
      * 
-     * @ensure return == null ||  return.bitLength() <= Parameters.HASH : "The returned value is either null or its length is at most Parameters.HASH.";
+     * @ensure return == null || return.bitLength() <= Parameters.HASH : "The returned value is either null or its length is at most Parameters.HASH.";
      */
     @Pure
     public static @Nullable @NonNegative BigInteger decodeNullable(@Nullable @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException {

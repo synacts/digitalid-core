@@ -9,11 +9,12 @@ import net.digitalid.utility.annotations.state.Stateless;
  * This class implements a key converter that uses the object itself as its key.
  * 
  * @param <O> the type of the objects that this converter can convert and recover.
+ * @param <E> the type of the external object that is needed to recover an object.
  * 
  * @see SubtypingXDFConverter
  */
 @Stateless
-public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKeyConverter<O, Object, O> {
+public final class NonConvertingKeyConverter<O, E> extends AbstractNonRequestingKeyConverter<O, E, O, E> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -28,11 +29,17 @@ public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKey
      * @return a new non-converting key converter.
      */
     @Pure
-    public static @Nonnull <O> NonConvertingKeyConverter<O> get() {
+    public static @Nonnull <O, E> NonConvertingKeyConverter<O, E> get() {
         return new NonConvertingKeyConverter<>();
     }
     
     /* -------------------------------------------------- Conversions -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull E decompose(@Nonnull E external) {
+        return external;
+    }
     
     @Pure
     @Override
@@ -42,7 +49,7 @@ public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKey
     
     @Pure
     @Override
-    public @Nonnull O recover(@Nonnull Object none, @Nonnull O object) {
+    public @Nonnull O recover(@Nonnull E external, @Nonnull O object) {
         return object;
     }
     

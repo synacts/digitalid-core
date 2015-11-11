@@ -8,7 +8,7 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
-import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
+import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
@@ -122,7 +122,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         @Pure
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull GroupWithKnownOrder group) {
-            final @Nonnull FreezableArray<Block> elements =  FreezableArray.get(2);
+            final @Nonnull FreezableArray<Block> elements = FreezableArray.get(2);
             elements.set(0, IntegerWrapper.encodeNonNullable(MODULUS, group.getModulus()));
             elements.set(1, IntegerWrapper.encodeNonNullable(ORDER, group.getOrder()));
             return TupleWrapper.encode(TYPE, elements.freeze());
@@ -162,7 +162,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<GroupWithKnownOrder, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<GroupWithKnownOrder, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
     
     @Pure
     @Override

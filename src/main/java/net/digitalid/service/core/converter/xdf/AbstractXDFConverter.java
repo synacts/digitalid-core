@@ -152,8 +152,8 @@ public abstract class AbstractXDFConverter<O, E> {
     @Locked
     @NonCommitting
     public @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        if (block != null) return decodeNonNullable(external, block);
-        else return null;
+        if (block != null) { return decodeNonNullable(external, block); }
+        else { return null; }
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */

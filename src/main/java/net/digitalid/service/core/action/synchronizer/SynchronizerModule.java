@@ -16,8 +16,6 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.concepts.error.ErrorModule;
-import net.digitalid.service.core.storage.ClientModule;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.abort.AbortException;
@@ -30,6 +28,8 @@ import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.client.Client;
+import net.digitalid.service.core.storage.ClientModule;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -123,7 +123,7 @@ public final class SynchronizerModule implements ClientModule {
     public static void remove(@Nonnull Role role) throws AbortException {
         final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
         while (iterator.hasNext()) {
-            final @Nonnull InternalAction action =  iterator.next();
+            final @Nonnull InternalAction action = iterator.next();
             if (action.getRole().equals(role)) iterator.remove();
         }
     }
@@ -165,7 +165,7 @@ public final class SynchronizerModule implements ClientModule {
         final @Nonnull Set<ReadOnlyPair<Role, Service>> ignored = new HashSet<>();
         final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
         while (iterator.hasNext()) {
-            final @Nonnull InternalAction reference =  iterator.next();
+            final @Nonnull InternalAction reference = iterator.next();
             final @Nonnull Role role = reference.getRole();
             final @Nonnull Service service = reference.getService();
             final @Nonnull ReadOnlyPair<Role, Service> pair = new FreezablePair<>(role, service).freeze();
@@ -173,7 +173,7 @@ public final class SynchronizerModule implements ClientModule {
                 methods.add(reference);
                 if (!reference.isSimilarTo(reference)) return methods.freeze();
                 while (iterator.hasNext()) {
-                    final @Nonnull InternalAction pendingAction =  iterator.next();
+                    final @Nonnull InternalAction pendingAction = iterator.next();
                     if (pendingAction.getRole().equals(role) && pendingAction.getService().equals(service)) {
                         if (pendingAction.isSimilarTo(reference) && reference.isSimilarTo(pendingAction)) methods.add(pendingAction);
                         else return methods.freeze();

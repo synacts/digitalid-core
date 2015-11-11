@@ -13,7 +13,7 @@ import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
-import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
+import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -340,7 +340,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PrivateKey, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<PrivateKey, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
     
     @Pure
     @Override

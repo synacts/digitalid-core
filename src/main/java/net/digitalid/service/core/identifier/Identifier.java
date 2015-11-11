@@ -160,7 +160,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
      * This class allows to convert an identifier to its string and recover it again by downcasting the identifier returned by the overridden method with the given caster.
      */
     @Immutable
-    public static final class StringConverter<I extends Identifier> extends CastingNonRequestingKeyConverter<I, Object, String, Identifier> {
+    public static final class StringConverter<I extends Identifier> extends CastingNonRequestingKeyConverter<I, Object, String, Object, Identifier> {
         
         /**
          * Creates a new identifier-string converter with the given caster.
@@ -179,13 +179,19 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
         
         @Pure
         @Override
+        public @Nonnull Object decompose(@Nonnull Object object) {
+            return object;
+        }
+        
+        @Pure
+        @Override
         public @Nonnull String convert(@Nonnull I identifier) {
             return identifier.getString();
         }
         
         @Pure
         @Override
-        public @Nonnull Identifier recoverSupertype(@Nonnull Object none, @Nonnull String string) throws InvalidEncodingException {
+        public @Nonnull Identifier recoverSupertype(@Nonnull Object none, @Nonnull @Validated String string) throws InvalidEncodingException {
             return IdentifierImplementation.get(string);
         }
         

@@ -16,11 +16,13 @@ import net.digitalid.utility.annotations.state.Validated;
  * @param <E> the type of the external object that is needed to recover an object, which is quite often an {@link Entity}.
  *            In case no external information is needed for the recovery of an object, declare it as an {@link Object}.
  * @param <K> the type of the keys which the objects are converted to and recovered from (with an external object).
+ * @param <D> the type of the external object that is needed to recover the key, which is quite often an {@link Entity}.
+ *            In case no external information is needed for the recovery of the key, declare it as an {@link Object}.
  * 
  * @see AbstractNonRequestingKeyConverter
  */
 @Stateless
-public abstract class AbstractKeyConverter<O, E, K> {
+public abstract class AbstractKeyConverter<O, E, K, D> {
     
     /**
      * Returns whether the given key is valid.
@@ -33,6 +35,16 @@ public abstract class AbstractKeyConverter<O, E, K> {
     public boolean isValid(@Nonnull K key) {
         return true;
     }
+    
+    /**
+     * Decomposes the external object into what is needed to recover the key.
+     * 
+     * @param external the external object needed to recover the object.
+     * 
+     * @return the external object which is needed to recover the key.
+     */
+    @Pure
+    public abstract @Nonnull D decompose(@Nonnull E external);
     
     /**
      * Returns the key of the given object.

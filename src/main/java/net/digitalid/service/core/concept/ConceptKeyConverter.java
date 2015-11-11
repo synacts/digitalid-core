@@ -5,6 +5,7 @@ import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverte
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 
 /**
  * This class allows to convert an object to its key and recover it again given its key (and an external object) without requests.
@@ -15,7 +16,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @param <K> the type of the keys which the objects are converted to and recovered from (with an external object).
  */
 @Immutable
-public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Entity<E>, K> extends AbstractNonRequestingKeyConverter<C, E, K> {
+public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Entity<E>, K> extends AbstractNonRequestingKeyConverter<C, E, K, E> {
     
     /* -------------------------------------------------- Concept Index -------------------------------------------------- */
     
@@ -61,13 +62,19 @@ public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Ent
     
     @Pure
     @Override
-    public @Nonnull K convert(@Nonnull C concept) {
+    public @Nonnull E decompose(@Nonnull E external) {
+        return external;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull @Validated K convert(@Nonnull C concept) {
         return concept.getKey();
     }
     
     @Pure
     @Override
-    public @Nonnull C recover(@Nonnull E external, @Nonnull K key) {
+    public @Nonnull C recover(@Nonnull E external, @Nonnull @Validated K key) {
         return index.get(external, key);
     }
     

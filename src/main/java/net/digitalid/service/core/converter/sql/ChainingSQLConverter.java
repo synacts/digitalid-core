@@ -24,24 +24,26 @@ import net.digitalid.utility.database.converter.ComposingSQLConverter;
  * @param <O> the type of the objects that this converter can store and restore, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
- * @param <K> the type of the objects that the other converter stores and restores (usually as a key for the objects of this converter).
+ * @param <K> the type of the objects that the other converter stores and restores (as a key for this converter's objects).
+ * @param <D> the type of the external object that is needed to recover the key, which is quite often an {@link Entity}.
+ *            In case no external information is needed for the recovery of the key, declare it as an {@link Object}.
  * 
  * @see XDFBasedSQLConverter
  */
 @Immutable
-public class ChainingSQLConverter<O, E, K> extends ComposingSQLConverter<O, E> {
+public class ChainingSQLConverter<O, E, K, D> extends ComposingSQLConverter<O, E> {
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the key converter used to convert and recover the object.
      */
-    private final @Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter;
+    private final @Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K, D> keyConverter;
     
     /**
      * Stores the SQL converter used to store and restore the object's key.
      */
-    private final @Nonnull AbstractSQLConverter<K, ? super E> SQLConverter;
+    private final @Nonnull AbstractSQLConverter<K, ? super D> SQLConverter;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -51,7 +53,7 @@ public class ChainingSQLConverter<O, E, K> extends ComposingSQLConverter<O, E> {
      * @param keyConverter the key converter used to convert and recover the object.
      * @param SQLConverter the SQL converter used to store and restore the object's key.
      */
-    private ChainingSQLConverter(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractSQLConverter<K, ? super E> SQLConverter) {
+    protected ChainingSQLConverter(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull AbstractSQLConverter<K, ? super D> SQLConverter) {
         super(FreezablePair.get(SQLConverter, false).freeze());
         
         this.keyConverter = keyConverter;
@@ -67,7 +69,7 @@ public class ChainingSQLConverter<O, E, K> extends ComposingSQLConverter<O, E> {
      * @return a new chaining SQL converter with the given converters.
      */
     @Pure
-    public static @Nonnull <O, E, K> ChainingSQLConverter<O, E, K> get(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> keyConverter, @Nonnull AbstractSQLConverter<K, ? super E> SQLConverter) {
+    public static @Nonnull <O, E, K, D> ChainingSQLConverter<O, E, K, D> get(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull AbstractSQLConverter<K, ? super D> SQLConverter) {
         return new ChainingSQLConverter<>(keyConverter, SQLConverter);
     }
     
@@ -92,11 +94,11 @@ public class ChainingSQLConverter<O, E, K> extends ComposingSQLConverter<O, E> {
     @Override
     @NonCommitting
     public final @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull ColumnIndex columnIndex) throws SQLException {
-        final @Nullable K key = SQLConverter.restoreNullable(external, resultSet, columnIndex);
+        final @Nullable K key = SQLConverter.restoreNullable(keyConverter.decompose(external), resultSet, columnIndex);
         if (key == null) { return null; }
         try {
             if (!keyConverter.isValid(key)) { throw new InvalidEncodingException("The restored key '" + key + "' is invalid."); }
-            return  keyConverter.recover(external, key);
+            return keyConverter.recover(external, key);
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException(exception);
         }

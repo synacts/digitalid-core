@@ -8,6 +8,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
@@ -19,7 +20,7 @@ import net.digitalid.utility.annotations.state.Pure;
  *            In case no external information is needed for the recovery of an object, declare it as an {@link Object}.
  */
 @Immutable
-public final class BlockKeyConverter<O, E> extends AbstractNonRequestingKeyConverter<O, E, Block> {
+public final class BlockConverter<O, E> extends AbstractNonRequestingKeyConverter<O, E, Block, SemanticType> {
     
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
@@ -35,7 +36,7 @@ public final class BlockKeyConverter<O, E> extends AbstractNonRequestingKeyConve
      * 
      * @param XDFConverter the XDF converter used to encode and decode the block.
      */
-    private BlockKeyConverter(@Nonnull AbstractXDFConverter<O, E> XDFConverter) {
+    private BlockConverter(@Nonnull AbstractXDFConverter<O, E> XDFConverter) {
         this.XDFConverter = XDFConverter;
     }
     
@@ -47,11 +48,17 @@ public final class BlockKeyConverter<O, E> extends AbstractNonRequestingKeyConve
      * @return a new object-block converter with the given XDF converter.
      */
     @Pure
-    public static @Nonnull <O, E> BlockKeyConverter<O, E> get(@Nonnull AbstractXDFConverter<O, E> XDFConverter) {
-        return new BlockKeyConverter<>(XDFConverter);
+    public static @Nonnull <O, E> BlockConverter<O, E> get(@Nonnull AbstractXDFConverter<O, E> XDFConverter) {
+        return new BlockConverter<>(XDFConverter);
     }
     
     /* -------------------------------------------------- Conversions -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType decompose(@Nonnull E external) {
+        return XDFConverter.getType();
+    }
     
     @Pure
     @Override

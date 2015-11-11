@@ -5,7 +5,7 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
+import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
 import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -122,7 +122,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PublicKeyChain, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<PublicKeyChain, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
     
     @Pure
     @Override

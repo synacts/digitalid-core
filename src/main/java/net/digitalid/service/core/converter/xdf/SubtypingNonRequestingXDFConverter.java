@@ -16,7 +16,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @see NonConvertingKeyConverter
  */
 @Immutable
-public final class SubtypingNonRequestingXDFConverter<O, E> extends ChainingNonRequestingXDFConverter<O, E, O> {
+public final class SubtypingNonRequestingXDFConverter<O, E> extends ChainingNonRequestingXDFConverter<O, E, O, E> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -29,7 +29,7 @@ public final class SubtypingNonRequestingXDFConverter<O, E> extends ChainingNonR
      * @require type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
      */
     private SubtypingNonRequestingXDFConverter(@Nonnull SemanticType type, @Nonnull AbstractNonRequestingXDFConverter<O, E> XDFConverter) {
-        super(type, NonConvertingKeyConverter.<O>get(), XDFConverter);
+        super(type, NonConvertingKeyConverter.<O, E>get(), XDFConverter);
     }
     
     /**

@@ -392,7 +392,7 @@ public final class Mapper {
     @NonCommitting
     public static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws AbortException {
         if (isMapped(identifier)) {
-            final @Nonnull Identity identity =  identifiers.get(identifier);
+            final @Nonnull Identity identity = identifiers.get(identifier);
             if (!identity.getCategory().equals(category)) throw new SQLException("The identifier " + identifier + " should have been mapped with the category " + category + " but has already been mapped with the category " + identity.getCategory() + ".");
             return identity;
         } else {

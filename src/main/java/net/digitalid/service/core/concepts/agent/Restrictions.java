@@ -186,7 +186,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     @NonCommitting
-    public void checkCover(@Nonnull Context otherContext) throws AbortException, PacketException  {
+    public void checkCover(@Nonnull Context otherContext) throws AbortException, PacketException {
         if (!cover(otherContext)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context.");
     }
     
