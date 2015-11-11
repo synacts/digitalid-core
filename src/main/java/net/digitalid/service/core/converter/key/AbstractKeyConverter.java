@@ -44,7 +44,10 @@ public abstract class AbstractKeyConverter<O, E, K, D> {
      * @return the external object which is needed to recover the key.
      */
     @Pure
-    public abstract @Nonnull D decompose(@Nonnull E external);
+    @SuppressWarnings("unchecked")
+    public @Nonnull D decompose(@Nonnull E external) {
+        return (D) external;
+    }
     
     /**
      * Returns the key of the given object.

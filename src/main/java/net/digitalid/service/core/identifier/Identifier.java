@@ -179,12 +179,6 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
         
         @Pure
         @Override
-        public @Nonnull Object decompose(@Nonnull Object object) {
-            return object;
-        }
-        
-        @Pure
-        @Override
         public @Nonnull String convert(@Nonnull I identifier) {
             return identifier.getString();
         }

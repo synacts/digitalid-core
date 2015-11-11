@@ -250,7 +250,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
      * This class allows to convert an identity to its address and recover it again by downcasting the identity returned by the overridden method with the given caster.
      */
     @Immutable
-    public static final class IdentifierConverter<I extends Identity> extends CastingKeyConverter<I, Object, Identifier, Identity> {
+    public static final class IdentifierConverter<I extends Identity> extends CastingKeyConverter<I, Object, Identifier, Object, Identity> {
         
         /**
          * Creates a new identity-identifier converter with the given caster.
@@ -279,7 +279,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
      * This class allows to convert an identity to its database ID and recover it again by downcasting the identity returned by the overridden method with the given caster.
      */
     @Immutable
-    public static final class LongConverter<I extends Identity> extends CastingNonRequestingKeyConverter<I, Object, Long, Identity> {
+    public static final class LongConverter<I extends Identity> extends CastingNonRequestingKeyConverter<I, Object, Long, Object, Identity> {
         
         /**
          * Creates a new identity-identifier converter with the given caster.

@@ -496,9 +496,9 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
      */
     private void append(@Nonnull StringBuilder string, long value, @Nonnull String unit) {
         if (value != 0) {
-            if (string.length() > 0) string.append(", ");
+            if (string.length() > 0) { string.append(", "); }
             string.append(value).append(" ").append(unit);
-            if (value != 1 && value != -1) string.append("s");
+            if (value != 1 && value != -1) { string.append("s"); }
         }
     }
     
@@ -536,8 +536,8 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Time)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Time)) { return false; }
         final @Nonnull Time other = (Time) object;
         return this.value == other.value;
     }
@@ -559,7 +559,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the key converter of this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<Time, Object, Long> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Time, Object, Long>() {
+    private static final @Nonnull AbstractNonRequestingKeyConverter<Time, Object, Long, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Time, Object, Long, Object>() {
         
         @Pure
         @Override

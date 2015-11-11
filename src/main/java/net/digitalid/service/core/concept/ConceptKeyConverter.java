@@ -62,12 +62,6 @@ public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Ent
     
     @Pure
     @Override
-    public @Nonnull E decompose(@Nonnull E external) {
-        return external;
-    }
-    
-    @Pure
-    @Override
     public @Nonnull @Validated K convert(@Nonnull C concept) {
         return concept.getKey();
     }

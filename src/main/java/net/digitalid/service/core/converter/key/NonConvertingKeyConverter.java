@@ -37,12 +37,6 @@ public final class NonConvertingKeyConverter<O, E> extends AbstractNonRequesting
     
     @Pure
     @Override
-    public @Nonnull E decompose(@Nonnull E external) {
-        return external;
-    }
-    
-    @Pure
-    @Override
     public @Nonnull O convert(@Nonnull O object) {
         return object;
     }
