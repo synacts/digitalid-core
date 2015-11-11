@@ -103,7 +103,7 @@ public abstract class IdentifierImplementation implements Identifier {
     @Pure
     @Override
     public final @Nonnull NonHostIdentifier toNonHostIdentifier() throws InvalidEncodingException {
-        if (this instanceof NonHostIdentifier) return (NonHostIdentifier) this;
+        if (this instanceof NonHostIdentifier) { return (NonHostIdentifier) this; }
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostIdentifier.");
     }
     
@@ -112,21 +112,21 @@ public abstract class IdentifierImplementation implements Identifier {
     @Pure
     @Override
     public final @Nonnull InternalIdentifier toInternalIdentifier() throws InvalidEncodingException {
-        if (this instanceof InternalIdentifier) return (InternalIdentifier) this;
+        if (this instanceof InternalIdentifier) { return (InternalIdentifier) this; }
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalIdentifier.");
     }
     
     @Pure
     @Override
     public final @Nonnull HostIdentifier toHostIdentifier() throws InvalidEncodingException {
-        if (this instanceof HostIdentifier) return (HostIdentifier) this;
+        if (this instanceof HostIdentifier) { return (HostIdentifier) this; }
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to HostIdentifier.");
     }
     
     @Pure
     @Override
     public final @Nonnull InternalNonHostIdentifier toInternalNonHostIdentifier() throws InvalidEncodingException {
-        if (this instanceof InternalNonHostIdentifier) return (InternalNonHostIdentifier) this;
+        if (this instanceof InternalNonHostIdentifier) { return (InternalNonHostIdentifier) this; }
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalNonHostIdentifier.");
     }
     
@@ -135,21 +135,21 @@ public abstract class IdentifierImplementation implements Identifier {
     @Pure
     @Override
     public final @Nonnull ExternalIdentifier toExternalIdentifier() throws InvalidEncodingException {
-        if (this instanceof ExternalIdentifier) return (ExternalIdentifier) this;
+        if (this instanceof ExternalIdentifier) { return (ExternalIdentifier) this; }
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ExternalIdentifier.");
     }
     
     @Pure
     @Override
     public final @Nonnull EmailIdentifier toEmailIdentifier() throws InvalidEncodingException {
-        if (this instanceof EmailIdentifier) return (EmailIdentifier) this;
+        if (this instanceof EmailIdentifier) { return (EmailIdentifier) this; }
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to EmailIdentifier.");
     }
     
     @Pure
     @Override
     public final @Nonnull MobileIdentifier toMobileIdentifier() throws InvalidEncodingException {
-        if (this instanceof MobileIdentifier) return (MobileIdentifier) this;
+        if (this instanceof MobileIdentifier) { return (MobileIdentifier) this; }
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobileIdentifier.");
     }
     
@@ -158,8 +158,8 @@ public abstract class IdentifierImplementation implements Identifier {
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof IdentifierImplementation)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof IdentifierImplementation)) { return false; }
         final @Nonnull IdentifierImplementation other = (IdentifierImplementation) object;
         return string.equals(other.string);
     }

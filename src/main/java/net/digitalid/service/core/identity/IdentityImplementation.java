@@ -57,8 +57,8 @@ public abstract class IdentityImplementation implements Identity {
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof IdentityImplementation)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof IdentityImplementation)) { return false; }
         final @Nonnull IdentityImplementation other = (IdentityImplementation) object;
         return this.databaseID == other.databaseID;
     }
@@ -80,14 +80,14 @@ public abstract class IdentityImplementation implements Identity {
     @Pure
     @Override
     public final @Nonnull InternalIdentity toInternalIdentity() throws InvalidEncodingException {
-        if (this instanceof InternalIdentity) return (InternalIdentity) this;
+        if (this instanceof InternalIdentity) { return (InternalIdentity) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalIdentity.");
     }
     
     @Pure
     @Override
     public final @Nonnull ExternalIdentity toExternalIdentity() throws InvalidEncodingException {
-        if (this instanceof ExternalIdentity) return (ExternalIdentity) this;
+        if (this instanceof ExternalIdentity) { return (ExternalIdentity) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ExternalIdentity.");
     }
     
@@ -96,21 +96,21 @@ public abstract class IdentityImplementation implements Identity {
     @Pure
     @Override
     public final @Nonnull HostIdentity toHostIdentity() throws InvalidEncodingException {
-        if (this instanceof HostIdentity) return (HostIdentity) this;
+        if (this instanceof HostIdentity) { return (HostIdentity) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to HostIdentity.");
     }
     
     @Pure
     @Override
     public final @Nonnull NonHostIdentity toNonHostIdentity() throws InvalidEncodingException {
-        if (this instanceof NonHostIdentity) return (NonHostIdentity) this;
+        if (this instanceof NonHostIdentity) { return (NonHostIdentity) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostIdentity.");
     }
     
     @Pure
     @Override
     public final @Nonnull InternalNonHostIdentity toInternalNonHostIdentity() throws InvalidEncodingException {
-        if (this instanceof InternalNonHostIdentity) return (InternalNonHostIdentity) this;
+        if (this instanceof InternalNonHostIdentity) { return (InternalNonHostIdentity) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalNonHostIdentity.");
     }
     
@@ -119,21 +119,21 @@ public abstract class IdentityImplementation implements Identity {
     @Pure
     @Override
     public final @Nonnull Type toType() throws InvalidEncodingException {
-        if (this instanceof Type) return (Type) this;
+        if (this instanceof Type) { return (Type) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to Type.");
     }
     
     @Pure
     @Override
     public final @Nonnull SyntacticType toSyntacticType() throws InvalidEncodingException {
-        if (this instanceof SyntacticType) return (SyntacticType) this;
+        if (this instanceof SyntacticType) { return (SyntacticType) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to SyntacticType.");
     }
     
     @Pure
     @Override
     public final @Nonnull SemanticType toSemanticType() throws InvalidEncodingException {
-        if (this instanceof SemanticType) return (SemanticType) this;
+        if (this instanceof SemanticType) { return (SemanticType) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to SemanticType.");
     }
     
@@ -142,49 +142,49 @@ public abstract class IdentityImplementation implements Identity {
     @Pure
     @Override
     public final @Nonnull Person toPerson() throws InvalidEncodingException {
-        if (this instanceof Person) return (Person) this;
+        if (this instanceof Person) { return (Person) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to Person.");
     }
     
     @Pure
     @Override
     public final @Nonnull InternalPerson toInternalPerson() throws InvalidEncodingException {
-        if (this instanceof InternalPerson) return (InternalPerson) this;
+        if (this instanceof InternalPerson) { return (InternalPerson) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalPerson.");
     }
     
     @Pure
     @Override
     public final @Nonnull NaturalPerson toNaturalPerson() throws InvalidEncodingException {
-        if (this instanceof NaturalPerson) return (NaturalPerson) this;
+        if (this instanceof NaturalPerson) { return (NaturalPerson) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to NaturalPerson.");
     }
     
     @Pure
     @Override
     public final @Nonnull ArtificialPerson toArtificialPerson() throws InvalidEncodingException {
-        if (this instanceof ArtificialPerson) return (ArtificialPerson) this;
+        if (this instanceof ArtificialPerson) { return (ArtificialPerson) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ArtificialPerson.");
     }
     
     @Pure
     @Override
     public final @Nonnull ExternalPerson toExternalPerson() throws InvalidEncodingException {
-        if (this instanceof ExternalPerson) return (ExternalPerson) this;
+        if (this instanceof ExternalPerson) { return (ExternalPerson) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ExternalPerson.");
     }
     
     @Pure
     @Override
     public final @Nonnull EmailPerson toEmailPerson() throws InvalidEncodingException {
-        if (this instanceof EmailPerson) return (EmailPerson) this;
+        if (this instanceof EmailPerson) { return (EmailPerson) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to EmailPerson.");
     }
     
     @Pure
     @Override
     public final @Nonnull MobilePerson toMobilePerson() throws InvalidEncodingException {
-        if (this instanceof MobilePerson) return (MobilePerson) this;
+        if (this instanceof MobilePerson) { return (MobilePerson) this; }
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobilePerson.");
     }
     

@@ -263,7 +263,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * @throws InvalidEncodingException if this is not the case.
      */
     public @Nonnull Block checkType(@Nonnull @Loaded SemanticType type) throws InvalidEncodingException {
-        if (!this.type.isBasedOn(type)) throw new InvalidEncodingException("The type of this block (" + this.type.getAddress() + ") is not based on the given type (" + type.getAddress() + ").");
+        if (!this.type.isBasedOn(type)) { throw new InvalidEncodingException("The type of this block (" + this.type.getAddress() + ") is not based on the given type (" + type.getAddress() + ")."); }
         return this;
     }
     
@@ -505,7 +505,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     public @Nonnull @Encoded Block encodeIfNotYetEncoded() {
         assert !isEncoding() : "This method is not called during encoding.";
         
-        if (!isEncoded()) encode();
+        if (!isEncoded()) { encode(); }
         return this;
     }
     
@@ -612,19 +612,19 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @Override
     @NonEncodingRecipient
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Block)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Block)) { return false; }
         final @Nonnull Block other = (Block) object;
         
-        if (!getType().equals(other.getType())) return false;
+        if (!getType().equals(other.getType())) { return false; }
         
         this.encodeIfNotYetEncoded();
         other.encodeIfNotYetEncoded();
         
-        if (this.length != other.length) return false;
+        if (this.length != other.length) { return false; }
         
         for (int i = 0; i < length; i++) {
-            if (this.bytes[this.offset + i] != other.bytes[other.offset + i]) return false;
+            if (this.bytes[this.offset + i] != other.bytes[other.offset + i]) { return false; }
         }
         
         return true;
@@ -867,7 +867,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
             outputStream.write(bytes, this.offset + offset, length);
             outputStream.flush();
         } finally {
-            if (close) outputStream.close();
+            if (close) { outputStream.close(); }
         }
     }
     
@@ -976,9 +976,9 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         @Override
         @SuppressWarnings("AssignmentToMethodParameter")
         public int read(final @Nonnull byte[] bytes, final int offset, int length) throws IOException {
-            if (length == 0) return 0;
-            if (start == end) return -1;
-            if (start + length > end) length = end - start;
+            if (length == 0) { return 0; }
+            if (start == end) { return -1; }
+            if (start + length > end) { length = end - start; }
             System.arraycopy(Block.this.bytes, start, bytes, offset, length);
             start += length;
             return length;
@@ -987,7 +987,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         @Override
         @SuppressWarnings("AssignmentToMethodParameter")
         public long skip(long number) throws IOException {
-            if (start + number > end) number = end - start;
+            if (start + number > end) { number = end - start; }
             start += number;
             return number;
         }
@@ -1130,7 +1130,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         
         @Override
         public void write(@Nonnull byte[] bytes, int offset, int length) throws IOException {
-            if (offset < 0 || length < 0 || offset + length > bytes.length) throw new IndexOutOfBoundsException();
+            if (offset < 0 || length < 0 || offset + length > bytes.length) { throw new IndexOutOfBoundsException(); }
             if (start + length <= end) {
                 System.arraycopy(bytes, offset, Block.this.bytes, start, length);
                 start += length;
