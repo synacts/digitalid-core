@@ -6,9 +6,9 @@ import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -31,18 +31,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 @Immutable
 public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     
-    /* -------------------------------------------------- Types -------------------------------------------------- */
-    
-    /**
-     * Stores the syntactic type {@code tuple@core.digitalid.net}.
-     */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("tuple@core.digitalid.net").load(-1);
-    
-    @Pure
-    @Override
-    public @Nonnull SyntacticType getSyntacticType() {
-        return TYPE;
-    }
+    /* -------------------------------------------------- Parameters -------------------------------------------------- */
     
     /**
      * Returns whether the given elements are based on the corresponding parameter of the given type.
@@ -55,10 +44,10 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     @Pure
     public static boolean basedOnParameters(@Nonnull SemanticType type, @Nonnull @NullableElements ReadOnlyArray<Block> elements) {
         final @Nonnull ReadOnlyList<SemanticType> parameters = type.getParameters();
-        if (elements.size() == 0 || elements.size() > parameters.size()) return false;
+        if (elements.size() == 0 || elements.size() > parameters.size()) { return false; }
         for (int i = 0; i < elements.size(); i++) {
             final @Nullable Block element = elements.getNullable(i);
-            if (element != null && !element.getType().isBasedOn(parameters.getNonNullable(i))) return false;
+            if (element != null && !element.getType().isBasedOn(parameters.getNonNullable(i))) { return false; }
         }
         return true;
     }
@@ -93,7 +82,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      */
     @Pure
     public @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> getNonNullableElements() throws InvalidEncodingException {
-        if (elements.containsNull()) throw new InvalidEncodingException("The tuple contains null.");
+        if (elements.containsNull()) { throw new InvalidEncodingException("The tuple contains null."); }
         return elements;
     }
     
@@ -113,7 +102,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     public @Nonnull @NullableElements @Frozen ReadOnlyArray<Block> getNullableElements(@Positive int length) throws InvalidEncodingException {
         assert length > 0 : "The length is positive.";
         
-        if (elements.size() < length) throw new InvalidEncodingException("The tuple contains not enough elements.");
+        if (elements.size() < length) { throw new InvalidEncodingException("The tuple contains not enough elements."); }
         return elements;
     }
     
@@ -132,7 +121,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     @Pure
     public @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> getNonNullableElements(@Positive int length) throws InvalidEncodingException {
         final @Nonnull ReadOnlyArray<Block> elements = getNullableElements(length);
-        if (elements.containsNull()) throw new InvalidEncodingException("The tuple contains null.");
+        if (elements.containsNull()) { throw new InvalidEncodingException("The tuple contains null."); }
         return elements;
     }
     
@@ -149,7 +138,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     public boolean isElementNull(@NonNegative int index) throws InvalidEncodingException {
         assert index >= 0 : "The index is non-negative.";
         
-        if (index >= elements.size()) throw new InvalidEncodingException("The tuple contains not enough elements.");
+        if (index >= elements.size()) { throw new InvalidEncodingException("The tuple contains not enough elements."); }
         return elements.getNullable(index) == null;
     }
     
@@ -168,7 +157,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     public @Nullable Block getNullableElement(@NonNegative int index) throws InvalidEncodingException {
         assert index >= 0 : "The index is non-negative.";
         
-        if (index >= elements.size()) throw new InvalidEncodingException("The tuple contains not enough elements.");
+        if (index >= elements.size()) { throw new InvalidEncodingException("The tuple contains not enough elements."); }
         return elements.getNullable(index);
     }
     
@@ -186,7 +175,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     @Pure
     public @Nonnull Block getNonNullableElement(@NonNegative int index) throws InvalidEncodingException {
         final @Nullable Block element = TupleWrapper.this.getNullableElement(index);
-        if (element == null) throw new InvalidEncodingException("The element at the given index is null.");
+        if (element == null) { throw new InvalidEncodingException("The element at the given index is null."); }
         return element;
     }
     
@@ -229,7 +218,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     @Pure
     public @Nonnull Block getNonNullableElement(@Nonnull SemanticType type) throws InvalidEncodingException {
         final @Nullable Block element = getNullableElement(type);
-        if (element == null) throw new InvalidEncodingException("The element of the given type is null.");
+        if (element == null) { throw new InvalidEncodingException("The element of the given type is null."); }
         return element;
     }
     
@@ -250,67 +239,6 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         assert basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
         
         this.elements = elements;
-    }
-    
-    /* -------------------------------------------------- Utility -------------------------------------------------- */
-    
-    /**
-     * Encodes the given elements into a new block of the given type.
-     * 
-     * @param type the semantic type of the new block.
-     * @param elements the elements to encode into the new block.
-     * 
-     * @return a new block containing the given elements.
-     * 
-     * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
-     */
-    @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull @NullableElements @Frozen ReadOnlyArray<Block> elements) {
-        return new XDFConverter(type).encodeNonNullable(new TupleWrapper(type, elements));
-    }
-    
-    /**
-     * Encodes the given elements into a new block of the given type.
-     * 
-     * @param type the semantic type of the new block.
-     * @param elements the elements to encode into the new block.
-     * 
-     * @return a new block containing the given elements.
-     * 
-     * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
-     */
-    @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Captured @Nonnull @NonEncoding Block... elements) {
-        return encode(type, FreezableArray.getNonNullable(elements).freeze());
-    }
-    
-    /**
-     * Encodes the given elements into a new block of the given type.
-     * 
-     * @param type the semantic type of the new block.
-     * @param elements the elements to encode into the new block.
-     * 
-     * @return a new block containing the given elements.
-     * 
-     * @require basedOnParameters(type, elements.toBlock()) : "Each element is either null or based on the corresponding parameter of the given type.";
-     */
-    @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull XDF<?, ?>... elements) {
-        final @Nonnull FreezableArray<Block> array = FreezableArray.get(elements.length);
-        for (int i = 0; i < elements.length; i++) array.set(i, ConvertToXDF.nullableWithCast(elements[i]));
-        return encode(type, array.freeze());
-    }
-    
-    /**
-     * Decodes the given block. 
-     * 
-     * @param block the block to be decoded.
-     * 
-     * @return the tuple contained in the given block.
-     */
-    @Pure
-    public static @Nonnull TupleWrapper decode(@Nonnull @NonEncoding @BasedOn("tuple@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block);
     }
     
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
@@ -356,6 +284,19 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         assert offset == block.getLength() : "The whole block should now be encoded.";
     }
     
+    /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
+    
+    /**
+     * Stores the syntactic type {@code tuple@core.digitalid.net}.
+     */
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("tuple@core.digitalid.net").load(-1);
+    
+    @Pure
+    @Override
+    public @Nonnull SyntacticType getSyntacticType() {
+        return XDF_TYPE;
+    }
+    
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
@@ -384,12 +325,12 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
             final int length = block.getLength();
             
             for (int i = 0; i < size; i++) {
-                if (offset >= length) break;
+                if (offset >= length) { break; }
                 int intvarLength = IntvarWrapper.decodeLength(block, offset);
                 int elementLength = (int) IntvarWrapper.decodeValue(block, offset, intvarLength);
                 offset += intvarLength;
                 if (elementLength > 0) {
-                    if (offset + elementLength > block.getLength()) throw new InvalidEncodingException("The subblock may not exceed the given block.");
+                    if (offset + elementLength > block.getLength()) { throw new InvalidEncodingException("The subblock may not exceed the given block."); }
                     elements.set(i, Block.get(parameters.getNonNullable(i), block, offset, elementLength));
                     offset += elementLength;
                 }
@@ -404,6 +345,77 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     @Override
     public @Nonnull XDFConverter getXDFConverter() {
         return new XDFConverter(getSemanticType());
+    }
+    
+    /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code semantic.tuple@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.tuple@core.digitalid.net").load(XDF_TYPE);
+    
+    /**
+     * Stores a static XDF converter for performance reasons.
+     */
+    private static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter(SEMANTIC);
+
+    /**
+     * Encodes the given elements into a new block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param elements the elements to encode into the new block.
+     * 
+     * @return a new block containing the given elements.
+     * 
+     * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
+     */
+    @Pure
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull @NullableElements @Frozen ReadOnlyArray<Block> elements) {
+        return XDF_CONVERTER.encodeNonNullable(new TupleWrapper(type, elements));
+    }
+    
+    /**
+     * Encodes the given elements into a new block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param elements the elements to encode into the new block.
+     * 
+     * @return a new block containing the given elements.
+     * 
+     * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
+     */
+    @Pure
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Captured @Nonnull @NonEncoding Block... elements) {
+        return encode(type, FreezableArray.getNonNullable(elements).freeze());
+    }
+    
+    /**
+     * Encodes the given elements into a new block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param elements the elements to encode into the new block.
+     * 
+     * @return a new block containing the given elements.
+     * 
+     * @require basedOnParameters(type, elements.toBlock()) : "Each element is either null or based on the corresponding parameter of the given type.";
+     */
+    @Pure
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull XDF<?, ?>... elements) {
+        final @Nonnull FreezableArray<Block> array = FreezableArray.get(elements.length);
+        for (int i = 0; i < elements.length; i++) { array.set(i, ConvertToXDF.nullableWithCast(elements[i])); }
+        return encode(type, array.freeze());
+    }
+    
+    /**
+     * Decodes the given block. 
+     * 
+     * @param block the block to be decoded.
+     * 
+     * @return the tuple contained in the given block.
+     */
+    @Pure
+    public static @Nonnull TupleWrapper decode(@Nonnull @NonEncoding @BasedOn("tuple@core.digitalid.net") Block block) throws InvalidEncodingException {
+        return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block);
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */

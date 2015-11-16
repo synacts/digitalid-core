@@ -36,17 +36,17 @@ public abstract class AttributeValue implements Blockable, SQLizable {
     /**
      * Stores the semantic type {@code content.attribute@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType CONTENT = SemanticType.map("content.attribute@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+    public static final @Nonnull SemanticType CONTENT = SemanticType.map("content.attribute@core.digitalid.net").load(SelfcontainedWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code value.attribute@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("value.attribute@core.digitalid.net").load(SignatureWrapper.TYPE, CONTENT);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("value.attribute@core.digitalid.net").load(SignatureWrapper.XDF_TYPE, CONTENT);
     
     /**
      * Stores the semantic type {@code list.attribute@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType LIST = SemanticType.map("list.attribute@core.digitalid.net").load(ListWrapper.TYPE, TYPE);
+    public static final @Nonnull SemanticType LIST = SemanticType.map("list.attribute@core.digitalid.net").load(ListWrapper.XDF_TYPE, TYPE);
     
     
     /**

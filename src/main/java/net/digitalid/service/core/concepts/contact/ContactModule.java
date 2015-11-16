@@ -75,12 +75,12 @@ public final class ContactModule implements StateModule {
     /**
      * Stores the semantic type {@code entry.contacts.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.contacts.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.contacts.module@core.digitalid.net").load(TupleWrapper.XDF_TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code contacts.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("contacts.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("contacts.module@core.digitalid.net").load(ListWrapper.XDF_TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
@@ -115,12 +115,12 @@ public final class ContactModule implements StateModule {
     /**
      * Stores the semantic type {@code entry.contacts.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.map("entry.contacts.state@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.map("entry.contacts.state@core.digitalid.net").load(TupleWrapper.XDF_TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code contacts.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("contacts.state@core.digitalid.net").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("contacts.state@core.digitalid.net").load(ListWrapper.XDF_TYPE, STATE_ENTRY);
     
     @Pure
     @Override

@@ -36,7 +36,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
     /**
      * Stores the semantic type {@code list.attribute.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("list.attribute.type@core.digitalid.net").load(ListWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("list.attribute.type@core.digitalid.net").load(ListWrapper.XDF_TYPE, SemanticType.ATTRIBUTE_IDENTIFIER);
     
     
     /**

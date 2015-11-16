@@ -40,7 +40,7 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     /**
      * Stores the semantic type {@code replace.commitment.client.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.commitment.client.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, OLD_COMMITMENT, NEW_COMMITMENT);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.commitment.client.agent@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Agent.TYPE, OLD_COMMITMENT, NEW_COMMITMENT);
     
     
     /**

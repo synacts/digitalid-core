@@ -21,7 +21,7 @@ public final class SelfcontainedWrapperTest extends DatabaseSetup {
     public void testWrapping() throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull SemanticType STRING = SemanticType.map("string@core.digitalid.net").load(StringWrapper.XDF_TYPE);
         final @Nonnull SemanticType INT32 = SemanticType.map("int32@core.digitalid.net").load(Int32Wrapper.XDF_TYPE);
-        final @Nonnull SemanticType TYPE = SemanticType.map("selfcontained@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.map("selfcontained@core.digitalid.net").load(SelfcontainedWrapper.XDF_TYPE);
         
         final @Nonnull Block string = new StringWrapper(STRING, "This is a short string.").toBlock();
         final @Nonnull Block int32 = new Int32Wrapper(INT32, 123456789).toBlock();

@@ -10,13 +10,13 @@ import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.wrappers.exceptions.UnexpectedEndOfFileException;
 import net.digitalid.service.core.block.wrappers.exceptions.UnsupportedBlockLengthException;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
@@ -37,28 +37,12 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedWrapper> {
     
-    /* -------------------------------------------------- Types -------------------------------------------------- */
-    
-    /**
-     * Stores the syntactic type {@code selfcontained@core.digitalid.net}.
-     */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("selfcontained@core.digitalid.net").load(0);
-    
-    /**
-     * Stores the semantic type {@code default@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType DEFAULT = SemanticType.map("default@core.digitalid.net").load(TYPE);
+    /* -------------------------------------------------- Implementation -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code implementation.selfcontained@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.selfcontained@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.IDENTIFIER, SemanticType.UNKNOWN);
-    
-    @Pure
-    @Override
-    public @Nonnull SyntacticType getSyntacticType() {
-        return TYPE;
-    }
+    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.selfcontained@core.digitalid.net").load(TupleWrapper.XDF_TYPE, SemanticType.IDENTIFIER, SemanticType.UNKNOWN);
     
     /* -------------------------------------------------- Element -------------------------------------------------- */
     
@@ -114,81 +98,6 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         element.setType(identifier.getIdentity().toSemanticType());
     }
     
-    /* -------------------------------------------------- Utility -------------------------------------------------- */
-    
-    /**
-     * Encodes the given element into a new non-nullable selfcontained block of the given type.
-     * 
-     * @param type the semantic type of the new block.
-     * @param element the element to encode into the new block.
-     * 
-     * @return a new non-nullable selfcontained block containing the given element.
-     */
-    @Pure
-    public static @Nonnull @NonEncoding <V extends XDF<V, Object>> Block encodeNonNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return new XDFConverter(type).encodeNonNullable(new SelfcontainedWrapper(type, ConvertToXDF.nonNullable(element)));
-    }
-    
-    /**
-     * Encodes the given element into a new nullable selfcontained block of the given type.
-     * 
-     * @param type the semantic type of the new block.
-     * @param element the element to encode into the new block.
-     * 
-     * @return a new nullable selfcontained block containing the given element.
-     */
-    @Pure
-    public static @Nullable @NonEncoding <V extends XDF<V, Object>> Block encodeNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nullable V element) {
-        return element == null ? null : encodeNonNullable(type, element);
-    }
-    
-    /**
-     * Decodes the given non-nullable block. 
-     * 
-     * @param block the block to be decoded.
-     * 
-     * @return the element contained in the given block.
-     */
-    @Pure
-    @Locked
-    @NonCommitting
-    public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).element;
-    }
-    
-    /**
-     * Decodes the given nullable block. 
-     * 
-     * @param block the block to be decoded.
-     * 
-     * @return the element contained in the given block.
-     */
-    @Pure
-    @Locked
-    @NonCommitting
-    public static @Nullable @NonEncoding Block decodeNullable(@Nullable @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        return block == null ? null : decodeNonNullable(block);
-    }
-    
-    /**
-     * Reads, wraps and decodes a selfcontained block from the given input stream and optionally closes the input stream afterwards.
-     * 
-     * @param inputStream the input stream to read from.
-     * @param close whether the input stream shall be closed.
-     * 
-     * @return the element of the selfcontained block from the given input stream.
-     */
-    @Pure
-    @Locked
-    @NonCommitting
-    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws AbortException, PacketException, ExternalException, NetworkException {
-        try {
-            return decodeNonNullable(readBlockFrom(inputStream, close));
-        } catch (@Nonnull IOException exception) {
-            throw NetworkException.get(exception);
-        }
-    }
-    
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     @Pure
@@ -204,6 +113,19 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
         tuple.writeTo(block);
+    }
+    
+    /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
+    
+    /**
+     * Stores the syntactic type {@code selfcontained@core.digitalid.net}.
+     */
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("selfcontained@core.digitalid.net").load(0);
+    
+    @Pure
+    @Override
+    public @Nonnull SyntacticType getSyntacticType() {
+        return XDF_TYPE;
     }
     
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
@@ -239,6 +161,91 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         return new XDFConverter(getSemanticType());
     }
     
+    /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code semantic.selfcontained@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.selfcontained@core.digitalid.net").load(XDF_TYPE);
+    
+    /**
+     * Stores a static XDF converter for performance reasons.
+     */
+    private static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter(SEMANTIC);
+
+    /**
+     * Encodes the given element into a new non-nullable selfcontained block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param element the element to encode into the new block.
+     * 
+     * @return a new non-nullable selfcontained block containing the given element.
+     */
+    @Pure
+    public static @Nonnull @NonEncoding <V extends XDF<V, Object>> Block encodeNonNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
+        return XDF_CONVERTER.encodeNonNullable(new SelfcontainedWrapper(type, ConvertToXDF.nonNullable(element)));
+    }
+    
+    /**
+     * Encodes the given element into a new nullable selfcontained block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param element the element to encode into the new block.
+     * 
+     * @return a new nullable selfcontained block containing the given element.
+     */
+    @Pure
+    public static @Nullable @NonEncoding <V extends XDF<V, Object>> Block encodeNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nullable V element) {
+        return element == null ? null : encodeNonNullable(type, element);
+    }
+    
+    /**
+     * Decodes the given non-nullable block. 
+     * 
+     * @param block the block to be decoded.
+     * 
+     * @return the element contained in the given block.
+     */
+    @Pure
+    @Locked
+    @NonCommitting
+    public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).element;
+    }
+    
+    /**
+     * Decodes the given nullable block. 
+     * 
+     * @param block the block to be decoded.
+     * 
+     * @return the element contained in the given block.
+     */
+    @Pure
+    @Locked
+    @NonCommitting
+    public static @Nullable @NonEncoding Block decodeNullable(@Nullable @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        return block == null ? null : decodeNonNullable(block);
+    }
+    
+    /**
+     * Reads, wraps and decodes a selfcontained block from the given input stream and optionally closes the input stream afterwards.
+     * 
+     * @param inputStream the input stream to read from.
+     * @param close whether the input stream shall be closed.
+     * 
+     * @return the element of the selfcontained block from the given input stream.
+     */
+    @Pure
+    @Locked
+    @NonCommitting
+    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws AbortException, PacketException, ExternalException, NetworkException {
+        try {
+            return decodeNonNullable(readBlockFrom(inputStream, close));
+        } catch (@Nonnull IOException exception) {
+            throw NetworkException.get(exception);
+        }
+    }
+    
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     @Pure
@@ -248,6 +255,11 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     }
     
     /* -------------------------------------------------- Reading -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code default@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType DEFAULT = SemanticType.map("default@core.digitalid.net").load(XDF_TYPE);
     
     /**
      * Reads a selfcontained block from the given input stream and optionally closes the input stream afterwards.
@@ -278,7 +290,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
             read(inputStream, intvarOfElement, 1, intvarOfElementLength - 1);
             
             final int elementLength = longToInt(IntvarWrapper.decodeValue(intvarOfElement, intvarOfElementLength));
-            final int length = longToInt((long) intvarOfIdentifierLength + (long) identifierLength + (long) intvarOfElementLength + (long) elementLength);
+            final int length = longToInt((long) intvarOfIdentifierLength + identifierLength + intvarOfElementLength + elementLength);
             final @Nonnull byte[] bytes = new byte[length];
             
             System.arraycopy(intvarOfIdentifier, 0, bytes, 0, intvarOfIdentifierLength);
@@ -288,7 +300,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
             
             return Block.get(DEFAULT, bytes);
         } finally {
-            if (close) inputStream.close();
+            if (close) { inputStream.close(); }
         }
     }
     
@@ -311,7 +323,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         
         while (length > 0) {
             final int read = inputStream.read(bytes, offset, length);
-            if (read == -1) throw UnexpectedEndOfFileException.get();
+            if (read == -1) { throw UnexpectedEndOfFileException.get(); }
             offset += read;
             length -= read;
         }
@@ -327,7 +339,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * @throws UnsupportedBlockLengthException if the value is larger than the maximum integer.
      */
     private static int longToInt(long value) throws UnsupportedBlockLengthException {
-        if (value > (long) Integer.MAX_VALUE) throw UnsupportedBlockLengthException.get();
+        if (value > Integer.MAX_VALUE || value < 0) { throw UnsupportedBlockLengthException.get(); }
         return (int) value;
     }
     

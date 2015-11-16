@@ -38,7 +38,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     /**
      * Stores the semantic type {@code known.group@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("known.group@core.digitalid.net").load(TupleWrapper.TYPE, MODULUS, ORDER);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("known.group@core.digitalid.net").load(TupleWrapper.XDF_TYPE, MODULUS, ORDER);
     
     /* -------------------------------------------------- Order -------------------------------------------------- */
     

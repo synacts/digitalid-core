@@ -57,12 +57,12 @@ public final class MemberModule implements HostModule {
     /**
      * Stores the semantic type {@code entry.members.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.members.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.members.module@core.digitalid.net").load(TupleWrapper.XDF_TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code members.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("members.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("members.module@core.digitalid.net").load(ListWrapper.XDF_TYPE, MODULE_ENTRY);
     
     @Pure
     @Override

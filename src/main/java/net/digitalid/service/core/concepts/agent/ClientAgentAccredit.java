@@ -41,7 +41,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code accredit.client.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.map("accredit.client.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, FreezableAgentPermissions.TYPE, Client.NAME, Settings.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("accredit.client.agent@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Agent.TYPE, FreezableAgentPermissions.TYPE, Client.NAME, Settings.TYPE);
     
     
     /**

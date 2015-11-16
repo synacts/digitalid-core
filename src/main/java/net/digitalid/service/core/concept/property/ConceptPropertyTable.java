@@ -50,8 +50,8 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     private static @Nonnull @Loaded SemanticType mapDumpType(@Nonnull ConceptPropertySetup<?, ?, ?> propertySetup) {
         final @Nonnull String identifier = propertySetup.getPropertyName() + propertySetup.getPropertyTable().getModule().getDumpType().getAddress().getStringWithDot();
         // TODO: should propertySetup.getValueConverters().getXDFConverter().getType() be replaced with propertySetup.getPropertyType()?
-        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, Identity.IDENTIFIER, propertySetup.getConceptSetup().getXDFConverter().getType(), Time.TYPE, propertySetup.getPropertyType());
-        return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
+        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.XDF_TYPE, Identity.IDENTIFIER, propertySetup.getConceptSetup().getXDFConverter().getType(), Time.TYPE, propertySetup.getPropertyType());
+        return SemanticType.map(identifier).load(ListWrapper.XDF_TYPE, entry);
     }
     
     /**
@@ -65,8 +65,8 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     private static @Nonnull @Loaded SemanticType mapStateType(@Nonnull ConceptPropertySetup<?, ?, ?> propertySetup) {
         final @Nonnull String identifier = propertySetup.getPropertyName() + propertySetup.getPropertyTable().getModule().getStateType().getAddress().getStringWithDot();
         // TODO: should propertySetup.getValueConverters().getXDFConverter().getType() be replaced with propertySetup.getPropertyType()?
-        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, propertySetup.getConceptSetup().getXDFConverter().getType(), Time.TYPE, propertySetup.getPropertyType());
-        return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
+        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.XDF_TYPE, propertySetup.getConceptSetup().getXDFConverter().getType(), Time.TYPE, propertySetup.getPropertyType());
+        return SemanticType.map(identifier).load(ListWrapper.XDF_TYPE, entry);
     }
     
     /* -------------------------------------------------- Property Factory -------------------------------------------------- */

@@ -26,12 +26,12 @@ public final class Certificate extends NonHostConcept {
     /**
      * Stores the semantic type {@code delegation@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType DELEGATION = SemanticType.map("delegation@core.digitalid.net").load(TupleWrapper.TYPE, NonHostIdentity.IDENTIFIER, PassiveExpression.TYPE);
+    public static final @Nonnull SemanticType DELEGATION = SemanticType.map("delegation@core.digitalid.net").load(TupleWrapper.XDF_TYPE, NonHostIdentity.IDENTIFIER, PassiveExpression.TYPE);
     
     /**
      * Stores the semantic type {@code list.delegation@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType DELEGATIONS = SemanticType.map("list.delegation@core.digitalid.net").load(ListWrapper.TYPE, DELEGATION);
+    public static final @Nonnull SemanticType DELEGATIONS = SemanticType.map("list.delegation@core.digitalid.net").load(ListWrapper.XDF_TYPE, DELEGATION);
     
     /**
      * Stores the semantic type {@code outgoing.list.delegation@core.digitalid.net}.

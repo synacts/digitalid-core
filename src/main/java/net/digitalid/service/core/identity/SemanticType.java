@@ -63,7 +63,7 @@ public final class SemanticType extends Type {
     /**
      * Stores the semantic type {@code categories.attribute.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType CATEGORIES = SemanticType.map("categories.attribute.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.TYPE, Category.TYPE);
+    public static final @Nonnull SemanticType CATEGORIES = SemanticType.map("categories.attribute.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.XDF_TYPE, Category.TYPE);
     
     /**
      * Stores the semantic type {@code caching.attribute.type@core.digitalid.net}.
@@ -78,7 +78,7 @@ public final class SemanticType extends Type {
     /**
      * Stores the semantic type {@code parameters.semantic.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.TYPE, SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.XDF_TYPE, SemanticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code semantic.base.semantic.type@core.digitalid.net}.

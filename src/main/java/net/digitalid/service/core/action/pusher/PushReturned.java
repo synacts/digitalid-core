@@ -56,7 +56,7 @@ public final class PushReturned extends ExternalAction {
     /**
      * Stores the semantic type {@code returned.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.map("returned.push@core.digitalid.net").load(TupleWrapper.TYPE, VALID, REPLY);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("returned.push@core.digitalid.net").load(TupleWrapper.XDF_TYPE, VALID, REPLY);
     
     
     /**

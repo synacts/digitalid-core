@@ -64,7 +64,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     /**
      * Stores the semantic type {@code private.key.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("private.key.host@core.digitalid.net").load(TupleWrapper.TYPE, COMPOSITE_GROUP, P, Q, D, SQUARE_GROUP, X);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("private.key.host@core.digitalid.net").load(TupleWrapper.XDF_TYPE, COMPOSITE_GROUP, P, Q, D, SQUARE_GROUP, X);
     
     /* -------------------------------------------------- Composite Group -------------------------------------------------- */
     

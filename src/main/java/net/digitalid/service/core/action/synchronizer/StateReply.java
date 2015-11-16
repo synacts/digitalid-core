@@ -30,7 +30,7 @@ final class StateReply extends QueryReply {
     /**
      * Stores the semantic type {@code reply.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.map("reply.module@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("reply.module@core.digitalid.net").load(SelfcontainedWrapper.XDF_TYPE);
     
     
     /**

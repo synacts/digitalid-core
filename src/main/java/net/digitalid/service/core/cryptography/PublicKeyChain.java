@@ -30,12 +30,12 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
     /**
      * Stores the semantic type {@code item.public.key.chain.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ITEM = SemanticType.map("item.public.key.chain.host@core.digitalid.net").load(TupleWrapper.TYPE, Time.TYPE, PublicKey.TYPE);
+    private static final @Nonnull SemanticType ITEM = SemanticType.map("item.public.key.chain.host@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Time.TYPE, PublicKey.TYPE);
     
     /**
      * Stores the semantic type {@code public.key.chain.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("public.key.chain.host@core.digitalid.net").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, ListWrapper.TYPE, ITEM);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("public.key.chain.host@core.digitalid.net").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, ListWrapper.XDF_TYPE, ITEM);
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

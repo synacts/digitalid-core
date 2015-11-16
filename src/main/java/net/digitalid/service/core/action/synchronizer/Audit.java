@@ -41,7 +41,7 @@ public abstract class Audit implements XDF<Audit, Object> {
     /**
      * Stores the semantic type {@code audit@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("audit@core.digitalid.net").load(TupleWrapper.TYPE, LAST_TIME, THIS_TIME, TRAIL);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("audit@core.digitalid.net").load(TupleWrapper.XDF_TYPE, LAST_TIME, THIS_TIME, TRAIL);
     
     
     /**

@@ -61,7 +61,7 @@ public class Commitment implements Blockable, SQLizable {
     /**
      * Stores the semantic type {@code commitment.client@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("commitment.client@core.digitalid.net").load(TupleWrapper.TYPE, HOST, TIME, VALUE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("commitment.client@core.digitalid.net").load(TupleWrapper.XDF_TYPE, HOST, TIME, VALUE);
     
     
     /**

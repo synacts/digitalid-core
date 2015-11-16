@@ -67,7 +67,7 @@ public abstract class Credential {
     /**
      * Stores the semantic type {@code exposed.credential@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType EXPOSED = SemanticType.map("exposed.credential@core.digitalid.net").load(TupleWrapper.TYPE, ISSUER, ISSUANCE, HASH, ROLE, AttributeValue.CONTENT);
+    public static final @Nonnull SemanticType EXPOSED = SemanticType.map("exposed.credential@core.digitalid.net").load(TupleWrapper.XDF_TYPE, ISSUER, ISSUANCE, HASH, ROLE, AttributeValue.CONTENT);
     
     /**
      * Returns the block containing the exposed arguments of a credential.

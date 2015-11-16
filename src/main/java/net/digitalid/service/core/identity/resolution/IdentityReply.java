@@ -39,7 +39,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
     /**
      * Stores the semantic type {@code reply.identity@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("reply.identity@core.digitalid.net").load(TupleWrapper.TYPE, Category.TYPE, FreezablePredecessors.TYPE, SUCCESSOR);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("reply.identity@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Category.TYPE, FreezablePredecessors.TYPE, SUCCESSOR);
     
     
     /**

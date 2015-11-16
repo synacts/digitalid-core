@@ -10,6 +10,8 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
@@ -21,8 +23,6 @@ import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -54,12 +54,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     
-    /* -------------------------------------------------- Types -------------------------------------------------- */
-    
-    /**
-     * Stores the syntactic type {@code signature@core.digitalid.net}.
-     */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("signature@core.digitalid.net").load(1);
+    /* -------------------------------------------------- Implementation -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code subject.content.signature@core.digitalid.net}.
@@ -69,18 +64,12 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     /**
      * Stores the semantic type {@code content.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CONTENT = SemanticType.map("content.signature@core.digitalid.net").load(TupleWrapper.TYPE, SUBJECT, Time.TYPE, SemanticType.UNKNOWN, Audit.TYPE);
+    private static final @Nonnull SemanticType CONTENT = SemanticType.map("content.signature@core.digitalid.net").load(TupleWrapper.XDF_TYPE, SUBJECT, Time.TYPE, SemanticType.UNKNOWN, Audit.TYPE);
     
     /**
      * Stores the semantic type {@code signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.signature@core.digitalid.net").load(TupleWrapper.TYPE, CONTENT, HostSignatureWrapper.SIGNATURE, ClientSignatureWrapper.SIGNATURE, CredentialsSignatureWrapper.SIGNATURE);
-    
-    @Pure
-    @Override
-    public final @Nonnull SyntacticType getSyntacticType() {
-        return TYPE;
-    }
+    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.signature@core.digitalid.net").load(TupleWrapper.XDF_TYPE, CONTENT, HostSignatureWrapper.SIGNATURE, ClientSignatureWrapper.SIGNATURE, CredentialsSignatureWrapper.SIGNATURE);
     
     /* -------------------------------------------------- Element -------------------------------------------------- */
     
@@ -110,7 +99,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      */
     @Pure
     public final @Nonnull Block getNonNullableElement() throws InvalidEncodingException {
-        if (element == null) throw new InvalidEncodingException("The signed element is null.");
+        if (element == null) { throw new InvalidEncodingException("The signed element is null."); }
         return element;
     }
     
@@ -299,17 +288,17 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         final @Nonnull Block content = TupleWrapper.decode(cache).getNonNullableElement(0);
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(content);
         this.subject = InternalIdentifier.XDF_CONVERTER.decodeNullable(None.OBJECT, tuple.getNullableElement(0));
-        if (isSigned() && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
+        if (isSigned() && subject == null) { throw new InvalidEncodingException("The subject may not be null if the element is signed."); }
         this.time = tuple.isElementNull(1) ? null : Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
-        if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");
-        if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
+        if (hasSubject() && time == null) { throw new InvalidEncodingException("The signature time may not be null if this signature has a subject."); }
+        if (time != null && !time.isPositive()) { throw new InvalidEncodingException("The signature time has to be positive."); }
         this.element = tuple.getNullableElement(2);
-        if (element != null) element.setType(block.getType().getParameters().getNonNullable(0));
+        if (element != null) { element.setType(block.getType().getParameters().getNonNullable(0)); }
         this.audit = tuple.isElementNull(3) ? null : Audit.get(tuple.getNonNullableElement(3));
         this.verified = verified;
     }
     
-    /* -------------------------------------------------- Utility -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
     
     /**
      * Encodes the given element with a new signature wrapper without signing.
@@ -366,10 +355,10 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         final @Nullable Block clientSignature = elements.getNullable(2);
         final @Nullable Block credentialsSignature = elements.getNullable(3);
         
-        if (hostSignature != null && clientSignature == null && credentialsSignature == null) return new HostSignatureWrapper(block, hostSignature, verified);
-        if (hostSignature == null && clientSignature != null && credentialsSignature == null) return new ClientSignatureWrapper(block, clientSignature, verified);
-        if (hostSignature == null && clientSignature == null && credentialsSignature != null) return new CredentialsSignatureWrapper(block, credentialsSignature, verified, entity);
-        if (hostSignature == null && clientSignature == null && credentialsSignature == null) return new SignatureWrapper(block, verified);
+        if (hostSignature != null && clientSignature == null && credentialsSignature == null) { return new HostSignatureWrapper(block, hostSignature, verified); }
+        if (hostSignature == null && clientSignature != null && credentialsSignature == null) { return new ClientSignatureWrapper(block, clientSignature, verified); }
+        if (hostSignature == null && clientSignature == null && credentialsSignature != null) { return new CredentialsSignatureWrapper(block, credentialsSignature, verified, entity); }
+        if (hostSignature == null && clientSignature == null && credentialsSignature == null) { return new SignatureWrapper(block, verified); }
         throw new InvalidEncodingException("The element may only be signed either by a host, by a client, with credentials or not at all.");
     }
     
@@ -392,7 +381,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      */
     @Pure
     public void checkRecency() throws InactiveSignatureException {
-        if (time == null || time.isLessThan(Time.HALF_HOUR.ago())) throw new InactiveSignatureException("The signature was signed more than half an hour ago.");
+        if (time == null || time.isLessThan(Time.HALF_HOUR.ago())) { throw new InactiveSignatureException("The signature was signed more than half an hour ago."); }
     }
     
     /* -------------------------------------------------- Signing -------------------------------------------------- */
@@ -450,6 +439,19 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         getCache().writeTo(block);
     }
     
+    /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
+    
+    /**
+     * Stores the syntactic type {@code signature@core.digitalid.net}.
+     */
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("signature@core.digitalid.net").load(1);
+    
+    @Pure
+    @Override
+    public final @Nonnull SyntacticType getSyntacticType() {
+        return XDF_TYPE;
+    }
+    
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
@@ -500,7 +502,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      */
     @Pure
     public final @Nonnull HostSignatureWrapper toHostSignatureWrapper() throws PacketException {
-        if (this instanceof HostSignatureWrapper) return (HostSignatureWrapper) this;
+        if (this instanceof HostSignatureWrapper) { return (HostSignatureWrapper) this; }
         throw new PacketException(PacketErrorCode.SIGNATURE, "The element was not signed by a host.");
     }
     
@@ -513,7 +515,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      */
     @Pure
     public final @Nonnull ClientSignatureWrapper toClientSignatureWrapper() throws PacketException {
-        if (this instanceof ClientSignatureWrapper) return (ClientSignatureWrapper) this;
+        if (this instanceof ClientSignatureWrapper) { return (ClientSignatureWrapper) this; }
         throw new PacketException(PacketErrorCode.SIGNATURE, "The element was not signed by a client.");
     }
     
@@ -526,7 +528,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      */
     @Pure
     public final @Nonnull CredentialsSignatureWrapper toCredentialsSignatureWrapper() throws PacketException {
-        if (this instanceof CredentialsSignatureWrapper) return (CredentialsSignatureWrapper) this;
+        if (this instanceof CredentialsSignatureWrapper) { return (CredentialsSignatureWrapper) this; }
         throw new PacketException(PacketErrorCode.SIGNATURE, "The element was not signed with credentials.");
     }
     

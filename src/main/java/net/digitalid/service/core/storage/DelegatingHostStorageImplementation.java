@@ -41,12 +41,12 @@ abstract class DelegatingHostStorageImplementation extends DelegatingClientStora
     /**
      * Stores the semantic type {@code table.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TABLE = SemanticType.map("table.module@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+    private static final @Nonnull SemanticType TABLE = SemanticType.map("table.module@core.digitalid.net").load(SelfcontainedWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.map("module@core.digitalid.net").load(ListWrapper.TYPE, TABLE);
+    private static final @Nonnull SemanticType MODULE = SemanticType.map("module@core.digitalid.net").load(ListWrapper.XDF_TYPE, TABLE);
     
     /* -------------------------------------------------- Dump Type -------------------------------------------------- */
     

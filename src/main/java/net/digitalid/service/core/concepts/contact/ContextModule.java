@@ -120,12 +120,12 @@ public final class ContextModule implements StateModule {
     /**
      * Stores the semantic type {@code entry.context.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.context.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.context.module@core.digitalid.net").load(TupleWrapper.XDF_TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code context.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("context.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("context.module@core.digitalid.net").load(ListWrapper.XDF_TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
@@ -160,29 +160,29 @@ public final class ContextModule implements StateModule {
     /**
      * Stores the semantic type {@code entry.name.context.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NAME_STATE_ENTRY = SemanticType.map("entry.name.context.state@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, Context.NAME_TYPE);
+    private static final @Nonnull SemanticType NAME_STATE_ENTRY = SemanticType.map("entry.name.context.state@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Context.TYPE, Context.NAME_TYPE);
     
     /**
      * Stores the semantic type {@code table.name.context.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NAME_STATE_TABLE = SemanticType.map("table.name.context.state@core.digitalid.net").load(ListWrapper.TYPE, NAME_STATE_ENTRY);
+    private static final @Nonnull SemanticType NAME_STATE_TABLE = SemanticType.map("table.name.context.state@core.digitalid.net").load(ListWrapper.XDF_TYPE, NAME_STATE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code entry.contact.context.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CONTACT_STATE_ENTRY = SemanticType.map("entry.contact.context.state@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, Person.IDENTIFIER);
+    private static final @Nonnull SemanticType CONTACT_STATE_ENTRY = SemanticType.map("entry.contact.context.state@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Context.TYPE, Person.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code table.contact.context.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CONTACT_STATE_TABLE = SemanticType.map("table.contact.context.state@core.digitalid.net").load(ListWrapper.TYPE, CONTACT_STATE_ENTRY);
+    private static final @Nonnull SemanticType CONTACT_STATE_TABLE = SemanticType.map("table.contact.context.state@core.digitalid.net").load(ListWrapper.XDF_TYPE, CONTACT_STATE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code context.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("context.state@core.digitalid.net").load(TupleWrapper.TYPE, NAME_STATE_TABLE, CONTACT_STATE_TABLE);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("context.state@core.digitalid.net").load(TupleWrapper.XDF_TYPE, NAME_STATE_TABLE, CONTACT_STATE_TABLE);
     
     @Pure
     @Override

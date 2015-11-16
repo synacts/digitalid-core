@@ -19,7 +19,7 @@ public final class EncryptionWrapperTest extends ServerSetup {
     @Test
     public void testWrapping() throws Exception {
         final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.XDF_TYPE);
-        final @Nonnull SemanticType TYPE = SemanticType.map("encryption@test.digitalid.net").load(EncryptionWrapper.TYPE, STRING);
+        final @Nonnull SemanticType TYPE = SemanticType.map("encryption@test.digitalid.net").load(EncryptionWrapper.XDF_TYPE, STRING);
         
         final @Nonnull Block[] blocks = new Block[] {null, new StringWrapper(STRING, "This is a secret message.").toBlock()};
         final @Nullable SymmetricKey[] symmetricKeys = new SymmetricKey[] {null, new SymmetricKey()};

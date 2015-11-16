@@ -40,7 +40,7 @@ final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code replace.context.outgoing.role@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.context.outgoing.role@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, OLD_CONTEXT, NEW_CONTEXT);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.context.outgoing.role@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Agent.TYPE, OLD_CONTEXT, NEW_CONTEXT);
     
     
     /**

@@ -113,7 +113,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /**
      * Stores the semantic type {@code public.key.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("public.key.host@core.digitalid.net").load(TupleWrapper.TYPE, COMPOSITE_GROUP, E, AB, AU, AI, AV, AO, T, SU, SI, SV, SO, SQUARE_GROUP, G, Y, Z);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("public.key.host@core.digitalid.net").load(TupleWrapper.XDF_TYPE, COMPOSITE_GROUP, E, AB, AU, AI, AV, AO, T, SU, SI, SV, SO, SQUARE_GROUP, G, Y, Z);
     
     
     /**
@@ -139,7 +139,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /**
      * Stores the semantic type {@code tuple.public.key.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TUPLE = SemanticType.map("tuple.public.key.host@core.digitalid.net").load(TupleWrapper.TYPE, TU, TI, TV, TO);
+    public static final @Nonnull SemanticType TUPLE = SemanticType.map("tuple.public.key.host@core.digitalid.net").load(TupleWrapper.XDF_TYPE, TU, TI, TV, TO);
     
     
     /**
@@ -155,7 +155,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /**
      * Stores the semantic type {@code verifiable.encryption@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType VERIFIABLE_ENCRYPTION = SemanticType.map("verifiable.encryption@core.digitalid.net").load(TupleWrapper.TYPE, W1, W2);
+    public static final @Nonnull SemanticType VERIFIABLE_ENCRYPTION = SemanticType.map("verifiable.encryption@core.digitalid.net").load(TupleWrapper.XDF_TYPE, W1, W2);
     
     /* -------------------------------------------------- Composite Group -------------------------------------------------- */
     

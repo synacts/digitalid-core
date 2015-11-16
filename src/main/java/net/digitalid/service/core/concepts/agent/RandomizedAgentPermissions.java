@@ -40,7 +40,7 @@ public final class RandomizedAgentPermissions implements Blockable {
     /**
      * Stores the semantic type {@code randomized.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("randomized.permission.agent@core.digitalid.net").load(TupleWrapper.TYPE, SALT, PERMISSIONS);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("randomized.permission.agent@core.digitalid.net").load(TupleWrapper.XDF_TYPE, SALT, PERMISSIONS);
     
     /**
      * Stores the semantic type {@code hash.randomized.permission.agent@core.digitalid.net}.

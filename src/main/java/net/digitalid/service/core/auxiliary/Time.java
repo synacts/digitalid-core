@@ -604,7 +604,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Time, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int64Wrapper.getValueSQLConverter(DECLARATION)); // TODO: Int64Wrapper.getValueSQLConverter(DECLARATION) should have a precondition that checks whether the DECLARATION is based on the right SQLType.
+    public static final @Nonnull AbstractSQLConverter<Time, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int64Wrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override

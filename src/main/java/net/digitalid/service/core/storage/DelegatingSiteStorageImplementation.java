@@ -46,12 +46,12 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
     /**
      * Stores the semantic type {@code table.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TABLE = SemanticType.map("table.state@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+    private static final @Nonnull SemanticType TABLE = SemanticType.map("table.state@core.digitalid.net").load(SelfcontainedWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.map("state@core.digitalid.net").load(ListWrapper.TYPE, TABLE);
+    private static final @Nonnull SemanticType STATE = SemanticType.map("state@core.digitalid.net").load(ListWrapper.XDF_TYPE, TABLE);
     
     /* -------------------------------------------------- State Type -------------------------------------------------- */
     

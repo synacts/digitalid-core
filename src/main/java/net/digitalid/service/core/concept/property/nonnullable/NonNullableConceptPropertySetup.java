@@ -61,7 +61,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     /**
      * Stores the type of the concept property internal action.
      */
-    private final @Nonnull @Loaded SemanticType actionType = SemanticType.map("action" + getPropertyType().getAddress().getStringWithDot()).load(TupleWrapper.TYPE, getConceptSetup().getConceptConverters().getXDFConverter().getType(), ConceptPropertyInternalAction.OLD_TIME, ConceptPropertyInternalAction.NEW_TIME, oldValueType, newValueType);
+    private final @Nonnull @Loaded SemanticType actionType = SemanticType.map("action" + getPropertyType().getAddress().getStringWithDot()).load(TupleWrapper.XDF_TYPE, getConceptSetup().getConceptConverters().getXDFConverter().getType(), ConceptPropertyInternalAction.OLD_TIME, ConceptPropertyInternalAction.NEW_TIME, oldValueType, newValueType);
     
     @Pure
     @Override

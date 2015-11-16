@@ -236,7 +236,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         private SQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
             super(declaration, SEMANTIC);
             
-            assert declaration.getType() == SQL_TYPE : "The declaration must match the SQL type of the wrapper.";
+            assert declaration.getType() == SQL_TYPE : "The declaration matches the SQL type of the wrapper.";
         }
         
         @Override

@@ -12,9 +12,9 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoded;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -29,19 +29,6 @@ import net.digitalid.utility.system.logger.Log;
  */
 @Immutable
 public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapper> {
-    
-    /* -------------------------------------------------- Types -------------------------------------------------- */
-    
-    /**
-     * Stores the syntactic type {@code compression@core.digitalid.net}.
-     */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("compression@core.digitalid.net").load(1);
-    
-    @Pure
-    @Override
-    public @Nonnull SyntacticType getSyntacticType() {
-        return TYPE;
-    }
     
     /* -------------------------------------------------- Element -------------------------------------------------- */
     
@@ -80,62 +67,6 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         assert element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
         
         this.element = element;
-    }
-    
-    /* -------------------------------------------------- Utility -------------------------------------------------- */
-    
-    /**
-     * Compresses the given element into a new non-nullable block of the given type.
-     * 
-     * @param type the semantic type of the new block.
-     * @param element the element to compress into the new block.
-     * 
-     * @return a new non-nullable block containing the given element.
-     * 
-     * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
-     */
-    @Pure
-    public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block compressNonNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return new XDFConverter(type).encodeNonNullable(new CompressionWrapper(type, ConvertToXDF.nonNullable(element)));
-    }
-    
-    /**
-     * Compresses the given element into a new nullable block of the given type.
-     * 
-     * @param type the semantic type of the new block.
-     * @param element the element to compress into the new block.
-     * 
-     * @return a new nullable block containing the given element.
-     * 
-     * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
-     */
-    @Pure
-    public static @Nullable @NonEncoding <V extends XDF<V, ?>> Block compressNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nullable V element) {
-        return element == null ? null : compressNonNullable(type, element);
-    }
-    
-    /**
-     * Decompresses the given non-nullable block. 
-     * 
-     * @param block the block to be decompressed.
-     * 
-     * @return the element contained in the given block.
-     */
-    @Pure
-    public static @Nonnull @NonEncoding Block decompressNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).element;
-    }
-    
-    /**
-     * Decompresses the given nullable block. 
-     * 
-     * @param block the block to be decompressed.
-     * 
-     * @return the element contained in the given block.
-     */
-    @Pure
-    public static @Nullable @NonEncoding Block decompressNullable(@Nullable @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return block == null ? null : decompressNonNullable(block);
     }
     
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
@@ -184,6 +115,19 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         }
     }
     
+    /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
+    
+    /**
+     * Stores the syntactic type {@code compression@core.digitalid.net}.
+     */
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("compression@core.digitalid.net").load(1);
+    
+    @Pure
+    @Override
+    public @Nonnull SyntacticType getSyntacticType() {
+        return XDF_TYPE;
+    }
+    
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
@@ -223,6 +167,72 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     @Override
     public @Nonnull XDFConverter getXDFConverter() {
         return new XDFConverter(getSemanticType());
+    }
+    
+    /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code semantic.compression@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.compression@core.digitalid.net").load(XDF_TYPE);
+    
+    /**
+     * Stores a static XDF converter for performance reasons.
+     */
+    private static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter(SEMANTIC);
+
+    /**
+     * Compresses the given element into a new non-nullable block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param element the element to compress into the new block.
+     * 
+     * @return a new non-nullable block containing the given element.
+     * 
+     * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
+     */
+    @Pure
+    public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block compressNonNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull V element) {
+        return XDF_CONVERTER.encodeNonNullable(new CompressionWrapper(type, ConvertToXDF.nonNullable(element)));
+    }
+    
+    /**
+     * Compresses the given element into a new nullable block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param element the element to compress into the new block.
+     * 
+     * @return a new nullable block containing the given element.
+     * 
+     * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
+     */
+    @Pure
+    public static @Nullable @NonEncoding <V extends XDF<V, ?>> Block compressNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nullable V element) {
+        return element == null ? null : compressNonNullable(type, element);
+    }
+    
+    /**
+     * Decompresses the given non-nullable block. 
+     * 
+     * @param block the block to be decompressed.
+     * 
+     * @return the element contained in the given block.
+     */
+    @Pure
+    public static @Nonnull @NonEncoding Block decompressNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
+        return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).element;
+    }
+    
+    /**
+     * Decompresses the given nullable block. 
+     * 
+     * @param block the block to be decompressed.
+     * 
+     * @return the element contained in the given block.
+     */
+    @Pure
+    public static @Nullable @NonEncoding Block decompressNullable(@Nullable @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
+        return block == null ? null : decompressNonNullable(block);
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */

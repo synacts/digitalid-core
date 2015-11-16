@@ -9,6 +9,8 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.PrivateKey;
 import net.digitalid.service.core.cryptography.PublicKey;
@@ -19,8 +21,6 @@ import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -49,7 +49,7 @@ import net.digitalid.utility.system.logger.Log;
 @Immutable
 public final class HostSignatureWrapper extends SignatureWrapper {
     
-    /* -------------------------------------------------- Types -------------------------------------------------- */
+    /* -------------------------------------------------- Implementation -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code signer.host.signature@core.digitalid.net}.
@@ -64,7 +64,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     /**
      * Stores the semantic type {@code host.signature@core.digitalid.net}.
      */
-    static final @Nonnull SemanticType SIGNATURE = SemanticType.map("host.signature@core.digitalid.net").load(TupleWrapper.TYPE, SIGNER, VALUE);
+    static final @Nonnull SemanticType SIGNATURE = SemanticType.map("host.signature@core.digitalid.net").load(TupleWrapper.XDF_TYPE, SIGNER, VALUE);
     
     /* -------------------------------------------------- Signer -------------------------------------------------- */
     
@@ -124,7 +124,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         this.signer = InternalIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, TupleWrapper.decode(hostSignature).getNonNullableElement(0));
     }
     
-    /* -------------------------------------------------- Utility -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
     
     /**
      * Encodes the element with a new host signature wrapper and signs it according to the arguments.
@@ -166,7 +166,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull Time start = Time.getCurrent();
         
-        if (getNonNullableTime().isLessThan(Time.TWO_YEARS.ago())) throw new InvalidSignatureException("The host signature is out of date.");
+        if (getNonNullableTime().isLessThan(Time.TWO_YEARS.ago())) { throw new InvalidSignatureException("The host signature is out of date."); }
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(getCache());
         final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();
@@ -179,7 +179,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         }
         
         final @Nonnull ReadOnlyArray<Block> subelements = TupleWrapper.decode(tuple.getNonNullableElement(1)).getNonNullableElements(2);
-        if (!publicKey.getCompositeGroup().getElement(subelements.getNonNullable(1)).pow(publicKey.getE()).getValue().equals(hash)) throw new InvalidSignatureException("The host signature is not valid.");
+        if (!publicKey.getCompositeGroup().getElement(subelements.getNonNullable(1)).pow(publicKey.getE()).getValue().equals(hash)) { throw new InvalidSignatureException("The host signature is not valid."); }
         
         Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
         

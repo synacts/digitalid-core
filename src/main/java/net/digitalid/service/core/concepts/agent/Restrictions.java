@@ -433,7 +433,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     /**
      * Stores the semantic type {@code restrictions.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("restrictions.agent@core.digitalid.net").load(TupleWrapper.TYPE, CLIENT_TYPE, ROLE_TYPE, WRITING_TYPE, CONTEXT_TYPE, CONTACT_TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("restrictions.agent@core.digitalid.net").load(TupleWrapper.XDF_TYPE, CLIENT_TYPE, ROLE_TYPE, WRITING_TYPE, CONTEXT_TYPE, CONTACT_TYPE);
     
     /**
      * The XDF converter for this class.

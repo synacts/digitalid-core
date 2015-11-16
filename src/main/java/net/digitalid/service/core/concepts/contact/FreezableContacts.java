@@ -35,7 +35,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
     /**
      * Stores the semantic type {@code list.contact@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("list.contact@core.digitalid.net").load(ListWrapper.TYPE, Contact.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("list.contact@core.digitalid.net").load(ListWrapper.XDF_TYPE, Contact.TYPE);
     
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */

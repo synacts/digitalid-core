@@ -65,27 +65,27 @@ public abstract class Packet {
     /**
      * Stores the semantic type {@code content.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType CONTENT = SemanticType.map("content.packet@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+    public static final @Nonnull SemanticType CONTENT = SemanticType.map("content.packet@core.digitalid.net").load(SelfcontainedWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code compression.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType COMPRESSION = SemanticType.map("compression.packet@core.digitalid.net").load(CompressionWrapper.TYPE, CONTENT);
+    public static final @Nonnull SemanticType COMPRESSION = SemanticType.map("compression.packet@core.digitalid.net").load(CompressionWrapper.XDF_TYPE, CONTENT);
     
     /**
      * Stores the semantic type {@code signature.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType SIGNATURE = SemanticType.map("signature.packet@core.digitalid.net").load(SignatureWrapper.TYPE, COMPRESSION);
+    public static final @Nonnull SemanticType SIGNATURE = SemanticType.map("signature.packet@core.digitalid.net").load(SignatureWrapper.XDF_TYPE, COMPRESSION);
     
     /**
      * Stores the semantic type {@code list.signature.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType SIGNATURES = SemanticType.map("list.signature.packet@core.digitalid.net").load(ListWrapper.TYPE, SIGNATURE);
+    public static final @Nonnull SemanticType SIGNATURES = SemanticType.map("list.signature.packet@core.digitalid.net").load(ListWrapper.XDF_TYPE, SIGNATURE);
     
     /**
      * Stores the semantic type {@code encryption.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType ENCRYPTION = SemanticType.map("encryption.packet@core.digitalid.net").load(EncryptionWrapper.TYPE, SIGNATURES);
+    public static final @Nonnull SemanticType ENCRYPTION = SemanticType.map("encryption.packet@core.digitalid.net").load(EncryptionWrapper.XDF_TYPE, SIGNATURES);
     
     /**
      * Stores the semantic type {@code packet@core.digitalid.net}.

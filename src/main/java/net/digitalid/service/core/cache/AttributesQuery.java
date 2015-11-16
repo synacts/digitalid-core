@@ -47,7 +47,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     /**
      * Stores the semantic type {@code query.attribute@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("query.attribute@core.digitalid.net").load(TupleWrapper.TYPE, FreezableAttributeTypeSet.TYPE, Attribute.PUBLISHED);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("query.attribute@core.digitalid.net").load(TupleWrapper.XDF_TYPE, FreezableAttributeTypeSet.TYPE, Attribute.PUBLISHED);
     
     
     /**

@@ -46,7 +46,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code replace.value.attribute@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.value.attribute@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, OLD_VALUE, NEW_VALUE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.value.attribute@core.digitalid.net").load(TupleWrapper.XDF_TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, OLD_VALUE, NEW_VALUE);
     
     
     /**

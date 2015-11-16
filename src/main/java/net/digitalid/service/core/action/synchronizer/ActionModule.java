@@ -97,12 +97,12 @@ public final class ActionModule implements StateModule {
     /**
      * Stores the semantic type {@code entry.actions.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.actions.module@core.digitalid.net").load(TupleWrapper.TYPE, InternalNonHostIdentity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Time.TYPE, FreezableAgentPermissions.TYPE, Restrictions.TYPE, Agent.NUMBER, HostIdentity.IDENTIFIER, Packet.SIGNATURE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.actions.module@core.digitalid.net").load(TupleWrapper.XDF_TYPE, InternalNonHostIdentity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Time.TYPE, FreezableAgentPermissions.TYPE, Restrictions.TYPE, Agent.NUMBER, HostIdentity.IDENTIFIER, Packet.SIGNATURE);
     
     /**
      * Stores the semantic type {@code actions.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("actions.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("actions.module@core.digitalid.net").load(ListWrapper.XDF_TYPE, MODULE_ENTRY);
     
     @Pure
     @Override

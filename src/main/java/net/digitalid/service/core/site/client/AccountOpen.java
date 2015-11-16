@@ -62,7 +62,7 @@ public final class AccountOpen extends Action {
     /**
      * Stores the semantic type {@code open.account@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("open.account@core.digitalid.net").load(TupleWrapper.TYPE, Category.TYPE, Agent.NUMBER, Client.NAME);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("open.account@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Category.TYPE, Agent.NUMBER, Client.NAME);
     
     
     /**

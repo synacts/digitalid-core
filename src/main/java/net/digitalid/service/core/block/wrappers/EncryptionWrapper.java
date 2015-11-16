@@ -10,6 +10,8 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.PrivateKey;
@@ -20,8 +22,6 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.HostIdentity;
@@ -49,12 +49,7 @@ import net.digitalid.utility.system.logger.Log;
 @Immutable
 public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper> {
     
-    /* -------------------------------------------------- Types -------------------------------------------------- */
-    
-    /**
-     * Stores the syntactic type {@code encryption@core.digitalid.net}.
-     */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("encryption@core.digitalid.net").load(1);
+    /* -------------------------------------------------- Implementation -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code recipient.encryption@core.digitalid.net}.
@@ -69,13 +64,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     /**
      * Stores the semantic type {@code implementation.encryption@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.encryption@core.digitalid.net").load(TupleWrapper.TYPE, Time.TYPE, RECIPIENT, KEY, InitializationVector.TYPE, SemanticType.UNKNOWN);
-    
-    @Pure
-    @Override
-    public @Nonnull SyntacticType getSyntacticType() {
-        return TYPE;
-    }
+    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.encryption@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Time.TYPE, RECIPIENT, KEY, InitializationVector.TYPE, SemanticType.UNKNOWN);
     
     /* -------------------------------------------------- Cache -------------------------------------------------- */
     
@@ -285,9 +274,9 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         if (tuple.isElementNull(1)) {
             // The encryption is part of a response.
             this.recipient = null;
-            if (encryptedKey != null) throw new InvalidEncodingException("A response may not include an encrypted symmetric key.");
+            if (encryptedKey != null) { throw new InvalidEncodingException("A response may not include an encrypted symmetric key."); }
             if (initializationVector != null) {
-                if (symmetricKey == null) throw new InvalidEncodingException("A symmetric key is needed in order to decrypt the response.");
+                if (symmetricKey == null) { throw new InvalidEncodingException("A symmetric key is needed in order to decrypt the response."); }
                 this.symmetricKey = symmetricKey;
             } else {
                 // It can happen that a requester expects an encryption but the host is not able to decipher the symmetric key and thus cannot encrypt the response.
@@ -296,14 +285,14 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         } else {
             // The encryption is part of a request.
             this.recipient = HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
-            if (!Server.hasHost(recipient)) throw new InvalidEncodingException(recipient + " does not run on this server.");
-            if (symmetricKey != null) throw new InvalidEncodingException("A response may not include a recipient.");
+            if (!Server.hasHost(recipient)) { throw new InvalidEncodingException(recipient + " does not run on this server."); }
+            if (symmetricKey != null) { throw new InvalidEncodingException("A response may not include a recipient."); }
             if (encryptedKey != null) {
-                if (initializationVector == null) throw new InvalidEncodingException("An initialization vector is needed to decrypt an element.");
+                if (initializationVector == null) { throw new InvalidEncodingException("An initialization vector is needed to decrypt an element."); }
                 final @Nonnull PrivateKey privateKey = Server.getHost(recipient).getPrivateKeyChain().getKey(time);
                 this.symmetricKey = decrypt(privateKey, encryptedKey);
             } else {
-                if (initializationVector != null) throw new InvalidEncodingException("If a request is encrypted, a symmetric key has to be provided.");
+                if (initializationVector != null) { throw new InvalidEncodingException("If a request is encrypted, a symmetric key has to be provided."); }
                 this.symmetricKey = null;
             }
         }
@@ -323,7 +312,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         this.publicKey = null;
     }
     
-    /* -------------------------------------------------- Utility -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
     
     /**
      * Encrypts the given element with a new encryption wrapper.
@@ -409,6 +398,19 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
         getCache().writeTo(block);
+    }
+    
+    /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
+    
+    /**
+     * Stores the syntactic type {@code encryption@core.digitalid.net}.
+     */
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("encryption@core.digitalid.net").load(1);
+    
+    @Pure
+    @Override
+    public @Nonnull SyntacticType getSyntacticType() {
+        return XDF_TYPE;
     }
     
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */

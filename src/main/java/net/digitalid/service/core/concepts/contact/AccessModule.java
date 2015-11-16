@@ -62,12 +62,12 @@ final class AccessModule implements StateModule {
     /**
      * Stores the semantic type {@code entry.access.request.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.access.request.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.access.request.module@core.digitalid.net").load(TupleWrapper.XDF_TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code access.request.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("access.request.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("access.request.module@core.digitalid.net").load(ListWrapper.XDF_TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
@@ -101,12 +101,12 @@ final class AccessModule implements StateModule {
     /**
      * Stores the semantic type {@code entry.access.request.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.map("entry.access.request.state@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.map("entry.access.request.state@core.digitalid.net").load(TupleWrapper.XDF_TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code access.request.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("access.request.state@core.digitalid.net").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("access.request.state@core.digitalid.net").load(ListWrapper.XDF_TYPE, STATE_ENTRY);
     
     @Pure
     @Override

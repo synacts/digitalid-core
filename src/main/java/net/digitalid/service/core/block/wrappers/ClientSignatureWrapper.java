@@ -9,6 +9,8 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.concepts.agent.AgentModule;
 import net.digitalid.service.core.concepts.agent.ClientAgent;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
@@ -21,8 +23,6 @@ import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -46,7 +46,7 @@ import net.digitalid.utility.system.logger.Log;
 @Immutable
 public final class ClientSignatureWrapper extends SignatureWrapper {
     
-    /* -------------------------------------------------- Types -------------------------------------------------- */
+    /* -------------------------------------------------- Implementation -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code hash.client.signature@core.digitalid.net}.
@@ -56,7 +56,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     /**
      * Stores the semantic type {@code client.signature@core.digitalid.net}.
      */
-    static final @Nonnull SemanticType SIGNATURE = SemanticType.map("client.signature@core.digitalid.net").load(TupleWrapper.TYPE, Commitment.TYPE, HASH, Exponent.TYPE);
+    static final @Nonnull SemanticType SIGNATURE = SemanticType.map("client.signature@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Commitment.TYPE, HASH, Exponent.TYPE);
     
     /* -------------------------------------------------- Commitment -------------------------------------------------- */
     
@@ -115,7 +115,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         this.commitment = new Commitment(elements.getNonNullable(0));
     }
     
-    /* -------------------------------------------------- Utility -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
     
     /**
      * Encodes the element with a new client signature wrapper and signs it according to the arguments.
@@ -154,7 +154,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull Time start = Time.getCurrent();
         
-        if (getNonNullableTime().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The client signature is out of date.");
+        if (getNonNullableTime().isLessThan(Time.TROPICAL_YEAR.ago())) { throw new InvalidSignatureException("The client signature is out of date."); }
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(getCache());
         final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();
@@ -164,7 +164,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         final @Nonnull Exponent s = Exponent.get(elements.getNonNullable(2));
         final @Nonnull BigInteger h = t.xor(hash);
         final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
-        if (!t.equals(ConvertToXDF.nonNullable(value).getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
+        if (!t.equals(ConvertToXDF.nonNullable(value).getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) { throw new InvalidSignatureException("The client signature is invalid."); }
         
         Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
         
@@ -206,9 +206,9 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     @Override
     @NonCommitting
     public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws PacketException, AbortException {
-        if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) throw new PacketException(PacketErrorCode.KEYROTATION, "The client has to recommit its secret.");
+        if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) { throw new PacketException(PacketErrorCode.KEYROTATION, "The client has to recommit its secret."); }
         final @Nullable ClientAgent agent = AgentModule.getClientAgent(entity, commitment);
-        if (agent == null) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The element was not signed by an authorized client.");
+        if (agent == null) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The element was not signed by an authorized client."); }
         agent.checkNotRemoved();
         return agent;
     }

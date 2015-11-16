@@ -41,7 +41,7 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code replace.password@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.password@core.digitalid.net").load(TupleWrapper.TYPE, OLD_VALUE, NEW_VALUE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.password@core.digitalid.net").load(TupleWrapper.XDF_TYPE, OLD_VALUE, NEW_VALUE);
     
     
     /**

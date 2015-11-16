@@ -90,12 +90,12 @@ public final class HostCredentialModule implements HostModule {
     /**
      * Stores the semantic type {@code entry.host.credential.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.host.credential.module@core.digitalid.net").load(TupleWrapper.TYPE, Time.TYPE, InternalNonHostIdentity.IDENTIFIER, E, I, V, Packet.SIGNATURE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.host.credential.module@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Time.TYPE, InternalNonHostIdentity.IDENTIFIER, E, I, V, Packet.SIGNATURE);
     
     /**
      * Stores the semantic type {@code host.credential.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("host.credential.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("host.credential.module@core.digitalid.net").load(ListWrapper.XDF_TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
