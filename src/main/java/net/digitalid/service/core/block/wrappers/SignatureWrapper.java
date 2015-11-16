@@ -456,7 +456,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.XDFConverter<SignatureWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.XDFConverter<SignatureWrapper> {
         
         /**
          * Creates a new factory with the given type.

@@ -238,7 +238,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.NonRequestingXDFConverter<BytesWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<BytesWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -269,7 +269,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * The SQL converter for this class.
      */
     @Immutable
-    public static final class SQLConverter extends Wrapper.SQLConverter<BytesWrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<BytesWrapper> {
 
         /**
          * Creates a new SQL converter with the given column name.
@@ -324,7 +324,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * The factory for this wrapper.
      */
     @Immutable
-    public static class Factory extends ValueWrapper.Factory<byte[], BytesWrapper> {
+    public static class Factory extends ValueWrapper.Wrapper<byte[], BytesWrapper> {
         
         @Pure
         @Override

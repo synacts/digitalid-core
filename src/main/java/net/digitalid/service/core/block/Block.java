@@ -17,7 +17,7 @@ import net.digitalid.service.core.block.annotations.EncodingRecipient;
 import net.digitalid.service.core.block.annotations.NonEncoded;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.annotations.NonEncodingRecipient;
-import net.digitalid.service.core.block.wrappers.Wrapper;
+import net.digitalid.service.core.block.wrappers.AbstractWrapper;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.InitializationVector;
@@ -41,6 +41,7 @@ import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.declaration.Declaration;
 import net.digitalid.utility.database.declaration.SQLType;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
@@ -105,7 +106,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     /**
      * Stores the wrapper of this block for lazy encoding or null otherwise.
      */
-    private final @Nullable Wrapper<?> wrapper;
+    private final @Nullable AbstractWrapper<?> wrapper;
     
     /**
      * Stores whether this block is already encoded and can thus no longer be written to.
@@ -198,7 +199,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * 
      * @ensure !isAllocated() : "This block is not yet allocated.";
      */
-    private @NonEncoded @NonEncoding Block(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
+    private @NonEncoded @NonEncoding Block(@Nonnull @Loaded SemanticType type, @Nonnull AbstractWrapper<?> wrapper) {
         assert type.isLoaded() : "The type declaration is loaded.";
         
         this.type = type;
@@ -219,7 +220,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * @ensure !isAllocated() : "This block is not yet allocated.";
      */
     @Pure
-    public static @Nonnull @NonEncoded @NonEncoding Block get(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
+    public static @Nonnull @NonEncoded @NonEncoding Block get(@Nonnull @Loaded SemanticType type, @Nonnull AbstractWrapper<?> wrapper) {
         return new Block(type, wrapper);
     }
     
@@ -737,7 +738,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     /**
      * Stores the declaration of this class.
      */
-    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("block", SQLType.BLOB, null);
+    public static final @Nonnull Declaration DECLARATION = ColumnDeclaration.get("block", SQLType.BLOB);
     
     /**
      * The SQL converter for this class.
@@ -754,7 +755,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         
         @Pure
         @Override
-        public void getValues(@Nonnull Block block, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+        public void storeNonNullable(@Nonnull Block block, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
             values.set(index.getAndIncrementValue(), block.toString());
         }
         

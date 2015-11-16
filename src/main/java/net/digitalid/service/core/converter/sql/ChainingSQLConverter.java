@@ -96,8 +96,8 @@ public class ChainingSQLConverter<O, E, K, D> extends AbstractSQLConverter<O, E>
     /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */
     
     @Override
-    public final void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
-        SQLConverter.getValues(keyConverter.convert(object), values, index);
+    public final void storeNonNullable(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+        SQLConverter.storeNonNullable(keyConverter.convert(object), values, index);
     }
     
     /* -------------------------------------------------- Storing (with PreparedStatement) -------------------------------------------------- */

@@ -13,15 +13,16 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.Positive;
-import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.database.column.Column;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.declaration.Declaration;
 
 /**
  * Values and elements are wrapped by separate objects as the native types do not support encoding and decoding.
@@ -29,7 +30,7 @@ import net.digitalid.utility.database.converter.SQL;
  * @see Block
  */
 @Immutable
-public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, SQL<W, Object> {
+public abstract class AbstractWrapper<W extends AbstractWrapper<W>> implements XDF<W, Object>, SQL<W, Object> {
     
     /* -------------------------------------------------- Semantic Type -------------------------------------------------- */
     
@@ -71,7 +72,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
      * 
      * @require semanticType.isBasedOn(getSyntacticType()) : "The given semantic type is based on the indicated syntactic type.";
      */
-    protected Wrapper(@Nonnull @Loaded SemanticType semanticType) {
+    protected AbstractWrapper(@Nonnull @Loaded SemanticType semanticType) {
         assert semanticType.isBasedOn(getSyntacticType()) : "The given semantic type is based on the indicated syntactic type.";
         
         this.semanticType = semanticType;
@@ -107,9 +108,9 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
     @Override
     @SuppressWarnings("unchecked")
     public final boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Wrapper)) return false;
-        final @Nonnull Wrapper<?> other = (Wrapper<?>) object;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof AbstractWrapper)) { return false; }
+        final @Nonnull AbstractWrapper<?> other = (AbstractWrapper<?>) object;
         return this.getClass().equals(other.getClass()) && ConvertToXDF.nonNullable((W) this).equals(ConvertToXDF.nonNullable((W) other));
     }
     
@@ -126,7 +127,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
      * The XDF converter for wrappers.
      */
     @Immutable
-    public abstract static class XDFConverter<W extends Wrapper<W>> extends AbstractXDFConverter<W, Object> {
+    public abstract static class XDFConverter<W extends AbstractWrapper<W>> extends AbstractXDFConverter<W, Object> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -152,7 +153,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
      * The non-requesting XDF converter for wrappers.
      */
     @Immutable
-    public abstract static class NonRequestingXDFConverter<W extends Wrapper<W>> extends XDFConverter<W> {
+    public abstract static class NonRequestingXDFConverter<W extends AbstractWrapper<W>> extends XDFConverter<W> {
         
         /**
          * Creates a new non-requesting XDF converter with the given type.
@@ -185,7 +186,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
      * The SQL converter for wrappers.
      */
     @Immutable
-    public abstract static class SQLConverter<W extends Wrapper<W>> extends AbstractSQLConverter<W, Object> {
+    public abstract static class SQLConverter<W extends AbstractWrapper<W>> extends AbstractSQLConverter<W, Object> {
         
         /**
          * Stores the semantic type of the restored wrappers.
@@ -202,21 +203,21 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
         }
         
         /**
-         * Creates a new SQL converter with the given column.
+         * Creates a new SQL converter with the given column declaration and semantic type.
          * 
-         * @param column the column used to store objects of the wrapper.
+         * @param declaration the declaration used to store instances of the wrapper.
          * @param type the semantic type of the restored wrappers.
          */
-        protected SQLConverter(@Nonnull @NonNullableElements Column column, @Nonnull @Loaded SemanticType type) {
-            super(column);
+        protected SQLConverter(@Nonnull @NonNullableElements Declaration declaration, @Nonnull @Loaded SemanticType type) {
+            super(declaration);
             
             this.type = type;
         }
         
         @Pure
         @Override
-        public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull W wrapper) {
-            return FreezableArray.getNonNullable(wrapper.toString());
+        public final void storeNonNullable(@Nonnull W wrapper, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+            values.set(index.getAndIncrementValue(), wrapper.toString());
         }
         
     }

@@ -308,7 +308,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.NonRequestingXDFConverter<IntvarWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<IntvarWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -344,7 +344,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * The SQL converter for this class.
      */
     @Immutable
-    public static final class SQLConverter extends Wrapper.SQLConverter<IntvarWrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<IntvarWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -396,7 +396,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * The factory for this wrapper.
      */
     @Immutable
-    public static class Factory extends ValueWrapper.Factory<Long, IntvarWrapper> {
+    public static class Factory extends ValueWrapper.Wrapper<Long, IntvarWrapper> {
         
         @Pure
         @Override

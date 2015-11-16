@@ -28,7 +28,7 @@ public final class FreezableAuthentications extends FreezableAttributeTypeSet im
     /**
      * Stores the semantic type {@code identity.based.authentication.contact@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTITY_BASED_TYPE = SemanticType.map("identity.based.authentication.contact@core.digitalid.net").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType IDENTITY_BASED_TYPE = SemanticType.map("identity.based.authentication.contact@core.digitalid.net").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.XDF_TYPE);
     
     /**
      * Stores an empty set of authentications.

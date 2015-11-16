@@ -239,7 +239,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.XDFConverter<ListWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.XDFConverter<ListWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.

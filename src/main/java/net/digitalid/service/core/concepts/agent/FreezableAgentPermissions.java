@@ -57,7 +57,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     /**
      * Stores the semantic type {@code writing.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType WRITING = SemanticType.map("writing.permission.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType WRITING = SemanticType.map("writing.permission.agent@core.digitalid.net").load(BooleanWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code permission.agent@core.digitalid.net}.
@@ -73,7 +73,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     /**
      * Stores the semantic type {@code general.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType GENERAL = SemanticType.map("general.permission.agent@core.digitalid.net").load(new Category[] {Category.HOST, Category.SYNTACTIC_TYPE, Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType GENERAL = SemanticType.map("general.permission.agent@core.digitalid.net").load(new Category[] {Category.HOST, Category.SYNTACTIC_TYPE, Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, BooleanWrapper.XDF_TYPE);
     
     /**
      * Stores an empty set of agent permissions.

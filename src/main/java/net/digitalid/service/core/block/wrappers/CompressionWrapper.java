@@ -190,7 +190,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.XDFConverter<CompressionWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.XDFConverter<CompressionWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.

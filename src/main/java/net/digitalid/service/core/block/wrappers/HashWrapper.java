@@ -184,7 +184,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.NonRequestingXDFConverter<HashWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<HashWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -217,7 +217,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      * The SQL converter for this class.
      */
     @Immutable
-    public static final class SQLConverter extends Wrapper.SQLConverter<HashWrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<HashWrapper> {
         
         /**
          * Creates a new SQL converter with the given column name.
@@ -262,7 +262,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class Factory extends ValueWrapper.Factory<BigInteger, HashWrapper> {
+    public static class Factory extends ValueWrapper.Wrapper<BigInteger, HashWrapper> {
         
         @Pure
         @Override

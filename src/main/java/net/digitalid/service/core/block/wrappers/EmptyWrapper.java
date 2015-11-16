@@ -105,7 +105,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.NonRequestingXDFConverter<EmptyWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<EmptyWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -138,7 +138,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
      * The SQL converter for this class.
      */
     @Immutable
-    public static final class SQLConverter extends Wrapper.SQLConverter<EmptyWrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<EmptyWrapper> {
         
         /**
          * Creates a new SQL converter with the given column name.
@@ -185,7 +185,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
      * The factory for this wrapper.
      */
     @Immutable
-    public static class Factory extends ValueWrapper.Factory<Object, EmptyWrapper> {
+    public static class Factory extends ValueWrapper.Wrapper<Object, EmptyWrapper> {
         
         @Pure
         @Override

@@ -84,12 +84,12 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     /**
      * Stores the semantic type {@code client.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType CLIENT = SemanticType.map("client.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType CLIENT = SemanticType.map("client.agent@core.digitalid.net").load(BooleanWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code removed.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType REMOVED = SemanticType.map("removed.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType REMOVED = SemanticType.map("removed.agent@core.digitalid.net").load(BooleanWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code agent@core.digitalid.net}.

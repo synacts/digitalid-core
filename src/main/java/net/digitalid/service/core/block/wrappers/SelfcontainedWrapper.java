@@ -212,7 +212,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.XDFConverter<SelfcontainedWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.XDFConverter<SelfcontainedWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.

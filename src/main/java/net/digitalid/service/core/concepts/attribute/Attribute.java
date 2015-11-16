@@ -36,7 +36,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     /**
      * Stores the semantic type {@code published.attribute@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType PUBLISHED = SemanticType.map("published.attribute@core.digitalid.net").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType PUBLISHED = SemanticType.map("published.attribute@core.digitalid.net").load(BooleanWrapper.XDF_TYPE);
     
     /* -------------------------------------------------- Semantic Type -------------------------------------------------- */
     

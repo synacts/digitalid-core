@@ -599,7 +599,7 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the declaration of this class.
      */
-    public static final @Nonnull ColumnDeclaration DECLARATION = Int64Wrapper.getColumnDeclaration("time", null);
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("time", Int64Wrapper.SQL_TYPE);
     
     /**
      * Stores the SQL converter of this class.

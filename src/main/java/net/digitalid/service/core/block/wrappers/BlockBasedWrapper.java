@@ -6,25 +6,24 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.Column;
-import net.digitalid.utility.database.declaration.SQLType;
 import net.digitalid.utility.database.converter.ConvertToSQL;
+import net.digitalid.utility.database.declaration.SQLType;
 
 /**
  * This class implements methods that all wrappers whose storable mechanisms use a {@link Block block} share.
  */
 @Immutable
-public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends Wrapper<W> {
+public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends AbstractWrapper<W> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -45,7 +44,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
      * The SQL converter for block-based wrappers.
      */
     @Immutable
-    public final static class SQLConverter<W extends BlockBasedWrapper<W>> extends Wrapper.SQLConverter<W> {
+    public final static class SQLConverter<W extends BlockBasedWrapper<W>> extends AbstractWrapper.SQLConverter<W> {
         
         /**
          * Stores the column for the block-based wrapper.
@@ -55,14 +54,14 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
         /**
          * Stores the XDF converter used to encode and decode the block.
          */
-        private final @Nonnull Wrapper.XDFConverter<W> XDFConverter;
+        private final @Nonnull AbstractWrapper.XDFConverter<W> XDFConverter;
         
         /**
          * Creates a new SQL converter with the given XDF converter.
          * 
          * @param XDFConverter the XDF converter used to encode and decode the block.
          */
-        protected SQLConverter(@Nonnull Wrapper.XDFConverter<W> XDFConverter) {
+        protected SQLConverter(@Nonnull AbstractWrapper.XDFConverter<W> XDFConverter) {
             super(COLUMN, XDFConverter.getType());
             
             this.XDFConverter = XDFConverter;

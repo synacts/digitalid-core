@@ -137,7 +137,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.NonRequestingXDFConverter<Int32Wrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<Int32Wrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -170,7 +170,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
      * The SQL converter for this class.
      */
     @Immutable
-    public static final class SQLConverter extends Wrapper.SQLConverter<Int32Wrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<Int32Wrapper> {
         
         /**
          * Creates a new SQL converter with the given column name.
@@ -215,7 +215,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
      * The factory for this wrapper.
      */
     @Immutable
-    public static class Factory extends ValueWrapper.Factory<Integer, Int32Wrapper> {
+    public static class Factory extends ValueWrapper.Wrapper<Integer, Int32Wrapper> {
         
         @Pure
         @Override

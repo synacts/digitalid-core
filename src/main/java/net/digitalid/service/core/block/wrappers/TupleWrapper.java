@@ -362,7 +362,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.XDFConverter<TupleWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.XDFConverter<TupleWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.

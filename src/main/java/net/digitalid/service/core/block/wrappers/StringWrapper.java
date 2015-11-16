@@ -188,7 +188,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends Wrapper.NonRequestingXDFConverter<StringWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<StringWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -220,7 +220,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * The SQL converter for this class.
      */
     @Immutable
-    public static final class SQLConverter extends Wrapper.SQLConverter<StringWrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<StringWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -271,7 +271,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * The factory for this wrapper.
      */
     @Immutable
-    public static class Factory extends ValueWrapper.Factory<String, StringWrapper> {
+    public static class Factory extends ValueWrapper.Wrapper<String, StringWrapper> {
         
         @Pure
         @Override
