@@ -17,6 +17,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This class models time in milliseconds for both dates and intervals.
@@ -596,9 +597,14 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = Int64Wrapper.getColumnDeclaration("time", null);
+    
+    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Time, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int64Wrapper.getValueSQLConverter("time", null));
+    public static final @Nonnull AbstractSQLConverter<Time, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int64Wrapper.getValueSQLConverter(DECLARATION)); // TODO: Int64Wrapper.getValueSQLConverter(DECLARATION) should have a precondition that checks whether the DECLARATION is based on the right SQLType.
     
     @Pure
     @Override

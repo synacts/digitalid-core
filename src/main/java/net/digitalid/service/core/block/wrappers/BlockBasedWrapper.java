@@ -17,7 +17,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
-import net.digitalid.utility.database.column.SQLType;
+import net.digitalid.utility.database.declaration.SQLType;
 import net.digitalid.utility.database.converter.ConvertToSQL;
 
 /**

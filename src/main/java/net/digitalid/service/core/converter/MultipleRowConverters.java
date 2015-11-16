@@ -1,28 +1,28 @@
 package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.MultipleRowSQLConverter;
 
 /**
- * This class allows to store several non-requesting converters in a single object.
+ * This class allows to store several multiple-row converters in a single object.
  * 
  * @param <O> the type of the objects that the converters can convert, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to recover an object, which is quite often an {@link Entity}.
  *            In case no external information is needed for the recovery of an object, declare it as an {@link Object}.
  */
 @Immutable
-public final class NonRequestingConverters<O, E> extends Converters<O, E> {
+public final class MultipleRowConverters<O, E> extends Converters<O, E> {
     
-    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingXDFConverter<O, E> getXDFConverter() {
-        return (AbstractNonRequestingXDFConverter<O, E>) super.getXDFConverter();
+    public @Nonnull MultipleRowSQLConverter<O, E> getSQLConverter() {
+        return (MultipleRowSQLConverter<O, E>) super.getSQLConverter();
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
@@ -33,7 +33,7 @@ public final class NonRequestingConverters<O, E> extends Converters<O, E> {
      * @param XDFConverter the XDF converter.
      * @param SQLConverter the SQL converter.
      */
-    protected NonRequestingConverters(@Nonnull AbstractNonRequestingXDFConverter<O, E> XDFConverter, @Nonnull AbstractSQLConverter<O, E> SQLConverter) {
+    protected MultipleRowConverters(@Nonnull AbstractXDFConverter<O, E> XDFConverter, @Nonnull MultipleRowSQLConverter<O, E> SQLConverter) {
         super(XDFConverter, SQLConverter);
     }
     
@@ -46,16 +46,16 @@ public final class NonRequestingConverters<O, E> extends Converters<O, E> {
      * @return a new object with the given converters.
      */
     @Pure
-    public static @Nonnull <O, E> NonRequestingConverters<O, E> get(@Nonnull AbstractNonRequestingXDFConverter<O, E> XDFConverter, @Nonnull AbstractSQLConverter<O, E> SQLConverter) {
-        return new NonRequestingConverters<>(XDFConverter, SQLConverter);
+    public static @Nonnull <O, E> MultipleRowConverters<O, E> get(@Nonnull AbstractXDFConverter<O, E> XDFConverter, @Nonnull MultipleRowSQLConverter<O, E> SQLConverter) {
+        return new MultipleRowConverters<>(XDFConverter, SQLConverter);
     }
     
     /* -------------------------------------------------- Subtyping -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull NonRequestingConverters<O, E> setType(@Nonnull SemanticType type) {
-        return new NonRequestingConverters<>(getXDFConverter().setType(type), getSQLConverter());
+    public @Nonnull MultipleRowConverters<O, E> setType(@Nonnull SemanticType type) {
+        return new MultipleRowConverters<>(getXDFConverter().setType(type), getSQLConverter());
     }
     
 }

@@ -29,7 +29,7 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.database.table.DatabaseTable;
+import net.digitalid.utility.database.table.Table;
 
 /**
  * This interface models a digital identity.
@@ -363,9 +363,9 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
         @Override
         @SafeVarargs
         @NonCommitting
-        public final void executeAfterCreation(@Nonnull DatabaseTable table, @Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
+        public final void executeAfterCreation(@Nonnull Table table, @Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
             if (mergeable) {
-                Mapper.addReference(table.getName(null), null, uniques);
+                Mapper.addReference(table.getName(null), null, uniques); // TODO
             }
         }
         

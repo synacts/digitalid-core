@@ -32,9 +32,9 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.ColumnIndex;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
-import net.digitalid.utility.database.converter.ComposingSQLConverter;
+import net.digitalid.utility.database.declaration.CombiningDeclaration;
 import net.digitalid.utility.database.converter.SQL;
 
 /**
@@ -495,7 +495,9 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      * The SQL converter for this class.
      */
     @Immutable
-    public static final class SQLConverter extends ComposingSQLConverter<Restrictions, NonHostEntity> {
+    public static final class SQLConverter extends CombiningDeclaration<Restrictions, NonHostEntity> {
+        
+        // TODO: Make the following converters static and assign them here instead of in the constructor!
         
         /**
          * Stores the SQL converter for the client field.
@@ -529,7 +531,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Pure
         @Override
-        public void getValues(@Nonnull Restrictions restrictions, @NonCapturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex index) {
+        public void getValues(@Nonnull Restrictions restrictions, @NonCapturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
             clientSQLConverter.getValues(restrictions.client, values, index);
             roleSQLConverter.getValues(restrictions.role, values, index);
             writingSQLConverter.getValues(restrictions.writing, values, index);
@@ -539,7 +541,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
             clientSQLConverter.storeNonNullable(restrictions.client, preparedStatement, parameterIndex);
             roleSQLConverter.storeNonNullable(restrictions.role, preparedStatement, parameterIndex);
             writingSQLConverter.storeNonNullable(restrictions.writing, preparedStatement, parameterIndex);
@@ -550,7 +552,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull ColumnIndex columnIndex) throws SQLException {
+        public @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
             final @Nullable Boolean client = clientSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
             final @Nullable Boolean role = roleSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);
             final @Nullable Boolean writing = writingSQLConverter.restoreNullable(None.OBJECT, resultSet, columnIndex);

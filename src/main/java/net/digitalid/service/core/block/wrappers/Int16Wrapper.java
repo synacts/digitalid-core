@@ -19,7 +19,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
-import net.digitalid.utility.database.column.SQLType;
+import net.digitalid.utility.database.declaration.SQLType;
 
 /**
  * This class wraps a {@code short} for encoding and decoding a block of the syntactic type {@code int16@core.digitalid.net}.

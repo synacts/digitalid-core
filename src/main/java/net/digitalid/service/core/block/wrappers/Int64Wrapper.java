@@ -22,8 +22,8 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
-import net.digitalid.utility.database.column.SQLType;
-import net.digitalid.utility.database.reference.ColumnReference;
+import net.digitalid.utility.database.declaration.SQLType;
+import net.digitalid.utility.database.reference.Reference;
 
 /**
  * This class wraps a {@code long} for encoding and decoding a block of the syntactic type {@code int64@core.digitalid.net}.
@@ -261,7 +261,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<Long, Int64Wrapper> getValueSQLConverter(@Nonnull @Validated String columnName, @Nullable ColumnReference columnReference) {
+    public static @Nonnull ValueSQLConverter<Long, Int64Wrapper> getValueSQLConverter(@Nonnull @Validated String columnName, @Nullable Reference columnReference) {
         return new ValueSQLConverter<>(FACTORY, new SQLConverter(columnName)); // TODO: Pass on the column reference!
     }
     

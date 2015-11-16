@@ -13,7 +13,7 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
-import net.digitalid.utility.database.table.DatabaseTable;
+import net.digitalid.utility.database.table.Table;
 
 /**
  * This class implements a database table that can be created and deleted on {@link Client clients} and {@link Host hosts}.
@@ -22,7 +22,7 @@ import net.digitalid.utility.database.table.DatabaseTable;
  * @see HostTableImplementation
  */
 @Immutable
-abstract class ClientTableImplementation<M extends DelegatingClientStorageImplementation> implements ClientStorage, DatabaseTable {
+abstract class ClientTableImplementation<M extends DelegatingClientStorageImplementation> implements ClientStorage, Table {
     
     /* -------------------------------------------------- Module -------------------------------------------------- */
     

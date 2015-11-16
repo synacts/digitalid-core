@@ -29,15 +29,19 @@ import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.reference.Captured;
+import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.annotations.index.ValidIndex;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
-import net.digitalid.utility.database.column.ColumnIndex;
-import net.digitalid.utility.database.column.SQLType;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.converter.ColumnSQLConverter;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.declaration.SQLType;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -731,26 +735,31 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("block", SQLType.BLOB, null);
+    
+    /**
      * The SQL converter for this class.
      */
     @Immutable
-    public static final class SQLConverter extends ColumnSQLConverter<Block, SemanticType> {
+    public static final class SQLConverter extends AbstractSQLConverter<Block, SemanticType> {
         
         /**
          * Creates a new SQL converter.
          */
         private SQLConverter() {
-            super("block", SQLType.BLOB, null);
+            super(DECLARATION);
         }
         
         @Pure
         @Override
-        protected @Nonnull String getValue(@Nonnull Block block) {
-            return block.toString();
+        public void getValues(@Nonnull Block block, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+            values.set(index.getAndIncrementValue(), block.toString());
         }
         
         @Override
-        public void storeNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
             if (Database.getConfiguration().supportsBinaryStream()) {
                 preparedStatement.setBinaryStream(parameterIndex.getAndIncrementValue(), block.getInputStream(), block.getLength());
             } else {
@@ -760,7 +769,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         
         @Pure
         @Override
-        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, @Nonnull ColumnIndex columnIndex) throws SQLException {
+        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
             final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
             return resultSet.wasNull() ? null : Block.get(type, bytes);
         }

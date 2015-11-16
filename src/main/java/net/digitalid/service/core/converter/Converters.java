@@ -50,7 +50,7 @@ public class Converters<O, E> {
      * @return the SQL converter.
      */
     @Pure
-    public final @Nonnull AbstractSQLConverter<O, E> getSQLConverter() {
+    public @Nonnull AbstractSQLConverter<O, E> getSQLConverter() {
         return SQLConverter;
     }
     
