@@ -15,9 +15,9 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.ConvertToSQL;
-import net.digitalid.utility.database.declaration.SQLType;
 
 /**
  * This class implements methods that all wrappers whose storable mechanisms use a {@link Block block} share.
@@ -47,11 +47,6 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
     public final static class SQLConverter<W extends BlockBasedWrapper<W>> extends AbstractWrapper.SQLConverter<W> {
         
         /**
-         * Stores the column for the block-based wrapper.
-         */
-        private static final @Nonnull Column COLUMN = Column.get("block", SQLType.BLOB);
-        
-        /**
          * Stores the XDF converter used to encode and decode the block.
          */
         private final @Nonnull AbstractWrapper.XDFConverter<W> XDFConverter;
@@ -62,21 +57,21 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
          * @param XDFConverter the XDF converter used to encode and decode the block.
          */
         protected SQLConverter(@Nonnull AbstractWrapper.XDFConverter<W> XDFConverter) {
-            super(COLUMN, XDFConverter.getType());
+            super(Block.DECLARATION, XDFConverter.getType());
             
             this.XDFConverter = XDFConverter;
         }
         
         @Override
         @NonCommitting
-        public final void storeNonNullable(@Nonnull W wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public final void storeNonNullable(@Nonnull W wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
             ConvertToSQL.nonNullable(ConvertToXDF.nonNullable(wrapper), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable W restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public final @Nullable W restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
             try {
                 final @Nullable Block block = Block.SQL_CONVERTER.restoreNullable(getType(), resultSet, columnIndex);
                 return block == null ? null : XDFConverter.decodeNonNullable(none, block);

@@ -112,7 +112,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /**
      * Stores the semantic type {@code initialization.vector@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("initialization.vector@core.digitalid.net").load(BytesWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("initialization.vector@core.digitalid.net").load(BytesWrapper.XDF_TYPE);
     
     /**
      * Stores the XDF converter of this class.

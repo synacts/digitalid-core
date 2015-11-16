@@ -51,7 +51,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     /**
      * Stores the semantic type {@code hash.client.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType HASH = SemanticType.map("hash.client.signature@core.digitalid.net").load(HashWrapper.TYPE);
+    private static final @Nonnull SemanticType HASH = SemanticType.map("hash.client.signature@core.digitalid.net").load(HashWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code client.signature@core.digitalid.net}.

@@ -39,12 +39,12 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     /**
      * Stores the semantic type {@code p.private.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType P = SemanticType.map("p.private.key.host@core.digitalid.net").load(IntegerWrapper.TYPE);
+    private static final @Nonnull SemanticType P = SemanticType.map("p.private.key.host@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code q.private.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType Q = SemanticType.map("q.private.key.host@core.digitalid.net").load(IntegerWrapper.TYPE);
+    private static final @Nonnull SemanticType Q = SemanticType.map("q.private.key.host@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code d.private.key.host@core.digitalid.net}.

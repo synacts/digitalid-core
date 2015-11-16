@@ -89,7 +89,7 @@ public final class SemanticType extends Type {
     /**
      * Stores the semantic type {@code unknown@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(BytesWrapper.TYPE);
+    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(BytesWrapper.XDF_TYPE);
     
     
     /**

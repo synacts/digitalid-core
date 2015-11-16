@@ -49,7 +49,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     /**
      * Stores the semantic type {@code symmetric.key@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("symmetric.key@core.digitalid.net").load(IntegerWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("symmetric.key@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /* -------------------------------------------------- Circumvent Cryptographic Restrictions -------------------------------------------------- */
     

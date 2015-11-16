@@ -17,7 +17,7 @@ public final class CompressionWrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.TYPE);
+        final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("compression@test.digitalid.net").load(CompressionWrapper.TYPE, STRING);
         final @Nonnull Block[] blocks = new Block[] {new StringWrapper(STRING, "").toBlock(), new StringWrapper(STRING, "This is a short string.").toBlock(), new StringWrapper(STRING, "This is a longer string in order to test different block lengths.").toBlock()};
         final @Nonnull byte[] algorithms = new byte[] {CompressionWrapper.NONE, CompressionWrapper.ZLIB};

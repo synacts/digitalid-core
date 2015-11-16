@@ -22,8 +22,8 @@ public final class TupleWrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.TYPE);
-        final @Nonnull SemanticType INT32 = SemanticType.map("int32@test.digitalid.net").load(Int32Wrapper.TYPE);
+        final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.XDF_TYPE);
+        final @Nonnull SemanticType INT32 = SemanticType.map("int32@test.digitalid.net").load(Int32Wrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("tuple@test.digitalid.net").load(TupleWrapper.TYPE, STRING, INT32);
         final @Nonnull Block string = new StringWrapper(STRING, "This is a short string.").toBlock();
         final @Nonnull Block int32 = new Int32Wrapper(INT32, 123456789).toBlock();

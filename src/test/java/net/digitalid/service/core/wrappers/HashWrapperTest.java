@@ -17,7 +17,7 @@ public final class HashWrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType TYPE = SemanticType.map("hash@test.digitalid.net").load(HashWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.map("hash@test.digitalid.net").load(HashWrapper.XDF_TYPE);
         final @Nonnull Random random = new Random();
         for (int i = 0; i < 10; i++) {
             final @Nonnull BigInteger hash = new BigInteger(HashWrapper.LENGTH * 8, random);

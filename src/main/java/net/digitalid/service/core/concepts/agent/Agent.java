@@ -79,7 +79,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     /**
      * Stores the semantic type {@code number.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType NUMBER = SemanticType.map("number.agent@core.digitalid.net").load(Int64Wrapper.TYPE);
+    public static final @Nonnull SemanticType NUMBER = SemanticType.map("number.agent@core.digitalid.net").load(Int64Wrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code client.agent@core.digitalid.net}.
@@ -523,7 +523,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
     
@@ -535,7 +535,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Agent agent, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public static void set(@Nullable Agent agent, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         if (agent == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else agent.set(preparedStatement, parameterIndex);
     }

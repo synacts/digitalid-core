@@ -24,7 +24,7 @@ public final class PassiveExpression extends AbstractExpression {
     /**
      * Stores the semantic type {@code passive.expression@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("passive.expression@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("passive.expression@core.digitalid.net").load(StringWrapper.XDF_TYPE);
     
     
     /**
@@ -99,7 +99,7 @@ public final class PassiveExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PassiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nonnull PassiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         try {
             return new PassiveExpression(entity, resultSet.getString(columnIndex));
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {

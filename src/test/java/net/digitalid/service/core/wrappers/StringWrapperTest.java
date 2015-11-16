@@ -15,7 +15,7 @@ public final class StringWrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType TYPE = SemanticType.map("string@test.digitalid.net").load(StringWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.map("string@test.digitalid.net").load(StringWrapper.XDF_TYPE);
         final @Nonnull String[] strings = new String[] {"", "äöüéè", "This is a short string.", "This is a longer string in order to test different string lengths."};
         for (final @Nonnull String string : strings) {
 //            System.out.println(string);

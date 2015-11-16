@@ -25,7 +25,7 @@ public final class Exponent extends Number<Exponent> {
     /**
      * Stores the semantic type {@code exponent.group@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("exponent.group@core.digitalid.net").load(IntegerWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("exponent.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

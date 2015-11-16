@@ -23,7 +23,7 @@ public final class PersonalExpression extends AbstractExpression {
     /**
      * Stores the semantic type {@code personal.expression@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("personal.expression@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("personal.expression@core.digitalid.net").load(StringWrapper.XDF_TYPE);
     
     
     /**
@@ -74,7 +74,7 @@ public final class PersonalExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PersonalExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nonnull PersonalExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         try {
             return new PersonalExpression(entity, resultSet.getString(columnIndex));
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {

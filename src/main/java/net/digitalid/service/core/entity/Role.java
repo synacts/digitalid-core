@@ -333,7 +333,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @Pure
     @NonCommitting
-    public static @Nullable Role get(@Nonnull Client client, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nullable Role get(@Nonnull Client client, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
         return RoleModule.load(client, number);
@@ -350,7 +350,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Role getNotNull(@Nonnull Client client, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nonnull Role getNotNull(@Nonnull Client client, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         return RoleModule.load(client, resultSet.getLong(columnIndex));
     }
     

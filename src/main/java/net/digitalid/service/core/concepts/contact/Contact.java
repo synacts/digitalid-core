@@ -236,7 +236,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nullable Identity identity = IdentityImplementation.get(resultSet, columnIndex);
         if (identity == null) return null;
         if (identity instanceof Person) return get(entity, (Person) identity);
@@ -254,7 +254,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
         if (identity instanceof Person) return get(entity, (Person) identity);
         else throw new SQLException("A non-person was stored as a contact.");
@@ -262,7 +262,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         preparedStatement.setLong(parameterIndex, person.getDatabaseID());
     }
     
@@ -274,7 +274,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Contact contact, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public static void set(@Nullable Contact contact, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         if (contact == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else contact.set(preparedStatement, parameterIndex);
     }

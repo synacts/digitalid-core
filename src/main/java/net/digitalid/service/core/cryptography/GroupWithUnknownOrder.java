@@ -26,7 +26,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
     /**
      * Stores the semantic type {@code unknown.group@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("unknown.group@core.digitalid.net").load(IntegerWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("unknown.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

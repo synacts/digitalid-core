@@ -93,7 +93,7 @@ public final class HostAccount extends Account implements HostEntity {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull HostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nonnull HostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
         if (identity instanceof HostIdentity) return get(host, (HostIdentity) identity);
         else throw new SQLException("The identity of " + identity.getAddress() + " is not a host.");

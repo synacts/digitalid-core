@@ -38,7 +38,7 @@ public abstract class EntityImplementation implements Entity {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         if (site instanceof Host) {
             return Account.getNotNull((Host) site, resultSet, columnIndex);
         } else if (site instanceof Client) {
@@ -50,7 +50,7 @@ public abstract class EntityImplementation implements Entity {
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
     
@@ -62,7 +62,7 @@ public abstract class EntityImplementation implements Entity {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Entity entity, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public static void set(@Nullable Entity entity, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         if (entity == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else entity.set(preparedStatement, parameterIndex);
     }

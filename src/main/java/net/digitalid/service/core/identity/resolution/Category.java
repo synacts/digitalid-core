@@ -225,7 +225,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     /**
      * Stores the semantic type {@code category@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("category@core.digitalid.net").load(Int8Wrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("category@core.digitalid.net").load(Int8Wrapper.XDF_TYPE);
     
     /**
      * Stores the XDF converter of this class.

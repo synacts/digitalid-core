@@ -418,7 +418,7 @@ public final class OutgoingRole extends Agent {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed, boolean restrictable) throws AbortException {
+    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex, boolean removed, boolean restrictable) throws AbortException {
         return get(entity, resultSet.getLong(columnIndex), removed, restrictable);
     }
     

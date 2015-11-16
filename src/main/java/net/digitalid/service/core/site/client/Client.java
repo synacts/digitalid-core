@@ -92,7 +92,7 @@ public class Client extends Site implements Observer {
     /**
      * Stores the semantic type {@code name.client.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType NAME = SemanticType.map("name.client.agent@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType NAME = SemanticType.map("name.client.agent@core.digitalid.net").load(StringWrapper.XDF_TYPE);
     
     
     /**

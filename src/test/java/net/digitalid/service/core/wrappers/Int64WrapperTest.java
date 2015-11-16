@@ -16,7 +16,7 @@ public final class Int64WrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType TYPE = SemanticType.map("int64@test.digitalid.net").load(Int64Wrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.map("int64@test.digitalid.net").load(Int64Wrapper.XDF_TYPE);
         final @Nonnull Random random = new Random();
         for (int i = 0; i < 10; i++) {
             final long value = random.nextLong();

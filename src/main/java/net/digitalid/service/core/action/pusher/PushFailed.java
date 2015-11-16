@@ -47,7 +47,7 @@ public final class PushFailed extends ExternalAction {
     /**
      * Stores the semantic type {@code number.failed.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NUMBER = SemanticType.map("number.failed.push@core.digitalid.net").load(Int64Wrapper.TYPE);
+    private static final @Nonnull SemanticType NUMBER = SemanticType.map("number.failed.push@core.digitalid.net").load(Int64Wrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code subject.failed.push@core.digitalid.net}.

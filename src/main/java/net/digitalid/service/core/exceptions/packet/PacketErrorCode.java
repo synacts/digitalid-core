@@ -146,7 +146,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
     /**
      * Stores the semantic type {@code code.error.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("code.error.packet@core.digitalid.net").load(Int8Wrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("code.error.packet@core.digitalid.net").load(Int8Wrapper.XDF_TYPE);
     
     /**
      * Returns the packet error encoded by the given block.
@@ -234,7 +234,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PacketErrorCode get(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nonnull PacketErrorCode get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nonnull byte value = resultSet.getByte(columnIndex);
         if (!isValid(value)) throw new SQLException("'" + value + "' is not a valid packet error.");
         return get(value);
@@ -242,7 +242,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         preparedStatement.setByte(parameterIndex, value);
     }
     

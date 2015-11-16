@@ -31,7 +31,7 @@ public final class SyntacticType extends Type {
      * Stores the semantic type {@code @core.digitalid.net}.
      * (This hack was necessary to get the initialization working.)
      */
-    static final @Nonnull SemanticType IDENTITY_IDENTIFIER = SemanticType.map("@core.digitalid.net").load(StringWrapper.TYPE);
+    static final @Nonnull SemanticType IDENTITY_IDENTIFIER = SemanticType.map("@core.digitalid.net").load(StringWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code nonhost@core.digitalid.net}.
@@ -54,7 +54,7 @@ public final class SyntacticType extends Type {
     /**
      * Stores the semantic type {@code parameters.syntactic.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.syntactic.type@core.digitalid.net").load(new Category[] {Category.SYNTACTIC_TYPE}, Time.TROPICAL_YEAR, Int8Wrapper.TYPE);
+    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.syntactic.type@core.digitalid.net").load(new Category[] {Category.SYNTACTIC_TYPE}, Time.TROPICAL_YEAR, Int8Wrapper.XDF_TYPE);
     
     
     /**

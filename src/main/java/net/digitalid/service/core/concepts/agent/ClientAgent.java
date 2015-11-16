@@ -263,7 +263,7 @@ public final class ClientAgent extends Agent {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull ClientAgent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed) throws AbortException {
+    public static @Nonnull ClientAgent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex, boolean removed) throws AbortException {
         return get(entity, resultSet.getLong(columnIndex), removed);
     }
     

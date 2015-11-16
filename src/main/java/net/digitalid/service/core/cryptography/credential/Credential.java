@@ -518,7 +518,7 @@ public abstract class Credential {
             string.append(", Attribute: (");
             try {
                 string.append(attributeContent.getType().getAddress().getString());
-                if (attributeContent.getType().isBasedOn(StringWrapper.TYPE)) {
+                if (attributeContent.getType().isBasedOn(StringWrapper.XDF_TYPE)) {
                     string.append(": ").append(new StringWrapper(attributeContent).getString());
                 }
             } catch (@Nonnull InvalidEncodingException exception) {

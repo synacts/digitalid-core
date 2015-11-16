@@ -47,7 +47,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends AbstractWr
     @Override
     public abstract @Nonnull AbstractWrapper.NonRequestingXDFConverter<W> getXDFConverter();
     
-    /* -------------------------------------------------- Factory -------------------------------------------------- */
+    /* -------------------------------------------------- Wrapper -------------------------------------------------- */
     
     /**
      * The wrapper for value wrappers.

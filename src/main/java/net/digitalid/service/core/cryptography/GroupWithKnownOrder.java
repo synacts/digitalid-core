@@ -28,12 +28,12 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     /**
      * Stores the semantic type {@code modulus.group@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULUS = SemanticType.map("modulus.group@core.digitalid.net").load(IntegerWrapper.TYPE);
+    private static final @Nonnull SemanticType MODULUS = SemanticType.map("modulus.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code order.group@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ORDER = SemanticType.map("order.group@core.digitalid.net").load(IntegerWrapper.TYPE);
+    private static final @Nonnull SemanticType ORDER = SemanticType.map("order.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code known.group@core.digitalid.net}.

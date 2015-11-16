@@ -93,7 +93,7 @@ public final class NonHostAccount extends Account implements NonHostEntity {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull NonHostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nonnull NonHostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
         if (identity instanceof InternalNonHostIdentity) return get(host, (InternalNonHostIdentity) identity);
         else throw new SQLException("The identity of " + identity.getAddress() + " is not a non-host.");

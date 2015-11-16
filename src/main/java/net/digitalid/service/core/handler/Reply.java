@@ -261,7 +261,7 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException, PacketException, ExternalException, NetworkException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {
@@ -279,7 +279,7 @@ public abstract class Reply extends Handler implements SQLizable {
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         if (number == null) preparedStatement.setNull(parameterIndex, java.sql.Types.BIGINT);
         else preparedStatement.setLong(parameterIndex, number);
     }
@@ -292,7 +292,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         if (reply == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else reply.set(preparedStatement, parameterIndex);
     }

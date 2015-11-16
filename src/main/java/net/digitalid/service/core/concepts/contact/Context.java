@@ -101,7 +101,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     /**
      * Stores the semantic type {@code context@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("context@core.digitalid.net").load(Int64Wrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("context@core.digitalid.net").load(Int64Wrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code flat.context@core.digitalid.net}.
@@ -111,7 +111,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     /**
      * Stores the semantic type {@code name.context@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType NAME_TYPE = SemanticType.map("name.context@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType NAME_TYPE = SemanticType.map("name.context@core.digitalid.net").load(StringWrapper.XDF_TYPE);
     
     
     /* -------------------------------------------------- Number -------------------------------------------------- */
@@ -695,7 +695,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nullable Context get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nullable Context get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
         else return get(entity, number);
@@ -712,13 +712,13 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Context getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+    public static @Nonnull Context getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         return get(entity, resultSet.getLong(columnIndex));
     }
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
     
@@ -730,7 +730,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Context context, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+    public static void set(@Nullable Context context, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
         if (context == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else context.set(preparedStatement, parameterIndex);
     }

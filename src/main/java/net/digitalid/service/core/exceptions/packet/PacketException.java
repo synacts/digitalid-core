@@ -25,7 +25,7 @@ public final class PacketException extends Exception implements Blockable {
     /**
      * Stores the semantic type {@code message.error.packet@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MESSAGE = SemanticType.map("message.error.packet@core.digitalid.net").load(StringWrapper.TYPE);
+    private static final @Nonnull SemanticType MESSAGE = SemanticType.map("message.error.packet@core.digitalid.net").load(StringWrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code error.packet@core.digitalid.net}.

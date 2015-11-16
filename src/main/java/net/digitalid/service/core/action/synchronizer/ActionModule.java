@@ -162,7 +162,7 @@ public final class ActionModule implements StateModule {
     /**
      * Stores the semantic type {@code actions.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("actions.state@core.digitalid.net").load(EmptyWrapper.TYPE);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("actions.state@core.digitalid.net").load(EmptyWrapper.XDF_TYPE);
     
     @Pure
     @Override
