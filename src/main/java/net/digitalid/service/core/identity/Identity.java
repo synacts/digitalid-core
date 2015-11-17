@@ -1,7 +1,9 @@
 package net.digitalid.service.core.identity;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.key.Caster;
@@ -22,13 +24,12 @@ import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.freezable.Frozen;
-import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.database.table.Table;
 
 /**
@@ -42,13 +43,6 @@ import net.digitalid.utility.database.table.Table;
  */
 @Immutable
 public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
-    
-    /* -------------------------------------------------- Type -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code @core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType IDENTIFIER = SyntacticType.IDENTITY_IDENTIFIER;
     
     /* -------------------------------------------------- Database ID -------------------------------------------------- */
     
@@ -330,61 +324,73 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
+     * Stores the semantic type {@code @core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType IDENTIFIER = SyntacticType.IDENTITY_IDENTIFIER;
+    
+    /**
      * Stores the XDF converter of this class.
      */
     public static final @Nonnull AbstractXDFConverter<Identity, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER);
     
-    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    /* -------------------------------------------------- Declaration -------------------------------------------------- */
     
     /**
-     * The SQL converter for this class.
+     * The column declaration for identities that registers at the mapper.
      */
     @Immutable
-    public static final class SQLConverter<I extends Identity> extends ChainingSQLConverter<I, Object, Long, Object> {
+    public static final class Declaration extends ColumnDeclaration {
         
         /**
-         * Stores whether the stored identities can be merged.
+         * Stores whether the identities can be merged.
          */
         private final boolean mergeable;
         
         /**
-         * Creates a new column SQL converter with the given parameters.
+         * Creates a new identity declaration with the given name.
          * 
-         * @param name the name of the column of the new SQL converter.
-         * @param mergeable whether the stored identities can be merged.
+         * @param name the name of the new identity declaration.
+         * @param mergeable whether the identities can be merged.
          */
-        SQLConverter(@Nonnull LongConverter<I> longConverter, @Nonnull @Validated String name, boolean mergeable) {
-            super(longConverter, Int64Wrapper.getValueSQLConverter(name, Mapper.REFERENCE));
+        protected Declaration(@Nonnull @Validated String name, boolean mergeable) {
+            super(name, Int64Wrapper.SQL_TYPE, Mapper.REFERENCE);
             
             this.mergeable = mergeable;
         }
         
         @Locked
         @Override
-        @SafeVarargs
         @NonCommitting
-        public final void executeAfterCreation(@Nonnull Table table, @Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
-            if (mergeable) {
-                Mapper.addReference(table.getName(null), null, uniques); // TODO
+        public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+            super.executeAfterCreation(statement, table, site, unique, prefix);
+            if (unique && mergeable) {
+                Mapper.addReference(table.getName(site), getName(prefix), table.getDeclaration().getPrimaryKeyColumnNames().toArray());
             }
         }
         
         @Locked
         @Override
-        @SafeVarargs
         @NonCommitting
-        public final void executeBeforeDeletion(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
-            if (mergeable) {
-                
+        public void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+            super.executeBeforeDeletion(statement, table, site, unique, prefix);
+            if (unique && mergeable) {
+                Mapper.removeReference(table.getName(site), getName(prefix), table.getDeclaration().getPrimaryKeyColumnNames().toArray());
             }
         }
         
     }
     
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull Identity.Declaration DECLARATION = new Identity.Declaration("identity", true);
+    
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter("identity", Mapper.REFERENCE));
+    public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

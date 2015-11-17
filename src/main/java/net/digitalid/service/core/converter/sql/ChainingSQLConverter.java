@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
+import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -15,6 +16,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.Declaration;
 
 /**
  * This class implements an SQL converter that is based on another SQL converter.
@@ -70,14 +72,31 @@ public class ChainingSQLConverter<O, E, K, D> extends AbstractSQLConverter<O, E>
     /**
      * Creates a new chaining SQL converter with the given converters.
      * 
+     * @param declaration the declaration of the new chaining SQL converter.
      * @param keyConverter the key converter used to convert and recover the object.
      * @param SQLConverter the SQL converter used to store and restore the object's key.
      */
-    protected ChainingSQLConverter(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull AbstractSQLConverter<K, ? super D> SQLConverter) {
-        super(SQLConverter.getDeclaration());
+    protected ChainingSQLConverter(@Nonnull @Matching Declaration declaration, @Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull AbstractSQLConverter<K, ? super D> SQLConverter) {
+        super(declaration);
+        
+        assert declaration.matches(SQLConverter.getDeclaration()) : "The declaration matches the declaration of the SQL converter.";
         
         this.keyConverter = keyConverter;
         this.SQLConverter = SQLConverter;
+    }
+    
+    /**
+     * Creates a new chaining SQL converter with the given converters.
+     * 
+     * @param declaration the declaration of the new chaining SQL converter.
+     * @param keyConverter the key converter used to convert and recover the object.
+     * @param SQLConverter the SQL converter used to store and restore the object's key.
+     * 
+     * @return a new chaining SQL converter with the given converters.
+     */
+    @Pure
+    public static @Nonnull <O, E, K, D> ChainingSQLConverter<O, E, K, D> get(@Nonnull @Matching Declaration declaration, @Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull AbstractSQLConverter<K, ? super D> SQLConverter) {
+        return new ChainingSQLConverter<>(declaration, keyConverter, SQLConverter);
     }
     
     /**
@@ -90,7 +109,7 @@ public class ChainingSQLConverter<O, E, K, D> extends AbstractSQLConverter<O, E>
      */
     @Pure
     public static @Nonnull <O, E, K, D> ChainingSQLConverter<O, E, K, D> get(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull AbstractSQLConverter<K, ? super D> SQLConverter) {
-        return new ChainingSQLConverter<>(keyConverter, SQLConverter);
+        return new ChainingSQLConverter<>(SQLConverter.getDeclaration(), keyConverter, SQLConverter);
     }
     
     /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */

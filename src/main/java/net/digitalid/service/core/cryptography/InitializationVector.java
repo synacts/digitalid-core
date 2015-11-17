@@ -18,6 +18,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * The random initialization vector ensures that multiple {@link EncryptionWrapper encryptions} of the same {@link Block block} are different.
@@ -128,9 +129,14 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("vector", BytesWrapper.SQL_TYPE);
+    
+    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<InitializationVector, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, BytesWrapper.getValueSQLConverter("vector"));
+    public static final @Nonnull AbstractSQLConverter<InitializationVector, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, BytesWrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
