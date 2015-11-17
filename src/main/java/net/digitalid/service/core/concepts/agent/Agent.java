@@ -11,6 +11,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.BooleanWrapper;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
@@ -29,7 +30,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForClients;
-import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -41,8 +41,7 @@ import net.digitalid.utility.database.site.Site;
  * @see AgentModule
  */
 @Immutable
-public abstract class Agent extends NonHostConcept implements SQL<Agent> {
-    
+public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     
     /* -------------------------------------------------- Aspects -------------------------------------------------- */
     

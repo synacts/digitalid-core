@@ -1,26 +1,33 @@
 package net.digitalid.service.core.identity;
 
-import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.service.core.identity.resolution.Category;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.BytesWrapper;
+import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concepts.contact.Context;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.key.Caster;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.identity.annotations.LoadedRecipient;
 import net.digitalid.service.core.identity.annotations.NonLoaded;
 import net.digitalid.service.core.identity.annotations.NonLoadedRecipient;
+import net.digitalid.service.core.identity.resolution.Category;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -34,6 +41,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class models a semantic type.
@@ -43,22 +51,6 @@ import net.digitalid.utility.database.configuration.Database;
  */
 @Immutable
 public final class SemanticType extends Type {
-    
-    /**
-     * Stores the semantic type {@code semantic.type@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("semantic.type@core.digitalid.net").load(Type.IDENTIFIER);
-    
-    /**
-     * Stores the semantic type {@code attribute.type@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType ATTRIBUTE_IDENTIFIER = SemanticType.map("attribute.type@core.digitalid.net").load(SemanticType.IDENTIFIER);
-    
-    /**
-     * Stores the semantic type {@code role.type@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType ROLE_IDENTIFIER = SemanticType.map("role.type@core.digitalid.net").load(SemanticType.IDENTIFIER);
-    
     
     /**
      * Stores the semantic type {@code categories.attribute.type@core.digitalid.net}.
@@ -575,5 +567,59 @@ public final class SemanticType extends Type {
         if (!isRoleType()) { throw new InvalidEncodingException(getAddress() + " is not a role type."); }
         return this;
     }
+    
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
+    
+    /**
+     * Stores the caster that casts identifiers to this subclass.
+     */
+    public static final @Nonnull Caster<Identity, SemanticType> CASTER = new Caster<Identity, SemanticType>() {
+        @Pure
+        @Override
+        protected @Nonnull SemanticType cast(@Nonnull Identity identity) throws InvalidEncodingException {
+            return identity.toSemanticType();
+        }
+    };
+    
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code semantic.type@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("semantic.type@core.digitalid.net").load(Type.IDENTIFIER);
+    
+    /**
+     * Stores the semantic type {@code attribute.type@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType ATTRIBUTE_IDENTIFIER = SemanticType.map("attribute.type@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    
+    /**
+     * Stores the semantic type {@code role.type@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType ROLE_IDENTIFIER = SemanticType.map("role.type@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    
+    /**
+     * Stores the XDF converter of this class.
+     */
+    public static final @Nonnull AbstractXDFConverter<SemanticType, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER);
+    
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull Identity.Declaration DECLARATION = new Identity.Declaration("semantic_type", false);
+    
+    /**
+     * Stores the SQL converter of this class.
+     */
+    public static final @Nonnull AbstractSQLConverter<SemanticType, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    /**
+     * Stores the converters of this class.
+     */
+    public static final @Nonnull Converters<SemanticType, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

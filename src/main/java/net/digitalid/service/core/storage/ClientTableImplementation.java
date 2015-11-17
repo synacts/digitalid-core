@@ -1,7 +1,6 @@
 package net.digitalid.service.core.storage;
 
 import java.sql.SQLException;
-import java.sql.Statement;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.site.client.Client;
@@ -11,9 +10,9 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.declaration.Declaration;
 import net.digitalid.utility.database.site.Site;
-import net.digitalid.utility.database.table.Table;
+import net.digitalid.utility.database.table.SpecificTable;
 
 /**
  * This class implements a database table that can be created and deleted on {@link Client clients} and {@link Host hosts}.
@@ -22,7 +21,7 @@ import net.digitalid.utility.database.table.Table;
  * @see HostTableImplementation
  */
 @Immutable
-abstract class ClientTableImplementation<M extends DelegatingClientStorageImplementation> implements ClientStorage, Table {
+abstract class ClientTableImplementation<M extends DelegatingClientStorageImplementation> extends SpecificTable implements ClientStorage {
     
     /* -------------------------------------------------- Module -------------------------------------------------- */
     
@@ -49,76 +48,52 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
         return module.getService();
     }
     
-    /* -------------------------------------------------- Name -------------------------------------------------- */
-    
-    /**
-     * Returns whether the given name is valid.
-     * 
-     * @param name the name to be checked.
-     * 
-     * @return whether the given name is valid.
-     */
-    @Pure
-    public static boolean isValidName(@Nonnull String name) {
-        return name.length() <= 22 && name.startsWith("_") && name.length() > 1 && Database.getConfiguration().isValidIdentifier(name);
-    }
-    
-    /**
-     * Stores the name of this table, which has to be unique within the module.
-     */
-    private final @Nonnull @Validated String name;
-    
-    @Pure
-    @Override
-    public final @Nonnull @Validated String getName() {
-        return name;
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull @Validated String getName(@Nonnull Site site) {
-        return site + name;
-    }
-    
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new table implementation with the given module and name.
+     * Creates a new table implementation with the given parameters.
      * 
      * @param module the module to which the new table belongs.
      * @param name the name of the new table (unique within the module).
+     * @param declaration the declaration of the new table.
      */
-    protected ClientTableImplementation(@Nonnull M module, @Nonnull @Validated String name) {
-        this.module = module;
-        this.name = module.getName() + "_" + name;
+    protected ClientTableImplementation(@Nonnull M module, @Nonnull @Validated String name, @Nonnull Declaration declaration) {
+        super(module.getName() + "_" + name, declaration);
         
-        assert isValidName(this.name) : "The name is valid.";
+        this.module = module;
     }
     
     /* -------------------------------------------------- Tables -------------------------------------------------- */
     
-    @Locked
-    @Override
-    @NonCommitting
-    public abstract void createTables(@Nonnull Site site) throws AbortException;
+    /**
+     * Returns whether this table is for the given site.
+     * 
+     * @param site the site for which to check the query.
+     * 
+     * @return whether this table is for the given site.
+     */
+    @Pure
+    protected boolean isTableFor(@Nonnull Site site) {
+        return true;
+    }
     
     @Locked
     @Override
     @NonCommitting
-    public final void create(@Nonnull Site site) throws SQLException {
+    public final void createTables(@Nonnull Site site) throws AbortException {
         try {
-            createTables(site);
-        } catch (@Nonnull AbortException exception) {
-            throw new SQLException(exception);
+            if (isTableFor(site)) { create(site); }
+        } catch (@Nonnull SQLException exception) {
+            throw AbortException.get(exception);
         }
     }
     
     @Locked
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws AbortException {
-        try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("DROP TABLE IF EXISTS " + site + name);
+    public final void deleteTables(@Nonnull Site site) throws AbortException {
+        try {
+            if (isTableFor(site)) { delete(site); }
         } catch (@Nonnull SQLException exception) {
             throw AbortException.get(exception);
         }

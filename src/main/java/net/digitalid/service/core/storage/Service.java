@@ -6,6 +6,12 @@ import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concepts.attribute.Attribute;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -16,7 +22,6 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -25,9 +30,9 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This class models a service of the Digital ID protocol.
@@ -35,7 +40,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @see CoreService
  */
 @Immutable
-public class Service extends DelegatingSiteStorageImplementation implements SQL<Service, Object> {
+public class Service extends DelegatingSiteStorageImplementation implements XDF<Service, Object>,  SQL<Service, Object> {
     
     /* -------------------------------------------------- Services -------------------------------------------------- */
     
@@ -73,7 +78,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
     /**
      * Stores the type of this service.
      */
-    private final @Nonnull @Loaded SemanticType type;
+    private final @Nonnull SemanticType type;
     
     /**
      * Returns the type of this service.
@@ -81,7 +86,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
      * @return the type of this service.
      */
     @Pure
-    public final @Nonnull @Loaded SemanticType getType() {
+    public final @Nonnull SemanticType getType() {
         return type;
     }
     
@@ -138,7 +143,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
      * @param title the title of the new service.
      * @param version the version of the new service.
      */
-    protected Service(@Nonnull @Validated String name, @Nonnull @Loaded SemanticType type, @Nonnull String title, @Nonnull String version) {
+    protected Service(@Nonnull @Validated String name, @Nonnull SemanticType type, @Nonnull String title, @Nonnull String version) {
         super(null, name);
         
         this.type = type;
@@ -190,48 +195,67 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
         return getType().toString();
     }
     
-    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
-     * The SQL converter for this class.
+     * Stores the key converter of this class.
      */
-    @Immutable
-    public static final class SQLConverter extends ChainingSQLConverter<Service, Object, SemanticType> {
-        
-        /**
-         * Creates a new SQL converter.
-         */
-        private SQLConverter() {
-            super(SemanticType.SQL_CONVERTER); // TODO: Redo after the identity is made storable.
-        }
+    private static final @Nonnull AbstractNonRequestingKeyConverter<Service, Object, SemanticType, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Service, Object, SemanticType, Object>() {
         
         @Pure
         @Override
-        public @Nonnull SemanticType getKey(@Nonnull Service service) {
+        public @Nonnull SemanticType convert(@Nonnull Service service) {
             return service.getType();
         }
         
         @Pure
         @Override
-        public @Nonnull Service getObject(@Nonnull Object none, @Nonnull SemanticType type) {
+        public @Nonnull Service recover(@Nonnull Object none, @Nonnull SemanticType type) throws InvalidEncodingException {
             try {
                 return getService(type);
             } catch (@Nonnull PacketException exception) {
-                throw new ShouldNeverHappenError(exception);
+                throw new InvalidEncodingException(exception);
             }
         }
         
+    };
+    
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the XDF converter of this class.
+     */
+    public static final @Nonnull AbstractXDFConverter<Service, Object> XDF_CONVERTER = ChainingXDFConverter.get(KEY_CONVERTER, SemanticType.XDF_CONVERTER);
+    
+    @Pure
+    @Override
+    public @Nonnull AbstractXDFConverter<Service, Object> getXDFConverter() {
+        return XDF_CONVERTER;
     }
+    
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = SemanticType.DECLARATION.renamedAs("service");
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
+    public static final @Nonnull AbstractSQLConverter<Service, Object> SQL_CONVERTER = ChainingSQLConverter.get(DECLARATION, KEY_CONVERTER, SemanticType.SQL_CONVERTER);
     
     @Pure
     @Override
-    public final @Nonnull SQLConverter getSQLConverter() {
+    public @Nonnull AbstractSQLConverter<Service, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
+    
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    /**
+     * Stores the converters of this class.
+     */
+    public static final @Nonnull Converters<Service, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }
