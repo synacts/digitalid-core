@@ -150,7 +150,7 @@ public final class Cache {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
         
-        if (time.equals(Time.MAX)) return new FreezablePair<Boolean, AttributeValue>(false, null).freeze();
+        if (time.equals(Time.MAX)) { return new FreezablePair<Boolean, AttributeValue>(false, null).freeze(); }
         final @Nonnull String query = "SELECT found, value FROM general_cache WHERE identity = " + identity + " AND (role = " + HostIdentity.DIGITALID + (role != null ? " OR role = " + role.getIdentity() : "") + ") AND type = " + type + " AND time >= " + time;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             boolean found = false;
@@ -189,13 +189,13 @@ public final class Cache {
         assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
         assert value == null || value.isVerified() : "The attribute value is null or its signature is verified.";
         
-        if (value != null) value.checkContentType(type);
+        if (value != null) { value.checkContentType(type); }
         
         final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO general_cache (identity, role, type, found, time, value, reply) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             identity.set(preparedStatement, 1);
-            if (role != null) role.getIdentity().set(preparedStatement, 2);
-            else HostIdentity.DIGITALID.set(preparedStatement, 2);
+            if (role != null) { role.getIdentity().set(preparedStatement, 2); }
+            else { HostIdentity.DIGITALID.set(preparedStatement, 2); }
             type.set(preparedStatement, 3);
             preparedStatement.setBoolean(4, value != null);
             time.set(preparedStatement, 5);
@@ -218,7 +218,7 @@ public final class Cache {
      */
     @Pure
     private static @Nonnull Time getExpiration(@Nonnull SemanticType type, @Nullable AttributeValue value, @Nonnull AttributesReply reply) throws InvalidEncodingException {
-        if (value != null && !value.getContent().getType().equals(type)) throw new InvalidEncodingException("A replied attribute value does not match the queried type.");
+        if (value != null && !value.getContent().getType().equals(type)) { throw new InvalidEncodingException("A replied attribute value does not match the queried type."); }
         return type.getCachingPeriodNotNull().add(value instanceof CertifiedAttributeValue ? ((CertifiedAttributeValue) value).getTime() : reply.getSignatureNotNull().getNonNullableTime());
     }
     
@@ -251,7 +251,7 @@ public final class Cache {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert types.length > 0 : "At least one type is given.";
         assert !Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1 : "If the public key chain of a host is queried, it is the only type.";
-        for (final @Nullable SemanticType type : types) assert type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity.";
+        for (final @Nullable SemanticType type : types) { assert type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity."; }
         
         final @Nonnull AttributeValue[] attributeValues = new AttributeValue[types.length];
         final @Nonnull FreezableAttributeTypeSet typesToRetrieve = new FreezableAttributeTypeSet();
@@ -277,7 +277,7 @@ public final class Cache {
                 final @Nonnull Response response = new AttributesQuery(role, identity.getAddress(), typesToRetrieve.freeze(), true).send();
                 final @Nonnull AttributesReply reply = response.getReplyNotNull(0);
                 final @Nonnull ReadOnlyList<AttributeValue> values = reply.getAttributeValues();
-                if (values.size() != typesToRetrieve.size()) throw new InvalidEncodingException("The number of queried and replied attributes have to be the same.");
+                if (values.size() != typesToRetrieve.size()) { throw new InvalidEncodingException("The number of queried and replied attributes have to be the same."); }
                 int i = 0;
                 for (final @Nonnull SemanticType type : typesToRetrieve) {
                     final @Nullable AttributeValue value = values.getNullable(i);
@@ -315,8 +315,8 @@ public final class Cache {
     @NonCommitting
     public static @Nonnull AttributeValue getAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull AttributeValue[] attributeValues = getAttributeValues(identity, role, time, type);
-        if (attributeValues[0] == null) throw new AttributeNotFoundException(identity, type);
-        else return attributeValues[0];
+        if (attributeValues[0] == null) { throw new AttributeNotFoundException(identity, type); }
+        else { return attributeValues[0]; }
     }
     
     /**
@@ -343,7 +343,7 @@ public final class Cache {
     @NonCommitting
     public static @Nonnull Block getAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, boolean certified) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull AttributeValue value = getAttributeValue(identity, role, time, type);
-        if (certified && !value.isCertified()) throw new CertificateNotFoundException(identity, type);
+        if (certified && !value.isCertified()) { throw new CertificateNotFoundException(identity, type); }
         return value.getContent();
     }
     
@@ -472,8 +472,8 @@ public final class Cache {
         }
         final @Nonnull AttributesReply reply = response.getReplyNotNull(0);
         final @Nullable AttributeValue value = reply.getAttributeValues().getNullable(0);
-        if (value == null) throw new AttributeNotFoundException(identity, PublicKeyChain.TYPE);
-        if (!value.isCertified()) throw new CertificateNotFoundException(identity, PublicKeyChain.TYPE);
+        if (value == null) { throw new AttributeNotFoundException(identity, PublicKeyChain.TYPE); }
+        if (!value.isCertified()) { throw new CertificateNotFoundException(identity, PublicKeyChain.TYPE); }
         setCachedAttributeValue(identity, null, getExpiration(PublicKeyChain.TYPE, value, reply), PublicKeyChain.TYPE, value, reply);
         reply.getSignatureNotNull().verify();
         return identity;

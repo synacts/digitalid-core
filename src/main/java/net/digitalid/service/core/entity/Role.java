@@ -245,11 +245,11 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
         final @Nonnull Time cutoff = Time.WEEK.ago();
         for (int i = 0; i < services.length; i++) {
             try {
-                if (times[i].isLessThan(cutoff)) reloadState(services[i]);
-                else refreshState(services[i]);
+                if (times[i].isLessThan(cutoff)) { reloadState(services[i]); }
+                else { refreshState(services[i]); }
             } catch (@Nonnull PacketException exception) {
-                if (exception.getError() == PacketErrorCode.AUDIT) return false;
-                else throw exception;
+                if (exception.getError() == PacketErrorCode.AUDIT) { return false; }
+                else { throw exception; }
             }
         }
         return true;
@@ -279,7 +279,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     @Pure
     @NonCommitting
     public @Nonnull @NonFrozen @NonNullableElements @UniqueElements ReadOnlyList<NonNativeRole> getRoles() throws AbortException {
-        if (roles == null) roles = RoleModule.getRoles(this);
+        if (roles == null) { roles = RoleModule.getRoles(this); }
         return roles;
     }
     
@@ -300,13 +300,13 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
         final @Nonnull NonNativeRole role = NonNativeRole.add(client, issuer, relation, this, agentNumber);
         role.observe(this, DELETED);
         
-        if (roles != null && !roles.contains(role)) roles.add(role);
+        if (roles != null && !roles.contains(role)) { roles.add(role); }
         notify(ADDED);
     }
     
     @Override
     public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
-        if (aspect.equals(DELETED) && roles != null) roles.remove(instance);
+        if (aspect.equals(DELETED) && roles != null) { roles.remove(instance); }
     }
     
     /**
@@ -335,7 +335,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     @NonCommitting
     public static @Nullable Role get(@Nonnull Client client, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final long number = resultSet.getLong(columnIndex);
-        if (resultSet.wasNull()) return null;
+        if (resultSet.wasNull()) { return null; }
         return RoleModule.load(client, number);
     }
     
@@ -367,8 +367,8 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Role)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Role)) { return false; }
         final @Nonnull Role other = (Role) object;
         return this.client.equals(other.client) && this.number == other.number;
     }

@@ -77,7 +77,7 @@ public final class PacketException extends Exception implements Blockable {
         
         this.error = error;
         this.remote = remote;
-        if (!remote) Log.warning("A packet exception occurred.", this);
+        if (!remote) { Log.warning("A packet exception occurred.", this); }
     }
     
     /**

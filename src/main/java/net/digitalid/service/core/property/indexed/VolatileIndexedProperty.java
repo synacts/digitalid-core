@@ -1,11 +1,11 @@
 package net.digitalid.service.core.property.indexed;
 
-import net.digitalid.utility.annotations.state.Validated;
 import java.util.Map;
-import net.digitalid.service.core.property.ValueValidator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
@@ -137,10 +137,10 @@ public class VolatileIndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extend
      * 
      * @return true if the keys and values are valid; false otherwise.
      */
-    private boolean keysAndValuesValid(@Nonnull ValueValidator<? super K> keyValidator, @Nonnull ValueValidator<? super V> valueValidator, @Nonnull @Validated F map) {
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (!keyValidator.isValid(entry.getKey())) return false;
-            if (!valueValidator.isValid(entry.getValue())) return false;
+    private boolean keysAndValuesValid(@Nonnull ValueValidator<? super K> keyValidator, @Nonnull ValueValidator<? super V> valueValidator, @Nonnull @Validated F map) { // TODO: Make it static? @NonNullableElements?
+        for (final @Nonnull Map.Entry<K, V> entry : map.entrySet()) {
+            if (!keyValidator.isValid(entry.getKey())) { return false; }
+            if (!valueValidator.isValid(entry.getValue())) { return false; }
         }
         return true;
     }

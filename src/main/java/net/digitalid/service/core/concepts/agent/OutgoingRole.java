@@ -127,7 +127,7 @@ public final class OutgoingRole extends Agent {
     @Pure
     @NonCommitting
     public @Nonnull SemanticType getRelation() throws AbortException {
-        if (relation == null) relation = AgentModule.getRelation(this);
+        if (relation == null) { relation = AgentModule.getRelation(this); }
         return relation;
     }
     
@@ -159,10 +159,10 @@ public final class OutgoingRole extends Agent {
     @NonCommitting
     @OnlyForActions
     public void replaceRelation(@Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws AbortException {
-        if (isOnHost()) revoke();
+        if (isOnHost()) { revoke(); }
         AgentModule.replaceRelation(this, oldRelation, newRelation);
         relation = newRelation;
-        if (isOnHost()) issue();
+        if (isOnHost()) { issue(); }
         notify(RELATION);
     }
     
@@ -185,7 +185,7 @@ public final class OutgoingRole extends Agent {
     @Pure
     @NonCommitting
     public @Nonnull Context getContext() throws AbortException {
-        if (context == null) context = AgentModule.getContext(this);
+        if (context == null) { context = AgentModule.getContext(this); }
         return context;
     }
     
@@ -257,11 +257,11 @@ public final class OutgoingRole extends Agent {
         assert isRestrictable() : "This outgoing role can be restricted.";
         assert credential.isRoleBased() : "The credential is role-based.";
         
-        if (permissions == null) getPermissions();
+        if (permissions == null) { getPermissions(); }
         assert permissions != null;
         permissions.restrictTo(credential.getPermissionsNotNull());
         
-        if (restrictions == null) getRestrictions();
+        if (restrictions == null) { getRestrictions(); }
         assert restrictions != null;
         restrictions = restrictions.restrictTo(credential.getRestrictionsNotNull());
     }
@@ -333,7 +333,7 @@ public final class OutgoingRole extends Agent {
         AgentModule.addOutgoingRole(this, relation, context);
         this.relation = relation;
         this.context = context;
-        if (isOnHost()) issue();
+        if (isOnHost()) { issue(); }
         notify(Agent.CREATED);
     }
     
@@ -360,7 +360,9 @@ public final class OutgoingRole extends Agent {
     public static void reset(@Nonnull NonHostEntity entity) throws AbortException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
-            if (map != null) for (final @Nonnull OutgoingRole outgoingRole : map.values()) outgoingRole.reset();
+            if (map != null) {
+                for (final @Nonnull OutgoingRole outgoingRole : map.values()) { outgoingRole.reset(); }
+            }
         }
     }
     
@@ -394,9 +396,9 @@ public final class OutgoingRole extends Agent {
     public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, long number, boolean removed, boolean restrictable) {
         if (!restrictable && Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, OutgoingRole>());
+            if (map == null) { map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, OutgoingRole>()); }
             @Nullable OutgoingRole outgoingRole = map.get(number);
-            if (outgoingRole == null) outgoingRole = map.putIfAbsentElseReturnPresent(number, new OutgoingRole(entity, number, removed, restrictable));
+            if (outgoingRole == null) { outgoingRole = map.putIfAbsentElseReturnPresent(number, new OutgoingRole(entity, number, removed, restrictable)); }
             return outgoingRole;
         } else {
             return new OutgoingRole(entity, number, removed, restrictable);

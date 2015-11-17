@@ -99,11 +99,11 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull InternalNonHostIdentifier subject = getSubject().toInternalNonHostIdentifier();
-        if (isOnHost() && FreezablePredecessors.exist(subject)) throw new PacketException(PacketErrorCode.METHOD, "The subject " + subject + " is already initialized.");
+        if (isOnHost() && FreezablePredecessors.exist(subject)) { throw new PacketException(PacketErrorCode.METHOD, "The subject " + subject + " is already initialized."); }
         
         final @Nonnull Category category = entity.getIdentity().getCategory();
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
-        if (elements.size() > 1 && !category.isInternalPerson()) throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", subject, null);
+        if (elements.size() > 1 && !category.isInternalPerson()) { throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", subject, null); }
         
         final @Nonnull FreezableList<ReadOnlyPair<Predecessor, Block>> states = new FreezableArrayList<>(elements.size());
         for (final @Nonnull Block element : elements) {
@@ -112,13 +112,13 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             final @Nonnull NonHostIdentifier identifier = predecessor.getIdentifier();
             final @Nonnull NonHostIdentity identity = identifier.getIdentity();
             final @Nonnull String message = "The claimed predecessor " + identifier + " of " + subject;
-            if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) throw new InvalidDeclarationException(message + " has a wrong category.", subject, null);
+            if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) { throw new InvalidDeclarationException(message + " has a wrong category.", subject, null); }
             if (identifier instanceof InternalNonHostIdentifier) {
-                if (!FreezablePredecessors.get((InternalNonHostIdentifier) identifier).equals(predecessor.getPredecessors())) throw new InvalidDeclarationException(message + " has other predecessors.", subject, null);
+                if (!FreezablePredecessors.get((InternalNonHostIdentifier) identifier).equals(predecessor.getPredecessors())) { throw new InvalidDeclarationException(message + " has other predecessors.", subject, null); }
             } else {
-                if (!predecessor.getPredecessors().isEmpty()) throw new InvalidDeclarationException(message + " is an external person and may not have any predecessors.", subject, null);
+                if (!predecessor.getPredecessors().isEmpty()) { throw new InvalidDeclarationException(message + " is an external person and may not have any predecessors.", subject, null); }
             }
-            if (!Successor.getReloaded(identifier).equals(subject)) throw new InvalidDeclarationException(message + " does not link back.", subject, null);
+            if (!Successor.getReloaded(identifier).equals(subject)) { throw new InvalidDeclarationException(message + " does not link back.", subject, null); }
             states.add(new FreezablePair<>(predecessor, tuple.getNullableElement(1)).freeze());
         }
         this.states = states.freeze();
@@ -181,7 +181,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             throw new SQLException("A problem occurred while adding a state.", exception);
         }
         
-        if (states.isEmpty()) PasswordModule.set(entity, "");
+        if (states.isEmpty()) { PasswordModule.set(entity, ""); }
     }
     
     @Pure

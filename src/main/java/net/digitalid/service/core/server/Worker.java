@@ -17,7 +17,6 @@ import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.credential.Credential;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -29,6 +28,7 @@ import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.packet.Request;
 import net.digitalid.service.core.packet.Response;
 import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.database.annotations.Committing;
@@ -84,9 +84,9 @@ public final class Worker implements Runnable {
                     
                     service = reference.getService();
                     subject = reference.getSubject();
-                    if (signature instanceof HostSignatureWrapper) signer = ((HostSignatureWrapper) signature).getSigner();
-                    else if (signature instanceof ClientSignatureWrapper) signer = subject;
-                    else if (signature instanceof CredentialsSignatureWrapper) signer = ((CredentialsSignatureWrapper) signature).getCredentials().getNonNullable(0).getIssuer().getAddress();
+                    if (signature instanceof HostSignatureWrapper) { signer = ((HostSignatureWrapper) signature).getSigner(); }
+                    else if (signature instanceof ClientSignatureWrapper) { signer = subject; }
+                    else if (signature instanceof CredentialsSignatureWrapper) { signer = ((CredentialsSignatureWrapper) signature).getCredentials().getNonNullable(0).getIssuer().getAddress(); }
                     
                     requestAudit = request.getAudit();
                     final @Nullable Agent agent = requestAudit != null && service.equals(CoreService.SERVICE) ? signature.getAgentCheckedAndRestricted(reference.getNonHostAccount(), null) : null;
@@ -104,14 +104,14 @@ public final class Worker implements Runnable {
                         if (i == 0) {
                             methods = new StringBuilder(method.getClass().getSimpleName());
                         } else {
-                            if (i + 1 == size) methods.append(" and ");
-                            else methods.append(", ");
+                            if (i + 1 == size) { methods.append(" and "); }
+                            else { methods.append(", "); }
                             methods.append(method.getClass().getSimpleName());
                         }
                         
                         try {
                             replies.set(i, method.executeOnHost());
-                            if (method instanceof Action) ActionModule.audit((Action) method);
+                            if (method instanceof Action) { ActionModule.audit((Action) method); }
                             Database.commit();
                         } catch (@Nonnull SQLException exception) {
                             exceptions.set(i, new PacketException(PacketErrorCode.INTERNAL, "An SQLException occurred.", exception));
@@ -128,7 +128,7 @@ public final class Worker implements Runnable {
                     final @Nullable ResponseAudit responseAudit;
                     if (requestAudit != null) {
                         final @Nonnull Time auditStart = Time.getCurrent();
-                        if (!(reference instanceof InternalMethod)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "An audit may only be requested by internal methods.");
+                        if (!(reference instanceof InternalMethod)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "An audit may only be requested by internal methods."); }
                         final @Nullable ReadOnlyAgentPermissions permissions;
                         @Nullable Restrictions restrictions;
                         if (service.equals(CoreService.SERVICE)) {
@@ -143,7 +143,7 @@ public final class Worker implements Runnable {
                             final @Nonnull Credential credential = signature.toCredentialsSignatureWrapper().getCredentials().getNonNullable(0);
                             permissions = credential.getPermissions();
                             restrictions = credential.getRestrictions();
-                            if (permissions == null || restrictions == null) throw new PacketException(PacketErrorCode.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null.");
+                            if (permissions == null || restrictions == null) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null."); }
                         }
                         responseAudit = ActionModule.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
@@ -177,7 +177,7 @@ public final class Worker implements Runnable {
             Log.warning("Could not send a response.", exception);
         } finally {
             try {
-                if (!socket.isClosed()) socket.close();
+                if (!socket.isClosed()) { socket.close(); }
             } catch (@Nonnull IOException exception) {
                 Log.warning("Could not close the socket.", exception);
             }

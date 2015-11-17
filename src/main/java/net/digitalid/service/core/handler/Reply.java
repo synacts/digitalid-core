@@ -161,8 +161,8 @@ public abstract class Reply extends Handler implements SQLizable {
     @NonCommitting
     private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nullable Reply.Factory factory = converters.get(block.getType());
-        if (factory == null) throw new PacketException(PacketErrorCode.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true);
-        else return factory.create(entity, signature, number, block);
+        if (factory == null) { throw new PacketException(PacketErrorCode.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true); }
+        else { return factory.create(entity, signature, number, block); }
     }
     
     /**
@@ -194,7 +194,7 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     @Pure
     public final @Nonnull ActionReply toActionReply() throws PacketException {
-        if (this instanceof ActionReply) return (ActionReply) this;
+        if (this instanceof ActionReply) { return (ActionReply) this; }
         throw new PacketException(PacketErrorCode.REPLY, "An action reply was expected but a query reply was found.", null, true);
     }
     
@@ -207,7 +207,7 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     @Pure
     public final @Nonnull QueryReply toQueryReply() throws PacketException {
-        if (this instanceof QueryReply) return (QueryReply) this;
+        if (this instanceof QueryReply) { return (QueryReply) this; }
         throw new PacketException(PacketErrorCode.REPLY, "A query reply was expected but an action reply was found.", null, true);
     }
     
@@ -263,7 +263,7 @@ public abstract class Reply extends Handler implements SQLizable {
     @NonCommitting
     public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException, PacketException, ExternalException, NetworkException {
         final long number = resultSet.getLong(columnIndex);
-        if (resultSet.wasNull()) return null;
+        if (resultSet.wasNull()) { return null; }
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {
             if (rs.next()) {
                 final @Nonnull Block block = Block.getNotNull(Packet.SIGNATURE, rs, 1);
@@ -280,8 +280,8 @@ public abstract class Reply extends Handler implements SQLizable {
     @Override
     @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
-        if (number == null) preparedStatement.setNull(parameterIndex, java.sql.Types.BIGINT);
-        else preparedStatement.setLong(parameterIndex, number);
+        if (number == null) { preparedStatement.setNull(parameterIndex, java.sql.Types.BIGINT); }
+        else { preparedStatement.setLong(parameterIndex, number); }
     }
     
     /**
@@ -293,8 +293,8 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     @NonCommitting
     public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
-        if (reply == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
-        else reply.set(preparedStatement, parameterIndex);
+        if (reply == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
+        else { reply.set(preparedStatement, parameterIndex); }
     }
     
     /**

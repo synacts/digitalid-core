@@ -169,7 +169,7 @@ public final class ContactModule implements StateModule {
 //    @NonCommitting
 //    static @Nonnull Set<SemanticType> getContactPreferences(@Nonnull NonHostIdentity identity, @Nonnull Person contact) throws AbortException {
 //        @Nonnull Set<SemanticType> preferences = getTypes(connection, identity, "contact_preference", "contact = " + contact);
-//        if (preferences.isEmpty() && contact.hasBeenMerged()) return getContactPreferences(connection, identity, contact);
+//        if (preferences.isEmpty() && contact.hasBeenMerged()) { return getContactPreferences(connection, identity, contact); }
 //        return preferences;
 //    }
 //    
@@ -204,10 +204,10 @@ public final class ContactModule implements StateModule {
 //    @NonCommitting
 //    static @Nonnull Set<SemanticType> getContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, boolean inherited) throws AbortException {
 //        @Nonnull Set<SemanticType> permissions = getTypes(connection, identity, "contact_permission", "contact = " + contact);
-//        if (permissions.isEmpty() && contact.hasBeenMerged()) return getContactPermissions(connection, identity, contact, inherited);
+//        if (permissions.isEmpty() && contact.hasBeenMerged()) { return getContactPermissions(connection, identity, contact, inherited); }
 //        if (inherited) {
 //            @Nonnull Set<Context> contexts = getContexts(connection, identity, contact);
-//            for (@Nonnull Context context : contexts) {
+//            for (final @Nonnull Context context : contexts) {
 //                permissions.addAll(getContextPermissions(connection, identity, context, true));
 //            }
 //        }
@@ -226,8 +226,8 @@ public final class ContactModule implements StateModule {
 //        try {
 //            addTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
 //        } catch (@Nonnull SQLException exception) {
-//            if (contact.hasBeenMerged()) addContactPermissions(connection, identity, contact, permissions);
-//            else throw exception;
+//            if (contact.hasBeenMerged()) { addContactPermissions(connection, identity, contact, permissions); }
+//            else { throw exception; }
 //        }
 //    }
 //    
@@ -241,7 +241,7 @@ public final class ContactModule implements StateModule {
 //    @NonCommitting
 //    static void removeContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> permissions) throws AbortException {
 //        int removed = removeTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
-//        if (removed == 0 && !permissions.isEmpty() && contact.hasBeenMerged()) removeTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
+//        if (removed == 0 && !permissions.isEmpty() && contact.hasBeenMerged()) { removeTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions); }
 //    }
 //    
 //    /**
@@ -255,10 +255,10 @@ public final class ContactModule implements StateModule {
 //    @NonCommitting
 //    static @Nonnull Set<SemanticType> getContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, boolean inherited) throws AbortException {
 //        @Nonnull Set<SemanticType> authentications = getTypes(connection, identity, "contact_authentication", "contact = " + contact);
-//        if (authentications.isEmpty() && contact.hasBeenMerged()) return getContactAuthentications(connection, identity, contact, inherited);
+//        if (authentications.isEmpty() && contact.hasBeenMerged()) { return getContactAuthentications(connection, identity, contact, inherited); }
 //        if (inherited) {
 //            @Nonnull Set<Context> contexts = getContexts(connection, identity, contact);
-//            for (@Nonnull Context context : contexts) {
+//            for (final @Nonnull Context context : contexts) {
 //                authentications.addAll(getContextAuthentications(connection, identity, context, true));
 //            }
 //        }
@@ -277,8 +277,8 @@ public final class ContactModule implements StateModule {
 //        try {
 //            addTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
 //        } catch (@Nonnull SQLException exception) {
-//            if (contact.hasBeenMerged()) addContactAuthentications(connection, identity, contact, authentications);
-//            else throw exception;
+//            if (contact.hasBeenMerged()) { addContactAuthentications(connection, identity, contact, authentications); }
+//            else { throw exception; }
 //        }
 //    }
 //    
@@ -292,7 +292,7 @@ public final class ContactModule implements StateModule {
 //    @NonCommitting
 //    static void removeContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> authentications) throws AbortException {
 //        int removed = removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
-//        if (removed == 0 && contact.hasBeenMerged()) removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
+//        if (removed == 0 && contact.hasBeenMerged()) { removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications); }
 //    }
     
     static { CoreService.SERVICE.add(MODULE); }

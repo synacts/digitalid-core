@@ -57,7 +57,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     @Pure
     public static boolean isValid(@Nonnull String string) {
         final int index = string.indexOf(":");
-        if (index < 1) return false;
+        if (index < 1) { return false; }
         final @Nonnull String scheme = string.substring(0, index);
         switch (scheme) {
             case "email": return EmailIdentifier.isValid(string);
@@ -105,8 +105,8 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
         assert isMapped() : "This identifier is mapped.";
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
-        if (identity instanceof Person) return (Person) identity;
-        else throw AbortException.get("The mapped identity has a wrong type.");
+        if (identity instanceof Person) { return (Person) identity; }
+        else { throw AbortException.get("The mapped identity has a wrong type."); }
     }
     
     @Pure

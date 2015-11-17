@@ -17,7 +17,7 @@ public final class ExpressionTest {
     @Committing
     public void testParsing() throws InvalidEncodingException, SQLException, Exception {
 //        String[] strings = new String[] {"", " ( everybody)", "person@test.digitalid.net + person@test.digitalid.net - person@test.digitalid.net", "person@test.digitalid.net + (person@test.digitalid.net - person@test.digitalid.net)", "person@test.digitalid.net + name@core.digitalid.net * person@test.digitalid.net"};
-//        for (String string : strings) {
+//        for (final @Nonnull String string : strings) {
 ////            System.out.println(string);
 //            Expression expression = Expression.parse(string);
 ////            System.out.println(expression);
@@ -26,7 +26,7 @@ public final class ExpressionTest {
 //        
 //        Block attribute = new SelfcontainedWrapper("name@core.digitalid.net", new StringWrapper("Person").toBlock()).getBlock();
 //        strings = new String[] {"", "name@core.digitalid.net", "(name@core.digitalid.net=\"person\" ) ", "name@core.digitalid.net \\ \"on\"", "name@core.digitalid.net ≠ \" ) \""};
-//        for (String string : strings) {
+//        for (final @Nonnull String string : strings) {
 ////            System.out.println(string);
 //            Expression expression = Expression.parse(string);
 ////            System.out.println(expression);

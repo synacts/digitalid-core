@@ -177,8 +177,8 @@ public final class Response extends Packet {
     @Override
     @RawRecipient
     @Nullable Block getBlock(int index) {
-        if (!exceptions.isNull(index)) return exceptions.getNonNullable(index).toBlock();
-        if (!replies.isNull(index)) return replies.getNonNullable(index).toBlock();
+        if (!exceptions.isNull(index)) { return exceptions.getNonNullable(index).toBlock(); }
+        if (!replies.isNull(index)) { return replies.getNonNullable(index).toBlock(); }
         return null;
     }
     
@@ -219,7 +219,7 @@ public final class Response extends Packet {
      */
     @Pure
     public void checkReply(@ValidIndex int index) throws PacketException {
-        if (!exceptions.isNull(index)) throw exceptions.getNonNullable(index);
+        if (!exceptions.isNull(index)) { throw exceptions.getNonNullable(index); }
     }
     
     /**

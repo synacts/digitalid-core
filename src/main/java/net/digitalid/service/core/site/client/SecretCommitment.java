@@ -39,7 +39,7 @@ public final class SecretCommitment extends Commitment {
     SecretCommitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull Element value, @Nonnull PublicKey publicKey, @Nonnull Exponent secret) throws PacketException {
         super(host, time, value, publicKey);
         
-        if (!publicKey.getAu().pow(secret).equals(value)) throw new PacketException(PacketErrorCode.INTERNAL, "The secret does not match the commitment.");
+        if (!publicKey.getAu().pow(secret).equals(value)) { throw new PacketException(PacketErrorCode.INTERNAL, "The secret does not match the commitment."); }
         this.secret = secret;
     }
     

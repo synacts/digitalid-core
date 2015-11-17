@@ -64,7 +64,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
     @Pure
     public static @Nonnull Service getService(@Nonnull SemanticType type) throws PacketException {
         final @Nullable Service service = services.get(type);
-        if (service == null) throw new PacketException(PacketErrorCode.SERVICE, "No service with the type " + type.getAddress() + " is installed.");
+        if (service == null) { throw new PacketException(PacketErrorCode.SERVICE, "No service with the type " + type.getAddress() + " is installed."); }
         return service;
     }
     
@@ -160,7 +160,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
     @NonCommitting
     public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws AbortException {
         final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
-        if (attributeValue == null) throw AbortException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + ".");
+        if (attributeValue == null) { throw AbortException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + "."); }
         try {
             return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, attributeValue.getContent());
         } catch (@Nonnull InvalidEncodingException exception) {

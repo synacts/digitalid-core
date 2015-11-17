@@ -30,7 +30,7 @@ public final class VolatileNonNullableProperty<V> extends WritableNonNullablePro
         final @Nonnull V oldValue = this.value;
         this.value = newValue;
         
-        if (!newValue.equals(oldValue)) notify(oldValue, newValue);
+        if (!newValue.equals(oldValue)) { notify(oldValue, newValue); }
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */

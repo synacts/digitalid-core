@@ -163,7 +163,7 @@ public final class ClientCredential extends Credential {
         
         this.oneTime = oneTime;
         
-        if (!publicKey.getAo().pow(getO()).equals(c.pow(e).multiply(publicKey.getAb().pow(b)).multiply(publicKey.getAu().pow(u)).multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)))) throw new InvalidSignatureException("The credential issued by " + issuer.getAddress() + " is invalid.");
+        if (!publicKey.getAo().pow(getO()).equals(c.pow(e).multiply(publicKey.getAb().pow(b)).multiply(publicKey.getAu().pow(u)).multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)))) { throw new InvalidSignatureException("The credential issued by " + issuer.getAddress() + " is invalid."); }
     }
     
     /**
@@ -263,7 +263,7 @@ public final class ClientCredential extends Credential {
     @NonCommitting
     public static @Nonnull @Active ClientCredential getRoleBased(@Nonnull @OfInternalPerson NonNativeRole role, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws AbortException, PacketException, ExternalException, NetworkException {
         @Nullable ConcurrentMap<ReadOnlyAgentPermissions, ClientCredential> map = roleBasedCredentials.get(role);
-        if (map == null) map = roleBasedCredentials.putIfAbsentElseReturnPresent(role, new ConcurrentHashMap<ReadOnlyAgentPermissions, ClientCredential>());
+        if (map == null) { map = roleBasedCredentials.putIfAbsentElseReturnPresent(role, new ConcurrentHashMap<ReadOnlyAgentPermissions, ClientCredential>()); }
         @Nullable ClientCredential credential = map.get(permissions);
         
         if (credential == null || !credential.isActive()) {
@@ -293,7 +293,7 @@ public final class ClientCredential extends Credential {
     @NonCommitting
     public static @Nonnull @Active ClientCredential getIdentityBased(@Nonnull @OfInternalPerson Role role, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws AbortException, PacketException, ExternalException, NetworkException {
         @Nullable ConcurrentMap<ReadOnlyAgentPermissions, ClientCredential> map = identityBasedCredentials.get(role);
-        if (map == null) map = identityBasedCredentials.putIfAbsentElseReturnPresent(role, new ConcurrentHashMap<ReadOnlyAgentPermissions, ClientCredential>());
+        if (map == null) { map = identityBasedCredentials.putIfAbsentElseReturnPresent(role, new ConcurrentHashMap<ReadOnlyAgentPermissions, ClientCredential>()); }
         @Nullable ClientCredential credential = map.get(permissions);
         
         if (credential == null || !credential.isActive()) {

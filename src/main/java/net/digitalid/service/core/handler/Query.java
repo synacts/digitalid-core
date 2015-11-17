@@ -51,7 +51,7 @@ public abstract class Query extends Method {
     protected Query(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
         super(entity, signature, recipient);
         
-        if (!isOnHost()) throw new InvalidEncodingException("Queries are only decoded on hosts.");
+        if (!isOnHost()) { throw new InvalidEncodingException("Queries are only decoded on hosts."); }
     }
     
     

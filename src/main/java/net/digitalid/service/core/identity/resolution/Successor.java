@@ -46,8 +46,8 @@ public final class Successor {
     public static @Nullable InternalNonHostIdentifier get(@Nonnull NonHostIdentifier identifier) throws AbortException {
         @Nonnull String query = "SELECT successor FROM general_successor WHERE identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
-            if (resultSet.next()) return new InternalNonHostIdentifier(resultSet.getString(1));
-            else return null;
+            if (resultSet.next()) { return new InternalNonHostIdentifier(resultSet.getString(1)); }
+            else { return null; }
         }
     }
     
@@ -73,8 +73,8 @@ public final class Successor {
                 throw new UnsupportedOperationException("The verification of email addresses is not supported yet.");
             }
             
-            if (successor != null) set(identifier, successor, reply);
-            else throw new PacketException(PacketErrorCode.EXTERNAL, "The identity with the identifier " + identifier + " has not been relocated.");
+            if (successor != null) { set(identifier, successor, reply); }
+            else { throw new PacketException(PacketErrorCode.EXTERNAL, "The identity with the identifier " + identifier + " has not been relocated."); }
         }
         return successor;
     }

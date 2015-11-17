@@ -105,7 +105,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
         this.attributeTypes = new FreezableAttributeTypeSet(elements.getNonNullable(0)).freeze();
-        if (attributeTypes.isEmpty()) throw new InvalidEncodingException("The attribute types may not be empty.");
+        if (attributeTypes.isEmpty()) { throw new InvalidEncodingException("The attribute types may not be empty."); }
         this.published = new BooleanWrapper(elements.getNonNullable(1)).getValue();
     }
     
@@ -153,13 +153,13 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
                 final @Nonnull Attribute attribute = Attribute.get(account, attributeType);
                 final @Nullable AttributeValue attributeValue = published ? attribute.getValue() : attribute.getUnpublishedValue();
                 if (attributeValue != null) {
-                    if (contactPermissions != null && contactPermissions.contains(attributeType)) attributeValues.add(attributeValue);
+                    if (contactPermissions != null && contactPermissions.contains(attributeType)) { attributeValues.add(attributeValue); }
                     else {
                         final @Nullable PassiveExpression attributeVisibility = attribute.getVisibility();
-                        if (attributeVisibility != null && attributeVisibility.matches(credentialsSignature)) attributeValues.add(attributeValue);
-                        else attributeValues.add(null);
+                        if (attributeVisibility != null && attributeVisibility.matches(credentialsSignature)) { attributeValues.add(attributeValue); }
+                        else { attributeValues.add(null); }
                     }
-                } else attributeValues.add(null);
+                } else { attributeValues.add(null); }
             }
         } else {
             for (final @Nonnull SemanticType attributeType : attributeTypes) {
@@ -168,10 +168,10 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
                 if (attributeValue != null) {
                     if (isInternalPerson) {
                         final @Nullable PassiveExpression attributeVisibility = attribute.getVisibility();
-                        if (attributeVisibility != null && attributeVisibility.isPublic()) attributeValues.add(attributeValue);
-                        else attributeValues.add(null);
-                    } else attributeValues.add(attributeValue);
-                } else attributeValues.add(null);
+                        if (attributeVisibility != null && attributeVisibility.isPublic()) { attributeValues.add(attributeValue); }
+                        else { attributeValues.add(null); }
+                    } else { attributeValues.add(attributeValue); }
+                } else { attributeValues.add(null); }
             }
         }
         

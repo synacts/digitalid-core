@@ -81,7 +81,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     @NonCommitting
     public @Nonnull IdentityReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull InternalIdentifier subject = getSubject(); // The following exception should never be thrown as the condition is already checked in the packet class.
-        if (!(subject instanceof InternalNonHostIdentifier)) throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity may only be queried of non-host identities.");
+        if (!(subject instanceof InternalNonHostIdentifier)) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity may only be queried of non-host identities."); }
         return new IdentityReply((InternalNonHostIdentifier) subject);
     }
     

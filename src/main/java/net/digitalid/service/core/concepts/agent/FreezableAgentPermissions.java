@@ -135,7 +135,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
             put(type, new BooleanWrapper(subelements.getNonNullable(1)).getValue());
         }
         
-        if (!areValid()) throw new InvalidEncodingException("The agent permissions in the given block are not valid.");
+        if (!areValid()) { throw new InvalidEncodingException("The agent permissions in the given block are not valid."); }
     }
     
     @Pure
@@ -173,7 +173,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
                 return areEmptyOrSingle();
             } else {
                 for (final @Nonnull SemanticType semanticType : keySet()) {
-                    if (!semanticType.equals(GENERAL) && !get(semanticType)) return false;
+                    if (!semanticType.equals(GENERAL) && !get(semanticType)) { return false; }
                 }
                 return true;
             }
@@ -197,7 +197,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      */
     @Pure
     public @Nonnull FreezableAgentPermissions checkIsSingle() throws InvalidEncodingException {
-        if (!isSingle()) throw new InvalidEncodingException("These permissions are not single.");
+        if (!isSingle()) { throw new InvalidEncodingException("These permissions are not single."); }
         return this;
     }
     
@@ -216,7 +216,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      */
     @Pure
     public @Nonnull FreezableAgentPermissions checkAreEmptyOrSingle() throws InvalidEncodingException {
-        if (!areEmptyOrSingle()) throw new InvalidEncodingException("These permissions are not empty or single.");
+        if (!areEmptyOrSingle()) { throw new InvalidEncodingException("These permissions are not empty or single."); }
         return this;
     }
     
@@ -232,7 +232,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public void checkCanRead(@Nonnull SemanticType type) throws PacketException {
-        if (!canRead(type)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "These agent permissions cannot read " + type.getAddress() + ".");
+        if (!canRead(type)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "These agent permissions cannot read " + type.getAddress() + "."); }
     }
     
     @Pure
@@ -246,7 +246,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public void checkCanWrite(@Nonnull SemanticType type) throws PacketException {
-        if (!canWrite(type)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "These agent permissions cannot write " + type.getAddress() + ".");
+        if (!canWrite(type)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "These agent permissions cannot write " + type.getAddress() + "."); }
     }
     
     @Pure
@@ -254,11 +254,11 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     public boolean cover(@Nonnull ReadOnlyAgentPermissions permissions) {
         final boolean generalPermission = containsKey(GENERAL);
         final boolean writingPermission = generalPermission ? get(GENERAL) : false;
-        for (@Nonnull SemanticType type : permissions.keySet()) {
+        for (final @Nonnull SemanticType type : permissions.keySet()) {
             if (containsKey(type)) {
-                if (permissions.get(type) && !get(type)) return false;
+                if (permissions.get(type) && !get(type)) { return false; }
             } else if (generalPermission) {
-                if (permissions.get(type) && !writingPermission) return false;
+                if (permissions.get(type) && !writingPermission) { return false; }
             } else {
                 return false;
             }
@@ -269,7 +269,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws PacketException {
-        if (!cover(permissions)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "These agent permissions do not cover " + permissions + ".");
+        if (!cover(permissions)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "These agent permissions do not cover " + permissions + "."); }
     }
     
     
@@ -291,13 +291,13 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
                     remove(GENERAL);
                     for (final @Nonnull SemanticType type : keySet()) {
                         if (permissions.containsKey(type)) {
-                            if (get(type) && !permissions.get(type)) put(type, false);
+                            if (get(type) && !permissions.get(type)) { put(type, false); }
                         } else {
                             remove(type);
                         }
                     }
                     for (final @Nonnull SemanticType semanticType : permissions.keySet()) {
-                        if (!containsKey(semanticType)) put(semanticType, false);
+                        if (!containsKey(semanticType)) { put(semanticType, false); }
                     }
                 }
             }
@@ -306,9 +306,9 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
             final boolean writingPermission = generalPermission ? permissions.get(GENERAL) : false;
             for (final @Nonnull SemanticType type : keySet()) {
                 if (permissions.containsKey(type)) {
-                    if (get(type) && !permissions.get(type)) put(type, false);
+                    if (get(type) && !permissions.get(type)) { put(type, false); }
                 } else if (generalPermission) {
-                    if (get(type) && !writingPermission) put(type, false);
+                    if (get(type) && !writingPermission) { put(type, false); }
                 } else {
                     remove(type);
                 }
@@ -337,7 +337,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
                 super.clear();
             } else {
                 for (final @Nonnull SemanticType key : keySet()) {
-                    if (!get(key)) remove(key);
+                    if (!get(key)) { remove(key); }
                 }
             }
             put = true;
@@ -393,7 +393,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
             if (!isEmpty()) {
                 string.append("type IN (");
                 for (final @Nonnull SemanticType type : keySet()) {
-                    if (string.length() != 14) string.append(", ");
+                    if (string.length() != 14) { string.append(", "); }
                     string.append(type);
                 }
                 string.append(")");
@@ -413,14 +413,14 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
             final @Nonnull StringBuilder string = new StringBuilder("(");
             for (final @Nonnull SemanticType type : keySet()) {
                 if (get(type)) {
-                    if (string.length() != 1) string.append(", ");
+                    if (string.length() != 1) { string.append(", "); }
                     string.append(type);
                 }
             }
             string.append(")");
             final @Nonnull String list = string.toString();
-            if (!list.equals("()")) return " AND type IN " + list;
-            else return " AND " + Database.toBoolean(false);
+            if (!list.equals("()")) { return " AND type IN " + list; }
+            else { return " AND " + Database.toBoolean(false); }
         } else {
             return "";
         }
@@ -490,7 +490,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             final @Nullable Identity identity = IdentityImplementation.get(resultSet, startIndex);
-            if (identity != null) permissions.put(identity.toSemanticType().checkIsAttributeType(), resultSet.getBoolean(startIndex + 1));
+            if (identity != null) { permissions.put(identity.toSemanticType().checkIsAttributeType(), resultSet.getBoolean(startIndex + 1)); }
             return permissions;
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);

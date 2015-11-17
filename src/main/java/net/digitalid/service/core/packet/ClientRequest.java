@@ -95,7 +95,7 @@ public final class ClientRequest extends Request {
     @Override
     @NonCommitting
     @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws AbortException, PacketException, ExternalException, NetworkException {
-        if (!subject.getHostIdentifier().equals(recipient)) throw new PacketException(PacketErrorCode.INTERNAL, "The host of the subject " + subject + " does not match the recipient " + recipient + ".");
+        if (!subject.getHostIdentifier().equals(recipient)) { throw new PacketException(PacketErrorCode.INTERNAL, "The host of the subject " + subject + " does not match the recipient " + recipient + "."); }
         return new ClientRequest(methods, subject, getAudit(), commitment).send(verified);
     }
     

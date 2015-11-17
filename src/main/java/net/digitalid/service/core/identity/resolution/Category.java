@@ -125,7 +125,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         assert isValid(value) : "The value is a valid category.";
         
         for (final @Nonnull Category category : values()) {
-            if (category.value == value) return category;
+            if (category.value == value) { return category; }
         }
         
         throw new ShouldNeverHappenError("The value '" + value + "' does not encode a category.");

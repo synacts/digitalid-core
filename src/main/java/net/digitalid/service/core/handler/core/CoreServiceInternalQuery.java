@@ -11,7 +11,6 @@ import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.PublicKey;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -20,6 +19,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
@@ -62,7 +62,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     protected CoreServiceInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal queries of the core service.");
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal queries of the core service."); }
         
         this.publicKey = Cache.getPublicKey(getRecipient(), signature.getNonNullableTime());
     }
@@ -92,14 +92,14 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     @NonCommitting
     public @Nonnull CoreServiceQueryReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
-        if (isLodged() && signature instanceof CredentialsSignatureWrapper) ((CredentialsSignatureWrapper) signature).checkIsLogded();
+        if (isLodged() && signature instanceof CredentialsSignatureWrapper) { ((CredentialsSignatureWrapper) signature).checkIsLogded(); }
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), publicKey);
         
         final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissionsToExecuteMethod();
-        if (!permissions.equals(FreezableAgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
+        if (!permissions.equals(FreezableAgentPermissions.NONE)) { agent.getPermissions().checkCover(permissions); }
         
         final @Nonnull Restrictions restrictions = getRequiredRestrictionsToExecuteMethod();
-        if (!restrictions.equals(Restrictions.MIN)) agent.getRestrictions().checkCover(restrictions);
+        if (!restrictions.equals(Restrictions.MIN)) { agent.getRestrictions().checkCover(restrictions); }
         
         return executeOnHost(agent);
     }

@@ -97,7 +97,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     public void checkIsClient() throws PacketException {
-        if (!isClient()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to clients.");
+        if (!isClient()) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to clients."); }
     }
     
     /* -------------------------------------------------- Role -------------------------------------------------- */
@@ -122,7 +122,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     public void checkIsRole() throws PacketException {
-        if (!isRole()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles.");
+        if (!isRole()) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles."); }
     }
     
     /* -------------------------------------------------- Writing -------------------------------------------------- */
@@ -147,7 +147,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     public void checkIsWriting() throws PacketException {
-        if (!isWriting()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can write to contexts.");
+        if (!isWriting()) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can write to contexts."); }
     }
     
     /* -------------------------------------------------- Context -------------------------------------------------- */
@@ -188,7 +188,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Context otherContext) throws AbortException, PacketException {
-        if (!cover(otherContext)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context.");
+        if (!cover(otherContext)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context."); }
     }
     
     /* -------------------------------------------------- Contact -------------------------------------------------- */
@@ -229,7 +229,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Contact otherContact) throws AbortException, PacketException {
-        if (!cover(otherContact)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact.");
+        if (!cover(otherContact)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact."); }
     }
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
@@ -311,11 +311,11 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     @Pure
     @NonCommitting
     public boolean cover(@Nonnull Restrictions restrictions) throws AbortException {
-        if (restrictions.client && !client) return false;
-        if (restrictions.role && !role) return false;
-        if (restrictions.writing && !writing) return false;
+        if (restrictions.client && !client) { return false; }
+        if (restrictions.role && !role) { return false; }
+        if (restrictions.writing && !writing) { return false; }
         final @Nullable Context context = restrictions.context;
-        if (context != null && !cover(context)) return false;
+        if (context != null && !cover(context)) { return false; }
         final @Nullable Contact contact = restrictions.contact;
         return contact == null || cover(contact);
     }
@@ -328,7 +328,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Restrictions restrictions) throws AbortException, PacketException {
-        if (!cover(restrictions)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions.");
+        if (!cover(restrictions)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions."); }
     }
     
     /* -------------------------------------------------- Matching -------------------------------------------------- */
@@ -356,7 +356,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     public @Nonnull Restrictions checkMatch(@Nonnull Agent agent) throws InvalidEncodingException {
-        if (!match(agent)) throw new InvalidEncodingException("The restrictions do not match the given agent.");
+        if (!match(agent)) { throw new InvalidEncodingException("The restrictions do not match the given agent."); }
         return this;
     }
     
@@ -379,8 +379,8 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Restrictions)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Restrictions)) { return false; }
         @Nonnull Restrictions other = (Restrictions) object;
         return this.client == other.client && this.role == other.role && this.writing == other.writing && Objects.equals(this.context, other.context) && Objects.equals(this.contact, other.contact);
     }

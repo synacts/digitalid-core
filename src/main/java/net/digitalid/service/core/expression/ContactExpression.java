@@ -89,8 +89,8 @@ final class ContactExpression extends Expression {
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof ContactExpression)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof ContactExpression)) { return false; }
         final @Nonnull ContactExpression other = (ContactExpression) object;
         return this.contact.equals(other.contact);
     }

@@ -126,7 +126,7 @@ public final class Exponent extends Number<Exponent> {
     @Pure
     public @Nonnull Exponent getNextRelativePrime(@Nonnull GroupWithKnownOrder group) {
         @Nonnull BigInteger next = getValue();
-        while (next.gcd(group.getOrder()).compareTo(BigInteger.ONE) == 1) next = next.add(BigInteger.ONE);
+        while (next.gcd(group.getOrder()).compareTo(BigInteger.ONE) == 1) { next = next.add(BigInteger.ONE); }
         return new Exponent(next);
     }
     

@@ -237,7 +237,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
                 final @Nonnull Time time = Time.SQL_CONVERTER.restoreNonNullable(None.OBJECT, resultSet, startIndex);
                 startIndex += Time.SQL_CONVERTER.getNumberOfColumns();
                 final @Nonnull V value = getPropertyFactory().getValueConverters().getSQLConverter().restoreNonNullable(entity, resultSet, startIndex);
-                if (!property.getValueValidator().isValid(value)) throw new SQLException("The value of the given property is invalid.");
+                if (!property.getValueValidator().isValid(value)) { throw new SQLException("The value of the given property is invalid."); }
                 return FreezablePair.get(time, value).freeze();
             } else {
                 // TODO: What about changes
@@ -258,7 +258,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
             getPropertyFactory().getValueConverters().getSQLConverter().storeNonNullable(newValue, preparedStatement, startIndex);
             startIndex += getPropertyFactory().getValueConverters().getSQLConverter().getNumberOfColumns();
             getPropertyFactory().getValueConverters().getSQLConverter().storeNonNullable(oldValue, preparedStatement, startIndex);
-            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The value of the given property could not be replaced.");
+            if (preparedStatement.executeUpdate() == 0) { throw new SQLException("The value of the given property could not be replaced."); }
         } catch (SQLException exception) {
             throw AbortException.get(exception);
         }

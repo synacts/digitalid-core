@@ -44,7 +44,7 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
         super(entity);
         
         this.expression = Expression.parse(entity, string);
-        if (!isValid()) throw new InvalidEncodingException("The expression '" + string + "' is invalid as " + getClass().getSimpleName() + ".");
+        if (!isValid()) { throw new InvalidEncodingException("The expression '" + string + "' is invalid as " + getClass().getSimpleName() + "."); }
     }
     
     /**
@@ -89,8 +89,8 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof AbstractExpression)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof AbstractExpression)) { return false; }
         final @Nonnull AbstractExpression other = (AbstractExpression) object;
         return this.expression.equals(other.expression);
     }

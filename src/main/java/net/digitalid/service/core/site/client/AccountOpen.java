@@ -128,21 +128,21 @@ public final class AccountOpen extends Action {
     private AccountOpen(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("open.account@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account.");
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account."); }
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
         
         this.category = Category.get(elements.getNonNullable(0));
-        if (!category.isInternalNonHostIdentity()) throw new InvalidEncodingException("The category has to denote an internal non-host identity.");
+        if (!category.isInternalNonHostIdentity()) { throw new InvalidEncodingException("The category has to denote an internal non-host identity."); }
         
         this.agentNumber = new Int64Wrapper(elements.getNonNullable(1)).getValue();
         
-        if (!(signature instanceof ClientSignatureWrapper)) throw new InvalidEncodingException("The action to open an account has to be signed by a client.");
+        if (!(signature instanceof ClientSignatureWrapper)) { throw new InvalidEncodingException("The action to open an account has to be signed by a client."); }
         this.commitment = ((ClientSignatureWrapper) signature).getCommitment();
         this.secret = null;
         
         this.name = new StringWrapper(elements.getNonNullable(2)).getString();
-        if (!Client.isValidName(name)) throw new InvalidEncodingException("The name '" + name + "' is invalid.");
+        if (!Client.isValidName(name)) { throw new InvalidEncodingException("The name '" + name + "' is invalid."); }
     }
     
     @Pure
@@ -210,7 +210,7 @@ public final class AccountOpen extends Action {
     @NonCommitting
     public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull InternalIdentifier subject = getSubject();
-        if (subject.isMapped()) throw new PacketException(PacketErrorCode.IDENTIFIER, "The account with the identifier " + subject + " already exists.");
+        if (subject.isMapped()) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The account with the identifier " + subject + " already exists."); }
         
         // TODO: Include the resctriction mechanisms like the tokens.
         
@@ -255,7 +255,7 @@ public final class AccountOpen extends Action {
     @Override
     @NonCommitting
     public @Nonnull Response send() throws AbortException, PacketException, ExternalException, NetworkException {
-        if (secret == null) throw new PacketException(PacketErrorCode.INTERNAL, "The secret may not be null for sending.");
+        if (secret == null) { throw new PacketException(PacketErrorCode.INTERNAL, "The secret may not be null for sending."); }
         return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
     }
     

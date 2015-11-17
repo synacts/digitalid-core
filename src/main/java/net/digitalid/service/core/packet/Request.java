@@ -129,7 +129,7 @@ public class Request extends Packet {
         assert !methods.containsNull() : "The list of methods does not contain null.";
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
         
-        if (iteration == 5) throw new PacketException(PacketErrorCode.EXTERNAL, "The resending of a request was triggered five times.");
+        if (iteration == 5) { throw new PacketException(PacketErrorCode.EXTERNAL, "The resending of a request was triggered five times."); }
         
         this.recipient = recipient;
         this.subject = subject;
@@ -185,7 +185,7 @@ public class Request extends Packet {
     @RawRecipient
     final void initialize(int size) {
         this.methods = new FreezableArrayList<>(size);
-        for (int i = 0; i < size; i++) methods.add(null);
+        for (int i = 0; i < size; i++) { methods.add(null); }
     }
     
     @Override
@@ -308,11 +308,11 @@ public class Request extends Packet {
             if (exception.getError() == PacketErrorCode.KEYROTATION && this instanceof ClientRequest) {
                 return ((ClientRequest) this).recommit(methods, iteration, verified);
             } else if (exception.getError() == PacketErrorCode.RELOCATION && subject instanceof InternalNonHostIdentifier) {
-                if (getMethod(0).getType().equals(IdentityQuery.TYPE)) throw new PacketException(PacketErrorCode.EXTERNAL, "The response to an identity query may not be a relocation exception.");
+                if (getMethod(0).getType().equals(IdentityQuery.TYPE)) { throw new PacketException(PacketErrorCode.EXTERNAL, "The response to an identity query may not be a relocation exception."); }
                 @Nullable InternalNonHostIdentifier address = Successor.get((InternalNonHostIdentifier) subject);
                 if (address == null) {
                     address = Successor.getReloaded((InternalNonHostIdentifier) subject);
-                    if (!address.getIdentity().equals(subject.getIdentity())) throw new InvalidDeclarationException("The claimed successor " + address + " of " + subject + " does not link back.", subject, null);
+                    if (!address.getIdentity().equals(subject.getIdentity())) { throw new InvalidDeclarationException("The claimed successor " + address + " of " + subject + " does not link back.", subject, null); }
                 } else if (subject.isMapped()) {
                     Mapper.unmap(subject.getMappedIdentity());
                 }
@@ -320,7 +320,7 @@ public class Request extends Packet {
                 return resend(methods, recipient, address, iteration, verified);
             } else if (exception.getError() == PacketErrorCode.SERVICE && !getMethod(0).isOnHost()) {
                 final @Nonnull HostIdentifier recipient = IdentifierImplementation.create(Cache.getReloadedAttributeContent(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).toHostIdentifier();
-                if (this.recipient.equals(recipient)) throw new PacketException(PacketErrorCode.EXTERNAL, "The recipient after a service error is still the same.", exception);
+                if (this.recipient.equals(recipient)) { throw new PacketException(PacketErrorCode.EXTERNAL, "The recipient after a service error is still the same.", exception); }
                 return resend(methods, recipient, subject, iteration, verified);
             } else {
                 throw exception;

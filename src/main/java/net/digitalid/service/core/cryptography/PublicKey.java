@@ -518,8 +518,8 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof PublicKey)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof PublicKey)) { return false; }
         final @Nonnull PublicKey other = (PublicKey) object;
         return this.compositeGroup.equals(other.compositeGroup)
                 && this.e.equals(other.e)
@@ -634,7 +634,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
             final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
             final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
             
-            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO)).getHash())) throw new InvalidEncodingException("The proof that au, ai, av and ao are in the subgroup of ab is invalid.");
+            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO)).getHash())) { throw new InvalidEncodingException("The proof that au, ai, av and ao are in the subgroup of ab is invalid."); }
             
             return new PublicKey(compositeGroup, e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup, g, y, zPlus1);
         }

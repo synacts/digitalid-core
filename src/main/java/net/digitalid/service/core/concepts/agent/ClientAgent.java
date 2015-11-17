@@ -54,7 +54,7 @@ public final class ClientAgent extends Agent {
      */
     @NonCommitting
     public @Nonnull Commitment getCommitment() throws AbortException {
-        if (commitment == null) commitment = AgentModule.getCommitment(this);
+        if (commitment == null) { commitment = AgentModule.getCommitment(this); }
         return commitment;
     }
     
@@ -111,7 +111,7 @@ public final class ClientAgent extends Agent {
      */
     @NonCommitting
     public @Nonnull String getName() throws AbortException {
-        if (name == null) name = AgentModule.getName(this);
+        if (name == null) { name = AgentModule.getName(this); }
         return name;
     }
     
@@ -210,7 +210,9 @@ public final class ClientAgent extends Agent {
     public static void reset(@Nonnull NonHostEntity entity) throws AbortException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
-            if (map != null) for (final @Nonnull ClientAgent clientAgent : map.values()) clientAgent.reset();
+            if (map != null) {
+                for (final @Nonnull ClientAgent clientAgent : map.values()) { clientAgent.reset(); }
+            }
         }
     }
     
@@ -240,9 +242,9 @@ public final class ClientAgent extends Agent {
     public static @Nonnull ClientAgent get(@Nonnull NonHostEntity entity, long number, boolean removed) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, ClientAgent>());
+            if (map == null) { map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, ClientAgent>()); }
             @Nullable ClientAgent clientAgent = map.get(number);
-            if (clientAgent == null) clientAgent = map.putIfAbsentElseReturnPresent(number, new ClientAgent(entity, number, removed));
+            if (clientAgent == null) { clientAgent = map.putIfAbsentElseReturnPresent(number, new ClientAgent(entity, number, removed)); }
             return clientAgent;
         } else {
             return new ClientAgent(entity, number, removed);

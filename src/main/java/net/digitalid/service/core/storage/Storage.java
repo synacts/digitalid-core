@@ -40,7 +40,7 @@ public final class Storage {
     @Pure
     public static @Nonnull SiteStorage get(@Nonnull SemanticType stateType) throws PacketException {
         final @Nullable SiteStorage storage = storages.get(stateType);
-        if (storage == null) throw new PacketException(PacketErrorCode.SERVICE, "There exists no site storage with the state type " + stateType.getAddress() + ".");
+        if (storage == null) { throw new PacketException(PacketErrorCode.SERVICE, "There exists no site storage with the state type " + stateType.getAddress() + "."); }
         return storage;
     }
     

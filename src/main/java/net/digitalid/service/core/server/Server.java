@@ -125,7 +125,7 @@ public final class Server {
         final @Nonnull File digitalid = new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".private.xdf");
         if (digitalid.exists() && digitalid.isFile()) {
             try {
-                if (!new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".tables.xdf").exists()) new Host(HostIdentifier.DIGITALID);
+                if (!new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".tables.xdf").exists()) { new Host(HostIdentifier.DIGITALID); }
             } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                 throw new InitializationError("Could not load the host configured in the file '" + digitalid.getName() + "'.", exception);
             }
@@ -137,7 +137,7 @@ public final class Server {
             if (file.isFile() && name.endsWith(".private.xdf") && !name.equals(HostIdentifier.DIGITALID.getString() + ".private.xdf")) { // TODO: Remove the special case eventually.
                 try {
                     final @Nonnull HostIdentifier identifier = new HostIdentifier(name.substring(0, name.length() - 12));
-                    if (!new File(Directory.getHostsDirectory().getPath() + File.separator + identifier.getString() + ".tables.xdf").exists()) new Host(identifier);
+                    if (!new File(Directory.getHostsDirectory().getPath() + File.separator + identifier.getString() + ".tables.xdf").exists()) { new Host(identifier); }
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                     throw new InitializationError("Could not load the host configured in the file '" + name + "'.", exception);
                 }
@@ -229,9 +229,9 @@ public final class Server {
         
         final @Nonnull Configuration configuration;
         try {
-            if (MySQLConfiguration.exists()) configuration = new MySQLConfiguration(false);
-            else if (PostgreSQLConfiguration.exists()) configuration = new PostgreSQLConfiguration(false);
-            else if (SQLiteConfiguration.exists()) configuration = new SQLiteConfiguration(false);
+            if (MySQLConfiguration.exists()) { configuration = new MySQLConfiguration(false); }
+            else if (PostgreSQLConfiguration.exists()) { configuration = new PostgreSQLConfiguration(false); }
+            else if (SQLiteConfiguration.exists()) { configuration = new SQLiteConfiguration(false); }
             else {
                 Console.write();
                 Console.write("Please select one of the following databases:");
@@ -240,9 +240,9 @@ public final class Server {
                 Console.write("- 3: SQLite");
                 Console.write();
                 final int input = Console.readNumber("Choice: ", 1);
-                if (input == 1) configuration = new MySQLConfiguration(false);
-                else if (input == 2) configuration = new PostgreSQLConfiguration(false);
-                else if (input == 3) configuration = new SQLiteConfiguration(false);
+                if (input == 1) { configuration = new MySQLConfiguration(false); }
+                else if (input == 2) { configuration = new PostgreSQLConfiguration(false); }
+                else if (input == 3) { configuration = new SQLiteConfiguration(false); }
                 else {
                     Console.write(Integer.toString(input) + " was not a valid option.");
                     Console.write();

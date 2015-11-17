@@ -50,7 +50,7 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
     protected CoreServiceExternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new InvalidEncodingException("The host of the subject and the recipient have to be the same for external actions of the core service.");
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new InvalidEncodingException("The host of the subject and the recipient have to be the same for external actions of the core service."); }
     }
     
     

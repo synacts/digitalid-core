@@ -166,9 +166,9 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws AbortException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
-        if (oldValue == null && newValue != null) AttributeModule.insertValue(this, true, newValue);
-        else if (oldValue != null && newValue == null) AttributeModule.deleteValue(this, true, oldValue);
-        else if (oldValue != null && newValue != null) AttributeModule.replaceValue(this, true, oldValue, newValue);
+        if (oldValue == null && newValue != null) { AttributeModule.insertValue(this, true, newValue); }
+        else if (oldValue != null && newValue == null) { AttributeModule.deleteValue(this, true, oldValue); }
+        else if (oldValue != null && newValue != null) { AttributeModule.replaceValue(this, true, oldValue, newValue); }
         
         value = newValue;
         valueLoaded = true;
@@ -224,9 +224,9 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws AbortException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
-        if (oldValue == null && newValue != null) AttributeModule.insertValue(this, false, newValue);
-        else if (oldValue != null && newValue == null) AttributeModule.deleteValue(this, false, oldValue);
-        else if (oldValue != null && newValue != null) AttributeModule.replaceValue(this, false, oldValue, newValue);
+        if (oldValue == null && newValue != null) { AttributeModule.insertValue(this, false, newValue); }
+        else if (oldValue != null && newValue == null) { AttributeModule.deleteValue(this, false, oldValue); }
+        else if (oldValue != null && newValue != null) { AttributeModule.replaceValue(this, false, oldValue, newValue); }
         
         unpublished = newValue;
         unpublishedLoaded = true;
@@ -286,9 +286,9 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     void replaceVisibility(@Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) throws AbortException {
         assert !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
         
-        if (oldVisibility == null && newVisibility != null) AttributeModule.insertVisibility(this, newVisibility);
-        else if (oldVisibility != null && newVisibility == null) AttributeModule.deleteVisibility(this, oldVisibility);
-        else if (oldVisibility != null && newVisibility != null) AttributeModule.replaceVisibility(this, oldVisibility, newVisibility);
+        if (oldVisibility == null && newVisibility != null) { AttributeModule.insertVisibility(this, newVisibility); }
+        else if (oldVisibility != null && newVisibility == null) { AttributeModule.deleteVisibility(this, oldVisibility); }
+        else if (oldVisibility != null && newVisibility != null) { AttributeModule.replaceVisibility(this, oldVisibility, newVisibility); }
         
         visibility = newVisibility;
         visibilityLoaded = true;
@@ -340,9 +340,9 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
         
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<SemanticType, Attribute> map = index.get(entity);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<SemanticType, Attribute>());
+            if (map == null) { map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<SemanticType, Attribute>()); }
             @Nullable Attribute context = map.get(type);
-            if (context == null) context = map.putIfAbsentElseReturnPresent(type, new Attribute(entity, type));
+            if (context == null) { context = map.putIfAbsentElseReturnPresent(type, new Attribute(entity, type)); }
             return context;
         } else {
             return new Attribute(entity, type);
@@ -371,7 +371,9 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     public static void reset(@Nonnull NonHostEntity entity) {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<SemanticType, Attribute> map = index.get(entity);
-            if (map != null) for (final @Nonnull Attribute attribute : map.values()) attribute.reset();
+            if (map != null) {
+                for (final @Nonnull Attribute attribute : map.values()) { attribute.reset(); }
+            }
         }
     }
     
@@ -380,8 +382,8 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     @Pure
     @Override
     public boolean equals(Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Attribute)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Attribute)) { return false; }
         final @Nonnull Attribute other = (Attribute) object;
         return this.getEntity().equals(other.getEntity()) && this.type.equals(other.type);
     }

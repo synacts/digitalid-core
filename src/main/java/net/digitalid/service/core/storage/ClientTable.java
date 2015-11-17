@@ -67,14 +67,14 @@ public abstract class ClientTable extends ClientTableImplementation<ClientModule
     @Override
     @NonCommitting
     public final void createTables(@Nonnull Site site) throws AbortException {
-        if (site instanceof Client) createTables((Client) site);
+        if (site instanceof Client) { createTables((Client) site); }
     }
     
     @Locked
     @Override
     @NonCommitting
     public final void deleteTables(@Nonnull Site site) throws AbortException {
-        if (site instanceof Client) deleteTables((Client) site);
+        if (site instanceof Client) { deleteTables((Client) site); }
     }
     
 }

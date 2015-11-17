@@ -74,7 +74,7 @@ public final class KeyPair {
         final @Nonnull Exponent d = e.inverse(compositeGroup);
         
         @Nonnull Element ab = compositeGroup.getRandomElement();
-        while (ab.pow(pMinus1).isOne() || ab.pow(qMinus1).isOne() || ab.pow(order.shiftRight(2)).isOne()) ab = compositeGroup.getRandomElement();
+        while (ab.pow(pMinus1).isOne() || ab.pow(qMinus1).isOne() || ab.pow(order.shiftRight(2)).isOne()) { ab = compositeGroup.getRandomElement(); }
         
         // Determine the four other bases.
         final @Nonnull Exponent eu = compositeGroup.getRandomExponent();
@@ -118,7 +118,7 @@ public final class KeyPair {
         
         final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrder.get(z.pow(2), z.multiply(zMinus1));
         @Nonnull Element g = squareGroup.getRandomElement();
-        while (g.pow(z).isOne() || g.pow(zMinus1).isOne()) g = squareGroup.getRandomElement();
+        while (g.pow(z).isOne() || g.pow(zMinus1).isOne()) { g = squareGroup.getRandomElement(); }
         
         final @Nonnull Exponent x = squareGroup.getRandomExponent();
         final @Nonnull Element y = g.pow(x);
@@ -158,7 +158,7 @@ public final class KeyPair {
         while (true) {
             final @Nonnull BigInteger prime = BigInteger.probablePrime(length - 1, random);
             final @Nonnull BigInteger value = prime.shiftLeft(1).add(BigInteger.ONE);
-            if (value.isProbablePrime(64)) return value;
+            if (value.isProbablePrime(64)) { return value; }
         }
     }
     

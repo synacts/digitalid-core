@@ -73,9 +73,9 @@ public final class HostAccount extends Account implements HostEntity {
     public static @Nonnull HostAccount get(@Nonnull Host host, @Nonnull HostIdentity identity) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<HostIdentity, HostAccount> map = index.get(host);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(host, new ConcurrentHashMap<HostIdentity, HostAccount>());
+            if (map == null) { map = index.putIfAbsentElseReturnPresent(host, new ConcurrentHashMap<HostIdentity, HostAccount>()); }
             @Nullable HostAccount account = map.get(identity);
-            if (account == null) account = map.putIfAbsentElseReturnPresent(identity, new HostAccount(host, identity));
+            if (account == null) { account = map.putIfAbsentElseReturnPresent(identity, new HostAccount(host, identity)); }
             return account;
         } else {
             return new HostAccount(host, identity);
@@ -95,8 +95,8 @@ public final class HostAccount extends Account implements HostEntity {
     @NonCommitting
     public static @Nonnull HostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
-        if (identity instanceof HostIdentity) return get(host, (HostIdentity) identity);
-        else throw new SQLException("The identity of " + identity.getAddress() + " is not a host.");
+        if (identity instanceof HostIdentity) { return get(host, (HostIdentity) identity); }
+        else { throw new SQLException("The identity of " + identity.getAddress() + " is not a host."); }
     }
     
 }

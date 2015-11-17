@@ -54,7 +54,7 @@ public abstract class QueryReply extends Reply {
     protected QueryReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
         super(entity, signature, number);
         
-        if (isOnHost()) throw new InvalidEncodingException("Query replies are never decoded on hosts.");
+        if (isOnHost()) { throw new InvalidEncodingException("Query replies are never decoded on hosts."); }
     }
     
 }

@@ -24,7 +24,7 @@ public final class SignatureWrapperTest extends ServerSetup {
         final @Nonnull SemanticType TYPE = SemanticType.map("boolean@test.digitalid.net").load(BooleanWrapper.XDF_TYPE);
         
 //        Block[] blocks = new Block[] {Block.EMPTY, new StringWrapper("String").toBlock()};
-//        for (Block block : blocks) {
+//        for (final @Nonnull Block block : blocks) {
 //            testSignature(block, identifier, 0, null, null, null, null, false); // Unsigned.
 //            testSignature(block, identifier, 0, null, identifier, null, null, false); // Signed by a host.
 //            testSignature(block, identifier, 0, null, null, client.getSecret(), null, false); // Signed by a client.

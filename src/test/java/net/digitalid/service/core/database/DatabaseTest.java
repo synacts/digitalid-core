@@ -47,7 +47,7 @@ public class DatabaseTest {
     @After
     @Committing
     public void commit() throws AbortException {
-        if (isSubclass()) Database.commit();
+        if (isSubclass()) { Database.commit(); }
     }
     
     @Test

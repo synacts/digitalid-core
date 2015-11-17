@@ -92,8 +92,8 @@ final class ContextExpression extends Expression {
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof ContextExpression)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof ContextExpression)) { return false; }
         final @Nonnull ContextExpression other = (ContextExpression) object;
         return this.context.equals(other.context);
     }

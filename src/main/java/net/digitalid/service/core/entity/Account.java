@@ -112,8 +112,8 @@ public abstract class Account extends EntityImplementation {
     @NonCommitting
     public static @Nonnull Account getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
-        if (identity instanceof InternalIdentity) return get(host, (InternalIdentity) identity);
-        else throw new SQLException("The identity of " + identity.getAddress() + " is not internal.");
+        if (identity instanceof InternalIdentity) { return get(host, (InternalIdentity) identity); }
+        else { throw new SQLException("The identity of " + identity.getAddress() + " is not internal."); }
     }
     
     
@@ -129,8 +129,8 @@ public abstract class Account extends EntityImplementation {
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Account)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Account)) { return false; }
         final @Nonnull Account other = (Account) object;
         return this.host.equals(other.host) && this.getIdentity().equals(other.getIdentity());
     }

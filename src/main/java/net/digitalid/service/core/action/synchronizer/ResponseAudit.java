@@ -74,7 +74,7 @@ public final class ResponseAudit extends Audit {
         
         assert trail.isFrozen() : "The trail is frozen.";
         assert !trail.containsNull() : "The trail does not contain null.";
-        for (final @Nonnull Block block : trail) assert block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
+        for (final @Nonnull Block block : trail) { assert block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type."; }
         
         this.thisTime = thisTime;
         this.trail = trail;
@@ -143,7 +143,7 @@ public final class ResponseAudit extends Audit {
     @Committing
     void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<StateModule> ignoredModules) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull FreezableSet<StateModule> suspendedModules = FreezableHashSet.get();
-        for (@Nonnull Block block : trail) {
+        for (final @Nonnull Block block : trail) {
             final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
             final @Nonnull Block element = SelfcontainedWrapper.decodeNonNullable(CompressionWrapper.decompressNonNullable(signature.getNonNullableElement()));
             final @Nonnull Action action = Method.get(role, signature, recipient, element).toAction();
@@ -196,7 +196,7 @@ public final class ResponseAudit extends Audit {
         suspendedModules.removeAll((FreezableSet<StateModule>) ignoredModules);
         if (!suspendedModules.freeze().isEmpty()) {
             final @Nonnull FreezableList<Method> queries = new FreezableArrayList<>(suspendedModules.size());
-            for (final @Nonnull StateModule module : suspendedModules) queries.add(new StateQuery(role, module));
+            for (final @Nonnull StateModule module : suspendedModules) { queries.add(new StateQuery(role, module)); }
             final @Nonnull Response response = Method.send(queries.freeze(), new RequestAudit(SynchronizerModule.getLastTime(role, service)));
             for (int i = 0; i < response.getSize(); i++) {
                 final @Nonnull StateReply reply = response.getReplyNotNull(i);

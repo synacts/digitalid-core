@@ -174,9 +174,9 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     public static @Nonnull Contact get(@Nonnull NonHostEntity entity, @Nonnull Person person) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Person, Contact> map = index.get(entity);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Person, Contact>());
+            if (map == null) { map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Person, Contact>()); }
             @Nullable Contact contact = map.get(person);
-            if (contact == null) contact = map.putIfAbsentElseReturnPresent(person, new Contact(entity, person));
+            if (contact == null) { contact = map.putIfAbsentElseReturnPresent(person, new Contact(entity, person)); }
             return contact;
         } else {
             return new Contact(entity, person);
@@ -238,9 +238,9 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     @NonCommitting
     public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nullable Identity identity = IdentityImplementation.get(resultSet, columnIndex);
-        if (identity == null) return null;
-        if (identity instanceof Person) return get(entity, (Person) identity);
-        else throw new SQLException("A non-person was stored as a contact.");
+        if (identity == null) { return null; }
+        if (identity instanceof Person) { return get(entity, (Person) identity); }
+        else { throw new SQLException("A non-person was stored as a contact."); }
     }
     
     /**
@@ -256,8 +256,8 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     @NonCommitting
     public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
-        if (identity instanceof Person) return get(entity, (Person) identity);
-        else throw new SQLException("A non-person was stored as a contact.");
+        if (identity instanceof Person) { return get(entity, (Person) identity); }
+        else { throw new SQLException("A non-person was stored as a contact."); }
     }
     
     @Override
@@ -275,8 +275,8 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     public static void set(@Nullable Contact contact, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
-        if (contact == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
-        else contact.set(preparedStatement, parameterIndex);
+        if (contact == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
+        else { contact.set(preparedStatement, parameterIndex); }
     }
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
@@ -284,8 +284,8 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Contact)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Contact)) { return false; }
         final @Nonnull Contact other = (Contact) object;
         return this.person.equals(other.person) && this.getEntity().equals(other.getEntity());
     }

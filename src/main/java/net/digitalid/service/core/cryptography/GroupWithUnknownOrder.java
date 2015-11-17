@@ -78,7 +78,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
             assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
             
             final @Nonnull @Positive BigInteger modulus = IntegerWrapper.decodeNonNullable(block);
-            if (modulus.compareTo(BigInteger.ZERO) != 1) throw new InvalidEncodingException("The modulus has to be positive.");
+            if (modulus.compareTo(BigInteger.ZERO) != 1) { throw new InvalidEncodingException("The modulus has to be positive."); }
             return new GroupWithUnknownOrder(modulus);
         }
         

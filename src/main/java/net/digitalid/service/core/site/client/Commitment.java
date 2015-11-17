@@ -208,8 +208,8 @@ public class Commitment implements Blockable, SQLizable {
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Commitment)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Commitment)) { return false; }
         final @Nonnull Commitment other = (Commitment) object;
         return host.equals(other.host) && time.equals(other.time) && value.equals(other.value);
     }

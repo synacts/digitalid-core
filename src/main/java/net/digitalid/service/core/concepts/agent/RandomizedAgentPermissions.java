@@ -189,8 +189,8 @@ public final class RandomizedAgentPermissions implements Blockable {
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof RandomizedAgentPermissions)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof RandomizedAgentPermissions)) { return false; }
         final @Nonnull RandomizedAgentPermissions other = (RandomizedAgentPermissions) object;
         return this.hash.equals(other.hash) && Objects.equals(this.salt, other.salt) && Objects.equals(this.permissions, other.permissions);
     }

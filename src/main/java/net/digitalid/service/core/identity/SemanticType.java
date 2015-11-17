@@ -157,23 +157,23 @@ public final class SemanticType extends Type {
     void load() throws AbortException, PacketException, ExternalException, NetworkException {
         assert !isLoaded() : "The type declaration is not loaded.";
         
-        if (categories != null) throw new InvalidEncodingException("The semantic base may not be circular.");
+        if (categories != null) { throw new InvalidEncodingException("The semantic base may not be circular."); }
         
         Cache.getAttributeValues(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(Cache.getStaleAttributeContent(this, null, CATEGORIES)).getElementsNotNull();
         final @Nonnull FreezableList<Category> categories = new FreezableArrayList<>(elements.size());
-        for (final @Nonnull Block element : elements) categories.add(Category.get(element));
-        if (!categories.containsDuplicates()) throw new InvalidEncodingException("The list of categories may not contain duplicates.");
+        for (final @Nonnull Block element : elements) { categories.add(Category.get(element)); }
+        if (!categories.containsDuplicates()) { throw new InvalidEncodingException("The list of categories may not contain duplicates."); }
         this.categories = categories.freeze();
         
         try {
             this.cachingPeriod = new Time(Cache.getStaleAttributeContent(this, null, CACHING));
-            if (cachingPeriod.isNegative() || cachingPeriod.isGreaterThan(Time.TROPICAL_YEAR)) throw new InvalidEncodingException("The caching period must be null or non-negative and less than a year.");
+            if (cachingPeriod.isNegative() || cachingPeriod.isGreaterThan(Time.TROPICAL_YEAR)) { throw new InvalidEncodingException("The caching period must be null or non-negative and less than a year."); }
         } catch (@Nonnull AttributeNotFoundException exception) {
             this.cachingPeriod = null;
         }
-        if (!categories.isEmpty() == (cachingPeriod == null)) throw new InvalidEncodingException("If (and only if) this semantic type can be used as an attribute, the caching period may not be null.");
+        if (!categories.isEmpty() == (cachingPeriod == null)) { throw new InvalidEncodingException("If (and only if) this semantic type can be used as an attribute, the caching period may not be null."); }
         
         try {
             this.semanticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().toSemanticType();
@@ -184,12 +184,12 @@ public final class SemanticType extends Type {
             this.syntacticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().toSyntacticType();
             final @Nonnull ReadOnlyList<Block> list = new ListWrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getElementsNotNull();
             final @Nonnull FreezableList<SemanticType> parameters = new FreezableArrayList<>(list.size());
-            for (final @Nonnull Block element : elements) parameters.add(Mapper.getIdentity(IdentifierImplementation.create(element)).toSemanticType());
-            if (!parameters.containsDuplicates()) throw new InvalidEncodingException("The list of parameters may not contain duplicates.");
-            if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) throw new InvalidEncodingException("The number of required parameters must either be variable or match the given parameters.");
+            for (final @Nonnull Block element : elements) { parameters.add(Mapper.getIdentity(IdentifierImplementation.create(element)).toSemanticType()); }
+            if (!parameters.containsDuplicates()) { throw new InvalidEncodingException("The list of parameters may not contain duplicates."); }
+            if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) { throw new InvalidEncodingException("The number of required parameters must either be variable or match the given parameters."); }
             this.parameters = parameters.freeze();
             setLoaded();
-            for (final @Nonnull SemanticType parameter : parameters) parameter.ensureLoaded();
+            for (final @Nonnull SemanticType parameter : parameters) { parameter.ensureLoaded(); }
         }
     }
     
@@ -468,7 +468,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public @Nonnull SemanticType checkIsAttributeType() throws InvalidEncodingException {
-        if (!isAttributeType()) throw new InvalidEncodingException(getAddress() + " is not an attribute type.");
+        if (!isAttributeType()) { throw new InvalidEncodingException(getAddress() + " is not an attribute type."); }
         return this;
     }
     
@@ -515,7 +515,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public @Nonnull SemanticType checkIsAttributeFor(@Nonnull Entity entity) throws InvalidEncodingException {
-        if (!isAttributeFor(entity)) throw new InvalidEncodingException(getAddress() + " is not an attribute for the given entity.");
+        if (!isAttributeFor(entity)) { throw new InvalidEncodingException(getAddress() + " is not an attribute for the given entity."); }
         return this;
     }
     
@@ -572,7 +572,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public @Nonnull SemanticType checkIsRoleType() throws InvalidEncodingException {
-        if (!isRoleType()) throw new InvalidEncodingException(getAddress() + " is not a role type.");
+        if (!isRoleType()) { throw new InvalidEncodingException(getAddress() + " is not a role type."); }
         return this;
     }
     

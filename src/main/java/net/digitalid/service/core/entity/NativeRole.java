@@ -74,9 +74,9 @@ public final class NativeRole extends Role {
     public static @Nonnull NativeRole get(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, long agentNumber) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, NativeRole> map = index.get(client);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(client, new ConcurrentHashMap<Long, NativeRole>());
+            if (map == null) { map = index.putIfAbsentElseReturnPresent(client, new ConcurrentHashMap<Long, NativeRole>()); }
             @Nullable NativeRole role = map.get(number);
-            if (role == null) role = map.putIfAbsentElseReturnPresent(number, new NativeRole(client, number, issuer, agentNumber));
+            if (role == null) { role = map.putIfAbsentElseReturnPresent(number, new NativeRole(client, number, issuer, agentNumber)); }
             return role;
         } else {
             return new NativeRole(client, number, issuer, agentNumber);
@@ -107,7 +107,7 @@ public final class NativeRole extends Role {
     public void remove() throws AbortException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NativeRole> map = index.get(getClient());
-            if (map != null) map.remove(getNumber());
+            if (map != null) { map.remove(getNumber()); }
         }
         super.remove();
     }

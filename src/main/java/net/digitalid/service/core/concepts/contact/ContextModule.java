@@ -294,7 +294,7 @@ public final class ContextModule implements StateModule {
             context.getEntity().set(preparedStatement, 1);
             context.set(preparedStatement, 2);
             preparedStatement.setString(3, "New Context");
-            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The context with the number " + context + " could not be created.");
+            if (preparedStatement.executeUpdate() == 0) { throw new SQLException("The context with the number " + context + " could not be created."); }
         }
         // TODO: Do it correctly!
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -350,7 +350,7 @@ public final class ContextModule implements StateModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             contacts.set(preparedStatement, 1);
             final int[] counts = preparedStatement.executeBatch();
-            for (final int count : counts) if (count < 1) throw new SQLException("Could not find a contact.");
+            for (final int count : counts) if (count < 1) { throw new SQLException("Could not find a contact."); }
         }
     }
     
@@ -367,8 +367,8 @@ public final class ContextModule implements StateModule {
 //    static boolean contextExists(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws AbortException {
 //        @Nonnull String query = "SELECT EXISTS(SELECT * FROM context_name WHERE identity = " + identity + " AND context = " + context + ")";
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
-//            if (resultSet.next()) return resultSet.getBoolean(1);
-//            else throw new SQLException("The executed statement should always have a result.");
+//            if (resultSet.next()) { return resultSet.getBoolean(1); }
+//            else { throw new SQLException("The executed statement should always have a result."); }
 //        }
 //    }
 //    
@@ -387,7 +387,7 @@ public final class ContextModule implements StateModule {
 //        @Nonnull String query = "SELECT context, name FROM context_name WHERE entity = " + identity + " AND context & " + context.getMask() + " = " + context;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            @Nonnull Set<Pair<Context, String>> contexts = new LinkedHashSet<Pair<Context, String>>();
-//            while (resultSet.next()) contexts.add(new Pair<Context, String>(new Context(resultSet.getLong(1)), resultSet.getString(2)));
+//            while (resultSet.next()) { contexts.add(new Pair<Context, String>(new Context(resultSet.getLong(1)), resultSet.getString(2))); }
 //            return contexts;
 //        } catch (@Nonnull InvalidEncodingException exception) {
 //            throw new SQLException("Some values returned by the database are invalid.", exception);
@@ -408,8 +408,8 @@ public final class ContextModule implements StateModule {
 //        
 //        @Nonnull String query = "SELECT name FROM context_name WHERE identity = " + identity + " AND context = " + context;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
-//            if (resultSet.next()) return resultSet.getString(2);
-//            else throw new SQLException("The given context could not be found though it should exist.");
+//            if (resultSet.next()) { return resultSet.getString(2); }
+//            else { throw new SQLException("The given context could not be found though it should exist."); }
 //        }
 //    }
 //    
@@ -448,8 +448,8 @@ public final class ContextModule implements StateModule {
 //        assert position >= 0 && position < set.size() : "The position is within the bounds of the set.";
 //        
 //        int i = 0;
-//        for (@Nonnull T element : set) {
-//            if (i == position) return element;
+//        for (final @Nonnull T element : set) {
+//            if (i == position) { return element; }
 //            i++;
 //        }
 //        
@@ -496,18 +496,18 @@ public final class ContextModule implements StateModule {
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
 //            preparedStatement.setLong(1, identity.getNumber());
 //            preparedStatement.setLong(2, value);
-//            for (@Nonnull SemanticType type : types) {
+//            for (final @Nonnull SemanticType type : types) {
 //                preparedStatement.setLong(3, type.getNumber());
 //                preparedStatement.addBatch();
 //            }
 //            preparedStatement.executeBatch();
 //        } catch (@Nonnull SQLException exception) {
 //            boolean merged = false;
-//            for (@Nonnull SemanticType type : types) {
-//                if (type.hasBeenMerged()) merged = true;
+//            for (final @Nonnull SemanticType type : types) {
+//                if (type.hasBeenMerged()) { merged = true; }
 //            }
-//            if (merged) addTypes(connection, identity, table, column, value, types);
-//            else throw exception;
+//            if (merged) { addTypes(connection, identity, table, column, value, types); }
+//            else { throw exception; }
 //        }
 //    }
 //    
@@ -527,7 +527,7 @@ public final class ContextModule implements StateModule {
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
 //            preparedStatement.setLong(1, identity.getNumber());
 //            preparedStatement.setLong(2, value);
-//            for (@Nonnull SemanticType type : types) {
+//            for (final @Nonnull SemanticType type : types) {
 //                preparedStatement.setLong(3, type.getNumber());
 //                preparedStatement.addBatch();
 //            }
@@ -539,10 +539,10 @@ public final class ContextModule implements StateModule {
 //                sum += updated[i];
 //                if (updated[i] < 1) {
 //                    @Nonnull SemanticType type = getElement(types, i);
-//                    if (type.hasBeenMerged()) merged.add(type);
+//                    if (type.hasBeenMerged()) { merged.add(type); }
 //                }
 //            }
-//            if (!merged.isEmpty()) return sum + removeTypes(connection, identity, table, column, value, merged);
+//            if (!merged.isEmpty()) { return sum + removeTypes(connection, identity, table, column, value, merged); }
 //            return sum;
 //        }
 //    }
@@ -708,18 +708,18 @@ public final class ContextModule implements StateModule {
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
 //            preparedStatement.setLong(1, identity.getNumber());
 //            preparedStatement.setLong(2, context.getNumber());
-//            for (@Nonnull Person contact : contacts) {
+//            for (final @Nonnull Person contact : contacts) {
 //                preparedStatement.setLong(3, contact.getNumber());
 //                preparedStatement.addBatch();
 //            }
 //            preparedStatement.executeBatch();
 //        } catch (@Nonnull SQLException exception) {
 //            boolean merged = false;
-//            for (@Nonnull Person contact : contacts) {
-//                if (contact.hasBeenMerged()) merged = true;
+//            for (final @Nonnull Person contact : contacts) {
+//                if (contact.hasBeenMerged()) { merged = true; }
 //            }
-//            if (merged) addContacts(connection, identity, context, contacts);
-//            else throw exception;
+//            if (merged) { addContacts(connection, identity, context, contacts); }
+//            else { throw exception; }
 //        }
 //    }
 //    
@@ -739,7 +739,7 @@ public final class ContextModule implements StateModule {
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 //            preparedStatement.setLong(1, identity.getNumber());
 //            preparedStatement.setLong(2, context.getNumber());
-//            for (@Nonnull Person contact : contacts) {
+//            for (final @Nonnull Person contact : contacts) {
 //                preparedStatement.setLong(3, contact.getNumber());
 //                preparedStatement.addBatch();
 //            }
@@ -749,14 +749,14 @@ public final class ContextModule implements StateModule {
 //            for (int i = 0; i < updated.length; i++) {
 //                if (updated[i] < 1) {
 //                    @Nonnull Person contact = getElement(contacts, i);
-//                    if (contact.hasBeenMerged()) merged.add(contact);
+//                    if (contact.hasBeenMerged()) { merged.add(contact); }
 //                }
 //            }
-//            if (!merged.isEmpty()) removeContacts(connection, identity, context, merged);
+//            if (!merged.isEmpty()) { removeContacts(connection, identity, context, merged); }
 //        }
 //        
 //        // Remove the preferences, permissions and authentications of the contacts that no longer have a context.
-//        for (@Nonnull Person contact : contacts) {
+//        for (final @Nonnull Person contact : contacts) {
 //            if (getContexts(connection, identity, contact).isEmpty()) {
 //                try (@Nonnull Statement statement = connection.createStatement()) {
 //                    @Nonnull String condition = "WHERE identity = " + identity + " AND contact = " + contact;
@@ -780,9 +780,9 @@ public final class ContextModule implements StateModule {
 //        @Nonnull String query = "SELECT context FROM context_contact WHERE identity = " + identity + " AND contact = " + contact;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            @Nonnull Set<Context> contexts = new LinkedHashSet<Context>();
-//            while (resultSet.next()) contexts.add(new Context(resultSet.getLong(1)));
-//            if (contexts.isEmpty() && contact.hasBeenMerged()) return getContexts(connection, identity, contact);
-//            else return contexts;
+//            while (resultSet.next()) { contexts.add(new Context(resultSet.getLong(1))); }
+//            if (contexts.isEmpty() && contact.hasBeenMerged()) { return getContexts(connection, identity, contact); }
+//            else { return contexts; }
 //        } catch (@Nonnull InvalidEncodingException exception) {
 //            throw new SQLException("Some values returned by the database are invalid.", exception);
 //        }
@@ -802,8 +802,8 @@ public final class ContextModule implements StateModule {
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            if (resultSet.next()) {
 //                boolean result = resultSet.getBoolean(1);
-//                if (!result && contact.hasBeenMerged()) return isInContext(connection, identity, contact, context);
-//                else return result;
+//                if (!result && contact.hasBeenMerged()) { return isInContext(connection, identity, contact, context); }
+//                else { return result; }
 //            } else {
 //                throw new SQLException("There should always be a result.");
 //            }

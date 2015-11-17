@@ -77,7 +77,7 @@ public final class ActionModule implements StateModule {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityImplementation.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + FreezableAgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierImplementation.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + Database.getConfiguration().INDEX("time") + ", " + FreezableAgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
             Database.getConfiguration().createIndex(statement, site + "action", "time");
             Mapper.addReference(site + "action", "contact");
-            if (site instanceof Host) Mapper.addReference(site + "action", "entity", "entity", "service", "time");
+            if (site instanceof Host) { Mapper.addReference(site + "action", "entity", "entity", "service", "time"); }
             Database.addRegularPurging(site + "action", Time.TROPICAL_YEAR);
         }
     }
@@ -87,7 +87,7 @@ public final class ActionModule implements StateModule {
     public void deleteTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.removeRegularPurging(site + "action");
-            if (site instanceof Host) Mapper.removeReference(site + "action", "entity", "entity", "service", "time");
+            if (site instanceof Host) { Mapper.removeReference(site + "action", "entity", "entity", "service", "time"); }
             Mapper.removeReference(site + "action", "contact");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "action");
         }
@@ -124,7 +124,7 @@ public final class ActionModule implements StateModule {
                 final @Nonnull FreezableAgentPermissions permissions = FreezableAgentPermissions.getEmptyOrSingle(resultSet, 4);
                 final @Nonnull Restrictions restrictions = Restrictions.get(account, resultSet, 6);
                 @Nullable Long number = resultSet.getLong(11);
-                if (resultSet.wasNull()) number = null;
+                if (resultSet.wasNull()) { number = null; }
                 final @Nonnull Identifier recipient = IdentifierImplementation.get(resultSet, 12);
                 final @Nonnull Block action = Block.getNotNull(Packet.SIGNATURE, resultSet, 13);
                 entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().toBlockable(InternalNonHostIdentity.IDENTIFIER), service.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), time, permissions, restrictions, (number != null ? new Int64Wrapper(Agent.NUMBER, number) : null), recipient.toBlock().setType(HostIdentity.IDENTIFIER).toBlockable(), action.toBlockable()).toBlock());
@@ -148,8 +148,8 @@ public final class ActionModule implements StateModule {
                 new Time(tuple.getNonNullableElement(2)).set(preparedStatement, 3);
                 new FreezableAgentPermissions(tuple.getNonNullableElement(3)).checkIsSingle().setEmptyOrSingle(preparedStatement, 4);
                 new Restrictions(NonHostAccount.get(host, identity), tuple.getNonNullableElement(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.toInternalPerson()).)
-                if (tuple.isElementNull(5)) preparedStatement.setLong(11, new Int64Wrapper(tuple.getNonNullableElement(5)).getValue());
-                else preparedStatement.setNull(11, Types.BIGINT);
+                if (tuple.isElementNull(5)) { preparedStatement.setLong(11, new Int64Wrapper(tuple.getNonNullableElement(5)).getValue()); }
+                else { preparedStatement.setNull(11, Types.BIGINT); }
                 IdentifierImplementation.create(tuple.getNonNullableElement(6)).toHostIdentifier().set(preparedStatement, 12);
                 tuple.getNonNullableElement(7).set(preparedStatement, 13);
                 preparedStatement.addBatch();
@@ -212,23 +212,23 @@ public final class ActionModule implements StateModule {
         SQL.append("(SELECT time, action FROM ").append(site).append("action a WHERE entity = ").append(entity).append(" AND service = ").append(service.getType()).append(" AND time > ").append(lastTime);
         SQL.append(" AND (type_writing IS NULL OR NOT type_writing").append(permissions.allTypesToString()).append(" OR type_writing").append(permissions.writeTypesToString()).append(")");
         
-        if (!restrictions.isClient()) SQL.append(" AND NOT client");
-        if (!restrictions.isRole()) SQL.append(" AND NOT role");
-        if (!restrictions.isWriting()) SQL.append(" AND NOT context_writing");
+        if (!restrictions.isClient()) { SQL.append(" AND NOT client"); }
+        if (!restrictions.isRole()) { SQL.append(" AND NOT role"); }
+        if (!restrictions.isWriting()) { SQL.append(" AND NOT context_writing"); }
         
         final @Nullable Context context = restrictions.getContext();
         final @Nullable Contact contact = restrictions.getContact();
         if (context == null) {
             SQL.append(" AND context IS NULL");
-            if (contact == null) SQL.append(" AND contact IS NULL");
-            else SQL.append(" AND (contact IS NULL OR contact = ").append(contact).append(")");
+            if (contact == null) { SQL.append(" AND contact IS NULL"); }
+            else { SQL.append(" AND (contact IS NULL OR contact = ").append(contact).append(")"); }
         } else {
             SQL.append(" AND (context IS NULL OR EXISTS (SELECT * FROM ").append(context.getEntity().getSite()).append("context_subcontext c WHERE c.entity = ").append(context.getEntity()).append(" AND c.context = ").append(context).append(" AND c.subcontext = a.context))");
             SQL.append(" AND (contact IS NULL OR EXISTS (SELECT * FROM ").append(context.getEntity().getSite()).append("context_subcontext cx, ").append(context.getEntity().getSite()).append("context_contact cc WHERE cx.entity = ").append(context.getEntity()).append(" AND cx.context = ").append(context).append(" AND cc.entity = ").append(context.getEntity()).append(" AND cc.context = cx.subcontext AND cc.contact = a.contact))");
         }
         
         SQL.append(" AND (agent IS NULL");
-        if (agent != null) SQL.append(" OR EXISTS (SELECT * FROM ").append(site).append("agent_permission_order po, ").append(site).append("agent_restrictions_ord ro WHERE po.entity = ").append(entity).append(" AND po.stronger = ").append(agent).append(" AND po.weaker = a.agent AND ro.entity = ").append(entity).append(" AND ro.stronger = ").append(agent).append(" AND ro.weaker = a.agent)");
+        if (agent != null) { SQL.append(" OR EXISTS (SELECT * FROM ").append(site).append("agent_permission_order po, ").append(site).append("agent_restrictions_ord ro WHERE po.entity = ").append(entity).append(" AND po.stronger = ").append(agent).append(" AND po.weaker = a.agent AND ro.entity = ").append(entity).append(" AND ro.stronger = ").append(agent).append(" AND ro.weaker = a.agent)"); }
         SQL.append(") ORDER BY time ASC)");
         
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL.toString())) {
@@ -239,7 +239,7 @@ public final class ActionModule implements StateModule {
                     trail.add(Block.SQL_CONVERTER.restoreNonNullable(Packet.SIGNATURE, resultSet, 2));
                 }
                 return new ResponseAudit(lastTime, thisTime, trail.freeze());
-            } else throw new SQLException("This should never happen.");
+            } else { throw new SQLException("This should never happen."); }
         }
     }
     

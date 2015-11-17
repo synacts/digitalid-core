@@ -94,9 +94,9 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity<E>,
     public @Nonnull C get(@Nonnull E entity, @Nonnull K key) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
-            if (map == null) map = concepts.putIfAbsentElseReturnPresent(entity, ConcurrentHashMap.<K, C>get());
+            if (map == null) { map = concepts.putIfAbsentElseReturnPresent(entity, ConcurrentHashMap.<K, C>get()); }
             @Nullable C concept = map.get(key);
-            if (concept == null) concept = map.putIfAbsentElseReturnPresent(key, factory.create(entity, key));
+            if (concept == null) { concept = map.putIfAbsentElseReturnPresent(key, factory.create(entity, key)); }
             return concept;
         } else {
             return factory.create(entity, key);
@@ -117,7 +117,7 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity<E>,
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
             if (map != null) {
-                for (final @Nonnull C concept : map.values()) concept.reset(table);
+                for (final @Nonnull C concept : map.values()) { concept.reset(table); }
             }
         }
     }

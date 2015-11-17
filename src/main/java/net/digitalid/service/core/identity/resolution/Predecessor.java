@@ -144,8 +144,8 @@ public final class Predecessor implements Blockable {
     @Pure
     @NonCommitting
     @Nullable NonHostIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
-        if (identifier.isMapped()) return identifier.getMappedIdentity();
-        if (!predecessors.getIdentities().isEmpty()) return identifier.getIdentity().toNonHostIdentity();
+        if (identifier.isMapped()) { return identifier.getMappedIdentity(); }
+        if (!predecessors.getIdentities().isEmpty()) { return identifier.getIdentity().toNonHostIdentity(); }
         return null;
     }
     
@@ -153,8 +153,8 @@ public final class Predecessor implements Blockable {
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Predecessor)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Predecessor)) { return false; }
         final @Nonnull Predecessor other = (Predecessor) object;
         
         return this.identifier.equals(other.identifier) && this.predecessors.equals(other.predecessors);

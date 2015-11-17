@@ -273,7 +273,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         assert !newPermissions.isEmpty() : "The new permissions are not empty.";
         
 //        Contexts.addPermissions(this, newPermissions);
-        if (permissions != null) permissions.addAll(newPermissions);
+        if (permissions != null) { permissions.addAll(newPermissions); }
         notify(PERMISSIONS);
     }
     
@@ -302,7 +302,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
         
 //        Contexts.removePermissions(this, oldPermissions);
-        if (permissions != null) permissions.removeAll(permissions);
+        if (permissions != null) { permissions.removeAll(permissions); }
         notify(PERMISSIONS);
     }
     
@@ -385,8 +385,8 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     public boolean isSupercontextOf(@Nonnull Context context) throws AbortException {
-        if (equals(context)) return true;
-        else throw new SQLException();
+        if (equals(context)) { return true; }
+        else { throw new SQLException(); }
     }
     
     /**
@@ -441,7 +441,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @Locked
     @NonCommitting
     public @Nonnull @NonFrozen ReadOnlyContacts getContacts() throws AbortException {
-        if (contacts == null) contacts = ContextModule.getContacts(this);
+        if (contacts == null) { contacts = ContextModule.getContacts(this); }
         return contacts;
     }
     
@@ -453,7 +453,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @Committing
     @OnlyForClients
     public void addContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws AbortException {
-        if (!contacts.isEmpty()) Synchronizer.execute(new ContactsAdd(this, contacts));
+        if (!contacts.isEmpty()) { Synchronizer.execute(new ContactsAdd(this, contacts)); }
     }
     
     /**
@@ -465,7 +465,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @OnlyForActions
     void addContactsForActions(@Nonnull @Frozen ReadOnlyContacts newContacts) throws AbortException {
         ContextModule.addContacts(this, newContacts);
-        if (contacts != null) contacts.addAll(newContacts);
+        if (contacts != null) { contacts.addAll(newContacts); }
         notify(CONTACTS);
     }
     
@@ -477,7 +477,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @Committing
     @OnlyForClients
     public void removeContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws AbortException {
-        if (!contacts.isEmpty()) Synchronizer.execute(new ContactsRemove(this, contacts));
+        if (!contacts.isEmpty()) { Synchronizer.execute(new ContactsRemove(this, contacts)); }
     }
     
     /**
@@ -489,7 +489,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @OnlyForActions
     void removeContactsForActions(@Nonnull @Frozen ReadOnlyContacts oldContacts) throws AbortException {
         ContextModule.removeContacts(this, oldContacts);
-        if (contacts != null) contacts.removeAll(oldContacts);
+        if (contacts != null) { contacts.removeAll(oldContacts); }
         notify(CONTACTS);
     }
     
@@ -573,7 +573,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
         final @Nullable ConcurrentMap<Long, Context> map = index.get(entity);
         if (map != null) {
             final @Nonnull Collection<Context> contexts = map.values();
-            for (final @Nonnull Context context : contexts) context.reset();
+            for (final @Nonnull Context context : contexts) { context.reset(); }
         }
     }
     
@@ -603,9 +603,9 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     public static @Nonnull Context get(@Nonnull NonHostEntity entity, long number) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, Context> map = index.get(entity);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, Context>());
+            if (map == null) { map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, Context>()); }
             @Nullable Context context = map.get(number);
-            if (context == null) context = map.putIfAbsentElseReturnPresent(number, new Context(entity, number));
+            if (context == null) { context = map.putIfAbsentElseReturnPresent(number, new Context(entity, number)); }
             return context;
         } else {
             return new Context(entity, number);
@@ -697,8 +697,8 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @NonCommitting
     public static @Nullable Context get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final long number = resultSet.getLong(columnIndex);
-        if (resultSet.wasNull()) return null;
-        else return get(entity, number);
+        if (resultSet.wasNull()) { return null; }
+        else { return get(entity, number); }
     }
     
     /**
@@ -731,8 +731,8 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     public static void set(@Nullable Context context, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
-        if (context == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
-        else context.set(preparedStatement, parameterIndex);
+        if (context == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
+        else { context.set(preparedStatement, parameterIndex); }
     }
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
@@ -740,8 +740,8 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @Pure
     @Override
     public boolean equals(Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Context)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Context)) { return false; }
         final @Nonnull Context other = (Context) object;
         return this.getEntity().equals(other.getEntity()) && this.number == other.number;
     }

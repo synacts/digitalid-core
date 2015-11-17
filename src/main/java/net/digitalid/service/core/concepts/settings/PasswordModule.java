@@ -148,7 +148,7 @@ public final class PasswordModule implements StateModule {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nullable Block element = new TupleWrapper(block).getNullableElement(0);
-        if (element != null) set(entity, new StringWrapper(element).getString());
+        if (element != null) { set(entity, new StringWrapper(element).getString()); }
         
         Settings.reset(entity);
     }
@@ -177,9 +177,9 @@ public final class PasswordModule implements StateModule {
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
                 final @Nonnull String value = resultSet.getString(1);
-                if (!Settings.isValid(value)) throw new SQLException("The stored password is not valid.");
+                if (!Settings.isValid(value)) { throw new SQLException("The stored password is not valid."); }
                 return value;
-            } else throw new SQLException(entity.getIdentity().getAddress() + " has no password.");
+            } else { throw new SQLException(entity.getIdentity().getAddress() + " has no password."); }
         }
     }
     
@@ -226,7 +226,7 @@ public final class PasswordModule implements StateModule {
             preparedStatement.setString(1, newValue);
             entity.set(preparedStatement, 2);
             preparedStatement.setString(3, oldValue);
-            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The password of " + entity.getIdentity().getAddress() + " could not be replaced.");
+            if (preparedStatement.executeUpdate() == 0) { throw new SQLException("The password of " + entity.getIdentity().getAddress() + " could not be replaced."); }
         }
     }
     

@@ -91,7 +91,7 @@ public abstract class Group<G extends Group<G>> implements XDF<G, Object>, SQL<G
         
         while (true) {
             value = new BigInteger(modulus.bitLength(), random);
-            if (value.compareTo(modulus) == -1 && value.gcd(modulus).equals(BigInteger.ONE)) break;
+            if (value.compareTo(modulus) == -1 && value.gcd(modulus).equals(BigInteger.ONE)) { break; }
         }
         
         assert value != null;
@@ -126,8 +126,8 @@ public abstract class Group<G extends Group<G>> implements XDF<G, Object>, SQL<G
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Group)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Group)) { return false; }
         @SuppressWarnings("rawtypes")
         final @Nonnull Group<?> other = (Group) object;
         return this.modulus.equals(other.modulus);

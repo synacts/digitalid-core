@@ -129,7 +129,7 @@ final class Options {
             for (final @Nonnull Host host : Server.getHosts()) {
                 Console.write("- " + host.getIdentifier().getString());
             }
-            if (Server.getHosts().isEmpty()) Console.write("(None)");
+            if (Server.getHosts().isEmpty()) { Console.write("(None)"); }
         }
         
     }
@@ -206,7 +206,7 @@ final class Options {
             for (final @Nonnull Service service : services) {
                 Console.write("- " + service.getNameWithVersion());
             }
-            if (services.isEmpty()) Console.write("(None)");
+            if (services.isEmpty()) { Console.write("(None)"); }
         }
         
     }

@@ -278,8 +278,8 @@ public abstract class Handler<O, E> implements XDF<O, E> {
      */
     @Pure
     protected boolean protectedEquals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Handler)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Handler)) { return false; }
         @SuppressWarnings("rawtypes")
         final @Nonnull Handler other = (Handler) object;
         return Objects.equals(this.entity, other.entity) && Objects.equals(this.subject, other.subject);

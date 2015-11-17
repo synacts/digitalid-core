@@ -59,7 +59,7 @@ public final class AttributeTest extends IdentitySetup {
             Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeTypes.NAME, false);
             Database.commit();
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            if (!(exception instanceof AttributeNotFoundException)) exception.printStackTrace();
+            if (!(exception instanceof AttributeNotFoundException)) { exception.printStackTrace(); }
             Database.rollback();
             throw exception;
         }

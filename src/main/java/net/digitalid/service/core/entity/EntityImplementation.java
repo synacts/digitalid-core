@@ -63,8 +63,8 @@ public abstract class EntityImplementation implements Entity {
      */
     @NonCommitting
     public static void set(@Nullable Entity entity, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
-        if (entity == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
-        else entity.set(preparedStatement, parameterIndex);
+        if (entity == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
+        else { entity.set(preparedStatement, parameterIndex); }
     }
     
     @Pure
@@ -77,42 +77,42 @@ public abstract class EntityImplementation implements Entity {
     @Pure
     @Override
     public final @Nonnull HostEntity toHostEntity() throws InvalidEncodingException {
-        if (this instanceof HostEntity) return (HostEntity) this;
+        if (this instanceof HostEntity) { return (HostEntity) this; }
         throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to HostEntity.");
     }
     
     @Pure
     @Override
     public final @Nonnull NonHostEntity toNonHostEntity() throws InvalidEncodingException {
-        if (this instanceof NonHostEntity) return (NonHostEntity) this;
+        if (this instanceof NonHostEntity) { return (NonHostEntity) this; }
         throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostEntity.");
     }
     
     @Pure
     @Override
     public final @Nonnull Account toAccount() throws InvalidEncodingException {
-        if (this instanceof Account) return (Account) this;
+        if (this instanceof Account) { return (Account) this; }
         throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to Account.");
     }
     
     @Pure
     @Override
     public final @Nonnull HostAccount toHostAccount() throws InvalidEncodingException {
-        if (this instanceof HostAccount) return (HostAccount) this;
+        if (this instanceof HostAccount) { return (HostAccount) this; }
         throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to HostAccount.");
     }
     
     @Pure
     @Override
     public final @Nonnull NonHostAccount toNonHostAccount() throws InvalidEncodingException {
-        if (this instanceof NonHostAccount) return (NonHostAccount) this;
+        if (this instanceof NonHostAccount) { return (NonHostAccount) this; }
         throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostAccount.");
     }
     
     @Pure
     @Override
     public final @Nonnull Role toRole() throws InvalidEncodingException {
-        if (this instanceof Role) return (Role) this;
+        if (this instanceof Role) { return (Role) this; }
         throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to Role.");
     }
     

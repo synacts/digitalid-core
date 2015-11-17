@@ -62,8 +62,8 @@ public abstract class InternalAction extends Action implements InternalMethod {
     protected InternalAction(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!isNonHost()) throw new PacketException(PacketErrorCode.IDENTIFIER, "Internal actions have to belong to a non-host.");
-        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal actions.");
+        if (!isNonHost()) { throw new PacketException(PacketErrorCode.IDENTIFIER, "Internal actions have to belong to a non-host."); }
+        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal actions."); }
     }
     
     
@@ -149,7 +149,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
         assert isOnClient() : "This method is called on a client.";
         
         final @Nullable InternalAction reverse = getReverse();
-        if (reverse != null) reverse.executeOnClient();
+        if (reverse != null) { reverse.executeOnClient(); }
     }
     
 }

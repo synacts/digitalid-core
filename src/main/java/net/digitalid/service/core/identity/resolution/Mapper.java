@@ -148,11 +148,11 @@ public final class Mapper {
                     SQL.append(" AND WHERE EXISTS (SELECT 1 FROM ").append(table).append(" AS b WHERE ");
                     boolean first = true;
                     for (final @Nonnull String unique : uniques) {
-                        if (first) first = false;
-                        else SQL.append(" AND ");
+                        if (first) { first = false; }
+                        else { SQL.append(" AND "); }
                         SQL.append("b.").append(unique).append(" = ");
-                        if (unique.equals(column)) SQL.append(newNumber);
-                        else SQL.append("a.").append(unique);
+                        if (unique.equals(column)) { SQL.append(newNumber); }
+                        else { SQL.append("a.").append(unique); }
                     }
                     SQL.append(")");
                     statement.executeUpdate(SQL.toString());
@@ -285,9 +285,9 @@ public final class Mapper {
     @NonCommitting
     public static @Nonnull Identity getIdentity(long number) throws AbortException {
         @Nullable Identity identity = numbers.get(number);
-        if (identity == null) identity = loadIdentity(number);
+        if (identity == null) { identity = loadIdentity(number); }
         try {
-            if (identity instanceof Type) ((Type) identity).ensureLoaded();
+            if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }
         } catch (@Nonnull PacketException | ExternalException | NetworkException exception) {
             throw new ShouldNeverHappenError("The type declaration and the referenced identities should already be cached.", exception);
         }
@@ -320,14 +320,14 @@ public final class Mapper {
                 
                 @Nullable Identity identity = numbers.get(number);
                 if (identity instanceof InternalNonHostIdentity) {
-                    if (!(address instanceof InternalNonHostIdentifier)) throw new SQLException("The address " + address + " should be an internal non-host identifier.");
-                    if (identity instanceof InternalPerson) ((InternalPerson) identity).setAddress((InternalNonHostIdentifier) address);
-                    else if (identity instanceof Type) ((Type) identity).setAddress((InternalNonHostIdentifier) address);
+                    if (!(address instanceof InternalNonHostIdentifier)) { throw new SQLException("The address " + address + " should be an internal non-host identifier."); }
+                    if (identity instanceof InternalPerson) { ((InternalPerson) identity).setAddress((InternalNonHostIdentifier) address); }
+                    else if (identity instanceof Type) { ((Type) identity).setAddress((InternalNonHostIdentifier) address); }
                 } else {
                     final @Nonnull Identity newIdentity = createIdentity(category, number, address);
                     numbers.put(number, newIdentity);
                     if (identity instanceof ExternalPerson) {
-                        if (!(address instanceof InternalNonHostIdentifier)) throw new SQLException("The address " + address + " should be an internal non-host identifier.");
+                        if (!(address instanceof InternalNonHostIdentifier)) { throw new SQLException("The address " + address + " should be an internal non-host identifier."); }
                         ((ExternalPerson) identity).setAddress((InternalNonHostIdentifier) address);
                     }
                     identity = newIdentity;
@@ -393,7 +393,7 @@ public final class Mapper {
     public static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws AbortException {
         if (isMapped(identifier)) {
             final @Nonnull Identity identity = identifiers.get(identifier);
-            if (!identity.getCategory().equals(category)) throw new SQLException("The identifier " + identifier + " should have been mapped with the category " + category + " but has already been mapped with the category " + identity.getCategory() + ".");
+            if (!identity.getCategory().equals(category)) { throw new SQLException("The identifier " + identifier + " should have been mapped with the category " + category + " but has already been mapped with the category " + identity.getCategory() + "."); }
             return identity;
         } else {
             try (@Nonnull Statement statement = Database.createStatement()) {
@@ -503,7 +503,7 @@ public final class Mapper {
                 }
             }
         }
-        if (identities.size() > 1) Cache.invalidateCachedAttributeValues(newIdentity);
+        if (identities.size() > 1) { Cache.invalidateCachedAttributeValues(newIdentity); }
     }
     
     /**
@@ -521,14 +521,14 @@ public final class Mapper {
     private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull @NonMapped InternalNonHostIdentifier identifier) throws AbortException, PacketException, ExternalException, NetworkException {
         assert !isMapped(identifier) : "The identifier is not mapped.";
         
-        if (Server.hasHost(identifier.getHostIdentifier())) throw new IdentityNotFoundException(identifier);
+        if (Server.hasHost(identifier.getHostIdentifier())) { throw new IdentityNotFoundException(identifier); }
         
         // Query the identity of the given identifier.
         final @Nonnull IdentityReply reply;
         try {
             reply = new IdentityQuery(identifier).sendNotNull();
         } catch (@Nonnull PacketException exception) {
-            if (exception.getError() == PacketErrorCode.IDENTIFIER) throw new IdentityNotFoundException(identifier); else throw exception;
+            if (exception.getError() == PacketErrorCode.IDENTIFIER) { throw new IdentityNotFoundException(identifier); else throw exception; }
         }
         final @Nonnull Category category = reply.getCategory();
         Log.verbose("The category of " + identifier + " is '" + category.name() + "'.");
@@ -543,10 +543,10 @@ public final class Mapper {
         for (final @Nonnull NonHostIdentity identity : identities) {
             final @Nonnull NonHostIdentifier address = identity.getAddress();
             final @Nonnull String message = "The claimed predecessor " + address + " of " + identifier;
-            if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) throw new InvalidDeclarationException(message + " has a wrong category.", identifier, reply);
+            if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) { throw new InvalidDeclarationException(message + " has a wrong category.", identifier, reply); }
             final @Nonnull Predecessor predecessor = new Predecessor(address);
-            if (!predecessors.contains(predecessor)) throw new InvalidDeclarationException(message + " has other predecessors.", identifier, reply);
-            if (!Successor.getReloaded(address).equals(identifier)) throw new InvalidDeclarationException(message + " does not link back.", identifier, reply);
+            if (!predecessors.contains(predecessor)) { throw new InvalidDeclarationException(message + " has other predecessors.", identifier, reply); }
+            if (!Successor.getReloaded(address).equals(identifier)) { throw new InvalidDeclarationException(message + " does not link back.", identifier, reply); }
         }
         
         final @Nonnull InternalNonHostIdentity identity;
@@ -563,7 +563,7 @@ public final class Mapper {
         // Create a new identity and merge existing predecessors into this new identity.
         } else {
             identity = mapIdentity(identifier, category, reply).toInternalNonHostIdentity();
-            if (identities.size() > 1 && !category.isInternalPerson()) throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", identifier, reply);
+            if (identities.size() > 1 && !category.isInternalPerson()) { throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", identifier, reply); }
             mergeIdentities(identities, identity);
         }
         Log.debugging("The identity of " + identifier + " was succesfully established.");
@@ -573,7 +573,7 @@ public final class Mapper {
         if (successor != null) {
             Successor.set(identifier, successor, reply);
             Log.verbose("The successor of " + identifier + " is " + successor + ".");
-            if (!successor.getIdentity().equals(identifier.getIdentity())) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + identifier + " does not link back.", identifier, reply);
+            if (!successor.getIdentity().equals(identifier.getIdentity())) { throw new InvalidDeclarationException("The claimed successor " + successor + " of " + identifier + " does not link back.", identifier, reply); }
             return successor.getIdentity();
         } else {
             return identity;
@@ -596,11 +596,11 @@ public final class Mapper {
         final @Nonnull Person person = mapExternalIdentity(identifier);
         try {
             final @Nonnull InternalNonHostIdentity identity = Successor.getReloaded(identifier).getIdentity();
-            if (!identity.equals(identifier.getIdentity())) throw new InvalidDeclarationException("The claimed successor " + identity.getAddress() + " of " + identifier + " does not link back.", identifier, null);
+            if (!identity.equals(identifier.getIdentity())) { throw new InvalidDeclarationException("The claimed successor " + identity.getAddress() + " of " + identifier + " does not link back.", identifier, null); }
             return identity.toPerson();
         } catch (@Nonnull PacketException exception) {
-            if (exception.getError() == PacketErrorCode.EXTERNAL) return person;
-            else throw exception;
+            if (exception.getError() == PacketErrorCode.EXTERNAL) { return person; }
+            else { throw exception; }
         }
     }
     

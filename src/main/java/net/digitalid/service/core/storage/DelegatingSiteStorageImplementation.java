@@ -114,7 +114,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
     @NonCommitting
     public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
         final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(substorages.size());
-        for (final @Nonnull SiteStorage table : substorages.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.getState(entity, permissions, restrictions, agent)));
+        for (final @Nonnull SiteStorage table : substorages.values()) { elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.getState(entity, permissions, restrictions, agent))); }
         return ListWrapper.encode(stateType, elements.freeze());
     }
     
@@ -126,7 +126,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
             final @Nullable SiteStorage substorage = substorages.get(selfcontained.getType());
-            if (substorage == null) throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + ".");
+            if (substorage == null) { throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + "."); }
             substorage.addState(entity, selfcontained);
         }
     }
@@ -135,7 +135,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
     @Override
     @NonCommitting
     public final void removeState(@Nonnull NonHostEntity entity) throws AbortException {
-      for (final @Nonnull SiteStorage substorage : substorages.values()) substorage.removeState(entity);
+      for (final @Nonnull SiteStorage substorage : substorages.values()) { substorage.removeState(entity); }
     }
     
 }

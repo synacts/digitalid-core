@@ -111,7 +111,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
      */
     @NonCommitting
     public final void ensureLoaded() throws AbortException, PacketException, ExternalException, NetworkException {
-        if (!loaded) load();
+        if (!loaded) { load(); }
     }
     
 }

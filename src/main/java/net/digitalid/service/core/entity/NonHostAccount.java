@@ -73,9 +73,9 @@ public final class NonHostAccount extends Account implements NonHostEntity {
     public static @Nonnull NonHostAccount get(@Nonnull Host host, @Nonnull InternalNonHostIdentity identity) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<InternalNonHostIdentity, NonHostAccount> map = index.get(host);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(host, new ConcurrentHashMap<InternalNonHostIdentity, NonHostAccount>());
+            if (map == null) { map = index.putIfAbsentElseReturnPresent(host, new ConcurrentHashMap<InternalNonHostIdentity, NonHostAccount>()); }
             @Nullable NonHostAccount account = map.get(identity);
-            if (account == null) account = map.putIfAbsentElseReturnPresent(identity, new NonHostAccount(host, identity));
+            if (account == null) { account = map.putIfAbsentElseReturnPresent(identity, new NonHostAccount(host, identity)); }
             return account;
         } else {
             return new NonHostAccount(host, identity);
@@ -95,8 +95,8 @@ public final class NonHostAccount extends Account implements NonHostEntity {
     @NonCommitting
     public static @Nonnull NonHostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
-        if (identity instanceof InternalNonHostIdentity) return get(host, (InternalNonHostIdentity) identity);
-        else throw new SQLException("The identity of " + identity.getAddress() + " is not a non-host.");
+        if (identity instanceof InternalNonHostIdentity) { return get(host, (InternalNonHostIdentity) identity); }
+        else { throw new SQLException("The identity of " + identity.getAddress() + " is not a non-host."); }
     }
     
 }

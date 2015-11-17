@@ -121,7 +121,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
         this.published = new BooleanWrapper(tuple.getNonNullableElement(1)).getValue();
         this.oldValue = tuple.isElementNotNull(2) ? AttributeValue.get(tuple.getNonNullableElement(2), true).checkMatches(attribute) : null;
         this.newValue = tuple.isElementNotNull(3) ? AttributeValue.get(tuple.getNonNullableElement(3), true).checkMatches(attribute) : null;
-        if (Objects.equals(oldValue, newValue)) throw new InvalidEncodingException("The old and new value may not be equal.");
+        if (Objects.equals(oldValue, newValue)) { throw new InvalidEncodingException("The old and new value may not be equal."); }
     }
     
     @Pure
@@ -153,8 +153,8 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
     @Override
     @NonCommitting
     protected void executeOnBoth() throws AbortException {
-        if (published) attribute.replaceValue(oldValue, newValue);
-        else attribute.replaceUnpublishedValue(oldValue, newValue);
+        if (published) { attribute.replaceValue(oldValue, newValue); }
+        else { attribute.replaceUnpublishedValue(oldValue, newValue); }
     }
     
     @Pure

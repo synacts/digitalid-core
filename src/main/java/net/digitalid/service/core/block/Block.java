@@ -669,7 +669,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         // See: 8.4.1. in http://www.postgresql.org/docs/9.0/static/datatype-binary.html
         final @Nonnull StringBuilder string = new StringBuilder("E'\\x");
         for (int i = offset; i < offset + length; i++) {
-            // if (string.length() > 4) string.append(" ");
+            // if (string.length() > 4) { string.append(" "); }
             string.append(String.format("%02X", bytes[i]));
         }
         return string.append("'").toString();

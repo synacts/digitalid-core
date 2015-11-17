@@ -68,7 +68,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
     @Pure
     public final @Nonnull K getKey(@Nonnull Time time) throws InvalidEncodingException {
         for (final @Nonnull ReadOnlyPair<Time, K> item : items) {
-            if (time.isGreaterThanOrEqualTo(item.getNonNullableElement0())) return item.getNonNullableElement1();
+            if (time.isGreaterThanOrEqualTo(item.getNonNullableElement0())) { return item.getNonNullableElement1(); }
         }
         throw new InvalidEncodingException("There is no key for the given time (" + time + ") in this key chain " + this + ".");
     }
@@ -199,7 +199,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
             assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
             
             final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
-            if (elements.isEmpty()) throw new InvalidEncodingException("The list of elements may not be empty.");
+            if (elements.isEmpty()) { throw new InvalidEncodingException("The list of elements may not be empty."); }
             final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, K>> items = FreezableLinkedList.get();
             
             for (final @Nonnull Block element : elements) {
@@ -209,7 +209,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
                 items.add(FreezablePair.get(time, key).freeze());
             }
             
-            if (!items.isStrictlyDescending()) throw new InvalidEncodingException("The time has to be strictly decreasing.");
+            if (!items.isStrictlyDescending()) { throw new InvalidEncodingException("The time has to be strictly decreasing."); }
             return createKeyChain(items.freeze());
         }
         

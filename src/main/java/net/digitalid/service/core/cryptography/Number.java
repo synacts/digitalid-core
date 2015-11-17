@@ -60,8 +60,8 @@ public abstract class Number<E extends Number<E>> implements XDF<E, Object>, SQL
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Number)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Number)) { return false; }
         @SuppressWarnings("rawtypes")
         final @Nonnull Number<?> other = (Number) object;
         return value.equals(other.value);

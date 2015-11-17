@@ -136,10 +136,10 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
             
             final @Nonnull @Positive BigInteger modulus = IntegerWrapper.decodeNonNullable(tuple.getNonNullableElement(0));
-            if (modulus.compareTo(BigInteger.ZERO) != 1) throw new InvalidEncodingException("The modulus has to be positive.");
+            if (modulus.compareTo(BigInteger.ZERO) != 1) { throw new InvalidEncodingException("The modulus has to be positive."); }
             
             final @Nonnull @Positive BigInteger order = IntegerWrapper.decodeNonNullable(tuple.getNonNullableElement(1));
-            if (order.compareTo(BigInteger.ZERO) != 1 || order.compareTo(modulus) != -1) throw new InvalidEncodingException("The order has to be positive and smaller than the modulus.");
+            if (order.compareTo(BigInteger.ZERO) != 1 || order.compareTo(modulus) != -1) { throw new InvalidEncodingException("The order has to be positive and smaller than the modulus."); }
             
             return new GroupWithKnownOrder(modulus, order);
         }

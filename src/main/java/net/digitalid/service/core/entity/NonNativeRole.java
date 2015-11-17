@@ -123,9 +123,9 @@ public final class NonNativeRole extends Role {
         
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, NonNativeRole> map = index.get(client);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(client, new ConcurrentHashMap<Long, NonNativeRole>());
+            if (map == null) { map = index.putIfAbsentElseReturnPresent(client, new ConcurrentHashMap<Long, NonNativeRole>()); }
             @Nullable NonNativeRole role = map.get(number);
-            if (role == null) role = map.putIfAbsentElseReturnPresent(number, new NonNativeRole(client, number, issuer, relation, recipient, agentNumber));
+            if (role == null) { role = map.putIfAbsentElseReturnPresent(number, new NonNativeRole(client, number, issuer, relation, recipient, agentNumber)); }
             return role;
         } else {
             return new NonNativeRole(client, number, issuer, relation, recipient, agentNumber);
@@ -159,7 +159,7 @@ public final class NonNativeRole extends Role {
     public void remove() throws AbortException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NonNativeRole> map = index.get(getClient());
-            if (map != null) map.remove(getNumber());
+            if (map != null) { map.remove(getNumber()); }
         }
         super.remove();
     }

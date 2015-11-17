@@ -81,8 +81,8 @@ public final class RoleModule {
         
         final @Nonnull String SQL = "SELECT role FROM " + client + "role WHERE issuer = " + issuer + " AND relation = " + relation + " AND recipient = " + recipient + " AND agent = " + agentNumber;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return resultSet.getLong(1);
-            else return Database.executeInsert(statement, "INSERT INTO " + client + "role (issuer, relation, recipient, agent) VALUES (" + issuer + ", " + relation + ", " + recipient + ", " + agentNumber + ")");
+            if (resultSet.next()) { return resultSet.getLong(1); }
+            else { return Database.executeInsert(statement, "INSERT INTO " + client + "role (issuer, relation, recipient, agent) VALUES (" + issuer + ", " + relation + ", " + recipient + ", " + agentNumber + ")"); }
         }
     }
     
@@ -105,10 +105,10 @@ public final class RoleModule {
                 final @Nullable SemanticType relation = identity != null ? identity.toSemanticType().checkIsRoleType() : null;
                 final @Nullable Role recipient = Role.get(client, resultSet, 3);
                 final long agentNumber = resultSet.getLong(4);
-                if (relation == null && recipient == null) return NativeRole.get(client, number, issuer, agentNumber);
-                if (relation != null && recipient != null) return NonNativeRole.get(client, number, issuer, relation, recipient, agentNumber);
-                else throw new InvalidEncodingException("The relation and the recipient have to be either both null or non-null.");
-            } else throw new SQLException("The role of the client '" + client + "' with the number" + number + " could not be found.");
+                if (relation == null && recipient == null) { return NativeRole.get(client, number, issuer, agentNumber); }
+                if (relation != null && recipient != null) { return NonNativeRole.get(client, number, issuer, relation, recipient, agentNumber); }
+                else { throw new InvalidEncodingException("The relation and the recipient have to be either both null or non-null."); }
+            } else { throw new SQLException("The role of the client '" + client + "' with the number" + number + " could not be found."); }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);
         }
@@ -205,10 +205,10 @@ public final class RoleModule {
                 final @Nullable SemanticType relation = identity != null ? identity.toSemanticType().checkIsRoleType() : null;
                 final @Nullable Role recipient = Role.get(client, resultSet, 3);
                 final long agentNumber = resultSet.getLong(4);
-                if (relation == null && recipient == null) return NativeRole.get(client, number, person, agentNumber);
-                if (relation != null && recipient != null) return NonNativeRole.get(client, number, person, relation, recipient, agentNumber);
-                else throw new InvalidEncodingException("The relation and the recipient have to be either both null or non-null.");
-            } else throw new PacketException(PacketErrorCode.IDENTIFIER, "No role for the person " + person.getAddress() + " could be found.");
+                if (relation == null && recipient == null) { return NativeRole.get(client, number, person, agentNumber); }
+                if (relation != null && recipient != null) { return NonNativeRole.get(client, number, person, relation, recipient, agentNumber); }
+                else { throw new InvalidEncodingException("The relation and the recipient have to be either both null or non-null."); }
+            } else { throw new PacketException(PacketErrorCode.IDENTIFIER, "No role for the person " + person.getAddress() + " could be found."); }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);
         }

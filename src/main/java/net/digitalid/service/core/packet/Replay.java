@@ -45,8 +45,8 @@ public final class Replay {
         final @Nonnull Time time = encryption.getTime();
         final @Nullable InitializationVector initializationVector = encryption.getInitializationVector();
         
-        if (time.isLessThan(Time.HALF_HOUR.ago())) throw new PacketException(PacketErrorCode.ENCRYPTION, "The encryption is older than half an hour.", null);
-        if (time.isGreaterThan(Time.MINUTE.ahead())) throw new PacketException(PacketErrorCode.ENCRYPTION, "The encryption is more than a minute ahead.", null);
+        if (time.isLessThan(Time.HALF_HOUR.ago())) { throw new PacketException(PacketErrorCode.ENCRYPTION, "The encryption is older than half an hour.", null); }
+        if (time.isGreaterThan(Time.MINUTE.ahead())) { throw new PacketException(PacketErrorCode.ENCRYPTION, "The encryption is more than a minute ahead.", null); }
         
         if (initializationVector != null) {
             final @Nonnull String SQL = "INSERT INTO general_replay (vector, time) VALUES (?, ?)";

@@ -541,7 +541,7 @@ public final class AgentModule implements StateModule {
     @Override
     @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
-        if (agent == null) throw new SQLException("The agent may not be null for state queries of the core service.");
+        if (agent == null) { throw new SQLException("The agent may not be null for state queries of the core service."); }
         
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String from = " FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site;
@@ -563,13 +563,13 @@ public final class AgentModule implements StateModule {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + FreezableAgentPermissions.COLUMNS + from + "agent_permission" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
-                while (resultSet.next()) entries.add(new TupleWrapper(AGENT_PERMISSION_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, resultSet.getLong(1)), FreezableAgentPermissions.getEmptyOrSingle(resultSet, 2)).toBlock());
+                while (resultSet.next()) { entries.add(new TupleWrapper(AGENT_PERMISSION_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, resultSet.getLong(1)), FreezableAgentPermissions.getEmptyOrSingle(resultSet, 2)).toBlock()); }
                 tables.set(1, new ListWrapper(AGENT_PERMISSION_STATE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Restrictions.COLUMNS + from + "agent_restrictions" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
-                while (resultSet.next()) entries.add(new TupleWrapper(AGENT_RESTRICTIONS_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, resultSet.getLong(1)), Restrictions.get(entity, resultSet, 2)).toBlock());
+                while (resultSet.next()) { entries.add(new TupleWrapper(AGENT_RESTRICTIONS_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, resultSet.getLong(1)), Restrictions.get(entity, resultSet, 2)).toBlock()); }
                 tables.set(2, new ListWrapper(AGENT_RESTRICTIONS_STATE_TABLE, entries.freeze()).toBlock());
             }
             
@@ -719,7 +719,7 @@ public final class AgentModule implements StateModule {
         ClientAgent.reset(entity);
         OutgoingRole.reset(entity);
         
-        if (entity instanceof Role) resetIncomingRoles((Role) entity);
+        if (entity instanceof Role) resetIncomingRoles((Role) { entity); }
     }
     
     @Override
@@ -752,8 +752,8 @@ public final class AgentModule implements StateModule {
     static boolean isRemoved(@Nonnull Agent agent) throws AbortException {
         final @Nonnull String SQL = "SELECT removed FROM " + agent.getEntity().getSite() + "agent WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return resultSet.getBoolean(1);
-            else throw new SQLException("The given agent could not be found.");
+            if (resultSet.next()) { return resultSet.getBoolean(1); }
+            else { throw new SQLException("The given agent could not be found."); }
         }
     }
     
@@ -777,7 +777,7 @@ public final class AgentModule implements StateModule {
     static void removeAgent(@Nonnull Agent agent) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             final @Nonnull String SQL = "UPDATE " + agent.getEntity().getSite() + "agent SET removed = " + Database.toBoolean(true) + " WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND removed = " + Database.toBoolean(false);
-            if (statement.executeUpdate(SQL) == 0) throw new SQLException("The agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be removed.");
+            if (statement.executeUpdate(SQL) == 0) { throw new SQLException("The agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be removed."); }
         }
     }
     
@@ -790,7 +790,7 @@ public final class AgentModule implements StateModule {
     static void unremoveAgent(@Nonnull Agent agent) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             final @Nonnull String SQL = "UPDATE " + agent.getEntity().getSite() + "agent SET removed = " + Database.toBoolean(false) + " WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND removed = " + Database.toBoolean(true);
-            if (statement.executeUpdate(SQL) == 0) throw new SQLException("The agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be unremoved.");
+            if (statement.executeUpdate(SQL) == 0) { throw new SQLException("The agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be unremoved."); }
         }
     }
     
@@ -840,7 +840,7 @@ public final class AgentModule implements StateModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             permissions.set(preparedStatement, 1);
             final int[] counts = preparedStatement.executeBatch();
-            for (final int count : counts) if (count < 1) throw new SQLException("Could not find a particular permission.");
+            for (final int count : counts) if (count < 1) { throw new SQLException("Could not find a particular permission."); }
         }
         redeterminePermissionsOrder(agent);
     }
@@ -891,8 +891,8 @@ public final class AgentModule implements StateModule {
     static @Nonnull Restrictions getRestrictions(@Nonnull Agent agent) throws AbortException {
         final @Nonnull String SQL = "SELECT " + Restrictions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_restrictions WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return Restrictions.get(agent.getEntity(), resultSet, 1).checkMatch(agent);
-            else throw new SQLException("The given agent has no restrictions.");
+            if (resultSet.next()) { return Restrictions.get(agent.getEntity(), resultSet, 1).checkMatch(agent); }
+            else { throw new SQLException("The given agent has no restrictions."); }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
         }
@@ -910,8 +910,8 @@ public final class AgentModule implements StateModule {
             statement.executeUpdate("INSERT INTO " + agent.getEntity().getSite() + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", " + restrictions + ")");
         } catch (@Nonnull SQLException exception) {
             final @Nullable Contact contact = restrictions.getContact();
-            if (contact != null && contact.getPerson().hasBeenMerged(exception)) setRestrictions(agent, restrictions);
-            else throw exception;
+            if (contact != null && contact.getPerson().hasBeenMerged(exception)) { setRestrictions(agent, restrictions); }
+            else { throw exception; }
         }
         redetermineRestrictionsOrder(agent);
     }
@@ -938,13 +938,13 @@ public final class AgentModule implements StateModule {
             count = statement.executeUpdate("UPDATE " + agent.getEntity().getSite() + "agent_restrictions SET " + newRestrictions.toUpdateValues() + " WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + oldRestrictions.toUpdateCondition());
         } catch (@Nonnull SQLException exception) {
             final @Nullable Contact contact = newRestrictions.getContact();
-            if (contact != null && contact.getPerson().hasBeenMerged(exception)) replaceRestrictions(agent, oldRestrictions, newRestrictions);
+            if (contact != null && contact.getPerson().hasBeenMerged(exception)) { replaceRestrictions(agent, oldRestrictions, newRestrictions); }
             return;
         }
         if (count == 0) {
             final @Nullable Contact contact = oldRestrictions.getContact();
             final @Nonnull SQLException exception = new SQLException("The restrictions of the agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be replaced.");
-            if (contact != null && contact.getPerson().hasBeenMerged(exception)) replaceRestrictions(agent, oldRestrictions, newRestrictions);
+            if (contact != null && contact.getPerson().hasBeenMerged(exception)) { replaceRestrictions(agent, oldRestrictions, newRestrictions); }
             return;
         }
         redetermineRestrictionsOrder(agent);
@@ -1012,7 +1012,7 @@ public final class AgentModule implements StateModule {
         final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site + "agent ag WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND ag.entity = " + entity + " AND po.weaker = ag.agent AND ro.weaker = ag.agent";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<Agent> agents = new FreezableLinkedList<>();
-            while (resultSet.next()) agents.add(Agent.get(entity, resultSet, 1, 2, 3));
+            while (resultSet.next()) { agents.add(Agent.get(entity, resultSet, 1, 2, 3)); }
             return agents;
         }
     }
@@ -1034,8 +1034,8 @@ public final class AgentModule implements StateModule {
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site + "agent ag WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND po.weaker = " + agentNumber + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND ro.weaker = " + agentNumber + " AND ag.entity = " + entity + " AND ag.agent = " + agentNumber;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return Agent.getNotNull(entity, resultSet, 1, 2, 3);
-            else throw new SQLException("No weaker agent with the given number was found.");
+            if (resultSet.next()) { return Agent.getNotNull(entity, resultSet, 1, 2, 3); }
+            else { throw new SQLException("No weaker agent with the given number was found."); }
         }
     }
     
@@ -1112,8 +1112,8 @@ public final class AgentModule implements StateModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             commitment.set(preparedStatement, 1);
             try (@Nonnull ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) return ClientAgent.get(entity, resultSet.getLong(1), resultSet.getBoolean(2));
-                else return null;
+                if (resultSet.next()) { return ClientAgent.get(entity, resultSet.getLong(1), resultSet.getBoolean(2)); }
+                else { return null; }
             }
         } catch (SQLException exception) {
             throw AbortException.get(exception);
@@ -1133,8 +1133,8 @@ public final class AgentModule implements StateModule {
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "SELECT " + Commitment.COLUMNS + " FROM " + entity.getSite() + "client_agent WHERE entity = " + entity + " AND agent = " + clientAgent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return Commitment.get(resultSet, 1);
-            else throw new SQLException("The given client agent has no commitment.");
+            if (resultSet.next()) { return Commitment.get(resultSet, 1); }
+            else { throw new SQLException("The given client agent has no commitment."); }
         }
     }
     
@@ -1152,7 +1152,7 @@ public final class AgentModule implements StateModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             newCommitment.set(preparedStatement, 1);
             oldCommitment.set(preparedStatement, 4);
-            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The commitment of the client agent with the number " + clientAgent + " could not be replaced.");
+            if (preparedStatement.executeUpdate() == 0) { throw new SQLException("The commitment of the client agent with the number " + clientAgent + " could not be replaced."); }
         }
     }
     
@@ -1173,9 +1173,9 @@ public final class AgentModule implements StateModule {
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
                 final @Nonnull String name = resultSet.getString(1);
-                if (!Client.isValidName(name)) throw new SQLException("The name of the client agent with the number " + clientAgent + " is invalid.");
+                if (!Client.isValidName(name)) { throw new SQLException("The name of the client agent with the number " + clientAgent + " is invalid."); }
                 return name;
-            } else throw new SQLException("The given client agent has no name.");
+            } else { throw new SQLException("The given client agent has no name."); }
         }
     }
     
@@ -1199,7 +1199,7 @@ public final class AgentModule implements StateModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             preparedStatement.setString(1, newName);
             preparedStatement.setString(2, oldName);
-            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The name of the client agent with the number " + clientAgent + " could not be replaced.");
+            if (preparedStatement.executeUpdate() == 0) { throw new SQLException("The name of the client agent with the number " + clientAgent + " could not be replaced."); }
         }
     }
     
@@ -1249,8 +1249,8 @@ public final class AgentModule implements StateModule {
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT a.agent, a.removed FROM " + site + "outgoing_role o, " + site + "agent a WHERE o.entity = " + entity + " AND a.entity = " + entity + " AND o.agent = a.agent AND o.relation = " + relation;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return OutgoingRole.get(entity, resultSet.getLong(1), resultSet.getBoolean(2), restrictable);
-            else return null;
+            if (resultSet.next()) { return OutgoingRole.get(entity, resultSet.getLong(1), resultSet.getBoolean(2), restrictable); }
+            else { return null; }
         }
     }
     
@@ -1269,8 +1269,8 @@ public final class AgentModule implements StateModule {
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         final @Nonnull String SQL = "SELECT relation FROM " + entity.getSite() + "outgoing_role WHERE entity = " + entity + " AND agent = " + outgoingRole;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return IdentityImplementation.getNotNull(resultSet, 1).toSemanticType().checkIsRoleType();
-            else throw new SQLException("The given outgoing role has no relation.");
+            if (resultSet.next()) { return IdentityImplementation.getNotNull(resultSet, 1).toSemanticType().checkIsRoleType(); }
+            else { throw new SQLException("The given outgoing role has no relation."); }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
         }
@@ -1294,7 +1294,7 @@ public final class AgentModule implements StateModule {
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         try (@Nonnull Statement statement = Database.createStatement()) {
             final @Nonnull String SQL = "UPDATE " + entity.getSite() + "outgoing_role SET relation = " + newRelation + " WHERE entity = " + entity + " AND agent = " + outgoingRole + " AND relation = " + oldRelation;
-            if (statement.executeUpdate(SQL) == 0) throw new SQLException("The relation of the client agent with the number " + outgoingRole + " could not be replaced.");
+            if (statement.executeUpdate(SQL) == 0) { throw new SQLException("The relation of the client agent with the number " + outgoingRole + " could not be replaced."); }
         }
     }
     
@@ -1313,8 +1313,8 @@ public final class AgentModule implements StateModule {
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         final @Nonnull String SQL = "SELECT context FROM " + entity.getSite() + "outgoing_role WHERE entity = " + entity + " AND agent = " + outgoingRole;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return Context.getNotNull(entity, resultSet, 1);
-            else throw new SQLException("The given outgoing role has no context.");
+            if (resultSet.next()) { return Context.getNotNull(entity, resultSet, 1); }
+            else { throw new SQLException("The given outgoing role has no context."); }
         }
     }
     
@@ -1336,7 +1336,7 @@ public final class AgentModule implements StateModule {
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         try (@Nonnull Statement statement = Database.createStatement()) {
             final @Nonnull String SQL = "UPDATE " + entity.getSite() + "outgoing_role SET context = " + newContext + " WHERE entity = " + entity + " AND agent = " + outgoingRole + " AND context = " + oldContext;
-            if (statement.executeUpdate(SQL) == 0) throw new SQLException("The context of the client agent with the number " + outgoingRole + " could not be replaced.");
+            if (statement.executeUpdate(SQL) == 0) { throw new SQLException("The context of the client agent with the number " + outgoingRole + " could not be replaced."); }
         }
         redetermineRestrictionsOrder(outgoingRole);
     }
@@ -1360,7 +1360,7 @@ public final class AgentModule implements StateModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO " + entity.getSite() + "incoming_role (entity, issuer, relation, agent) VALUES (" + entity + ", " + issuer + ", " + relation + ", " + agentNumber + ")");
         } catch (@Nonnull SQLException exception) {
-            if (issuer.hasBeenMerged(exception)) addIncomingRole(entity, issuer, relation, agentNumber);
+            if (issuer.hasBeenMerged(exception)) { addIncomingRole(entity, issuer, relation, agentNumber); }
         }
     }
     
@@ -1381,7 +1381,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull String SQL = "DELETE FROM " + entity.getSite() + "incoming_role WHERE entity = " + entity + " AND issuer = " + issuer + " AND relation = " + relation;
             if (statement.executeUpdate(SQL) == 0) {
                 final @Nonnull SQLException exception = new SQLException("The incoming role with the issuer " + issuer.getAddress() + " and relation " + relation.getAddress() + " could not be removed.");
-                if (issuer.hasBeenMerged(exception)) removeIncomingRole(entity, issuer, relation);
+                if (issuer.hasBeenMerged(exception)) { removeIncomingRole(entity, issuer, relation); }
             }
         }
     }
@@ -1410,13 +1410,13 @@ public final class AgentModule implements StateModule {
                         break;
                     }
                 }
-                if (!found) role.addRole(issuer, relation, agentNumber);
+                if (!found) { role.addRole(issuer, relation, agentNumber); }
             }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
         }
         for (final @Nonnull NonNativeRole subrole : roles) {
-            if (!foundRoles.contains(subrole)) subrole.remove();
+            if (!foundRoles.contains(subrole)) { subrole.remove(); }
         }
     }
     

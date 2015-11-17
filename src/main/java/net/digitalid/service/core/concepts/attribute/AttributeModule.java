@@ -328,7 +328,7 @@ public final class AttributeModule implements StateModule {
         final @Nonnull String SQL = "SELECT DISTINCT type FROM " + entity.getSite() + "attribute_value WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableSet<Attribute> attributes = new FreezableLinkedHashSet<>();
-            while (resultSet.next()) attributes.add(Attribute.get(entity, IdentityImplementation.getNotNull(resultSet, 1).toSemanticType().checkIsAttributeFor(entity)));
+            while (resultSet.next()) { attributes.add(Attribute.get(entity, IdentityImplementation.getNotNull(resultSet, 1).toSemanticType().checkIsAttributeFor(entity))); }
             return attributes;
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
@@ -352,8 +352,8 @@ public final class AttributeModule implements StateModule {
     static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws AbortException {
         final @Nonnull String SQL = "SELECT value FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + Database.toBoolean(published);
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return AttributeValue.get(resultSet, 1).checkMatches(attribute);
-            else return null;
+            if (resultSet.next()) { return AttributeValue.get(resultSet, 1).checkMatches(attribute); }
+            else { return null; }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
         }
@@ -400,7 +400,7 @@ public final class AttributeModule implements StateModule {
             attribute.getType().set(preparedStatement, 2);
             preparedStatement.setBoolean(3, published);
             value.set(preparedStatement, 4);
-            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The value of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be deleted.");
+            if (preparedStatement.executeUpdate() == 0) { throw new SQLException("The value of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be deleted."); }
         }
     }
     
@@ -427,7 +427,7 @@ public final class AttributeModule implements StateModule {
             attribute.getType().set(preparedStatement, 3);
             preparedStatement.setBoolean(4, published);
             oldValue.set(preparedStatement, 5);
-            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The value of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be replaced.");
+            if (preparedStatement.executeUpdate() == 0) { throw new SQLException("The value of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be replaced."); }
         }
     }
     
@@ -451,8 +451,8 @@ public final class AttributeModule implements StateModule {
         
         final @Nonnull String SQL = "SELECT visibility FROM " + attribute.getEntity().getSite() + "attribute_visibility WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType();
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return PassiveExpression.get((NonHostEntity) attribute.getEntity(), resultSet, 1);
-            else return null;
+            if (resultSet.next()) { return PassiveExpression.get((NonHostEntity) attribute.getEntity(), resultSet, 1); }
+            else { return null; }
         }
     }
     
@@ -498,7 +498,7 @@ public final class AttributeModule implements StateModule {
             attribute.getEntity().set(preparedStatement, 1);
             attribute.getType().set(preparedStatement, 2);
             visibility.set(preparedStatement, 3);
-            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The visibility of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be deleted.");
+            if (preparedStatement.executeUpdate() == 0) { throw new SQLException("The visibility of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be deleted."); }
         }
     }
     
@@ -525,7 +525,7 @@ public final class AttributeModule implements StateModule {
             attribute.getEntity().set(preparedStatement, 2);
             attribute.getType().set(preparedStatement, 3);
             oldVisibility.set(preparedStatement, 4);
-            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The visibility of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be replaced.");
+            if (preparedStatement.executeUpdate() == 0) { throw new SQLException("The visibility of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be replaced."); }
         }
     }
     

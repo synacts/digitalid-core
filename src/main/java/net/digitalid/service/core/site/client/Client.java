@@ -324,8 +324,8 @@ public class Client extends Site implements Observer {
     @Pure
     @NonCommitting
     public final @Nonnull @NonFrozen ReadOnlyList<NativeRole> getRoles() throws AbortException {
-        if (Database.isMultiAccess()) return RoleModule.getRoles(this);
-        if (roles == null) roles = RoleModule.getRoles(this);
+        if (Database.isMultiAccess()) { return RoleModule.getRoles(this); }
+        if (roles == null) { roles = RoleModule.getRoles(this); }
         return roles;
     }
     
@@ -340,16 +340,16 @@ public class Client extends Site implements Observer {
     @NonCommitting
     private @Nonnull NativeRole addRole(@Nonnull InternalNonHostIdentity issuer, long agentNumber) throws AbortException {
         final @Nonnull NativeRole role = NativeRole.add(this, issuer, agentNumber);
-        if (Database.isSingleAccess()) role.observe(this, Role.DELETED);
+        if (Database.isSingleAccess()) { role.observe(this, Role.DELETED); }
         
-        if (roles != null) roles.add(role);
+        if (roles != null) { roles.add(role); }
         notify(ROLE_ADDED);
         return role;
     }
     
     @Override
     public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
-        if (aspect.equals(Role.DELETED) && roles != null) roles.remove(instance);
+        if (aspect.equals(Role.DELETED) && roles != null) { roles.remove(instance); }
     }
     
     
@@ -416,7 +416,7 @@ public class Client extends Site implements Observer {
         final @Nonnull FreezableList<ReadOnlyPair<Predecessor, Block>> states = new FreezableArrayList<>(roles.size() + identifiers.size());
         
         for (final @Nonnull NativeRole role : roles) {
-            if (role.getIdentity().getCategory() != category) throw new PacketException(PacketErrorCode.INTERNAL, "A role is of the wrong category.");
+            if (role.getIdentity().getCategory() != category) { throw new PacketException(PacketErrorCode.INTERNAL, "A role is of the wrong category."); }
             Synchronizer.reload(role, CoreService.SERVICE);
             final @Nonnull ClientAgent clientAgent = role.getAgent();
             final @Nonnull Block state = CoreService.SERVICE.getState(role, clientAgent.getPermissions(), clientAgent.getRestrictions(), clientAgent);

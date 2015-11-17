@@ -112,7 +112,7 @@ public final class PushReturned extends ExternalAction {
         this.valid = new BooleanWrapper(elements.getNonNullable(0)).getValue();
         
         final @Nonnull SignatureWrapper _signature = SignatureWrapper.decodeWithoutVerifying(elements.getNonNullable(1), false, null);
-        if (!(_signature instanceof HostSignatureWrapper)) throw new InvalidEncodingException("Replies have to be signed by a host.");
+        if (!(_signature instanceof HostSignatureWrapper)) { throw new InvalidEncodingException("Replies have to be signed by a host."); }
         final @Nonnull CompressionWrapper _compression = new CompressionWrapper(_signature.getNonNullableElement());
         final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElement());
         try {
@@ -181,7 +181,7 @@ public final class PushReturned extends ExternalAction {
         if (!isValid()) {
             // TODO: Add it to the Errors module.
         }
-        else reply.executeBySynchronizer();
+        else { reply.executeBySynchronizer(); }
     }
     
     @Override

@@ -126,7 +126,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
         final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<>(size());
         for (final @Nonnull Predecessor predecessor : this) {
             final @Nullable NonHostIdentity identity = predecessor.getIdentity();
-            if (identity != null) identities.add(identity);
+            if (identity != null) { identities.add(identity); }
         }
         return identities.freeze();
     }
@@ -135,15 +135,15 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof FreezablePredecessors)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof FreezablePredecessors)) { return false; }
         final @Nonnull FreezablePredecessors other = (FreezablePredecessors) object;
         
         final int size = this.size();
-        if (size != other.size()) return false;
+        if (size != other.size()) { return false; }
         
         for (int i = 0; i < size; i++) {
-            if (!this.getNonNullable(i).equals(other.getNonNullable(i))) return false;
+            if (!this.getNonNullable(i).equals(other.getNonNullable(i))) { return false; }
         }
         
         return true;
@@ -178,8 +178,8 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     public static boolean exist(@Nonnull InternalNonHostIdentifier identifier) throws AbortException {
         final @Nonnull String SQL = "SELECT EXISTS (SELECT 1 FROM general_predecessors WHERE identifier = " + identifier + ")";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return resultSet.getBoolean(1);
-            else throw new SQLException("This should never happen.");
+            if (resultSet.next()) { return resultSet.getBoolean(1); }
+            else { throw new SQLException("This should never happen."); }
         }
     }
     
@@ -199,8 +199,8 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
         
         final @Nonnull String SQL = "SELECT predecessors FROM general_predecessors WHERE identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return new FreezablePredecessors(Block.getNotNull(TYPE, resultSet, 1)).freeze();
-            else throw new SQLException("The identifier " + identifier + " has no predecessors.");
+            if (resultSet.next()) { return new FreezablePredecessors(Block.getNotNull(TYPE, resultSet, 1)).freeze(); }
+            else { throw new SQLException("The identifier " + identifier + " has no predecessors."); }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The predecessors of " + identifier + " have an invalid encoding.", exception);
         }

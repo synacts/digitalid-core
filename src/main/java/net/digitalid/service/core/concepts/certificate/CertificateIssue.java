@@ -124,7 +124,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     @NonCommitting
     public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
-        if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "TODO");
+        if (!(signature instanceof HostSignatureWrapper)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "TODO"); }
         
         try {
             certificate.verify();

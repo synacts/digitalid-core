@@ -125,7 +125,7 @@ final class CredentialReply extends CoreServiceQueryReply {
     private CredentialReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, number);
         
-        if (!hasEntity()) throw new InvalidEncodingException("A credential reply must have an entity.");
+        if (!hasEntity()) { throw new InvalidEncodingException("A credential reply must have an entity."); }
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.restrictions = tuple.isElementNotNull(0) ? new Restrictions(entity, tuple.getNonNullableElement(0)) : null;
@@ -135,7 +135,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         this.e = new Exponent(tuple.getNonNullableElement(3));
         this.i = new Exponent(tuple.getNonNullableElement(4));
         
-        if (issuance.isLessThan(Time.HOUR.ago())) throw new InvalidEncodingException("The returned credential is no longer active.");
+        if (issuance.isLessThan(Time.HOUR.ago())) { throw new InvalidEncodingException("The returned credential is no longer active."); }
     }
     
     @Pure
@@ -167,7 +167,7 @@ final class CredentialReply extends CoreServiceQueryReply {
     @Nonnull ClientCredential getInternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull BigInteger b, @Nonnull Exponent u) throws AbortException, PacketException, ExternalException, NetworkException {
         assert hasSignature() : "This handler has a signature.";
         
-        if (restrictions == null) throw new InvalidEncodingException("The restrictions may not be null for internal credentials.");
+        if (restrictions == null) { throw new InvalidEncodingException("The restrictions may not be null for internal credentials."); }
         final @Nonnull Exponent v = new Exponent(restrictions.toBlock().getHash());
         
         final @Nonnull InternalPerson issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().toInternalPerson();
@@ -191,7 +191,7 @@ final class CredentialReply extends CoreServiceQueryReply {
     @Nonnull ClientCredential getExternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull BigInteger b, @Nonnull Exponent u, @Nonnull Exponent v) throws AbortException, PacketException, ExternalException, NetworkException {
         assert hasSignature() : "This handler has a signature.";
         
-        if (restrictions != null) throw new InvalidEncodingException("The restrictions must be null for external credentials.");
+        if (restrictions != null) { throw new InvalidEncodingException("The restrictions must be null for external credentials."); }
         
         final @Nonnull InternalNonHostIdentity issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().toInternalNonHostIdentity();
         return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, attributeContent, c, e, new Exponent(b), u, i, v, false);

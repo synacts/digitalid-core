@@ -174,7 +174,7 @@ abstract class Expression extends NonHostConcept {
             
             // Check if the char is in a quotation.
             if (quotation) {
-                if (c == '\"') quotation = false;
+                if (c == '\"') { quotation = false; }
                 continue;
             } else if (c == '\"') {
                 quotation = true;
@@ -186,16 +186,16 @@ abstract class Expression extends NonHostConcept {
                 parenthesesCounter++;
                 continue;
             } else if (c == '(') {
-                if (parenthesesCounter == 0) throw new InvalidEncodingException("The string '" + string + "' has more opening than closing parentheses.");
+                if (parenthesesCounter == 0) { throw new InvalidEncodingException("The string '" + string + "' has more opening than closing parentheses."); }
                 parenthesesCounter--;
                 continue;
             }
             
-            if (parenthesesCounter == 0 && characters.contains(c)) return i;
+            if (parenthesesCounter == 0 && characters.contains(c)) { return i; }
         }
         
-        if (parenthesesCounter > 0) throw new InvalidEncodingException("The string '" + string + "' has more closing than opening parentheses.");
-        if (quotation) throw new InvalidEncodingException("The string '" + string + "' has more closing than opening quotation marks.");
+        if (parenthesesCounter > 0) { throw new InvalidEncodingException("The string '" + string + "' has more closing than opening parentheses."); }
+        if (quotation) { throw new InvalidEncodingException("The string '" + string + "' has more closing than opening quotation marks."); }
         
         return -1;
     }
@@ -252,13 +252,13 @@ abstract class Expression extends NonHostConcept {
     @Pure
     @NonCommitting
     static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws AbortException, PacketException, ExternalException, NetworkException {
-        if (string.trim().isEmpty()) return new EmptyExpression(entity);
+        if (string.trim().isEmpty()) { return new EmptyExpression(entity); }
         
         int index = lastIndexOf(string, addition);
-        if (index == -1) index = lastIndexOf(string, multiplication);
-        if (index != -1) return new BinaryExpression(entity, string.substring(0, index), string.substring(index + 1, string.length()), string.charAt(index));
+        if (index == -1) { index = lastIndexOf(string, multiplication); }
+        if (index != -1) { return new BinaryExpression(entity, string.substring(0, index), string.substring(index + 1, string.length()), string.charAt(index)); }
         
-        if (string.charAt(0) == '(' && string.charAt(string.length() - 1) == ')') return parse(entity, string.substring(1, string.length() - 1));
+        if (string.charAt(0) == '(' && string.charAt(string.length() - 1) == ')') { return parse(entity, string.substring(1, string.length() - 1)); }
         
         // The string is now either a context, a contact or a restriction.
         
@@ -266,24 +266,24 @@ abstract class Expression extends NonHostConcept {
             index = string.indexOf(symbol);
             if (index != -1) {
                 @Nonnull String identifier = string.substring(0, index).trim();
-                if (isQuoted(identifier)) identifier = removeQuotes(identifier);
-                if (!IdentifierImplementation.isValid(identifier)) throw new InvalidEncodingException("The string '" + string + "' does not start with a valid identifier.");
+                if (isQuoted(identifier)) { identifier = removeQuotes(identifier); }
+                if (!IdentifierImplementation.isValid(identifier)) { throw new InvalidEncodingException("The string '" + string + "' does not start with a valid identifier."); }
                 final @Nonnull SemanticType type = IdentifierImplementation.get(identifier).getIdentity().toSemanticType().checkIsAttributeType();
                 final @Nonnull String substring = string.substring(index + symbol.length(), string.length()).trim();
-                if (isQuoted(substring) || substring.matches("\\d+")) return new RestrictionExpression(entity, type, substring, symbol);
-                else throw new InvalidEncodingException("The string '" + substring + "' is neither a quoted string nor a number.");
+                if (isQuoted(substring) || substring.matches("\\d+")) { return new RestrictionExpression(entity, type, substring, symbol); }
+                else { throw new InvalidEncodingException("The string '" + substring + "' is neither a quoted string nor a number."); }
             }
         }
         
-        if (string.equals("everybody")) return new EverybodyExpression(entity);
+        if (string.equals("everybody")) { return new EverybodyExpression(entity); }
         
-        if (string.matches("\\d+")) return new ContextExpression(entity, Context.get(entity, string));
+        if (string.matches("\\d+")) { return new ContextExpression(entity, Context.get(entity, string)); }
         
         final @Nonnull String identifier = isQuoted(string) ? removeQuotes(string) : string;
         if (IdentifierImplementation.isValid(string)) {
             final @Nonnull Identity identity = IdentifierImplementation.get(identifier).getIdentity();
-            if (identity instanceof Person) return new ContactExpression(entity, Contact.get(entity, (Person) identity));
-            if (identity instanceof SemanticType) return new RestrictionExpression(entity, ((SemanticType) identity).checkIsAttributeType(), null, null);
+            if (identity instanceof Person) { return new ContactExpression(entity, Contact.get(entity, (Person) identity)); }
+            if (identity instanceof SemanticType) { return new RestrictionExpression(entity, ((SemanticType) identity).checkIsAttributeType(), null, null); }
             throw new InvalidEncodingException("The string '" + string + "' is a valid identifier but neither a person nor a semantic type.");
         }
         

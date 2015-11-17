@@ -246,8 +246,8 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof PrivateKey)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof PrivateKey)) { return false; }
         final @Nonnull PrivateKey other = (PrivateKey) object;
         return this.compositeGroup.equals(other.compositeGroup)
                 && this.p.equals(other.p)
@@ -317,7 +317,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
             final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrder.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(4));
             final @Nonnull Exponent x = Exponent.get(elements.getNonNullable(5));
             
-            if (!compositeGroup.getModulus().equals(p.multiply(q))) throw new InvalidEncodingException("The modulus of the composite group has to be the product of p and q.");
+            if (!compositeGroup.getModulus().equals(p.multiply(q))) { throw new InvalidEncodingException("The modulus of the composite group has to be the product of p and q."); }
             
             return new PrivateKey(compositeGroup, p, q, d, squareGroup, x);
         }

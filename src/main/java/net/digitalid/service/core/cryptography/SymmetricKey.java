@@ -231,8 +231,8 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof SymmetricKey)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof SymmetricKey)) { return false; }
         @Nonnull SymmetricKey other = (SymmetricKey) object;
         return this.value.equals(other.value);
     }

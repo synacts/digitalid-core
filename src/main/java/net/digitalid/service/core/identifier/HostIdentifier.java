@@ -83,8 +83,8 @@ public final class HostIdentifier extends InternalIdentifier {
         assert isMapped() : "This identifier is mapped.";
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
-        if (identity instanceof HostIdentity) return (HostIdentity) identity;
-        else throw AbortException.get("The mapped identity has a wrong type.");
+        if (identity instanceof HostIdentity) { return (HostIdentity) identity; }
+        else { throw AbortException.get("The mapped identity has a wrong type."); }
     }
     
     @Pure

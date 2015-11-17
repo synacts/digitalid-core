@@ -78,8 +78,8 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         assert isMapped() : "This identifier is mapped.";
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
-        if (identity instanceof InternalNonHostIdentity) return (InternalNonHostIdentity) identity;
-        else throw AbortException.get("The mapped identity has a wrong type.");
+        if (identity instanceof InternalNonHostIdentity) { return (InternalNonHostIdentity) identity; }
+        else { throw AbortException.get("The mapped identity has a wrong type."); }
     }
     
     @Pure
@@ -89,7 +89,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     public @Nonnull InternalNonHostIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull InternalNonHostIdentity identity = Mapper.getIdentity(this).toInternalNonHostIdentity();
         // If the returned identity is a type, its fields need to be loaded from the type's attributes.
-        if (identity instanceof Type) ((Type) identity).ensureLoaded();
+        if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }
         return identity;
     }
     

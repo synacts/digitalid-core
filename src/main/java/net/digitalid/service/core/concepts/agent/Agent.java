@@ -29,8 +29,8 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForClients;
-import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.site.Site;
 
 /**
  * This class models an agent that acts on behalf of an {@link Identity identity}.
@@ -138,7 +138,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
      */
     @Pure
     public final void checkNotRemoved() throws PacketException {
-        if (isRemoved()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The agent has been removed.");
+        if (isRemoved()) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The agent has been removed."); }
     }
     
     /**
@@ -161,7 +161,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @OnlyForActions
     final void removeForActions() throws AbortException {
         AgentModule.removeAgent(this);
-        if (isOnHost() && this instanceof OutgoingRole) ((OutgoingRole) this).revoke();
+        if (isOnHost() && this instanceof OutgoingRole) { ((OutgoingRole) this).revoke(); }
         removed = true;
         notify(DELETED);
     }
@@ -186,7 +186,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @OnlyForActions
     final void unremoveForActions() throws AbortException {
         AgentModule.unremoveAgent(this);
-        if (isOnHost() && this instanceof OutgoingRole) ((OutgoingRole) this).issue();
+        if (isOnHost() && this instanceof OutgoingRole) { ((OutgoingRole) this).issue(); }
         removed = false;
         notify(CREATED);
     }
@@ -206,7 +206,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @Pure
     @NonCommitting
     public final @Nonnull @NonFrozen ReadOnlyAgentPermissions getPermissions() throws AbortException {
-        if (permissions == null) permissions = AgentModule.getPermissions(this);
+        if (permissions == null) { permissions = AgentModule.getPermissions(this); }
         return permissions;
     }
     
@@ -221,7 +221,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @Committing
     @OnlyForClients
     public final void addPermissions(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws AbortException {
-        if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
+        if (!permissions.isEmpty()) { Synchronizer.execute(new AgentPermissionsAdd(this, permissions)); }
     }
     
     /**
@@ -233,7 +233,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @OnlyForActions
     final void addPermissionsForActions(@Nonnull @Frozen ReadOnlyAgentPermissions newPermissions) throws AbortException {
         AgentModule.addPermissions(this, newPermissions);
-        if (permissions != null) permissions.putAll(newPermissions);
+        if (permissions != null) { permissions.putAll(newPermissions); }
         notify(PERMISSIONS);
     }
     
@@ -245,7 +245,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @Committing
     @OnlyForClients
     public final void removePermissions(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws AbortException {
-        if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
+        if (!permissions.isEmpty()) { Synchronizer.execute(new AgentPermissionsRemove(this, permissions)); }
     }
     
     /**
@@ -257,7 +257,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @OnlyForActions
     final void removePermissionsForActions(@Nonnull @Frozen ReadOnlyAgentPermissions oldPermissions) throws AbortException {
         AgentModule.removePermissions(this, oldPermissions);
-        if (permissions != null) permissions.removeAll(oldPermissions);
+        if (permissions != null) { permissions.removeAll(oldPermissions); }
         notify(PERMISSIONS);
     }
     
@@ -280,7 +280,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @Pure
     @NonCommitting
     public final @Nonnull Restrictions getRestrictions() throws AbortException {
-        if (restrictions == null) restrictions = AgentModule.getRestrictions(this);
+        if (restrictions == null) { restrictions = AgentModule.getRestrictions(this); }
         return restrictions;
     }
     
@@ -390,7 +390,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @Pure
     @NonCommitting
     public final void checkCovers(@Nonnull Agent agent) throws PacketException, SQLException {
-        if (!covers(agent)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "This agent does not cover the other agent.");
+        if (!covers(agent)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "This agent does not cover the other agent."); }
     }
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
@@ -498,7 +498,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
         assert columnIndexes.length == 3 : "The number of given indexes is 3.";
         
         final long number = resultSet.getLong(columnIndexes[0]);
-        if (resultSet.wasNull()) return null;
+        if (resultSet.wasNull()) { return null; }
         return get(entity, number, resultSet.getBoolean(columnIndexes[1]), resultSet.getBoolean(columnIndexes[2]));
     }
     
@@ -536,8 +536,8 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
      */
     @NonCommitting
     public static void set(@Nullable Agent agent, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
-        if (agent == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
-        else agent.set(preparedStatement, parameterIndex);
+        if (agent == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
+        else { agent.set(preparedStatement, parameterIndex); }
     }
     
     /* -------------------------------------------------- Casting -------------------------------------------------- */
@@ -551,7 +551,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
      */
     @Pure
     public final @Nonnull ClientAgent toClientAgent() throws InvalidEncodingException {
-        if (this instanceof ClientAgent) return (ClientAgent) this;
+        if (this instanceof ClientAgent) { return (ClientAgent) this; }
         throw new InvalidEncodingException("This agent cannot be cast to ClientAgent.");
     }
     
@@ -564,7 +564,7 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
      */
     @Pure
     public final @Nonnull OutgoingRole toOutgoingRole() throws InvalidEncodingException {
-        if (this instanceof OutgoingRole) return (OutgoingRole) this;
+        if (this instanceof OutgoingRole) { return (OutgoingRole) this; }
         throw new InvalidEncodingException("This agent cannot be cast to OutgoingRole.");
     }
     
@@ -573,8 +573,8 @@ public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     @Pure
     @Override
     public final boolean equals(Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof Agent)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof Agent)) { return false; }
         @Nonnull Agent other = (Agent) object;
         return this.number == other.number;
     }

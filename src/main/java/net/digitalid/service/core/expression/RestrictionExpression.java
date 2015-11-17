@@ -101,41 +101,41 @@ final class RestrictionExpression extends Expression {
     boolean matches(@Nonnull Block attributeContent) {
         assert isImpersonal() : "This expression is impersonal.";
         
-        if (!attributeContent.getType().equals(type)) return false;
+        if (!attributeContent.getType().equals(type)) { return false; }
         
-        if (string == null || symbol == null) return true;
+        if (string == null || symbol == null) { return true; }
         
         if (isQuoted(string)) {
             final byte[] bytes = attributeContent.getBytes(1);
             final @Nonnull String substring = removeQuotes(string).toLowerCase();
             final @Nonnull String attribute = new String(bytes, 0, bytes.length, StringWrapper.CHARSET).toLowerCase();
-            if (symbol.equals("=")) return attribute.equals(substring);
-            if (symbol.equals("≠")) return !attribute.equals(substring);
-            if (symbol.equals("<")) return attribute.compareTo(substring) < 0;
-            if (symbol.equals(">")) return attribute.compareTo(substring) > 0;
-            if (symbol.equals("≤")) return attribute.compareTo(substring) <= 0;
-            if (symbol.equals("≥")) return attribute.compareTo(substring) >= 0;
-            if (symbol.equals("/")) return attribute.startsWith(substring);
-            if (symbol.equals("!/")) return !attribute.startsWith(substring);
-            if (symbol.equals("|")) return attribute.contains(substring);
-            if (symbol.equals("!|")) return !attribute.contains(substring);
-            if (symbol.equals("\\")) return attribute.endsWith(substring);
-            if (symbol.equals("!\\")) return !attribute.endsWith(substring);
+            if (symbol.equals("=")) { return attribute.equals(substring); }
+            if (symbol.equals("≠")) { return !attribute.equals(substring); }
+            if (symbol.equals("<")) { return attribute.compareTo(substring) < 0; }
+            if (symbol.equals(">")) { return attribute.compareTo(substring) > 0; }
+            if (symbol.equals("≤")) { return attribute.compareTo(substring) <= 0; }
+            if (symbol.equals("≥")) { return attribute.compareTo(substring) >= 0; }
+            if (symbol.equals("/")) { return attribute.startsWith(substring); }
+            if (symbol.equals("!/")) { return !attribute.startsWith(substring); }
+            if (symbol.equals("|")) { return attribute.contains(substring); }
+            if (symbol.equals("!|")) { return !attribute.contains(substring); }
+            if (symbol.equals("\\")) { return attribute.endsWith(substring); }
+            if (symbol.equals("!\\")) { return !attribute.endsWith(substring); }
         } else {
             final int length = attributeContent.getLength();
-            if (length > 8) return false;
+            if (length > 8) { return false; }
             long attribute = 0;
             for (int i = 0; i < length; i++) {
                 attribute = (attribute << 8) | (attributeContent.getByte(i) & 0xFF);
             }
             try {
                 final long number = Long.parseLong(this.string);
-                if (symbol.equals("=")) return attribute == number;
-                if (symbol.equals("≠")) return attribute != number;
-                if (symbol.equals("<")) return attribute < number;
-                if (symbol.equals(">")) return attribute > number;
-                if (symbol.equals("≤")) return attribute <= number;
-                if (symbol.equals("≥")) return attribute >= number;
+                if (symbol.equals("=")) { return attribute == number; }
+                if (symbol.equals("≠")) { return attribute != number; }
+                if (symbol.equals("<")) { return attribute < number; }
+                if (symbol.equals(">")) { return attribute > number; }
+                if (symbol.equals("≤")) { return attribute <= number; }
+                if (symbol.equals("≥")) { return attribute >= number; }
             } catch (@Nonnull NumberFormatException exception) {}
         }
         
@@ -146,7 +146,7 @@ final class RestrictionExpression extends Expression {
     @Override
     boolean matches(@Nonnull CredentialsSignatureWrapper signature) {
         final @Nullable Block attributeContent = signature.getAttributeContent(type);
-        if (attributeContent == null) return false;
+        if (attributeContent == null) { return false; }
         return matches(attributeContent);
     }
     
@@ -163,8 +163,8 @@ final class RestrictionExpression extends Expression {
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof RestrictionExpression)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof RestrictionExpression)) { return false; }
         final @Nonnull RestrictionExpression other = (RestrictionExpression) object;
         return this.type.equals(other.type) && this.string.equals(other.string) && this.symbol.equals(other.symbol);
     }

@@ -102,7 +102,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Override
     @NonCommitting
     public @Nonnull Time getTime() throws AbortException {
-        if (time == null) load();
+        if (time == null) { load(); }
         assert time != null;
         return time;
     }
@@ -119,7 +119,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Override
     @NonCommitting
     public @Nonnull @Validated V get() throws AbortException {
-        if (value == null) load();
+        if (value == null) { load(); }
         assert value != null;
         return value;
     }
@@ -168,7 +168,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
             final @Nonnull V oldValue = value;
             this.value = null;
             final @Nonnull V newValue = get();
-            if (!oldValue.equals(newValue)) notify(oldValue, newValue);
+            if (!oldValue.equals(newValue)) { notify(oldValue, newValue); }
         } else {
             this.time = null;
             this.value = null;

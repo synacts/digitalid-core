@@ -124,7 +124,7 @@ public final class SynchronizerModule implements ClientModule {
         final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
         while (iterator.hasNext()) {
             final @Nonnull InternalAction action = iterator.next();
-            if (action.getRole().equals(role)) iterator.remove();
+            if (action.getRole().equals(role)) { iterator.remove(); }
         }
     }
     
@@ -139,7 +139,7 @@ public final class SynchronizerModule implements ClientModule {
     @Pure
     private static boolean contains(@Nonnull Role role, @Nonnull Service service) {
         for (final @Nonnull InternalAction pendingAction : pendingActions) {
-            if (pendingAction.getRole().equals(role) && pendingAction.getService().equals(service)) return true;
+            if (pendingAction.getRole().equals(role) && pendingAction.getService().equals(service)) { return true; }
         }
         return false;
     }
@@ -171,12 +171,12 @@ public final class SynchronizerModule implements ClientModule {
             final @Nonnull ReadOnlyPair<Role, Service> pair = new FreezablePair<>(role, service).freeze();
             if (!ignored.contains(pair) && Synchronizer.suspend(role, service)) {
                 methods.add(reference);
-                if (!reference.isSimilarTo(reference)) return methods.freeze();
+                if (!reference.isSimilarTo(reference)) { return methods.freeze(); }
                 while (iterator.hasNext()) {
                     final @Nonnull InternalAction pendingAction = iterator.next();
                     if (pendingAction.getRole().equals(role) && pendingAction.getService().equals(service)) {
-                        if (pendingAction.isSimilarTo(reference) && reference.isSimilarTo(pendingAction)) methods.add(pendingAction);
-                        else return methods.freeze();
+                        if (pendingAction.isSimilarTo(reference) && reference.isSimilarTo(pendingAction)) { methods.add(pendingAction); }
+                        else { return methods.freeze(); }
                     }
                 }
             } else {
@@ -221,7 +221,7 @@ public final class SynchronizerModule implements ClientModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             new SelfcontainedWrapper(Packet.CONTENT, action).toBlock().set(preparedStatement, 1);
             final int count = preparedStatement.executeUpdate();
-            if (count != 1) throw new SQLException("Could not find the action to be removed from the pending actions. (The count is " + count + " instead of 1.)");
+            if (count != 1) { throw new SQLException("Could not find the action to be removed from the pending actions. (The count is " + count + " instead of 1.)"); }
         }
         pendingActions.remove(action);
         synchronized (pendingActions) { pendingActions.notifyAll(); }
@@ -249,7 +249,7 @@ public final class SynchronizerModule implements ClientModule {
                 preparedStatement.addBatch();
             }
             final int[] counts = preparedStatement.executeBatch();
-            for (final int count : counts) if (count != 1) throw new SQLException("Could not find an action to be removed from the pending actions. (The count is " + count + " instead of 1.)");
+            for (final int count : counts) if (count != 1) { throw new SQLException("Could not find an action to be removed from the pending actions. (The count is " + count + " instead of 1.)"); }
         }
         for (final @Nonnull Method method : methods) pendingActions.remove(method); // The pending actions may contain duplicates which may not be removed.
         synchronized (pendingActions) { pendingActions.notifyAll(); }
@@ -279,7 +279,7 @@ public final class SynchronizerModule implements ClientModule {
                     Database.commit();
                 }
             }
-            if (pendingAction == lastAction) break;
+            if (pendingAction == lastAction) { break; }
         }
     }
     
@@ -314,7 +314,7 @@ public final class SynchronizerModule implements ClientModule {
      */
     @Committing
     static void redoReversedActions(@Nonnull ReadOnlyList<InternalAction> reversedActions) throws AbortException {
-        for (@Nonnull InternalAction reversedAction : reversedActions) {
+        for (final @Nonnull InternalAction reversedAction : reversedActions) {
             try {
                 Log.debugging("Reexecute the reversed action " + reversedAction + ".");
                 reversedAction.executeOnClient();
@@ -344,8 +344,8 @@ public final class SynchronizerModule implements ClientModule {
     public static @Nonnull Time getLastTime(@Nonnull Role role, @Nonnull Service service) throws AbortException {
         final @Nonnull String SQL = "SELECT time FROM " + role.getSite() + "synchronization_last WHERE entity = " + role + " AND service = " + service;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return Time.get(resultSet, 1);
-            else return Time.MIN;
+            if (resultSet.next()) { return Time.get(resultSet, 1); }
+            else { return Time.MIN; }
         }
     }
     

@@ -105,11 +105,11 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
     // TODO: Must be adapted to work for non-core service internal actions.
     public void executeOnHostInternalAction() throws PacketException, AbortException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
-        if (signature instanceof CredentialsSignatureWrapper) ((CredentialsSignatureWrapper) signature).checkIsLogded();
+        if (signature instanceof CredentialsSignatureWrapper) { ((CredentialsSignatureWrapper) signature).checkIsLogded(); }
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());
         
         final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissionsToExecuteMethod();
-        if (!permissions.equals(FreezableAgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
+        if (!permissions.equals(FreezableAgentPermissions.NONE)) { agent.getPermissions().checkCover(permissions); }
         
         final @Nonnull Restrictions restrictions = getRequiredRestrictionsToExecuteMethod();
         if (!restrictions.equals(Restrictions.MIN)) {

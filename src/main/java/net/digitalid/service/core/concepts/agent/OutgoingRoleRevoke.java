@@ -129,7 +129,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     @Override
     @NonCommitting
     public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
-        if (!getSignatureNotNull().isSigned()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The revocation of a role has to be signed.");
+        if (!getSignatureNotNull().isSigned()) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The revocation of a role has to be signed."); }
         executeOnBoth();
         return null;
     }
@@ -145,7 +145,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     public void executeOnClient() throws AbortException {
         executeOnBoth();
         for (final @Nonnull NonNativeRole role : getRole().getRoles()) {
-            if (role.getIssuer().equals(issuer) && relation.equals(role.getRelation())) role.remove();
+            if (role.getIssuer().equals(issuer) && relation.equals(role.getRelation())) { role.remove(); }
         }
     }
     

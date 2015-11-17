@@ -128,14 +128,14 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!(entity.getIdentity() instanceof InternalPerson)) throw new PacketException(PacketErrorCode.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons.");
+        if (!(entity.getIdentity() instanceof InternalPerson)) { throw new PacketException(PacketErrorCode.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons."); }
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.permissions = new RandomizedAgentPermissions(tuple.getNonNullableElement(0));
-        if (tuple.isElementNull(1)) this.relation = null;
-        else this.relation = IdentityImplementation.create(tuple.getNonNullableElement(1)).toSemanticType().checkIsRoleType();
-        if (signature instanceof ClientSignatureWrapper) this.value = ((ClientSignatureWrapper) signature).getCommitment().getValue().getValue();
-        else if (signature instanceof CredentialsSignatureWrapper) this.value = ((CredentialsSignatureWrapper) signature).getValue();
-        else throw new PacketException(PacketErrorCode.SIGNATURE, "A credential request must be signed by a client or with credentials.");
+        if (tuple.isElementNull(1)) { this.relation = null; }
+        else { this.relation = IdentityImplementation.create(tuple.getNonNullableElement(1)).toSemanticType().checkIsRoleType(); }
+        if (signature instanceof ClientSignatureWrapper) { this.value = ((ClientSignatureWrapper) signature).getCommitment().getValue().getValue(); }
+        else if (signature instanceof CredentialsSignatureWrapper) { this.value = ((CredentialsSignatureWrapper) signature).getValue(); }
+        else { throw new PacketException(PacketErrorCode.SIGNATURE, "A credential request must be signed by a client or with credentials."); }
     }
     
     @Pure
@@ -172,8 +172,8 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     @Pure
     @Override
     public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
-        if (relation == null) return Restrictions.MIN;
-        else return Restrictions.ROLE;
+        if (relation == null) { return Restrictions.MIN; }
+        else { return Restrictions.ROLE; }
     }
     
     

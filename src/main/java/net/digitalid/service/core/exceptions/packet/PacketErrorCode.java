@@ -136,7 +136,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
         assert isValid(value) : "The value is a valid packet error.";
         
         for (final @Nonnull PacketErrorCode error : values()) {
-            if (error.value == value) return error;
+            if (error.value == value) { return error; }
         }
         
         throw new ShouldNeverHappenError("The value '" + value + "' does not encode a packet error.");
@@ -162,7 +162,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final byte value = new Int8Wrapper(block).getValue();
-        if (!isValid(value)) throw new InvalidEncodingException("The value '" + value + "' does not encode a packet error.");
+        if (!isValid(value)) { throw new InvalidEncodingException("The value '" + value + "' does not encode a packet error."); }
         return get(value);
     }
     
@@ -236,7 +236,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
     @NonCommitting
     public static @Nonnull PacketErrorCode get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nonnull byte value = resultSet.getByte(columnIndex);
-        if (!isValid(value)) throw new SQLException("'" + value + "' is not a valid packet error.");
+        if (!isValid(value)) { throw new SQLException("'" + value + "' is not a valid packet error."); }
         return get(value);
     }
     

@@ -94,7 +94,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         
         this.person = entity.getIdentity().toInternalPerson();
         this.permissions = new FreezableContactPermissions(block).freeze();
-        if (permissions.isEmpty()) throw new InvalidEncodingException("The permissions may not be empty.");
+        if (permissions.isEmpty()) { throw new InvalidEncodingException("The permissions may not be empty."); }
     }
     
     @Pure

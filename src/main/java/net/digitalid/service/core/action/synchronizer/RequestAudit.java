@@ -46,7 +46,7 @@ public final class RequestAudit extends Audit {
         if (method.isOnClient() && method instanceof InternalMethod) {
             final @Nonnull Role role = method.getRole();
             final @Nonnull Service service = method.getService();
-            if (Synchronizer.suspend(role, service)) return new RequestAudit(SynchronizerModule.getLastTime(role, service));
+            if (Synchronizer.suspend(role, service)) { return new RequestAudit(SynchronizerModule.getLastTime(role, service)); }
         }
         return null;
     }
@@ -57,7 +57,7 @@ public final class RequestAudit extends Audit {
      * @param method the method which was sent to a host.
      */
     public static void release(@Nonnull Method method) {
-        if (method.isOnClient() && method instanceof InternalMethod) Synchronizer.resume(method.getRole(), method.getService());
+        if (method.isOnClient() && method instanceof InternalMethod) { Synchronizer.resume(method.getRole(), method.getService()); }
     }
     
 }

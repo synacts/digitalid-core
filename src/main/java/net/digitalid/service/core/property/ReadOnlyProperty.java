@@ -65,9 +65,9 @@ public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
      * @param observer the observer to be registered.
      */
     public final void register(@Nonnull O observer) {
-        if (Database.isMultiAccess()) Log.warning("Since the database is in multi-access mode, you might not be notified about all changes.", new Exception());
+        if (Database.isMultiAccess()) { Log.warning("Since the database is in multi-access mode, you might not be notified about all changes.", new Exception()); }
         
-        if (observers == null) observers = FreezableLinkedList.get();
+        if (observers == null) { observers = FreezableLinkedList.get(); }
         observers.add(observer);
     }
     
@@ -77,7 +77,7 @@ public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
      * @param observer the observer to be deregistered.
      */
     public final void deregister(@Nonnull O observer) {
-        if (observers != null) observers.remove(observer);
+        if (observers != null) { observers.remove(observer); }
     }
     
     /**
@@ -109,7 +109,7 @@ public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
      */
     @Pure
     protected final @Nonnull @NonFrozen ReadOnlyList<O> getObservers() {
-        if (observers == null) observers = FreezableLinkedList.get();
+        if (observers == null) { observers = FreezableLinkedList.get(); }
         return observers;
     }
     

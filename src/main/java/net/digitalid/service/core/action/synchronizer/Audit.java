@@ -114,7 +114,7 @@ public abstract class Audit implements XDF<Audit, Object> {
      */
     @Pure
     public final @Nonnull RequestAudit toRequestAudit() throws InvalidEncodingException {
-        if (this instanceof RequestAudit) return (RequestAudit) this;
+        if (this instanceof RequestAudit) { return (RequestAudit) this; }
         throw new InvalidEncodingException("This audit is not a request audit.");
     }
     
@@ -127,7 +127,7 @@ public abstract class Audit implements XDF<Audit, Object> {
      */
     @Pure
     public final @Nonnull ResponseAudit toResponseAudit() throws InvalidEncodingException {
-        if (this instanceof ResponseAudit) return (ResponseAudit) this;
+        if (this instanceof ResponseAudit) { return (ResponseAudit) this; }
         throw new InvalidEncodingException("This audit is not a response audit.");
     }
     

@@ -43,14 +43,14 @@ public class VolatileExtensibleProperty<V, R extends ReadOnlySet<V>, F extends F
     public void add(@Nonnull V value) {
         boolean alreadyContained = set.add(value);
         
-        if (!alreadyContained) notifyAdded(set, value);
+        if (!alreadyContained) { notifyAdded(set, value); }
     }
     
     @Override
     public void remove(@Nonnull V value) {
         boolean didExist = set.remove(value);
         
-        if (didExist) notifyRemoved(set, value);
+        if (didExist) { notifyRemoved(set, value); }
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
@@ -108,9 +108,9 @@ public class VolatileExtensibleProperty<V, R extends ReadOnlySet<V>, F extends F
      * 
      * @return true if the keys and values are valid; false otherwise.
      */
-    private boolean valuesValid(@Nonnull ValueValidator<? super V> valueValidator, @Nonnull @Validated F set) {
-        for (V value : set) {
-            if (!valueValidator.isValid(value)) return false;
+    private boolean valuesValid(@Nonnull ValueValidator<? super V> valueValidator, @Nonnull @Validated F set) { // TODO: Make it static? @NonNullableElements?
+        for (final @Nonnull V value : set) {
+            if (!valueValidator.isValid(value)) { return false; }
         }
         return true;
     }

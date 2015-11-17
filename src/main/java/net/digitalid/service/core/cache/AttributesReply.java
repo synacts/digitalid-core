@@ -50,7 +50,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      */
     static boolean areVerified(@Nonnull ReadOnlyList<AttributeValue> attributeValues) {
         for (final @Nullable AttributeValue attribute : attributeValues) {
-            if (attribute != null && !attribute.isVerified()) return false;
+            if (attribute != null && !attribute.isVerified()) { return false; }
         }
         return true;
     }
@@ -124,7 +124,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
                 attributeValues.add(null);
             }
         }
-        if (attributeValues.isEmpty()) throw new InvalidEncodingException("The attribute values may not be empty.");
+        if (attributeValues.isEmpty()) { throw new InvalidEncodingException("The attribute values may not be empty."); }
         this.attributeValues = attributeValues.freeze();
     }
     

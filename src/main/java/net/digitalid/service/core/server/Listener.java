@@ -58,7 +58,7 @@ public final class Listener extends Thread {
                     socket.close();
                 }
             } catch (@Nonnull IOException exception) {
-                if (!serverSocket.isClosed()) Log.warning("Could not accept or close a socket.", exception);
+                if (!serverSocket.isClosed()) { Log.warning("Could not accept or close a socket.", exception); }
             }
         }
     }

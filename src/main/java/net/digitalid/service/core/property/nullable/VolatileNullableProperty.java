@@ -35,7 +35,7 @@ public class VolatileNullableProperty<V> extends WritableNullableProperty<V> {
         final @Nullable V oldValue = this.value;
         this.value = newValue;
         
-        if (!newValue.equals(oldValue)) notify(oldValue, newValue);
+        if (!newValue.equals(oldValue)) { notify(oldValue, newValue); }
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */

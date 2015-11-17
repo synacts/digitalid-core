@@ -105,9 +105,9 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
         this.clientAgent = Agent.get(entity.toNonHostEntity(), elements.getNonNullable(0)).toClientAgent();
         this.oldName = new StringWrapper(elements.getNonNullable(1)).getString();
-        if (!Client.isValidName(oldName)) throw new InvalidEncodingException("The old name is invalid.");
+        if (!Client.isValidName(oldName)) { throw new InvalidEncodingException("The old name is invalid."); }
         this.newName = new StringWrapper(elements.getNonNullable(2)).getString();
-        if (!Client.isValidName(newName)) throw new InvalidEncodingException("The new name is invalid.");
+        if (!Client.isValidName(newName)) { throw new InvalidEncodingException("The new name is invalid."); }
     }
     
     @Pure

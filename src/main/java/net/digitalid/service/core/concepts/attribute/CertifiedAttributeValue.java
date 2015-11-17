@@ -95,11 +95,11 @@ public final class CertifiedAttributeValue extends AttributeValue {
     CertifiedAttributeValue(@Nonnull Block content, @Nonnull SignatureWrapper signature) throws AbortException, PacketException, ExternalException, NetworkException {
         super(content);
         
-        if (signature instanceof HostSignatureWrapper) this.signature = (HostSignatureWrapper) signature;
-        else throw new InvalidEncodingException("Certified attribute values have to be signed by a host.");
+        if (signature instanceof HostSignatureWrapper) { this.signature = (HostSignatureWrapper) signature; }
+        else { throw new InvalidEncodingException("Certified attribute values have to be signed by a host."); }
         this.subject = this.signature.getNonNullableSubject().getIdentity();
         this.issuer = this.signature.getSigner().getIdentity().toInternalNonHostIdentity();
-        if (!content.getType().isAttributeFor(subject.getCategory())) throw new InvalidEncodingException("The content has to be an attribute for the subject.");
+        if (!content.getType().isAttributeFor(subject.getCategory())) { throw new InvalidEncodingException("The content has to be an attribute for the subject."); }
     }
     
     
@@ -159,7 +159,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
      */
     @Pure
     public void checkIsValid(@Nonnull Time time) throws InvalidSignatureException {
-        if (!isValid(time)) throw new InvalidSignatureException("The certificate is no longer valid.");
+        if (!isValid(time)) { throw new InvalidSignatureException("The certificate is no longer valid."); }
     }
     
     /**
@@ -181,7 +181,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
      */
     @Pure
     public void checkSubject(@Nonnull InternalIdentity subject) throws InvalidSignatureException {
-        if (!this.subject.equals(subject)) throw new InvalidSignatureException("The attribute is certified for the wrong subject.");
+        if (!this.subject.equals(subject)) { throw new InvalidSignatureException("The attribute is certified for the wrong subject."); }
     }
     
     /**

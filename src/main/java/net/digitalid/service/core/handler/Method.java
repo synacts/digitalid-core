@@ -232,10 +232,10 @@ public abstract class Method extends Handler {
         try {
             response = Method.send(new FreezableArrayList<>(this).freeze(), requestAudit);
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            if (requestAudit != null) RequestAudit.release(this);
+            if (requestAudit != null) { RequestAudit.release(this); }
             throw exception;
         }
-        if (requestAudit != null) response.getAuditNotNull().executeAsynchronously(this);
+        if (requestAudit != null) { response.getAuditNotNull().executeAsynchronously(this); }
         response.checkReply(0);
         return response;
     }
@@ -275,7 +275,7 @@ public abstract class Method extends Handler {
         final @Nonnull Method reference = iterator.next();
         while (iterator.hasNext()) {
             final @Nonnull Method method = iterator.next();
-            if (!method.isSimilarTo(reference) || !reference.isSimilarTo(method)) return false;
+            if (!method.isSimilarTo(reference) || !reference.isSimilarTo(method)) { return false; }
         }
         return true;
     }
@@ -290,7 +290,7 @@ public abstract class Method extends Handler {
     @Pure
     private static ReadOnlyAgentPermissions getRequiredPermissions(@Nonnull ReadOnlyList<? extends Method> methods) {
         final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
-        for (@Nonnull Method method : methods) {
+        for (final @Nonnull Method method : methods) {
             permissions.putAll(method.getRequiredPermissionsToExecuteMethod());
         }
         return permissions.freeze();
@@ -325,8 +325,8 @@ public abstract class Method extends Handler {
         final boolean lodged = reference.isLodged();
         final @Nullable BigInteger value = reference.getValue();
         
-        if (reference.isOnHost() && !reference.canBeSentByHosts()) throw new PacketException(PacketErrorCode.INTERNAL, "These methods cannot be sent by hosts.");
-        if (reference.isOnClient() && reference.canOnlyBeSentByHosts()) throw new PacketException(PacketErrorCode.INTERNAL, "These methods cannot be sent by clients.");
+        if (reference.isOnHost() && !reference.canBeSentByHosts()) { throw new PacketException(PacketErrorCode.INTERNAL, "These methods cannot be sent by hosts."); }
+        if (reference.isOnClient() && reference.canOnlyBeSentByHosts()) { throw new PacketException(PacketErrorCode.INTERNAL, "These methods cannot be sent by clients."); }
         
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadOnlyAuthentications authentications;
@@ -359,7 +359,7 @@ public abstract class Method extends Handler {
                             final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
                             if (attributeValue != null && attributeValue.isCertified()) {
                                 final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.toCertifiedAttributeValue();
-                                if (certifiedAttributeValue.isValid(time)) certificates.add(certifiedAttributeValue);
+                                if (certifiedAttributeValue.isValid(time)) { certificates.add(certifiedAttributeValue); }
                             }
                         }
                     }
@@ -370,7 +370,7 @@ public abstract class Method extends Handler {
                         final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
                         if (attributeValue != null && attributeValue.isCertified()) {
                             final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.toCertifiedAttributeValue();
-                            if (certifiedAttributeValue.isValid(time)) credentials.add(ClientCredential.getAttributeBased(role, certifiedAttributeValue, permissions));
+                            if (certifiedAttributeValue.isValid(time)) { credentials.add(ClientCredential.getAttributeBased(role, certifiedAttributeValue, permissions)); }
                         }
                     }
                     certificates = null;
@@ -389,18 +389,18 @@ public abstract class Method extends Handler {
                 }
             } else {
                 assert reference instanceof InternalMethod;
-                if (!(entity instanceof Role)) throw new PacketException(PacketErrorCode.INTERNAL, "The entity has to be a role in case of internal methods.");
+                if (!(entity instanceof Role)) { throw new PacketException(PacketErrorCode.INTERNAL, "The entity has to be a role in case of internal methods."); }
                 final @Nonnull Role role = (Role) entity;
                 final @Nonnull Agent agent = role.getAgent();
                 
                 final @Nonnull Restrictions restrictions = agent.getRestrictions();
-                for (@Nonnull Method method : methods) {
-                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictionsToExecuteMethod())) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the role do not cover the required restrictions.");
+                for (final @Nonnull Method method : methods) {
+                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictionsToExecuteMethod())) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the role do not cover the required restrictions."); }
                 }
                 
                 if (reference.getService().equals(CoreService.SERVICE)) {
                     if (role.isNative()) {
-                        if (!agent.getPermissions().cover(getRequiredPermissions(methods))) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The permissions of the client agent do not cover the required permissions.");
+                        if (!agent.getPermissions().cover(getRequiredPermissions(methods))) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The permissions of the client agent do not cover the required permissions."); }
                         return new ClientRequest(methods, subject, audit, role.toNativeRole().getAgent().getCommitment().addSecret(role.getClient().getSecret())).send();
                     } else {
                         final @Nonnull ClientCredential credential = ClientCredential.getRoleBased(role.toNonNativeRole(), getRequiredPermissions(methods));
@@ -479,8 +479,8 @@ public abstract class Method extends Handler {
     @NonCommitting
     public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nullable Method.Factory factory = converters.get(block.getType());
-        if (factory == null) throw new PacketException(PacketErrorCode.METHOD, "No method could be found for the type " + block.getType().getAddress() + ".");
-        else return factory.create(entity, signature, recipient, block);
+        if (factory == null) { throw new PacketException(PacketErrorCode.METHOD, "No method could be found for the type " + block.getType().getAddress() + "."); }
+        else { return factory.create(entity, signature, recipient, block); }
     }
     
     
@@ -493,7 +493,7 @@ public abstract class Method extends Handler {
      */
     @Pure
     public final @Nonnull Action toAction() throws InvalidEncodingException {
-        if (this instanceof Action) return (Action) this;
+        if (this instanceof Action) { return (Action) this; }
         throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an action.");
     }
     
@@ -506,7 +506,7 @@ public abstract class Method extends Handler {
      */
     @Pure
     public final @Nonnull InternalAction toInternalAction() throws InvalidEncodingException {
-        if (this instanceof InternalAction) return (InternalAction) this;
+        if (this instanceof InternalAction) { return (InternalAction) this; }
         throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an internal action.");
     }
     
@@ -519,7 +519,7 @@ public abstract class Method extends Handler {
      */
     @Pure
     public final @Nonnull ExternalAction toExternalAction() throws InvalidEncodingException {
-        if (this instanceof ExternalAction) return (ExternalAction) this;
+        if (this instanceof ExternalAction) { return (ExternalAction) this; }
         throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an external action.");
     }
     
@@ -532,7 +532,7 @@ public abstract class Method extends Handler {
      */
     @Pure
     public final @Nonnull Query toQuery() throws InvalidEncodingException {
-        if (this instanceof Query) return (Query) this;
+        if (this instanceof Query) { return (Query) this; }
         throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not a query.");
     }
     
@@ -545,7 +545,7 @@ public abstract class Method extends Handler {
      */
     @Pure
     public final @Nonnull InternalQuery toInternalQuery() throws InvalidEncodingException {
-        if (this instanceof InternalQuery) return (InternalQuery) this;
+        if (this instanceof InternalQuery) { return (InternalQuery) this; }
         throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an internal query.");
     }
     
@@ -558,7 +558,7 @@ public abstract class Method extends Handler {
      */
     @Pure
     public final @Nonnull ExternalQuery toExternalQuery() throws InvalidEncodingException {
-        if (this instanceof ExternalQuery) return (ExternalQuery) this;
+        if (this instanceof ExternalQuery) { return (ExternalQuery) this; }
         throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an external query.");
     }
     
@@ -567,7 +567,7 @@ public abstract class Method extends Handler {
     @Override
     public final @Nonnull String toString() {
         final @Nonnull StringBuilder string = new StringBuilder("\"").append(getClass().getSimpleName()).append(" to ").append(getSubject());
-        if (hasEntity()) string.append(" by ").append(getEntityNotNull().getIdentity().getAddress());
+        if (hasEntity()) { string.append(" by ").append(getEntityNotNull().getIdentity().getAddress()); }
         string.append(": ").append(getDescription()).append("\"");
         return string.toString();
     }

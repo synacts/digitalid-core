@@ -70,14 +70,14 @@ public abstract class HostTable extends HostTableImplementation<HostModule> {
     @Override
     @NonCommitting
     public final void createTables(@Nonnull Site site) throws AbortException {
-        if (site instanceof Host) createTables((Host) site);
+        if (site instanceof Host) { createTables((Host) site); }
     }
     
     @Locked
     @Override
     @NonCommitting
     public final void deleteTables(@Nonnull Site site) throws AbortException {
-        if (site instanceof Host) deleteTables((Host) site);
+        if (site instanceof Host) { deleteTables((Host) site); }
     }
     
 }

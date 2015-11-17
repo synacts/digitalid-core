@@ -117,7 +117,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         this.newTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
         this.oldValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
         this.newValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
-        if (newValue.equals(oldValue)) throw new InvalidEncodingException("The old and new value may not be equal.");
+        if (newValue.equals(oldValue)) { throw new InvalidEncodingException("The old and new value may not be equal."); }
     }
     
     /* -------------------------------------------------- Methods -------------------------------------------------- */
@@ -177,8 +177,8 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     @Pure
     @Override
     public boolean equals(Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof NonNullableConceptPropertyInternalAction)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof NonNullableConceptPropertyInternalAction)) { return false; }
         final @Nonnull NonNullableConceptPropertyInternalAction<?, ?, ?> other = (NonNullableConceptPropertyInternalAction) object;
         return other.property.equals(this.property) && 
                other.oldValue.equals(this.oldValue) && 
@@ -238,7 +238,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
                 final Time newTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
                 final V oldValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
                 final V newValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
-                if (newValue.equals(oldValue)) throw new InvalidEncodingException("The old and new value may not be equal.");
+                if (newValue.equals(oldValue)) { throw new InvalidEncodingException("The old and new value may not be equal."); }
                 // TODO: call other constructor. This constructor is reserved for clients that do not have or need a signature. For methods executed on the host, the signature must be stored.
                 return new NonNullableConceptPropertyInternalAction<V, C, E>(setup, property, oldTime, newTime, oldValue, newValue);
             } catch (AbortException | PacketException | ExternalException | NetworkException exception) {

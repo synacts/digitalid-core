@@ -52,7 +52,7 @@ public abstract class ActionReply extends Reply implements Auditable {
     protected ActionReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
         super(entity, signature, number);
         
-        if (!hasEntity()) throw new InvalidEncodingException("An action reply must have an entity.");
+        if (!hasEntity()) { throw new InvalidEncodingException("An action reply must have an entity."); }
     }
     
     

@@ -76,8 +76,8 @@ public final class Synchronizer extends Thread {
      */
     static boolean isSuspended(@Nonnull Role role, @Nonnull Service service) {
         final @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
-        if (set != null) return set.contains(service);
-        else return false;
+        if (set != null) { return set.contains(service); }
+        else { return false; }
     }
     
     /**
@@ -92,10 +92,10 @@ public final class Synchronizer extends Thread {
      */
     static boolean suspend(@Nonnull Role role, @Nonnull Service service) {
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
-        if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
+        if (set == null) { set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>()); }
         final boolean result = set.add(service);
-        if (result) Log.debugging("The " + service.getName() + " of " + role.getIdentity().getAddress() + " is suspended.");
-        else Log.debugging("The " + service.getName() + " of " + role.getIdentity().getAddress() + " was suspended by another thread.");
+        if (result) { Log.debugging("The " + service.getName() + " of " + role.getIdentity().getAddress() + " is suspended."); }
+        else { Log.debugging("The " + service.getName() + " of " + role.getIdentity().getAddress() + " was suspended by another thread."); }
         return result;
     }
     
@@ -114,7 +114,7 @@ public final class Synchronizer extends Thread {
         
         Log.debugging("The " + service.getName() + " of " + role.getIdentity().getAddress() + " is resumed.");
         final @Nonnull ConcurrentSet<Service> set = suspendedServices.get(role);
-        if (!set.remove(service)) Log.error("The " + service.getName() + " of " + role.getIdentity().getAddress() + " was resumed by another thread.");
+        if (!set.remove(service)) { Log.error("The " + service.getName() + " of " + role.getIdentity().getAddress() + " was resumed by another thread."); }
         synchronized (set) { set.notifyAll(); }
     }
     
@@ -133,20 +133,20 @@ public final class Synchronizer extends Thread {
         assert isSuspended(role, service) : "The service is suspended.";
         
         @Nonnull Time lastTime = SynchronizerModule.getLastTime(role, service); // Read from the database in order to synchronize with other processes.
-        if (module.equals(service)) lastTime = Time.MAX;
+        if (module.equals(service)) { lastTime = Time.MAX; }
         Log.debugging("Send a state query for the " + module.getClass().getSimpleName() + " of " + role.getIdentity().getAddress() + " with a request audit from " + lastTime.asDate() + ".");
         final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(new StateQuery(role, module)).freeze(), new RequestAudit(lastTime));
         final @Nonnull StateReply reply = response.getReplyNotNull(0);
         Log.debugging("Update the state of the " + module.getClass().getSimpleName() + " of " + role.getIdentity().getAddress() + ".");
         reply.updateState();
         
-        if (module.equals(service)) SynchronizerModule.setLastTime(role, service, response.getAuditNotNull().getThisTime());
+        if (module.equals(service)) { SynchronizerModule.setLastTime(role, service, response.getAuditNotNull().getThisTime()); }
         final @Nullable InternalAction lastAction = SynchronizerModule.pendingActions.peekLast();
         Database.commit();
         
         final @Nonnull ReadOnlySet<StateModule> modules = new FreezableHashSet<>(module).freeze();
         SynchronizerModule.redoPendingActions(role, module.equals(service) ? service.getBothModules() : modules, lastAction);
-        if (!module.equals(service)) response.getAuditNotNull().execute(role, service, response.getRequest().getRecipient(), ResponseAudit.emptyMethodList, modules);
+        if (!module.equals(service)) { response.getAuditNotNull().execute(role, service, response.getRequest().getRecipient(), ResponseAudit.emptyMethodList, modules); }
     }
     
     /**
@@ -162,7 +162,7 @@ public final class Synchronizer extends Thread {
         assert !Database.isLocked() : "The database is not locked.";
         
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
-        if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
+        if (set == null) { set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>()); }
         final @Nonnull Service service = module.getService();
         Log.debugging("Wait for the suspension of the " + service.getName() + " of " + role.getIdentity().getAddress() + " to reload the " + module.getClass().getSimpleName() + ".");
         synchronized (set) { while (!set.add(service)) set.wait(); }
@@ -208,7 +208,7 @@ public final class Synchronizer extends Thread {
             }
         } else {
             @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
-            if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
+            if (set == null) { set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>()); }
             Log.debugging("Wait for the resumption of the " + service.getName() + " of " + role.getIdentity().getAddress() + ".");
             synchronized (set) { while (set.contains(service)) set.wait(); }
         }

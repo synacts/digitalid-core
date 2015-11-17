@@ -75,7 +75,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
     @Override
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(size());
-        for (final @Nonnull Contact contact : this) elements.add(contact.toBlock());
+        for (final @Nonnull Contact contact : this) { elements.add(contact.toBlock()); }
         return new ListWrapper(TYPE, elements.freeze()).toBlock();
     }
     
@@ -92,7 +92,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
-        for (final @Nonnull Block element : elements) add(Contact.get(entity, element));
+        for (final @Nonnull Block element : elements) { add(Contact.get(entity, element)); }
     }
     
     /* -------------------------------------------------- Freezable -------------------------------------------------- */
@@ -146,7 +146,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
     @NonCommitting
     public static @Capturable @Nonnull @NonFrozen FreezableContacts get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
         final @Nonnull FreezableContacts contacts = new FreezableContacts();
-        while (resultSet.next()) contacts.add(Contact.getNotNull(entity, resultSet, columnIndex));
+        while (resultSet.next()) { contacts.add(Contact.getNotNull(entity, resultSet, columnIndex)); }
         return contacts;
      }
     

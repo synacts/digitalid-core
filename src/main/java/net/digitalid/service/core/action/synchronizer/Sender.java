@@ -8,7 +8,6 @@ import java.util.concurrent.FutureTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.concepts.error.ErrorModule;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -17,6 +16,7 @@ import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.packet.ClientRequest;
 import net.digitalid.service.core.packet.Response;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
@@ -52,7 +52,7 @@ public final class Sender extends Thread {
      */
     Sender(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<Method> methods) {
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
-        for (final @Nonnull Method method : methods) assert method instanceof InternalAction : "The methods are internal actions.";
+        for (final @Nonnull Method method : methods) { assert method instanceof InternalAction : "The methods are internal actions."; }
         
         this.methods = methods;
     }
@@ -72,7 +72,7 @@ public final class Sender extends Thread {
             try {
                 Database.lock();
                 requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
-                if (Database.isSingleAccess()) Database.commit();
+                if (Database.isSingleAccess()) { Database.commit(); }
             } finally {
                 Database.unlock();
             }
@@ -89,7 +89,7 @@ public final class Sender extends Thread {
                     } catch (@Nonnull SQLException | PacketException | ExternalException exception) {
                         Log.warning("Could not send the methods " + methods + ".", exception);
                         Database.rollback();
-                        for (final @Nonnull Method method : methods) ErrorModule.add("Could not send", (InternalAction) method);
+                        for (final @Nonnull Method method : methods) { ErrorModule.add("Could not send", (InternalAction) method); }
                         Database.commit();
                         return;
                     }

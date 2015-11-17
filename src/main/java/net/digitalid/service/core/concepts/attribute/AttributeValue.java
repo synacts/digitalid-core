@@ -88,8 +88,8 @@ public abstract class AttributeValue implements Blockable, SQLizable {
         final @Nonnull Block content = new SelfcontainedWrapper(signature.getNonNullableElement()).getElement();
         content.getType().checkIsAttributeType();
         
-        if (signature.isSigned()) return new CertifiedAttributeValue(content, signature);
-        else return new UncertifiedAttributeValue(content, signature);
+        if (signature.isSigned()) { return new CertifiedAttributeValue(content, signature); }
+        else { return new UncertifiedAttributeValue(content, signature); }
     }
     
     @Pure
@@ -151,7 +151,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      */
     @Pure
     public final @Nonnull AttributeValue checkMatches(@Nonnull Attribute attribute) throws InvalidEncodingException {
-        if (!matches(attribute)) throw new InvalidEncodingException("This value does not match the given attribute.");
+        if (!matches(attribute)) { throw new InvalidEncodingException("This value does not match the given attribute."); }
         return this;
     }
     
@@ -170,7 +170,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
     public final @Nonnull AttributeValue checkContentType(@Nonnull SemanticType type) throws InvalidEncodingException {
         assert type.isAttributeType() : "The type is an attribute type.";
         
-        if (!content.getType().equals(type)) throw new InvalidEncodingException("The content of this value does not match the given type.");
+        if (!content.getType().equals(type)) { throw new InvalidEncodingException("The content of this value does not match the given type."); }
         return this;
     }
     
@@ -258,7 +258,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      */
     @Pure
     public final @Nonnull CertifiedAttributeValue toCertifiedAttributeValue() throws InvalidEncodingException {
-        if (this instanceof CertifiedAttributeValue) return (CertifiedAttributeValue) this;
+        if (this instanceof CertifiedAttributeValue) { return (CertifiedAttributeValue) this; }
         throw new InvalidEncodingException("This attribute value cannot be cast to CertifiedAttributeValue.");
     }
     
@@ -271,7 +271,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      */
     @Pure
     public final @Nonnull UncertifiedAttributeValue toUncertifiedAttributeValue() throws InvalidEncodingException {
-        if (this instanceof UncertifiedAttributeValue) return (UncertifiedAttributeValue) this;
+        if (this instanceof UncertifiedAttributeValue) { return (UncertifiedAttributeValue) this; }
         throw new InvalidEncodingException("This attribute value cannot be cast to UncertifiedAttributeValue.");
     }
     
@@ -279,8 +279,8 @@ public abstract class AttributeValue implements Blockable, SQLizable {
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
-        if (object == this) return true;
-        if (object == null || !(object instanceof AttributeValue)) return false;
+        if (object == this) { return true; }
+        if (object == null || !(object instanceof AttributeValue)) { return false; }
         final @Nonnull AttributeValue other = (AttributeValue) object;
         return this.toBlock().equals(other.toBlock());
     }
