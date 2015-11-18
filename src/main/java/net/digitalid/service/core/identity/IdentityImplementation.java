@@ -16,40 +16,40 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
  * @see NonHostIdentity
  */
 @Immutable
-public abstract class IdentityImplementation implements Identity {
+abstract class IdentityImplementation implements Identity {
     
-    /* -------------------------------------------------- Database ID -------------------------------------------------- */
+    /* -------------------------------------------------- Key -------------------------------------------------- */
     
     /**
-     * Stores the database ID that represents and indexes this identity.
-     * The database ID remains the same after relocation but changes after merging.
+     * Stores the number that represents and indexes this identity.
+     * The key remains the same after relocation but changes after merging.
      */
-    private volatile long databaseID;
+    private volatile long key;
     
     @Pure
     @Override
-    public final long getDatabaseID() {
-        return databaseID;
+    public final long getKey() {
+        return key;
     }
     
     /**
-     * Sets the database ID that represents this identity.
+     * Sets the number that represents this identity.
      * 
-     * @param databaseID the new database ID of this identity.
+     * @param key the new key of this identity.
      */
-    public final void setDatabaseID(long databaseID) {
-        this.databaseID = databaseID;
+    final void setKey(long key) {
+        this.key = key;
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new identity with the given database ID.
+     * Creates a new identity with the given key.
      * 
-     * @param databaseID the database ID that represents this identity.
+     * @param key the number that represents this identity.
      */
-    IdentityImplementation(long databaseID) {
-        this.databaseID = databaseID;
+    IdentityImplementation(long key) {
+        this.key = key;
     }
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
@@ -60,19 +60,19 @@ public abstract class IdentityImplementation implements Identity {
         if (object == this) { return true; }
         if (object == null || !(object instanceof IdentityImplementation)) { return false; }
         final @Nonnull IdentityImplementation other = (IdentityImplementation) object;
-        return this.databaseID == other.databaseID;
+        return this.key == other.key;
     }
     
     @Pure
     @Override
     public final int hashCode() {
-        return (int) (databaseID ^ (databaseID >>> 32));
+        return (int) (key ^ (key >>> 32));
     }
     
     @Pure
     @Override
     public final @Nonnull String toString() {
-        return String.valueOf(databaseID);
+        return String.valueOf(key);
     }
     
     /* -------------------------------------------------- Casting to Internal vs. External Identity -------------------------------------------------- */

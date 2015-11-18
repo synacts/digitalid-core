@@ -9,15 +9,17 @@ import net.digitalid.utility.annotations.state.Immutable;
  * @see Person
  */
 @Immutable
-public abstract class NonHostIdentityImplementation extends IdentityImplementation implements NonHostIdentity {
+abstract class NonHostIdentityImplementation extends IdentityImplementation implements NonHostIdentity {
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new non-host identity with the given number.
+     * Creates a new non-host identity with the given key.
      * 
-     * @param number the number that represents this identity.
+     * @param key the number that represents this identity.
      */
-    NonHostIdentityImplementation(long number) {
-        super(number);
+    NonHostIdentityImplementation(long key) {
+        super(key);
     }
     
 }

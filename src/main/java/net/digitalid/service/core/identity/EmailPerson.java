@@ -21,23 +21,16 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public final class EmailPerson extends ExternalPerson {
     
-    /* -------------------------------------------------- Type -------------------------------------------------- */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Stores the semantic type {@code email.person@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("email.person@core.digitalid.net").load(ExternalPerson.IDENTIFIER);
-    
-    /* -------------------------------------------------- COnstructor -------------------------------------------------- */
-    
-    /**
-     * Creates a new email person with the given number and address.
+     * Creates a new email person with the given key and address.
      * 
-     * @param number the number that represents this identity.
+     * @param key the number that represents this identity.
      * @param address the address of this email person.
      */
-    EmailPerson(long number, @Nonnull EmailIdentifier address) {
-        super(number, address);
+    EmailPerson(long key, @Nonnull EmailIdentifier address) {
+        super(key, address);
     }
     
     /* -------------------------------------------------- Category -------------------------------------------------- */
@@ -61,17 +54,31 @@ public final class EmailPerson extends ExternalPerson {
         }
     };
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code email.person@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("email.person@core.digitalid.net").load(ExternalPerson.IDENTIFIER);
     
     /**
      * Stores the XDF converter of this class.
      */
     public static final @Nonnull AbstractXDFConverter<EmailPerson, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
     
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull Identity.Declaration DECLARATION = new Identity.Declaration("email_person", true);
+    
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<EmailPerson, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter("email_person")); // TODO: Add GeneralReference.get("REFERENCES general_identity (identity) ON DELETE RESTRICT ON UPDATE RESTRICT")
+    public static final @Nonnull AbstractSQLConverter<EmailPerson, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

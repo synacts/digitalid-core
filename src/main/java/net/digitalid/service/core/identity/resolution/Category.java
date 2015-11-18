@@ -18,6 +18,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -100,6 +101,12 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     @Pure
     public @Validated byte getValue() {
         return value;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return String.valueOf(value);
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
@@ -198,7 +205,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     /**
      * Stores the key converter of this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<Category, Object, Byte> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Category, Object, Byte>() {
+    private static final @Nonnull AbstractNonRequestingKeyConverter<Category, Object, Byte, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Category, Object, Byte, Object>() {
         
         @Pure
         @Override
@@ -241,20 +248,19 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("category", Int8Wrapper.SQL_TYPE);
+    
+    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Category, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int8Wrapper.getValueSQLConverter("category"));
+    public static final @Nonnull AbstractSQLConverter<Category, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int8Wrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
     public @Nonnull AbstractSQLConverter<Category, Object> getSQLConverter() {
         return SQL_CONVERTER;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull String toString() {
-        return String.valueOf(value);
     }
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */

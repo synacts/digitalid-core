@@ -3,12 +3,22 @@ package net.digitalid.service.core.identity;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.key.Caster;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.identity.resolution.Successor;
 import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class models a person.
@@ -21,21 +31,18 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public abstract class Person extends NonHostIdentityImplementation {
     
-    /**
-     * Stores the semantic type {@code person@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("person@core.digitalid.net").load(NonHostIdentity.IDENTIFIER);
-    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new person with the given internal number.
+     * Creates a new person with the given key.
      * 
-     * @param number the number that represents this identity.
+     * @param key the number that represents this identity.
      */
-    Person(long number) {
-        super(number);
+    Person(long key) {
+        super(key);
     }
     
+    /* -------------------------------------------------- Address -------------------------------------------------- */
     
     /**
      * Sets the address of this person.
@@ -44,6 +51,8 @@ public abstract class Person extends NonHostIdentityImplementation {
      */
     public abstract void setAddress(@Nonnull Mapper.Key key, @Nonnull InternalNonHostIdentifier address);
     
+    /* -------------------------------------------------- Merging -------------------------------------------------- */
+    
     @Override
     @NonCommitting
     public final boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException {
@@ -51,12 +60,56 @@ public abstract class Person extends NonHostIdentityImplementation {
         if (successor != null && successor.isMapped()) {
             final @Nonnull InternalNonHostIdentity person = successor.getMappedIdentity();
             setAddress(person.getAddress());
-            setDatabaseID(person.getDatabaseID());
+            setKey(person.getKey());
             return true;
         } else {
             Mapper.unmap(this);
             throw exception;
         }
     }
+    
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
+    
+    /**
+     * Stores the caster that casts identities to this subclass.
+     */
+    public static final @Nonnull Caster<Identity, Person> CASTER = new Caster<Identity, Person>() {
+        @Pure
+        @Override
+        protected @Nonnull Person cast(@Nonnull Identity identity) throws InvalidEncodingException {
+            return identity.toPerson();
+        }
+    };
+    
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code person@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("person@core.digitalid.net").load(NonHostIdentity.IDENTIFIER);
+    
+    /**
+     * Stores the XDF converter of this class.
+     */
+    public static final @Nonnull AbstractXDFConverter<Person, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
+    
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull Identity.Declaration DECLARATION = new Identity.Declaration("person", true);
+    
+    /**
+     * Stores the SQL converter of this class.
+     */
+    public static final @Nonnull AbstractSQLConverter<Person, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    /**
+     * Stores the converters of this class.
+     */
+    public static final @Nonnull Converters<Person, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

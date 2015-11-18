@@ -21,23 +21,16 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 @Immutable
 public final class ArtificialPerson extends InternalPerson {
     
-    /* -------------------------------------------------- Type -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code artificial.person@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("artificial.person@core.digitalid.net").load(InternalPerson.IDENTIFIER);
-    
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new artificial person with the given number and address.
+     * Creates a new artificial person with the given key and address.
      * 
-     * @param number the number that represents this identity.
+     * @param key the number that represents this identity.
      * @param address the current address of this identity.
      */
-    ArtificialPerson(long number, @Nonnull InternalNonHostIdentifier address) {
-        super(number, address);
+    ArtificialPerson(long key, @Nonnull InternalNonHostIdentifier address) {
+        super(key, address);
     }
     
     /* -------------------------------------------------- Category -------------------------------------------------- */
@@ -61,17 +54,31 @@ public final class ArtificialPerson extends InternalPerson {
         }
     };
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code artificial.person@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("artificial.person@core.digitalid.net").load(InternalPerson.IDENTIFIER);
     
     /**
      * Stores the XDF converter of this class.
      */
     public static final @Nonnull AbstractXDFConverter<ArtificialPerson, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
     
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull Identity.Declaration DECLARATION = new Identity.Declaration("artificial_person", true);
+    
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<ArtificialPerson, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter("artificial_person")); // TODO: Add GeneralReference.get("REFERENCES general_identity (identity) ON DELETE RESTRICT ON UPDATE RESTRICT")
+    public static final @Nonnull AbstractSQLConverter<ArtificialPerson, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

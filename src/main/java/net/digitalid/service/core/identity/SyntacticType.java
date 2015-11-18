@@ -1,31 +1,45 @@
 package net.digitalid.service.core.identity;
 
-import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.service.core.identity.resolution.Category;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.key.Caster;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.identity.annotations.LoadedRecipient;
 import net.digitalid.service.core.identity.annotations.NonLoaded;
 import net.digitalid.service.core.identity.annotations.NonLoadedRecipient;
+import net.digitalid.service.core.identity.resolution.Category;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class models a syntactic type.
  */
 @Immutable
 public final class SyntacticType extends Type {
+    
+    /* -------------------------------------------------- Semantic Type Hacks -------------------------------------------------- */
+    
+    // TODO: Document the reason for these hacks more precisely.
     
     /**
      * Stores the semantic type {@code @core.digitalid.net}.
@@ -45,17 +59,7 @@ public final class SyntacticType extends Type {
      */
     static final @Nonnull SemanticType TYPE_IDENTIFIER = SemanticType.map("type@core.digitalid.net").load(NONHOST_IDENTIFIER);
     
-    /**
-     * Stores the semantic type {@code syntactic.type@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("syntactic.type@core.digitalid.net").load(TYPE_IDENTIFIER);
-    
-    
-    /**
-     * Stores the semantic type {@code parameters.syntactic.type@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.syntactic.type@core.digitalid.net").load(new Category[] {Category.SYNTACTIC_TYPE}, Time.TROPICAL_YEAR, Int8Wrapper.XDF_TYPE);
-    
+    /* -------------------------------------------------- Number of Parameters -------------------------------------------------- */
     
     /**
      * Stores the number of generic parameters of this syntactic type.
@@ -64,6 +68,24 @@ public final class SyntacticType extends Type {
      * @invariant !isLoaded() || numberOfParameters >= -1 : "The number of parameters is at least -1.";
      */
     private byte numberOfParameters;
+    
+    /**
+     * Returns the number of generic parameters of this syntactic type.
+     * A value of -1 indicates a variable number of parameters.
+     * 
+     * @return the number of generic parameters of this syntactic type.
+     * 
+     * @ensure numberOfParameters >= -1 : "The number of parameters is at least -1.";
+     */
+    @Pure
+    @LoadedRecipient
+    public byte getNumberOfParameters() {
+        assert isLoaded() : "The type declaration is already loaded.";
+        
+        return numberOfParameters;
+    }
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new identity with the given number and address.
@@ -87,13 +109,19 @@ public final class SyntacticType extends Type {
         return Mapper.mapSyntacticType(new InternalNonHostIdentifier(identifier));
     }
     
+    /* -------------------------------------------------- Loading -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code parameters.syntactic.type@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.syntactic.type@core.digitalid.net").load(new Category[] {Category.SYNTACTIC_TYPE}, Time.TROPICAL_YEAR, Int8Wrapper.XDF_TYPE);
     
     @Override
     @NonCommitting
     void load() throws AbortException, PacketException, ExternalException, NetworkException {
         assert !isLoaded() : "The type declaration is not loaded.";
         
-        this.numberOfParameters = new Int8Wrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getValue();
+        this.numberOfParameters = Int8Wrapper.decode(Cache.getStaleAttributeContent(this, null, PARAMETERS));
         if (numberOfParameters < -1) { throw new InvalidEncodingException("The number of parameters has to be at least -1."); }
         setLoaded();
     }
@@ -121,6 +149,7 @@ public final class SyntacticType extends Type {
         return this;
     }
     
+    /* -------------------------------------------------- Category -------------------------------------------------- */
     
     @Pure
     @Override
@@ -128,21 +157,48 @@ public final class SyntacticType extends Type {
         return Category.SYNTACTIC_TYPE;
     }
     
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
     
     /**
-     * Returns the number of generic parameters of this syntactic type.
-     * A value of -1 indicates a variable number of parameters.
-     * 
-     * @return the number of generic parameters of this syntactic type.
-     * 
-     * @ensure numberOfParameters >= -1 : "The number of parameters is at least -1.";
+     * Stores the caster that casts identities to this subclass.
      */
-    @Pure
-    @LoadedRecipient
-    public byte getNumberOfParameters() {
-        assert isLoaded() : "The type declaration is already loaded.";
-        
-        return numberOfParameters;
-    }
+    public static final @Nonnull Caster<Identity, SyntacticType> CASTER = new Caster<Identity, SyntacticType>() {
+        @Pure
+        @Override
+        protected @Nonnull SyntacticType cast(@Nonnull Identity identity) throws InvalidEncodingException {
+            return identity.toSyntacticType();
+        }
+    };
+    
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code syntactic.type@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("syntactic.type@core.digitalid.net").load(TYPE_IDENTIFIER);
+    
+    /**
+     * Stores the XDF converter of this class.
+     */
+    public static final @Nonnull AbstractXDFConverter<SyntacticType, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
+    
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull Identity.Declaration DECLARATION = new Identity.Declaration("syntactic_type", false);
+    
+    /**
+     * Stores the SQL converter of this class.
+     */
+    public static final @Nonnull AbstractSQLConverter<SyntacticType, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    /**
+     * Stores the converters of this class.
+     */
+    public static final @Nonnull Converters<SyntacticType, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

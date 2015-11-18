@@ -236,7 +236,7 @@ public final class Mapper {
      * @param identity the identity which is to be removed.
      */
     public static void unmap(@Nonnull Identity identity) {
-        numbers.remove(identity.getDatabaseID());
+        numbers.remove(identity.getKey());
         identifiers.remove(identity.getAddress());
         Log.debugging("The identity of " + identity.getAddress() + " was unmapped.");
     }
@@ -334,8 +334,9 @@ public final class Mapper {
                 }
                 
                 identifiers.put(identifier, identity);
-                if (!address.equals(identifier))
+                if (!address.equals(identifier)) {
                     identifiers.put(address, identity);
+                }
                 
                 return true;
             } else {
@@ -437,7 +438,7 @@ public final class Mapper {
         
         try {
             final @Nonnull SyntacticType type = mapIdentity(identifier, Category.SYNTACTIC_TYPE, null).toSyntacticType();
-            numbers.put(type.getDatabaseID(), type);
+            numbers.put(type.getKey(), type);
             identifiers.put(identifier, type);
             return type;
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
@@ -458,7 +459,7 @@ public final class Mapper {
         
         try {
             final @Nonnull SemanticType type = mapIdentity(identifier, Category.SEMANTIC_TYPE, null).toSemanticType();
-            numbers.put(type.getDatabaseID(), type);
+            numbers.put(type.getKey(), type);
             identifiers.put(identifier, type);
             return type;
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
@@ -490,10 +491,10 @@ public final class Mapper {
     @Locked
     @NonCommitting
     public static void mergeIdentities(@Nonnull ReadOnlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws AbortException {
-        final long newNumber = newIdentity.getDatabaseID();
+        final long newNumber = newIdentity.getKey();
         try (@Nonnull Statement statement = Database.createStatement()) {
             for (final @Nonnull NonHostIdentity identity : identities) {
-                final long oldNumber = identity.getDatabaseID();
+                final long oldNumber = identity.getKey();
                 if (oldNumber != newNumber) {
                     updateReferences(statement, oldNumber, newNumber);
                     statement.executeUpdate("UPDATE general_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);

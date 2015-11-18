@@ -263,7 +263,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     @Override
     @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
-        preparedStatement.setLong(parameterIndex, person.getDatabaseID());
+        preparedStatement.setLong(parameterIndex, person.getKey());
     }
     
     /**

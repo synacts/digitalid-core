@@ -59,7 +59,7 @@ public abstract class Account extends EntityImplementation {
     @Pure
     @Override
     public final long getNumber() {
-        return getIdentity().getDatabaseID();
+        return getIdentity().getKey();
     }
     
     

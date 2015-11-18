@@ -44,22 +44,22 @@ import net.digitalid.utility.database.table.Table;
 @Immutable
 public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     
-    /* -------------------------------------------------- Database ID -------------------------------------------------- */
+    /* -------------------------------------------------- Key -------------------------------------------------- */
     
     /**
-     * Returns the database ID of this identity.
+     * Returns the number that represents this identity
      * 
-     * @return the database ID of this identity.
+     * @return the number that represents this identity
      */
     @Pure
-    public long getDatabaseID();
+    public long getKey();
     
     /* -------------------------------------------------- Address -------------------------------------------------- */
     
     /**
-     * Returns the address of this identity.
+     * Returns the current address of this identity.
      * 
-     * @return the address of this identity.
+     * @return the current address of this identity.
      */
     @Pure
     public @Nonnull Identifier getAddress();
@@ -276,7 +276,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     }
     
     /**
-     * This class allows to convert an identity to its database ID and recover it again by downcasting the identity returned by the overridden method with the given caster.
+     * This class allows to convert an identity to its key and recover it again by downcasting the identity returned by the overridden method with the given caster.
      */
     @Immutable
     public static final class LongConverter<I extends Identity> extends CastingNonRequestingKeyConverter<I, Object, Long, Object, Identity> {
@@ -293,14 +293,14 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
         @Pure
         @Override
         public @Nonnull Long convert(@Nonnull I identity) {
-            return identity.getDatabaseID();
+            return identity.getKey();
         }
         
         @Pure
         @Override
-        public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Long databaseID) throws InvalidEncodingException {
+        public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Long key) throws InvalidEncodingException {
             try {
-                return Mapper.getIdentity(databaseID);
+                return Mapper.getIdentity(key);
             } catch (@Nonnull AbortException exception) {
                 throw new InvalidEncodingException(exception);
             }

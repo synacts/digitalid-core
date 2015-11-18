@@ -29,7 +29,7 @@ import net.digitalid.utility.database.declaration.ColumnDeclaration;
 @Immutable
 public final class HostIdentifier extends InternalIdentifier {
     
-    /* -------------------------------------------------- Identifier -------------------------------------------------- */
+    /* -------------------------------------------------- Digital ID Host Identifier -------------------------------------------------- */
     
     /**
      * Stores the host identifier {@code core.digitalid.net}.
