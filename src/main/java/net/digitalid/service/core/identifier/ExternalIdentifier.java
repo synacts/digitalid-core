@@ -22,6 +22,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -142,6 +143,11 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = Identifier.DECLARATION.renamedAs("external_identifier");
+    
+    /**
      * Stores the key converter of this class.
      */
     public static final @Nonnull Identifier.StringConverter<ExternalIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
@@ -154,7 +160,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<ExternalIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("external_identifier"));
+    public static final @Nonnull AbstractSQLConverter<ExternalIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter(DECLARATION));
     
     /**
      * Stores the converters of this class.

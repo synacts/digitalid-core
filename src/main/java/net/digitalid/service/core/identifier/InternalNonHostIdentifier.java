@@ -22,6 +22,7 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This class models internal non-host identifiers.
@@ -131,6 +132,11 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = Identifier.DECLARATION.renamedAs("internal_non_host_identifier");
+    
+    /**
      * Stores the key converter of this class.
      */
     public static final @Nonnull Identifier.StringConverter<InternalNonHostIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
@@ -143,7 +149,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<InternalNonHostIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("internal_non_host_identifier"));
+    public static final @Nonnull AbstractSQLConverter<InternalNonHostIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter(DECLARATION));
     
     /**
      * Stores the converters of this class.

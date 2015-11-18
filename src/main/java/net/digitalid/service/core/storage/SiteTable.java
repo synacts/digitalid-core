@@ -5,14 +5,18 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.declaration.Declaration;
+import net.digitalid.utility.database.site.Site;
 
 /**
  * This class models a database table that contains part of an {@link Entity entity's} state.
  */
 @Immutable
 public abstract class SiteTable extends SiteTableImplementation<SiteModule> {
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new site table with the given parameters.
@@ -27,6 +31,14 @@ public abstract class SiteTable extends SiteTableImplementation<SiteModule> {
         super(module, name, declaration, dumpType, stateType);
         
         module.registerSiteStorage(this);
+    }
+    
+    /* -------------------------------------------------- Tables -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    protected final boolean isTableFor(@Nonnull Site site) {
+        return true;
     }
     
 }

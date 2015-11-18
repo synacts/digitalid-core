@@ -73,9 +73,7 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
      * @return whether this table is for the given site.
      */
     @Pure
-    protected boolean isTableFor(@Nonnull Site site) {
-        return true;
-    }
+    protected abstract boolean isTableFor(@Nonnull Site site);
     
     @Locked
     @Override

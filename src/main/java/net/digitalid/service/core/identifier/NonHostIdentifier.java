@@ -17,6 +17,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This interface models non-host identifiers.
@@ -55,6 +56,11 @@ public interface NonHostIdentifier extends Identifier {
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = Identifier.DECLARATION.renamedAs("non_host_identifier");
+    
+    /**
      * Stores the key converter of this class.
      */
     public static final @Nonnull Identifier.StringConverter<NonHostIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
@@ -67,7 +73,7 @@ public interface NonHostIdentifier extends Identifier {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<NonHostIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("non_host_identifier"));
+    public static final @Nonnull AbstractSQLConverter<NonHostIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter(DECLARATION));
     
     /**
      * Stores the converters of this class.

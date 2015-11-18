@@ -21,6 +21,7 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This class models host identifiers.
@@ -134,6 +135,11 @@ public final class HostIdentifier extends InternalIdentifier {
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = Identifier.DECLARATION.renamedAs("host_identifier");
+    
+    /**
      * Stores the key converter of this class.
      */
     public static final @Nonnull Identifier.StringConverter<HostIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
@@ -146,7 +152,7 @@ public final class HostIdentifier extends InternalIdentifier {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<HostIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("host_identifier"));
+    public static final @Nonnull AbstractSQLConverter<HostIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter(DECLARATION));
     
     /**
      * Stores the converters of this class.

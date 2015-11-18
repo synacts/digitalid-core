@@ -22,6 +22,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This class models mobile identifiers.
@@ -106,6 +107,11 @@ public final class MobileIdentifier extends ExternalIdentifier {
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = Identifier.DECLARATION.renamedAs("mobile_identifier");
+    
+    /**
      * Stores the key converter of this class.
      */
     public static final @Nonnull Identifier.StringConverter<MobileIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
@@ -118,7 +124,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<MobileIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("mobile_identifier"));
+    public static final @Nonnull AbstractSQLConverter<MobileIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter(DECLARATION));
     
     /**
      * Stores the converters of this class.
