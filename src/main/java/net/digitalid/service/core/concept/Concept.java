@@ -4,12 +4,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.concept.property.ConceptPropertyTable;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -33,7 +33,7 @@ import net.digitalid.utility.database.converter.SQL;
  *            (The type has to be a supertype of {@link NonHostEntity}, which cannot be declared in Java, unfortunately!)
  * @param <K> the type of the key which identifies an instance among all instances of a concept at the same entity.
  */
-public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K> implements XDF<C, E>, SQL<C, E> {
+public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> implements XDF<C, E>, SQL<C, E> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
@@ -220,7 +220,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
      * The factory for concepts.
      */
     @Immutable
-    protected static abstract class Factory<C extends Concept<C, E, K>, E extends Entity<E>, K> {
+    protected static abstract class Factory<C extends Concept<C, E, K>, E extends Entity, K> {
         
         /**
          * Returns a new instance of the generic concept class.

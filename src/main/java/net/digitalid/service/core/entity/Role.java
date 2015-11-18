@@ -10,21 +10,24 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.AgentModule;
 import net.digitalid.service.core.cryptography.credential.ClientCredential;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.client.Client;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.elements.UniqueElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -39,13 +42,7 @@ import net.digitalid.utility.database.configuration.Database;
  * @see NonNativeRole
  */
 @Immutable
-public abstract class Role extends EntityImplementation implements NonHostEntity, Observer {
-    
-    /**
-     * Stores the aspect of a new role being added to the observed role.
-     */
-    public static final @Nonnull Aspect ADDED = new Aspect(Role.class, "added");
-    
+public abstract class Role extends EntityImplementation implements NonHostEntity {
     
     /**
      * Stores the semantic type {@code issuer.role@core.digitalid.net}.
@@ -184,7 +181,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     
     @Pure
     @Override
-    public final long getNumber() {
+    public final long getKey() {
         return number;
     }
     
@@ -354,15 +351,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
         return RoleModule.load(client, resultSet.getLong(columnIndex));
     }
     
-    
-    @Pure
-    @Override
-    public final int hashCode() {
-        int hash = 7;
-        hash = 41 * hash + client.hashCode();
-        hash = 41 * hash + (int) (number ^ (number >>> 32));
-        return hash;
-    }
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
@@ -371,6 +360,15 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
         if (object == null || !(object instanceof Role)) { return false; }
         final @Nonnull Role other = (Role) object;
         return this.client.equals(other.client) && this.number == other.number;
+    }
+    
+    @Pure
+    @Override
+    public final int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + client.hashCode();
+        hash = 41 * hash + (int) (number ^ (number >>> 32));
+        return hash;
     }
     
 }

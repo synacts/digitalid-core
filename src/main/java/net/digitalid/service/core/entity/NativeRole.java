@@ -107,7 +107,7 @@ public final class NativeRole extends Role {
     public void remove() throws AbortException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NativeRole> map = index.get(getClient());
-            if (map != null) { map.remove(getNumber()); }
+            if (map != null) { map.remove(getKey()); }
         }
         super.remove();
     }

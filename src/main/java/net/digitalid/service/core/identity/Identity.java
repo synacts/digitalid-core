@@ -282,7 +282,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     public static final class LongConverter<I extends Identity> extends CastingNonRequestingKeyConverter<I, Object, Long, Object, Identity> {
         
         /**
-         * Creates a new identity-identifier converter with the given caster.
+         * Creates a new identity-long converter with the given caster.
          * 
          * @param caster the caster that allows to cast objects to the specified subtype.
          */

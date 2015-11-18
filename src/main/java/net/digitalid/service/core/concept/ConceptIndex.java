@@ -21,25 +21,26 @@ import net.digitalid.utility.database.configuration.Database;
  * This class indexes the instances of a {@link Concept concept} by their {@link Entity entity} and key.
  */
 @Immutable
-public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity<E>, K> {
+public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity, K> {
     
     /* -------------------------------------------------- Removal -------------------------------------------------- */
     
     /**
      * Stores a list of all the indexes that were created.
      */
-    private static final @Nonnull @NonNullableElements List<ConceptIndex<?, ? extends Entity<?>, ?>> indexes = new LinkedList<>();
+    private static final @Nonnull @NonNullableElements List<ConceptIndex<?, ? extends Entity, ?>> indexes = new LinkedList<>();
     
     /**
      * Removes the entries of the given entity from all indexes.
      * 
      * @param entity the entity whose entries are to be removed.
      */
+    // TODO: Make sure this method is called in the right places!
     @OnlyForSingleAccess
-    public static void remove(@Nonnull Entity<?> entity) {
+    public static void remove(@Nonnull Entity entity) {
         assert Database.isSingleAccess() : "The database is in single-access mode.";
         
-        for (final @Nonnull ConceptIndex<?, ? extends Entity<?>, ?> index : indexes) {
+        for (final @Nonnull ConceptIndex<?, ? extends Entity, ?> index : indexes) {
             index.concepts.remove(entity);
         }
     }

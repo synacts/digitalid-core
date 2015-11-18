@@ -5,12 +5,15 @@ import java.sql.ResultSet;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -20,7 +23,9 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @see Role
  */
 @Immutable
-public abstract class EntityImplementation implements Entity {
+public abstract class EntityImplementation<S extends Site> implements Entity {
+    
+    // TODO: Implement the getSite() here.
     
     /**
      * Stores the data type used to reference instances of this class.
@@ -51,7 +56,7 @@ public abstract class EntityImplementation implements Entity {
     @Override
     @NonCommitting
     public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
-        preparedStatement.setLong(parameterIndex, getNumber());
+        preparedStatement.setLong(parameterIndex, getKey());
     }
     
     /**
@@ -70,9 +75,10 @@ public abstract class EntityImplementation implements Entity {
     @Pure
     @Override
     public final @Nonnull String toString() {
-        return String.valueOf(getNumber());
+        return String.valueOf(getKey());
     }
     
+    /* -------------------------------------------------- Casting -------------------------------------------------- */
     
     @Pure
     @Override
