@@ -8,13 +8,14 @@ import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.key.CastingNonRequestingKeyConverter;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -71,18 +72,18 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
     /* -------------------------------------------------- Key Converters -------------------------------------------------- */
     
     /**
-     * This class allows to convert an entity to its identity and recover it again by downcasting the entity returned by the overridden method with the given caster.
+     * This class allows to convert an entity to its identity and recover it again by downcasting the entity returned by the overridden method to the given target class.
      */
     @Immutable
     public static final class IdentityConverter<E extends Entity> extends CastingNonRequestingKeyConverter<E, Site, InternalIdentity, Object, Entity> {
         
         /**
-         * Creates a new entity-identity converter with the given caster.
+         * Creates a new entity-identity converter with the given target class.
          * 
-         * @param caster the caster that allows to cast objects to the specified subtype.
+         * @param targetClass the target class to which the recovered object is cast.
          */
-        protected IdentityConverter(@Nonnull Caster<Entity, E> caster) {
-            super(caster);
+        protected IdentityConverter(@Nonnull Class<E> targetClass) {
+            super(targetClass);
         }
         
         @Pure
@@ -105,25 +106,25 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
             } else {
                 // Entities are encoded through their identity, which is not enough to recover roles.
                 // (There can exist several roles for the same identity through different paths.)
-                throw new InvalidEncodingException("Roles cannot be recovered from a block.");
+                throw InvalidOperationException.get("Roles cannot be recovered from a block.");
             }
         }
         
     }
     
     /**
-     * This class allows to convert an entity to its key and recover it again by downcasting the entity returned by the overridden method with the given caster.
+     * This class allows to convert an entity to its key and recover it again by downcasting the entity returned by the overridden method to the given target class.
      */
     @Immutable
     public static final class LongConverter<E extends Entity> extends CastingNonRequestingKeyConverter<E, Site, Long, Object, Entity> {
         
         /**
-         * Creates a new identity-long converter with the given caster.
+         * Creates a new identity-long converter with the given target class.
          * 
-         * @param caster the caster that allows to cast objects to the specified subtype.
+         * @param targetClass the target class to which the recovered object is cast.
          */
-        protected LongConverter(@Nonnull Caster<Entity, E> caster) {
-            super(caster);
+        protected LongConverter(@Nonnull Class<E> targetClass) {
+            super(targetClass);
         }
         
         @Pure
@@ -141,34 +142,21 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
                 } else if (site instanceof Client) {
                     return Role.get((Client) site, key);
                 } else {
-                    throw new InvalidEncodingException("The site is always a host or a client.");
+                    throw InvalidOperationException.get("The site is always a host or a client.");
                 }
             } catch (@Nonnull DatabaseException exception) {
-                throw new InvalidEncodingException(exception);
+                throw MaskingInvalidEncodingException.get(exception);
             }
         }
         
     }
-    
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
-    
-    /**
-     * Stores the caster that casts identifiers to this subclass.
-     */
-    public static final @Nonnull Caster<Entity, Entity> CASTER = new Caster<Entity, Entity>() {
-        @Pure
-        @Override
-        protected @Nonnull Entity cast(@Nonnull Entity entity) throws InvalidEncodingException {
-            return entity;
-        }
-    };
     
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<Entity, Site> XDF_CONVERTER = ChainingXDFConverter.get(new Entity.IdentityConverter<>(CASTER), InternalIdentity.XDF_CONVERTER);
+    public static final @Nonnull AbstractXDFConverter<Entity, Site> XDF_CONVERTER = ChainingXDFConverter.get(new Entity.IdentityConverter<>(Entity.class), InternalIdentity.XDF_CONVERTER);
     
     /* -------------------------------------------------- Declaration -------------------------------------------------- */
     
@@ -218,7 +206,7 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Entity, Site> SQL_CONVERTER = ChainingSQLConverter.get(new Entity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<Entity, Site> SQL_CONVERTER = ChainingSQLConverter.get(new Entity.LongConverter<>(Entity.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
