@@ -95,7 +95,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         final @Nonnull @NonNullableElements ReadOnlyArray<Block> elements = TupleWrapper.decode(tuple).getNonNullableElements(2);
         final @Nonnull Identifier identifier = Identifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(0));
         this.element = elements.getNonNullable(1);
-        element.setType(identifier.getIdentity().toSemanticType());
+        element.setType(identifier.getIdentity().castTo(SemanticType.class));
     }
     
     /* -------------------------------------------------- Encoding -------------------------------------------------- */

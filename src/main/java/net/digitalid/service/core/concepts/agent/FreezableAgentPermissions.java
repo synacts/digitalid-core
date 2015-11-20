@@ -131,7 +131,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
             final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(element).getNonNullableElements(2);
-            final @Nonnull SemanticType type = IdentityImplementation.create(subelements.getNonNullable(0)).toSemanticType().checkIsAttributeType();
+            final @Nonnull SemanticType type = IdentityImplementation.create(subelements.getNonNullable(0)).castTo(SemanticType.class).checkIsAttributeType();
             put(type, new BooleanWrapper(subelements.getNonNullable(1)).getValue());
         }
         
@@ -466,7 +466,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             while (resultSet.next()) {
-                final @Nonnull SemanticType type = IdentityImplementation.getNotNull(resultSet, startIndex).toSemanticType().checkIsAttributeType();
+                final @Nonnull SemanticType type = IdentityImplementation.getNotNull(resultSet, startIndex).castTo(SemanticType.class).checkIsAttributeType();
                 final boolean writing = resultSet.getBoolean(startIndex + 1);
                 permissions.put(type, writing);
             }
@@ -490,7 +490,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             final @Nullable Identity identity = IdentityImplementation.get(resultSet, startIndex);
-            if (identity != null) { permissions.put(identity.toSemanticType().checkIsAttributeType(), resultSet.getBoolean(startIndex + 1)); }
+            if (identity != null) { permissions.put(identity.castTo(SemanticType.class).checkIsAttributeType(), resultSet.getBoolean(startIndex + 1)); }
             return permissions;
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);

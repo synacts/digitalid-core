@@ -50,7 +50,7 @@ public final class ArtificialPerson extends InternalPerson {
         @Pure
         @Override
         protected @Nonnull ArtificialPerson cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toArtificialPerson();
+            return identity.castTo(ArtificialPerson.class);
         }
     };
     

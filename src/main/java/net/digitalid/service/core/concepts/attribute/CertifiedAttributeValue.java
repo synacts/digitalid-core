@@ -98,7 +98,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
         if (signature instanceof HostSignatureWrapper) { this.signature = (HostSignatureWrapper) signature; }
         else { throw new InvalidEncodingException("Certified attribute values have to be signed by a host."); }
         this.subject = this.signature.getNonNullableSubject().getIdentity();
-        this.issuer = this.signature.getSigner().getIdentity().toInternalNonHostIdentity();
+        this.issuer = this.signature.getSigner().getIdentity().castTo(InternalNonHostIdentity.class);
         if (!content.getType().isAttributeFor(subject.getCategory())) { throw new InvalidEncodingException("The content has to be an attribute for the subject."); }
     }
     

@@ -417,7 +417,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             if (entity instanceof HostEntity) {
                 final @Nonnull Host host = ((HostEntity) entity).getHost();
                 final @Nonnull InternalIdentifier subject = getNonNullableSubject();
-                final @Nonnull InternalPerson person = subject.getIdentity().toInternalPerson();
+                final @Nonnull InternalPerson person = subject.getIdentity().castTo(InternalPerson.class);
                 // If the subject is hosted on the given host, the entity is recreated for that subject.
                 if (host.getIdentifier().equals(subject.getHostIdentifier())) {
                     nonHostEntity = NonHostAccount.get(host, person);

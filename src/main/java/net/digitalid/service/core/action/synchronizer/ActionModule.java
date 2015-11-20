@@ -142,12 +142,12 @@ public final class ActionModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull TupleWrapper tuple = new TupleWrapper(entry);
-                final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(tuple.getNonNullableElement(0)).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(tuple.getNonNullableElement(0)).castTo(InternalNonHostIdentity.class);
                 identity.set(preparedStatement, 1);
-                IdentityImplementation.create(tuple.getNonNullableElement(1)).toSemanticType().set(preparedStatement, 2);
+                IdentityImplementation.create(tuple.getNonNullableElement(1)).castTo(SemanticType.class).set(preparedStatement, 2);
                 new Time(tuple.getNonNullableElement(2)).set(preparedStatement, 3);
                 new FreezableAgentPermissions(tuple.getNonNullableElement(3)).checkIsSingle().setEmptyOrSingle(preparedStatement, 4);
-                new Restrictions(NonHostAccount.get(host, identity), tuple.getNonNullableElement(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.toInternalPerson()).)
+                new Restrictions(NonHostAccount.get(host, identity), tuple.getNonNullableElement(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.castTo(InternalPerson.class)).)
                 if (tuple.isElementNull(5)) { preparedStatement.setLong(11, new Int64Wrapper(tuple.getNonNullableElement(5)).getValue()); }
                 else { preparedStatement.setNull(11, Types.BIGINT); }
                 IdentifierImplementation.create(tuple.getNonNullableElement(6)).castTo(HostIdentifier.class).set(preparedStatement, 12);

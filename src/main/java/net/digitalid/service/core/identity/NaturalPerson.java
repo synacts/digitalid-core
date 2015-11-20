@@ -50,7 +50,7 @@ public final class NaturalPerson extends InternalPerson {
         @Pure
         @Override
         protected @Nonnull NaturalPerson cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toNaturalPerson();
+            return identity.castTo(NaturalPerson.class);
         }
     };
     

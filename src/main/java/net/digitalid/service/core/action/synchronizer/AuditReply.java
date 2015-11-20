@@ -63,7 +63,7 @@ final class AuditReply extends QueryReply {
     private AuditReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, number);
         
-        this.service = Service.getService(IdentityImplementation.create(block).toSemanticType());
+        this.service = Service.getService(IdentityImplementation.create(block).castTo(SemanticType.class));
     }
     
     @Pure

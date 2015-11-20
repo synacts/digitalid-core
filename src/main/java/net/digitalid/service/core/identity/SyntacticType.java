@@ -166,7 +166,7 @@ public final class SyntacticType extends Type {
         @Pure
         @Override
         protected @Nonnull SyntacticType cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toSyntacticType();
+            return identity.castTo(SyntacticType.class);
         }
     };
     

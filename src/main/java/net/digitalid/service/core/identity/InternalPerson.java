@@ -67,7 +67,7 @@ public abstract class InternalPerson extends Person implements InternalNonHostId
         @Pure
         @Override
         protected @Nonnull InternalPerson cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toInternalPerson();
+            return identity.castTo(InternalPerson.class);
         }
     };
     

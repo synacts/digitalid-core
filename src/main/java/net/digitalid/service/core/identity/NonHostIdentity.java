@@ -38,7 +38,7 @@ public interface NonHostIdentity extends Identity {
         @Pure
         @Override
         protected @Nonnull NonHostIdentity cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toNonHostIdentity();
+            return identity.castTo(NonHostIdentity.class);
         }
     };
     

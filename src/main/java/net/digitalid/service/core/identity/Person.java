@@ -77,7 +77,7 @@ public abstract class Person extends NonHostIdentityImplementation {
         @Pure
         @Override
         protected @Nonnull Person cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toPerson();
+            return identity.castTo(Person.class);
         }
     };
     

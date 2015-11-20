@@ -76,7 +76,7 @@ final class AuditQuery extends InternalQuery {
     private AuditQuery(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("query.audit@core.digitalid.net") Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity.toNonHostEntity(), signature, recipient);
         
-        this.service = Service.getService(IdentityImplementation.create(block).toSemanticType());
+        this.service = Service.getService(IdentityImplementation.create(block).castTo(SemanticType.class));
         this.permissions = FreezableAgentPermissions.NONE;
     }
     

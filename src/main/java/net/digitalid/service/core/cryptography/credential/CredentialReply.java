@@ -170,7 +170,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         if (restrictions == null) { throw new InvalidEncodingException("The restrictions may not be null for internal credentials."); }
         final @Nonnull Exponent v = new Exponent(restrictions.toBlock().getHash());
         
-        final @Nonnull InternalPerson issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().toInternalPerson();
+        final @Nonnull InternalPerson issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().castTo(InternalPerson.class);
         return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, role, restrictions, c, e, new Exponent(b), u, i, v);
     }
     
@@ -193,7 +193,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         
         if (restrictions != null) { throw new InvalidEncodingException("The restrictions must be null for external credentials."); }
         
-        final @Nonnull InternalNonHostIdentity issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().toInternalNonHostIdentity();
+        final @Nonnull InternalNonHostIdentity issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().castTo(InternalNonHostIdentity.class);
         return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, attributeContent, c, e, new Exponent(b), u, i, v, false);
     }
     

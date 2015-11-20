@@ -38,7 +38,7 @@ public interface InternalNonHostIdentity extends InternalIdentity, NonHostIdenti
         @Pure
         @Override
         protected @Nonnull InternalNonHostIdentity cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toInternalNonHostIdentity();
+            return identity.castTo(InternalNonHostIdentity.class);
         }
     };
     

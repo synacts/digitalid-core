@@ -173,7 +173,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<>(states.size());
             for (final @Nonnull ReadOnlyPair<Predecessor, Block> state : states) {
                 final @Nonnull Predecessor predecessor = state.getElement0();
-                identities.add(predecessor.getIdentifier().getIdentity().toNonHostIdentity());
+                identities.add(predecessor.getIdentifier().getIdentity().castTo(NonHostIdentity.class));
                 CoreService.SERVICE.addState(entity, state.getElement1());
                 predecessors.add(predecessor);
             }

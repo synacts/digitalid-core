@@ -419,7 +419,7 @@ public final class Mapper {
     @NonCommitting
     public static @Nonnull HostIdentity mapHostIdentity(@Nonnull HostIdentifier identifier) throws DatabaseException {
         try {
-            return mapIdentity(identifier, Category.HOST, null).toHostIdentity();
+            return mapIdentity(identifier, Category.HOST, null).castTo(HostIdentity.class);
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("The host with the identifier " + identifier + " could not be mapped.", exception);
         }
@@ -437,7 +437,7 @@ public final class Mapper {
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         try {
-            final @Nonnull SyntacticType type = mapIdentity(identifier, Category.SYNTACTIC_TYPE, null).toSyntacticType();
+            final @Nonnull SyntacticType type = mapIdentity(identifier, Category.SYNTACTIC_TYPE, null).castTo(SyntacticType.class);
             numbers.put(type.getKey(), type);
             identifiers.put(identifier, type);
             return type;
@@ -458,7 +458,7 @@ public final class Mapper {
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         try {
-            final @Nonnull SemanticType type = mapIdentity(identifier, Category.SEMANTIC_TYPE, null).toSemanticType();
+            final @Nonnull SemanticType type = mapIdentity(identifier, Category.SEMANTIC_TYPE, null).castTo(SemanticType.class);
             numbers.put(type.getKey(), type);
             identifiers.put(identifier, type);
             return type;
@@ -477,7 +477,7 @@ public final class Mapper {
     @Locked
     @NonCommitting
     private static @Nonnull ExternalPerson mapExternalIdentity(@Nonnull ExternalIdentifier identifier) throws DatabaseException, InvalidEncodingException {
-        return mapIdentity(identifier, identifier.getCategory(), null).toExternalPerson();
+        return mapIdentity(identifier, identifier.getCategory(), null).castTo(ExternalPerson.class);
     }
     
     
@@ -553,7 +553,7 @@ public final class Mapper {
         final @Nonnull InternalNonHostIdentity identity;
         // Relocate the existing identity in case there is exactly one internal predecessor.
         if (identities.size() == 1 && identities.getNonNullable(0).getCategory().isInternalNonHostIdentity()) {
-            identity = identities.getNonNullable(0).toInternalNonHostIdentity();
+            identity = identities.getNonNullable(0).castTo(InternalNonHostIdentity.class);
             try (@Nonnull Statement statement = Database.createStatement()) {
                 statement.executeUpdate("INSERT INTO general_identifier (identifier, identity) VALUES (" + identifier + ", " + identity + ")");
                 statement.executeUpdate("UPDATE general_identity SET address = " + identifier + " WHERE identity = " + identity);
@@ -563,7 +563,7 @@ public final class Mapper {
             
         // Create a new identity and merge existing predecessors into this new identity.
         } else {
-            identity = mapIdentity(identifier, category, reply).toInternalNonHostIdentity();
+            identity = mapIdentity(identifier, category, reply).castTo(InternalNonHostIdentity.class);
             if (identities.size() > 1 && !category.isInternalPerson()) { throw InvalidDeclarationException.get("Only internal persons may have more than one predecessor.", identifier, reply); }
             mergeIdentities(identities, identity);
         }
@@ -598,7 +598,7 @@ public final class Mapper {
         try {
             final @Nonnull InternalNonHostIdentity identity = Successor.getReloaded(identifier).getIdentity();
             if (!identity.equals(identifier.getIdentity())) { throw InvalidDeclarationException.get("The claimed successor " + identity.getAddress() + " of " + identifier + " does not link back.", identifier); }
-            return identity.toPerson();
+            return identity.castTo(Person.class);
         } catch (@Nonnull PacketException exception) {
             if (exception.getError() == PacketErrorCode.EXTERNAL) { return person; }
             else { throw exception; }

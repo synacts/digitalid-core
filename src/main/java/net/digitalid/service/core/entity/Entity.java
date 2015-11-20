@@ -198,7 +198,7 @@ public interface Entity extends XDF<Entity, Site>, SQL<Entity, Site> {
         public @Nonnull Entity recoverSupertype(@Nonnull Site site, @Nonnull Long key) throws InvalidEncodingException {
             try {
                 if (site instanceof Host) {
-                    return Account.get((Host) site, Mapper.getIdentity(key).toInternalIdentity());
+                    return Account.get((Host) site, Mapper.getIdentity(key).castTo(InternalIdentity.class));
                 } else if (site instanceof Client) {
                     return Role.get((Client) site, key);
                 } else {

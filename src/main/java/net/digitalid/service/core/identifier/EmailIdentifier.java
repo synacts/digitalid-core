@@ -83,7 +83,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
     @NonCommitting
     public @Nonnull Person getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
         if (!providerExists()) { throw IdentityNotFoundException.get(this); }
-        return Mapper.getIdentity(this).toPerson();
+        return Mapper.getIdentity(this).castTo(Person.class);
     }
     
     /* -------------------------------------------------- Category -------------------------------------------------- */

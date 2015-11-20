@@ -79,7 +79,7 @@ final class StateQuery extends InternalQuery {
     private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        this.module = Service.getModule(IdentityImplementation.create(block).toSemanticType());
+        this.module = Service.getModule(IdentityImplementation.create(block).castTo(SemanticType.class));
     }
     
     @Pure

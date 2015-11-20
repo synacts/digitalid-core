@@ -92,7 +92,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     private AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        this.person = entity.getIdentity().toInternalPerson();
+        this.person = entity.getIdentity().castTo(InternalPerson.class);
         this.permissions = new FreezableContactPermissions(block).freeze();
         if (permissions.isEmpty()) { throw new InvalidEncodingException("The permissions may not be empty."); }
     }

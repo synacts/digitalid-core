@@ -83,12 +83,12 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
         super(entity, signature, recipient);
         
         if (signature instanceof HostSignatureWrapper) {
-            this.issuer = signature.toHostSignatureWrapper().getSigner().getIdentity().toInternalNonHostIdentity();
+            this.issuer = signature.toHostSignatureWrapper().getSigner().getIdentity().castTo(InternalNonHostIdentity.class);
         } else {
-            this.issuer = entity.getIdentity().toInternalNonHostIdentity();
+            this.issuer = entity.getIdentity().castTo(InternalNonHostIdentity.class);
         }
         
-        this.relation = IdentityImplementation.create(block).toSemanticType().checkIsRoleType();
+        this.relation = IdentityImplementation.create(block).castTo(SemanticType.class).checkIsRoleType();
     }
     
     @Pure

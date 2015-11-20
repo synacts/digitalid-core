@@ -114,9 +114,9 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
-        nonHostEntity.getIdentity().toInternalPerson();
+        nonHostEntity.getIdentity().castTo(InternalPerson.class);
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.attribute = Attribute.get(entity, IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity));
+        this.attribute = Attribute.get(entity, IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().castTo(SemanticType.class).checkIsAttributeFor(entity));
         this.oldVisibility = tuple.isElementNotNull(1) ? new PassiveExpression(nonHostEntity, tuple.getNonNullableElement(1)) : null;
         this.newVisibility = tuple.isElementNotNull(2) ? new PassiveExpression(nonHostEntity, tuple.getNonNullableElement(2)) : null;
         if (Objects.equals(oldVisibility, newVisibility)) { throw new InvalidEncodingException("The old and new visibility may not be equal."); }

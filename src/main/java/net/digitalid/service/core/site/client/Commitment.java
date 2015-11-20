@@ -268,7 +268,7 @@ public class Commitment implements Blockable, SQLizable {
     @NonCommitting
     public static @Nonnull Commitment get(@Nonnull ResultSet resultSet, int startIndex) throws DatabaseException {
         try {
-            final @Nonnull HostIdentity host = IdentityImplementation.getNotNull(resultSet, startIndex + 0).toHostIdentity();
+            final @Nonnull HostIdentity host = IdentityImplementation.getNotNull(resultSet, startIndex + 0).castTo(HostIdentity.class);
             final @Nonnull Time time = Time.get(resultSet, startIndex + 1);
             final @Nonnull BigInteger value = new IntegerWrapper(Block.getNotNull(Element.TYPE, resultSet, startIndex + 2)).getValue();
             return new Commitment(host, time, value);

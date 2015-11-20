@@ -256,7 +256,7 @@ public final class ContextModule implements StateModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
                 Context.get(entity, elements.getNonNullable(0)).set(preparedStatement, 2);
-                IdentityImplementation.create(elements.getNonNullable(1)).toPerson().set(preparedStatement, 3);
+                IdentityImplementation.create(elements.getNonNullable(1)).castTo(Person.class).set(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -473,7 +473,7 @@ public final class ContextModule implements StateModule {
 //                long number = resultSet.getLong(1);
 //                @Nonnull Category category = Category.get(resultSet.getByte(2));
 //                @Nonnull NonHostIdentifier address = new NonHostIdentifier(resultSet.getString(3));
-//                types.add(Identity.create(category, number, address).toSemanticType());
+//                types.add(Identity.create(category, number, address).castTo(SemanticType.class));
 //            }
 //            return types;
 //        } catch (@Nonnull InvalidEncodingException exception) {
@@ -685,7 +685,7 @@ public final class ContextModule implements StateModule {
 //                long number = resultSet.getLong(1);
 //                @Nonnull Category category = Category.get(resultSet.getByte(2));
 //                @Nonnull NonHostIdentifier address = new NonHostIdentifier(resultSet.getString(3));
-//                contacts.add(Identity.create(category, number, address).toPerson());
+//                contacts.add(Identity.create(category, number, address).castTo(Person.class));
 //            }
 //            return contacts;
 //        } catch (@Nonnull InvalidEncodingException exception) {

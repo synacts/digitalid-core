@@ -78,7 +78,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
     @Override
     @NonCommitting
     public @Nonnull Person getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
-        return Mapper.getIdentity(this).toPerson();
+        return Mapper.getIdentity(this).castTo(Person.class);
     }
     
     /* -------------------------------------------------- Category -------------------------------------------------- */

@@ -268,7 +268,7 @@ abstract class Expression extends NonHostConcept {
                 @Nonnull String identifier = string.substring(0, index).trim();
                 if (isQuoted(identifier)) { identifier = removeQuotes(identifier); }
                 if (!IdentifierImplementation.isValid(identifier)) { throw new InvalidEncodingException("The string '" + string + "' does not start with a valid identifier."); }
-                final @Nonnull SemanticType type = IdentifierImplementation.get(identifier).getIdentity().toSemanticType().checkIsAttributeType();
+                final @Nonnull SemanticType type = IdentifierImplementation.get(identifier).getIdentity().castTo(SemanticType.class).checkIsAttributeType();
                 final @Nonnull String substring = string.substring(index + symbol.length(), string.length()).trim();
                 if (isQuoted(substring) || substring.matches("\\d+")) { return new RestrictionExpression(entity, type, substring, symbol); }
                 else { throw new InvalidEncodingException("The string '" + substring + "' is neither a quoted string nor a number."); }

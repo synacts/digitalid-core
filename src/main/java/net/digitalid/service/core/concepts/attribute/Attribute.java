@@ -336,7 +336,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     @Pure
     public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull SemanticType type) {
         // TODO: Make the checkIsAttributeFor(entity) here? No, rather during decoding in the XDF converter!
-        // Attribute.get(entity, IdentifierClass.create(tuple.getNonNullableElement(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity))
+        // Attribute.get(entity, IdentifierClass.create(tuple.getNonNullableElement(0)).getIdentity().castTo(SemanticType.class).checkIsAttributeFor(entity))
         
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<SemanticType, Attribute> map = index.get(entity);

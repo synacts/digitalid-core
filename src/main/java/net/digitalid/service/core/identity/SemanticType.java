@@ -170,15 +170,15 @@ public final class SemanticType extends Type {
         if (!categories.isEmpty() == (cachingPeriod == null)) { throw new InvalidEncodingException("If (and only if) this semantic type can be used as an attribute, the caching period may not be null."); }
         
         try {
-            this.semanticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().toSemanticType();
+            this.semanticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().castTo(SemanticType.class);
             this.syntacticBase = semanticBase.syntacticBase;
             this.parameters = semanticBase.parameters;
             setLoaded();
         } catch (@Nonnull AttributeNotFoundException exception) {
-            this.syntacticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().toSyntacticType();
+            this.syntacticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().castTo(SyntacticType.class);
             final @Nonnull ReadOnlyList<Block> list = new ListWrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getElementsNotNull();
             final @Nonnull FreezableList<SemanticType> parameters = new FreezableArrayList<>(list.size());
-            for (final @Nonnull Block element : elements) { parameters.add(Mapper.getIdentity(IdentifierImplementation.create(element)).toSemanticType()); }
+            for (final @Nonnull Block element : elements) { parameters.add(Mapper.getIdentity(IdentifierImplementation.create(element)).castTo(SemanticType.class)); }
             if (!parameters.containsDuplicates()) { throw new InvalidEncodingException("The list of parameters may not contain duplicates."); }
             if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) { throw new InvalidEncodingException("The number of required parameters must either be variable or match the given parameters."); }
             this.parameters = parameters.freeze();
@@ -579,7 +579,7 @@ public final class SemanticType extends Type {
         @Pure
         @Override
         protected @Nonnull SemanticType cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toSemanticType();
+            return identity.castTo(SemanticType.class);
         }
     };
     

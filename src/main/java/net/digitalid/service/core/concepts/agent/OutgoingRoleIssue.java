@@ -91,13 +91,13 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
         super(entity, signature, recipient);
         
         if (signature instanceof HostSignatureWrapper) {
-            this.issuer = signature.toHostSignatureWrapper().getSigner().getIdentity().toInternalNonHostIdentity();
+            this.issuer = signature.toHostSignatureWrapper().getSigner().getIdentity().castTo(InternalNonHostIdentity.class);
         } else {
-            this.issuer = entity.getIdentity().toInternalNonHostIdentity();
+            this.issuer = entity.getIdentity().castTo(InternalNonHostIdentity.class);
         }
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
-        this.relation = IdentityImplementation.create(elements.getNonNullable(0)).toSemanticType().checkIsRoleType();
+        this.relation = IdentityImplementation.create(elements.getNonNullable(0)).castTo(SemanticType.class).checkIsRoleType();
         this.agentNumber = new Int64Wrapper(elements.getNonNullable(1)).getValue();
     }
     

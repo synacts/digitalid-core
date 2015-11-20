@@ -50,7 +50,7 @@ public final class MobilePerson extends ExternalPerson {
         @Pure
         @Override
         protected @Nonnull MobilePerson cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toMobilePerson();
+            return identity.castTo(MobilePerson.class);
         }
     };
     

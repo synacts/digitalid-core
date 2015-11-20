@@ -235,7 +235,7 @@ public abstract class Credential {
         assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(exposed);
-        this.issuer = IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().toInternalNonHostIdentity();
+        this.issuer = IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().castTo(InternalNonHostIdentity.class);
         this.issuance = new Time(tuple.getNonNullableElement(1));
         if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) { throw new InvalidEncodingException("The issuance time has to be positive and a multiple of half an hour."); }
         this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier(), issuance);
@@ -246,7 +246,7 @@ public abstract class Credential {
         } else {
             this.randomizedPermissions = new RandomizedAgentPermissions(hash);
         }
-        this.role = tuple.isElementNull(3) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(3)).getIdentity().toSemanticType();
+        this.role = tuple.isElementNull(3) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(3)).getIdentity().castTo(SemanticType.class);
         if (role != null && !role.isRoleType()) { throw new InvalidEncodingException("The role has to be either null or a role type"); }
         this.attributeContent = SelfcontainedWrapper.toElement(tuple.getNullableElement(4));
         if (role != null && attributeContent != null) { throw new InvalidEncodingException("The role and the attribute may not both be not null."); }

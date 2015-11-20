@@ -63,7 +63,7 @@ public class IdentitySetup extends ServerSetup {
             client = new Client("tester", "Test Client", FreezableAgentPermissions.GENERAL_WRITE);
             final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("person@test.digitalid.net");
             role = client.openAccount(identifier, Category.NATURAL_PERSON);
-            subject = identifier.getIdentity().toNaturalPerson();
+            subject = identifier.getIdentity().castTo(NaturalPerson.class);
             Database.commit();
         } catch (@Nonnull InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException exception) {
             exception.printStackTrace();

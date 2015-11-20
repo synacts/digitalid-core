@@ -359,7 +359,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
-                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNonNullable(3)).getValue());
@@ -372,7 +372,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 new FreezableAgentPermissions(elements.getNonNullable(2)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
                 preparedStatement.addBatch();
@@ -384,7 +384,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(2)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 preparedStatement.setLong(3, new Int64Wrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.addBatch();
@@ -396,7 +396,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(3)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class);
                 identity.set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 new Restrictions(NonHostAccount.get(host, identity), elements.getNonNullable(2)).set(preparedStatement, 3);
@@ -409,7 +409,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(4)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 preparedStatement.setLong(3, new Int64Wrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.addBatch();
@@ -421,7 +421,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
-                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 new Commitment(elements.getNonNullable(2)).set(preparedStatement, 3);
                 preparedStatement.setString(6, new StringWrapper(elements.getNonNullable(3)).getString());
@@ -434,10 +434,10 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(6)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
-                final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class);
                 identity.set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
-                IdentityImplementation.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                IdentityImplementation.create(elements.getNonNullable(2)).castTo(SemanticType.class).checkIsRoleType().set(preparedStatement, 3);
                 Context.get(NonHostAccount.get(host, identity), elements.getNonNullable(3)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
@@ -448,9 +448,9 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(7)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
-                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
-                IdentityImplementation.create(elements.getNonNullable(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
-                IdentityImplementation.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(1)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(2)).castTo(SemanticType.class).checkIsRoleType().set(preparedStatement, 3);
                 preparedStatement.setLong(4, new Int64Wrapper(elements.getNonNullable(3)).getValue());
                 preparedStatement.addBatch();
             }
@@ -684,7 +684,7 @@ public final class AgentModule implements StateModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(0)).getValue());
-                IdentityImplementation.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                IdentityImplementation.create(elements.getNonNullable(1)).castTo(SemanticType.class).checkIsRoleType().set(preparedStatement, 3);
                 Context.get(entity, elements.getNonNullable(2)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
@@ -696,8 +696,8 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 2);
-                IdentityImplementation.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(1)).castTo(SemanticType.class).checkIsRoleType().set(preparedStatement, 3);
                 preparedStatement.setLong(4, new Int64Wrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.addBatch();
             }
@@ -1269,7 +1269,7 @@ public final class AgentModule implements StateModule {
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         final @Nonnull String SQL = "SELECT relation FROM " + entity.getSite() + "outgoing_role WHERE entity = " + entity + " AND agent = " + outgoingRole;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) { return IdentityImplementation.getNotNull(resultSet, 1).toSemanticType().checkIsRoleType(); }
+            if (resultSet.next()) { return IdentityImplementation.getNotNull(resultSet, 1).castTo(SemanticType.class).checkIsRoleType(); }
             else { throw new SQLException("The given outgoing role has no relation."); }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
@@ -1398,8 +1398,8 @@ public final class AgentModule implements StateModule {
         final @Nonnull String SQL = "SELECT issuer, relation, agent FROM " + role.getSite() + "incoming_role WHERE entity = " + role;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             while (resultSet.next()) {
-                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 1).toInternalNonHostIdentity();
-                final @Nonnull SemanticType relation = IdentityImplementation.getNotNull(resultSet, 2).toSemanticType().checkIsRoleType();
+                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 1).castTo(InternalNonHostIdentity.class);
+                final @Nonnull SemanticType relation = IdentityImplementation.getNotNull(resultSet, 2).castTo(SemanticType.class).checkIsRoleType();
                 final long agentNumber = resultSet.getLong(3);
                 
                 boolean found = false;

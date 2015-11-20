@@ -69,7 +69,7 @@ public abstract class ExternalPerson extends Person implements ExternalIdentity 
         @Pure
         @Override
         protected @Nonnull ExternalPerson cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toExternalPerson();
+            return identity.castTo(ExternalPerson.class);
         }
     };
     

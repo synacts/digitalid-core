@@ -133,7 +133,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
         @Pure
         @Override
         protected @Nonnull Type cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toType();
+            return identity.castTo(Type.class);
         }
     };
     

@@ -77,7 +77,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
-            final @Nonnull SemanticType type = IdentityImplementation.create(element).toSemanticType().checkIsAttributeType();
+            final @Nonnull SemanticType type = IdentityImplementation.create(element).castTo(SemanticType.class).checkIsAttributeType();
             add(type);
         }
     }

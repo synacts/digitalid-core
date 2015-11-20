@@ -164,8 +164,8 @@ public final class AttributeModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
-                IdentityImplementation.create(elements.getNonNullable(0)).toInternalIdentity().set(preparedStatement, 1);
-                IdentityImplementation.create(elements.getNonNullable(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalIdentity.class).set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(1)).castTo(SemanticType.class).checkIsAttributeType().set(preparedStatement, 2);
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(2)).getValue());
                 elements.getNonNullable(3).set(preparedStatement, 4);
                 preparedStatement.addBatch();
@@ -177,8 +177,8 @@ public final class AttributeModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityImplementation.create(elements.getNonNullable(0)).toInternalIdentity().set(preparedStatement, 1);
-                IdentityImplementation.create(elements.getNonNullable(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalIdentity.class).set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(1)).castTo(SemanticType.class).checkIsAttributeType().set(preparedStatement, 2);
                 preparedStatement.setString(2, new StringWrapper(elements.getNonNullable(2)).getString());
                 preparedStatement.addBatch();
             }
@@ -273,7 +273,7 @@ public final class AttributeModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityImplementation.create(elements.getNonNullable(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(SemanticType.class).checkIsAttributeFor(entity).set(preparedStatement, 2);
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(1)).getValue());
                 elements.getNonNullable(2).set(preparedStatement, 4);
                 preparedStatement.addBatch();
@@ -286,7 +286,7 @@ public final class AttributeModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
-                IdentityImplementation.create(elements.getNonNullable(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(0)).castTo(SemanticType.class).checkIsAttributeFor(entity).set(preparedStatement, 2);
                 preparedStatement.setString(3, new StringWrapper(elements.getNonNullable(1)).getString());
                 preparedStatement.addBatch();
             }
@@ -328,7 +328,7 @@ public final class AttributeModule implements StateModule {
         final @Nonnull String SQL = "SELECT DISTINCT type FROM " + entity.getSite() + "attribute_value WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableSet<Attribute> attributes = new FreezableLinkedHashSet<>();
-            while (resultSet.next()) { attributes.add(Attribute.get(entity, IdentityImplementation.getNotNull(resultSet, 1).toSemanticType().checkIsAttributeFor(entity))); }
+            while (resultSet.next()) { attributes.add(Attribute.get(entity, IdentityImplementation.getNotNull(resultSet, 1).castTo(SemanticType.class).checkIsAttributeFor(entity))); }
             return attributes;
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);

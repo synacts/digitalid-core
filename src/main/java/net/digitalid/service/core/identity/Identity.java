@@ -5,6 +5,7 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.key.CastingKeyConverter;
@@ -13,7 +14,6 @@ import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -29,6 +29,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.database.table.Table;
 
@@ -42,7 +43,7 @@ import net.digitalid.utility.database.table.Table;
  * @see Mapper
  */
 @Immutable
-public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
+public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity, Object> {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
@@ -85,164 +86,6 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
      */
     @NonCommitting
     public boolean hasBeenMerged(@Nonnull SQLException exception) throws DatabaseException;
-    
-    /* -------------------------------------------------- Casting to Internal vs. External Identity -------------------------------------------------- */
-    
-    /**
-     * Returns this identity as an {@link InternalIdentity}.
-     * 
-     * @return this identity as an {@link InternalIdentity}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link InternalIdentity}.
-     */
-    @Pure
-    public @Nonnull InternalIdentity toInternalIdentity() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as an {@link ExternalIdentity}.
-     * 
-     * @return this identity as an {@link ExternalIdentity}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link ExternalIdentity}.
-     */
-    @Pure
-    public @Nonnull ExternalIdentity toExternalIdentity() throws InvalidEncodingException;
-    
-    /* -------------------------------------------------- Casting to Host vs. Non-Host Identity -------------------------------------------------- */
-    
-    /**
-     * Returns this identity as a {@link HostIdentity}.
-     * 
-     * @return this identity as a {@link HostIdentity}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link HostIdentity}.
-     */
-    @Pure
-    public @Nonnull HostIdentity toHostIdentity() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as a {@link NonHostIdentity}.
-     * 
-     * @return this identity as a {@link NonHostIdentity}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link NonHostIdentity}.
-     */
-    @Pure
-    public @Nonnull NonHostIdentity toNonHostIdentity() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as an {@link InternalNonHostIdentity}.
-     * 
-     * @return this identity as an {@link InternalNonHostIdentity}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link InternalNonHostIdentity}.
-     */
-    @Pure
-    public @Nonnull InternalNonHostIdentity toInternalNonHostIdentity() throws InvalidEncodingException;
-    
-    /* -------------------------------------------------- Casting to Type -------------------------------------------------- */
-    
-    /**
-     * Returns this identity as a {@link Type}.
-     * 
-     * @return this identity as a {@link Type}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link Type}.
-     */
-    @Pure
-    public @Nonnull Type toType() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as a {@link SyntacticType}.
-     * 
-     * @return this identity as a {@link SyntacticType}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link SyntacticType}.
-     */
-    @Pure
-    public @Nonnull SyntacticType toSyntacticType() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as a {@link SemanticType}.
-     * 
-     * @return this identity as a {@link SemanticType}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link SemanticType}.
-     */
-    @Pure
-    public @Nonnull SemanticType toSemanticType() throws InvalidEncodingException;
-    
-    /* -------------------------------------------------- Casting to Person -------------------------------------------------- */
-    
-    /**
-     * Returns this identity as a {@link Person}.
-     * 
-     * @return this identity as a {@link Person}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link Person}.
-     */
-    @Pure
-    public @Nonnull Person toPerson() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as an {@link InternalPerson}.
-     * 
-     * @return this identity as an {@link InternalPerson}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link InternalPerson}.
-     */
-    @Pure
-    public @Nonnull InternalPerson toInternalPerson() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as a {@link NaturalPerson}.
-     * 
-     * @return this identity as a {@link NaturalPerson}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link NaturalPerson}.
-     */
-    @Pure
-    public @Nonnull NaturalPerson toNaturalPerson() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as a {@link ArtificialPerson}.
-     * 
-     * @return this identity as a {@link ArtificialPerson}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link ArtificialPerson}.
-     */
-    @Pure
-    public @Nonnull ArtificialPerson toArtificialPerson() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as an {@link ExternalPerson}.
-     * 
-     * @return this identity as an {@link ExternalPerson}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link ExternalPerson}.
-     */
-    @Pure
-    public @Nonnull ExternalPerson toExternalPerson() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as an {@link EmailPerson}.
-     * 
-     * @return this identity as an {@link EmailPerson}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link EmailPerson}.
-     */
-    @Pure
-    public @Nonnull EmailPerson toEmailPerson() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identity as a {@link MobilePerson}.
-     * 
-     * @return this identity as a {@link MobilePerson}.
-     * 
-     * @throws InvalidEncodingException if this identity is not an instance of {@link MobilePerson}.
-     */
-    @Pure
-    public @Nonnull MobilePerson toMobilePerson() throws InvalidEncodingException;
     
     /* -------------------------------------------------- Key Converters -------------------------------------------------- */
     

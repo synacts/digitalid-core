@@ -38,7 +38,7 @@ public interface InternalIdentity extends Identity {
         @Pure
         @Override
         protected @Nonnull InternalIdentity cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toInternalIdentity();
+            return identity.castTo(InternalIdentity.class);
         }
     };
     

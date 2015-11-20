@@ -50,7 +50,7 @@ public final class EmailPerson extends ExternalPerson {
         @Pure
         @Override
         protected @Nonnull EmailPerson cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toEmailPerson();
+            return identity.castTo(EmailPerson.class);
         }
     };
     

@@ -100,9 +100,9 @@ public final class RoleModule {
         final @Nonnull String SQL = "SELECT issuer, relation, recipient, agent FROM " + client + "role WHERE role = " + number;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
-                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 1).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 1).castTo(InternalNonHostIdentity.class);
                 final @Nullable Identity identity = IdentityImplementation.get(resultSet, 2);
-                final @Nullable SemanticType relation = identity != null ? identity.toSemanticType().checkIsRoleType() : null;
+                final @Nullable SemanticType relation = identity != null ? identity.castTo(SemanticType.class).checkIsRoleType() : null;
                 final @Nullable Role recipient = Role.get(client, resultSet, 3);
                 final long agentNumber = resultSet.getLong(4);
                 if (relation == null && recipient == null) { return NativeRole.get(client, number, issuer, agentNumber); }
@@ -144,8 +144,8 @@ public final class RoleModule {
             final @Nonnull FreezableList<NonNativeRole> roles = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final long number = resultSet.getLong(1);
-                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 2).toInternalNonHostIdentity();
-                final @Nonnull SemanticType relation = IdentityImplementation.getNotNull(resultSet, 3).toSemanticType();
+                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 2).castTo(InternalNonHostIdentity.class);
+                final @Nonnull SemanticType relation = IdentityImplementation.getNotNull(resultSet, 3).castTo(SemanticType.class);
                 final long agentNumber = resultSet.getLong(4);
                 roles.add(NonNativeRole.get(client, number, issuer, relation, role, agentNumber));
             }
@@ -174,7 +174,7 @@ public final class RoleModule {
             final @Nonnull FreezableList<NativeRole> roles = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final long number = resultSet.getLong(1);
-                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 2).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 2).castTo(InternalNonHostIdentity.class);
                 final long agentNumber = resultSet.getLong(3);
                 roles.add(NativeRole.get(client, number, issuer, agentNumber));
             }
@@ -202,7 +202,7 @@ public final class RoleModule {
             if (resultSet.next()) {
                 final long number = resultSet.getLong(1);
                 final @Nullable Identity identity = IdentityImplementation.get(resultSet, 2);
-                final @Nullable SemanticType relation = identity != null ? identity.toSemanticType().checkIsRoleType() : null;
+                final @Nullable SemanticType relation = identity != null ? identity.castTo(SemanticType.class).checkIsRoleType() : null;
                 final @Nullable Role recipient = Role.get(client, resultSet, 3);
                 final long agentNumber = resultSet.getLong(4);
                 if (relation == null && recipient == null) { return NativeRole.get(client, number, person, agentNumber); }

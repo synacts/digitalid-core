@@ -105,7 +105,7 @@ public final class HostIdentity extends IdentityImplementation implements Intern
         @Pure
         @Override
         protected @Nonnull HostIdentity cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.toHostIdentity();
+            return identity.castTo(HostIdentity.class);
         }
     };
     

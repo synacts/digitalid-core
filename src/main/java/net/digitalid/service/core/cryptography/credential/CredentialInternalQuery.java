@@ -132,7 +132,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.permissions = new RandomizedAgentPermissions(tuple.getNonNullableElement(0));
         if (tuple.isElementNull(1)) { this.relation = null; }
-        else { this.relation = IdentityImplementation.create(tuple.getNonNullableElement(1)).toSemanticType().checkIsRoleType(); }
+        else { this.relation = IdentityImplementation.create(tuple.getNonNullableElement(1)).castTo(SemanticType.class).checkIsRoleType(); }
         if (signature instanceof ClientSignatureWrapper) { this.value = ((ClientSignatureWrapper) signature).getCommitment().getValue().getValue(); }
         else if (signature instanceof CredentialsSignatureWrapper) { this.value = ((CredentialsSignatureWrapper) signature).getValue(); }
         else { throw new PacketException(PacketErrorCode.SIGNATURE, "A credential request must be signed by a client or with credentials."); }
