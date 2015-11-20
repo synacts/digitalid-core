@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.key.CastingNonRequestingKeyConverter;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
@@ -83,18 +82,18 @@ public interface Identifier extends Castable, XDF<Identifier, Object>, SQL<Ident
     /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
-     * This class allows to convert an identifier to its string and recover it again by downcasting the identifier returned by the overridden method with the given caster.
+     * This class allows to convert an identifier to its string and recover it again by downcasting the identifier returned by the overridden method to the given target class.
      */
     @Immutable
     public static final class StringConverter<I extends Identifier> extends CastingNonRequestingKeyConverter<I, Object, String, Object, Identifier> {
         
         /**
-         * Creates a new identifier-string converter with the given caster.
+         * Creates a new identifier-string converter with the given target class.
          * 
-         * @param caster the caster that allows to cast objects to the specified subtype.
+         * @param targetClass the target class to which the recovered object is cast.
          */
-        protected StringConverter(@Nonnull Caster<Identifier, I> caster) {
-            super(caster);
+        protected StringConverter(@Nonnull Class<I> targetClass) {
+            super(targetClass);
         }
         
         @Pure
@@ -117,32 +116,7 @@ public interface Identifier extends Castable, XDF<Identifier, Object>, SQL<Ident
         
     }
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
-    
-    /**
-     * Stores the caster that casts identifiers to this subclass.
-     */
-    public static final @Nonnull Caster<Identifier, Identifier> CASTER = new Caster<Identifier, Identifier>() {
-        @Pure
-        @Override
-        protected @Nonnull Identifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier;
-        }
-    };
-    
-    /**
-     * Stores the key converter of this class.
-     */
-    public static final @Nonnull Identifier.StringConverter<Identifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
-    
-    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
-    
-    /**
-     * Stores the XDF converter of this class.
-     */
-    public static final @Nonnull AbstractNonRequestingXDFConverter<Identifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(Identity.IDENTIFIER));
-    
-    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the declaration of this class.
@@ -150,11 +124,19 @@ public interface Identifier extends Castable, XDF<Identifier, Object>, SQL<Ident
     public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("identifier", StringWrapper.SQL_TYPE);
     
     /**
+     * Stores the key converter of this class.
+     */
+    public static final @Nonnull Identifier.StringConverter<Identifier> KEY_CONVERTER = new Identifier.StringConverter<>(Identifier.class);
+    
+    /**
+     * Stores the XDF converter of this class.
+     */
+    public static final @Nonnull AbstractNonRequestingXDFConverter<Identifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(Identity.IDENTIFIER));
+    
+    /**
      * Stores the SQL converter of this class.
      */
     public static final @Nonnull AbstractSQLConverter<Identifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter(DECLARATION));
-    
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.

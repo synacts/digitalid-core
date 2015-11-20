@@ -3,13 +3,10 @@ package net.digitalid.service.core.identifier;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.ExternalIdentity;
@@ -23,6 +20,7 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -57,7 +55,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
      */
     @Pure
     public static boolean isValid(@Nonnull String string) {
-        final int index = string.indexOf(":");
+        final int index = string.indexOf(':');
         if (index < 1) { return false; }
         final @Nonnull String scheme = string.substring(0, index);
         switch (scheme) {
@@ -89,7 +87,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
      */
     @Pure
     public static @Nonnull Identifier get(@Nonnull @Validated String string) {
-        final @Nonnull String scheme = string.substring(0, string.indexOf(":"));
+        final @Nonnull String scheme = string.substring(0, string.indexOf(':'));
         switch (scheme) {
             case "email": return EmailIdentifier.get(string);
             case "mobile": return MobileIdentifier.get(string);
@@ -127,19 +125,6 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     @Pure
     public abstract @Nonnull Category getCategory();
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
-    
-    /**
-     * Stores the caster that casts identifiers to this subclass.
-     */
-    public static final @Nonnull Caster<Identifier, ExternalIdentifier> CASTER = new Caster<Identifier, ExternalIdentifier>() {
-        @Pure
-        @Override
-        protected @Nonnull ExternalIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier.castTo(ExternalIdentifier.class);
-        }
-    };
-    
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
@@ -150,7 +135,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     /**
      * Stores the key converter of this class.
      */
-    public static final @Nonnull Identifier.StringConverter<ExternalIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
+    public static final @Nonnull Identifier.StringConverter<ExternalIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(ExternalIdentifier.class);
     
     /**
      * Stores the XDF converter of this class.

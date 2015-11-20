@@ -1,16 +1,17 @@
 package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
- * This class allows to convert an object to its key and recover it again by downcasting the object returned by the abstract method with the given caster.
+ * This class allows to convert an object to its key and recover it again by downcasting the object returned by the abstract method to the given target class.
  * 
  * @param <O> the type of the objects that this converter can convert and recover, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to recover an object, which is quite often an {@link Entity}.
@@ -21,24 +22,24 @@ import net.digitalid.utility.annotations.state.Validated;
  * @param <S> the supertype from which the objects returned by the abstract (and thus overridden) method are downcast.
  */
 @Immutable
-public abstract class CastingKeyConverter<O extends S, E, K, D, S> extends AbstractKeyConverter<O, E, K, D> {
+public abstract class CastingKeyConverter<O extends S, E, K, D, S extends Castable> extends AbstractKeyConverter<O, E, K, D> {
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
+    /* -------------------------------------------------- Target Class -------------------------------------------------- */
     
     /**
-     * Stores the caster that allows to cast objects to the specified subtype.
+     * Stores the target class to which the recovered object is cast.
      */
-    private final @Nonnull Caster<S, O> caster;
+    private final @Nonnull Class<O> targetClass;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new casting key converter with the given caster.
+     * Creates a new casting key converter with the given target class.
      * 
-     * @param caster the caster that allows to cast objects to the specified subtype.
+     * @param targetClass the target class to which the recovered object is cast.
      */
-    protected CastingKeyConverter(@Nonnull Caster<S, O> caster) {
-        this.caster = caster;
+    protected CastingKeyConverter(@Nonnull Class<O> targetClass) {
+        this.targetClass = targetClass;
     }
     
     /* -------------------------------------------------- Abstract -------------------------------------------------- */
@@ -59,7 +60,7 @@ public abstract class CastingKeyConverter<O extends S, E, K, D, S> extends Abstr
     @Pure
     @Override
     public final @Nonnull O recover(@Nonnull E external, @Nonnull K key) throws DatabaseException, PacketException, ExternalException, NetworkException {
-        return caster.cast(recoverSupertype(external, key));
+        return recoverSupertype(external, key).castTo(targetClass);
     }
     
 }

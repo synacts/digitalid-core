@@ -3,13 +3,10 @@ package net.digitalid.service.core.identifier;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.HostIdentity;
@@ -22,6 +19,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models host identifiers.
@@ -119,19 +117,6 @@ public final class HostIdentifier extends InternalIdentifier {
         return (Character.isDigit(string.charAt(0)) ? "_" : "") + string.replace(".", "_").replace("-", "$");
     }
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
-    
-    /**
-     * Stores the caster that casts identifiers to this subclass.
-     */
-    public static final @Nonnull Caster<Identifier, HostIdentifier> CASTER = new Caster<Identifier, HostIdentifier>() {
-        @Pure
-        @Override
-        protected @Nonnull HostIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier.castTo(HostIdentifier.class);
-        }
-    };
-    
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
@@ -142,7 +127,7 @@ public final class HostIdentifier extends InternalIdentifier {
     /**
      * Stores the key converter of this class.
      */
-    public static final @Nonnull Identifier.StringConverter<HostIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
+    public static final @Nonnull Identifier.StringConverter<HostIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(HostIdentifier.class);
     
     /**
      * Stores the XDF converter of this class.

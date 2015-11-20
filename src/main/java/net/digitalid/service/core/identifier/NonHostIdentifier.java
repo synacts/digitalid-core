@@ -3,12 +3,10 @@ package net.digitalid.service.core.identifier;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidClassCastException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.NonHostIdentity;
@@ -40,19 +38,6 @@ public interface NonHostIdentifier extends Identifier {
     @NonCommitting
     public @Nonnull NonHostIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException;
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
-    
-    /**
-     * Stores the caster that casts identifiers to this subclass.
-     */
-    public static final @Nonnull Caster<Identifier, NonHostIdentifier> CASTER = new Caster<Identifier, NonHostIdentifier>() {
-        @Pure
-        @Override
-        protected @Nonnull NonHostIdentifier cast(@Nonnull Identifier identifier) throws InvalidClassCastException {
-            return identifier.castTo(NonHostIdentifier.class);
-        }
-    };
-    
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
@@ -63,7 +48,7 @@ public interface NonHostIdentifier extends Identifier {
     /**
      * Stores the key converter of this class.
      */
-    public static final @Nonnull Identifier.StringConverter<NonHostIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
+    public static final @Nonnull Identifier.StringConverter<NonHostIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(NonHostIdentifier.class);
     
     /**
      * Stores the XDF converter of this class.

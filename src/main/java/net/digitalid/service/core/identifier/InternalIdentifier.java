@@ -4,14 +4,11 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -22,6 +19,7 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models internal identifiers.
@@ -129,19 +127,6 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     @Pure
     public abstract @Nonnull HostIdentifier getHostIdentifier();
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
-    
-    /**
-     * Stores the caster that casts identifiers to this subclass.
-     */
-    public static final @Nonnull Caster<Identifier, InternalIdentifier> CASTER = new Caster<Identifier, InternalIdentifier>() {
-        @Pure
-        @Override
-        protected @Nonnull InternalIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier.castTo(InternalIdentifier.class);
-        }
-    };
-    
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
@@ -152,7 +137,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     /**
      * Stores the key converter of this class.
      */
-    public static final @Nonnull Identifier.StringConverter<InternalIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
+    public static final @Nonnull Identifier.StringConverter<InternalIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(InternalIdentifier.class);
     
     /**
      * Stores the XDF converter of this class.
