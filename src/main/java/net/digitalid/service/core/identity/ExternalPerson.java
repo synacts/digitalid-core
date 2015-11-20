@@ -3,11 +3,9 @@ package net.digitalid.service.core.identity;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identifier.ExternalIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
@@ -60,19 +58,6 @@ public abstract class ExternalPerson extends Person implements ExternalIdentity 
         this.address = address;
     }
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
-    
-    /**
-     * Stores the caster that casts identities to this subclass.
-     */
-    public static final @Nonnull Caster<Identity, ExternalPerson> CASTER = new Caster<Identity, ExternalPerson>() {
-        @Pure
-        @Override
-        protected @Nonnull ExternalPerson cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.castTo(ExternalPerson.class);
-        }
-    };
-    
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
@@ -83,7 +68,7 @@ public abstract class ExternalPerson extends Person implements ExternalIdentity 
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<ExternalPerson, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
+    public static final @Nonnull AbstractXDFConverter<ExternalPerson, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(ExternalPerson.class), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
@@ -95,7 +80,7 @@ public abstract class ExternalPerson extends Person implements ExternalIdentity 
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<ExternalPerson, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<ExternalPerson, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(ExternalPerson.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

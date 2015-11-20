@@ -3,11 +3,9 @@ package net.digitalid.service.core.identity;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.NonHostIdentifier;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -29,19 +27,6 @@ public interface NonHostIdentity extends Identity {
     @Override
     public @Nonnull NonHostIdentifier getAddress();
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
-    
-    /**
-     * Stores the caster that casts identities to this subclass.
-     */
-    public static final @Nonnull Caster<Identity, NonHostIdentity> CASTER = new Caster<Identity, NonHostIdentity>() {
-        @Pure
-        @Override
-        protected @Nonnull NonHostIdentity cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.castTo(NonHostIdentity.class);
-        }
-    };
-    
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
@@ -52,7 +37,7 @@ public interface NonHostIdentity extends Identity {
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<NonHostIdentity, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
+    public static final @Nonnull AbstractXDFConverter<NonHostIdentity, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(NonHostIdentity.class), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
@@ -64,7 +49,7 @@ public interface NonHostIdentity extends Identity {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<NonHostIdentity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<NonHostIdentity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(NonHostIdentity.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

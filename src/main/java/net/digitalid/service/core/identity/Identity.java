@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.key.CastingKeyConverter;
 import net.digitalid.service.core.converter.key.CastingNonRequestingKeyConverter;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
@@ -16,6 +15,7 @@ import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -90,18 +90,18 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
     /* -------------------------------------------------- Key Converters -------------------------------------------------- */
     
     /**
-     * This class allows to convert an identity to its address and recover it again by downcasting the identity returned by the overridden method with the given caster.
+     * This class allows to convert an identity to its address and recover it again by downcasting the identity returned by the overridden method to the given target class.
      */
     @Immutable
     public static final class IdentifierConverter<I extends Identity> extends CastingKeyConverter<I, Object, Identifier, Object, Identity> {
         
         /**
-         * Creates a new identity-identifier converter with the given caster.
+         * Creates a new identity-identifier converter with the given target class.
          * 
-         * @param caster the caster that allows to cast objects to the specified subtype.
+         * @param targetClass the target class to which the recovered object is cast.
          */
-        protected IdentifierConverter(@Nonnull Caster<Identity, I> caster) {
-            super(caster);
+        protected IdentifierConverter(@Nonnull Class<I> targetClass) {
+            super(targetClass);
         }
         
         @Pure
@@ -119,18 +119,18 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
     }
     
     /**
-     * This class allows to convert an identity to its key and recover it again by downcasting the identity returned by the overridden method with the given caster.
+     * This class allows to convert an identity to its key and recover it again by downcasting the identity returned by the overridden method to the given target class.
      */
     @Immutable
     public static final class LongConverter<I extends Identity> extends CastingNonRequestingKeyConverter<I, Object, Long, Object, Identity> {
         
         /**
-         * Creates a new identity-long converter with the given caster.
+         * Creates a new identity-long converter with the given target class.
          * 
-         * @param caster the caster that allows to cast objects to the specified subtype.
+         * @param targetClass the target class to which the recovered object is cast.
          */
-        protected LongConverter(@Nonnull Caster<Identity, I> caster) {
-            super(caster);
+        protected LongConverter(@Nonnull Class<I> targetClass) {
+            super(targetClass);
         }
         
         @Pure
@@ -145,24 +145,11 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
             try {
                 return Mapper.getIdentity(key);
             } catch (@Nonnull DatabaseException exception) {
-                throw new InvalidEncodingException(exception);
+                throw MaskingInvalidEncodingException.get(exception);
             }
         }
         
     }
-    
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
-    
-    /**
-     * Stores the caster that casts identifiers to this subclass.
-     */
-    public static final @Nonnull Caster<Identity, Identity> CASTER = new Caster<Identity, Identity>() {
-        @Pure
-        @Override
-        protected @Nonnull Identity cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity;
-        }
-    };
     
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
@@ -174,7 +161,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<Identity, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER);
+    public static final @Nonnull AbstractXDFConverter<Identity, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(Identity.class), Identifier.XDF_CONVERTER);
     
     /* -------------------------------------------------- Declaration -------------------------------------------------- */
     
@@ -233,7 +220,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Identity.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

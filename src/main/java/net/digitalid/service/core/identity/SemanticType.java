@@ -10,15 +10,13 @@ import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -44,6 +42,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models a semantic type.
@@ -570,19 +569,6 @@ public final class SemanticType extends Type {
         return this;
     }
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
-    
-    /**
-     * Stores the caster that casts identifiers to this subclass.
-     */
-    public static final @Nonnull Caster<Identity, SemanticType> CASTER = new Caster<Identity, SemanticType>() {
-        @Pure
-        @Override
-        protected @Nonnull SemanticType cast(@Nonnull Identity identity) throws InvalidEncodingException {
-            return identity.castTo(SemanticType.class);
-        }
-    };
-    
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
@@ -603,7 +589,7 @@ public final class SemanticType extends Type {
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<SemanticType, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(CASTER), Identifier.XDF_CONVERTER);
+    public static final @Nonnull AbstractXDFConverter<SemanticType, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(SemanticType.class), Identifier.XDF_CONVERTER);
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
@@ -615,7 +601,7 @@ public final class SemanticType extends Type {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<SemanticType, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(CASTER), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<SemanticType, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(SemanticType.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
