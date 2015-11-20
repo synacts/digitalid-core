@@ -79,7 +79,7 @@ public final class CredentialsRequest extends Request {
      * @require CredentialsSignatureWrapper.certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
     @NonCommitting
-    public CredentialsRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadOnlyList<Credential> credentials, @Nullable ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
+    public CredentialsRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadOnlyList<Credential> credentials, @Nullable ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws DatabaseException, PacketException, ExternalException, NetworkException {
         this(methods, recipient, subject, audit, credentials, certificates, lodged, value, 0);
     }
     
@@ -97,7 +97,7 @@ public final class CredentialsRequest extends Request {
      * @param iteration how many times this request was resent.
      */
     @NonCommitting
-    private CredentialsRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadOnlyList<Credential> credentials, @Nullable ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value, int iteration) throws AbortException, PacketException, ExternalException, NetworkException {
+    private CredentialsRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadOnlyList<Credential> credentials, @Nullable ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value, int iteration) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(methods, recipient, new SymmetricKey(), subject, audit, new FreezableQuartet<>(credentials, certificates, lodged, value).freeze(), iteration);
     }
     
@@ -118,7 +118,7 @@ public final class CredentialsRequest extends Request {
     @Override
     @RawRecipient
     @NonCommitting
-    @Nonnull CredentialsSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws AbortException, PacketException, ExternalException, NetworkException {
+    @Nonnull CredentialsSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, PacketException, ExternalException, NetworkException {
         return new CredentialsSignatureWrapper(Packet.SIGNATURE, compression, subject, audit, credentials, certificates, lodged, value);
     }
     
@@ -131,7 +131,7 @@ public final class CredentialsRequest extends Request {
     
     @Override
     @NonCommitting
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws AbortException, PacketException, ExternalException, NetworkException {
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
         return new CredentialsRequest(methods, recipient, subject, getAudit(), credentials, certificates, lodged, value, iteration).send(verified);
     }
     

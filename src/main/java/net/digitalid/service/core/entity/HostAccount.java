@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.Observer;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.IdentityImplementation;
@@ -95,7 +95,7 @@ public final class HostAccount extends Account implements HostEntity {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull HostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Nonnull HostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
         if (identity instanceof HostIdentity) { return get(host, (HostIdentity) identity); }
         else { throw new SQLException("The identity of " + identity.getAddress() + " is not a host."); }

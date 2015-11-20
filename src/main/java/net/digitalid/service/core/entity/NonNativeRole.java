@@ -146,7 +146,7 @@ public final class NonNativeRole extends Role {
      * @require relation.isRoleType() : "The relation is a role type.";
      */
     @NonCommitting
-    static @Nonnull NonNativeRole add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, @Nonnull Role recipient, long agentNumber) throws AbortException {
+    static @Nonnull NonNativeRole add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, @Nonnull Role recipient, long agentNumber) throws DatabaseException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         final @Nonnull NonNativeRole role = get(client, RoleModule.map(client, issuer, relation, recipient, agentNumber), issuer, relation, recipient, agentNumber);
@@ -156,7 +156,7 @@ public final class NonNativeRole extends Role {
     
     @Override
     @NonCommitting
-    public void remove() throws AbortException {
+    public void remove() throws DatabaseException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NonNativeRole> map = index.get(getClient());
             if (map != null) { map.remove(getKey()); }

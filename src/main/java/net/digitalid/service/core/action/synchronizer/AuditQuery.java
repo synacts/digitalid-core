@@ -11,7 +11,7 @@ import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.handler.Method;
@@ -56,7 +56,7 @@ final class AuditQuery extends InternalQuery {
      * @param service the service whose audit is queried.
      */
     @NonCommitting
-    AuditQuery(@Nonnull Role role, @Nonnull Service service) throws AbortException, PacketException, InvalidEncodingException {
+    AuditQuery(@Nonnull Role role, @Nonnull Service service) throws DatabaseException, PacketException, InvalidEncodingException {
         super(role, service.getRecipient(role));
         
         this.service = service;
@@ -73,7 +73,7 @@ final class AuditQuery extends InternalQuery {
      */
     @OnlyForHosts
     @NonCommitting
-    private AuditQuery(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("query.audit@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private AuditQuery(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("query.audit@core.digitalid.net") Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity.toNonHostEntity(), signature, recipient);
         
         this.service = Service.getService(IdentityImplementation.create(block).toSemanticType());
@@ -148,7 +148,7 @@ final class AuditQuery extends InternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new AuditQuery(entity, signature, recipient, block);
         }
         

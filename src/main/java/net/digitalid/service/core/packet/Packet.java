@@ -22,11 +22,11 @@ import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.HostAccount;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InactiveSignatureException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -136,7 +136,7 @@ public abstract class Packet {
      */
     @NonCommitting
     @SuppressWarnings("AssignmentToMethodParameter")
-    Packet(@Nonnull Object list, int size, @Nullable Object field, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable InternalIdentifier subject, @Nullable Audit audit) throws AbortException, PacketException, ExternalException, NetworkException {
+    Packet(@Nonnull Object list, int size, @Nullable Object field, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert !(this instanceof Request) || audit == null || audit instanceof RequestAudit : "If this is a request, the audit is either null or a request audit.";
         assert !(this instanceof Response) || audit == null || audit instanceof ResponseAudit : "If this is a response, the audit is either null or a response audit.";
         
@@ -175,7 +175,7 @@ public abstract class Packet {
      * @require (request != null) == (this instanceof Response) : "If the request is not null, this packet is a response.";
      */
     @NonCommitting
-    Packet(@Nonnull InputStream inputStream, @Nullable Request request, boolean verified) throws AbortException, PacketException, ExternalException, NetworkException {
+    Packet(@Nonnull InputStream inputStream, @Nullable Request request, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert (request == null) == (this instanceof Request) : "If the request is null, this packet is itself a request.";
         assert (request != null) == (this instanceof Response) : "If the request is not null, this packet is a response.";
         
@@ -393,7 +393,7 @@ public abstract class Packet {
     @Pure
     @RawRecipient
     @NonCommitting
-    abstract @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws AbortException, PacketException, ExternalException, NetworkException;
+    abstract @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     
     /**

@@ -15,7 +15,7 @@ import net.digitalid.utility.system.logger.Log;
 public final class Pusher extends Thread {
     
     @NonCommitting
-    public static void send(@Nonnull ExternalAction action) throws AbortException {
+    public static void send(@Nonnull ExternalAction action) throws DatabaseException {
         Log.error("The action '" + action + "' should have been pushed but this is not implemented yet."); // TODO: Write a real implementation!
     }
     

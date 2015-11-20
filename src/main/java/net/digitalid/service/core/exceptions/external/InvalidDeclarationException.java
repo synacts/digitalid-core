@@ -1,6 +1,7 @@
 package net.digitalid.service.core.exceptions.external;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -10,31 +11,14 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception is thrown when an identity has an invalid declaration.
  */
 @Immutable
-public final class InvalidDeclarationException extends ExternalException {
+public class InvalidDeclarationException extends ExternalException {
+    
+    /* -------------------------------------------------- Identifier -------------------------------------------------- */
     
     /**
      * Stores the identifier that has an invalid declaration.
      */
     private final @Nonnull Identifier identifier;
-    
-    /**
-     * Stores the reply that contains the invalid declaration.
-     */
-    private final @Nonnull Reply reply;
-    
-    /**
-     * Creates a new invalid declaration exception with the given message, identifier and reply.
-     * 
-     * @param message a string explaining the problem of the invalid declaration.
-     * @param identifier the identifier that has an invalid declaration.
-     * @param reply the reply that contains the invalid declaration.
-     */
-    public InvalidDeclarationException(@Nonnull String message, @Nonnull Identifier identifier, @Nonnull Reply reply) {
-        super(identifier.toString() + " has an invalid declaration: " + message);
-        
-        this.identifier = identifier;
-        this.reply = reply;
-    }
     
     /**
      * Returns the identifier that has an invalid declaration.
@@ -46,14 +30,64 @@ public final class InvalidDeclarationException extends ExternalException {
         return identifier;
     }
     
+    /* -------------------------------------------------- Reply -------------------------------------------------- */
+    
+    /**
+     * Stores the reply that contains the invalid declaration.
+     */
+    private final @Nullable Reply reply;
+    
     /**
      * Returns the reply that contains the invalid declaration.
      * 
      * @return the reply that contains the invalid declaration.
      */
     @Pure
-    public @Nonnull Reply getReply() {
+    public @Nullable Reply getReply() {
         return reply;
+    }
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    /**
+     * Creates a new invalid declaration exception with the given message, identifier and reply.
+     * 
+     * @param message a string explaining the problem of the invalid declaration.
+     * @param identifier the identifier that has an invalid declaration.
+     * @param reply the reply that contains the invalid declaration.
+     */
+    protected InvalidDeclarationException(@Nonnull String message, @Nonnull Identifier identifier, @Nullable Reply reply) {
+        super(identifier.toString() + " has an invalid declaration: " + message);
+        
+        this.identifier = identifier;
+        this.reply = reply;
+    }
+    
+    /**
+     * Returns a new invalid declaration exception with the given message, identifier and reply.
+     * 
+     * @param message a string explaining the problem of the invalid declaration.
+     * @param identifier the identifier that has an invalid declaration.
+     * @param reply the reply that contains the invalid declaration.
+     * 
+     * @return a new invalid declaration exception with the given message, identifier and reply.
+     */
+    @Pure
+    public static @Nonnull InvalidDeclarationException get(@Nonnull String message, @Nonnull Identifier identifier, @Nullable Reply reply) {
+        return new InvalidDeclarationException(message, identifier, reply);
+    }
+    
+    /**
+     * Returns a new invalid declaration exception with the given message and identifier.
+     * 
+     * @param message a string explaining the problem of the invalid declaration.
+     * @param identifier the identifier that has an invalid declaration.
+     * 
+     * @return a new invalid declaration exception with the given message and identifier.
+     */
+    @Pure
+    public static @Nonnull InvalidDeclarationException get(@Nonnull String message, @Nonnull Identifier identifier) {
+        return new InvalidDeclarationException(message, identifier, null);
     }
     
 }

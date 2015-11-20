@@ -7,9 +7,9 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
@@ -75,19 +75,19 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull InternalNonHostIdentity getMappedIdentity() throws AbortException {
+    public @Nonnull InternalNonHostIdentity getMappedIdentity() throws DatabaseException {
         assert isMapped() : "This identifier is mapped.";
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof InternalNonHostIdentity) { return (InternalNonHostIdentity) identity; }
-        else { throw AbortException.get("The mapped identity has a wrong type."); }
+        else { throw DatabaseException.get("The mapped identity has a wrong type."); }
     }
     
     @Pure
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull InternalNonHostIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
+    public @Nonnull InternalNonHostIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
         final @Nonnull InternalNonHostIdentity identity = Mapper.getIdentity(this).toInternalNonHostIdentity();
         // If the returned identity is a type, its fields need to be loaded from the type's attributes.
         if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }
@@ -125,7 +125,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         @Pure
         @Override
         protected @Nonnull InternalNonHostIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier.toInternalNonHostIdentifier();
+            return identifier.castTo(InternalNonHostIdentifier.class);
         }
     };
     

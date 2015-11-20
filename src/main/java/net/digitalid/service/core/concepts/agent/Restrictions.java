@@ -16,9 +16,9 @@ import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -176,7 +176,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     @NonCommitting
-    public boolean cover(@Nonnull Context otherContext) throws AbortException {
+    public boolean cover(@Nonnull Context otherContext) throws DatabaseException {
         return context != null && context.isSupercontextOf(otherContext);
     }
     
@@ -187,7 +187,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     @NonCommitting
-    public void checkCover(@Nonnull Context otherContext) throws AbortException, PacketException {
+    public void checkCover(@Nonnull Context otherContext) throws DatabaseException, PacketException {
         if (!cover(otherContext)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context."); }
     }
     
@@ -217,7 +217,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     @NonCommitting
-    public boolean cover(@Nonnull Contact otherContact) throws AbortException {
+    public boolean cover(@Nonnull Contact otherContact) throws DatabaseException {
         return context != null && !context.contains(otherContact) || contact != null && !contact.equals(otherContact);
     }
     
@@ -228,7 +228,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     @NonCommitting
-    public void checkCover(@Nonnull Contact otherContact) throws AbortException, PacketException {
+    public void checkCover(@Nonnull Contact otherContact) throws DatabaseException, PacketException {
         if (!cover(otherContact)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact."); }
     }
     
@@ -310,7 +310,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     @NonCommitting
-    public boolean cover(@Nonnull Restrictions restrictions) throws AbortException {
+    public boolean cover(@Nonnull Restrictions restrictions) throws DatabaseException {
         if (restrictions.client && !client) { return false; }
         if (restrictions.role && !role) { return false; }
         if (restrictions.writing && !writing) { return false; }
@@ -327,7 +327,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     @NonCommitting
-    public void checkCover(@Nonnull Restrictions restrictions) throws AbortException, PacketException {
+    public void checkCover(@Nonnull Restrictions restrictions) throws DatabaseException, PacketException {
         if (!cover(restrictions)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions."); }
     }
     
@@ -462,7 +462,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Pure
         @Override
-        public @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @BasedOn("restrictions.agent@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        public @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @BasedOn("restrictions.agent@core.digitalid.net") Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
             
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);

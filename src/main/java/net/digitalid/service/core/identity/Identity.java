@@ -13,9 +13,9 @@ import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -84,7 +84,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
      * @return whether this identity has been merged.
      */
     @NonCommitting
-    public boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException;
+    public boolean hasBeenMerged(@Nonnull SQLException exception) throws DatabaseException;
     
     /* -------------------------------------------------- Casting to Internal vs. External Identity -------------------------------------------------- */
     
@@ -269,7 +269,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
         
         @Pure
         @Override
-        public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Identifier identifier) throws AbortException, PacketException, ExternalException, NetworkException {
+        public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Identifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return identifier.getIdentity();
         }
         
@@ -301,7 +301,7 @@ public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
         public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Long key) throws InvalidEncodingException {
             try {
                 return Mapper.getIdentity(key);
-            } catch (@Nonnull AbortException exception) {
+            } catch (@Nonnull DatabaseException exception) {
                 throw new InvalidEncodingException(exception);
             }
         }

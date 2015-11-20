@@ -58,7 +58,7 @@ final class ContextExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws AbortException {
+    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws DatabaseException {
         assert isActive() : "This expression is active.";
         
         return context.getAllContacts();
@@ -75,7 +75,7 @@ final class ContextExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws AbortException {
+    boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws DatabaseException {
         return signature.isIdentityBased() && !signature.isRoleBased() && context.contains(Contact.get(getEntity(), signature.getIssuer()));
     }
     

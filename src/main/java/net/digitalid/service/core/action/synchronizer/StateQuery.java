@@ -15,7 +15,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.InternalQuery;
@@ -55,7 +55,7 @@ final class StateQuery extends InternalQuery {
      * @param module the module whose state is queried.
      */
     @NonCommitting
-    StateQuery(@Nonnull Role role, @Nonnull StateModule module) throws AbortException, PacketException, InvalidEncodingException {
+    StateQuery(@Nonnull Role role, @Nonnull StateModule module) throws DatabaseException, PacketException, InvalidEncodingException {
         super(role, module.getService().getRecipient(role));
         
         this.module = module;
@@ -76,7 +76,7 @@ final class StateQuery extends InternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.module = Service.getModule(IdentityImplementation.create(block).toSemanticType());
@@ -155,7 +155,7 @@ final class StateQuery extends InternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new StateQuery(entity, signature, recipient, block);
         }
         

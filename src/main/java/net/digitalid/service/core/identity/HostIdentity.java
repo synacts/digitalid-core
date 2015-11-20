@@ -8,8 +8,8 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.resolution.Category;
@@ -41,7 +41,7 @@ public final class HostIdentity extends IdentityImplementation implements Intern
         
         try {
             return Mapper.mapHostIdentity(identifier);
-        } catch (@Nonnull AbortException exception) {
+        } catch (@Nonnull DatabaseException exception) {
             throw new InitializationError("The host identity with the identifier " + identifier + " could not be mapped.", exception);
         }
     }
@@ -91,7 +91,7 @@ public final class HostIdentity extends IdentityImplementation implements Intern
     @Pure
     @Override
     @NonCommitting
-    public boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException {
+    public boolean hasBeenMerged(@Nonnull SQLException exception) throws DatabaseException {
         Mapper.unmap(this);
         throw exception;
     }

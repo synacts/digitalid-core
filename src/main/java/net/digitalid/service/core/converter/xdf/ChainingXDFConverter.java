@@ -3,9 +3,9 @@ package net.digitalid.service.core.converter.xdf;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.key.AbstractKeyConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -82,7 +82,7 @@ public class ChainingXDFConverter<O, E, K, D> extends AbstractXDFConverter<O, E>
     
     @Pure
     @Override
-    public final @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public final @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
         
         final @Nonnull K key = XDFConverter.decodeNonNullable(keyConverter.decompose(external), block);

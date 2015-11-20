@@ -7,7 +7,7 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.utility.annotations.state.Immutable;

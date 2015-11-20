@@ -33,7 +33,7 @@ public final class ImpersonalExpression extends AbstractExpression {
      * @param string the string which is to be parsed for the expression.
      */
     @NonCommitting
-    public ImpersonalExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws AbortException, PacketException, ExternalException, NetworkException {
+    public ImpersonalExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, string);
     }
     
@@ -46,7 +46,7 @@ public final class ImpersonalExpression extends AbstractExpression {
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
     @NonCommitting
-    public ImpersonalExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public ImpersonalExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, block);
     }
     
@@ -87,7 +87,7 @@ public final class ImpersonalExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull ImpersonalExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Nonnull ImpersonalExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         try {
             return new ImpersonalExpression(entity, resultSet.getString(columnIndex));
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {

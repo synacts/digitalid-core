@@ -27,7 +27,7 @@ import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonNativeRole;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;
@@ -125,7 +125,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         if (!(entity.getIdentity() instanceof InternalPerson)) { throw new PacketException(PacketErrorCode.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons."); }
@@ -179,7 +179,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     
     @Override
     @NonCommitting
-    protected @Nonnull CredentialReply executeOnHost(@Nonnull Agent agent) throws AbortException {
+    protected @Nonnull CredentialReply executeOnHost(@Nonnull Agent agent) throws DatabaseException {
         final @Nonnull Restrictions restrictions = agent.getRestrictions();
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         final @Nonnull NonHostAccount account = getNonHostAccount();
@@ -253,7 +253,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new CredentialInternalQuery(entity, signature, recipient, block);
         }
         

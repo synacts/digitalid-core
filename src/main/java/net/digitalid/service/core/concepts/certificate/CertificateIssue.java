@@ -75,7 +75,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private CertificateIssue(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private CertificateIssue(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.certificate = AttributeValue.get(block, false).toCertifiedAttributeValue();
@@ -116,7 +116,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
      * Executes this action on both hosts and clients.
      */
     @NonCommitting
-    private void executeOnBoth() throws AbortException {
+    private void executeOnBoth() throws DatabaseException {
         // TODO: Replace the attribute with the certificate if they match. Otherwise, this should be reported as a packet error (at least on host).
     }
     
@@ -146,7 +146,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws AbortException {
+    public void executeOnClient() throws DatabaseException {
         // TODO: I'm not sure how far the checks should go on the client.
         
         executeOnBoth();
@@ -154,7 +154,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnFailure() throws AbortException {
+    public void executeOnFailure() throws DatabaseException {
         // TODO!
     }
     
@@ -194,7 +194,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new CertificateIssue(entity, signature, recipient, block);
         }
         

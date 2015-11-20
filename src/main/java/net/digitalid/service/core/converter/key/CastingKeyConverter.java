@@ -1,7 +1,7 @@
 package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -52,13 +52,13 @@ public abstract class CastingKeyConverter<O extends S, E, K, D, S> extends Abstr
      * @return the object of the supertype with the given key.
      */
     @Pure
-    protected abstract @Nonnull S recoverSupertype(@Nonnull E external, @Nonnull @Validated K key) throws AbortException, PacketException, ExternalException, NetworkException;
+    protected abstract @Nonnull S recoverSupertype(@Nonnull E external, @Nonnull @Validated K key) throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     /* -------------------------------------------------- Method -------------------------------------------------- */
     
     @Pure
     @Override
-    public final @Nonnull O recover(@Nonnull E external, @Nonnull K key) throws AbortException, PacketException, ExternalException, NetworkException {
+    public final @Nonnull O recover(@Nonnull E external, @Nonnull K key) throws DatabaseException, PacketException, ExternalException, NetworkException {
         return caster.cast(recoverSupertype(external, key));
     }
     

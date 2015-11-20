@@ -10,7 +10,7 @@ import net.digitalid.service.core.concept.NonHostConcept;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -40,7 +40,7 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
      * @param string the string which is to be parsed for the expression.
      */
     @NonCommitting
-    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws AbortException, PacketException, ExternalException, NetworkException {
+    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity);
         
         this.expression = Expression.parse(entity, string);
@@ -56,7 +56,7 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
     @NonCommitting
-    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         this(entity, new StringWrapper(block).getString());
     }
     
@@ -115,7 +115,7 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         preparedStatement.setString(parameterIndex, toString());
     }
     

@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.storage.HostModule;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.utility.annotations.state.Pure;
@@ -38,7 +38,7 @@ public final class TokenModule implements HostModule {
     
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws AbortException {
+    public void createTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS public (host BIGINT NOT NULL, public BOOLEAN NOT NULL, PRIMARY KEY (host), FOREIGN KEY (host) REFERENCES general_identity (identity))");
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS token (host BIGINT NOT NULL, token CHAR(19) BIGINT NOT NULL, PRIMARY KEY (host, token), FOREIGN KEY (host) REFERENCES general_identity (identity))");
@@ -47,7 +47,7 @@ public final class TokenModule implements HostModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws AbortException {
+    public void deleteTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
@@ -73,7 +73,7 @@ public final class TokenModule implements HostModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block exportModule(@Nonnull Host host) throws AbortException {
+    public @Nonnull Block exportModule(@Nonnull Host host) throws DatabaseException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
@@ -83,7 +83,7 @@ public final class TokenModule implements HostModule {
     
     @Override
     @NonCommitting
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws AbortException, InvalidEncodingException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();

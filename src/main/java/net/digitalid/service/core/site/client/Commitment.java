@@ -17,7 +17,7 @@ import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.database.SQLizable;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -92,7 +92,7 @@ public class Commitment implements Blockable, SQLizable {
      * @param value the value of this commitment.
      */
     @NonCommitting
-    public Commitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
+    public Commitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value) throws DatabaseException, PacketException, ExternalException, NetworkException {
         this.host = host;
         this.time = time;
         this.publicKey = Cache.getPublicKeyChain(host).getKey(time);
@@ -123,11 +123,11 @@ public class Commitment implements Blockable, SQLizable {
      */
     @Locked
     @NonCommitting
-    public Commitment(@Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public Commitment(@Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
-        final @Nonnull HostIdentifier identifier = IdentifierImplementation.create(elements.getNonNullable(0)).toHostIdentifier();
+        final @Nonnull HostIdentifier identifier = IdentifierImplementation.create(elements.getNonNullable(0)).castTo(HostIdentifier.class);
         this.host = identifier.getIdentity();
         this.time = new Time(elements.getNonNullable(1));
         this.publicKey = (Server.hasHost(identifier) ? Server.getHost(identifier).getPublicKeyChain() : Cache.getPublicKeyChain(host)).getKey(time);
@@ -266,7 +266,7 @@ public class Commitment implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Commitment get(@Nonnull ResultSet resultSet, int startIndex) throws AbortException {
+    public static @Nonnull Commitment get(@Nonnull ResultSet resultSet, int startIndex) throws DatabaseException {
         try {
             final @Nonnull HostIdentity host = IdentityImplementation.getNotNull(resultSet, startIndex + 0).toHostIdentity();
             final @Nonnull Time time = Time.get(resultSet, startIndex + 1);
@@ -285,7 +285,7 @@ public class Commitment implements Blockable, SQLizable {
      */
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws AbortException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws DatabaseException {
         host.set(preparedStatement, startIndex + 0);
         time.set(preparedStatement, startIndex + 1);
         value.toBlock().set(preparedStatement, startIndex + 2);

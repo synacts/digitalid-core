@@ -5,7 +5,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.Int32Wrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
 import net.digitalid.utility.collections.freezable.FreezableArray;

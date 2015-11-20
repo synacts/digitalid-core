@@ -54,7 +54,7 @@ public final class Certificate extends NonHostConcept {
     @Pure
     @Locked
     @NonCommitting
-    public static boolean isAuthorized(@Nonnull InternalNonHostIdentity issuer, @Nonnull Block content) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static boolean isAuthorized(@Nonnull InternalNonHostIdentity issuer, @Nonnull Block content) throws DatabaseException, PacketException, ExternalException, NetworkException {
 //        long vid = Mapper.getVid(identifier);
 //        long type = Mapper.getVid(new SelfcontainedWrapper(value).getIdentifier());
 //        

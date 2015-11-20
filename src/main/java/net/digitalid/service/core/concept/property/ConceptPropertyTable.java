@@ -15,7 +15,7 @@ import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -119,7 +119,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     @Pure
     @Locked
     @NonCommitting
-    public abstract @Nonnull @NonEncoding Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException;
+    public abstract @Nonnull @NonEncoding Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException;
     
     /**
      * Adds the state in the given block to the given entity in this data collection.
@@ -131,7 +131,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      */
     @Locked
     @NonCommitting
-    public abstract void addState(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException;
+    public abstract void addState(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     /**
      * Removes all the entries of the given entity in this data collection.
@@ -140,11 +140,11 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      */
     @Locked
     @NonCommitting
-    public void removeState(@Nonnull E entity) throws AbortException {
+    public void removeState(@Nonnull E entity) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + getName() + " WHERE entity = " + entity);
         } catch (SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     
@@ -155,7 +155,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
+    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
         return getState((E) entity, permissions, restrictions, agent);
     }
     
@@ -163,7 +163,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         addState((E) entity, block);
     }
     
@@ -171,7 +171,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public final void removeState(@Nonnull NonHostEntity entity) throws AbortException {
+    public final void removeState(@Nonnull NonHostEntity entity) throws DatabaseException {
         removeState((E) entity);
     }
     

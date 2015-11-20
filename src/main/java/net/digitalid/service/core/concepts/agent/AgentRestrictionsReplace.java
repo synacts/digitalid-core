@@ -97,7 +97,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AgentRestrictionsReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private AgentRestrictionsReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
@@ -141,7 +141,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws AbortException {
+    protected void executeOnBoth() throws DatabaseException {
         agent.replaceRestrictions(oldRestrictions, newRestrictions);
     }
     
@@ -193,7 +193,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new AgentRestrictionsReplace(entity, signature, recipient, block);
         }
         

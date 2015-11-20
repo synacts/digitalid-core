@@ -8,10 +8,10 @@ import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.concepts.certificate.Certificate;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -92,7 +92,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
      * @require signature.isSigned() : "The signature is signed.";
      */
     @NonCommitting
-    CertifiedAttributeValue(@Nonnull Block content, @Nonnull SignatureWrapper signature) throws AbortException, PacketException, ExternalException, NetworkException {
+    CertifiedAttributeValue(@Nonnull Block content, @Nonnull SignatureWrapper signature) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(content);
         
         if (signature instanceof HostSignatureWrapper) { this.signature = (HostSignatureWrapper) signature; }
@@ -120,7 +120,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
     @Locked
     @Override
     @NonCommitting
-    public void verify() throws AbortException, PacketException, ExternalException, NetworkException {
+    public void verify() throws DatabaseException, PacketException, ExternalException, NetworkException {
         signature.verify();
         Certificate.isAuthorized(getIssuer(), getContent());
     }

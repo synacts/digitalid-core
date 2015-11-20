@@ -9,7 +9,7 @@ import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -50,7 +50,7 @@ public interface SiteStorage extends HostStorage {
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull @NonEncoding Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException;
+    public @Nonnull @NonEncoding Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException;
     
     /**
      * Adds the state in the given block to the given entity in this storage.
@@ -62,7 +62,7 @@ public interface SiteStorage extends HostStorage {
      */
     @Locked
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException;
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     /**
      * Removes all the entries of the given entity in this storage.
@@ -71,6 +71,6 @@ public interface SiteStorage extends HostStorage {
      */
     @Locked
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws AbortException;
+    public void removeState(@Nonnull NonHostEntity entity) throws DatabaseException;
     
 }

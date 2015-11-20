@@ -19,7 +19,7 @@ public final class SQLiteTest extends DatabaseTest {
     
     @BeforeClass
     @Committing
-    public static void configureDatabase() throws AbortException {
+    public static void configureDatabase() throws DatabaseException {
         Database.initialize(new SQLiteConfiguration(true), false);
         createTables();
     }

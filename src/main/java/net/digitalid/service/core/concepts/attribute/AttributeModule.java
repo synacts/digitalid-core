@@ -20,7 +20,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.identity.Identity;
@@ -67,7 +67,7 @@ public final class AttributeModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws AbortException {
+    public void createTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_value (entity " + EntityImplementation.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, published BOOLEAN NOT NULL, value " + AttributeValue.FORMAT + " NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_visibility (entity " + EntityImplementation.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, visibility " + PassiveExpression.FORMAT + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
@@ -76,7 +76,7 @@ public final class AttributeModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws AbortException {
+    public void deleteTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "attribute_visibility");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "attribute_value");
@@ -121,7 +121,7 @@ public final class AttributeModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block exportModule(@Nonnull Host host) throws AbortException {
+    public @Nonnull Block exportModule(@Nonnull Host host) throws DatabaseException {
         final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
@@ -154,7 +154,7 @@ public final class AttributeModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getNonNullableElements(2);
@@ -224,7 +224,7 @@ public final class AttributeModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
         final @Nonnull Site site = entity.getSite();
         final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -256,7 +256,7 @@ public final class AttributeModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nonnull Site site = entity.getSite();
@@ -303,7 +303,7 @@ public final class AttributeModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws AbortException {
+    public void removeState(@Nonnull NonHostEntity entity) throws DatabaseException {
         final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + site + "attribute_visibility WHERE entity = " + entity);
@@ -324,7 +324,7 @@ public final class AttributeModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws AbortException {
+    static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws DatabaseException {
         final @Nonnull String SQL = "SELECT DISTINCT type FROM " + entity.getSite() + "attribute_value WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableSet<Attribute> attributes = new FreezableLinkedHashSet<>();
@@ -349,7 +349,7 @@ public final class AttributeModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws AbortException {
+    static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws DatabaseException {
         final @Nonnull String SQL = "SELECT value FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + Database.toBoolean(published);
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) { return AttributeValue.get(resultSet, 1).checkMatches(attribute); }
@@ -369,7 +369,7 @@ public final class AttributeModule implements StateModule {
      * @require value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
      */
     @NonCommitting
-    static void insertValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws AbortException {
+    static void insertValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws DatabaseException {
         assert value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
         
         final @Nonnull String SQL = "INSERT INTO " + attribute.getEntity().getSite() + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)";
@@ -391,7 +391,7 @@ public final class AttributeModule implements StateModule {
      * 
      * @require value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
      */
-    static void deleteValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws AbortException {
+    static void deleteValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws DatabaseException {
         assert value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
         
         final @Nonnull String SQL = "DELETE FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = ? AND type = ? AND published = ? AND value = ?";
@@ -416,7 +416,7 @@ public final class AttributeModule implements StateModule {
      * @require newValue.isVerified() && newValue.matches(attribute) : "The new value is verified and matches the given attribute.";
      */
     @NonCommitting
-    static void replaceValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue oldValue, @Nonnull AttributeValue newValue) throws AbortException {
+    static void replaceValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue oldValue, @Nonnull AttributeValue newValue) throws DatabaseException {
         assert oldValue.isVerified() && oldValue.matches(attribute) : "The old value is verified and matches the given attribute.";
         assert newValue.isVerified() && newValue.matches(attribute) : "The new value is verified and matches the given attribute.";
         
@@ -446,7 +446,7 @@ public final class AttributeModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Nullable PassiveExpression getVisibility(@Nonnull Attribute attribute) throws AbortException {
+    static @Nullable PassiveExpression getVisibility(@Nonnull Attribute attribute) throws DatabaseException {
         assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
         
         final @Nonnull String SQL = "SELECT visibility FROM " + attribute.getEntity().getSite() + "attribute_visibility WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType();
@@ -466,7 +466,7 @@ public final class AttributeModule implements StateModule {
      * @require visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
      */
     @NonCommitting
-    static void insertVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws AbortException {
+    static void insertVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws DatabaseException {
         assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
         assert visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
         
@@ -489,7 +489,7 @@ public final class AttributeModule implements StateModule {
      * @require visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
      */
     @NonCommitting
-    static void deleteVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws AbortException {
+    static void deleteVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws DatabaseException {
         assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
         assert visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
         
@@ -514,7 +514,7 @@ public final class AttributeModule implements StateModule {
      * @require newVisibility.getEntity().equals(attribute.getEntity()) : "The new visibility and the attribute belong to the same entity.";
      */
     @NonCommitting
-    static void replaceVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression oldVisibility, @Nonnull PassiveExpression newVisibility) throws AbortException {
+    static void replaceVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression oldVisibility, @Nonnull PassiveExpression newVisibility) throws DatabaseException {
         assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
         assert oldVisibility.getEntity().equals(attribute.getEntity()) : "The old visibility and the attribute belong to the same entity.";
         assert newVisibility.getEntity().equals(attribute.getEntity()) : "The new visibility and the attribute belong to the same entity.";

@@ -11,7 +11,7 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.dataservice.SiteModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -75,26 +75,26 @@ public abstract class Action extends Method implements Auditable {
     
     @Override
     @NonCommitting
-    public abstract @Nullable ActionReply executeOnHost() throws PacketException, AbortException;
+    public abstract @Nullable ActionReply executeOnHost() throws PacketException, DatabaseException;
     
     
     /**
      * Executes this action on the client.
      * 
-     * @throws AbortException if this handler cannot be executed.
+     * @throws DatabaseException if this handler cannot be executed.
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
     @NonCommitting
-    public abstract void executeOnClient() throws AbortException;
+    public abstract void executeOnClient() throws DatabaseException;
     
     /**
      * This method is executed after successful transmission.
      * 
-     * @throws AbortException if this handler cannot be executed.
+     * @throws DatabaseException if this handler cannot be executed.
      */
     @NonCommitting
-    public void executeOnSuccess() throws AbortException {}
+    public void executeOnSuccess() throws DatabaseException {}
     
     
     @Pure

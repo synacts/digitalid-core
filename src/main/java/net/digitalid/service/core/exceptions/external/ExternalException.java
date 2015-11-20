@@ -3,13 +3,13 @@ package net.digitalid.service.core.exceptions.external;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * An external exception is caused by another party.
  * 
+ * @see SignatureException
  * @see InvalidEncodingException
- * @see InvalidSignatureException
- * @see InactiveSignatureException
  * @see InvalidDeclarationException
  * 
  * @see IdentityNotFoundException
@@ -18,34 +18,27 @@ import net.digitalid.utility.annotations.state.Immutable;
 @Immutable
 public abstract class ExternalException extends Exception {
     
-    /**
-     * Creates a new external exception with the given message.
-     * 
-     * @param message a string explaining the exception.
-     */
-    protected ExternalException(@Nonnull String message) {
-        this(message, null);
-    }
-    
-    /**
-     * Creates a new external exception with the given cause.
-     * 
-     * @param cause a reference to the cause of the exception.
-     */
-    protected ExternalException(@Nonnull Throwable cause) {
-        this(null, cause);
-    }
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new external exception with the given message and cause.
      * 
-     * @param message a string explaining the exception.
-     * @param cause a reference to the cause of the exception.
+     * @param message a string explaining the problem which has occurred.
+     * @param cause the exception that caused this problem, if available.
      */
-    protected ExternalException(@Nullable String message, @Nullable Throwable cause) {
-        super(message == null ? "An external exception occurred." : message, cause);
+    protected ExternalException(@Nonnull String message, @Nullable Exception cause) {
+        super(message, cause);
         
-//        Log.warning("An external exception occurred.", this);
+        Log.warning("An external exception occurred.", this);
+    }
+    
+    /**
+     * Creates a new external exception with the given message.
+     * 
+     * @param message a string explaining the problem which has occurred.
+     */
+    protected ExternalException(@Nonnull String message) {
+        this(message, null);
     }
     
 }

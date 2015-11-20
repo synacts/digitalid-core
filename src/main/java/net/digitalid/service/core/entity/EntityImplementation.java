@@ -5,8 +5,8 @@ import java.sql.ResultSet;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -43,7 +43,7 @@ public abstract class EntityImplementation<S extends Site> implements Entity {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         if (site instanceof Host) {
             return Account.getNotNull((Host) site, resultSet, columnIndex);
         } else if (site instanceof Client) {
@@ -55,7 +55,7 @@ public abstract class EntityImplementation<S extends Site> implements Entity {
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         preparedStatement.setLong(parameterIndex, getKey());
     }
     
@@ -67,7 +67,7 @@ public abstract class EntityImplementation<S extends Site> implements Entity {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Entity entity, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public static void set(@Nullable Entity entity, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         if (entity == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
         else { entity.set(preparedStatement, parameterIndex); }
     }

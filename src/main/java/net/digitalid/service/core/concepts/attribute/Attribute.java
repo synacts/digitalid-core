@@ -127,7 +127,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      */
     @Pure
     @NonCommitting
-    public @Nullable AttributeValue getValue() throws AbortException {
+    public @Nullable AttributeValue getValue() throws DatabaseException {
         if (!valueLoaded) {
             value = AttributeModule.getValue(this, true);
             valueLoaded = true;
@@ -144,7 +144,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
     @Committing
-    public void setValue(@Nullable AttributeValue newValue) throws AbortException {
+    public void setValue(@Nullable AttributeValue newValue) throws DatabaseException {
         final @Nullable AttributeValue oldValue = getValue();
         if (!Objects.equals(oldValue, newValue)) {
             Synchronizer.execute(new AttributeValueReplace(this, true, oldValue, newValue));
@@ -163,7 +163,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      */
     @NonCommitting
     @OnlyForActions
-    public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws AbortException {
+    public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws DatabaseException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
         if (oldValue == null && newValue != null) { AttributeModule.insertValue(this, true, newValue); }
@@ -185,7 +185,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      */
     @Pure
     @NonCommitting
-    public @Nullable AttributeValue getUnpublishedValue() throws AbortException {
+    public @Nullable AttributeValue getUnpublishedValue() throws DatabaseException {
         if (!unpublishedLoaded) {
             unpublished = AttributeModule.getValue(this, false);
             unpublishedLoaded = true;
@@ -202,7 +202,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
     @Committing
-    public void setUnpublishedValue(@Nullable AttributeValue newValue) throws AbortException {
+    public void setUnpublishedValue(@Nullable AttributeValue newValue) throws DatabaseException {
         final @Nullable AttributeValue oldValue = getUnpublishedValue();
         if (!Objects.equals(oldValue, newValue)) {
             Synchronizer.execute(new AttributeValueReplace(this, false, oldValue, newValue));
@@ -221,7 +221,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      */
     @NonCommitting
     @OnlyForActions
-    void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws AbortException {
+    void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws DatabaseException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
         if (oldValue == null && newValue != null) { AttributeModule.insertValue(this, false, newValue); }
@@ -245,7 +245,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      */
     @Pure
     @NonCommitting
-    public @Nullable PassiveExpression getVisibility() throws AbortException {
+    public @Nullable PassiveExpression getVisibility() throws DatabaseException {
         if (!visibilityLoaded) {
             visibility = AttributeModule.getVisibility(this);
             visibilityLoaded = true;
@@ -263,7 +263,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      * @require newVisibility == null || newVisibility.getEntity().equals(getEntity()) : "The new visibility is null or belongs to the same entity.";
      */
     @Committing
-    public void setVisibility(@Nullable PassiveExpression newVisibility) throws AbortException {
+    public void setVisibility(@Nullable PassiveExpression newVisibility) throws DatabaseException {
         final @Nullable PassiveExpression oldVisibility = getVisibility();
         if (!Objects.equals(oldVisibility, newVisibility)) {
             Synchronizer.execute(new AttributeVisibilityReplace(this, oldVisibility, newVisibility));
@@ -283,7 +283,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      */
     @NonCommitting
     @OnlyForActions
-    void replaceVisibility(@Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) throws AbortException {
+    void replaceVisibility(@Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) throws DatabaseException {
         assert !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
         
         if (oldVisibility == null && newVisibility != null) { AttributeModule.insertVisibility(this, newVisibility); }
@@ -359,7 +359,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
      * @ensure return.!isFrozen() : "The returned attributes are not frozen.";
      */
     @NonCommitting
-    public static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws AbortException {
+    public static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws DatabaseException {
         return AttributeModule.getAll(entity);
     }
     

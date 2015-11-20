@@ -13,7 +13,7 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.core.CoreServiceActionReply;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -75,12 +75,12 @@ public abstract class ActionReply extends Reply implements Auditable {
     /**
      * Executes this action reply by the synchronizer.
      * 
-     * @throws AbortException if this handler cannot be executed.
+     * @throws DatabaseException if this handler cannot be executed.
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
     @NonCommitting
-    public abstract void executeBySynchronizer() throws AbortException;
+    public abstract void executeBySynchronizer() throws DatabaseException;
     
     
     @Pure

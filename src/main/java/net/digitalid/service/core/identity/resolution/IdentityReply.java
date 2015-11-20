@@ -9,7 +9,7 @@ import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
@@ -67,7 +67,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * @param subject the subject of this handler.
      */
     @NonCommitting
-    IdentityReply(@Nonnull InternalNonHostIdentifier subject) throws AbortException, PacketException {
+    IdentityReply(@Nonnull InternalNonHostIdentifier subject) throws DatabaseException, PacketException {
         super(subject);
         
         if (!subject.isMapped()) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host."); }
@@ -96,7 +96,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         this.category = Category.get(tuple.getNonNullableElement(0));
         if (!category.isInternalNonHostIdentity()) { throw new InvalidEncodingException("The category is " + category.name() + " instead of an internal non-host identity."); }
         this.predecessors = new FreezablePredecessors(tuple.getNonNullableElement(1)).freeze();
-        this.successor = tuple.isElementNull(2) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(2)).toInternalNonHostIdentifier();
+        this.successor = tuple.isElementNull(2) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(2)).castTo(InternalNonHostIdentifier.class);
     }
     
     @Pure
@@ -188,7 +188,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new IdentityReply(entity, signature, number, block);
         }
         

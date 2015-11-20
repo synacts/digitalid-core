@@ -17,9 +17,9 @@ import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.PrivateKey;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.SymmetricKey;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -240,7 +240,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
      */
     @Locked
     @NonCommitting
-    private EncryptionWrapper(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws AbortException, PacketException, ExternalException, NetworkException {
+    private EncryptionWrapper(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(type);
         
         assert element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
@@ -329,7 +329,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends XDF<V, ?>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull <V extends XDF<V, ?>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws DatabaseException, PacketException, ExternalException, NetworkException {
         return new EncryptionWrapper(type, ConvertToXDF.nonNullable(element), recipient, symmetricKey);
     }
     

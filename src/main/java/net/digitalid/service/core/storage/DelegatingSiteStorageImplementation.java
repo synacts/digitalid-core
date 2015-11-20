@@ -9,9 +9,8 @@ import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -31,6 +30,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class implements a storage that delegates the retrieval of an {@link Entity entity's} state to substorages on {@link Host hosts} and {@link Client clients}.
@@ -112,7 +112,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
     @Locked
     @Override
     @NonCommitting
-    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
+    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
         final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(substorages.size());
         for (final @Nonnull SiteStorage table : substorages.values()) { elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.getState(entity, permissions, restrictions, agent))); }
         return ListWrapper.encode(stateType, elements.freeze());
@@ -121,12 +121,12 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
     @Locked
     @Override
     @NonCommitting
-    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
             final @Nullable SiteStorage substorage = substorages.get(selfcontained.getType());
-            if (substorage == null) { throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + "."); }
+            if (substorage == null) { throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + "."); } // TODO: Change to a PacketException?
             substorage.addState(entity, selfcontained);
         }
     }
@@ -134,7 +134,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
     @Locked
     @Override
     @NonCommitting
-    public final void removeState(@Nonnull NonHostEntity entity) throws AbortException {
+    public final void removeState(@Nonnull NonHostEntity entity) throws DatabaseException {
       for (final @Nonnull SiteStorage substorage : substorages.values()) { substorage.removeState(entity); }
     }
     

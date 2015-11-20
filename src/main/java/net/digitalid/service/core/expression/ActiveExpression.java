@@ -36,7 +36,7 @@ public final class ActiveExpression extends AbstractExpression {
      * @param string the string which is to be parsed for the expression.
      */
     @NonCommitting
-    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws AbortException, PacketException, ExternalException, NetworkException {
+    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, string);
     }
     
@@ -49,7 +49,7 @@ public final class ActiveExpression extends AbstractExpression {
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
     @NonCommitting
-    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, block);
     }
     
@@ -73,7 +73,7 @@ public final class ActiveExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public @Nonnull @Capturable FreezableSet<Contact> getContacts() throws AbortException {
+    public @Nonnull @Capturable FreezableSet<Contact> getContacts() throws DatabaseException {
         return getExpression().getContacts();
     }
     
@@ -89,7 +89,7 @@ public final class ActiveExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull ActiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Nonnull ActiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         try {
             return new ActiveExpression(entity, resultSet.getString(columnIndex));
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {

@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
@@ -122,7 +122,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<NonHostIdentity> getIdentities() throws AbortException, PacketException, ExternalException, NetworkException {
+    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<NonHostIdentity> getIdentities() throws DatabaseException, PacketException, ExternalException, NetworkException {
         final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<>(size());
         for (final @Nonnull Predecessor predecessor : this) {
             final @Nullable NonHostIdentity identity = predecessor.getIdentity();
@@ -175,7 +175,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
      * @return whether the predecessors of the given identifier exist.
      */
     @NonCommitting
-    public static boolean exist(@Nonnull InternalNonHostIdentifier identifier) throws AbortException {
+    public static boolean exist(@Nonnull InternalNonHostIdentifier identifier) throws DatabaseException {
         final @Nonnull String SQL = "SELECT EXISTS (SELECT 1 FROM general_predecessors WHERE identifier = " + identifier + ")";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) { return resultSet.getBoolean(1); }
@@ -194,7 +194,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
      */
     @Pure
     @NonCommitting
-    public static @Nonnull @Frozen ReadOnlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws AbortException {
+    public static @Nonnull @Frozen ReadOnlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws DatabaseException {
         assert exist(identifier) : "The predecessors of the given identifier exist.";
         
         final @Nonnull String SQL = "SELECT predecessors FROM general_predecessors WHERE identifier = " + identifier;
@@ -209,7 +209,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     @Pure
     @Override
     @NonCommitting
-    public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws AbortException {
+    public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws DatabaseException {
         final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO general_predecessors (identifier, predecessors, reply) VALUES (?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             identifier.set(preparedStatement, 1);

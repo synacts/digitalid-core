@@ -13,9 +13,9 @@ import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -33,6 +33,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models a service of the Digital ID protocol.
@@ -163,13 +164,13 @@ public class Service extends DelegatingSiteStorageImplementation implements XDF<
      */
     @Pure
     @NonCommitting
-    public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws AbortException {
+    public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws DatabaseException {
         final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
-        if (attributeValue == null) { throw AbortException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + "."); }
+        if (attributeValue == null) { throw DatabaseException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + "."); }
         try {
             return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, attributeValue.getContent());
         } catch (@Nonnull InvalidEncodingException exception) {
-            throw AbortException.get("The attribute of type " + getType().getAddress() + " of the role " + role.getIdentity().getAddress() + " does not encode a host identifier.", exception);
+            throw DatabaseException.get("The attribute of type " + getType().getAddress() + " of the role " + role.getIdentity().getAddress() + " does not encode a host identifier.", exception);
         }
     }
     
@@ -183,7 +184,7 @@ public class Service extends DelegatingSiteStorageImplementation implements XDF<
      */
     @Pure
     @NonCommitting
-    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws AbortException, PacketException, ExternalException, NetworkException {
+    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws DatabaseException, PacketException, ExternalException, NetworkException {
         return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false));
     }
     
@@ -214,7 +215,7 @@ public class Service extends DelegatingSiteStorageImplementation implements XDF<
             try {
                 return getService(type);
             } catch (@Nonnull PacketException exception) {
-                throw new InvalidEncodingException(exception);
+                throw MaskingInvalidEncodingException.get(exception);
             }
         }
         

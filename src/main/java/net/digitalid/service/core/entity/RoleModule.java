@@ -7,8 +7,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.storage.ClientModule;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
@@ -39,7 +39,7 @@ public final class RoleModule {
      * @param client the client for which to create the database tables.
      */
     @NonCommitting
-    public static void createTable(@Nonnull Client client) throws AbortException {
+    public static void createTable(@Nonnull Client client) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + client + "role (role " + Database.getConfiguration().PRIMARY_KEY() + ", issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + ", recipient " + EntityImplementation.FORMAT + ", agent " + Agent.FORMAT + " NOT NULL, FOREIGN KEY (issuer) " + Mapper.REFERENCE + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ", FOREIGN KEY (recipient) " + client.getEntityReference() + ")");
             Mapper.addReference(client + "role", "issuer");
@@ -52,7 +52,7 @@ public final class RoleModule {
      * @param client the client for which to delete the database tables.
      */
     @NonCommitting
-    public static void deleteTable(@Nonnull Client client) throws AbortException {
+    public static void deleteTable(@Nonnull Client client) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Mapper.removeReference(client + "role", "issuer");
             statement.executeUpdate("DROP TABLE IF EXISTS " + client + "role");
@@ -75,7 +75,7 @@ public final class RoleModule {
      * @require (relation == null) == (recipient == null) : "The relation and the recipient are either both null or non-null.";
      */
     @NonCommitting
-    public static long map(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, long agentNumber) throws AbortException {
+    public static long map(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, long agentNumber) throws DatabaseException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         assert (relation == null) == (recipient == null) : "The relation and the recipient are either both null or non-null.";
         
@@ -96,7 +96,7 @@ public final class RoleModule {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Role load(@Nonnull Client client, long number) throws AbortException {
+    public static @Nonnull Role load(@Nonnull Client client, long number) throws DatabaseException {
         final @Nonnull String SQL = "SELECT issuer, relation, recipient, agent FROM " + client + "role WHERE role = " + number;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
@@ -118,7 +118,7 @@ public final class RoleModule {
      * Removes the given role, which triggers the removal of all associated concepts.
      */
     @NonCommitting
-    public static void remove(@Nonnull Role role) throws AbortException {
+    public static void remove(@Nonnull Role role) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + role.getClient() + "role WHERE role = " + role);
         }
@@ -137,7 +137,7 @@ public final class RoleModule {
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull FreezableList<NonNativeRole> getRoles(@Nonnull Role role) throws AbortException {
+    public static @Capturable @Nonnull FreezableList<NonNativeRole> getRoles(@Nonnull Role role) throws DatabaseException {
         final @Nonnull Client client = role.getClient();
         final @Nonnull String SQL = "SELECT role, issuer, relation, agent FROM " + client + "role WHERE recipient = " + role;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -168,7 +168,7 @@ public final class RoleModule {
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull FreezableList<NativeRole> getRoles(@Nonnull Client client) throws AbortException {
+    public static @Capturable @Nonnull FreezableList<NativeRole> getRoles(@Nonnull Client client) throws DatabaseException {
         final @Nonnull String SQL = "SELECT role, issuer, agent FROM " + client + "role WHERE recipient IS NULL";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<NativeRole> roles = new FreezableLinkedList<>();
@@ -196,7 +196,7 @@ public final class RoleModule {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Role getRole(@Nonnull Client client, @Nonnull InternalPerson person) throws AbortException, PacketException {
+    public static @Nonnull Role getRole(@Nonnull Client client, @Nonnull InternalPerson person) throws DatabaseException, PacketException {
         final @Nonnull String SQL = "SELECT role, relation, recipient, agent FROM " + client + "role WHERE issuer = " + person;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {

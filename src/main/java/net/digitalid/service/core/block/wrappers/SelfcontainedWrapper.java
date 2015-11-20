@@ -12,9 +12,9 @@ import net.digitalid.service.core.block.wrappers.exceptions.UnexpectedEndOfFileE
 import net.digitalid.service.core.block.wrappers.exceptions.UnsupportedBlockLengthException;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -88,7 +88,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      */
     @Locked
     @NonCommitting
-    private SelfcontainedWrapper(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private SelfcontainedWrapper(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(block.getType());
         
         this.tuple = Block.get(IMPLEMENTATION, block);
@@ -149,7 +149,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         @Locked
         @Override
         @NonCommitting
-        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new SelfcontainedWrapper(block);
         }
         
@@ -209,7 +209,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).element;
     }
     
@@ -223,7 +223,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Locked
     @NonCommitting
-    public static @Nullable @NonEncoding Block decodeNullable(@Nullable @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nullable @NonEncoding Block decodeNullable(@Nullable @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         return block == null ? null : decodeNonNullable(block);
     }
     
@@ -238,7 +238,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws DatabaseException, PacketException, ExternalException, NetworkException {
         try {
             return decodeNonNullable(readBlockFrom(inputStream, close));
         } catch (@Nonnull IOException exception) {

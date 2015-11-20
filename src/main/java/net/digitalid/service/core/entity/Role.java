@@ -11,7 +11,7 @@ import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.AgentModule;
 import net.digitalid.service.core.cryptography.credential.ClientCredential;
 import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -193,7 +193,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @NonLocked
     @Committing
-    public final void reloadState(@Nonnull StateModule module) throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
+    public final void reloadState(@Nonnull StateModule module) throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
         Synchronizer.reload(this, module);
         if (Database.isMultiAccess() && (module.equals(CoreService.SERVICE) || module.equals(AgentModule.MODULE))) {
             getAgent().reset();
@@ -208,7 +208,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @NonLocked
     @Committing
-    public final void refreshState(@Nonnull Service service) throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
+    public final void refreshState(@Nonnull Service service) throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
         Synchronizer.refresh(this, service);
         if (Database.isMultiAccess() && service.equals(CoreService.SERVICE)) {
             getAgent().reset();
@@ -225,7 +225,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @NonLocked
     @Committing
-    public boolean reloadOrRefreshState(@Nonnull Service... services) throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
+    public boolean reloadOrRefreshState(@Nonnull Service... services) throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
         final @Nonnull Time[] times = new Time[services.length];
         try {
             Database.lock();
@@ -275,7 +275,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @Pure
     @NonCommitting
-    public @Nonnull @NonFrozen @NonNullableElements @UniqueElements ReadOnlyList<NonNativeRole> getRoles() throws AbortException {
+    public @Nonnull @NonFrozen @NonNullableElements @UniqueElements ReadOnlyList<NonNativeRole> getRoles() throws DatabaseException {
         if (roles == null) { roles = RoleModule.getRoles(this); }
         return roles;
     }
@@ -291,7 +291,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @NonCommitting
     @OnlyForActions
-    public void addRole(@Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws AbortException {
+    public void addRole(@Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws DatabaseException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         final @Nonnull NonNativeRole role = NonNativeRole.add(client, issuer, relation, this, agentNumber);
@@ -311,7 +311,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @NonCommitting
     @OnlyForActions
-    public void remove() throws AbortException {
+    public void remove() throws DatabaseException {
         RoleModule.remove(this);
         ClientCredential.remove(this);
         SynchronizerModule.remove(this);
@@ -330,7 +330,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @Pure
     @NonCommitting
-    public static @Nullable Role get(@Nonnull Client client, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Nullable Role get(@Nonnull Client client, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) { return null; }
         return RoleModule.load(client, number);
@@ -347,7 +347,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Role getNotNull(@Nonnull Client client, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Nonnull Role getNotNull(@Nonnull Client client, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         return RoleModule.load(client, resultSet.getLong(columnIndex));
     }
     

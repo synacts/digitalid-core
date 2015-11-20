@@ -13,7 +13,7 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;
@@ -89,7 +89,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.person = entity.getIdentity().toInternalPerson();
@@ -170,13 +170,13 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws AbortException {
+    public void executeOnClient() throws DatabaseException {
         // TODO: Add this access request to a list of pending access requests.
     }
     
     @Override
     @NonCommitting
-    public void executeOnFailure() throws AbortException {
+    public void executeOnFailure() throws DatabaseException {
         // TODO: Add this access request to a list of failed access requests.
     }
     
@@ -216,7 +216,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new AccessRequest(entity, signature, recipient, block);
         }
         

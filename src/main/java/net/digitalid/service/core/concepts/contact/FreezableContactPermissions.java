@@ -63,7 +63,7 @@ public final class FreezableContactPermissions extends FreezableAttributeTypeSet
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public FreezableContactPermissions(@Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public FreezableContactPermissions(@Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(block);
     }
     

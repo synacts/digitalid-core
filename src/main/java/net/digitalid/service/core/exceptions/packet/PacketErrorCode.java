@@ -8,7 +8,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.Blockable;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;
 import net.digitalid.service.core.database.SQLizable;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -234,7 +234,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PacketErrorCode get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Nonnull PacketErrorCode get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         final @Nonnull byte value = resultSet.getByte(columnIndex);
         if (!isValid(value)) { throw new SQLException("'" + value + "' is not a valid packet error."); }
         return get(value);
@@ -242,7 +242,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         preparedStatement.setByte(parameterIndex, value);
     }
     

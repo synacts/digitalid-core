@@ -11,9 +11,9 @@ import net.digitalid.service.core.concepts.attribute.Attribute;
 import net.digitalid.service.core.concepts.attribute.AttributeTypes;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
-import net.digitalid.service.core.exceptions.external.AttributeNotFoundException;
+import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.setup.IdentitySetup;
@@ -34,7 +34,7 @@ public final class AttributeTest extends IdentitySetup {
         
     @Test
     @Committing
-    public void _01_testValueReplace() throws AbortException, InvalidEncodingException {
+    public void _01_testValueReplace() throws DatabaseException, InvalidEncodingException {
         print("_01_testValueReplace");
         try {
             final @Nonnull Attribute attribute = Attribute.get(getRole(), AttributeTypes.NAME);
@@ -53,12 +53,12 @@ public final class AttributeTest extends IdentitySetup {
     
     @Committing
     @Test(expected = AttributeNotFoundException.class)
-    public void _02_testNonPublicAccess() throws AbortException, PacketException, ExternalException, NetworkException {
+    public void _02_testNonPublicAccess() throws DatabaseException, PacketException, ExternalException, NetworkException {
         print("_02_testNonPublicAccess");
         try {
             Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeTypes.NAME, false);
             Database.commit();
-        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
             if (!(exception instanceof AttributeNotFoundException)) { exception.printStackTrace(); }
             Database.rollback();
             throw exception;
@@ -67,7 +67,7 @@ public final class AttributeTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _03_testVisibilityReplace() throws AbortException, PacketException, ExternalException, NetworkException {
+    public void _03_testVisibilityReplace() throws DatabaseException, PacketException, ExternalException, NetworkException {
         print("_03_testVisibilityReplace");
         try {
             final @Nonnull PassiveExpression passiveExpression = new PassiveExpression(getRole(), "everybody");
@@ -76,7 +76,7 @@ public final class AttributeTest extends IdentitySetup {
             attribute.reset(); // Not necessary but I want to test the database state.
             Assert.assertEquals(passiveExpression, attribute.getVisibility());
             Database.commit();
-        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;
@@ -85,13 +85,13 @@ public final class AttributeTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _04_testPublicAccess() throws AbortException, PacketException, ExternalException, NetworkException {
+    public void _04_testPublicAccess() throws DatabaseException, PacketException, ExternalException, NetworkException {
         print("_04_testPublicAccess");
         try {
             final @Nonnull Block content = Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeTypes.NAME, false);
             Assert.assertEquals(NAME, new StringWrapper(content).getString());
             Database.commit();
-        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;

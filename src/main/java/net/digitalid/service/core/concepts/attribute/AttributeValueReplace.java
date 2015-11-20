@@ -13,7 +13,7 @@ import net.digitalid.service.core.concepts.certificate.CertificateIssue;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
@@ -113,7 +113,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AttributeValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private AttributeValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity.toNonHostEntity(), signature, recipient);
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
@@ -152,7 +152,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws AbortException {
+    protected void executeOnBoth() throws DatabaseException {
         if (published) { attribute.replaceValue(oldValue, newValue); }
         else { attribute.replaceUnpublishedValue(oldValue, newValue); }
     }
@@ -214,7 +214,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new AttributeValueReplace(entity, signature, recipient, block);
         }
         

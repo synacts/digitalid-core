@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -45,7 +45,7 @@ public final class Successor {
      * @return the successor of the given identifier as stored in the database.
      */
     @NonCommitting
-    public static @Nullable InternalNonHostIdentifier get(@Nonnull NonHostIdentifier identifier) throws AbortException {
+    public static @Nullable InternalNonHostIdentifier get(@Nonnull NonHostIdentifier identifier) throws DatabaseException {
         @Nonnull String query = "SELECT successor FROM general_successor WHERE identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) { return new InternalNonHostIdentifier(resultSet.getString(1)); }
@@ -61,7 +61,7 @@ public final class Successor {
      * @return the successor of the given identifier as stored in the database or retrieved by a new request.
      */
     @NonCommitting
-    public static @Nonnull InternalNonHostIdentifier getReloaded(@Nonnull NonHostIdentifier identifier) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull InternalNonHostIdentifier getReloaded(@Nonnull NonHostIdentifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
         @Nullable InternalNonHostIdentifier successor = get(identifier);
         if (successor == null) {
             final @Nonnull Reply reply;
@@ -90,7 +90,7 @@ public final class Successor {
      * @param reply the reply stating that the given identifier has the given successor.
      */
     @NonCommitting
-    public static void set(@Nonnull NonHostIdentifier identifier, @Nonnull InternalNonHostIdentifier successor, @Nullable Reply reply) throws AbortException {
+    public static void set(@Nonnull NonHostIdentifier identifier, @Nonnull InternalNonHostIdentifier successor, @Nullable Reply reply) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO general_successor (identifier, successor, reply) VALUES (" + identifier + ", " + successor + ", " + reply + ")");
         }

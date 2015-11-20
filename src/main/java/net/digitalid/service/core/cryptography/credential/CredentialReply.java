@@ -17,7 +17,7 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
@@ -122,7 +122,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
     @NonCommitting
-    private CredentialReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private CredentialReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, number);
         
         if (!hasEntity()) { throw new InvalidEncodingException("A credential reply must have an entity."); }
@@ -164,7 +164,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      * @require hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    @Nonnull ClientCredential getInternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull BigInteger b, @Nonnull Exponent u) throws AbortException, PacketException, ExternalException, NetworkException {
+    @Nonnull ClientCredential getInternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull BigInteger b, @Nonnull Exponent u) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert hasSignature() : "This handler has a signature.";
         
         if (restrictions == null) { throw new InvalidEncodingException("The restrictions may not be null for internal credentials."); }
@@ -188,7 +188,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      * @require hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    @Nonnull ClientCredential getExternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull BigInteger b, @Nonnull Exponent u, @Nonnull Exponent v) throws AbortException, PacketException, ExternalException, NetworkException {
+    @Nonnull ClientCredential getExternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull BigInteger b, @Nonnull Exponent u, @Nonnull Exponent v) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert hasSignature() : "This handler has a signature.";
         
         if (restrictions != null) { throw new InvalidEncodingException("The restrictions must be null for external credentials."); }
@@ -238,7 +238,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new CredentialReply(entity, signature, number, block);
         }
         

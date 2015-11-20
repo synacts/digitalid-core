@@ -10,7 +10,7 @@ import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -70,21 +70,21 @@ abstract class SiteTableImplementation<M extends DelegatingSiteStorageImplementa
     @Locked
     @Override
     @NonCommitting
-    public abstract @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException;
+    public abstract @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException;
     
     @Locked
     @Override
     @NonCommitting
-    public abstract void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException;
+    public abstract void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     @Locked
     @Override
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws AbortException {
+    public void removeState(@Nonnull NonHostEntity entity) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + getName() + " WHERE entity = " + entity);
         } catch (@Nonnull SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     

@@ -53,7 +53,7 @@ public final class ClientAgent extends Agent {
      * @return the commitment of this client agent.
      */
     @NonCommitting
-    public @Nonnull Commitment getCommitment() throws AbortException {
+    public @Nonnull Commitment getCommitment() throws DatabaseException {
         if (commitment == null) { commitment = AgentModule.getCommitment(this); }
         return commitment;
     }
@@ -66,7 +66,7 @@ public final class ClientAgent extends Agent {
      * @require isOnClient() : "This client agent is on a client.";
      */
     @Committing
-    public void setCommitment(@Nonnull Commitment newCommitment) throws AbortException {
+    public void setCommitment(@Nonnull Commitment newCommitment) throws DatabaseException {
         final @Nonnull Commitment oldCommitment = getCommitment();
         if (!newCommitment.equals(oldCommitment)) {
             Synchronizer.execute(new ClientAgentCommitmentReplace(this, oldCommitment, newCommitment));
@@ -82,7 +82,7 @@ public final class ClientAgent extends Agent {
     @NonCommitting
     @OnlyForActions
     @SuppressWarnings("deprecation")
-    public void replaceCommitment(@Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws AbortException {
+    public void replaceCommitment(@Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws DatabaseException {
         AgentModule.replaceCommitment(this, oldCommitment, newCommitment);
         commitment = newCommitment;
         notify(COMMITMENT);
@@ -110,7 +110,7 @@ public final class ClientAgent extends Agent {
      * @ensure Client.isValid(return) : "The returned name is valid.";
      */
     @NonCommitting
-    public @Nonnull String getName() throws AbortException {
+    public @Nonnull String getName() throws DatabaseException {
         if (name == null) { name = AgentModule.getName(this); }
         return name;
     }
@@ -124,7 +124,7 @@ public final class ClientAgent extends Agent {
      * @require Client.isValid(newName) : "The new name is valid.";
      */
     @Committing
-    public void setName(@Nonnull String newName) throws AbortException {
+    public void setName(@Nonnull String newName) throws DatabaseException {
         final @Nonnull String oldName = getName();
         if (!newName.equals(oldName)) {
             Synchronizer.execute(new ClientAgentNameReplace(this, oldName, newName));
@@ -142,7 +142,7 @@ public final class ClientAgent extends Agent {
      */
     @NonCommitting
     @OnlyForActions
-    public void replaceName(@Nonnull String oldName, @Nonnull String newName) throws AbortException {
+    public void replaceName(@Nonnull String oldName, @Nonnull String newName) throws DatabaseException {
         AgentModule.replaceName(this, oldName, newName);
         name = newName;
         notify(NAME);
@@ -151,7 +151,7 @@ public final class ClientAgent extends Agent {
     /* -------------------------------------------------- Agent -------------------------------------------------- */
     
     @Override
-    public void reset() throws AbortException {
+    public void reset() throws DatabaseException {
         this.commitment = null;
         this.name = null;
         super.reset();
@@ -178,7 +178,7 @@ public final class ClientAgent extends Agent {
      */
     @NonCommitting
     @OnlyForActions
-    public void createForActions(@Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name) throws AbortException {
+    public void createForActions(@Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name) throws DatabaseException {
         AgentModule.addClientAgent(this, permissions, restrictions, commitment, name);
         this.permissions = permissions.clone();
         this.restrictions = restrictions;
@@ -207,7 +207,7 @@ public final class ClientAgent extends Agent {
      * 
      * @param entity the entity whose client agents are to be reset.
      */
-    public static void reset(@Nonnull NonHostEntity entity) throws AbortException {
+    public static void reset(@Nonnull NonHostEntity entity) throws DatabaseException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
             if (map != null) {
@@ -265,7 +265,7 @@ public final class ClientAgent extends Agent {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull ClientAgent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex, boolean removed) throws AbortException {
+    public static @Nonnull ClientAgent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex, boolean removed) throws DatabaseException {
         return get(entity, resultSet.getLong(columnIndex), removed);
     }
     

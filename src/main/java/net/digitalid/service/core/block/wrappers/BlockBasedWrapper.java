@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -75,7 +75,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
             try {
                 final @Nullable Block block = Block.SQL_CONVERTER.restoreNullable(getType(), resultSet, columnIndex);
                 return block == null ? null : XDFConverter.decodeNonNullable(none, block);
-            } catch (@Nonnull AbortException | PacketException | ExternalException | NetworkException exception) {
+            } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
                 throw new SQLException("Could not decode a block from the database.", exception);
             }
         }

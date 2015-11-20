@@ -8,10 +8,10 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -94,12 +94,12 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull InternalIdentity getMappedIdentity() throws AbortException;
+    public abstract @Nonnull InternalIdentity getMappedIdentity() throws DatabaseException;
     
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull InternalIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
+    public abstract @Nonnull InternalIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     /* -------------------------------------------------- Existence -------------------------------------------------- */
     
@@ -110,7 +110,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
      */
     @Pure
     @NonCommitting
-    public final boolean exists() throws AbortException, PacketException, ExternalException, NetworkException {
+    public final boolean exists() throws DatabaseException, PacketException, ExternalException, NetworkException {
         try {
             Mapper.getIdentity(this);
             return true;
@@ -138,7 +138,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
         @Pure
         @Override
         protected @Nonnull InternalIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier.toInternalIdentifier();
+            return identifier.castTo(InternalIdentifier.class);
         }
     };
     

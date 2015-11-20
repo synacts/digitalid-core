@@ -12,7 +12,7 @@ import net.digitalid.service.core.block.wrappers.BooleanWrapper;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.resolution.Category;
@@ -125,7 +125,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public FreezableAgentPermissions(@Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public FreezableAgentPermissions(@Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -462,7 +462,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull @NonFrozen FreezableAgentPermissions get(@Nonnull ResultSet resultSet, int startIndex) throws AbortException {
+    public static @Capturable @Nonnull @NonFrozen FreezableAgentPermissions get(@Nonnull ResultSet resultSet, int startIndex) throws DatabaseException {
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             while (resultSet.next()) {
@@ -486,7 +486,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull @NonFrozen @EmptyOrSingle FreezableAgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws AbortException {
+    public static @Capturable @Nonnull @NonFrozen @EmptyOrSingle FreezableAgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws DatabaseException {
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             final @Nullable Identity identity = IdentityImplementation.get(resultSet, startIndex);
@@ -505,7 +505,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      */
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws AbortException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws DatabaseException {
         for (final @Nonnull SemanticType type : keySet()) {
             type.set(preparedStatement, startIndex);
             preparedStatement.setBoolean(startIndex + 1, get(type));
@@ -522,7 +522,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Override
     @NonCommitting
     @EmptyOrSingleRecipient
-    public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws AbortException {
+    public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws DatabaseException {
         assert areEmptyOrSingle() : "These permissions are empty or single.";
         
         final @Nonnull FreezableSet<SemanticType> keySet = keySet();

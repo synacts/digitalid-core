@@ -18,6 +18,7 @@ import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
@@ -33,6 +34,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.logger.Log;
 
 /**
@@ -173,7 +175,7 @@ public final class Worker implements Runnable {
             response.write(socket.getOutputStream());
             
             Log.information(methods + (requestAudit != null ? " with audit" : "") + (service != null ? " of the " + service.getName() : "") + (subject != null ? " to " + subject : "") + (signer != null ? " by " + signer : "") + " handled in " + start.ago().getValue() + " ms" + (error != null ? " with the error " + error.getName() : "") + ".");
-        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
             Log.warning("Could not send a response.", exception);
         } finally {
             try {

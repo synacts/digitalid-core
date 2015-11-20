@@ -14,9 +14,9 @@ import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
@@ -85,12 +85,12 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
      * @param oldValue the value of the last modification.
      * @param newValue the new value.
      * 
-     * @throws AbortException
+     * @throws DatabaseException
      * @throws PacketException
      * @throws ExternalException
      * @throws NetworkException
      */
-    private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertySetup<V, C, E> setup, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws AbortException {
+    private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertySetup<V, C, E> setup, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws DatabaseException {
         super(property.getConcept().getRole(), setup.getConceptSetup().getService());
         
         this.setup = setup;
@@ -102,11 +102,11 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     }
     
     @Pure
-    static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertyInternalAction<V, C, E> get(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull V oldValue, @Nonnull V newValue) throws AbortException {
+    static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertyInternalAction<V, C, E> get(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull V oldValue, @Nonnull V newValue) throws DatabaseException {
         return new NonNullableConceptPropertyInternalAction<>(property.getConceptPropertySetup(), property, property.getTime(), Time.getCurrent(), oldValue, newValue); // TODO: Let all the arguments be determined by the caller.
     }
     
-    private NonNullableConceptPropertyInternalAction(@Nonnull E entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block content, @Nonnull NonNullableConceptPropertySetup<V, C, E> setup) throws AbortException, PacketException, ExternalException, NetworkException {
+    private NonNullableConceptPropertyInternalAction(@Nonnull E entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block content, @Nonnull NonNullableConceptPropertySetup<V, C, E> setup) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient, setup.getConceptSetup().getService());
         
         this.setup = setup;
@@ -123,7 +123,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     /* -------------------------------------------------- Methods -------------------------------------------------- */
     
     @Override
-    protected void executeOnBoth() throws AbortException {
+    protected void executeOnBoth() throws DatabaseException {
         property.replace(oldTime, newTime, oldValue, newValue);
     }
     
@@ -134,7 +134,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     }
     
     @Override
-    public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> getReverse() throws AbortException {
+    public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> getReverse() throws DatabaseException {
         return new NonNullableConceptPropertyInternalAction<>(setup, property, newTime, oldTime, newValue, oldValue);
     }
     
@@ -241,7 +241,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
                 if (newValue.equals(oldValue)) { throw new InvalidEncodingException("The old and new value may not be equal."); }
                 // TODO: call other constructor. This constructor is reserved for clients that do not have or need a signature. For methods executed on the host, the signature must be stored.
                 return new NonNullableConceptPropertyInternalAction<V, C, E>(setup, property, oldTime, newTime, oldValue, newValue);
-            } catch (AbortException | PacketException | ExternalException | NetworkException exception) {
+            } catch (DatabaseException | PacketException | ExternalException | NetworkException exception) {
                 throw new InvalidEncodingException(exception);
             }
         }
@@ -274,7 +274,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @Override
         @NonCommitting
         @SuppressWarnings("unchecked")
-        protected @Nonnull Method create(@Nonnull Entity<E> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, InvalidEncodingException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity<E> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, InvalidEncodingException, PacketException, ExternalException, NetworkException {
                return new NonNullableConceptPropertyInternalAction<>((E) entity.toNonHostEntity(), signature, recipient, block, setup);
         }
         

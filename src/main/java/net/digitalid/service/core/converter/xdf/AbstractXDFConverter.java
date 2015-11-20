@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -136,7 +136,7 @@ public abstract class AbstractXDFConverter<O, E> {
     @Pure
     @Locked
     @NonCommitting
-    public abstract @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull @NonEncoding Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     /**
      * Decodes the given nullable block.
@@ -151,7 +151,7 @@ public abstract class AbstractXDFConverter<O, E> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         if (block != null) { return decodeNonNullable(external, block); }
         else { return null; }
     }

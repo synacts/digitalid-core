@@ -9,8 +9,8 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -55,7 +55,7 @@ public abstract class Person extends NonHostIdentityImplementation {
     
     @Override
     @NonCommitting
-    public final boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException {
+    public final boolean hasBeenMerged(@Nonnull SQLException exception) throws DatabaseException {
         final @Nullable InternalNonHostIdentifier successor = Successor.get(getAddress());
         if (successor != null && successor.isMapped()) {
             final @Nonnull InternalNonHostIdentity person = successor.getMappedIdentity();

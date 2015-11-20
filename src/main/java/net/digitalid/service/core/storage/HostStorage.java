@@ -3,7 +3,7 @@ package net.digitalid.service.core.storage;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -43,7 +43,7 @@ public interface HostStorage extends ClientStorage {
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull @NonEncoding Block exportAll(@Nonnull Host host) throws AbortException;
+    public @Nonnull @NonEncoding Block exportAll(@Nonnull Host host) throws DatabaseException;
     
     /**
      * Imports this storage for the given host from the given block.
@@ -55,6 +55,6 @@ public interface HostStorage extends ClientStorage {
      */
     @Locked
     @NonCommitting
-    public void importAll(@Nonnull Host host, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException;
+    public void importAll(@Nonnull Host host, @Nonnull @NonEncoding Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
     
 }

@@ -10,11 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.cache.Cache;
-import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.external.InvalidDeclarationException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -54,6 +53,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.database.reference.GeneralReference;
 import net.digitalid.utility.database.reference.ReferenceOption;
 import net.digitalid.utility.database.table.GeneralTable;
@@ -136,7 +136,7 @@ public final class Mapper {
      * @param newNumber the new number of the person which is updated.
      */
     @NonCommitting
-    private static void updateReferences(@Nonnull Statement statement, long oldNumber, long newNumber) throws AbortException {
+    private static void updateReferences(@Nonnull Statement statement, long oldNumber, long newNumber) throws DatabaseException {
         final @Nonnull String IGNORE = Database.getConfiguration().IGNORE();
         for (final @Nonnull ReadOnlyTriplet<String, String, String[]> reference : references) {
             final @Nonnull String table = reference.getElement0();
@@ -194,16 +194,16 @@ public final class Mapper {
      */
     @Pure
     @NonCommitting
-    private static @Nonnull Identity createIdentity(@Nonnull Category category, long number, @Nonnull Identifier address) throws AbortException {
+    private static @Nonnull Identity createIdentity(@Nonnull Category category, long number, @Nonnull Identifier address) throws DatabaseException {
         try {
             switch (category) {
-                case HOST: return new HostIdentity(number, address.toHostIdentifier());
-                case SYNTACTIC_TYPE: return new SyntacticType(number, address.toInternalNonHostIdentifier());
-                case SEMANTIC_TYPE: return new SemanticType(number, address.toInternalNonHostIdentifier());
-                case NATURAL_PERSON: return new NaturalPerson(number, address.toInternalNonHostIdentifier());
-                case ARTIFICIAL_PERSON: return new ArtificialPerson(number, address.toInternalNonHostIdentifier());
-                case EMAIL_PERSON: return new EmailPerson(number, address.toEmailIdentifier());
-                case MOBILE_PERSON: return new MobilePerson(number, address.toMobileIdentifier());
+                case HOST: return new HostIdentity(number, address.castTo(HostIdentifier.class));
+                case SYNTACTIC_TYPE: return new SyntacticType(number, address.castTo(InternalNonHostIdentifier.class));
+                case SEMANTIC_TYPE: return new SemanticType(number, address.castTo(InternalNonHostIdentifier.class));
+                case NATURAL_PERSON: return new NaturalPerson(number, address.castTo(InternalNonHostIdentifier.class));
+                case ARTIFICIAL_PERSON: return new ArtificialPerson(number, address.castTo(InternalNonHostIdentifier.class));
+                case EMAIL_PERSON: return new EmailPerson(number, address.castTo(EmailIdentifier.class));
+                case MOBILE_PERSON: return new MobilePerson(number, address.castTo(MobileIdentifier.class));
                 default: throw new ShouldNeverHappenError("The category '" + category.name() + "' is not supported.");
             }
         } catch (@Nonnull InvalidEncodingException exception) {
@@ -252,7 +252,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    private static @Nonnull Identity loadIdentity(long number) throws AbortException {
+    private static @Nonnull Identity loadIdentity(long number) throws DatabaseException {
         assert !numbers.containsKey(number) : "The given number is not yet loaded.";
         
         final @Nonnull String SQL = "SELECT category, address FROM general_identity WHERE identity = " + number;
@@ -283,7 +283,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    public static @Nonnull Identity getIdentity(long number) throws AbortException {
+    public static @Nonnull Identity getIdentity(long number) throws DatabaseException {
         @Nullable Identity identity = numbers.get(number);
         if (identity == null) { identity = loadIdentity(number); }
         try {
@@ -306,7 +306,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    private static boolean loadIdentity(@Nonnull Identifier identifier) throws AbortException {
+    private static boolean loadIdentity(@Nonnull Identifier identifier) throws DatabaseException {
         assert !identifiers.containsKey(identifier) : "The given identifier is not yet loaded.";
         
         Log.verbose("Try to load the identifier " + identifier + " from the database.");
@@ -354,7 +354,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    public static boolean isMapped(@Nonnull Identifier identifier) throws AbortException {
+    public static boolean isMapped(@Nonnull Identifier identifier) throws DatabaseException {
         return identifiers.containsKey(identifier) || loadIdentity(identifier);
     }
     
@@ -370,7 +370,7 @@ public final class Mapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Identity getMappedIdentity(@Nonnull Identifier identifier) throws AbortException {
+    public static @Nonnull Identity getMappedIdentity(@Nonnull Identifier identifier) throws DatabaseException {
         assert isMapped(identifier) : "The identifier is mapped.";
         
         return identifiers.get(identifier);
@@ -391,7 +391,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    public static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws AbortException {
+    public static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws DatabaseException {
         if (isMapped(identifier)) {
             final @Nonnull Identity identity = identifiers.get(identifier);
             if (!identity.getCategory().equals(category)) { throw new SQLException("The identifier " + identifier + " should have been mapped with the category " + category + " but has already been mapped with the category " + identity.getCategory() + "."); }
@@ -417,7 +417,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    public static @Nonnull HostIdentity mapHostIdentity(@Nonnull HostIdentifier identifier) throws AbortException {
+    public static @Nonnull HostIdentity mapHostIdentity(@Nonnull HostIdentifier identifier) throws DatabaseException {
         try {
             return mapIdentity(identifier, Category.HOST, null).toHostIdentity();
         } catch (@Nonnull InvalidEncodingException exception) {
@@ -476,7 +476,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    private static @Nonnull ExternalPerson mapExternalIdentity(@Nonnull ExternalIdentifier identifier) throws AbortException, InvalidEncodingException {
+    private static @Nonnull ExternalPerson mapExternalIdentity(@Nonnull ExternalIdentifier identifier) throws DatabaseException, InvalidEncodingException {
         return mapIdentity(identifier, identifier.getCategory(), null).toExternalPerson();
     }
     
@@ -490,7 +490,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    public static void mergeIdentities(@Nonnull ReadOnlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws AbortException {
+    public static void mergeIdentities(@Nonnull ReadOnlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws DatabaseException {
         final long newNumber = newIdentity.getKey();
         try (@Nonnull Statement statement = Database.createStatement()) {
             for (final @Nonnull NonHostIdentity identity : identities) {
@@ -519,17 +519,17 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull @NonMapped InternalNonHostIdentifier identifier) throws AbortException, PacketException, ExternalException, NetworkException {
+    private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull @NonMapped InternalNonHostIdentifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert !isMapped(identifier) : "The identifier is not mapped.";
         
-        if (Server.hasHost(identifier.getHostIdentifier())) { throw new IdentityNotFoundException(identifier); }
+        if (Server.hasHost(identifier.getHostIdentifier())) { throw IdentityNotFoundException.get(identifier); }
         
         // Query the identity of the given identifier.
         final @Nonnull IdentityReply reply;
         try {
             reply = new IdentityQuery(identifier).sendNotNull();
         } catch (@Nonnull PacketException exception) {
-            if (exception.getError() == PacketErrorCode.IDENTIFIER) { throw new IdentityNotFoundException(identifier); else throw exception; }
+            if (exception.getError() == PacketErrorCode.IDENTIFIER) { throw IdentityNotFoundException.get(identifier); else throw exception; }
         }
         final @Nonnull Category category = reply.getCategory();
         Log.verbose("The category of " + identifier + " is '" + category.name() + "'.");
@@ -544,10 +544,10 @@ public final class Mapper {
         for (final @Nonnull NonHostIdentity identity : identities) {
             final @Nonnull NonHostIdentifier address = identity.getAddress();
             final @Nonnull String message = "The claimed predecessor " + address + " of " + identifier;
-            if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) { throw new InvalidDeclarationException(message + " has a wrong category.", identifier, reply); }
+            if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) { throw InvalidDeclarationException.get(message + " has a wrong category.", identifier, reply); }
             final @Nonnull Predecessor predecessor = new Predecessor(address);
-            if (!predecessors.contains(predecessor)) { throw new InvalidDeclarationException(message + " has other predecessors.", identifier, reply); }
-            if (!Successor.getReloaded(address).equals(identifier)) { throw new InvalidDeclarationException(message + " does not link back.", identifier, reply); }
+            if (!predecessors.contains(predecessor)) { throw InvalidDeclarationException.get(message + " has other predecessors.", identifier, reply); }
+            if (!Successor.getReloaded(address).equals(identifier)) { throw InvalidDeclarationException.get(message + " does not link back.", identifier, reply); }
         }
         
         final @Nonnull InternalNonHostIdentity identity;
@@ -564,7 +564,7 @@ public final class Mapper {
         // Create a new identity and merge existing predecessors into this new identity.
         } else {
             identity = mapIdentity(identifier, category, reply).toInternalNonHostIdentity();
-            if (identities.size() > 1 && !category.isInternalPerson()) { throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", identifier, reply); }
+            if (identities.size() > 1 && !category.isInternalPerson()) { throw InvalidDeclarationException.get("Only internal persons may have more than one predecessor.", identifier, reply); }
             mergeIdentities(identities, identity);
         }
         Log.debugging("The identity of " + identifier + " was succesfully established.");
@@ -574,7 +574,7 @@ public final class Mapper {
         if (successor != null) {
             Successor.set(identifier, successor, reply);
             Log.verbose("The successor of " + identifier + " is " + successor + ".");
-            if (!successor.getIdentity().equals(identifier.getIdentity())) { throw new InvalidDeclarationException("The claimed successor " + successor + " of " + identifier + " does not link back.", identifier, reply); }
+            if (!successor.getIdentity().equals(identifier.getIdentity())) { throw InvalidDeclarationException.get("The claimed successor " + successor + " of " + identifier + " does not link back.", identifier, reply); }
             return successor.getIdentity();
         } else {
             return identity;
@@ -591,13 +591,13 @@ public final class Mapper {
     @Pure
     @Locked
     @NonCommitting
-    private static @Nonnull Person establishExternalIdentity(@Nonnull @NonMapped ExternalIdentifier identifier) throws AbortException, PacketException, ExternalException, NetworkException {
+    private static @Nonnull Person establishExternalIdentity(@Nonnull @NonMapped ExternalIdentifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert !isMapped(identifier) : "The identifier is not mapped.";
         
         final @Nonnull Person person = mapExternalIdentity(identifier);
         try {
             final @Nonnull InternalNonHostIdentity identity = Successor.getReloaded(identifier).getIdentity();
-            if (!identity.equals(identifier.getIdentity())) { throw new InvalidDeclarationException("The claimed successor " + identity.getAddress() + " of " + identifier + " does not link back.", identifier, null); }
+            if (!identity.equals(identifier.getIdentity())) { throw InvalidDeclarationException.get("The claimed successor " + identity.getAddress() + " of " + identifier + " does not link back.", identifier); }
             return identity.toPerson();
         } catch (@Nonnull PacketException exception) {
             if (exception.getError() == PacketErrorCode.EXTERNAL) { return person; }
@@ -617,7 +617,7 @@ public final class Mapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
         if (isMapped(identifier)) {
             Log.verbose("The identifier " + identifier + " is already mapped.");
             return identifiers.get(identifier);

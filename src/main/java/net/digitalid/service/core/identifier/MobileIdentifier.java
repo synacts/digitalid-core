@@ -8,9 +8,9 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.MobilePerson;
@@ -79,7 +79,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Person getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
+    public @Nonnull Person getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
         return Mapper.getIdentity(this).toPerson();
     }
     
@@ -100,7 +100,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
         @Pure
         @Override
         protected @Nonnull MobileIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier.toMobileIdentifier();
+            return identifier.castTo(MobileIdentifier.class);
         }
     };
     

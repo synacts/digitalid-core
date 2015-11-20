@@ -42,7 +42,7 @@ public final class RequestAudit extends Audit {
      * @return the request audit for the given method.
      */
     @NonCommitting
-    public static @Nullable RequestAudit get(@Nonnull Method method) throws AbortException {
+    public static @Nullable RequestAudit get(@Nonnull Method method) throws DatabaseException {
         if (method.isOnClient() && method instanceof InternalMethod) {
             final @Nonnull Role role = method.getRole();
             final @Nonnull Service service = method.getService();

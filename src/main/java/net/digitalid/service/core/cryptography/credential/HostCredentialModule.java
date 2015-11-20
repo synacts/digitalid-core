@@ -53,7 +53,7 @@ public final class HostCredentialModule implements HostModule {
     
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws AbortException {
+    public void createTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "credential (time " + Time.FORMAT + " NOT NULL, entity " + EntityImplementation.FORMAT + " NOT NULL, e " + Exponent.FORMAT + " NOT NULL, i " + Exponent.FORMAT + " NOT NULL, v " + Exponent.FORMAT + ", signature " + Block.FORMAT + " NOT NULL, PRIMARY KEY (time), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
             Mapper.addReference(site + "credential", "entity");
@@ -63,7 +63,7 @@ public final class HostCredentialModule implements HostModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws AbortException {
+    public void deleteTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.removeRegularPurging(site + "credential");
             Mapper.removeReference(site + "credential", "entity");
@@ -106,7 +106,7 @@ public final class HostCredentialModule implements HostModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block exportModule(@Nonnull Host host) throws AbortException {
+    public @Nonnull Block exportModule(@Nonnull Host host) throws DatabaseException {
         final @Nonnull String SQL = "SELECT time, entity, e, i, v, signature FROM " + host + "credential";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
@@ -125,7 +125,7 @@ public final class HostCredentialModule implements HostModule {
     
     @Override
     @NonCommitting
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("INSERT INTO " + host + "credential (time, entity, e, i, v, signature) VALUES (?, ?, ?, ?, ?, ?)")) {
@@ -154,7 +154,7 @@ public final class HostCredentialModule implements HostModule {
      * @param signature the signature of the credential request.
      */
     @NonCommitting
-    public static void store(@Nonnull NonHostAccount account, @Nonnull Exponent e, @Nonnull Exponent i, @Nullable Exponent v, @Nonnull SignatureWrapper signature) throws AbortException {
+    public static void store(@Nonnull NonHostAccount account, @Nonnull Exponent e, @Nonnull Exponent i, @Nullable Exponent v, @Nonnull SignatureWrapper signature) throws DatabaseException {
         final @Nonnull Site site = account.getSite();
         final @Nonnull String TIME = Database.getConfiguration().GREATEST() + "(COALESCE(MAX(time), 0) + 1, " + Database.getConfiguration().CURRENT_TIME() + ")";
         final @Nonnull String SQL = "INSERT INTO " + site + "credential (time, entity, e, i, v, signature) SELECT " + TIME + ", ?, ?, ?, ?, ? FROM " + site + "credential";

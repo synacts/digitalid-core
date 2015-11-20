@@ -9,7 +9,7 @@ import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.Identity;
@@ -80,7 +80,7 @@ abstract class Expression extends NonHostConcept {
      */
     @Pure
     @NonCommitting
-    abstract @Nonnull @Capturable FreezableSet<Contact> getContacts() throws AbortException;
+    abstract @Nonnull @Capturable FreezableSet<Contact> getContacts() throws DatabaseException;
     
     /**
      * Returns whether this expression matches the given attribute content.
@@ -103,7 +103,7 @@ abstract class Expression extends NonHostConcept {
      */
     @Pure
     @NonCommitting
-    abstract boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws AbortException;
+    abstract boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws DatabaseException;
     
     
     /**
@@ -251,7 +251,7 @@ abstract class Expression extends NonHostConcept {
      */
     @Pure
     @NonCommitting
-    static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws AbortException, PacketException, ExternalException, NetworkException {
+    static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, PacketException, ExternalException, NetworkException {
         if (string.trim().isEmpty()) { return new EmptyExpression(entity); }
         
         int index = lastIndexOf(string, addition);

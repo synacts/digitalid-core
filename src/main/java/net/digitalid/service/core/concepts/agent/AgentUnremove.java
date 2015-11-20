@@ -61,7 +61,7 @@ final class AgentUnremove extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AgentUnremove(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private AgentUnremove(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.agent = Agent.get(entity.toNonHostEntity(), block);
@@ -95,7 +95,7 @@ final class AgentUnremove extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws AbortException {
+    protected void executeOnBoth() throws DatabaseException {
         agent.unremoveForActions();
     }
     
@@ -147,7 +147,7 @@ final class AgentUnremove extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new AgentUnremove(entity, signature, recipient, block);
         }
         

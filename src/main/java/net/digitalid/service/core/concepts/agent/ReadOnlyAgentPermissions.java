@@ -139,6 +139,6 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<SemanticType, Bool
      * @require areEmptyOrSingle() : "These permissions are empty or single.";
      */
     @NonCommitting
-    public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws AbortException;
+    public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws DatabaseException;
     
 }

@@ -152,7 +152,7 @@ final class Options {
                 final @Nonnull HostIdentifier identifier = new HostIdentifier(string);
                 try {
                     new Host(identifier);
-                } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+                } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
                     Console.write("Could not create the host " + identifier + " (" + exception + ").");
                     Database.rollback();
                 }

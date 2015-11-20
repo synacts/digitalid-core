@@ -13,8 +13,8 @@ import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -204,7 +204,7 @@ public interface Entity extends XDF<Entity, Site>, SQL<Entity, Site> {
                 } else {
                     throw new InvalidEncodingException("The site is always a host or a client.");
                 }
-            } catch (@Nonnull AbortException exception) {
+            } catch (@Nonnull DatabaseException exception) {
                 throw new InvalidEncodingException(exception);
             }
         }

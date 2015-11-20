@@ -9,7 +9,7 @@ import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -187,11 +187,11 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
      * @return the property of this concept with the given table.
      */
     @Pure
-    public final @Nonnull ConceptProperty<?, C, E> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws AbortException { // TODO: Change the parameter to ConceptPropertySetup!
+    public final @Nonnull ConceptProperty<?, C, E> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws DatabaseException { // TODO: Change the parameter to ConceptPropertySetup!
         for (final @Nonnull ConceptProperty<?, C, E> property : properties) {
             if (property.getConceptPropertySetup().getPropertyTable().equals(table)) { return property; }
         }
-        throw AbortException.get("No property is registered for the given table.");
+        throw DatabaseException.get("No property is registered for the given table.");
     }
     
     /**
@@ -201,7 +201,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
      */
     @Locked
     @NonCommitting
-    public void reset(@Nonnull ConceptPropertyTable<?, C, E> table) throws AbortException {
+    public void reset(@Nonnull ConceptPropertyTable<?, C, E> table) throws DatabaseException {
         getProperty(table).reset();
     }
     
@@ -210,7 +210,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
      */
     @Locked
     @NonCommitting
-    public void resetAll() throws AbortException {
+    public void resetAll() throws DatabaseException {
         for (final @Nonnull ConceptProperty<?, C, E> property : properties) { property.reset(); }
     }
     

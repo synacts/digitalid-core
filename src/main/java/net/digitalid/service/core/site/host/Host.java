@@ -15,7 +15,7 @@ import net.digitalid.service.core.cryptography.KeyPair;
 import net.digitalid.service.core.cryptography.PrivateKeyChain;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
 import net.digitalid.service.core.entity.HostAccount;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -89,7 +89,7 @@ public final class Host extends Site {
      */
     @Locked
     @Committing
-    public Host(@Nonnull HostIdentifier identifier) throws AbortException, PacketException, ExternalException, NetworkException {
+    public Host(@Nonnull HostIdentifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(identifier.asHostName());
         
         this.identifier = identifier;

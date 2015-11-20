@@ -8,7 +8,7 @@ import net.digitalid.service.core.concept.property.indexed.IndexedConceptPropert
 import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.service.core.concept.property.nullable.NullableConceptProperty;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -47,13 +47,13 @@ public interface ConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull Time getTime() throws AbortException;
+    public @Nonnull Time getTime() throws DatabaseException;
     
     /**
      * Resets the time and value of this property.
      */
     @Locked
     @NonCommitting
-    public void reset() throws AbortException;
+    public void reset() throws DatabaseException;
     
 }

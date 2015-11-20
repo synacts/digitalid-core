@@ -65,7 +65,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
      * @require outgoingRole.isOnHost() : "The outgoing role is on a host.";
      */
     @NonCommitting
-    OutgoingRoleIssue(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws AbortException {
+    OutgoingRoleIssue(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws DatabaseException {
         super(outgoingRole.getAccount(), subject);
         
         this.issuer = outgoingRole.getAccount().getIdentity();
@@ -87,7 +87,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private OutgoingRoleIssue(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private OutgoingRoleIssue(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         if (signature instanceof HostSignatureWrapper) {
@@ -131,7 +131,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
      * Executes this action on both hosts and clients.
      */
     @NonCommitting
-    private void executeOnBoth() throws AbortException {
+    private void executeOnBoth() throws DatabaseException {
         AgentModule.addIncomingRole(getNonHostEntity(), issuer, relation, agentNumber);
     }
     
@@ -151,14 +151,14 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws AbortException {
+    public void executeOnClient() throws DatabaseException {
         executeOnBoth();
         getRole().addRole(issuer, relation, agentNumber);
     }
     
     @Override
     @NonCommitting
-    public void executeOnFailure() throws AbortException {
+    public void executeOnFailure() throws DatabaseException {
         // TODO: Add this role issuance to a list of failed external actions.
     }
     
@@ -206,7 +206,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new OutgoingRoleIssue(entity, signature, recipient, block);
         }
         

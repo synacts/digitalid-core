@@ -21,7 +21,7 @@ public final class PasswordTest extends IdentitySetup {
         
     @Test
     @Committing
-    public void _01_testValueReplace() throws AbortException {
+    public void _01_testValueReplace() throws DatabaseException {
         print("_01_testValueReplace");
         try {
             final @Nonnull Settings password = Settings.get(getRole());

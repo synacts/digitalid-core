@@ -8,9 +8,9 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -73,7 +73,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
     @Pure
     @Override
     @NonCommitting
-    public final boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException {
+    public final boolean hasBeenMerged(@Nonnull SQLException exception) throws DatabaseException {
         Mapper.unmap(this);
         throw exception;
     }
@@ -112,7 +112,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     @NonCommitting
-    abstract void load() throws AbortException, PacketException, ExternalException, NetworkException;
+    abstract void load() throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     /**
      * Ensures that the type declaration is loaded.
@@ -120,7 +120,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
      * @ensure isLoaded() : "The type declaration is loaded.";
      */
     @NonCommitting
-    public final void ensureLoaded() throws AbortException, PacketException, ExternalException, NetworkException {
+    public final void ensureLoaded() throws DatabaseException, PacketException, ExternalException, NetworkException {
         if (!loaded) { load(); }
     }
     

@@ -23,9 +23,9 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
@@ -105,7 +105,7 @@ public final class AccountOpen extends Action {
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
     @NonCommitting
-    AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws AbortException, PacketException, ExternalException, NetworkException {
+    AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(null, subject, subject.getHostIdentifier());
         
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
@@ -126,7 +126,7 @@ public final class AccountOpen extends Action {
      * @param block the content which is to be decoded.
      */
     @NonCommitting
-    private AccountOpen(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("open.account@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private AccountOpen(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("open.account@core.digitalid.net") Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account."); }
@@ -197,7 +197,7 @@ public final class AccountOpen extends Action {
      * @param entity the entity which is to be initialized.
      */
     @NonCommitting
-    public void initialize(@Nonnull NonHostEntity entity) throws AbortException {
+    public void initialize(@Nonnull NonHostEntity entity) throws DatabaseException {
         final @Nonnull Context context = Context.getRoot(entity);
         context.createForActions();
         context.replaceName("New Context", "Root Context");
@@ -230,7 +230,7 @@ public final class AccountOpen extends Action {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws AbortException {
+    public void executeOnClient() throws DatabaseException {
         throw new ShouldNeverHappenError("The action to open an account should never be executed on a client.");
     }
     
@@ -255,7 +255,7 @@ public final class AccountOpen extends Action {
     
     @Override
     @NonCommitting
-    public @Nonnull Response send() throws AbortException, PacketException, ExternalException, NetworkException {
+    public @Nonnull Response send() throws DatabaseException, PacketException, ExternalException, NetworkException {
         if (secret == null) { throw new PacketException(PacketErrorCode.INTERNAL, "The secret may not be null for sending."); }
         return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
     }
@@ -312,7 +312,7 @@ public final class AccountOpen extends Action {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new AccountOpen(entity, signature, recipient, block);
         }
         

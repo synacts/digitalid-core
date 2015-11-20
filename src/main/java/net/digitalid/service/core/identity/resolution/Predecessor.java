@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.Blockable;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
@@ -74,7 +74,7 @@ public final class Predecessor implements Blockable {
      * @param identifier the identifier of this predecessor.
      */
     @NonCommitting
-    public Predecessor(@Nonnull NonHostIdentifier identifier) throws AbortException {
+    public Predecessor(@Nonnull NonHostIdentifier identifier) throws DatabaseException {
         this(identifier, identifier instanceof InternalNonHostIdentifier ? FreezablePredecessors.get((InternalNonHostIdentifier) identifier) : new FreezablePredecessors().freeze());
     }
     
@@ -89,7 +89,7 @@ public final class Predecessor implements Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
-        this.identifier = IdentifierImplementation.create(elements.getNonNullable(0)).toNonHostIdentifier();
+        this.identifier = IdentifierImplementation.create(elements.getNonNullable(0)).castTo(NonHostIdentifier.class);
         this.predecessors = new FreezablePredecessors(elements.getNonNullable(1)).freeze();
     }
     
@@ -143,7 +143,7 @@ public final class Predecessor implements Blockable {
      */
     @Pure
     @NonCommitting
-    @Nullable NonHostIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
+    @Nullable NonHostIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
         if (identifier.isMapped()) { return identifier.getMappedIdentity(); }
         if (!predecessors.getIdentities().isEmpty()) { return identifier.getIdentity().toNonHostIdentity(); }
         return null;

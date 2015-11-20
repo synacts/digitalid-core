@@ -19,6 +19,7 @@ import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidDeclarationException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
@@ -27,9 +28,9 @@ import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identifier.NonHostIdentifier;
-import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.NonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.resolution.FreezablePredecessors;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.identity.resolution.Predecessor;
@@ -45,6 +46,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Initializes a new account with the given states.
@@ -75,7 +77,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @param states the states to merge into the new account.
      */
     @NonCommitting
-    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @NonNullableElements ReadOnlyList<ReadOnlyPair<Predecessor, Block>> states) throws AbortException, PacketException, ExternalException, NetworkException {
+    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @NonNullableElements ReadOnlyList<ReadOnlyPair<Predecessor, Block>> states) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(role);
         
         this.states = states;
@@ -95,15 +97,15 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AccountInitialize(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private AccountInitialize(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull InternalNonHostIdentifier subject = getSubject().toInternalNonHostIdentifier();
+        final @Nonnull InternalNonHostIdentifier subject = getSubject().castTo(InternalNonHostIdentifier.class);
         if (isOnHost() && FreezablePredecessors.exist(subject)) { throw new PacketException(PacketErrorCode.METHOD, "The subject " + subject + " is already initialized."); }
         
         final @Nonnull Category category = entity.getIdentity().getCategory();
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
-        if (elements.size() > 1 && !category.isInternalPerson()) { throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", subject, null); }
+        if (elements.size() > 1 && !category.isInternalPerson()) { throw InvalidDeclarationException.get("Only internal persons may have more than one predecessor.", subject); }
         
         final @Nonnull FreezableList<ReadOnlyPair<Predecessor, Block>> states = new FreezableArrayList<>(elements.size());
         for (final @Nonnull Block element : elements) {
@@ -112,13 +114,13 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             final @Nonnull NonHostIdentifier identifier = predecessor.getIdentifier();
             final @Nonnull NonHostIdentity identity = identifier.getIdentity();
             final @Nonnull String message = "The claimed predecessor " + identifier + " of " + subject;
-            if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) { throw new InvalidDeclarationException(message + " has a wrong category.", subject, null); }
+            if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) { throw InvalidDeclarationException.get(message + " has a wrong category.", subject); }
             if (identifier instanceof InternalNonHostIdentifier) {
-                if (!FreezablePredecessors.get((InternalNonHostIdentifier) identifier).equals(predecessor.getPredecessors())) { throw new InvalidDeclarationException(message + " has other predecessors.", subject, null); }
+                if (!FreezablePredecessors.get((InternalNonHostIdentifier) identifier).equals(predecessor.getPredecessors())) { throw InvalidDeclarationException.get(message + " has other predecessors.", subject); }
             } else {
-                if (!predecessor.getPredecessors().isEmpty()) { throw new InvalidDeclarationException(message + " is an external person and may not have any predecessors.", subject, null); }
+                if (!predecessor.getPredecessors().isEmpty()) { throw InvalidDeclarationException.get(message + " is an external person and may not have any predecessors.", subject); }
             }
-            if (!Successor.getReloaded(identifier).equals(subject)) { throw new InvalidDeclarationException(message + " does not link back.", subject, null); }
+            if (!Successor.getReloaded(identifier).equals(subject)) { throw InvalidDeclarationException.get(message + " does not link back.", subject); }
             states.add(new FreezablePair<>(predecessor, tuple.getNullableElement(1)).freeze());
         }
         this.states = states.freeze();
@@ -162,7 +164,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws AbortException {
+    protected void executeOnBoth() throws DatabaseException {
         final @Nonnull NonHostEntity entity = getNonHostEntity();
         
         try {
@@ -176,7 +178,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
                 predecessors.add(predecessor);
             }
             Mapper.mergeIdentities(identities.freeze(), entity.getIdentity());
-            predecessors.set(getSubject().toInternalNonHostIdentifier(), null);
+            predecessors.set(getSubject().castTo(InternalNonHostIdentifier.class), null);
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {
             throw new SQLException("A problem occurred while adding a state.", exception);
         }
@@ -232,7 +234,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new AccountInitialize(entity, signature, recipient, block);
         }
         

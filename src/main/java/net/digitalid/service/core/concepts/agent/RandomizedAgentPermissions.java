@@ -102,7 +102,7 @@ public final class RandomizedAgentPermissions implements Blockable {
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public RandomizedAgentPermissions(@Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public RandomizedAgentPermissions(@Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         this.hash = block.getHash();

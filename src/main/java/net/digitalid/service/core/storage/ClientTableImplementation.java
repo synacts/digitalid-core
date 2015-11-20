@@ -2,7 +2,7 @@ package net.digitalid.service.core.storage;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -78,22 +78,22 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
     @Locked
     @Override
     @NonCommitting
-    public final void createTables(@Nonnull Site site) throws AbortException {
+    public final void createTables(@Nonnull Site site) throws DatabaseException {
         try {
             if (isTableFor(site)) { create(site); }
         } catch (@Nonnull SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     
     @Locked
     @Override
     @NonCommitting
-    public final void deleteTables(@Nonnull Site site) throws AbortException {
+    public final void deleteTables(@Nonnull Site site) throws DatabaseException {
         try {
             if (isTableFor(site)) { delete(site); }
         } catch (@Nonnull SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     

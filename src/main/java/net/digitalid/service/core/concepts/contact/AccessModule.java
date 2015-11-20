@@ -12,7 +12,7 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.host.Host;
@@ -44,7 +44,7 @@ final class AccessModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws AbortException {
+    public void createTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Create the tables of this module.
         }
@@ -52,7 +52,7 @@ final class AccessModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws AbortException {
+    public void deleteTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
@@ -78,7 +78,7 @@ final class AccessModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block exportModule(@Nonnull Host host) throws AbortException {
+    public @Nonnull Block exportModule(@Nonnull Host host) throws DatabaseException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
@@ -88,7 +88,7 @@ final class AccessModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws AbortException, InvalidEncodingException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
@@ -117,7 +117,7 @@ final class AccessModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
@@ -127,7 +127,7 @@ final class AccessModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, InvalidEncodingException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
@@ -138,7 +138,7 @@ final class AccessModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws AbortException {
+    public void removeState(@Nonnull NonHostEntity entity) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Remove the entries of the given entity from the database table(s).
         }

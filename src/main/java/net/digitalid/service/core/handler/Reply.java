@@ -19,9 +19,9 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
+import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -123,7 +123,7 @@ public abstract class Reply extends Handler implements SQLizable {
          */
         @Pure
         @NonCommitting
-        protected abstract Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException;
+        protected abstract Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
         
     }
     
@@ -159,7 +159,7 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     @Pure
     @NonCommitting
-    private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         final @Nullable Reply.Factory factory = converters.get(block.getType());
         if (factory == null) { throw new PacketException(PacketErrorCode.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true); }
         else { return factory.create(entity, signature, number, block); }
@@ -180,7 +180,7 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         return get(entity, signature, store(signature), block);
     }
     
@@ -261,7 +261,7 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException, PacketException, ExternalException, NetworkException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) { return null; }
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {
@@ -279,7 +279,7 @@ public abstract class Reply extends Handler implements SQLizable {
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         if (number == null) { preparedStatement.setNull(parameterIndex, java.sql.Types.BIGINT); }
         else { preparedStatement.setLong(parameterIndex, number); }
     }
@@ -292,7 +292,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         if (reply == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
         else { reply.set(preparedStatement, parameterIndex); }
     }

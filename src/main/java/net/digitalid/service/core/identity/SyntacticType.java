@@ -11,9 +11,9 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -118,7 +118,7 @@ public final class SyntacticType extends Type {
     
     @Override
     @NonCommitting
-    void load() throws AbortException, PacketException, ExternalException, NetworkException {
+    void load() throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert !isLoaded() : "The type declaration is not loaded.";
         
         this.numberOfParameters = Int8Wrapper.decode(Cache.getStaleAttributeContent(this, null, PARAMETERS));

@@ -7,7 +7,7 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.property.nonnullable.WritableNonNullableProperty;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -84,7 +84,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Pure
     @Locked
     @NonCommitting
-    private void load() throws AbortException {
+    private void load() throws DatabaseException {
         final @Nonnull @NonNullableElements ReadOnlyPair<Time, V> pair = propertySetup.getPropertyTable().load(this, propertySetup);
         this.time = pair.getNonNullableElement0();
         this.value = pair.getNonNullableElement1();
@@ -101,7 +101,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull Time getTime() throws AbortException {
+    public @Nonnull Time getTime() throws DatabaseException {
         if (time == null) { load(); }
         assert time != null;
         return time;
@@ -118,7 +118,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull @Validated V get() throws AbortException {
+    public @Nonnull @Validated V get() throws DatabaseException {
         if (value == null) { load(); }
         assert value != null;
         return value;
@@ -127,7 +127,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @Override
     @Committing
-    public void set(@Nonnull @Validated V newValue) throws AbortException {
+    public void set(@Nonnull @Validated V newValue) throws DatabaseException {
         assert getValueValidator().isValid(newValue) : "The new value is valid.";
         
         final @Nonnull V oldValue = get();
@@ -150,7 +150,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
      */
     @Locked
     @NonCommitting
-    void replace(@Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws AbortException {
+    void replace(@Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws DatabaseException {
         assert getValueValidator().isValid(oldValue) : "The old value is valid.";
         assert getValueValidator().isValid(newValue) : "The new value is valid.";
         
@@ -163,7 +163,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @Override
     @NonCommitting
-    public void reset() throws AbortException {
+    public void reset() throws DatabaseException {
         if (hasObservers() && value != null) {
             final @Nonnull V oldValue = value;
             this.value = null;

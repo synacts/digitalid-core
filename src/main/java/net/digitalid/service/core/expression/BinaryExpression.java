@@ -50,7 +50,7 @@ final class BinaryExpression extends Expression {
      * @require operators.contains(operator) : "The operator is valid.";
      */
     @NonCommitting
-    BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, char operator) throws AbortException, PacketException, ExternalException, NetworkException {
+    BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, char operator) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity);
         
         assert operators.contains(operator) : "The operator is valid.";
@@ -88,7 +88,7 @@ final class BinaryExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws AbortException {
+    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws DatabaseException {
         assert isActive() : "This expression is active.";
         
         final @Nonnull FreezableSet<Contact> leftContacts = left.getContacts();
@@ -117,7 +117,7 @@ final class BinaryExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws AbortException {
+    boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws DatabaseException {
         switch (operator) {
             case '+': return left.matches(signature) || right.matches(signature);
             case '-': return left.matches(signature) && !right.matches(signature);

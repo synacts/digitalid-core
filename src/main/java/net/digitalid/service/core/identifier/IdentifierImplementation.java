@@ -2,9 +2,8 @@ package net.digitalid.service.core.identifier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.castable.CastableObject;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -12,6 +11,7 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models identifiers.
@@ -20,7 +20,7 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
  * @see ExternalIdentifier
  */
 @Immutable
-public abstract class IdentifierImplementation implements Identifier {
+public abstract class IdentifierImplementation extends CastableObject implements Identifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     
@@ -94,63 +94,8 @@ public abstract class IdentifierImplementation implements Identifier {
     @Locked
     @Override
     @NonCommitting
-    public final boolean isMapped() throws AbortException {
+    public final boolean isMapped() throws DatabaseException {
         return Mapper.isMapped(this);
-    }
-    
-    /* -------------------------------------------------- Casting to Non-Host Identifier -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final @Nonnull NonHostIdentifier toNonHostIdentifier() throws InvalidEncodingException {
-        if (this instanceof NonHostIdentifier) { return (NonHostIdentifier) this; }
-        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostIdentifier.");
-    }
-    
-    /* -------------------------------------------------- Casting to Internal Identifiers -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final @Nonnull InternalIdentifier toInternalIdentifier() throws InvalidEncodingException {
-        if (this instanceof InternalIdentifier) { return (InternalIdentifier) this; }
-        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalIdentifier.");
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull HostIdentifier toHostIdentifier() throws InvalidEncodingException {
-        if (this instanceof HostIdentifier) { return (HostIdentifier) this; }
-        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to HostIdentifier.");
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull InternalNonHostIdentifier toInternalNonHostIdentifier() throws InvalidEncodingException {
-        if (this instanceof InternalNonHostIdentifier) { return (InternalNonHostIdentifier) this; }
-        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalNonHostIdentifier.");
-    }
-    
-    /* -------------------------------------------------- Casting to External Identifiers -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final @Nonnull ExternalIdentifier toExternalIdentifier() throws InvalidEncodingException {
-        if (this instanceof ExternalIdentifier) { return (ExternalIdentifier) this; }
-        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ExternalIdentifier.");
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull EmailIdentifier toEmailIdentifier() throws InvalidEncodingException {
-        if (this instanceof EmailIdentifier) { return (EmailIdentifier) this; }
-        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to EmailIdentifier.");
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull MobileIdentifier toMobileIdentifier() throws InvalidEncodingException {
-        if (this instanceof MobileIdentifier) { return (MobileIdentifier) this; }
-        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobileIdentifier.");
     }
     
     /* -------------------------------------------------- Object -------------------------------------------------- */

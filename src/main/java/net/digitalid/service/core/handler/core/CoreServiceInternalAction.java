@@ -13,7 +13,7 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -64,7 +64,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws AbortException, PacketException, ExternalException, NetworkException {
+    protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal actions of the core service."); }
@@ -107,12 +107,12 @@ public abstract class CoreServiceInternalAction extends InternalAction {
      * Executes this internal action on both the host and client.
      */
     @NonCommitting
-    protected abstract void executeOnBoth() throws AbortException;
+    protected abstract void executeOnBoth() throws DatabaseException;
     
     @Override
     @OnlyForHosts
     @NonCommitting
-    public void executeOnHostInternalAction() throws PacketException, AbortException {
+    public void executeOnHostInternalAction() throws PacketException, DatabaseException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (signature instanceof CredentialsSignatureWrapper) { ((CredentialsSignatureWrapper) signature).checkIsLogded(); }
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());
@@ -125,7 +125,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
             try {
                 agent.getRestrictions().checkCover(restrictions);
             } catch (SQLException exception) {
-               throw AbortException.get(exception);
+               throw DatabaseException.get(exception);
             }
         }
         final @Nullable Agent other = getRequiredAgentToExecuteMethod();
@@ -133,7 +133,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
             try {
                 agent.checkCovers(other);
             } catch (SQLException exception) {
-                throw AbortException.get(exception);
+                throw DatabaseException.get(exception);
             }  
         }
         
@@ -143,7 +143,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     @Override
     @NonCommitting
     @OnlyForClients
-    public final void executeOnClient() throws AbortException {
+    public final void executeOnClient() throws DatabaseException {
         executeOnBoth();
     }
     

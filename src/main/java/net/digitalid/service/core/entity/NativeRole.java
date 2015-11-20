@@ -96,7 +96,7 @@ public final class NativeRole extends Role {
      * @return a new or existing native role with the given arguments.
      */
     @NonCommitting
-    public static @Nonnull NativeRole add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, long agentNumber) throws AbortException {
+    public static @Nonnull NativeRole add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, long agentNumber) throws DatabaseException {
         final @Nonnull NativeRole role = get(client, RoleModule.map(client, issuer, null, null, agentNumber), issuer, agentNumber);
         role.notify(CREATED);
         return role;
@@ -104,7 +104,7 @@ public final class NativeRole extends Role {
     
     @Override
     @NonCommitting
-    public void remove() throws AbortException {
+    public void remove() throws DatabaseException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NativeRole> map = index.get(getClient());
             if (map != null) { map.remove(getKey()); }

@@ -2,6 +2,7 @@ package net.digitalid.service.core.identifier;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.key.CastingNonRequestingKeyConverter;
@@ -9,9 +10,8 @@ import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
@@ -24,6 +24,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This interface models identifiers.
@@ -32,7 +33,7 @@ import net.digitalid.utility.database.declaration.ColumnDeclaration;
  * @see NonHostIdentifier
  */
 @Immutable
-public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Object> {
+public interface Identifier extends Castable, XDF<Identifier, Object>, SQL<Identifier, Object> {
     
     /* -------------------------------------------------- String -------------------------------------------------- */
     
@@ -54,7 +55,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     @Pure
     @Locked
     @NonCommitting
-    public boolean isMapped() throws AbortException;
+    public boolean isMapped() throws DatabaseException;
     
     /**
      * Returns the mapped identity of this identifier.
@@ -65,7 +66,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     @Locked
     @NonCommitting
     @MappedRecipient
-    public @Nonnull Identity getMappedIdentity() throws AbortException;
+    public @Nonnull Identity getMappedIdentity() throws DatabaseException;
     
     /**
      * Returns the identity of this identifier.
@@ -77,83 +78,7 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull Identity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
-    
-    /* -------------------------------------------------- Casting to Non-Host Identifier -------------------------------------------------- */
-    
-    /**
-     * Returns this identifier as a {@link NonHostIdentifier}.
-     * 
-     * @return this identifier as a {@link NonHostIdentifier}.
-     * 
-     * @throws InvalidEncodingException if this identifier is not an instance of {@link NonHostIdentifier}.
-     */
-    @Pure
-    public @Nonnull NonHostIdentifier toNonHostIdentifier() throws InvalidEncodingException;
-    
-    /* -------------------------------------------------- Casting to Internal Identifiers -------------------------------------------------- */
-    
-    /**
-     * Returns this identifier as an {@link InternalIdentifier}.
-     * 
-     * @return this identifier as an {@link InternalIdentifier}.
-     * 
-     * @throws InvalidEncodingException if this identifier is not an instance of {@link InternalIdentifier}.
-     */
-    @Pure
-    public @Nonnull InternalIdentifier toInternalIdentifier() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identifier as a {@link HostIdentifier}.
-     * 
-     * @return this identifier as a {@link HostIdentifier}.
-     * 
-     * @throws InvalidEncodingException if this identifier is not an instance of {@link HostIdentifier}.
-     */
-    @Pure
-    public @Nonnull HostIdentifier toHostIdentifier() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identifier as a {@link InternalNonHostIdentifier}.
-     * 
-     * @return this identifier as a {@link InternalNonHostIdentifier}.
-     * 
-     * @throws InvalidEncodingException if this identifier is not an instance of {@link InternalNonHostIdentifier}.
-     */
-    @Pure
-    public @Nonnull InternalNonHostIdentifier toInternalNonHostIdentifier() throws InvalidEncodingException;
-    
-    /* -------------------------------------------------- Casting to External Identifiers -------------------------------------------------- */
-    
-    /**
-     * Returns this identifier as an {@link ExternalIdentifier}.
-     * 
-     * @return this identifier as an {@link ExternalIdentifier}.
-     * 
-     * @throws InvalidEncodingException if this identifier is not an instance of {@link ExternalIdentifier}.
-     */
-    @Pure
-    public @Nonnull ExternalIdentifier toExternalIdentifier() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identifier as an {@link EmailIdentifier}.
-     * 
-     * @return this identifier as an {@link EmailIdentifier}.
-     * 
-     * @throws InvalidEncodingException if this identifier is not an instance of {@link EmailIdentifier}.
-     */
-    @Pure
-    public @Nonnull EmailIdentifier toEmailIdentifier() throws InvalidEncodingException;
-    
-    /**
-     * Returns this identifier as a {@link MobileIdentifier}.
-     * 
-     * @return this identifier as a {@link MobileIdentifier}.
-     * 
-     * @throws InvalidEncodingException if this identifier is not an instance of {@link MobileIdentifier}.
-     */
-    @Pure
-    public @Nonnull MobileIdentifier toMobileIdentifier() throws InvalidEncodingException;
+    public @Nonnull Identity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     

@@ -34,7 +34,7 @@ public class DatabaseTest {
     }
     
     @Committing
-    protected static void createTables() throws AbortException {
+    protected static void createTables() throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identifier (identifier VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", identity BIGINT NOT NULL, value BIGINT, PRIMARY KEY (identifier), FOREIGN KEY (identity) REFERENCES test_identity (identity))");
@@ -46,13 +46,13 @@ public class DatabaseTest {
     
     @After
     @Committing
-    public void commit() throws AbortException {
+    public void commit() throws DatabaseException {
         if (isSubclass()) { Database.commit(); }
     }
     
     @Test
     @NonCommitting
-    public void _01_testKeyInsertWithStatement() throws AbortException {
+    public void _01_testKeyInsertWithStatement() throws DatabaseException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
                 Assert.assertEquals(1L, Database.executeInsert(statement, "INSERT INTO test_identity (category, address) VALUES (1, 'a@test.digitalid.net')"));
@@ -62,7 +62,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _02_testKeyInsertWithPreparedStatement() throws AbortException {
+    public void _02_testKeyInsertWithPreparedStatement() throws DatabaseException {
         if (isSubclass()) {
             final @Nonnull String SQL = "INSERT INTO test_identity (category, address) VALUES (?, ?)";
             try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
@@ -76,7 +76,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _03_testInsertWithForeignKeyConstraint() throws AbortException {
+    public void _03_testInsertWithForeignKeyConstraint() throws DatabaseException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
                 statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('a@test.digitalid.net', 1, 3)");
@@ -86,7 +86,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _04_testLocalRollbackWithSavepoint() throws AbortException {
+    public void _04_testLocalRollbackWithSavepoint() throws DatabaseException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
                 statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('b@test.digitalid.net', 2, 4)");
@@ -108,7 +108,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _05_testOnInsertIgnore() throws AbortException {
+    public void _05_testOnInsertIgnore() throws DatabaseException {
         if (isSubclass()) {
             final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@test.digitalid.net', 1, 6)";
             try (@Nonnull Statement statement = Database.createStatement()) {
@@ -125,7 +125,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _06_testOnInsertUpdate() throws AbortException {
+    public void _06_testOnInsertUpdate() throws DatabaseException {
         if (isSubclass()) {
             final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@test.digitalid.net', 1, 7)";
             try (@Nonnull Statement statement = Database.createStatement()) {
@@ -142,7 +142,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _07_testSimpleJoin() throws AbortException {
+    public void _07_testSimpleJoin() throws DatabaseException {
         if (isSubclass()) {
             final @Nonnull String SQL = "SELECT test_identity.category FROM test_identifier JOIN test_identity ON test_identifier.identity = test_identity.identity WHERE identifier = 'a@test.digitalid.net'";
             try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -154,7 +154,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _08_testParallelQueries() throws AbortException {
+    public void _08_testParallelQueries() throws DatabaseException {
         if (isSubclass()) {
             final @Nonnull String SQL = "SELECT identity FROM test_identity WHERE address = ";
             try (@Nonnull Statement statement1 = Database.createStatement(); @Nonnull Statement statement2 = Database.createStatement()) {
@@ -170,7 +170,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _09_testParallelUpdates() throws AbortException {
+    public void _09_testParallelUpdates() throws DatabaseException {
         if (isSubclass()) {
             try (@Nonnull Statement statement1 = Database.createStatement(); @Nonnull Statement statement2 = Database.createStatement()) {
                 statement1.executeUpdate("UPDATE test_identity SET category = 3 WHERE address = 'a@test.digitalid.net'");
@@ -190,7 +190,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _10_testCurrentTime() throws AbortException {
+    public void _10_testCurrentTime() throws DatabaseException {
         if (isSubclass()) {
             final long before = System.currentTimeMillis();
             try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery("SELECT " + Database.getConfiguration().CURRENT_TIME())) {
@@ -205,7 +205,7 @@ public class DatabaseTest {
     /*
     @Test
     @NonCommitting
-    public void _11_testHandlingBlocks() throws AbortException, InvalidEncodingException {
+    public void _11_testHandlingBlocks() throws DatabaseException, InvalidEncodingException {
         if (isSubclass()) {
             final @Nonnull SemanticType STRING1 = SemanticType.create("string1.tuple@test.digitalid.net").load(StringWrapper.TYPE);
             final @Nonnull SemanticType STRING2 = SemanticType.create("string2.tuple@test.digitalid.net").load(StringWrapper.TYPE);
@@ -234,7 +234,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _12_testBatchInsertWithPreparedStatement() throws AbortException {
+    public void _12_testBatchInsertWithPreparedStatement() throws DatabaseException {
         if (isSubclass()) {
             final @Nonnull String SQL = "INSERT INTO test_batch (a, b) VALUES (?, ?)";
             try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -256,7 +256,7 @@ public class DatabaseTest {
     
     @Test
     @NonCommitting
-    public void _13_testIndexCreation() throws AbortException {
+    public void _13_testIndexCreation() throws DatabaseException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_index (time BIGINT NOT NULL" + Database.getConfiguration().INDEX("time") + ")");

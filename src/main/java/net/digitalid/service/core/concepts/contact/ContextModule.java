@@ -18,7 +18,7 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.IdentityImplementation;
@@ -81,7 +81,7 @@ public final class ContextModule implements StateModule {
      * @param site the site for which the reference table is created.
      */
     @NonCommitting
-    public static void createReferenceTable(@Nonnull Site site) throws AbortException {
+    public static void createReferenceTable(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_name (entity " + EntityImplementation.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity, context), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
         }
@@ -89,7 +89,7 @@ public final class ContextModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws AbortException {
+    public void createTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_preference (entity " + EntityImplementation.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_permission (entity " + EntityImplementation.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
@@ -103,7 +103,7 @@ public final class ContextModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws AbortException {
+    public void deleteTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Mapper.removeReference(site + "context_contact", "contact", "entity", "context", "contact");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "context_contact");
@@ -136,7 +136,7 @@ public final class ContextModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block exportModule(@Nonnull Host host) throws AbortException {
+    public @Nonnull Block exportModule(@Nonnull Host host) throws DatabaseException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
@@ -146,7 +146,7 @@ public final class ContextModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws AbortException, InvalidEncodingException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
@@ -193,7 +193,7 @@ public final class ContextModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
         // TODO: Extend this implementation and make sure the state is restricted according to the restrictions.
         // TODO: This might be a little bit complicated as the context for which the client is authorized needs to be aggregated.
         final @Nonnull Site site = entity.getSite();
@@ -226,7 +226,7 @@ public final class ContextModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nonnull Site site = entity.getSite();
@@ -272,7 +272,7 @@ public final class ContextModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws AbortException {
+    public void removeState(@Nonnull NonHostEntity entity) throws DatabaseException {
         final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + site + "context_contact WHERE entity = " + entity);
@@ -288,7 +288,7 @@ public final class ContextModule implements StateModule {
      * @param context the context to be created.
      */
     @NonCommitting
-    public static void create(@Nonnull Context context) throws AbortException {
+    public static void create(@Nonnull Context context) throws DatabaseException {
         final @Nonnull String SQL = "INSERT INTO " + context.getEntity().getSite() + "context_name (entity, context, name) VALUES (?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             context.getEntity().set(preparedStatement, 1);
@@ -313,7 +313,7 @@ public final class ContextModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Capturable @Nonnull @NonFrozen FreezableContacts getContacts(@Nonnull Context context) throws AbortException {
+    static @Capturable @Nonnull @NonFrozen FreezableContacts getContacts(@Nonnull Context context) throws DatabaseException {
         final @Nonnull NonHostEntity entity = context.getEntity();
         final @Nonnull String SQL = "SELECT contact FROM " + entity.getSite() + "context_contact WHERE entity = " + entity + " AND context = " + context;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -328,7 +328,7 @@ public final class ContextModule implements StateModule {
      * @param contacts the contacts to be added to the given context.
      */
     @NonCommitting
-    static void addContacts(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) throws AbortException {
+    static void addContacts(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) throws DatabaseException {
         final @Nonnull NonHostEntity entity = context.getEntity();
         final @Nonnull String SQL = "INSERT INTO " + entity.getSite() + "context_contact (entity, context, contact) VALUES (" + entity + ", " + context + ", ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -344,7 +344,7 @@ public final class ContextModule implements StateModule {
      * @param contacts the contacts to be removed from the given context.
      */
     @NonCommitting
-    static void removeContacts(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) throws AbortException {
+    static void removeContacts(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) throws DatabaseException {
         final @Nonnull NonHostEntity entity = context.getEntity();
         final @Nonnull String SQL = "DELETE FROM " + entity.getSite() + "context_contact WHERE entity = " + entity + " AND context = " + context + " AND contact = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -364,7 +364,7 @@ public final class ContextModule implements StateModule {
 //     * @return whether the given context at the given identity exists.
 //     */
 //    @NonCommitting
-//    static boolean contextExists(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws AbortException {
+//    static boolean contextExists(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws DatabaseException {
 //        @Nonnull String query = "SELECT EXISTS(SELECT * FROM context_name WHERE identity = " + identity + " AND context = " + context + ")";
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            if (resultSet.next()) { return resultSet.getBoolean(1); }
@@ -381,7 +381,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static @Nonnull Set<Pair<Context, String>> getSubcontexts(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws AbortException {
+//    static @Nonnull Set<Pair<Context, String>> getSubcontexts(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        @Nonnull String query = "SELECT context, name FROM context_name WHERE entity = " + identity + " AND context & " + context.getMask() + " = " + context;
@@ -403,7 +403,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static @Nonnull String getContextName(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws AbortException {
+//    static @Nonnull String getContextName(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        @Nonnull String query = "SELECT name FROM context_name WHERE identity = " + identity + " AND context = " + context;
@@ -423,7 +423,7 @@ public final class ContextModule implements StateModule {
 //     * @require name.length() <= 50 : "The context name may have at most 50 characters.";
 //     */
 //    @NonCommitting
-//    static void setContextName(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull String name) throws AbortException {
+//    static void setContextName(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull String name) throws DatabaseException {
 //        assert contextExists(connection, identity, context.getSupercontext()) : "The supercontext of the given context has to exist.";
 //        assert name.length() <= 50 : "The context name may have at most 50 characters.";
 //        
@@ -465,7 +465,7 @@ public final class ContextModule implements StateModule {
 //     * @return the types from the given table with the given condition of the given identity.
 //     */
 //    @NonCommitting
-//    private static @Nonnull Set<SemanticType> getTypes(@Nonnull NonHostIdentity identity, @Nonnull String table, @Nonnull String condition) throws AbortException {
+//    private static @Nonnull Set<SemanticType> getTypes(@Nonnull NonHostIdentity identity, @Nonnull String table, @Nonnull String condition) throws DatabaseException {
 //        @Nonnull String query = "SELECT general_identity.identity, general_identity.category, general_identity.address FROM " + table + " JOIN general_identity ON " + table + ".type = general_identity.identity WHERE " + table + ".identity = " + identity + " AND " + table + "." + condition;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            @Nonnull Set<SemanticType> types = new LinkedHashSet<SemanticType>();
@@ -491,7 +491,7 @@ public final class ContextModule implements StateModule {
 //     * @param types the types to be added to the given table of the given identity.
 //     */
 //    @NonCommitting
-//    private static void addTypes(@Nonnull NonHostIdentity identity, @Nonnull String table, @Nonnull String column, long value, @Nonnull Set<SemanticType> types) throws AbortException {
+//    private static void addTypes(@Nonnull NonHostIdentity identity, @Nonnull String table, @Nonnull String column, long value, @Nonnull Set<SemanticType> types) throws DatabaseException {
 //        @Nonnull String statement = "INSERT " + Database.IGNORE + " INTO " + table + " (identity, " + column + ", type) VALUES (?, ?, ?)";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
 //            preparedStatement.setLong(1, identity.getNumber());
@@ -522,7 +522,7 @@ public final class ContextModule implements StateModule {
 //     * @return the number of rows deleted from the database.
 //     */
 //    @NonCommitting
-//    private static int removeTypes(@Nonnull NonHostIdentity identity, @Nonnull String table, @Nonnull String column, long value, @Nonnull Set<SemanticType> types) throws AbortException {
+//    private static int removeTypes(@Nonnull NonHostIdentity identity, @Nonnull String table, @Nonnull String column, long value, @Nonnull Set<SemanticType> types) throws DatabaseException {
 //        @Nonnull String statement = "DELETE FROM " + table + " WHERE identity = ? AND " + column + " = ? AND type = ?";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
 //            preparedStatement.setLong(1, identity.getNumber());
@@ -557,7 +557,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static @Nonnull Set<SemanticType> getContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean inherited) throws AbortException {
+//    static @Nonnull Set<SemanticType> getContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean inherited) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        return getTypes(connection, identity, "context_permission", "context" + (inherited ? " IN (" + context.getSupercontextsAsString() + ")" : " = " + context));
@@ -572,7 +572,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static void addContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> permissions) throws AbortException {
+//    static void addContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> permissions) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        addTypes(connection, identity, "context_permission", "context", context.getNumber(), permissions);
@@ -587,7 +587,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static void removeContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> permissions) throws AbortException {
+//    static void removeContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> permissions) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        removeTypes(connection, identity, "context_permission", "context", context.getNumber(), permissions);
@@ -603,7 +603,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static @Nonnull Set<SemanticType> getContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean inherited) throws AbortException {
+//    static @Nonnull Set<SemanticType> getContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean inherited) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        return getTypes(connection, identity, "context_authentication", "context" + (inherited ? " IN (" + context.getSupercontextsAsString() + ")" : " = " + context));
@@ -618,7 +618,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static void addContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> authentications) throws AbortException {
+//    static void addContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> authentications) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        addTypes(connection, identity, "context_authentication", "context", context.getNumber(), authentications);
@@ -633,7 +633,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static void removeContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> authentications) throws AbortException {
+//    static void removeContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> authentications) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        removeTypes(connection, identity, "context_authentication", "context", context.getNumber(), authentications);
@@ -647,7 +647,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static void removeContext(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws AbortException {
+//    static void removeContext(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        try (@Nonnull Statement statement = connection.createStatement()) {
@@ -675,7 +675,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static @Nonnull Set<Person> getContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean recursive) throws AbortException {
+//    static @Nonnull Set<Person> getContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean recursive) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        @Nonnull String query = "SELECT DISTINCT general_identity.identity, general_identity.category, general_identity.address FROM context_contact JOIN general_identity ON context_contact.contact = general_identity.identity WHERE context_contact.identity = " + identity + " AND context_contact.context" + (recursive ? " & " + context.getMask() : "") + " = " + context;
@@ -701,7 +701,7 @@ public final class ContextModule implements StateModule {
 //     * @param contacts the contacts to add to the given context.
 //     */
 //    @NonCommitting
-//    static void addContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<Person> contacts) throws AbortException {
+//    static void addContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<Person> contacts) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        @Nonnull String statement = "INSERT " + Database.IGNORE + " INTO context_contact (identity, context, contact) VALUES (?, ?, ?)";
@@ -732,7 +732,7 @@ public final class ContextModule implements StateModule {
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
 //    @NonCommitting
-//    static void removeContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<Person> contacts) throws AbortException {
+//    static void removeContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<Person> contacts) throws DatabaseException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
 //        @Nonnull String sql = "DELETE FROM context_contact WHERE identity = ? AND context = ? AND contact = ?";
@@ -776,7 +776,7 @@ public final class ContextModule implements StateModule {
 //     * @return the contexts of the given contact at the given identity.
 //     */
 //    @NonCommitting
-//    static @Nonnull Set<Context> getContexts(@Nonnull NonHostIdentity identity, @Nonnull Person contact) throws AbortException {
+//    static @Nonnull Set<Context> getContexts(@Nonnull NonHostIdentity identity, @Nonnull Person contact) throws DatabaseException {
 //        @Nonnull String query = "SELECT context FROM context_contact WHERE identity = " + identity + " AND contact = " + contact;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            @Nonnull Set<Context> contexts = new LinkedHashSet<Context>();
@@ -797,7 +797,7 @@ public final class ContextModule implements StateModule {
 //     * @return whether the given contact is in the given context of the given identity.
 //     */
 //    @NonCommitting
-//    public static boolean isInContext(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Context context) throws AbortException {
+//    public static boolean isInContext(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Context context) throws DatabaseException {
 //        @Nonnull String query = "SELECT EXISTS (SELECT * FROM context_contact WHERE identity = " + identity + " AND context & " + context.getMask() + " = " + context + " AND contact = " + contact;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            if (resultSet.next()) {

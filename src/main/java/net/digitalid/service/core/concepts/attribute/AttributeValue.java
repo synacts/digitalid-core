@@ -12,10 +12,10 @@ import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.database.SQLizable;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -81,7 +81,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AttributeValue get(@Nonnull Block block, boolean verified) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull AttributeValue get(@Nonnull Block block, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, verified, null);
@@ -194,7 +194,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public abstract void verify() throws AbortException, PacketException, ExternalException, NetworkException;
+    public abstract void verify() throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     /**
      * Returns whether the signature of this attribute value is verified.
@@ -222,7 +222,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AttributeValue get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Nonnull AttributeValue get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         try {
             return AttributeValue.get(Block.getNotNull(TYPE, resultSet, columnIndex), true);
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {
@@ -232,7 +232,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         toBlock().set(preparedStatement, parameterIndex);
     }
     
@@ -244,7 +244,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable AttributeValue attributeValue, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public static void set(@Nullable AttributeValue attributeValue, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         Block.set(Block.toBlock(attributeValue), preparedStatement, parameterIndex);
     }
     

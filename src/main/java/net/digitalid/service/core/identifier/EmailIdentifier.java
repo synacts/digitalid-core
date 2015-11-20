@@ -11,10 +11,10 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.EmailPerson;
@@ -83,8 +83,8 @@ public final class EmailIdentifier extends ExternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Person getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
-        if (!providerExists()) { throw new IdentityNotFoundException(this); }
+    public @Nonnull Person getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
+        if (!providerExists()) { throw IdentityNotFoundException.get(this); }
         return Mapper.getIdentity(this).toPerson();
     }
     
@@ -133,7 +133,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
         @Pure
         @Override
         protected @Nonnull EmailIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier.toEmailIdentifier();
+            return identifier.castTo(EmailIdentifier.class);
         }
     };
     

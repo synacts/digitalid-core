@@ -5,10 +5,10 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -66,7 +66,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
      * @throws InvalidEncodingException if there is no key for the given time.
      */
     @Pure
-    public final @Nonnull K getKey(@Nonnull Time time) throws InvalidEncodingException {
+    public final @Nonnull K getKey(@Nonnull Time time) throws InvalidEncodingException { // TODO: Throw an InvalidDeclarationException instead!
         for (final @Nonnull ReadOnlyPair<Time, K> item : items) {
             if (time.isGreaterThanOrEqualTo(item.getNonNullableElement0())) { return item.getNonNullableElement1(); }
         }

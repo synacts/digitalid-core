@@ -7,9 +7,8 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidClassCastException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.NonHostIdentity;
@@ -18,6 +17,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This interface models non-host identifiers.
@@ -33,12 +33,12 @@ public interface NonHostIdentifier extends Identifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull NonHostIdentity getMappedIdentity() throws AbortException;
+    public @Nonnull NonHostIdentity getMappedIdentity() throws DatabaseException;
     
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull NonHostIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
+    public @Nonnull NonHostIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     /* -------------------------------------------------- Caster -------------------------------------------------- */
     
@@ -48,8 +48,8 @@ public interface NonHostIdentifier extends Identifier {
     public static final @Nonnull Caster<Identifier, NonHostIdentifier> CASTER = new Caster<Identifier, NonHostIdentifier>() {
         @Pure
         @Override
-        protected @Nonnull NonHostIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier.toNonHostIdentifier();
+        protected @Nonnull NonHostIdentifier cast(@Nonnull Identifier identifier) throws InvalidClassCastException {
+            return identifier.castTo(NonHostIdentifier.class);
         }
     };
     

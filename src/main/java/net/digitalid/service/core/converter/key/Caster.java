@@ -1,7 +1,8 @@
 package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidClassCastException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 
@@ -24,6 +25,6 @@ public abstract class Caster<S, O extends S> {
      * @throws InvalidEncodingException if the given object is not an instance of the specified subtype.
      */
     @Pure
-    protected abstract @Nonnull O cast(@Nonnull S object) throws InvalidEncodingException;
+    protected abstract @Nonnull O cast(@Nonnull S object) throws InvalidClassCastException;
     
 }

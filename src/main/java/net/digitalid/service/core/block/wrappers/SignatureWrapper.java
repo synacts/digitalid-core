@@ -15,11 +15,10 @@ import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InactiveSignatureException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -39,6 +38,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code signature@core.digitalid.net}.
@@ -243,7 +243,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public void verify() throws AbortException, PacketException, ExternalException, NetworkException {
+    public void verify() throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert !isVerified() : "This signature is not verified.";
         
         setVerified();
@@ -331,7 +331,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <E extends Entity<E>> SignatureWrapper decodeWithVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nullable Entity<E> entity) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull SignatureWrapper decodeWithVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nullable Entity entity) throws DatabaseException, PacketException, ExternalException, NetworkException {
         final @Nonnull SignatureWrapper signatureWrapper = decodeWithoutVerifying(block, false, entity);
         signatureWrapper.verify();
         return signatureWrapper;
@@ -349,7 +349,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <E extends Entity<E>> SignatureWrapper decodeWithoutVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified, @Nullable Entity<E> entity) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified, @Nullable Entity entity) throws DatabaseException, PacketException, ExternalException, NetworkException {
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(Block.get(IMPLEMENTATION, block)).getNullableElements(4);
         final @Nullable Block hostSignature = elements.getNullable(1);
         final @Nullable Block clientSignature = elements.getNullable(2);
@@ -381,7 +381,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      */
     @Pure
     public void checkRecency() throws InactiveSignatureException {
-        if (time == null || time.isLessThan(Time.HALF_HOUR.ago())) { throw new InactiveSignatureException("The signature was signed more than half an hour ago."); }
+        if (time == null || time.isLessThan(Time.HALF_HOUR.ago())) { throw InactiveSignatureException.get("The signature was signed more than half an hour ago."); }
     }
     
     /* -------------------------------------------------- Signing -------------------------------------------------- */
@@ -437,58 +437,6 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
         getCache().writeTo(block);
-    }
-    
-    /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
-    
-    /**
-     * Stores the syntactic type {@code signature@core.digitalid.net}.
-     */
-    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("signature@core.digitalid.net").load(1);
-    
-    @Pure
-    @Override
-    public final @Nonnull SyntacticType getSyntacticType() {
-        return XDF_TYPE;
-    }
-    
-    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
-    
-    /**
-     * The XDF converter for this class.
-     */
-    @Immutable
-    public static final class XDFConverter extends AbstractWrapper.XDFConverter<SignatureWrapper> {
-        
-        /**
-         * Creates a new factory with the given type.
-         * 
-         * @param type the semantic type of the wrapper.
-         */
-        private XDFConverter(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type) {
-            super(type);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull SignatureWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block) throws InvalidEncodingException {
-            return new SignatureWrapper(block, false);
-        }
-        
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull XDFConverter getXDFConverter() {
-        return new XDFConverter(getSemanticType());
-    }
-    
-    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull SQLConverter<SignatureWrapper> getSQLConverter() {
-        return new SQLConverter<>(getXDFConverter());
     }
     
     /* -------------------------------------------------- Casting -------------------------------------------------- */
@@ -547,7 +495,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nullable Agent getAgent(@Nonnull NonHostEntity entity) throws AbortException {
+    public @Nullable Agent getAgent(@Nonnull NonHostEntity entity) throws DatabaseException {
         return null;
     }
     
@@ -567,8 +515,60 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws AbortException, PacketException {
+    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws DatabaseException, PacketException {
         throw new PacketException(PacketErrorCode.AUTHORIZATION, "The element was not signed by an authorized agent.");
+    }
+    
+    /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
+    
+    /**
+     * Stores the syntactic type {@code signature@core.digitalid.net}.
+     */
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("signature@core.digitalid.net").load(1);
+    
+    @Pure
+    @Override
+    public final @Nonnull SyntacticType getSyntacticType() {
+        return SignatureWrapper.XDF_TYPE;
+    }
+    
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    
+    /**
+     * The XDF converter for this class.
+     */
+    @Immutable
+    public static final class XDFConverter extends AbstractWrapper.XDFConverter<SignatureWrapper> {
+        
+        /**
+         * Creates a new factory with the given type.
+         * 
+         * @param type the semantic type of the wrapper.
+         */
+        private XDFConverter(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type) {
+            super(type);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull SignatureWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block) throws InvalidEncodingException {
+            return new SignatureWrapper(block, false);
+        }
+        
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull SignatureWrapper.XDFConverter getXDFConverter() {
+        return new SignatureWrapper.XDFConverter(getSemanticType());
+    }
+    
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull BlockBasedWrapper.SQLConverter<SignatureWrapper> getSQLConverter() {
+        return new BlockBasedWrapper.SQLConverter<>(getXDFConverter());
     }
     
 }

@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.concept.property.ConceptPropertyTable;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -114,7 +114,7 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity, K>
      */
     @Locked
     @NonCommitting
-    public void reset(@Nonnull E entity, @Nonnull ConceptPropertyTable<?, C, E> table) throws AbortException {
+    public void reset(@Nonnull E entity, @Nonnull ConceptPropertyTable<?, C, E> table) throws DatabaseException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
             if (map != null) {

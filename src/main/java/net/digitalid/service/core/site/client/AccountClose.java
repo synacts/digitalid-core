@@ -77,10 +77,10 @@ public final class AccountClose extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AccountClose(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private AccountClose(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        this.successor = IdentifierImplementation.create(block).toInternalNonHostIdentifier();
+        this.successor = IdentifierImplementation.create(block).castTo(InternalNonHostIdentifier.class);
         this.restrictions = new Restrictions(true, true, true, Context.getRoot(entity.toNonHostEntity()));
     }
     
@@ -130,7 +130,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws AbortException {
+    protected void executeOnBoth() throws DatabaseException {
         CoreService.SERVICE.removeState(getNonHostEntity());
         if (successor != null) { Successor.set((NonHostIdentifier) getSubject(), successor, null); }
     }
@@ -183,7 +183,7 @@ public final class AccountClose extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new AccountClose(entity, signature, recipient, block);
         }
         

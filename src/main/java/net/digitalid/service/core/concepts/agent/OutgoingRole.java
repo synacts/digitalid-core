@@ -15,7 +15,7 @@ import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
@@ -58,7 +58,7 @@ public final class OutgoingRole extends Agent {
      * @require isOnHost() : "This outgoing role is on a host.";
      */
     @NonCommitting
-    public void issue(@Nonnull ReadOnlySet<Contact> contacts) throws AbortException {
+    public void issue(@Nonnull ReadOnlySet<Contact> contacts) throws DatabaseException {
         assert isOnHost() : "This outgoing role is on a host.";
         
         for (final @Nonnull Contact contact : contacts) {
@@ -74,7 +74,7 @@ public final class OutgoingRole extends Agent {
      * @require isOnHost() : "This outgoing role is on a host.";
      */
     @NonCommitting
-    public void issue() throws AbortException {
+    public void issue() throws DatabaseException {
         issue(getContext().getAllContacts());
     }
     
@@ -88,7 +88,7 @@ public final class OutgoingRole extends Agent {
      * @require isOnHost() : "This outgoing role is on a host.";
      */
     @NonCommitting
-    public void revoke(@Nonnull ReadOnlySet<Contact> contacts) throws AbortException {
+    public void revoke(@Nonnull ReadOnlySet<Contact> contacts) throws DatabaseException {
         assert isOnHost() : "This outgoing role is on a host.";
         
         for (final @Nonnull Contact contact : contacts) {
@@ -104,7 +104,7 @@ public final class OutgoingRole extends Agent {
      * @require isOnHost() : "This outgoing role is on a host.";
      */
     @NonCommitting
-    public void revoke() throws AbortException {
+    public void revoke() throws DatabaseException {
         revoke(getContext().getAllContacts());
     }
     
@@ -126,7 +126,7 @@ public final class OutgoingRole extends Agent {
      */
     @Pure
     @NonCommitting
-    public @Nonnull SemanticType getRelation() throws AbortException {
+    public @Nonnull SemanticType getRelation() throws DatabaseException {
         if (relation == null) { relation = AgentModule.getRelation(this); }
         return relation;
     }
@@ -140,7 +140,7 @@ public final class OutgoingRole extends Agent {
      * @require newRelation.isRoleType() : "The new relation is a role type.";
      */
     @Committing
-    public void setRelation(@Nonnull SemanticType newRelation) throws AbortException {
+    public void setRelation(@Nonnull SemanticType newRelation) throws DatabaseException {
         final @Nonnull SemanticType oldRelation = getRelation();
         if (!newRelation.equals(oldRelation)) {
             Synchronizer.execute(new OutgoingRoleRelationReplace(this, oldRelation, newRelation));
@@ -158,7 +158,7 @@ public final class OutgoingRole extends Agent {
      */
     @NonCommitting
     @OnlyForActions
-    public void replaceRelation(@Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws AbortException {
+    public void replaceRelation(@Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws DatabaseException {
         if (isOnHost()) { revoke(); }
         AgentModule.replaceRelation(this, oldRelation, newRelation);
         relation = newRelation;
@@ -184,7 +184,7 @@ public final class OutgoingRole extends Agent {
      */
     @Pure
     @NonCommitting
-    public @Nonnull Context getContext() throws AbortException {
+    public @Nonnull Context getContext() throws DatabaseException {
         if (context == null) { context = AgentModule.getContext(this); }
         return context;
     }
@@ -198,7 +198,7 @@ public final class OutgoingRole extends Agent {
      * @require newContext.getEntity().equals(getEntity()) : "The new context belongs to the same entity.";
      */
     @Committing
-    public void setContext(@Nonnull Context newContext) throws AbortException {
+    public void setContext(@Nonnull Context newContext) throws DatabaseException {
         final @Nonnull Context oldContext = getContext();
         if (!newContext.equals(oldContext)) {
             Synchronizer.execute(new OutgoingRoleContextReplace(this, oldContext, newContext));
@@ -216,7 +216,7 @@ public final class OutgoingRole extends Agent {
      */
     @NonCommitting
     @OnlyForActions
-    public void replaceContext(@Nonnull Context oldContext, @Nonnull Context newContext) throws AbortException {
+    public void replaceContext(@Nonnull Context oldContext, @Nonnull Context newContext) throws DatabaseException {
         AgentModule.replaceContext(this, oldContext, newContext);
         if (isOnHost()) {
             final @Nonnull ReadOnlySet<Contact> oldContacts = oldContext.getAllContacts();
@@ -253,7 +253,7 @@ public final class OutgoingRole extends Agent {
      * @require credential.isRoleBased() : "The credential is role-based.";
      */
     @NonCommitting
-    public void restrictTo(@Nonnull Credential credential) throws AbortException {
+    public void restrictTo(@Nonnull Credential credential) throws DatabaseException {
         assert isRestrictable() : "This outgoing role can be restricted.";
         assert credential.isRoleBased() : "The credential is role-based.";
         
@@ -275,7 +275,7 @@ public final class OutgoingRole extends Agent {
      * @require credential.getRestrictions() != null : "The restrictions of the credential are not null.";
      */
     @NonCommitting
-    public void checkCovers(@Nonnull Credential credential) throws AbortException, PacketException {
+    public void checkCovers(@Nonnull Credential credential) throws DatabaseException, PacketException {
         final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
         assert permissions != null : "The permissions of the credential are not null.";
         final @Nullable Restrictions restrictions = credential.getRestrictions();
@@ -288,7 +288,7 @@ public final class OutgoingRole extends Agent {
     /* -------------------------------------------------- Agent -------------------------------------------------- */
     
     @Override
-    public void reset() throws AbortException {
+    public void reset() throws DatabaseException {
         this.relation = null;
         this.context = null;
         super.reset();
@@ -312,7 +312,7 @@ public final class OutgoingRole extends Agent {
      * @require context.isOnClient() : "The context is on a client.";
      */
     @Committing
-    public static @Nonnull OutgoingRole create(@Nonnull SemanticType relation, @Nonnull Context context) throws AbortException {
+    public static @Nonnull OutgoingRole create(@Nonnull SemanticType relation, @Nonnull Context context) throws DatabaseException {
         final @Nonnull OutgoingRole outgoingRole = get(context.getRole(), new Random().nextLong(), false, false);
         Synchronizer.execute(new OutgoingRoleCreate(outgoingRole, relation, context));
         return outgoingRole;
@@ -329,7 +329,7 @@ public final class OutgoingRole extends Agent {
      */
     @NonCommitting
     @OnlyForActions
-    public void createForActions(@Nonnull SemanticType relation, @Nonnull Context context) throws AbortException {
+    public void createForActions(@Nonnull SemanticType relation, @Nonnull Context context) throws DatabaseException {
         AgentModule.addOutgoingRole(this, relation, context);
         this.relation = relation;
         this.context = context;
@@ -357,7 +357,7 @@ public final class OutgoingRole extends Agent {
      * 
      * @param entity the entity whose outgoing roles are to be reset.
      */
-    public static void reset(@Nonnull NonHostEntity entity) throws AbortException {
+    public static void reset(@Nonnull NonHostEntity entity) throws DatabaseException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
             if (map != null) {
@@ -420,7 +420,7 @@ public final class OutgoingRole extends Agent {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex, boolean removed, boolean restrictable) throws AbortException {
+    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex, boolean removed, boolean restrictable) throws DatabaseException {
         return get(entity, resultSet.getLong(columnIndex), removed, restrictable);
     }
     

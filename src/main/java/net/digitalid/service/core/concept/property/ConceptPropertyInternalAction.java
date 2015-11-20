@@ -14,7 +14,7 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -76,7 +76,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     @OnlyForClients
-    protected ConceptPropertyInternalAction(@Nonnull Role role, @Nonnull Service service) throws AbortException {
+    protected ConceptPropertyInternalAction(@Nonnull Role role, @Nonnull Service service) throws DatabaseException {
         super(role, service.getRecipient(role));
         
         this.service = service;
@@ -84,7 +84,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
         this.publicKey = null;
     }
     
-    protected ConceptPropertyInternalAction(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Service service) throws AbortException, PacketException, ExternalException, NetworkException {
+    protected ConceptPropertyInternalAction(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Service service) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.service = service;
@@ -97,13 +97,13 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
      * Executes this internal action on both the host and client.
      */
     @NonCommitting
-    protected abstract void executeOnBoth() throws AbortException;
+    protected abstract void executeOnBoth() throws DatabaseException;
     
     @Override
     @OnlyForHosts
     @NonCommitting
     // TODO: Must be adapted to work for non-core service internal actions.
-    public void executeOnHostInternalAction() throws PacketException, AbortException {
+    public void executeOnHostInternalAction() throws PacketException, DatabaseException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (signature instanceof CredentialsSignatureWrapper) { ((CredentialsSignatureWrapper) signature).checkIsLogded(); }
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());
@@ -116,7 +116,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
             try {
                 agent.getRestrictions().checkCover(restrictions);
             } catch (SQLException exception) {
-                throw AbortException.get(exception);
+                throw DatabaseException.get(exception);
             }
         }
         
@@ -125,7 +125,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
             try {
                 agent.checkCovers(other);
             } catch (SQLException exception) {
-                throw AbortException.get(exception);
+                throw DatabaseException.get(exception);
             }
         }
         executeOnBoth();
@@ -134,7 +134,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
     @Override
     @NonCommitting
     @OnlyForClients
-    public final void executeOnClient() throws AbortException {
+    public final void executeOnClient() throws DatabaseException {
         executeOnBoth();
     }
     

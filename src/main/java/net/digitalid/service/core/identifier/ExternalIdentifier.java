@@ -7,9 +7,9 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.ExternalIdentity;
@@ -102,18 +102,18 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     @Pure
     @Override
     @NonCommitting
-    public final @Nonnull Person getMappedIdentity() throws AbortException {
+    public final @Nonnull Person getMappedIdentity() throws DatabaseException {
         assert isMapped() : "This identifier is mapped.";
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof Person) { return (Person) identity; }
-        else { throw AbortException.get("The mapped identity has a wrong type."); }
+        else { throw DatabaseException.get("The mapped identity has a wrong type."); }
     }
     
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull Person getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
+    public abstract @Nonnull Person getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException;
     
     /* -------------------------------------------------- Category -------------------------------------------------- */
     
@@ -136,7 +136,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
         @Pure
         @Override
         protected @Nonnull ExternalIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier.toExternalIdentifier();
+            return identifier.castTo(ExternalIdentifier.class);
         }
     };
     

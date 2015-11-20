@@ -1,7 +1,7 @@
 package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
@@ -54,7 +54,7 @@ public interface ClientStorage {
      */
     @Locked
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws AbortException;
+    public void createTables(@Nonnull Site site) throws DatabaseException;
     
     /**
      * Deletes the database tables of this storage for the given site.
@@ -63,6 +63,6 @@ public interface ClientStorage {
      */
     @Locked
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws AbortException;
+    public void deleteTables(@Nonnull Site site) throws DatabaseException;
     
 }

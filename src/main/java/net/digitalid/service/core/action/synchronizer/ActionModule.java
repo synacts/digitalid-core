@@ -1,6 +1,6 @@
 package net.digitalid.service.core.action.synchronizer;
 
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.None;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +28,7 @@ import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
@@ -72,7 +72,7 @@ public final class ActionModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void createTables(final @Nonnull Site site) throws AbortException {
+    public void createTables(final @Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityImplementation.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + FreezableAgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierImplementation.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + Database.getConfiguration().INDEX("time") + ", " + FreezableAgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
             Database.getConfiguration().createIndex(statement, site + "action", "time");
@@ -84,7 +84,7 @@ public final class ActionModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws AbortException {
+    public void deleteTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.removeRegularPurging(site + "action");
             if (site instanceof Host) { Mapper.removeReference(site + "action", "entity", "entity", "service", "time"); }
@@ -113,7 +113,7 @@ public final class ActionModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block exportModule(@Nonnull Host host) throws AbortException {
+    public @Nonnull Block exportModule(@Nonnull Host host) throws DatabaseException {
         final @Nonnull String SQL = "SELECT entity, service, time, " + Restrictions.COLUMNS + ", " + FreezableAgentPermissions.COLUMNS + ", agent, recipient, action FROM " + host + "action";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
@@ -135,7 +135,7 @@ public final class ActionModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("INSERT INTO " + host + "action (entity, service, time, " + Restrictions.COLUMNS + ", " + FreezableAgentPermissions.COLUMNS + ", agent, recipient, action) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
@@ -150,7 +150,7 @@ public final class ActionModule implements StateModule {
                 new Restrictions(NonHostAccount.get(host, identity), tuple.getNonNullableElement(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.toInternalPerson()).)
                 if (tuple.isElementNull(5)) { preparedStatement.setLong(11, new Int64Wrapper(tuple.getNonNullableElement(5)).getValue()); }
                 else { preparedStatement.setNull(11, Types.BIGINT); }
-                IdentifierImplementation.create(tuple.getNonNullableElement(6)).toHostIdentifier().set(preparedStatement, 12);
+                IdentifierImplementation.create(tuple.getNonNullableElement(6)).castTo(HostIdentifier.class).set(preparedStatement, 12);
                 tuple.getNonNullableElement(7).set(preparedStatement, 13);
                 preparedStatement.addBatch();
             }
@@ -173,19 +173,19 @@ public final class ActionModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
         return new EmptyWrapper(STATE_FORMAT).toBlock();
     }
     
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, InvalidEncodingException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
     }
     
     @Override
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws AbortException {}
+    public void removeState(@Nonnull NonHostEntity entity) throws DatabaseException {}
     
     
     /**
@@ -204,7 +204,7 @@ public final class ActionModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull ResponseAudit getAudit(@Nonnull NonHostEntity entity, @Nonnull Service service, @Nonnull Time lastTime, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
+    public static @Nonnull ResponseAudit getAudit(@Nonnull NonHostEntity entity, @Nonnull Service service, @Nonnull Time lastTime, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
         assert agent == null || service.equals(CoreService.SERVICE) : "The agent is null or the audit trail is requested for the core service.";
         
         final @Nonnull Site site = entity.getSite();
@@ -252,7 +252,7 @@ public final class ActionModule implements StateModule {
      * @require action.hasSignature() : "The action has a signature.";
      */
     @NonCommitting
-    public static void audit(@Nonnull Action action) throws AbortException {
+    public static void audit(@Nonnull Action action) throws DatabaseException {
         assert action.hasEntity() : "The action has an entity.";
         assert action.hasSignature() : "The action has a signature.";
         

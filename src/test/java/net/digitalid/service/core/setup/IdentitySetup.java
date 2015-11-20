@@ -57,7 +57,7 @@ public class IdentitySetup extends ServerSetup {
     
     @BeforeClass
     @Committing
-    public static void setUpIdentity() throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
+    public static void setUpIdentity() throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
         print("setUpIdentity");
         try {
             client = new Client("tester", "Test Client", FreezableAgentPermissions.GENERAL_WRITE);
@@ -65,7 +65,7 @@ public class IdentitySetup extends ServerSetup {
             role = client.openAccount(identifier, Category.NATURAL_PERSON);
             subject = identifier.getIdentity().toNaturalPerson();
             Database.commit();
-        } catch (@Nonnull InterruptedException | SQLException | IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;
@@ -74,7 +74,7 @@ public class IdentitySetup extends ServerSetup {
     
     @After
     @Committing
-    public final void testStateEquality() throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
+    public final void testStateEquality() throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
         try {
             role.waitForCompletion(CoreService.SERVICE);
             Thread.sleep(1l);
@@ -82,19 +82,19 @@ public class IdentitySetup extends ServerSetup {
             System.out.println("\nAfter:");
             System.out.flush();
             
-            try { role.refreshState(CoreService.SERVICE); } catch (InterruptedException | SQLException | IOException | PacketException | ExternalException e) { e.printStackTrace(); throw e; }
+            try { role.refreshState(CoreService.SERVICE); } catch (InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException e) { e.printStackTrace(); throw e; }
             final @Nonnull Agent agent = role.getAgent();
             
             final @Nonnull Block beforeState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
             Database.commit();
             
-            try { role.reloadState(CoreService.SERVICE); } catch (InterruptedException | SQLException | IOException | PacketException | ExternalException e) { e.printStackTrace(); throw e; }
+            try { role.reloadState(CoreService.SERVICE); } catch (InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException e) { e.printStackTrace(); throw e; }
             
             final @Nonnull Block afterState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
             Database.commit();
             
             Assert.assertEquals(beforeState, afterState);
-        } catch (@Nonnull InterruptedException | SQLException | IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;

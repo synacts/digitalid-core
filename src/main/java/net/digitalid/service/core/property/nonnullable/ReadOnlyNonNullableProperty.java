@@ -1,7 +1,7 @@
 package net.digitalid.service.core.property.nonnullable;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.property.ReadOnlyProperty;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Pure;
@@ -39,6 +39,6 @@ public abstract class ReadOnlyNonNullableProperty<V> extends ReadOnlyProperty<V,
     @Pure
     @Locked
     @NonCommitting
-    public abstract @Nonnull @Validated V get() throws AbortException;
+    public abstract @Nonnull @Validated V get() throws DatabaseException;
     
 }

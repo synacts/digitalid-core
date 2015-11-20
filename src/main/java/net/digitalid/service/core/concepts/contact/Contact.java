@@ -115,7 +115,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @return the permissions of this contact.
      */
     @NonCommitting
-    public @Nonnull ReadOnlyContactPermissions getPermissions() throws AbortException {
+    public @Nonnull ReadOnlyContactPermissions getPermissions() throws DatabaseException {
         return FreezableContactPermissions.NONE; // TODO
     }
     
@@ -127,7 +127,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @return the authentications of this contact.
      */
     @NonCommitting
-    public @Nonnull ReadOnlyAuthentications getAuthentications() throws AbortException {
+    public @Nonnull ReadOnlyAuthentications getAuthentications() throws DatabaseException {
         return FreezableAuthentications.IDENTITY_BASED; // TODO
     }
     
@@ -207,7 +207,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Contact get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull Contact get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         return get(entity, IdentifierImplementation.create(block).getIdentity().toPerson());
@@ -236,7 +236,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         final @Nullable Identity identity = IdentityImplementation.get(resultSet, columnIndex);
         if (identity == null) { return null; }
         if (identity instanceof Person) { return get(entity, (Person) identity); }
@@ -254,7 +254,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
         if (identity instanceof Person) { return get(entity, (Person) identity); }
         else { throw new SQLException("A non-person was stored as a contact."); }
@@ -262,7 +262,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         preparedStatement.setLong(parameterIndex, person.getKey());
     }
     
@@ -274,7 +274,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Contact contact, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public static void set(@Nullable Contact contact, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         if (contact == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
         else { contact.set(preparedStatement, parameterIndex); }
     }

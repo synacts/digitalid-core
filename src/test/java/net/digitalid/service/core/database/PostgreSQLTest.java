@@ -20,7 +20,7 @@ public final class PostgreSQLTest extends DatabaseTest {
     
     @BeforeClass
     @Committing
-    public static void configureDatabase() throws AbortException, IOException {
+    public static void configureDatabase() throws DatabaseException, IOException {
         Database.initialize(new PostgreSQLConfiguration(true), false);
         createTables();
     }

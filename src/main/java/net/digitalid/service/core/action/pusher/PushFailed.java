@@ -16,7 +16,7 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.ActionReply;
@@ -113,14 +113,14 @@ public final class PushFailed extends ExternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(4);
         this.number = new Int64Wrapper(elements.getNonNullable(0)).getValue();
         
-        final @Nonnull InternalIdentifier _subject = IdentifierImplementation.create(elements.getNonNullable(1)).toInternalIdentifier();
-        final @Nonnull HostIdentifier _recipient = IdentifierImplementation.create(elements.getNonNullable(2)).toHostIdentifier();
+        final @Nonnull InternalIdentifier _subject = IdentifierImplementation.create(elements.getNonNullable(1)).castTo(InternalIdentifier.class);
+        final @Nonnull HostIdentifier _recipient = IdentifierImplementation.create(elements.getNonNullable(2)).castTo(HostIdentifier.class);
         final @Nonnull Block _block = new SelfcontainedWrapper(elements.getNonNullable(3)).getElement();
         try {
             this.action = (ExternalAction) Method.get(entity, new SignatureWrapper(Packet.SIGNATURE, (Block) null, _subject), _recipient, _block);
@@ -188,14 +188,14 @@ public final class PushFailed extends ExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws AbortException {
+    public void executeOnClient() throws DatabaseException {
         // TODO: Add this failed push to some list where the user can see it (see the Errors module).
         action.executeOnFailure();
     }
     
     @Override
     @NonCommitting
-    public void executeOnFailure() throws AbortException {
+    public void executeOnFailure() throws DatabaseException {
         throw new ShouldNeverHappenError("Failed push actions should never be pushed themselves.");
     }
     
@@ -267,7 +267,7 @@ public final class PushFailed extends ExternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new PushFailed(entity, signature, recipient, block);
         }
         

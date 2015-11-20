@@ -33,11 +33,11 @@ import net.digitalid.service.core.entity.HostEntity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.RoleModule;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InactiveSignatureException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -375,7 +375,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
+    private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(type, element, subject, audit);
         
         assert credentials.isFrozen() : "The credentials are frozen.";
@@ -401,7 +401,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    <E extends Entity<E>> CredentialsSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("credentials.signature@core.digitalid.net") Block credentialsSignature, boolean verified, @Nullable Entity<E> entity) throws AbortException, PacketException, ExternalException, NetworkException {
+    CredentialsSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("credentials.signature@core.digitalid.net") Block credentialsSignature, boolean verified, @Nullable Entity entity) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(block, verified);
         
         assert credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
@@ -484,7 +484,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends XDF<V, ?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull <E extends XDF<E, ?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable E element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws DatabaseException, PacketException, ExternalException, NetworkException {
         return new CredentialsSignatureWrapper(type, ConvertToXDF.nullable(element), subject, audit, credentials, certificates, lodged, value);
     }
     
@@ -508,7 +508,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         super.checkRecency();
         final @Nonnull Time time = Time.HOUR.ago();
         for (final @Nonnull Credential credential : credentials) {
-            if (credential.getIssuance().isLessThan(time)) { throw new InactiveSignatureException("One of the credentials is older than an hour."); }
+            if (credential.getIssuance().isLessThan(time)) { throw InactiveSignatureException.get("One of the credentials is older than an hour."); }
         }
     }
     
@@ -709,7 +709,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public void verify() throws AbortException, PacketException, ExternalException, NetworkException {
+    public void verify() throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert !isVerified() : "This signature is not verified.";
         
         final @Nonnull Time start = Time.getCurrent();
@@ -957,7 +957,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public @Nullable OutgoingRole getAgent(@Nonnull NonHostEntity entity) throws AbortException {
+    public @Nullable OutgoingRole getAgent(@Nonnull NonHostEntity entity) throws DatabaseException {
         final @Nonnull Credential credential = getCredentials().getNonNullable(0);
         return credential.isRoleBased() ? AgentModule.getOutgoingRole(entity, credential.getRoleNotNull(), false) : null;
     }
@@ -966,7 +966,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws AbortException, PacketException {
+    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws DatabaseException, PacketException {
         final @Nonnull Credential credential = getCredentials().getNonNullable(0);
         if (credential.isRoleBased()) {
             final @Nullable OutgoingRole outgoingRole = AgentModule.getOutgoingRole(entity, credential.getRoleNotNull(), true);

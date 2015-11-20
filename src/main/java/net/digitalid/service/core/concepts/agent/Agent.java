@@ -13,8 +13,8 @@ import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
@@ -147,7 +147,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Committing
     @OnlyForClients
-    public final void remove() throws AbortException {
+    public final void remove() throws DatabaseException {
         assert !isRemoved() : "This agent is not removed.";
         
         Synchronizer.execute(new AgentRemove(this));
@@ -158,7 +158,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @NonCommitting
     @OnlyForActions
-    final void removeForActions() throws AbortException {
+    final void removeForActions() throws DatabaseException {
         AgentModule.removeAgent(this);
         if (isOnHost() && this instanceof OutgoingRole) { ((OutgoingRole) this).revoke(); }
         removed = true;
@@ -172,7 +172,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      * @require isRemoved() : "This agent is removed.";
      */
     @Committing
-    public final void unremove() throws AbortException {
+    public final void unremove() throws DatabaseException {
         assert isRemoved() : "This agent is removed.";
         
         Synchronizer.execute(new AgentUnremove(this));
@@ -183,7 +183,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @NonCommitting
     @OnlyForActions
-    final void unremoveForActions() throws AbortException {
+    final void unremoveForActions() throws DatabaseException {
         AgentModule.unremoveAgent(this);
         if (isOnHost() && this instanceof OutgoingRole) { ((OutgoingRole) this).issue(); }
         removed = false;
@@ -204,7 +204,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull @NonFrozen ReadOnlyAgentPermissions getPermissions() throws AbortException {
+    public final @Nonnull @NonFrozen ReadOnlyAgentPermissions getPermissions() throws DatabaseException {
         if (permissions == null) { permissions = AgentModule.getPermissions(this); }
         return permissions;
     }
@@ -219,7 +219,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Committing
     @OnlyForClients
-    public final void addPermissions(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws AbortException {
+    public final void addPermissions(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws DatabaseException {
         if (!permissions.isEmpty()) { Synchronizer.execute(new AgentPermissionsAdd(this, permissions)); }
     }
     
@@ -230,7 +230,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @NonCommitting
     @OnlyForActions
-    final void addPermissionsForActions(@Nonnull @Frozen ReadOnlyAgentPermissions newPermissions) throws AbortException {
+    final void addPermissionsForActions(@Nonnull @Frozen ReadOnlyAgentPermissions newPermissions) throws DatabaseException {
         AgentModule.addPermissions(this, newPermissions);
         if (permissions != null) { permissions.putAll(newPermissions); }
         notify(PERMISSIONS);
@@ -243,7 +243,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Committing
     @OnlyForClients
-    public final void removePermissions(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws AbortException {
+    public final void removePermissions(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws DatabaseException {
         if (!permissions.isEmpty()) { Synchronizer.execute(new AgentPermissionsRemove(this, permissions)); }
     }
     
@@ -254,7 +254,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @NonCommitting
     @OnlyForActions
-    final void removePermissionsForActions(@Nonnull @Frozen ReadOnlyAgentPermissions oldPermissions) throws AbortException {
+    final void removePermissionsForActions(@Nonnull @Frozen ReadOnlyAgentPermissions oldPermissions) throws DatabaseException {
         AgentModule.removePermissions(this, oldPermissions);
         if (permissions != null) { permissions.removeAll(oldPermissions); }
         notify(PERMISSIONS);
@@ -278,7 +278,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull Restrictions getRestrictions() throws AbortException {
+    public final @Nonnull Restrictions getRestrictions() throws DatabaseException {
         if (restrictions == null) { restrictions = AgentModule.getRestrictions(this); }
         return restrictions;
     }
@@ -292,7 +292,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Committing
     @OnlyForClients
-    public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws AbortException {
+    public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws DatabaseException {
         final @Nonnull Restrictions oldRestrictions = getRestrictions();
         if (!newRestrictions.equals(oldRestrictions)) {
             Synchronizer.execute(new AgentRestrictionsReplace(this, oldRestrictions, newRestrictions));
@@ -310,7 +310,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @NonCommitting
     @OnlyForActions
-    final void replaceRestrictions(@Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws AbortException {
+    final void replaceRestrictions(@Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws DatabaseException {
         AgentModule.replaceRestrictions(this, oldRestrictions, newRestrictions);
         restrictions = newRestrictions;
         notify(RESTRICTIONS);
@@ -321,7 +321,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     /**
      * Resets this agent.
      */
-    public void reset() throws AbortException {
+    public void reset() throws DatabaseException {
         this.removed = AgentModule.isRemoved(this);
         this.permissions = null;
         this.restrictions = null;
@@ -347,7 +347,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Pure
     @NonCommitting
-    public final @Capturable @Nonnull FreezableList<Agent> getWeakerAgents() throws AbortException {
+    public final @Capturable @Nonnull FreezableList<Agent> getWeakerAgents() throws DatabaseException {
         return AgentModule.getWeakerAgents(this);
     }
     
@@ -358,11 +358,11 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      * 
      * @return the weaker agent with the given agent number.
      * 
-     * @throws AbortException if no such weaker agent is found.
+     * @throws DatabaseException if no such weaker agent is found.
      */
     @Pure
     @NonCommitting
-    public final @Nonnull Agent getWeakerAgent(long agentNumber) throws AbortException {
+    public final @Nonnull Agent getWeakerAgent(long agentNumber) throws DatabaseException {
         return AgentModule.getWeakerAgent(this, agentNumber);
     }
     
@@ -377,7 +377,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Pure
     @NonCommitting
-    public final boolean covers(@Nonnull Agent agent) throws AbortException {
+    public final boolean covers(@Nonnull Agent agent) throws DatabaseException {
         return !isRemoved() && AgentModule.isStronger(this, agent);
     }
     
@@ -475,7 +475,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      * @return the foreign key constraint used to reference instances of this class.
      */
     @NonCommitting
-    public static @Nonnull String getReference(@Nonnull Site site) throws AbortException {
+    public static @Nonnull String getReference(@Nonnull Site site) throws DatabaseException {
         AgentModule.createReferenceTable(site);
         return "REFERENCES " + site + "agent (entity, agent) ON DELETE CASCADE";
     }
@@ -493,7 +493,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Pure
     @NonCommitting
-    public static @Nullable Agent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws AbortException {
+    public static @Nullable Agent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws DatabaseException {
         assert columnIndexes.length == 3 : "The number of given indexes is 3.";
         
         final long number = resultSet.getLong(columnIndexes[0]);
@@ -514,7 +514,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Agent getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws AbortException {
+    public static @Nonnull Agent getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws DatabaseException {
         assert columnIndexes.length == 3 : "The number of given indexes is 3.";
         
         return get(entity, resultSet.getLong(columnIndexes[0]), resultSet.getBoolean(columnIndexes[1]), resultSet.getBoolean(columnIndexes[2]));
@@ -522,7 +522,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
     
@@ -534,7 +534,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Agent agent, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public static void set(@Nullable Agent agent, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         if (agent == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
         else { agent.set(preparedStatement, parameterIndex); }
     }

@@ -59,7 +59,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    protected CoreServiceInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws AbortException, PacketException, ExternalException, NetworkException {
+    protected CoreServiceInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal queries of the core service."); }
@@ -86,7 +86,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
      * @require hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    protected abstract @Nonnull CoreServiceQueryReply executeOnHost(@Nonnull Agent agent) throws AbortException;
+    protected abstract @Nonnull CoreServiceQueryReply executeOnHost(@Nonnull Agent agent) throws DatabaseException;
     
     @Override
     @NonCommitting

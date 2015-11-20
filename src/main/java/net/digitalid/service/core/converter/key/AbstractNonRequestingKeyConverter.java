@@ -2,7 +2,7 @@ package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.concept.ConceptKeyConverter;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.annotations.state.Validated;

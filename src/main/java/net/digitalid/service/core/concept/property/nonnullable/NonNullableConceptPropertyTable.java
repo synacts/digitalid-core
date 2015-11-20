@@ -18,7 +18,7 @@ import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -64,7 +64,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws AbortException {
+    public void createTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
             ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
@@ -72,19 +72,19 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
             Database.onInsertIgnore(statement, getName(site), entityConverters.getSQLConverter().getSelection(), conceptConverters.getSQLConverter().getSelection()); // TODO: There is a problem when the entity or the concept uses more than one column because the onInsertIgnore-method expects the arguments differently.
             // TODO: Shouldn't we detect here whether we need to call Mapper.addReference?
         } catch (@Nonnull SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     
     @Locked
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws AbortException {
+    public void deleteTables(@Nonnull Site site) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.onInsertNotIgnore(statement, getName(site));
             statement.executeUpdate("DROP TABLE IF EXISTS " + getName(site));
         } catch (@Nonnull SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     
@@ -94,7 +94,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull Block exportAll(@Nonnull Host host) throws AbortException {
+    public @Nonnull Block exportAll(@Nonnull Host host) throws DatabaseException {
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
         ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
         final @Nonnull String SQL = "SELECT " + entityConverters.getSQLConverter().getSelection() + ", " + conceptConverters.getSQLConverter().getSelection() + ", " + Time.SQL_CONVERTER.getSelection() + ", " + getPropertyFactory().getValueConverters().getSQLConverter().getSelection() + " FROM " + getName(host);
@@ -113,14 +113,14 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
             }
             return ListWrapper.encode(getDumpType(), entries.freeze());
         } catch (SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     
     @Locked
     @Override
     @NonCommitting
-    public void importAll(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getDumpType()) : "The block is based on the dump type of this data collection.";
         
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
@@ -151,7 +151,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
             }
             preparedStatement.executeBatch();
         } catch (SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     
@@ -161,7 +161,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
+    public @Nonnull Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
         ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
         // TODO: String SQL = select(getConceptConverters(), Time.CONVERTERS, getPropertyFactory().getValueConverters()).from(entity).where(factory, object).and().and().toSQL();
@@ -180,14 +180,14 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
             }
             return ListWrapper.encode(getStateType(), entries.freeze());
         } catch (SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     
     @Locked
     @Override
     @NonCommitting
-    public void addState(@Nonnull E entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public void addState(@Nonnull E entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getStateType()) : "The block is based on the state type of this data collection.";
         
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
@@ -217,7 +217,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
             }
             preparedStatement.executeBatch();
         } catch (SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
         
         getPropertyFactory().getConceptSetup().getConceptIndex().reset(entity, this);
@@ -226,7 +226,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     /* -------------------------------------------------- Methods -------------------------------------------------- */
     
     @Pure
-    @Nonnull @NonNullableElements @Frozen ReadOnlyPair<Time, V> load(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup) throws AbortException {
+    @Nonnull @NonNullableElements @Frozen ReadOnlyPair<Time, V> load(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup) throws DatabaseException {
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
         ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
         final @Nonnull E entity = property.getConcept().getEntity();
@@ -244,11 +244,11 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
                 return FreezablePair.get(Time.getCurrent(), propertySetup.getDefaultValue()).freeze();
             }
         } catch (SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     
-    void replace(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws AbortException {
+    void replace(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws DatabaseException {
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
         ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
         final @Nonnull E entity = property.getConcept().getEntity();
@@ -260,7 +260,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
             getPropertyFactory().getValueConverters().getSQLConverter().storeNonNullable(oldValue, preparedStatement, startIndex);
             if (preparedStatement.executeUpdate() == 0) { throw new SQLException("The value of the given property could not be replaced."); }
         } catch (SQLException exception) {
-            throw AbortException.get(exception);
+            throw DatabaseException.get(exception);
         }
     }
     

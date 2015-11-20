@@ -2,7 +2,7 @@ package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -60,11 +60,11 @@ abstract class HostTableImplementation<M extends DelegatingHostStorageImplementa
     @Locked
     @Override
     @NonCommitting
-    public abstract @Nonnull Block exportAll(@Nonnull Host host) throws AbortException;
+    public abstract @Nonnull Block exportAll(@Nonnull Host host) throws DatabaseException;
     
     @Locked
     @Override
     @NonCommitting
-    public abstract void importAll(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException;
+    public abstract void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
     
 }

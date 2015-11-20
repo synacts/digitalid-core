@@ -58,7 +58,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
      * @require outgoingRole.isOnHost() : "The outgoing role is on a host.";
      */
     @NonCommitting
-    OutgoingRoleRevoke(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws AbortException {
+    OutgoingRoleRevoke(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws DatabaseException {
         super(outgoingRole.getAccount(), subject);
         
         this.issuer = outgoingRole.getAccount().getIdentity();
@@ -79,7 +79,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private OutgoingRoleRevoke(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private OutgoingRoleRevoke(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         if (signature instanceof HostSignatureWrapper) {
@@ -113,7 +113,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     @Pure
     @Override
     @NonCommitting
-    public @Nullable OutgoingRole getFailedAuditAgent() throws AbortException {
+    public @Nullable OutgoingRole getFailedAuditAgent() throws DatabaseException {
         return AgentModule.getOutgoingRole(getNonHostEntity(), relation, false);
     }
     
@@ -122,7 +122,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
      * Executes this action on both hosts and clients.
      */
     @NonCommitting
-    private void executeOnBoth() throws AbortException {
+    private void executeOnBoth() throws DatabaseException {
         AgentModule.removeIncomingRole(getNonHostEntity(), issuer, relation);
     }
     
@@ -142,7 +142,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws AbortException {
+    public void executeOnClient() throws DatabaseException {
         executeOnBoth();
         for (final @Nonnull NonNativeRole role : getRole().getRoles()) {
             if (role.getIssuer().equals(issuer) && relation.equals(role.getRelation())) { role.remove(); }
@@ -151,7 +151,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnFailure() throws AbortException {
+    public void executeOnFailure() throws DatabaseException {
         // TODO: Add this role issuance to a list of failed external actions.
     }
     
@@ -198,7 +198,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             return new OutgoingRoleRevoke(entity, signature, recipient, block);
         }
         

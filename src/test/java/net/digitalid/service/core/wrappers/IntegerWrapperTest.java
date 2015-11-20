@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
 import org.junit.Assert;

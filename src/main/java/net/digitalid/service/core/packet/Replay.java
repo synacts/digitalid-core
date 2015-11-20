@@ -41,7 +41,7 @@ public final class Replay {
      * @param encryption the encryption to check for a replay attack.
      */
     @NonCommitting
-    public static void check(@Nonnull EncryptionWrapper encryption) throws AbortException, PacketException {
+    public static void check(@Nonnull EncryptionWrapper encryption) throws DatabaseException, PacketException {
         final @Nonnull Time time = encryption.getTime();
         final @Nullable InitializationVector initializationVector = encryption.getInitializationVector();
         

@@ -16,10 +16,10 @@ import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -106,7 +106,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws AbortException, PacketException, ExternalException, NetworkException {
+    ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(block, verified);
         
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
@@ -197,7 +197,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public @Nullable ClientAgent getAgent(@Nonnull NonHostEntity entity) throws AbortException {
+    public @Nullable ClientAgent getAgent(@Nonnull NonHostEntity entity) throws DatabaseException {
         return AgentModule.getClientAgent(entity, commitment);
     }
     
@@ -205,7 +205,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws PacketException, AbortException {
+    public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws PacketException, DatabaseException {
         if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) { throw new PacketException(PacketErrorCode.KEYROTATION, "The client has to recommit its secret."); }
         final @Nullable ClientAgent agent = AgentModule.getClientAgent(entity, commitment);
         if (agent == null) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The element was not signed by an authorized client."); }

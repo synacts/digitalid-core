@@ -88,7 +88,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public @NonFrozen FreezableContacts(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public @NonFrozen FreezableContacts(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -144,7 +144,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull @NonFrozen FreezableContacts get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws AbortException {
+    public static @Capturable @Nonnull @NonFrozen FreezableContacts get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         final @Nonnull FreezableContacts contacts = new FreezableContacts();
         while (resultSet.next()) { contacts.add(Contact.getNotNull(entity, resultSet, columnIndex)); }
         return contacts;
@@ -158,7 +158,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
      */
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws AbortException {
+    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         for (final @Nonnull Contact contact : this) {
             contact.set(preparedStatement, parameterIndex);
             preparedStatement.addBatch();

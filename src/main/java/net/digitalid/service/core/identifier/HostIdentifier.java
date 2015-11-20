@@ -7,9 +7,9 @@ import net.digitalid.service.core.converter.key.Caster;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.HostIdentity;
@@ -80,18 +80,18 @@ public final class HostIdentifier extends InternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull HostIdentity getMappedIdentity() throws AbortException {
+    public @Nonnull HostIdentity getMappedIdentity() throws DatabaseException {
         assert isMapped() : "This identifier is mapped.";
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof HostIdentity) { return (HostIdentity) identity; }
-        else { throw AbortException.get("The mapped identity has a wrong type."); }
+        else { throw DatabaseException.get("The mapped identity has a wrong type."); }
     }
     
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull HostIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
+    public @Nonnull HostIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
         return Mapper.getIdentity(this).toHostIdentity();
     }
     
@@ -128,7 +128,7 @@ public final class HostIdentifier extends InternalIdentifier {
         @Pure
         @Override
         protected @Nonnull HostIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
-            return identifier.toHostIdentifier();
+            return identifier.castTo(HostIdentifier.class);
         }
     };
     

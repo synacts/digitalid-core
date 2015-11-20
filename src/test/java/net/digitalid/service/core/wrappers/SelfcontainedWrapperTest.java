@@ -18,7 +18,7 @@ import org.junit.Test;
 public final class SelfcontainedWrapperTest extends DatabaseSetup {
     
     @Test
-    public void testWrapping() throws AbortException, PacketException, ExternalException, NetworkException {
+    public void testWrapping() throws DatabaseException, PacketException, ExternalException, NetworkException {
         final @Nonnull SemanticType STRING = SemanticType.map("string@core.digitalid.net").load(StringWrapper.XDF_TYPE);
         final @Nonnull SemanticType INT32 = SemanticType.map("int32@core.digitalid.net").load(Int32Wrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("selfcontained@core.digitalid.net").load(SelfcontainedWrapper.XDF_TYPE);
