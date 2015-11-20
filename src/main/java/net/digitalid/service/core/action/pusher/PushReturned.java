@@ -11,10 +11,10 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
+import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -28,6 +28,7 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.service.core.packet.Response;
 import net.digitalid.service.core.site.host.Host;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
@@ -116,7 +117,7 @@ public final class PushReturned extends ExternalAction {
         final @Nonnull CompressionWrapper _compression = new CompressionWrapper(_signature.getNonNullableElement());
         final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElement());
         try {
-            this.reply = Reply.get(entity.toNonHostEntity(), (HostSignatureWrapper) _signature, _content.getElement()).toActionReply();
+            this.reply = Reply.get(entity.castTo(NonHostEntity.class), (HostSignatureWrapper) _signature, _content.getElement()).toActionReply();
         } catch (@Nonnull PacketException exception) {
             throw new InvalidEncodingException("Could not decode the reply to an external action.", exception);
         }

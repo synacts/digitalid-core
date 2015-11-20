@@ -64,7 +64,7 @@ final class AgentRemove extends CoreServiceInternalAction {
     private AgentRemove(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        this.agent = Agent.get(entity.toNonHostEntity(), block);
+        this.agent = Agent.get(entity.castTo(NonHostEntity.class), block);
     }
     
     @Pure

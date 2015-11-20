@@ -81,7 +81,7 @@ public final class AccountClose extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         this.successor = IdentifierImplementation.create(block).castTo(InternalNonHostIdentifier.class);
-        this.restrictions = new Restrictions(true, true, true, Context.getRoot(entity.toNonHostEntity()));
+        this.restrictions = new Restrictions(true, true, true, Context.getRoot(entity.castTo(NonHostEntity.class)));
     }
     
     @Pure

@@ -113,7 +113,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     private AttributeVisibilityReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
+        final @Nonnull NonHostEntity nonHostEntity = entity.castTo(NonHostEntity.class);
         nonHostEntity.getIdentity().castTo(InternalPerson.class);
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.attribute = Attribute.get(entity, IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().castTo(SemanticType.class).checkIsAttributeFor(entity));

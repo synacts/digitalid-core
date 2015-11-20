@@ -103,7 +103,7 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
-        this.password = Settings.get(entity.toNonHostEntity());
+        this.password = Settings.get(entity.castTo(NonHostEntity.class));
         this.oldValue = new StringWrapper(elements.getNonNullable(0)).getString();
         this.newValue = new StringWrapper(elements.getNonNullable(1)).getString();
     }

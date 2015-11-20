@@ -114,7 +114,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
      */
     @NonCommitting
     private AttributeValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
-        super(entity.toNonHostEntity(), signature, recipient);
+        super(entity.castTo(NonHostEntity.class), signature, recipient);
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.attribute = Attribute.get(entity, IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().castTo(SemanticType.class).checkIsAttributeFor(entity));

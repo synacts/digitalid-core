@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.key.Caster;
@@ -13,7 +14,6 @@ import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
@@ -29,6 +29,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -39,7 +40,7 @@ import net.digitalid.utility.database.site.Site;
  * @see NonHostEntity
  */
 @Immutable
-public interface Entity extends XDF<Entity, Site>, SQL<Entity, Site> {
+public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
     
     /* -------------------------------------------------- Methods -------------------------------------------------- */
     
@@ -66,68 +67,6 @@ public interface Entity extends XDF<Entity, Site>, SQL<Entity, Site> {
      */
     @Pure
     public long getKey();
-    
-    /* -------------------------------------------------- Casting -------------------------------------------------- */
-    
-    /**
-     * Returns this entity as a {@link HostEntity}.
-     * 
-     * @return this entity as a {@link HostEntity}.
-     * 
-     * @throws InvalidEncodingException if this entity is not an instance of {@link HostEntity}.
-     */
-    @Pure
-    public @Nonnull HostEntity toHostEntity() throws InvalidEncodingException;
-    
-    /**
-     * Returns this entity as a {@link NonHostEntity}.
-     * 
-     * @return this entity as a {@link NonHostEntity}.
-     * 
-     * @throws InvalidEncodingException if this entity is not an instance of {@link NonHostEntity}.
-     */
-    @Pure
-    public @Nonnull NonHostEntity toNonHostEntity() throws InvalidEncodingException;
-    
-    /**
-     * Returns this entity as an {@link Account}.
-     * 
-     * @return this entity as an {@link Account}.
-     * 
-     * @throws InvalidEncodingException if this entity is not an instance of {@link Account}.
-     */
-    @Pure
-    public @Nonnull Account toAccount() throws InvalidEncodingException;
-    
-    /**
-     * Returns this entity as a {@link HostAccount}.
-     * 
-     * @return this entity as a {@link HostAccount}.
-     * 
-     * @throws InvalidEncodingException if this entity is not an instance of {@link HostAccount}.
-     */
-    @Pure
-    public @Nonnull HostAccount toHostAccount() throws InvalidEncodingException;
-    
-    /**
-     * Returns this entity as a {@link NonHostAccount}.
-     * 
-     * @return this entity as a {@link NonHostAccount}.
-     * 
-     * @throws InvalidEncodingException if this entity is not an instance of {@link NonHostAccount}.
-     */
-    @Pure
-    public @Nonnull NonHostAccount toNonHostAccount() throws InvalidEncodingException;
-    
-    /**
-     * Returns this entity as a {@link Role}.
-     * 
-     * @return this entity as a {@link Role}.
-     * 
-     * @throws InvalidEncodingException if this entity is not an instance of {@link Role}.
-     */
-    @Pure
-    public @Nonnull Role toRole() throws InvalidEncodingException;
     
     /* -------------------------------------------------- Key Converters -------------------------------------------------- */
     

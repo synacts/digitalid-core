@@ -5,14 +5,14 @@ import java.sql.ResultSet;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.castable.CastableObject;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
@@ -23,7 +23,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @see Role
  */
 @Immutable
-public abstract class EntityImplementation<S extends Site> implements Entity {
+public abstract class EntityImplementation<S extends Site> extends CastableObject implements Entity {
     
     // TODO: Implement the getSite() here.
     
@@ -76,50 +76,6 @@ public abstract class EntityImplementation<S extends Site> implements Entity {
     @Override
     public final @Nonnull String toString() {
         return String.valueOf(getKey());
-    }
-    
-    /* -------------------------------------------------- Casting -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final @Nonnull HostEntity toHostEntity() throws InvalidEncodingException {
-        if (this instanceof HostEntity) { return (HostEntity) this; }
-        throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to HostEntity.");
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull NonHostEntity toNonHostEntity() throws InvalidEncodingException {
-        if (this instanceof NonHostEntity) { return (NonHostEntity) this; }
-        throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostEntity.");
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull Account toAccount() throws InvalidEncodingException {
-        if (this instanceof Account) { return (Account) this; }
-        throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to Account.");
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull HostAccount toHostAccount() throws InvalidEncodingException {
-        if (this instanceof HostAccount) { return (HostAccount) this; }
-        throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to HostAccount.");
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull NonHostAccount toNonHostAccount() throws InvalidEncodingException {
-        if (this instanceof NonHostAccount) { return (NonHostAccount) this; }
-        throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostAccount.");
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull Role toRole() throws InvalidEncodingException {
-        if (this instanceof Role) { return (Role) this; }
-        throw new InvalidEncodingException("This entity is a " + this.getClass().getSimpleName() + " and cannot be cast to Role.");
     }
     
 }

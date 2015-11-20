@@ -275,7 +275,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @NonCommitting
         @SuppressWarnings("unchecked")
         protected @Nonnull Method create(@Nonnull Entity<E> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, InvalidEncodingException, PacketException, ExternalException, NetworkException {
-               return new NonNullableConceptPropertyInternalAction<>((E) entity.toNonHostEntity(), signature, recipient, block, setup);
+               return new NonNullableConceptPropertyInternalAction<>((E) entity.castTo(NonHostEntity.class), signature, recipient, block, setup);
         }
         
     }

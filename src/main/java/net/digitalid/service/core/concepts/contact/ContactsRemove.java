@@ -76,8 +76,8 @@ final class ContactsRemove extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
-        this.context = Context.get(entity.toNonHostEntity(), elements.getNonNullable(0));
-        this.contacts = new FreezableContacts(entity.toNonHostEntity(), elements.getNonNullable(1)).freeze();
+        this.context = Context.get(entity.castTo(NonHostEntity.class), elements.getNonNullable(0));
+        this.contacts = new FreezableContacts(entity.castTo(NonHostEntity.class), elements.getNonNullable(1)).freeze();
     }
     
     @Pure
