@@ -209,7 +209,7 @@ public abstract class Packet {
                 
                 final @Nullable Audit _audit = signature.getAudit();
                 if (_audit != null) {
-                    audit = isResponse ? _audit.toResponseAudit() : _audit.toRequestAudit();
+                    audit = isResponse ? _audit.castTo(ResponseAudit.class) : _audit.castTo(RequestAudit.class);
                     if (!signature.isSigned()) { throw new PacketException(PacketErrorCode.SIGNATURE, "A packet that contains an audit has to be signed."); }
                 }
                 

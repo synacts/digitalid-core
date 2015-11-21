@@ -16,7 +16,7 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.ActionReply;
@@ -125,7 +125,7 @@ public final class PushFailed extends ExternalAction {
         try {
             this.action = (ExternalAction) Method.get(entity, new SignatureWrapper(Packet.SIGNATURE, (Block) null, _subject), _recipient, _block);
         } catch (@Nonnull PacketException | ClassCastException exception) {
-            throw new InvalidEncodingException("Could not decode the action of the failed push.", exception);
+            throw MaskingInvalidEncodingException.get(exception);
         }
     }
     

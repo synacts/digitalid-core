@@ -13,14 +13,14 @@ import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidActionException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
@@ -34,12 +34,13 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models the {@link InternalAction internal action} of a {@link NonNullableConceptProperty non-nullable concept property}. 
  */
 @Immutable
-final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends ConceptPropertyInternalAction {
+final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, ?>, E extends Entity> extends ConceptPropertyInternalAction {
     
     /* -------------------------------------------------- Immutable Fields -------------------------------------------------- */
     
@@ -84,11 +85,6 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
      * @param newTime the current time.
      * @param oldValue the value of the last modification.
      * @param newValue the new value.
-     * 
-     * @throws DatabaseException
-     * @throws PacketException
-     * @throws ExternalException
-     * @throws NetworkException
      */
     private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertySetup<V, C, E> setup, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws DatabaseException {
         super(property.getConcept().getRole(), setup.getConceptSetup().getService());
@@ -102,7 +98,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     }
     
     @Pure
-    static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertyInternalAction<V, C, E> get(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull V oldValue, @Nonnull V newValue) throws DatabaseException {
+    static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity> NonNullableConceptPropertyInternalAction<V, C, E> get(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull V oldValue, @Nonnull V newValue) throws DatabaseException {
         return new NonNullableConceptPropertyInternalAction<>(property.getConceptPropertySetup(), property, property.getTime(), Time.getCurrent(), oldValue, newValue); // TODO: Let all the arguments be determined by the caller.
     }
     
@@ -117,7 +113,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         this.newTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
         this.oldValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
         this.newValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
-        if (newValue.equals(oldValue)) { throw new InvalidEncodingException("The old and new value may not be equal."); }
+        if (newValue.equals(oldValue)) { throw InvalidActionException.get(this); }
     }
     
     /* -------------------------------------------------- Methods -------------------------------------------------- */
@@ -206,7 +202,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
      */
     // TODO: must be re-done and merged with Method.Factory.
     @Immutable
-    public static final class XDFConverter<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends AbstractNonRequestingXDFConverter<NonNullableConceptPropertyInternalAction<V, C, E>, ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>>> {
+    public static final class XDFConverter<V, C extends Concept<C, E, ?>, E extends Entity> extends AbstractXDFConverter<NonNullableConceptPropertyInternalAction<V, C, E>, ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>>> {
         
         /**
          * Creates a new XDF converter.
@@ -223,27 +219,23 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         
         @Pure
         @Override
-        public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> decodeNonNullable(@Nonnull ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>> pair, @Nonnull Block block) throws InvalidEncodingException {
+        public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> decodeNonNullable(@Nonnull ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>> pair, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
             
             final E entity = pair.getNonNullableElement0();
             final NonNullableConceptPropertySetup<V, C, E> setup = pair.getNonNullableElement1();
             
-            try {
-                final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(5);
-                final @Nonnull C concept = setup.getConceptSetup().getConceptConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(0));
-                
-                final NonNullableConceptProperty<V, C, E> property = (NonNullableConceptProperty<V, C, E>) concept.getProperty(setup.getPropertyTable()); // TODO: Find a better alternative than casting here (e.g. a toNonNullableConceptProperty() with some kind of exception).
-                final Time oldTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
-                final Time newTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
-                final V oldValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
-                final V newValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
-                if (newValue.equals(oldValue)) { throw new InvalidEncodingException("The old and new value may not be equal."); }
-                // TODO: call other constructor. This constructor is reserved for clients that do not have or need a signature. For methods executed on the host, the signature must be stored.
-                return new NonNullableConceptPropertyInternalAction<V, C, E>(setup, property, oldTime, newTime, oldValue, newValue);
-            } catch (DatabaseException | PacketException | ExternalException | NetworkException exception) {
-                throw new InvalidEncodingException(exception);
-            }
+            final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(5);
+            final @Nonnull C concept = setup.getConceptSetup().getConceptConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(0));
+            
+            final NonNullableConceptProperty<V, C, E> property = (NonNullableConceptProperty<V, C, E>) concept.getProperty(setup.getPropertyTable()); // TODO: Find a better alternative than casting here (e.g. a toNonNullableConceptProperty() with some kind of exception).
+            final Time oldTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
+            final Time newTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
+            final V oldValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
+            final V newValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
+            if (newValue.equals(oldValue)) { throw InvalidActionException.get(property); }
+            // TODO: call other constructor. This constructor is reserved for clients that do not have or need a signature. For methods executed on the host, the signature must be stored.
+            return new NonNullableConceptPropertyInternalAction<V, C, E>(setup, property, oldTime, newTime, oldValue, newValue);
         }
         
     }
@@ -260,7 +252,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
      * The factory class for this method.
      */
     @Immutable
-    static final class Factory<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends Method.Factory<E> {
+    static final class Factory<V, C extends Concept<C, E, ?>, E extends Entity> extends Method.Factory<E> {
         
         private final @Nonnull NonNullableConceptPropertySetup<V, C, E> setup;
         
@@ -274,7 +266,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @Override
         @NonCommitting
         @SuppressWarnings("unchecked")
-        protected @Nonnull Method create(@Nonnull Entity<E> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, InvalidEncodingException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, InvalidEncodingException, PacketException, ExternalException, NetworkException {
                return new NonNullableConceptPropertyInternalAction<>((E) entity.castTo(NonHostEntity.class), signature, recipient, block, setup);
         }
         

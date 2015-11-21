@@ -20,7 +20,7 @@ import net.digitalid.utility.annotations.state.Validated;
  * This is the factory for non-nullable concept properties.
  */
 @Immutable
-public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends ConceptPropertySetup<V, C, E> {
+public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>, E extends Entity> extends ConceptPropertySetup<V, C, E> {
     
     /* -------------------------------------------------- Old Value Type -------------------------------------------------- */
     
@@ -131,7 +131,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
      * @return a new non-nullable concept property factory with the given parameters.
      */
     @Pure
-    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertySetup<V, C, E> get(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueConverters, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
+    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity> NonNullableConceptPropertySetup<V, C, E> get(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueConverters, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
         return new NonNullableConceptPropertySetup<>(conceptSetup, propertyName, valueConverters, requiredAuthorization, valueValidator, defaultValue);
     }
     

@@ -15,6 +15,7 @@ import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -157,7 +158,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
                 Log.verbose("Element with " + element.getLength() + " bytes decompressed in " + start.ago().getValue() + " ms.");
                 return new CompressionWrapper(block.getType(), element);
             } catch (@Nonnull IOException exception) {
-                throw new InvalidEncodingException("The given block could not be decompressed.", exception);
+                throw MaskingInvalidEncodingException.get(exception);
             }
         }
         

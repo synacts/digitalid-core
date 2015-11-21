@@ -22,12 +22,12 @@ import net.digitalid.service.core.concepts.contact.FreezableAttributeTypeSet;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyException;
 import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.external.notfound.CertificateNotFoundException;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
@@ -52,6 +52,7 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.directory.Directory;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.logger.Log;
@@ -184,7 +185,7 @@ public final class Cache {
      */
     @Locked
     @NonCommitting
-    private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws DatabaseException, InvalidEncodingException {
+    private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws DatabaseException, InvalidReplyException {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
         assert value == null || value.isVerified() : "The attribute value is null or its signature is verified.";
@@ -218,7 +219,7 @@ public final class Cache {
      */
     @Pure
     private static @Nonnull Time getExpiration(@Nonnull SemanticType type, @Nullable AttributeValue value, @Nonnull AttributesReply reply) throws InvalidEncodingException {
-        if (value != null && !value.getContent().getType().equals(type)) { throw new InvalidEncodingException("A replied attribute value does not match the queried type."); }
+        if (value != null && !value.getContent().getType().equals(type)) { throw InvalidReplyException.get(reply, "attribute type", type.getAddress(), value.getContent().getType().getAddress()); }
         return type.getCachingPeriodNotNull().add(value instanceof CertifiedAttributeValue ? ((CertifiedAttributeValue) value).getTime() : reply.getSignatureNotNull().getNonNullableTime());
     }
     
@@ -277,7 +278,7 @@ public final class Cache {
                 final @Nonnull Response response = new AttributesQuery(role, identity.getAddress(), typesToRetrieve.freeze(), true).send();
                 final @Nonnull AttributesReply reply = response.getReplyNotNull(0);
                 final @Nonnull ReadOnlyList<AttributeValue> values = reply.getAttributeValues();
-                if (values.size() != typesToRetrieve.size()) { throw new InvalidEncodingException("The number of queried and replied attributes have to be the same."); }
+                if (values.size() != typesToRetrieve.size()) { throw InvalidReplyException.get(reply, "number of attributes", typesToRetrieve.size(), values.size()); }
                 int i = 0;
                 for (final @Nonnull SemanticType type : typesToRetrieve) {
                     final @Nullable AttributeValue value = values.getNullable(i);

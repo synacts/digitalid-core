@@ -17,7 +17,7 @@ import net.digitalid.utility.annotations.state.Validated;
  * This factory creates a new property for each concept instance and stores the required converters and methods.
  */
 @Immutable
-public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E extends Entity<E>> {
+public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E extends Entity> {
     
     /* -------------------------------------------------- Property Name -------------------------------------------------- */
     

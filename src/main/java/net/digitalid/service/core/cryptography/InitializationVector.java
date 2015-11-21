@@ -16,6 +16,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingEx
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
@@ -36,7 +37,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
      * @ensure return.length == 16 : "The array contains 16 bytes.";
      */
     @Pure
-    private static byte[] getRandomBytes() {
+    private static @Nonnull @Validated byte[] getRandomBytes() {
         final @Nonnull byte[] bytes = new byte[16];
         new SecureRandom().nextBytes(bytes);
         return bytes;
@@ -51,7 +52,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
      * 
      * @require bytes.length == 16 : "The array contains 16 bytes.";
      */
-    private InitializationVector(@Nonnull byte[] bytes) {
+    private InitializationVector(@Nonnull @Validated byte[] bytes) {
         super(bytes);
         
         assert bytes.length == 16 : "The array contains 16 bytes.";
@@ -67,7 +68,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
      * @require bytes.length == 16 : "The array contains 16 bytes.";
      */
     @Pure
-    public static @Nonnull InitializationVector get(@Nonnull byte[] bytes) {
+    public static @Nonnull InitializationVector get(@Nonnull @Validated byte[] bytes) {
         return new InitializationVector(bytes);
     }
     
@@ -96,13 +97,13 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         
         @Pure
         @Override
-        public @Nonnull byte[] convert(@Nonnull InitializationVector vector) {
+        public @Nonnull @Validated byte[] convert(@Nonnull InitializationVector vector) {
             return vector.getIV();
         }
         
         @Pure
         @Override
-        public @Nonnull InitializationVector recover(@Nonnull Object none, @Nonnull byte[] bytes) throws InvalidEncodingException {
+        public @Nonnull InitializationVector recover(@Nonnull Object none, @Nonnull @Validated byte[] bytes) throws InvalidEncodingException {
             return new InitializationVector(bytes);
         }
         

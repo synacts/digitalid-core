@@ -7,6 +7,7 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
@@ -14,7 +15,6 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -27,12 +27,13 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForClients;
 import net.digitalid.utility.database.annotations.OnlyForHosts;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Description.
  */
 @Immutable
-public abstract class ConceptPropertyInternalAction extends InternalAction {
+public abstract class ConceptPropertyInternalAction<V, C extends Concept<C, E, ?>, E extends Entity> extends InternalAction {
     
     /* -------------------------------------------------- Types -------------------------------------------------- */
     
@@ -45,6 +46,11 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
      * Stores the semantic type {@code new.time@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType NEW_TIME = SemanticType.map("new.time@core.digitalid.net").load(Time.TYPE);
+    
+    /* -------------------------------------------------- Property -------------------------------------------------- */
+    
+    @Pure
+    public abstract @Nonnull ConceptProperty<V, C, E> getProperty();
     
     /* -------------------------------------------------- Service -------------------------------------------------- */
     
@@ -84,7 +90,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
         this.publicKey = null;
     }
     
-    protected ConceptPropertyInternalAction(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Service service) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    protected ConceptPropertyInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Service service) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.service = service;

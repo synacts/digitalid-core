@@ -21,7 +21,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see ExtensibleConceptProperty
  * @see IndexedConceptProperty
  */
-public interface ConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity<E>> {
+public interface ConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity> {
     
     /**
      * Returns the property setup that contains the property and value converters, the required authorization and the value validator.

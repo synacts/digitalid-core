@@ -13,13 +13,14 @@ import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.AttributeType;
+import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -135,7 +136,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
             put(type, new BooleanWrapper(subelements.getNonNullable(1)).getValue());
         }
         
-        if (!areValid()) { throw new InvalidEncodingException("The agent permissions in the given block are not valid."); }
+        if (!areValid()) { throw InvalidValueException.get("agent permissions", this); }
     }
     
     @Pure
@@ -196,8 +197,8 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @throws InvalidEncodingException if this is not the case.
      */
     @Pure
-    public @Nonnull FreezableAgentPermissions checkIsSingle() throws InvalidEncodingException {
-        if (!isSingle()) { throw new InvalidEncodingException("These permissions are not single."); }
+    public @Nonnull FreezableAgentPermissions checkIsSingle() throws InvalidValueException {
+        if (!isSingle()) { throw InvalidValueException.get("agent permissions", this); }
         return this;
     }
     
@@ -215,8 +216,8 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @throws InvalidEncodingException if this is not the case.
      */
     @Pure
-    public @Nonnull FreezableAgentPermissions checkAreEmptyOrSingle() throws InvalidEncodingException {
-        if (!areEmptyOrSingle()) { throw new InvalidEncodingException("These permissions are not empty or single."); }
+    public @Nonnull FreezableAgentPermissions checkAreEmptyOrSingle() throws InvalidValueException {
+        if (!areEmptyOrSingle()) { throw InvalidValueException.get("agent permissions", this); }
         return this;
     }
     

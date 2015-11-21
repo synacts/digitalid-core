@@ -16,7 +16,7 @@ import net.digitalid.utility.annotations.state.Validated;
  * @param <K> the type of the keys which the objects are converted to and recovered from (with an external object).
  */
 @Immutable
-public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Entity<E>, K> extends AbstractNonRequestingKeyConverter<C, E, K, E> {
+public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Entity, K> extends AbstractNonRequestingKeyConverter<C, E, K, E> {
     
     /* -------------------------------------------------- Concept Index -------------------------------------------------- */
     
@@ -54,7 +54,7 @@ public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Ent
      * @return a new concept-key converter with the given index.
      */
     @Pure
-    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity<E>, K> ConceptKeyConverter<C, E, K> get(@Nonnull ConceptIndex<C, E, K> index) {
+    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity, K> ConceptKeyConverter<C, E, K> get(@Nonnull ConceptIndex<C, E, K> index) {
         return new ConceptKeyConverter<>(index);
     }
     

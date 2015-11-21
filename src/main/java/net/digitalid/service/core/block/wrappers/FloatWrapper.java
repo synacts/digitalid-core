@@ -13,7 +13,7 @@ import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
 import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
@@ -121,7 +121,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         @Pure
         @Override
         public @Nonnull FloatWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("float@core.digitalid.net") Block block) throws InvalidEncodingException {
-            if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
+            if (block.getLength() != LENGTH) { throw InvalidLengthException.get(LENGTH, block.getLength()); }
             
             return new FloatWrapper(block.getType(), Float.intBitsToFloat((int) block.decodeValue()));
         }

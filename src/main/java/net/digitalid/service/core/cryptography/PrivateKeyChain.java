@@ -2,9 +2,10 @@ package net.digitalid.service.core.cryptography;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -17,24 +18,13 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This class models a {@link KeyChain key chain} of {@link PrivateKey private keys}.
  */
 @Immutable
-public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain> {
-    
-    /* -------------------------------------------------- Types -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code item.private.key.chain.host@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType ITEM = SemanticType.map("item.private.key.chain.host@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Time.TYPE, PrivateKey.TYPE);
-    
-    /**
-     * Stores the semantic type {@code private.key.chain.host@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("private.key.chain.host@core.digitalid.net").load(ListWrapper.XDF_TYPE, ITEM);
+public final class PrivateKeyChain extends KeyChain<PrivateKeyChain, PrivateKey> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -85,43 +75,43 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain>
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
-     * The XDF converter for this class.
+     * Stores the semantic type {@code item.private.key.chain.host@core.digitalid.net}.
      */
-    @Immutable
-    public static final class XDFConverter extends KeyChain.XDFConverter<PrivateKey, PrivateKeyChain> {
-        
-        /**
-         * Creates a new XDF converter based on the XDF converter of the key.
-         */
-        protected XDFConverter() {
-            super(TYPE, ITEM, PrivateKey.XDF_CONVERTER);
-        }
-        
-        @Pure
-        @Override
-        protected @Nonnull PrivateKeyChain createKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, PrivateKey>> items) {
-            return new PrivateKeyChain(items);
-        }
-        
-    }
+    private static final @Nonnull SemanticType ITEM = SemanticType.map("item.private.key.chain.host@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Time.TYPE, PrivateKey.TYPE);
+    
+    /**
+     * Stores the semantic type {@code private.key.chain.host@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("private.key.chain.host@core.digitalid.net").load(ListWrapper.XDF_TYPE, ITEM);
     
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
+    public static final @Nonnull KeyChain.XDFConverter<PrivateKeyChain, PrivateKey> XDF_CONVERTER = new KeyChain.XDFConverter<PrivateKeyChain, PrivateKey>(TYPE, ITEM, PrivateKey.XDF_CONVERTER) {
+        @Pure
+        @Override
+        protected @Nonnull PrivateKeyChain createKeyChain(@Nonnull @NonNullableElements @Frozen @NonEmpty ReadOnlyList<ReadOnlyPair<Time, PrivateKey>> items) {
+            return new PrivateKeyChain(items);
+        }
+    };
     
     @Pure
     @Override
-    public @Nonnull XDFConverter getXDFConverter() {
+    public @Nonnull KeyChain.XDFConverter<PrivateKeyChain, PrivateKey> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = Block.DECLARATION.renamedAs("private_key_chain");
+    
+    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PrivateKeyChain, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<PrivateKeyChain, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
     
     @Pure
     @Override
@@ -134,6 +124,6 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain>
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<PrivateKeyChain, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<PrivateKeyChain, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

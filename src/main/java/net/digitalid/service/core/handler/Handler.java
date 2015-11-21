@@ -4,15 +4,17 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.storage.Service;
+import net.digitalid.service.core.castable.Castable;
+import net.digitalid.service.core.castable.CastableObject;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
@@ -23,12 +25,12 @@ import net.digitalid.utility.annotations.state.Pure;
  * @see Reply
  */
 @Immutable
-public abstract class Handler<O, E> implements XDF<O, E> {
+public abstract class Handler<O, E> extends CastableObject implements Castable, XDF<O, E> {
     
     /**
      * Stores the entity to which this handler belongs or null if it is impersonal.
      */
-    private final @Nullable Entity<?> entity;
+    private final @Nullable Entity entity;
     
     /**
      * Stores the subject of this handler.
@@ -49,7 +51,7 @@ public abstract class Handler<O, E> implements XDF<O, E> {
      * @param entity the entity to which this handler belongs or null if it is impersonal.
      * @param subject the subject of this handler.
      */
-    protected Handler(@Nullable Entity<?> entity, @Nonnull InternalIdentifier<?> subject) {
+    protected Handler(@Nullable Entity entity, @Nonnull InternalIdentifier<?> subject) {
         this.entity = entity;
         this.signature = null;
         this.subject = subject;
@@ -65,7 +67,7 @@ public abstract class Handler<O, E> implements XDF<O, E> {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    protected Handler(@Nullable Entity<?> entity, @Nonnull SignatureWrapper signature) {
+    protected Handler(@Nullable Entity entity, @Nonnull SignatureWrapper signature) {
         this.entity = entity;
         this.signature = signature;
         this.subject = signature.getNonNullableSubject();
@@ -77,7 +79,7 @@ public abstract class Handler<O, E> implements XDF<O, E> {
      * @return the entity to which this handler belongs or null if it is impersonal.
      */
     @Pure
-    public final @Nullable Entity<?> getEntity() {
+    public final @Nullable Entity getEntity() {
         return entity;
     }
     
@@ -99,7 +101,7 @@ public abstract class Handler<O, E> implements XDF<O, E> {
      * @require hasEntity() : "This handler has an entity.";
      */
     @Pure
-    public final @Nonnull Entity<?> getEntityNotNull() {
+    public final @Nonnull Entity getEntityNotNull() {
         assert entity != null : "This handler has an entity.";
         
         return entity;

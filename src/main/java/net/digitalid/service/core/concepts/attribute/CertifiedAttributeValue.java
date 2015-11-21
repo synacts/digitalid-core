@@ -8,9 +8,8 @@ import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.concepts.certificate.Certificate;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -20,6 +19,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class facilitates the encoding and decoding of certified attribute values.
@@ -96,10 +96,10 @@ public final class CertifiedAttributeValue extends AttributeValue {
         super(content);
         
         if (signature instanceof HostSignatureWrapper) { this.signature = (HostSignatureWrapper) signature; }
-        else { throw new InvalidEncodingException("Certified attribute values have to be signed by a host."); }
+        else { throw InvalidCombinationException.get("Certified attribute values have to be signed by a host."); }
         this.subject = this.signature.getNonNullableSubject().getIdentity();
         this.issuer = this.signature.getSigner().getIdentity().castTo(InternalNonHostIdentity.class);
-        if (!content.getType().isAttributeFor(subject.getCategory())) { throw new InvalidEncodingException("The content has to be an attribute for the subject."); }
+        if (!content.getType().isAttributeFor(subject.getCategory())) { throw InvalidCombinationException.get("The content has to be an attribute for the subject."); }
     }
     
     

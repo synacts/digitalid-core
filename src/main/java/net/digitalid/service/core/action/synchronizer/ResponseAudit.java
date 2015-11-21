@@ -146,7 +146,7 @@ public final class ResponseAudit extends Audit {
         for (final @Nonnull Block block : trail) {
             final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
             final @Nonnull Block element = SelfcontainedWrapper.decodeNonNullable(CompressionWrapper.decompressNonNullable(signature.getNonNullableElement()));
-            final @Nonnull Action action = Method.get(role, signature, recipient, element).toAction();
+            final @Nonnull Action action = Method.get(role, signature, recipient, element).castTo(Action.class);
             Database.commit();
             
             final @Nonnull ReadOnlyList<StateModule> suspendModules = action.suspendModules();

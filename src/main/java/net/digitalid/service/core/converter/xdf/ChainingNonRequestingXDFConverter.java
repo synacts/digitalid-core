@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -82,7 +83,7 @@ public class ChainingNonRequestingXDFConverter<O, E, K, D> extends AbstractNonRe
         assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
         
         final @Nonnull K key = XDFConverter.decodeNonNullable(keyConverter.decompose(external), block);
-        if (!keyConverter.isValid(key)) { throw new InvalidEncodingException("The decoded key '" + key + "' is invalid."); }
+        if (!keyConverter.isValid(key)) { throw InvalidValueException.get("key", key); }
         return keyConverter.recover(external, key);
     }
     

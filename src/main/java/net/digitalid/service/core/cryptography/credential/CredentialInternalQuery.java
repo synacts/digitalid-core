@@ -41,6 +41,7 @@ import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Requests a new identity- or role-based credential with the given permissions and relation.

@@ -104,7 +104,7 @@ public interface Identifier extends Castable, XDF<Identifier, Object>, SQL<Ident
         
         @Pure
         @Override
-        public @Nonnull String convert(@Nonnull I identifier) {
+        public @Nonnull @Validated String convert(@Nonnull I identifier) {
             return identifier.getString();
         }
         

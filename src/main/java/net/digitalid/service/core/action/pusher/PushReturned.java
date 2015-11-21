@@ -16,7 +16,8 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.ActionReply;
@@ -34,6 +35,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -110,24 +112,20 @@ public final class PushReturned extends ExternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
-        this.valid = new BooleanWrapper(elements.getNonNullable(0)).getValue();
+        this.valid = BooleanWrapper.decode(elements.getNonNullable(0));
         
         final @Nonnull SignatureWrapper _signature = SignatureWrapper.decodeWithoutVerifying(elements.getNonNullable(1), false, null);
-        if (!(_signature instanceof HostSignatureWrapper)) { throw new InvalidEncodingException("Replies have to be signed by a host."); }
+        if (!(_signature instanceof HostSignatureWrapper)) { throw InvalidCombinationException.get("Replies have to be signed by a host."); }
         final @Nonnull CompressionWrapper _compression = new CompressionWrapper(_signature.getNonNullableElement());
         final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElement());
-        try {
-            this.reply = Reply.get(entity.castTo(NonHostEntity.class), (HostSignatureWrapper) _signature, _content.getElement()).toActionReply();
-        } catch (@Nonnull PacketException exception) {
-            throw new InvalidEncodingException("Could not decode the reply to an external action.", exception);
-        }
+        this.reply = Reply.get(entity.castTo(NonHostEntity.class), (HostSignatureWrapper) _signature, _content.getElement()).castTo(ActionReply.class);
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
-        elements.set(0, new BooleanWrapper(VALID, valid).toBlock());
+        elements.set(0, BooleanWrapper.encode(valid, VALID));
         elements.set(1, reply.getSignatureNotNull().toBlock().setType(TYPE));
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }

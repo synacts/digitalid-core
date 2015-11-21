@@ -9,6 +9,9 @@ import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidNullException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidOffsetException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidSizeException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -81,8 +84,8 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * @ensure basedOnParameters(getSemanticType(), elements) : "Each element is based on the corresponding parameter of the semantic type.";
      */
     @Pure
-    public @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> getNonNullableElements() throws InvalidEncodingException {
-        if (elements.containsNull()) { throw new InvalidEncodingException("The tuple contains null."); }
+    public @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> getNonNullableElements() throws InvalidNullException {
+        if (elements.containsNull()) { throw InvalidNullException.get(); }
         return elements;
     }
     
@@ -93,16 +96,16 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * 
      * @return the nullable elements of this tuple wrapper.
      * 
-     * @throws InvalidEncodingException if the number of elements is less than the given length.
+     * @throws InvalidSizeException if the number of elements is less than the given length.
      * 
      * @ensure elements.size() >= length : "The number of elements is at least the given length.";
      * @ensure basedOnParameters(getSemanticType(), elements) : "Each element is either null or based on the corresponding parameter of the semantic type.";
      */
     @Pure
-    public @Nonnull @NullableElements @Frozen ReadOnlyArray<Block> getNullableElements(@Positive int length) throws InvalidEncodingException {
+    public @Nonnull @NullableElements @Frozen ReadOnlyArray<Block> getNullableElements(@Positive int length) throws InvalidSizeException {
         assert length > 0 : "The length is positive.";
         
-        if (elements.size() < length) { throw new InvalidEncodingException("The tuple contains not enough elements."); }
+        if (elements.size() < length) { throw InvalidSizeException.get(length, elements.size()); }
         return elements;
     }
     
@@ -113,15 +116,16 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * 
      * @return the non-nullable elements of this tuple wrapper.
      * 
-     * @throws InvalidEncodingException if the elements contain null or their number is less than the given length.
+     * @throws InvalidSizeException if the number of elements is less than the given length.
+     * @throws InvalidNullException if the elements contain null.
      * 
      * @ensure elements.size() >= length : "The number of elements is at least the given length.";
      * @ensure basedOnParameters(getSemanticType(), elements) : "Each element is based on the corresponding parameter of the semantic type.";
      */
     @Pure
-    public @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> getNonNullableElements(@Positive int length) throws InvalidEncodingException {
+    public @Nonnull @NonNullableElements @Frozen ReadOnlyArray<Block> getNonNullableElements(@Positive int length) throws InvalidSizeException, InvalidNullException {
         final @Nonnull ReadOnlyArray<Block> elements = getNullableElements(length);
-        if (elements.containsNull()) { throw new InvalidEncodingException("The tuple contains null."); }
+        if (elements.containsNull()) { throw InvalidNullException.get(); }
         return elements;
     }
     
@@ -132,13 +136,13 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * 
      * @return whether the element at the given index is null.
      * 
-     * @throws InvalidEncodingException if the number of elements is less than or equal to the given index.
+     * @throws InvalidSizeException if the number of elements is less than or equal to the given index.
      */
     @Pure
-    public boolean isElementNull(@NonNegative int index) throws InvalidEncodingException {
+    public boolean isElementNull(@NonNegative int index) throws InvalidSizeException {
         assert index >= 0 : "The index is non-negative.";
         
-        if (index >= elements.size()) { throw new InvalidEncodingException("The tuple contains not enough elements."); }
+        if (index >= elements.size()) { throw InvalidSizeException.get(index, elements.size()); }
         return elements.getNullable(index) == null;
     }
     
@@ -149,15 +153,15 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * 
      * @return the nullable element at the given index.
      * 
-     * @throws InvalidEncodingException if the number of elements is less than or equal to the given index.
+     * @throws InvalidSizeException if the number of elements is less than or equal to the given index.
      * 
      * @ensure element == null || element.getType().isBasedOn(getSemanticType().getParameters().getNonNullable(index)) : "The element is either null or based on the corresponding parameter of the semantic type.";
      */
     @Pure
-    public @Nullable Block getNullableElement(@NonNegative int index) throws InvalidEncodingException {
+    public @Nullable Block getNullableElement(@NonNegative int index) throws InvalidSizeException {
         assert index >= 0 : "The index is non-negative.";
         
-        if (index >= elements.size()) { throw new InvalidEncodingException("The tuple contains not enough elements."); }
+        if (index >= elements.size()) { throw InvalidSizeException.get(index, elements.size()); }
         return elements.getNullable(index);
     }
     
@@ -168,14 +172,15 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * 
      * @return the non-nullable element at the given index.
      * 
-     * @throws InvalidEncodingException if the number of elements is less than or equal to the given index or the accessed element is null.
+     * @throws InvalidSizeException if the number of elements is less than or equal to the given index.
+     * @throws InvalidNullException if the accessed element is null.
      * 
      * @ensure element.getType().isBasedOn(getSemanticType().getParameters().getNonNullable(index)) : "The element is based on the corresponding parameter of the semantic type.";
      */
     @Pure
-    public @Nonnull Block getNonNullableElement(@NonNegative int index) throws InvalidEncodingException {
+    public @Nonnull Block getNonNullableElement(@NonNegative int index) throws InvalidSizeException, InvalidNullException {
         final @Nullable Block element = TupleWrapper.this.getNullableElement(index);
-        if (element == null) { throw new InvalidEncodingException("The element at the given index is null."); }
+        if (element == null) { throw InvalidNullException.get(); }
         return element;
     }
     
@@ -209,16 +214,16 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * 
      * @return the non-nullable element of the given type.
      * 
-     * @throws InvalidEncodingException if the element of the given type is null.
+     * @throws InvalidNullException if the element of the given type is null.
      * 
      * @require getSemanticType().getParameters().contains(type) : "The parameters of this tuple contain the given type.";
      * 
      * @ensure return.getType().isBasedOn(type) : "The returned block is based on the given type.";
      */
     @Pure
-    public @Nonnull Block getNonNullableElement(@Nonnull SemanticType type) throws InvalidEncodingException {
+    public @Nonnull Block getNonNullableElement(@Nonnull SemanticType type) throws InvalidNullException {
         final @Nullable Block element = getNullableElement(type);
-        if (element == null) { throw new InvalidEncodingException("The element of the given type is null."); }
+        if (element == null) { throw InvalidNullException.get(); }
         return element;
     }
     
@@ -330,7 +335,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
                 int elementLength = (int) IntvarWrapper.decodeValue(block, offset, intvarLength);
                 offset += intvarLength;
                 if (elementLength > 0) {
-                    if (offset + elementLength > block.getLength()) { throw new InvalidEncodingException("The subblock may not exceed the given block."); }
+                    if (offset + elementLength > block.getLength()) { throw InvalidOffsetException.get(offset, elementLength, block); }
                     elements.set(i, Block.get(parameters.getNonNullable(i), block, offset, elementLength));
                     offset += elementLength;
                 }

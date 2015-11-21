@@ -5,7 +5,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.key.AbstractKeyConverter;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -86,7 +86,7 @@ public class ChainingXDFConverter<O, E, K, D> extends AbstractXDFConverter<O, E>
         assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
         
         final @Nonnull K key = XDFConverter.decodeNonNullable(keyConverter.decompose(external), block);
-        if (!keyConverter.isValid(key)) { throw new InvalidEncodingException("The decoded key '" + key + "' is invalid."); }
+        if (!keyConverter.isValid(key)) { throw InvalidValueException.get("key", key); }
         return keyConverter.recover(external, key);
     }
     

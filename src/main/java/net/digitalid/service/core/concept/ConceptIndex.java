@@ -72,7 +72,7 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity, K>
      * @return a new index with the given concept factory.
      */
     @Pure
-    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity<E>, K> ConceptIndex<C, E, K> get(@Nonnull Concept.Factory<C, E, K> factory) {
+    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity, K> ConceptIndex<C, E, K> get(@Nonnull Concept.Factory<C, E, K> factory) {
         return new ConceptIndex<>(factory);
     }
     

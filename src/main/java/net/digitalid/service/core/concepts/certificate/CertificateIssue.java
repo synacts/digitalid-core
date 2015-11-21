@@ -78,7 +78,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     private CertificateIssue(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        this.certificate = AttributeValue.get(block, false).toCertifiedAttributeValue();
+        this.certificate = AttributeValue.get(block, false).castTo(CertifiedAttributeValue.class);
     }
     
     @Pure

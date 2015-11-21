@@ -17,9 +17,10 @@ import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.PrivateKey;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.SymmetricKey;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -39,6 +40,7 @@ import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.logger.Log;
 
 /**
@@ -274,9 +276,9 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         if (tuple.isElementNull(1)) {
             // The encryption is part of a response.
             this.recipient = null;
-            if (encryptedKey != null) { throw new InvalidEncodingException("A response may not include an encrypted symmetric key."); }
+            if (encryptedKey != null) { throw InvalidCombinationException.get("A response may not include an encrypted symmetric key."); }
             if (initializationVector != null) {
-                if (symmetricKey == null) { throw new InvalidEncodingException("A symmetric key is needed in order to decrypt the response."); }
+                if (symmetricKey == null) { throw InvalidOperationException.get("A symmetric key is needed in order to decrypt the response."); }
                 this.symmetricKey = symmetricKey;
             } else {
                 // It can happen that a requester expects an encryption but the host is not able to decipher the symmetric key and thus cannot encrypt the response.
@@ -285,14 +287,14 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         } else {
             // The encryption is part of a request.
             this.recipient = HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
-            if (!Server.hasHost(recipient)) { throw new InvalidEncodingException(recipient + " does not run on this server."); }
-            if (symmetricKey != null) { throw new InvalidEncodingException("A response may not include a recipient."); }
+            if (!Server.hasHost(recipient)) { throw InvalidOperationException.get(recipient + " does not run on this server."); }
+            if (symmetricKey != null) { throw InvalidCombinationException.get("A response may not include a recipient."); }
             if (encryptedKey != null) {
-                if (initializationVector == null) { throw new InvalidEncodingException("An initialization vector is needed to decrypt an element."); }
+                if (initializationVector == null) { throw InvalidCombinationException.get("An initialization vector is needed to decrypt an element."); }
                 final @Nonnull PrivateKey privateKey = Server.getHost(recipient).getPrivateKeyChain().getKey(time);
                 this.symmetricKey = decrypt(privateKey, encryptedKey);
             } else {
-                if (initializationVector != null) { throw new InvalidEncodingException("If a request is encrypted, a symmetric key has to be provided."); }
+                if (initializationVector != null) { throw InvalidCombinationException.get("If a request is encrypted, a symmetric key has to be provided."); }
                 this.symmetricKey = null;
             }
         }

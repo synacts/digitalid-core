@@ -16,7 +16,7 @@ import net.digitalid.utility.database.site.Site;
  * This class stores the setup of a {@link Concept concept}.
  */
 @Immutable
-public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>, K> {
+public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity, K> {
     
     /* -------------------------------------------------- Concept Service -------------------------------------------------- */
     
@@ -226,7 +226,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
      * @return a new concept setup with the given parameters.
      */
     @Pure
-    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity<E>, K> ConceptSetup<C, E, K> get(@Nonnull Service service, @Nonnull @Validated String conceptName, @Nonnull ConceptIndex<C, E, K> conceptIndex, @Nonnull Converters<K, E> keyConverters, @Nonnull Converters<E, Site> entityConverters) {
+    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity, K> ConceptSetup<C, E, K> get(@Nonnull Service service, @Nonnull @Validated String conceptName, @Nonnull ConceptIndex<C, E, K> conceptIndex, @Nonnull Converters<K, E> keyConverters, @Nonnull Converters<E, Site> entityConverters) {
         return new ConceptSetup<>(service, conceptName, conceptIndex, keyConverters, entityConverters);
     }
     

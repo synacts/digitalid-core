@@ -4,28 +4,24 @@ import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
-import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * An exponent is a number that raises elements of an arbitrary group.
  */
 @Immutable
-public final class Exponent extends Number<Exponent> {
-    
-    /* -------------------------------------------------- Type -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code exponent.group@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("exponent.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
+public final class Exponent extends Number<Exponent, Object> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -130,54 +126,56 @@ public final class Exponent extends Number<Exponent> {
         return new Exponent(next);
     }
     
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the key converter of this class.
+     */
+    private static final @Nonnull AbstractNonRequestingKeyConverter<Exponent, Object, BigInteger, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Exponent, Object, BigInteger, Object>() {
+        
+        @Pure
+        @Override
+        public @Nonnull BigInteger convert(@Nonnull Exponent exponent) {
+            return exponent.getValue();
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Exponent recover(@Nonnull Object none, @Nonnull BigInteger value) throws InvalidEncodingException {
+            return new Exponent(value);
+        }
+        
+    };
+    
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
-     * The XDF converter for this class.
+     * Stores the semantic type {@code exponent.group@core.digitalid.net}.
      */
-    @Immutable
-    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<Exponent, Object> {
-        
-        /**
-         * Creates a new XDF converter.
-         */
-        private XDFConverter() {
-            super(TYPE);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull Exponent exponent) {
-            return IntegerWrapper.encodeNonNullable(TYPE, exponent.getValue());
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Exponent decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("exponent.group@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-            
-            return get(block);
-        }
-        
-    }
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("exponent.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
+    public static final @Nonnull AbstractNonRequestingXDFConverter<Exponent, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, IntegerWrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull XDFConverter getXDFConverter() {
+    public @Nonnull AbstractNonRequestingXDFConverter<Exponent, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("exponent", IntegerWrapper.SQL_TYPE);
+    
+    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Exponent, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<Exponent, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, IntegerWrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
@@ -190,6 +188,6 @@ public final class Exponent extends Number<Exponent> {
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<Exponent, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<Exponent, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

@@ -109,7 +109,7 @@ public final class SynchronizerModule implements ClientModule {
                 final @Nonnull Service service = Service.get(resultSet, 2);
                 final @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(Block.getNotNull(Packet.CONTENT, resultSet, 3));
                 final @Nonnull SignatureWrapper signature = new SignatureWrapper(Packet.SIGNATURE, (Block) null, role.getIdentity().getAddress());
-                pendingActions.add(Method.get(role, signature, service.getRecipient(role), content.getElement()).toInternalAction());
+                pendingActions.add(Method.get(role, signature, service.getRecipient(role), content.getElement()).castTo(InternalAction.class));
             }
         }
     }

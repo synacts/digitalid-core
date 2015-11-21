@@ -16,8 +16,11 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -98,8 +101,8 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @ensure element.getType().isBasedOn(getSemanticType().getParameters().getNonNullable(0)) : "The element is based on the parameter of the semantic type.";
      */
     @Pure
-    public final @Nonnull Block getNonNullableElement() throws InvalidEncodingException {
-        if (element == null) { throw new InvalidEncodingException("The signed element is null."); }
+    public final @Nonnull Block getNonNullableElement() throws InvalidOperationException {
+        if (element == null) { throw InvalidOperationException.get("The signed element is null."); }
         return element;
     }
     
@@ -288,10 +291,10 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         final @Nonnull Block content = TupleWrapper.decode(cache).getNonNullableElement(0);
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(content);
         this.subject = InternalIdentifier.XDF_CONVERTER.decodeNullable(None.OBJECT, tuple.getNullableElement(0));
-        if (isSigned() && subject == null) { throw new InvalidEncodingException("The subject may not be null if the element is signed."); }
+        if (isSigned() && subject == null) { throw InvalidCombinationException.get("The subject may not be null if the element is signed."); }
         this.time = tuple.isElementNull(1) ? null : Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
-        if (hasSubject() && time == null) { throw new InvalidEncodingException("The signature time may not be null if this signature has a subject."); }
-        if (time != null && !time.isPositive()) { throw new InvalidEncodingException("The signature time has to be positive."); }
+        if (hasSubject() && time == null) { throw InvalidCombinationException.get("The signature time may not be null if this signature has a subject."); }
+        if (time != null && !time.isPositive()) { throw InvalidValueException.get("time", time); }
         this.element = tuple.getNullableElement(2);
         if (element != null) { element.setType(block.getType().getParameters().getNonNullable(0)); }
         this.audit = tuple.isElementNull(3) ? null : Audit.get(tuple.getNonNullableElement(3));
@@ -359,7 +362,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         if (hostSignature == null && clientSignature != null && credentialsSignature == null) { return new ClientSignatureWrapper(block, clientSignature, verified); }
         if (hostSignature == null && clientSignature == null && credentialsSignature != null) { return new CredentialsSignatureWrapper(block, credentialsSignature, verified, entity); }
         if (hostSignature == null && clientSignature == null && credentialsSignature == null) { return new SignatureWrapper(block, verified); }
-        throw new InvalidEncodingException("The element may only be signed either by a host, by a client, with credentials or not at all.");
+        throw InvalidCombinationException.get("The element may only be signed either by a host, by a client, with credentials or not at all.");
     }
     
     /* -------------------------------------------------- Checks -------------------------------------------------- */

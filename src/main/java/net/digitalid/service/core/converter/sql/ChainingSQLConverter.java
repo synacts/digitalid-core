@@ -137,7 +137,7 @@ public class ChainingSQLConverter<O, E, K, D> extends AbstractSQLConverter<O, E>
         final @Nullable K key = SQLConverter.restoreNullable(keyConverter.decompose(external), resultSet, columnIndex);
         if (key == null) { return null; }
         try {
-            if (!keyConverter.isValid(key)) { throw InvalidValueException.get("The restored key '" + key + "' is invalid."); }
+            if (!keyConverter.isValid(key)) { throw InvalidValueException.get("key", key); }
             return keyConverter.recover(external, key);
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException(exception);

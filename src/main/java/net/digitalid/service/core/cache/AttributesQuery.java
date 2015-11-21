@@ -19,7 +19,7 @@ import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.handler.Method;
@@ -105,7 +105,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
         this.attributeTypes = new FreezableAttributeTypeSet(elements.getNonNullable(0)).freeze();
-        if (attributeTypes.isEmpty()) { throw new InvalidEncodingException("The attribute types may not be empty."); }
+        if (attributeTypes.isEmpty()) { throw InvalidValueException.get("attribute types", attributeTypes); }
         this.published = new BooleanWrapper(elements.getNonNullable(1)).getValue();
     }
     

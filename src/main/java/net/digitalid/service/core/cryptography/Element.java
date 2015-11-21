@@ -2,18 +2,22 @@ package net.digitalid.service.core.cryptography;
 
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
-import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * An element is a number in a certain group.
@@ -21,14 +25,7 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
  * @invariant getValue().compareTo(BigInteger.ZERO) >= 0 && getValue().compareTo(getGroup().getModulus()) == -1 : "The value is non-negative and smaller than the group modulus.";
  */
 @Immutable
-public final class Element extends Number<Element> {
-    
-    /* -------------------------------------------------- Type -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code element.group@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("element.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
+public final class Element extends Number<Element, Group<?>> {
     
     /* -------------------------------------------------- Group -------------------------------------------------- */
     
@@ -206,58 +203,66 @@ public final class Element extends Number<Element> {
         return getValue().equals(BigInteger.ONE);
     }
     
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the key converter of this class.
+     */
+    private static final @Nonnull AbstractNonRequestingKeyConverter<Element, Group<?>, BigInteger, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Element, Group<?>, BigInteger, Object>() {
+        
+        @Pure
+        @Override
+        public @Nonnull Object decompose(@Nonnull Group<?> group) {
+            return None.OBJECT;
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull BigInteger convert(@Nonnull Element element) {
+            return element.getValue();
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Element recover(@Nonnull Group<?> group, @Nonnull BigInteger value) throws InvalidEncodingException {
+            return new Element(group, value);
+        }
+        
+    };
+    
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
-     * The XDF converter for this class.
+     * Stores the semantic type {@code element.group@core.digitalid.net}.
      */
-    @Immutable
-    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<Element, Object> {
-        
-        /**
-         * Creates a new XDF converter.
-         */
-        private XDFConverter() {
-            super(TYPE);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull Element element) {
-            return IntegerWrapper.encodeNonNullable(getType(), element.getValue());
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Element decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("element.group@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
-            
-            throw new InvalidEncodingException("An element can only be decoded from a block with a group.");
-        }
-        
-    }
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("element.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
+    public static final @Nonnull AbstractNonRequestingXDFConverter<Element, Group<?>> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, IntegerWrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull XDFConverter getXDFConverter() {
+    public @Nonnull AbstractNonRequestingXDFConverter<Element, Group<?>> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("element", IntegerWrapper.SQL_TYPE);
+    
+    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Element, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<Element, Group<?>> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, IntegerWrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<Element, Object> getSQLConverter() {
+    public @Nonnull AbstractSQLConverter<Element, Group<?>> getSQLConverter() {
         return SQL_CONVERTER;
     }
     
@@ -266,6 +271,6 @@ public final class Element extends Number<Element> {
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<Element, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<Element, Group<?>> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

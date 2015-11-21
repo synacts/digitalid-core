@@ -33,10 +33,11 @@ import net.digitalid.service.core.entity.HostEntity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.RoleModule;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -64,6 +65,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.logger.Log;
 
 /**
@@ -412,7 +414,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         final @Nullable Restrictions restrictions;
         final @Nullable Block restrictionsBlock = tuple.getNullableElement(2);
         if (restrictionsBlock != null) {
-            if (entity == null) { throw new InvalidEncodingException("The restrictions of a credentials signature cannot be decoded without an entity."); }
+            if (entity == null) { throw InvalidOperationException.get("The restrictions of a credentials signature cannot be decoded without an entity."); }
             final @Nonnull NonHostEntity nonHostEntity;
             if (entity instanceof HostEntity) {
                 final @Nonnull Host host = ((HostEntity) entity).getHost();
@@ -445,18 +447,18 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         }
         this.credentials = credentials.freeze();
         this.lodged = lodged;
-        if (!CredentialsSignatureWrapper.areValid(credentials)) { throw new InvalidEncodingException("The credentials of the signature are invalid."); }
+        if (!CredentialsSignatureWrapper.areValid(credentials)) { throw InvalidValueException.get("credentials", credentials); }
         
         // Certificates
         if (!tuple.isElementNull(5)) {
             list = ListWrapper.decodeNonNullableElements(tuple.getNonNullableElement(5));
             final @Nonnull FreezableList<CertifiedAttributeValue> certificates = FreezableArrayList.getWithCapacity(list.size());
-            for (final @Nonnull Block element : list) { certificates.add(AttributeValue.get(element, verified).toCertifiedAttributeValue()); }
+            for (final @Nonnull Block element : list) { certificates.add(AttributeValue.get(element, verified).castTo(CertifiedAttributeValue.class)); }
             this.certificates = certificates.freeze();
         } else {
             this.certificates = null;
         }
-        if (!areValid(certificates, credentials)) { throw new InvalidEncodingException("The certificates do not match the credentials of the signature."); }
+        if (!areValid(certificates, credentials)) { throw InvalidCombinationException.get("The certificates do not match the credentials of the signature."); }
         
         // Value and public key
         this.value = IntegerWrapper.decodeNullable(tuple.getNullableElement(6));

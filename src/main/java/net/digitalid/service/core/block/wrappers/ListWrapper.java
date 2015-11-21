@@ -8,7 +8,10 @@ import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidNullException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidOffsetException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -73,14 +76,14 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      * 
      * @return the non-nullable elements of this list wrapper.
      * 
-     * @throws InvalidEncodingException if the elements contain null.
+     * @throws InvalidNullException if the elements contain null.
      * 
      * @ensure basedOnParameter(getSemanticType(), elements) : "Each element is based on the parameter of the semantic type.";
      */
     @Pure
-    public @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> getNonNullableElements() throws InvalidEncodingException {
+    public @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> getNonNullableElements() throws InvalidNullException {
         final @Nonnull ReadOnlyList<Block> elements = getNullableElements();
-        if (elements.containsNull()) { throw new InvalidEncodingException("The list contains null."); }
+        if (elements.containsNull()) { throw InvalidNullException.get(); }
         return elements;
     }
     
@@ -195,13 +198,13 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
                 if (elementLength == 0) {
                     elements.add(null);
                 } else {
-                    if (offset + elementLength > block.getLength()) { throw new InvalidEncodingException("The subblock may not exceed the given block."); }
+                    if (offset + elementLength > block.getLength()) { throw InvalidOffsetException.get(offset, elementLength, block); }
                     elements.add(Block.get(parameter, block, offset, elementLength));
                     offset += elementLength;
                 }
             }
             
-            if (offset != block.getLength()) { throw new InvalidEncodingException("The end of the last element has to match the end of the block."); }
+            if (offset != block.getLength()) { throw InvalidLengthException.get(offset, block.getLength()); }
             
             return new ListWrapper(block.getType(), elements.freeze());
         }

@@ -12,7 +12,7 @@ import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
@@ -112,7 +112,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
                 try {
                     attributeValue.verify();
                     if (attributeValue.isCertified()) {
-                        final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.toCertifiedAttributeValue();
+                        final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.castTo(CertifiedAttributeValue.class);
                         certifiedAttributeValue.checkSubject(subject);
                         certifiedAttributeValue.checkIsValid(time);
                     }
@@ -124,7 +124,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
                 attributeValues.add(null);
             }
         }
-        if (attributeValues.isEmpty()) { throw new InvalidEncodingException("The attribute values may not be empty."); }
+        if (attributeValues.isEmpty()) { throw InvalidValueException.get("attribute values", attributeValues); }
         this.attributeValues = attributeValues.freeze();
     }
     

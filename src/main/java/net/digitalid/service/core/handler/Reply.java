@@ -19,7 +19,6 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -33,6 +32,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForHosts;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.errors.InitializationError;
 
 /**
@@ -182,33 +182,6 @@ public abstract class Reply extends Handler implements SQLizable {
     @NonCommitting
     public static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         return get(entity, signature, store(signature), block);
-    }
-    
-    
-    /**
-     * Returns this reply as an {@link ActionReply}.
-     * 
-     * @return this reply as an {@link ActionReply}.
-     * 
-     * @throws PacketException if this reply is not an instance of {@link ActionReply}.
-     */
-    @Pure
-    public final @Nonnull ActionReply toActionReply() throws PacketException {
-        if (this instanceof ActionReply) { return (ActionReply) this; }
-        throw new PacketException(PacketErrorCode.REPLY, "An action reply was expected but a query reply was found.", null, true);
-    }
-    
-    /**
-     * Returns this reply as a {@link QueryReply}.
-     * 
-     * @return this reply as a {@link QueryReply}.
-     * 
-     * @throws PacketException if this reply is not an instance of {@link QueryReply}.
-     */
-    @Pure
-    public final @Nonnull QueryReply toQueryReply() throws PacketException {
-        if (this instanceof QueryReply) { return (QueryReply) this; }
-        throw new PacketException(PacketErrorCode.REPLY, "A query reply was expected but an action reply was found.", null, true);
     }
     
     

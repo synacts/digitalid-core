@@ -5,10 +5,11 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
@@ -16,29 +17,13 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This class models a multiplicative group with known order.
  */
 @Immutable
 public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
-    
-    /* -------------------------------------------------- Types -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code modulus.group@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType MODULUS = SemanticType.map("modulus.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
-    
-    /**
-     * Stores the semantic type {@code order.group@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType ORDER = SemanticType.map("order.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
-    
-    /**
-     * Stores the semantic type {@code known.group@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("known.group@core.digitalid.net").load(TupleWrapper.XDF_TYPE, MODULUS, ORDER);
     
     /* -------------------------------------------------- Order -------------------------------------------------- */
     
@@ -107,6 +92,21 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
+     * Stores the semantic type {@code modulus.group@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType MODULUS = SemanticType.map("modulus.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
+    
+    /**
+     * Stores the semantic type {@code order.group@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType ORDER = SemanticType.map("order.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
+    
+    /**
+     * Stores the semantic type {@code known.group@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("known.group@core.digitalid.net").load(TupleWrapper.XDF_TYPE, MODULUS, ORDER);
+    
+    /**
      * The XDF converter for this class.
      */
     @Immutable
@@ -136,10 +136,10 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
             
             final @Nonnull @Positive BigInteger modulus = IntegerWrapper.decodeNonNullable(tuple.getNonNullableElement(0));
-            if (modulus.compareTo(BigInteger.ZERO) != 1) { throw new InvalidEncodingException("The modulus has to be positive."); }
+            if (modulus.compareTo(BigInteger.ZERO) != 1) { throw InvalidValueException.get("modulus", modulus); }
             
             final @Nonnull @Positive BigInteger order = IntegerWrapper.decodeNonNullable(tuple.getNonNullableElement(1));
-            if (order.compareTo(BigInteger.ZERO) != 1 || order.compareTo(modulus) != -1) { throw new InvalidEncodingException("The order has to be positive and smaller than the modulus."); }
+            if (order.compareTo(BigInteger.ZERO) != 1 || order.compareTo(modulus) != -1) { throw InvalidValueException.get("order", order); }
             
             return new GroupWithKnownOrder(modulus, order);
         }
@@ -156,13 +156,18 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     public @Nonnull XDFConverter getXDFConverter() {
         return XDF_CONVERTER;
     }
-
+    
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = Block.DECLARATION.renamedAs("group_with_known_order");
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<GroupWithKnownOrder, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<GroupWithKnownOrder, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
     
     @Pure
     @Override
@@ -175,6 +180,6 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<GroupWithKnownOrder, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<GroupWithKnownOrder, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

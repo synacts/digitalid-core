@@ -15,7 +15,7 @@ import net.digitalid.utility.database.converter.SQL;
  * @see Exponent
  */
 @Immutable
-public abstract class Number<E extends Number<E>> implements XDF<E, Object>, SQL<E, Object> {
+public abstract class Number<N extends Number<N, E>, E> implements XDF<N, E>, SQL<N, E> {
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
@@ -62,8 +62,7 @@ public abstract class Number<E extends Number<E>> implements XDF<E, Object>, SQL
     public final boolean equals(@Nullable Object object) {
         if (object == this) { return true; }
         if (object == null || !(object instanceof Number)) { return false; }
-        @SuppressWarnings("rawtypes")
-        final @Nonnull Number<?> other = (Number) object;
+        final @Nonnull Number<?, ?> other = (Number) object;
         return value.equals(other.value);
     }
     

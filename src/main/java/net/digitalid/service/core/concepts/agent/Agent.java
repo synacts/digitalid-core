@@ -13,7 +13,6 @@ import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -26,10 +25,12 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForClients;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -537,57 +538,6 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     public static void set(@Nullable Agent agent, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         if (agent == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
         else { agent.set(preparedStatement, parameterIndex); }
-    }
-    
-    /* -------------------------------------------------- Casting -------------------------------------------------- */
-    
-    /**
-     * Returns this agent as a {@link ClientAgent}.
-     * 
-     * @return this agent as a {@link ClientAgent}.
-     * 
-     * @throws InvalidEncodingException if this agent is not an instance of {@link ClientAgent}.
-     */
-    @Pure
-    public final @Nonnull ClientAgent toClientAgent() throws InvalidEncodingException {
-        if (this instanceof ClientAgent) { return (ClientAgent) this; }
-        throw new InvalidEncodingException("This agent cannot be cast to ClientAgent.");
-    }
-    
-    /**
-     * Returns this agent as an {@link OutgoingRole}.
-     * 
-     * @return this agent as an {@link OutgoingRole}.
-     * 
-     * @throws InvalidEncodingException if this agent is not an instance of {@link OutgoingRole}.
-     */
-    @Pure
-    public final @Nonnull OutgoingRole toOutgoingRole() throws InvalidEncodingException {
-        if (this instanceof OutgoingRole) { return (OutgoingRole) this; }
-        throw new InvalidEncodingException("This agent cannot be cast to OutgoingRole.");
-    }
-    
-    /* -------------------------------------------------- Object -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final boolean equals(Object object) {
-        if (object == this) { return true; }
-        if (object == null || !(object instanceof Agent)) { return false; }
-        @Nonnull Agent other = (Agent) object;
-        return this.number == other.number;
-    }
-    
-    @Pure
-    @Override
-    public final int hashCode() {
-        return (int) (number ^ (number >>> 32));
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull String toString() {
-        return String.valueOf(number);
     }
     
 }

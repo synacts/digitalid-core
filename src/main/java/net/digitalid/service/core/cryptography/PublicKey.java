@@ -5,12 +5,13 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -19,6 +20,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This class stores the groups, elements and exponents of a host's public key.
@@ -634,7 +636,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
             final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
             final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
             
-            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO)).getHash())) { throw new InvalidEncodingException("The proof that au, ai, av and ao are in the subgroup of ab is invalid."); }
+            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO)).getHash())) { throw InvalidCombinationException.get("The proof that au, ai, av and ao are in the subgroup of ab is invalid."); }
             
             return new PublicKey(compositeGroup, e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup, g, y, zPlus1);
         }
@@ -655,9 +657,14 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = Block.DECLARATION.renamedAs("public_key");
+    
+    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PublicKey, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<PublicKey, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
     
     @Pure
     @Override
@@ -670,6 +677,6 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<PublicKey, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<PublicKey, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

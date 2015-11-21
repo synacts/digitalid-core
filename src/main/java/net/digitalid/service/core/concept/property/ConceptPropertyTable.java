@@ -35,7 +35,7 @@ import net.digitalid.utility.database.configuration.Database;
  * This class models a database table that stores a {@link ReadOnlyProperty property} of a {@link Concept concept}.
  */
 @Immutable
-public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends SiteTable {
+public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity> extends SiteTable {
     
     /* -------------------------------------------------- Type Mappings -------------------------------------------------- */
     

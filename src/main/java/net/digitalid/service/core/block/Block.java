@@ -23,6 +23,7 @@ import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidTypeException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.NonNegative;
@@ -41,7 +42,6 @@ import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
-import net.digitalid.utility.database.declaration.Declaration;
 import net.digitalid.utility.database.declaration.SQLType;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
@@ -265,10 +265,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * 
      * @return this block.
      * 
-     * @throws InvalidEncodingException if this is not the case.
+     * @throws InvalidTypeException if this is not the case.
      */
-    public @Nonnull Block checkType(@Nonnull @Loaded SemanticType type) throws InvalidEncodingException {
-        if (!this.type.isBasedOn(type)) { throw new InvalidEncodingException("The type of this block (" + this.type.getAddress() + ") is not based on the given type (" + type.getAddress() + ")."); }
+    public @Nonnull Block checkType(@Nonnull @Loaded SemanticType type) throws InvalidTypeException {
+        if (!this.type.isBasedOn(type)) { throw InvalidTypeException.get(type, this.type); }
         return this;
     }
     
@@ -738,7 +738,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     /**
      * Stores the declaration of this class.
      */
-    public static final @Nonnull Declaration DECLARATION = ColumnDeclaration.get("block", SQLType.BLOB);
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("block", SQLType.BLOB);
     
     /**
      * The SQL converter for this class.

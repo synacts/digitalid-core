@@ -18,15 +18,16 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
-import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -35,6 +36,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
@@ -43,13 +45,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  */
 @Immutable
 public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<SymmetricKey, Object> {
-    
-    /* -------------------------------------------------- Type -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code symmetric.key@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("symmetric.key@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /* -------------------------------------------------- Circumvent Cryptographic Restrictions -------------------------------------------------- */
     
@@ -122,7 +117,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
      * @return the value of this symmetric key.
      */
     @Pure
-    public @Nonnull BigInteger getValue() {
+    public final @Nonnull BigInteger getValue() {
         return value;
     }
     
@@ -185,7 +180,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
      * @require offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
      */
     @Pure
-    public @Capturable @Nonnull @NonEmpty byte[] encrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, @NonNegative int offset, @Positive int length) {
+    public final @Capturable @Nonnull @NonEmpty byte[] encrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, @NonNegative int offset, @Positive int length) {
         assert offset >= 0 : "The offset is not negative.";
         assert length > 0 : "The length is positive.";
         assert offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
@@ -212,7 +207,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
      * @require offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
      */
     @Pure
-    public @Capturable @Nonnull @NonEmpty byte[] decrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, @NonNegative int offset, @Positive int length) throws InvalidEncodingException {
+    public final @Capturable @Nonnull @NonEmpty byte[] decrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, @NonNegative int offset, @Positive int length) throws InvalidEncodingException {
         assert offset >= 0 : "The offset is not negative.";
         assert length > 0 : "The length is positive.";
         assert offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
@@ -222,7 +217,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
             cipher.init(Cipher.DECRYPT_MODE, key, initializationVector);
             return cipher.doFinal(bytes, offset, length);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException exception) {
-            throw new InvalidEncodingException("Could not decrypt the given bytes.", exception);
+            throw MaskingInvalidEncodingException.get(exception);
         }
     }
     
@@ -230,7 +225,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     
     @Pure
     @Override
-    public boolean equals(@Nullable Object object) {
+    public final boolean equals(@Nullable Object object) {
         if (object == this) { return true; }
         if (object == null || !(object instanceof SymmetricKey)) { return false; }
         @Nonnull SymmetricKey other = (SymmetricKey) object;
@@ -239,58 +234,60 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     
     @Pure
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return this.value.hashCode();
     }
+    
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the key converter of this class.
+     */
+    private static final @Nonnull AbstractNonRequestingKeyConverter<SymmetricKey, Object, BigInteger, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<SymmetricKey, Object, BigInteger, Object>() {
+        
+        @Pure
+        @Override
+        public @Nonnull BigInteger convert(@Nonnull SymmetricKey symmetricKey) {
+            return symmetricKey.getValue();
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull SymmetricKey recover(@Nonnull Object none, @Nonnull BigInteger value) throws InvalidEncodingException {
+            return new SymmetricKey(value);
+        }
+        
+    };
     
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
-     * The XDF converter for this class.
+     * Stores the semantic type {@code symmetric.key@core.digitalid.net}.
      */
-    @Immutable
-    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<SymmetricKey, Object> {
-        
-        /**
-         * Creates a new XDF converter.
-         */
-        private XDFConverter() {
-            super(TYPE);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull SymmetricKey symmetricKey) {
-            return IntegerWrapper.encodeNonNullable(TYPE, symmetricKey.value);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull SymmetricKey decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("symmetric.key@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-            
-            return new SymmetricKey(IntegerWrapper.decodeNonNullable(block));
-        }
-        
-    }
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("symmetric.key@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
+    public static final @Nonnull AbstractNonRequestingXDFConverter<SymmetricKey, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, IntegerWrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull XDFConverter getXDFConverter() {
+    public @Nonnull AbstractNonRequestingXDFConverter<SymmetricKey, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("symmetric_key", IntegerWrapper.SQL_TYPE);
+    
+    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<SymmetricKey, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<SymmetricKey, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, IntegerWrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
@@ -303,6 +300,6 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<SymmetricKey, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<SymmetricKey, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

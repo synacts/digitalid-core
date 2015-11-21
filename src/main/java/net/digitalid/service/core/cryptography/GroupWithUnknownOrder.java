@@ -2,31 +2,25 @@ package net.digitalid.service.core.cryptography;
 
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
-import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
- * Description.
+ * This class models a multiplicative group with unknown order.
  */
 @Immutable
 public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
-    
-    /* -------------------------------------------------- Types -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code unknown.group@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("unknown.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -51,56 +45,62 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
         return new GroupWithUnknownOrder(modulus);
     }
     
-    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
-     * The XDF converter for this class.
+     * Stores the key converter of this class.
      */
-    @Immutable
-    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<GroupWithUnknownOrder, Object> {
+    private static final @Nonnull AbstractNonRequestingKeyConverter<GroupWithUnknownOrder, Object, BigInteger, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<GroupWithUnknownOrder, Object, BigInteger, Object>() {
         
-        /**
-         * Creates a new XDF converter.
-         */
-        private XDFConverter() {
-            super(TYPE);
+        @Pure
+        @Override
+        public boolean isValid(@Nonnull BigInteger modulus) {
+            return modulus.compareTo(BigInteger.ZERO) == 1;
         }
         
         @Pure
         @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull GroupWithUnknownOrder group) {
-            return IntegerWrapper.encodeNonNullable(TYPE, group.getModulus());
+        public @Nonnull BigInteger convert(@Nonnull GroupWithUnknownOrder group) {
+            return group.getModulus();
         }
         
         @Pure
         @Override
-        public @Nonnull GroupWithUnknownOrder decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("unknown.group@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-            
-            final @Nonnull @Positive BigInteger modulus = IntegerWrapper.decodeNonNullable(block);
-            if (modulus.compareTo(BigInteger.ZERO) != 1) { throw new InvalidEncodingException("The modulus has to be positive."); }
+        public @Nonnull GroupWithUnknownOrder recover(@Nonnull Object object, @Nonnull BigInteger modulus) throws InvalidEncodingException {
             return new GroupWithUnknownOrder(modulus);
         }
         
-    }
+    };
+    
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type {@code unknown.group@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("unknown.group@core.digitalid.net").load(IntegerWrapper.XDF_TYPE);
     
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
+    public static final @Nonnull AbstractNonRequestingXDFConverter<GroupWithUnknownOrder, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, IntegerWrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull XDFConverter getXDFConverter() {
+    public @Nonnull AbstractNonRequestingXDFConverter<GroupWithUnknownOrder, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
-
+    
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("group_with_unknown_order", IntegerWrapper.SQL_TYPE);
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<GroupWithUnknownOrder, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<GroupWithUnknownOrder, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, IntegerWrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
@@ -113,6 +113,6 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<GroupWithUnknownOrder, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<GroupWithUnknownOrder, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

@@ -45,7 +45,7 @@ import net.digitalid.utility.database.site.Site;
  * This class models a database table that stores a non-nullable {@link ReadOnlyProperty property} of a {@link Concept concept}.
  */
 @Immutable
-public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends ConceptPropertyTable<V, C, E> {
+public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity> extends ConceptPropertyTable<V, C, E> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

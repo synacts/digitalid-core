@@ -22,7 +22,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * 
  * @invariant (time == null) == (value == null) : "The time and value are either both null or both non-null.";
  */
-public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends WritableNonNullableProperty<V> implements ConceptProperty<V, C, E> {
+public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity> extends WritableNonNullableProperty<V> implements ConceptProperty<V, C, E> {
     
     /* -------------------------------------------------- Factory -------------------------------------------------- */
     
@@ -72,7 +72,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
      * @param propertySetup the property factory that contains the required information.
      * @return a new non-nullable concept property with the given parameters.
      */
-    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptProperty<V, C, E> get(@Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup, @Nonnull C concept) {
+    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity> NonNullableConceptProperty<V, C, E> get(@Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup, @Nonnull C concept) {
         return new NonNullableConceptProperty<>(propertySetup, concept);
     }
     

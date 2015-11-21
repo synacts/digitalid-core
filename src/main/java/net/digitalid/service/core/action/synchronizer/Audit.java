@@ -5,8 +5,10 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.castable.Castable;
+import net.digitalid.service.core.castable.CastableObject;
 import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -21,7 +23,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
  * @see ResponseAudit
  */
 @Immutable
-public abstract class Audit implements XDF<Audit, Object> {
+public abstract class Audit extends CastableObject implements Castable, XDF<Audit, Object> {
     
     /**
      * Stores the semantic type {@code last.time.audit@core.digitalid.net}.
@@ -102,33 +104,6 @@ public abstract class Audit implements XDF<Audit, Object> {
     @Pure
     public final @Nonnull Time getLastTime() {
         return lastTime;
-    }
-    
-    
-    /**
-     * Returns this audit as a {@link RequestAudit}.
-     * 
-     * @return this audit as a {@link RequestAudit}.
-     * 
-     * @throws InvalidEncodingException if this audit is not an instance of {@link RequestAudit}.
-     */
-    @Pure
-    public final @Nonnull RequestAudit toRequestAudit() throws InvalidEncodingException {
-        if (this instanceof RequestAudit) { return (RequestAudit) this; }
-        throw new InvalidEncodingException("This audit is not a request audit.");
-    }
-    
-    /**
-     * Returns this audit as a {@link ResponseAudit}.
-     * 
-     * @return this audit as a {@link ResponseAudit}.
-     * 
-     * @throws InvalidEncodingException if this audit is not an instance of {@link ResponseAudit}.
-     */
-    @Pure
-    public final @Nonnull ResponseAudit toResponseAudit() throws InvalidEncodingException {
-        if (this instanceof ResponseAudit) { return (ResponseAudit) this; }
-        throw new InvalidEncodingException("This audit is not a response audit.");
     }
     
 }

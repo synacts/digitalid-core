@@ -16,8 +16,8 @@ import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -37,6 +37,7 @@ import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.CombiningDeclaration;
 import net.digitalid.utility.database.declaration.Declaration;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models the restrictions of an agent.
@@ -356,7 +357,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     public @Nonnull Restrictions checkMatch(@Nonnull Agent agent) throws InvalidEncodingException {
-        if (!match(agent)) { throw new InvalidEncodingException("The restrictions do not match the given agent."); }
+        if (!match(agent)) { throw InvalidCombinationException.get("The restrictions do not match the given agent."); }
         return this;
     }
     
@@ -472,7 +473,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
             final @Nullable Context context = Context.XDF_CONVERTER.decodeNullable(entity, tuple.getNullableElement(3));
             final @Nullable Contact contact = Contact.XDF_CONVERTER.decodeNullable(entity, tuple.getNullableElement(4));
             
-            if (context != null && contact != null) { throw new InvalidEncodingException("The context and the contact are not null."); }
+            if (context != null && contact != null) { throw InvalidCombinationException.get("Both the context and the contact are non-null."); }
             
             return new Restrictions(client, role, writing, context, contact);
         }

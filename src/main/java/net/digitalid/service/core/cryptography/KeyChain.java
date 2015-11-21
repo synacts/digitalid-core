@@ -8,7 +8,9 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -33,7 +35,7 @@ import net.digitalid.utility.database.converter.SQL;
  * @see PrivateKeyChain
  */
 @Immutable
-abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> implements XDF<C, Object>, SQL<C, Object> {
+public abstract class KeyChain<C extends KeyChain<C, K>, K extends XDF<K, Object>> implements XDF<C, Object>, SQL<C, Object> {
     
     /* -------------------------------------------------- Items -------------------------------------------------- */
     
@@ -63,14 +65,14 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
      * 
      * @return the key in use at the given time.
      * 
-     * @throws InvalidEncodingException if there is no key for the given time.
+     * @throws InvalidCombinationException if there is no key for the given time.
      */
     @Pure
-    public final @Nonnull K getKey(@Nonnull Time time) throws InvalidEncodingException { // TODO: Throw an InvalidDeclarationException instead!
+    public final @Nonnull K getKey(@Nonnull Time time) throws InvalidCombinationException {
         for (final @Nonnull ReadOnlyPair<Time, K> item : items) {
             if (time.isGreaterThanOrEqualTo(item.getNonNullableElement0())) { return item.getNonNullableElement1(); }
         }
-        throw new InvalidEncodingException("There is no key for the given time (" + time + ") in this key chain " + this + ".");
+        throw InvalidCombinationException.get("There is no key for the given time (" + time + ") in this key chain " + this + ".");
     }
     
     /**
@@ -92,7 +94,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
      * @return a new key chain with the given key added and expired ones removed.
      */
     @Pure
-    public final @Nonnull KeyChain<K, C> add(@Nonnull Time time, @Nonnull K key) {
+    public final @Nonnull KeyChain<C, K> add(@Nonnull Time time, @Nonnull K key) {
         assert time.isGreaterThan(getNewestTime()) : "The time is greater than the newest time of this key chain.";
         assert time.isGreaterThan(Time.getCurrent().add(Time.TROPICAL_YEAR)) : "The time lies at least one year in the future.";
         
@@ -141,7 +143,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
      * The XDF converter for this class.
      */
     @Immutable
-    public static abstract class XDFConverter<K extends XDF<K, Object>, C extends KeyChain<K, C>> extends AbstractNonRequestingXDFConverter<C, Object> {
+    public static abstract class XDFConverter<C extends KeyChain<C, K>, K extends XDF<K, Object>> extends AbstractNonRequestingXDFConverter<C, Object> {
         
         /**
          * Stores the type of the key chain items.
@@ -149,22 +151,22 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
         private final @Nonnull SemanticType itemType;
         
         /**
-         * Stores the factory that retrieves a key from a block.
+         * Stores the converter that recovers a key from a block.
          */
-        private final @Nonnull AbstractNonRequestingXDFConverter<K, Object> factory;
+        private final @Nonnull AbstractNonRequestingXDFConverter<K, Object> XDFConverter;
         
         /**
          * Creates a new XDF converter with the given parameters.
          * 
          * @param chainType the type of the key chain.
          * @param itemType the type of the key chain items.
-         * @param factory the factory that retrieves a key from a block.
+         * @param XDFConverter the converter that recovers a key from a block.
          */
-        protected XDFConverter(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull AbstractNonRequestingXDFConverter<K, Object> factory) {
+        protected XDFConverter(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull AbstractNonRequestingXDFConverter<K, Object> XDFConverter) {
             super(chainType);
             
             this.itemType = itemType;
-            this.factory = factory;
+            this.XDFConverter = XDFConverter;
         }
         
         /**
@@ -199,17 +201,17 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
             assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
             
             final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
-            if (elements.isEmpty()) { throw new InvalidEncodingException("The list of elements may not be empty."); }
+            if (elements.isEmpty()) { throw InvalidValueException.get("elements", elements); }
             final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, K>> items = FreezableLinkedList.get();
             
             for (final @Nonnull Block element : elements) {
                 final @Nonnull ReadOnlyArray<Block> pair = TupleWrapper.decode(element).getNonNullableElements(2);
                 final @Nonnull Time time = Time.XDF_CONVERTER.decodeNonNullable(none, pair.getNonNullable(0));
-                final @Nonnull K key = factory.decodeNonNullable(none, pair.getNonNullable(1));
+                final @Nonnull K key = XDFConverter.decodeNonNullable(none, pair.getNonNullable(1));
                 items.add(FreezablePair.get(time, key).freeze());
             }
             
-            if (!items.isStrictlyDescending()) { throw new InvalidEncodingException("The time has to be strictly decreasing."); }
+            if (!items.isStrictlyDescending()) { throw InvalidValueException.get("items", items); }
             return createKeyChain(items.freeze());
         }
         
@@ -217,6 +219,6 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
     
     @Pure
     @Override
-    public abstract @Nonnull XDFConverter<K, C> getXDFConverter();
+    public abstract @Nonnull XDFConverter<C, K> getXDFConverter();
     
 }

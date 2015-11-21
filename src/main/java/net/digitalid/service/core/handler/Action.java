@@ -11,7 +11,6 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.dataservice.SiteModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -22,6 +21,7 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Actions affect the state of a digital identity and are thus always {@link Audit audited}.
@@ -61,7 +61,7 @@ public abstract class Action extends Method implements Auditable {
      * @ensure hasEntity() : "This method has an entity.";
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    protected Action(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
+    protected Action(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
         super(entity, signature, recipient);
     }
     

@@ -7,21 +7,26 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.Blockable;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.database.SQLizable;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.service.core.castable.Castable;
+import net.digitalid.service.core.castable.CastableObject;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.AttributeType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class facilitates the encoding and decoding of attribute values.
@@ -31,7 +36,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see UncertifiedAttributeValue
  */
 @Immutable
-public abstract class AttributeValue implements Blockable, SQLizable {
+public abstract class AttributeValue extends CastableObject implements Castable, XDF<AttributeValue, Boolean>, SQL<AttributeValue, Object> {
     
     /**
      * Stores the semantic type {@code content.attribute@core.digitalid.net}.
@@ -147,11 +152,11 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      * 
      * @return this attribute value.
      * 
-     * @throws InvalidEncodingException otherwise.
+     * @throws InvalidCombinationException otherwise.
      */
     @Pure
-    public final @Nonnull AttributeValue checkMatches(@Nonnull Attribute attribute) throws InvalidEncodingException {
-        if (!matches(attribute)) { throw new InvalidEncodingException("This value does not match the given attribute."); }
+    public final @Nonnull AttributeValue checkMatches(@Nonnull Attribute attribute) throws InvalidCombinationException {
+        if (!matches(attribute)) { throw InvalidCombinationException.get("This value does not match the given attribute."); }
         return this;
     }
     
@@ -162,15 +167,15 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      * 
      * @return this attribute value.
      * 
-     * @throws InvalidEncodingException otherwise.
+     * @throws InvalidReplyException otherwise.
      * 
      * @ensure getContent().getType().equals(type) : "The content matches the given type.";
      */
     @Pure
-    public final @Nonnull AttributeValue checkContentType(@Nonnull SemanticType type) throws InvalidEncodingException {
+    public final @Nonnull AttributeValue checkContentType(@Nonnull @AttributeType SemanticType type) throws InvalidReplyException {
         assert type.isAttributeType() : "The type is an attribute type.";
         
-        if (!content.getType().equals(type)) { throw new InvalidEncodingException("The content of this value does not match the given type."); }
+        if (!content.getType().equals(type)) { throw InvalidReplyException.get(null, "content type", type.getAddress(), content.getType().getAddress()); }
         return this;
     }
     
@@ -246,33 +251,6 @@ public abstract class AttributeValue implements Blockable, SQLizable {
     @NonCommitting
     public static void set(@Nullable AttributeValue attributeValue, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         Block.set(Block.toBlock(attributeValue), preparedStatement, parameterIndex);
-    }
-    
-    
-    /**
-     * Returns this attribute value as a {@link CertifiedAttributeValue}.
-     * 
-     * @return this attribute value as a {@link CertifiedAttributeValue}.
-     * 
-     * @throws InvalidEncodingException if this attribute value is not an instance of {@link CertifiedAttributeValue}.
-     */
-    @Pure
-    public final @Nonnull CertifiedAttributeValue toCertifiedAttributeValue() throws InvalidEncodingException {
-        if (this instanceof CertifiedAttributeValue) { return (CertifiedAttributeValue) this; }
-        throw new InvalidEncodingException("This attribute value cannot be cast to CertifiedAttributeValue.");
-    }
-    
-    /**
-     * Returns this attribute value as an {@link UncertifiedAttributeValue}.
-     * 
-     * @return this attribute value as an {@link UncertifiedAttributeValue}.
-     * 
-     * @throws InvalidEncodingException if this attribute value is not an instance of {@link UncertifiedAttributeValue}.
-     */
-    @Pure
-    public final @Nonnull UncertifiedAttributeValue toUncertifiedAttributeValue() throws InvalidEncodingException {
-        if (this instanceof UncertifiedAttributeValue) { return (UncertifiedAttributeValue) this; }
-        throw new InvalidEncodingException("This attribute value cannot be cast to UncertifiedAttributeValue.");
     }
     
     

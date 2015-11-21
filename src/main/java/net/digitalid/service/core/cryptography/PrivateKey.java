@@ -7,13 +7,14 @@ import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.entity.annotations.Matching;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.entity.annotations.Matching;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -22,6 +23,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This class stores the groups and exponents of a host's private key.
@@ -317,7 +319,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
             final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrder.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(4));
             final @Nonnull Exponent x = Exponent.get(elements.getNonNullable(5));
             
-            if (!compositeGroup.getModulus().equals(p.multiply(q))) { throw new InvalidEncodingException("The modulus of the composite group has to be the product of p and q."); }
+            if (!compositeGroup.getModulus().equals(p.multiply(q))) { throw InvalidCombinationException.get("The modulus of the composite group has to be the product of p and q."); }
             
             return new PrivateKey(compositeGroup, p, q, d, squareGroup, x);
         }
@@ -338,9 +340,14 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = Block.DECLARATION.renamedAs("private_key");
+    
+    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PrivateKey, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(XDF_CONVERTER);
+    public static final @Nonnull AbstractSQLConverter<PrivateKey, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
     
     @Pure
     @Override
@@ -353,6 +360,6 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<PrivateKey, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<PrivateKey, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

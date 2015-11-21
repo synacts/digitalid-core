@@ -1,8 +1,6 @@
 package net.digitalid.service.core.handler;
 
-import java.io.IOException;
 import java.math.BigInteger;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,9 +26,7 @@ import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -57,6 +53,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyIterator;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForHosts;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class implements a remote method invocation mechanism.
@@ -106,7 +103,7 @@ public abstract class Method extends Handler {
      * @ensure hasEntity() : "This method has an entity.";
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    protected Method(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
+    protected Method(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
         super(entity, signature);
         
         this.recipient = recipient;
@@ -358,7 +355,7 @@ public abstract class Method extends Handler {
                         if (!type.equals(FreezableAuthentications.IDENTITY_BASED_TYPE)) {
                             final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
                             if (attributeValue != null && attributeValue.isCertified()) {
-                                final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.toCertifiedAttributeValue();
+                                final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.castTo(CertifiedAttributeValue.class);
                                 if (certifiedAttributeValue.isValid(time)) { certificates.add(certifiedAttributeValue); }
                             }
                         }
@@ -369,7 +366,7 @@ public abstract class Method extends Handler {
                     for (final @Nonnull SemanticType type : authentications) {
                         final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
                         if (attributeValue != null && attributeValue.isCertified()) {
-                            final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.toCertifiedAttributeValue();
+                            final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.castTo(CertifiedAttributeValue.class);
                             if (certifiedAttributeValue.isValid(time)) { credentials.add(ClientCredential.getAttributeBased(role, certifiedAttributeValue, permissions)); }
                         }
                     }
@@ -418,7 +415,7 @@ public abstract class Method extends Handler {
     /**
      * Each method needs to {@link #add(net.digitalid.service.core.identity.SemanticType, net.digitalid.service.core.handler.Method.Factory) register} a factory that inherits from this class.
      */
-    protected static abstract class Factory<E extends Entity<E>> {
+    protected static abstract class Factory<E extends Entity> {
         
         /**
          * Creates a method that handles contents of the indicated type.
@@ -438,7 +435,7 @@ public abstract class Method extends Handler {
          */
         @Pure
         @NonCommitting
-        protected abstract @Nonnull Method create(@Nonnull Entity<E> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
+        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
         
     }
     
@@ -481,85 +478,6 @@ public abstract class Method extends Handler {
         final @Nullable Method.Factory factory = converters.get(block.getType());
         if (factory == null) { throw new PacketException(PacketErrorCode.METHOD, "No method could be found for the type " + block.getType().getAddress() + "."); }
         else { return factory.create(entity, signature, recipient, block); }
-    }
-    
-    
-    /**
-     * Returns this method as an {@link Action}.
-     * 
-     * @return this method as an {@link Action}.
-     * 
-     * @throws InvalidEncodingException if this method is not an instance of {@link Action}.
-     */
-    @Pure
-    public final @Nonnull Action toAction() throws InvalidEncodingException {
-        if (this instanceof Action) { return (Action) this; }
-        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an action.");
-    }
-    
-    /**
-     * Returns this method as an {@link InternalAction}.
-     * 
-     * @return this method as an {@link InternalAction}.
-     * 
-     * @throws InvalidEncodingException if this method is not an instance of {@link InternalAction}.
-     */
-    @Pure
-    public final @Nonnull InternalAction toInternalAction() throws InvalidEncodingException {
-        if (this instanceof InternalAction) { return (InternalAction) this; }
-        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an internal action.");
-    }
-    
-    /**
-     * Returns this method as an {@link ExternalAction}.
-     * 
-     * @return this method as an {@link ExternalAction}.
-     * 
-     * @throws InvalidEncodingException if this method is not an instance of {@link ExternalAction}.
-     */
-    @Pure
-    public final @Nonnull ExternalAction toExternalAction() throws InvalidEncodingException {
-        if (this instanceof ExternalAction) { return (ExternalAction) this; }
-        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an external action.");
-    }
-    
-    /**
-     * Returns this method as a {@link Query}.
-     * 
-     * @return this method as a {@link Query}.
-     * 
-     * @throws InvalidEncodingException if this method is not an instance of {@link Query}.
-     */
-    @Pure
-    public final @Nonnull Query toQuery() throws InvalidEncodingException {
-        if (this instanceof Query) { return (Query) this; }
-        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not a query.");
-    }
-    
-    /**
-     * Returns this method as an {@link InternalQuery}.
-     * 
-     * @return this method as an {@link InternalQuery}.
-     * 
-     * @throws InvalidEncodingException if this method is not an instance of {@link InternalQuery}.
-     */
-    @Pure
-    public final @Nonnull InternalQuery toInternalQuery() throws InvalidEncodingException {
-        if (this instanceof InternalQuery) { return (InternalQuery) this; }
-        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an internal query.");
-    }
-    
-    /**
-     * Returns this method as an {@link ExternalQuery}.
-     * 
-     * @return this method as an {@link ExternalQuery}.
-     * 
-     * @throws InvalidEncodingException if this method is not an instance of {@link ExternalQuery}.
-     */
-    @Pure
-    public final @Nonnull ExternalQuery toExternalQuery() throws InvalidEncodingException {
-        if (this instanceof ExternalQuery) { return (ExternalQuery) this; }
-        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an external query.");
     }
     
     
