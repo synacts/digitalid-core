@@ -13,7 +13,7 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.core.CoreServiceActionReply;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -49,10 +49,10 @@ public abstract class ActionReply extends Reply implements Auditable {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    protected ActionReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
+    protected ActionReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidOperationException {
         super(entity, signature, number);
         
-        if (!hasEntity()) { throw new InvalidEncodingException("An action reply must have an entity."); }
+        if (!hasEntity()) { throw InvalidOperationException.get("An action reply must have an entity."); }
     }
     
     

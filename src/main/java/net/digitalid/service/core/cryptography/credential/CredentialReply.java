@@ -17,7 +17,10 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
@@ -27,6 +30,7 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Replies the parameters of a new credential.
@@ -125,7 +129,7 @@ final class CredentialReply extends CoreServiceQueryReply {
     private CredentialReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, number);
         
-        if (!hasEntity()) { throw new InvalidEncodingException("A credential reply must have an entity."); }
+        if (!hasEntity()) { throw InvalidOperationException.get("A credential reply must have an entity."); }
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.restrictions = tuple.isElementNotNull(0) ? new Restrictions(entity, tuple.getNonNullableElement(0)) : null;
@@ -135,7 +139,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         this.e = new Exponent(tuple.getNonNullableElement(3));
         this.i = new Exponent(tuple.getNonNullableElement(4));
         
-        if (issuance.isLessThan(Time.HOUR.ago())) { throw new InvalidEncodingException("The returned credential is no longer active."); }
+        if (issuance.isLessThan(Time.HOUR.ago())) { throw InvalidParameterValueException.get("issuance time", issuance); }
     }
     
     @Pure
@@ -167,11 +171,11 @@ final class CredentialReply extends CoreServiceQueryReply {
     @Nonnull ClientCredential getInternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull BigInteger b, @Nonnull Exponent u) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert hasSignature() : "This handler has a signature.";
         
-        if (restrictions == null) { throw new InvalidEncodingException("The restrictions may not be null for internal credentials."); }
+        if (restrictions == null) { throw InvalidParameterValueCombinationException.get("The restrictions may not be null for internal credentials."); }
         final @Nonnull Exponent v = new Exponent(restrictions.toBlock().getHash());
         
         final @Nonnull InternalPerson issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().castTo(InternalPerson.class);
-        return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, role, restrictions, c, e, new Exponent(b), u, i, v);
+        return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, role, restrictions, c, e, Exponent.get(b), u, i, v);
     }
     
     /**
@@ -191,7 +195,7 @@ final class CredentialReply extends CoreServiceQueryReply {
     @Nonnull ClientCredential getExternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull BigInteger b, @Nonnull Exponent u, @Nonnull Exponent v) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert hasSignature() : "This handler has a signature.";
         
-        if (restrictions != null) { throw new InvalidEncodingException("The restrictions must be null for external credentials."); }
+        if (restrictions != null) { throw InvalidParameterValueCombinationException.get("The restrictions must be null for external credentials."); }
         
         final @Nonnull InternalNonHostIdentity issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().castTo(InternalNonHostIdentity.class);
         return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, attributeContent, c, e, new Exponent(b), u, i, v, false);

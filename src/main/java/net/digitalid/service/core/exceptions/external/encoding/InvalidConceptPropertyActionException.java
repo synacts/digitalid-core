@@ -10,7 +10,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This is typically the case when the action would not affect the property.
  */
 @Immutable
-public class InvalidActionException extends InvalidEncodingException {
+public class InvalidConceptPropertyActionException extends InvalidEncodingException {
     
     /* -------------------------------------------------- Action -------------------------------------------------- */
     
@@ -32,26 +32,26 @@ public class InvalidActionException extends InvalidEncodingException {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new invalid action exception with the given action.
+     * Creates a new invalid property action exception with the given action.
      * 
      * @param action the action to change a property which is invalid.
      */
-    protected InvalidActionException(@Nonnull ConceptPropertyInternalAction<?, ?, ?> action) {
+    protected InvalidConceptPropertyActionException(@Nonnull ConceptPropertyInternalAction<?, ?, ?> action) {
         super("The action to change the property '" + action.getProperty().getConceptPropertySetup().getPropertyName() + "' of the concept '" + action.getProperty().getConceptPropertySetup().getConceptSetup().getConceptName() + "' of the user " + action.getEntityNotNull().getIdentity().getAddress() + " is invalid.");
         
         this.action = action;
     }
     
     /**
-     * Returns a new invalid action exception with the given action.
+     * Returns a new invalid property action exception with the given action.
      * 
      * @param action the action to change a property which is invalid.
      * 
-     * @return a new invalid action exception with the given action.
+     * @return a new invalid property action exception with the given action.
      */
     @Pure
-    public static @Nonnull InvalidActionException get(@Nonnull ConceptPropertyInternalAction<?, ?, ?> action) {
-        return new InvalidActionException(action);
+    public static @Nonnull InvalidConceptPropertyActionException get(@Nonnull ConceptPropertyInternalAction<?, ?, ?> action) {
+        return new InvalidConceptPropertyActionException(action);
     }
     
 }

@@ -17,7 +17,7 @@ import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidActionException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidConceptPropertyActionException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -113,7 +113,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         this.newTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
         this.oldValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
         this.newValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
-        if (newValue.equals(oldValue)) { throw InvalidActionException.get(this); }
+        if (newValue.equals(oldValue)) { throw InvalidConceptPropertyActionException.get(this); }
     }
     
     /* -------------------------------------------------- Methods -------------------------------------------------- */
@@ -233,7 +233,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
             final Time newTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2));
             final V oldValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(3));
             final V newValue = setup.getValueConverters().getXDFConverter().decodeNonNullable(entity, elements.getNonNullable(4));
-            if (newValue.equals(oldValue)) { throw InvalidActionException.get(property); }
+            if (newValue.equals(oldValue)) { throw InvalidConceptPropertyActionException.get(property); }
             // TODO: call other constructor. This constructor is reserved for clients that do not have or need a signature. For methods executed on the host, the signature must be stored.
             return new NonNullableConceptPropertyInternalAction<V, C, E>(setup, property, oldTime, newTime, oldValue, newValue);
         }

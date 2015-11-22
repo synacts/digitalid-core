@@ -9,7 +9,7 @@ import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
@@ -136,10 +136,10 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
             
             final @Nonnull @Positive BigInteger modulus = IntegerWrapper.decodeNonNullable(tuple.getNonNullableElement(0));
-            if (modulus.compareTo(BigInteger.ZERO) != 1) { throw InvalidValueException.get("modulus", modulus); }
+            if (modulus.compareTo(BigInteger.ZERO) != 1) { throw InvalidParameterValueException.get("modulus", modulus); }
             
             final @Nonnull @Positive BigInteger order = IntegerWrapper.decodeNonNullable(tuple.getNonNullableElement(1));
-            if (order.compareTo(BigInteger.ZERO) != 1 || order.compareTo(modulus) != -1) { throw InvalidValueException.get("order", order); }
+            if (order.compareTo(BigInteger.ZERO) != 1 || order.compareTo(modulus) != -1) { throw InvalidParameterValueException.get("order", order); }
             
             return new GroupWithKnownOrder(modulus, order);
         }

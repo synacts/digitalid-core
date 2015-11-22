@@ -18,7 +18,10 @@ import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
@@ -29,6 +32,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class abstracts from client and host credentials.
@@ -237,30 +241,30 @@ public abstract class Credential {
         final @Nonnull TupleWrapper tuple = new TupleWrapper(exposed);
         this.issuer = IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().castTo(InternalNonHostIdentity.class);
         this.issuance = new Time(tuple.getNonNullableElement(1));
-        if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) { throw new InvalidEncodingException("The issuance time has to be positive and a multiple of half an hour."); }
+        if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) { throw InvalidParameterValueException.get("issuance time", issuance); }
         this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier(), issuance);
         final @Nonnull BigInteger hash = new HashWrapper(tuple.getNonNullableElement(2)).getValue();
         if (randomizedPermissions != null) {
             this.randomizedPermissions = new RandomizedAgentPermissions(randomizedPermissions);
-            if (!this.randomizedPermissions.getHash().equals(hash)) { throw new InvalidEncodingException("The hash of the given permissions has to equal the credential's exposed hash."); }
+            if (!this.randomizedPermissions.getHash().equals(hash)) { throw InvalidParameterValueCombinationException.get("The hash of the given permissions has to equal the credential's exposed hash."); }
         } else {
             this.randomizedPermissions = new RandomizedAgentPermissions(hash);
         }
         this.role = tuple.isElementNull(3) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(3)).getIdentity().castTo(SemanticType.class);
-        if (role != null && !role.isRoleType()) { throw new InvalidEncodingException("The role has to be either null or a role type"); }
+        if (role != null && !role.isRoleType()) { throw InvalidParameterValueException.get("role", role); }
         this.attributeContent = SelfcontainedWrapper.toElement(tuple.getNullableElement(4));
-        if (role != null && attributeContent != null) { throw new InvalidEncodingException("The role and the attribute may not both be not null."); }
+        if (role != null && attributeContent != null) { throw InvalidParameterValueCombinationException.get("The role and the attribute may not both be not null."); }
         this.restrictions = restrictions;
-        if (attributeContent == null && !(issuer instanceof InternalPerson)) { throw new InvalidEncodingException("If the attribute is null, the issuer has to be an internal person."); }
-        if (attributeContent != null && restrictions != null) { throw new InvalidEncodingException("The attribute and the restrictions may not both be not null."); }
-        if (role != null && getPermissions() == null) { throw new InvalidEncodingException("If a role is given, the permissions may not be null."); }
-        if (role != null && restrictions == null) { throw new InvalidEncodingException("If a role is given, the restrictions may not be null."); }
+        if (attributeContent == null && !(issuer instanceof InternalPerson)) { throw InvalidParameterValueCombinationException.get("If the attribute is null, the issuer has to be an internal person."); }
+        if (attributeContent != null && restrictions != null) { throw InvalidParameterValueCombinationException.get("The attribute and the restrictions may not both be not null."); }
+        if (role != null && getPermissions() == null) { throw InvalidParameterValueCombinationException.get("If a role is given, the permissions may not be null."); }
+        if (role != null && restrictions == null) { throw InvalidParameterValueCombinationException.get("If a role is given, the restrictions may not be null."); }
         
         this.exposed = exposed;
         this.o = new Exponent(exposed.getHash());
         this.i = i != null ? new Exponent(i) : null;
         
-        if (isIdentityBased() && i != null) { throw new InvalidEncodingException("If the credential is identity-based, the value i has to be null."); }
+        if (isIdentityBased() && i != null) { throw InvalidParameterValueCombinationException.get("If the credential is identity-based, the value i has to be null."); }
         
         assert invariant();
     }

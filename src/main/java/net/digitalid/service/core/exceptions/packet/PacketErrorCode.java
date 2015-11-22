@@ -9,6 +9,7 @@ import net.digitalid.service.core.block.Blockable;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -161,8 +162,8 @@ public enum PacketErrorCode implements Blockable, SQLizable {
     public static @Nonnull PacketErrorCode get(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final byte value = new Int8Wrapper(block).getValue();
-        if (!isValid(value)) { throw new InvalidEncodingException("The value '" + value + "' does not encode a packet error."); }
+        final byte value = Int8Wrapper.decode(block);
+        if (!isValid(value)) { throw InvalidParameterValueException.get("value", value); }
         return get(value);
     }
     

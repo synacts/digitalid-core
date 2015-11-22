@@ -13,9 +13,9 @@ import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
 import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidLengthException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidOffsetException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockOffsetException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -100,7 +100,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
     public static int decodeLength(@Nonnull Block block, @NonNegative int offset) throws InvalidEncodingException {
         assert offset >= 0 : "The offset is not negative.";
         
-        if (offset >= block.getLength()) { throw InvalidOffsetException.get(offset, 0, block); }
+        if (offset >= block.getLength()) { throw InvalidBlockOffsetException.get(offset, 0, block); }
         
         return 1 << ((block.getByte(offset) & 0xFF) >>> 6);
     }
@@ -142,14 +142,14 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         assert offset >= 0 : "The offset is not negative.";
         assert length == decodeLength(block, offset) : "The length is correct.";
         
-        if (offset + length > block.getLength()) { throw InvalidOffsetException.get(offset, length, block); }
+        if (offset + length > block.getLength()) { throw InvalidBlockOffsetException.get(offset, length, block); }
         
         long result = block.getByte(offset) & 0x3F;
         for (int i = 1; i < length; i++) {
             result = (result << 8) | (block.getByte(offset + i) & 0xFF);
         }
         
-        if (determineLength(result) != length) { throw InvalidLengthException.get(determineLength(result), length); }
+        if (determineLength(result) != length) { throw InvalidBlockLengthException.get(determineLength(result), length); }
         
         return result;
     }
@@ -178,7 +178,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
             result = (result << 8) | (bytes[i] & 0xFF);
         }
         
-        if (determineLength(result) != length) { throw InvalidLengthException.get(determineLength(result), length); }
+        if (determineLength(result) != length) { throw InvalidBlockLengthException.get(determineLength(result), length); }
         
         return result;
     }
@@ -290,7 +290,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         public @Nonnull IntvarWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException {
             final int length = block.getLength();
             
-            if (length != decodeLength(block, 0)) { throw InvalidLengthException.get(decodeLength(block, 0), length); }
+            if (length != decodeLength(block, 0)) { throw InvalidBlockLengthException.get(decodeLength(block, 0), length); }
             
             final long value = decodeValue(block, 0, length);
             return new IntvarWrapper(block.getType(), value);

@@ -8,10 +8,10 @@ import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidLengthException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidNullException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidOffsetException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidNullElementException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockOffsetException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -76,14 +76,14 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      * 
      * @return the non-nullable elements of this list wrapper.
      * 
-     * @throws InvalidNullException if the elements contain null.
+     * @throws InvalidNullElementException if the elements contain null.
      * 
      * @ensure basedOnParameter(getSemanticType(), elements) : "Each element is based on the parameter of the semantic type.";
      */
     @Pure
-    public @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> getNonNullableElements() throws InvalidNullException {
+    public @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> getNonNullableElements() throws InvalidNullElementException {
         final @Nonnull ReadOnlyList<Block> elements = getNullableElements();
-        if (elements.containsNull()) { throw InvalidNullException.get(); }
+        if (elements.containsNull()) { throw InvalidNullElementException.get(); }
         return elements;
     }
     
@@ -198,13 +198,13 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
                 if (elementLength == 0) {
                     elements.add(null);
                 } else {
-                    if (offset + elementLength > block.getLength()) { throw InvalidOffsetException.get(offset, elementLength, block); }
+                    if (offset + elementLength > block.getLength()) { throw InvalidBlockOffsetException.get(offset, elementLength, block); }
                     elements.add(Block.get(parameter, block, offset, elementLength));
                     offset += elementLength;
                 }
             }
             
-            if (offset != block.getLength()) { throw InvalidLengthException.get(offset, block.getLength()); }
+            if (offset != block.getLength()) { throw InvalidBlockLengthException.get(offset, block.getLength()); }
             
             return new ListWrapper(block.getType(), elements.freeze());
         }

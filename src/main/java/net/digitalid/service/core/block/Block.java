@@ -23,7 +23,7 @@ import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidTypeException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockTypeException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.NonNegative;
@@ -265,10 +265,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * 
      * @return this block.
      * 
-     * @throws InvalidTypeException if this is not the case.
+     * @throws InvalidBlockTypeException if this is not the case.
      */
-    public @Nonnull Block checkType(@Nonnull @Loaded SemanticType type) throws InvalidTypeException {
-        if (!this.type.isBasedOn(type)) { throw InvalidTypeException.get(type, this.type); }
+    public @Nonnull Block checkType(@Nonnull @Loaded SemanticType type) throws InvalidBlockTypeException {
+        if (!this.type.isBasedOn(type)) { throw InvalidBlockTypeException.get(type, this.type); }
         return this;
     }
     

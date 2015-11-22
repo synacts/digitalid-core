@@ -8,7 +8,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception is thrown when a value decoded from a block is invalid.
  */
 @Immutable
-public class InvalidValueException extends InvalidEncodingException {
+public class InvalidParameterValueException extends InvalidEncodingException {
     
     /* -------------------------------------------------- Parameter -------------------------------------------------- */
     
@@ -47,12 +47,12 @@ public class InvalidValueException extends InvalidEncodingException {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new invalid value exception with the given parameter and value.
+     * Creates a new invalid parameter value exception with the given parameter and value.
      * 
      * @param parameter the parameter name whose value is invalid.
      * @param value the value decoded from a block which is invalid.
      */
-    protected InvalidValueException(@Nonnull String parameter, @Nonnull Object value) {
+    protected InvalidParameterValueException(@Nonnull String parameter, @Nonnull Object value) {
         super("The " + parameter + " '" + value + "' " + (parameter.endsWith("s") ? "are" : "is") + " invalid.");
         
         this.parameter = parameter;
@@ -60,16 +60,16 @@ public class InvalidValueException extends InvalidEncodingException {
     }
     
     /**
-     * Returns a new invalid value exception with the given parameter and value.
+     * Returns a new invalid parameter value exception with the given parameter and value.
      * 
      * @param parameter the parameter name whose value is invalid.
      * @param value the value decoded from a block which is invalid.
      * 
-     * @return a new invalid value exception with the given parameter and value.
+     * @return a new invalid parameter value exception with the given parameter and value.
      */
     @Pure
-    public static @Nonnull InvalidValueException get(@Nonnull String parameter, @Nonnull Object value) {
-        return new InvalidValueException(parameter, value);
+    public static @Nonnull InvalidParameterValueException get(@Nonnull String parameter, @Nonnull Object value) {
+        return new InvalidParameterValueException(parameter, value);
     }
     
 }

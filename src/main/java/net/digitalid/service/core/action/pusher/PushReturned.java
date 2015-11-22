@@ -16,7 +16,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -115,7 +115,7 @@ public final class PushReturned extends ExternalAction {
         this.valid = BooleanWrapper.decode(elements.getNonNullable(0));
         
         final @Nonnull SignatureWrapper _signature = SignatureWrapper.decodeWithoutVerifying(elements.getNonNullable(1), false, null);
-        if (!(_signature instanceof HostSignatureWrapper)) { throw InvalidCombinationException.get("Replies have to be signed by a host."); }
+        if (!(_signature instanceof HostSignatureWrapper)) { throw InvalidParameterValueCombinationException.get("Replies have to be signed by a host."); }
         final @Nonnull CompressionWrapper _compression = new CompressionWrapper(_signature.getNonNullableElement());
         final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElement());
         this.reply = Reply.get(entity.castTo(NonHostEntity.class), (HostSignatureWrapper) _signature, _content.getElement()).castTo(ActionReply.class);

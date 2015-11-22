@@ -9,7 +9,7 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
@@ -105,9 +105,9 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
         this.clientAgent = Agent.get(entity.castTo(NonHostEntity.class), elements.getNonNullable(0)).castTo(ClientAgent.class);
         this.oldName = new StringWrapper(elements.getNonNullable(1)).getString();
-        if (!Client.isValidName(oldName)) { throw InvalidValueException.get("old name", oldName); }
+        if (!Client.isValidName(oldName)) { throw InvalidParameterValueException.get("old name", oldName); }
         this.newName = new StringWrapper(elements.getNonNullable(2)).getString();
-        if (!Client.isValidName(newName)) { throw InvalidValueException.get("new name", newName); }
+        if (!Client.isValidName(newName)) { throw InvalidParameterValueException.get("new name", newName); }
     }
     
     @Pure

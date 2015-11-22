@@ -25,7 +25,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -633,7 +633,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull String string) throws InvalidEncodingException {
-        try { return get(entity, Long.parseLong(string)); } catch (@Nonnull NumberFormatException exception) { throw InvalidValueException.get("context key", string); }
+        try { return get(entity, Long.parseLong(string)); } catch (@Nonnull NumberFormatException exception) { throw InvalidParameterValueException.get("context key", string); }
     }
     
     /* -------------------------------------------------- Blockable -------------------------------------------------- */

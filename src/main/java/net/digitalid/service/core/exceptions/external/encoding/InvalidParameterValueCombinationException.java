@@ -5,10 +5,10 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**
- * This exception is thrown when a combination of values is invalid.
+ * This exception is thrown when a combination of parameter values is invalid.
  */
 @Immutable
-public class InvalidCombinationException extends InvalidEncodingException {
+public class InvalidParameterValueCombinationException extends InvalidEncodingException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -17,7 +17,7 @@ public class InvalidCombinationException extends InvalidEncodingException {
      * 
      * @param message a string explaining which values cannot be combined.
      */
-    protected InvalidCombinationException(@Nonnull String message) {
+    protected InvalidParameterValueCombinationException(@Nonnull String message) {
         super(message);
     }
     
@@ -29,8 +29,8 @@ public class InvalidCombinationException extends InvalidEncodingException {
      * @return a new invalid combination exception with the given message.
      */
     @Pure
-    public static @Nonnull InvalidCombinationException get(@Nonnull String message) {
-        return new InvalidCombinationException(message);
+    public static @Nonnull InvalidParameterValueCombinationException get(@Nonnull String message) {
+        return new InvalidParameterValueCombinationException(message);
     }
     
 }

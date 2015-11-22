@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -137,7 +137,7 @@ public class ChainingSQLConverter<O, E, K, D> extends AbstractSQLConverter<O, E>
         final @Nullable K key = SQLConverter.restoreNullable(keyConverter.decompose(external), resultSet, columnIndex);
         if (key == null) { return null; }
         try {
-            if (!keyConverter.isValid(key)) { throw InvalidValueException.get("key", key); }
+            if (!keyConverter.isValid(key)) { throw InvalidParameterValueException.get("key", key); }
             return keyConverter.recover(external, key);
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException(exception);

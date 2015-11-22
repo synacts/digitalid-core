@@ -8,9 +8,9 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -65,14 +65,14 @@ public abstract class KeyChain<C extends KeyChain<C, K>, K extends XDF<K, Object
      * 
      * @return the key in use at the given time.
      * 
-     * @throws InvalidCombinationException if there is no key for the given time.
+     * @throws InvalidParameterValueCombinationException if there is no key for the given time.
      */
     @Pure
-    public final @Nonnull K getKey(@Nonnull Time time) throws InvalidCombinationException {
+    public final @Nonnull K getKey(@Nonnull Time time) throws InvalidParameterValueCombinationException {
         for (final @Nonnull ReadOnlyPair<Time, K> item : items) {
             if (time.isGreaterThanOrEqualTo(item.getNonNullableElement0())) { return item.getNonNullableElement1(); }
         }
-        throw InvalidCombinationException.get("There is no key for the given time (" + time + ") in this key chain " + this + ".");
+        throw InvalidParameterValueCombinationException.get("There is no key for the given time (" + time + ") in this key chain " + this + ".");
     }
     
     /**
@@ -201,7 +201,7 @@ public abstract class KeyChain<C extends KeyChain<C, K>, K extends XDF<K, Object
             assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
             
             final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
-            if (elements.isEmpty()) { throw InvalidValueException.get("elements", elements); }
+            if (elements.isEmpty()) { throw InvalidParameterValueException.get("elements", elements); }
             final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, K>> items = FreezableLinkedList.get();
             
             for (final @Nonnull Block element : elements) {
@@ -211,7 +211,7 @@ public abstract class KeyChain<C extends KeyChain<C, K>, K extends XDF<K, Object
                 items.add(FreezablePair.get(time, key).freeze());
             }
             
-            if (!items.isStrictlyDescending()) { throw InvalidValueException.get("items", items); }
+            if (!items.isStrictlyDescending()) { throw InvalidParameterValueException.get("items", items); }
             return createKeyChain(items.freeze());
         }
         

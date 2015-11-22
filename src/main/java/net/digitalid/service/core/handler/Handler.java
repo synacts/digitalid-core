@@ -38,7 +38,7 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
      * The subject is stored as an identifier because for certain handlers
      * the corresponding identity is not known to (or does not yet) exist.
      */
-    private final @Nonnull InternalIdentifier<?> subject;
+    private final @Nonnull InternalIdentifier subject;
     
     /**
      * Stores the signature of this handler.
@@ -51,7 +51,7 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
      * @param entity the entity to which this handler belongs or null if it is impersonal.
      * @param subject the subject of this handler.
      */
-    protected Handler(@Nullable Entity entity, @Nonnull InternalIdentifier<?> subject) {
+    protected Handler(@Nullable Entity entity, @Nonnull InternalIdentifier subject) {
         this.entity = entity;
         this.signature = null;
         this.subject = subject;
@@ -205,7 +205,7 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
      * @return the subject of this handler.
      */
     @Pure
-    public final @Nonnull InternalIdentifier<?> getSubject() {
+    public final @Nonnull InternalIdentifier getSubject() {
         return subject;
     }
     

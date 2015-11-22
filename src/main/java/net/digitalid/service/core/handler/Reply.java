@@ -16,7 +16,6 @@ import net.digitalid.service.core.block.wrappers.CompressionWrapper;
 import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -29,9 +28,11 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForHosts;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.errors.InitializationError;
 
@@ -45,7 +46,7 @@ import net.digitalid.utility.system.errors.InitializationError;
  * @see QueryReply
  */
 @Immutable
-public abstract class Reply extends Handler implements SQLizable {
+public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTriplet<NonHostEntity, HostSignatureWrapper, Long>> implements SQL<Reply, Object> {
     
     /**
      * Stores the number that references this reply in the database.

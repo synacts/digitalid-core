@@ -11,7 +11,7 @@ import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidLengthException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
@@ -119,7 +119,7 @@ public final class Int32Wrapper extends ValueWrapper<Int32Wrapper> {
         @Pure
         @Override
         public @Nonnull Int32Wrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("int32@core.digitalid.net") Block block) throws InvalidEncodingException {
-            if (block.getLength() != LENGTH) { throw InvalidLengthException.get(LENGTH, block.getLength()); }
+            if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
             
             return new Int32Wrapper(getType(), (int) block.decodeValue());
         }

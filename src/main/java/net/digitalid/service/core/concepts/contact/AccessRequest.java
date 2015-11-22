@@ -13,7 +13,7 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -96,7 +96,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         
         this.person = entity.getIdentity().castTo(InternalPerson.class);
         this.permissions = new FreezableContactPermissions(block).freeze();
-        if (permissions.isEmpty()) { throw InvalidValueException.get("contact permissions", permissions); }
+        if (permissions.isEmpty()) { throw InvalidParameterValueException.get("contact permissions", permissions); }
     }
     
     @Pure

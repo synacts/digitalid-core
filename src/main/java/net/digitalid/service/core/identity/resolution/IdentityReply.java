@@ -9,7 +9,9 @@ import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidDeclarationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
@@ -22,6 +24,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Replies the identity of the given subject.
@@ -94,7 +97,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.category = Category.get(tuple.getNonNullableElement(0));
-        if (!category.isInternalNonHostIdentity()) { throw new InvalidEncodingException("The category is " + category.name() + " instead of an internal non-host identity."); }
+        if (!category.isInternalNonHostIdentity()) { throw InvalidDeclarationException.get("The category is " + category.name() + " instead of an internal non-host identity.", getSubject(), this); }
         this.predecessors = new FreezablePredecessors(tuple.getNonNullableElement(1)).freeze();
         this.successor = tuple.isElementNull(2) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(2)).castTo(InternalNonHostIdentifier.class);
     }

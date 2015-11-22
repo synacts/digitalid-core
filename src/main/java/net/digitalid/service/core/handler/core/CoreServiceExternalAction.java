@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.ExternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -47,10 +47,10 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    protected CoreServiceExternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
+    protected CoreServiceExternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidParameterValueCombinationException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new InvalidEncodingException("The host of the subject and the recipient have to be the same for external actions of the core service."); }
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw InvalidParameterValueCombinationException.get("The host of the subject and the recipient have to be the same for external actions of the core service."); }
     }
     
     

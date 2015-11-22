@@ -13,7 +13,7 @@ import net.digitalid.service.core.concepts.certificate.CertificateIssue;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidActionException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidConceptPropertyActionException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
@@ -121,7 +121,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
         this.published = new BooleanWrapper(tuple.getNonNullableElement(1)).getValue();
         this.oldValue = tuple.isElementNotNull(2) ? AttributeValue.get(tuple.getNonNullableElement(2), true).checkMatches(attribute) : null;
         this.newValue = tuple.isElementNotNull(3) ? AttributeValue.get(tuple.getNonNullableElement(3), true).checkMatches(attribute) : null;
-        if (Objects.equals(oldValue, newValue)) { throw InvalidActionException.get(this); }
+        if (Objects.equals(oldValue, newValue)) { throw InvalidConceptPropertyActionException.get(this); }
     }
     
     @Pure

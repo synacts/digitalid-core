@@ -34,9 +34,9 @@ import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.RoleModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -447,7 +447,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         }
         this.credentials = credentials.freeze();
         this.lodged = lodged;
-        if (!CredentialsSignatureWrapper.areValid(credentials)) { throw InvalidValueException.get("credentials", credentials); }
+        if (!CredentialsSignatureWrapper.areValid(credentials)) { throw InvalidParameterValueException.get("credentials", credentials); }
         
         // Certificates
         if (!tuple.isElementNull(5)) {
@@ -458,7 +458,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         } else {
             this.certificates = null;
         }
-        if (!areValid(certificates, credentials)) { throw InvalidCombinationException.get("The certificates do not match the credentials of the signature."); }
+        if (!areValid(certificates, credentials)) { throw InvalidParameterValueCombinationException.get("The certificates do not match the credentials of the signature."); }
         
         // Value and public key
         this.value = IntegerWrapper.decodeNullable(tuple.getNullableElement(6));

@@ -19,7 +19,8 @@ import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.handler.Method;
@@ -35,6 +36,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Queries the given attributes from the given subject.
@@ -105,7 +107,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
         this.attributeTypes = new FreezableAttributeTypeSet(elements.getNonNullable(0)).freeze();
-        if (attributeTypes.isEmpty()) { throw InvalidValueException.get("attribute types", attributeTypes); }
+        if (attributeTypes.isEmpty()) { throw InvalidParameterValueException.get("attribute types", attributeTypes); }
         this.published = new BooleanWrapper(elements.getNonNullable(1)).getValue();
     }
     

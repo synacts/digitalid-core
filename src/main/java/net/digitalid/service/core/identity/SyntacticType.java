@@ -11,7 +11,7 @@ import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.InvalidDeclarationException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -121,7 +121,7 @@ public final class SyntacticType extends Type {
         assert !isLoaded() : "The type declaration is not loaded.";
         
         this.numberOfParameters = Int8Wrapper.decode(Cache.getStaleAttributeContent(this, null, PARAMETERS));
-        if (numberOfParameters < -1) { throw new InvalidEncodingException("The number of parameters has to be at least -1."); }
+        if (numberOfParameters < -1) { throw InvalidDeclarationException.get("The number of parameters has to be at least -1 but was " + numberOfParameters + ".", getAddress()); }
         setLoaded();
     }
     

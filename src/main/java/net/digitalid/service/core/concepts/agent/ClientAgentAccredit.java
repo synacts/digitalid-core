@@ -15,8 +15,8 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
@@ -121,18 +121,18 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(4);
         
         this.clientAgent = Agent.get(entity.castTo(NonHostEntity.class), elements.getNonNullable(0)).castTo(ClientAgent.class);
-        if (!clientAgent.isRemoved()) { throw InvalidCombinationException.get("The client agent has to be removed."); }
+        if (!clientAgent.isRemoved()) { throw InvalidParameterValueCombinationException.get("The client agent has to be removed."); }
         
         this.permissions = new FreezableAgentPermissions(elements.getNonNullable(1)).freeze();
         
-        if (!(signature instanceof ClientSignatureWrapper)) { throw InvalidCombinationException.get("The action to accredit a client agent has to be signed by a client."); }
+        if (!(signature instanceof ClientSignatureWrapper)) { throw InvalidParameterValueCombinationException.get("The action to accredit a client agent has to be signed by a client."); }
         this.commitment = ((ClientSignatureWrapper) signature).getCommitment();
         
         this.name = new StringWrapper(elements.getNonNullable(2)).getString();
-        if (!Client.isValidName(name)) { throw InvalidValueException.get("name", name); }
+        if (!Client.isValidName(name)) { throw InvalidParameterValueException.get("name", name); }
         
         this.password = new StringWrapper(elements.getNonNullable(3)).getString();
-        if (!Settings.isValid(password)) { throw InvalidValueException.get("password", password); }
+        if (!Settings.isValid(password)) { throw InvalidParameterValueException.get("password", password); }
     }
     
     @Pure

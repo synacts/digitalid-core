@@ -6,8 +6,8 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
@@ -119,7 +119,7 @@ abstract class DelegatingHostStorageImplementation extends DelegatingClientStora
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
             final @Nullable HostStorage substorage = substorages.get(selfcontained.getType());
-            if (substorage == null) { throw new InvalidEncodingException("There is no substorage for the block of type " + selfcontained.getType() + "."); } // TODO: Change to a PacketException?
+            if (substorage == null) { throw new PacketException(PacketErrorCode.CONTENT, "There is no substorage for the block of type " + selfcontained.getType() + "."); }
             substorage.importAll(host, selfcontained);
         }
     }

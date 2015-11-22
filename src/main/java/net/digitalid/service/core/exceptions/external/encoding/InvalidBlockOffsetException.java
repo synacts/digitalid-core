@@ -9,7 +9,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception is thrown when the offset within a block is invalid.
  */
 @Immutable
-public class InvalidOffsetException extends InvalidEncodingException {
+public class InvalidBlockOffsetException extends InvalidEncodingException {
     
     /* -------------------------------------------------- Offset -------------------------------------------------- */
     
@@ -65,13 +65,13 @@ public class InvalidOffsetException extends InvalidEncodingException {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new invalid offset exception with the given offset, length and block.
+     * Creates a new invalid block offset exception with the given offset, length and block.
      * 
      * @param offset the offset within the block.
      * @param length the length within the block.
      * @param block the block which is exceeded.
      */
-    protected InvalidOffsetException(int offset, int length, @Nonnull Block block) {
+    protected InvalidBlockOffsetException(int offset, int length, @Nonnull Block block) {
         super("The offset " + offset + " and length " + length + " exceed the block of length " + block.getLength() + ".");
         
         this.offset = offset;
@@ -80,17 +80,17 @@ public class InvalidOffsetException extends InvalidEncodingException {
     }
     
     /**
-     * Returns a new invalid offset exception with the given offset, length and block.
+     * Returns a new invalid block offset exception with the given offset, length and block.
      * 
      * @param offset the offset within the block.
      * @param length the length within the block.
      * @param block the block which is exceeded.
      * 
-     * @return a new invalid offset exception with the given offset, length and block.
+     * @return a new invalid block offset exception with the given offset, length and block.
      */
     @Pure
-    public static @Nonnull InvalidOffsetException get(int offset, int length, @Nonnull Block block) {
-        return new InvalidOffsetException(offset, length, block);
+    public static @Nonnull InvalidBlockOffsetException get(int offset, int length, @Nonnull Block block) {
+        return new InvalidBlockOffsetException(offset, length, block);
     }
     
 }

@@ -8,7 +8,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception is thrown when the length of a block is invalid.
  */
 @Immutable
-public class InvalidLengthException extends InvalidEncodingException {
+public class InvalidBlockLengthException extends InvalidEncodingException {
     
     /* -------------------------------------------------- Expected Length -------------------------------------------------- */
     
@@ -47,12 +47,12 @@ public class InvalidLengthException extends InvalidEncodingException {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new invalid length exception with the given expected and encountered lengths.
+     * Creates a new invalid block length exception with the given expected and encountered lengths.
      * 
      * @param expectedLength the expected length of the block.
      * @param encounteredLength the encountered length of the block.
      */
-    protected InvalidLengthException(int expectedLength, int encounteredLength) {
+    protected InvalidBlockLengthException(int expectedLength, int encounteredLength) {
         super("A block of length " + expectedLength + " was expected but a block of length " + encounteredLength + " was encountered.");
         
         this.expectedLength = expectedLength;
@@ -60,16 +60,16 @@ public class InvalidLengthException extends InvalidEncodingException {
     }
     
     /**
-     * Returns a new invalid length exception with the given expected and encountered lengths.
+     * Returns a new invalid block length exception with the given expected and encountered lengths.
      * 
      * @param expectedLength the expected length of the block.
      * @param encounteredLength the encountered length of the block.
      * 
-     * @return a new invalid length exception with the given expected and encountered lengths.
+     * @return a new invalid block length exception with the given expected and encountered lengths.
      */
     @Pure
-    public static @Nonnull InvalidLengthException get(int expectedLength, int encounteredLength) {
-        return new InvalidLengthException(expectedLength, encounteredLength);
+    public static @Nonnull InvalidBlockLengthException get(int expectedLength, int encounteredLength) {
+        return new InvalidBlockLengthException(expectedLength, encounteredLength);
     }
     
 }

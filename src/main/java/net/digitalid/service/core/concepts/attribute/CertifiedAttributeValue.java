@@ -9,7 +9,7 @@ import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.concepts.certificate.Certificate;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -96,10 +96,10 @@ public final class CertifiedAttributeValue extends AttributeValue {
         super(content);
         
         if (signature instanceof HostSignatureWrapper) { this.signature = (HostSignatureWrapper) signature; }
-        else { throw InvalidCombinationException.get("Certified attribute values have to be signed by a host."); }
+        else { throw InvalidParameterValueCombinationException.get("Certified attribute values have to be signed by a host."); }
         this.subject = this.signature.getNonNullableSubject().getIdentity();
         this.issuer = this.signature.getSigner().getIdentity().castTo(InternalNonHostIdentity.class);
-        if (!content.getType().isAttributeFor(subject.getCategory())) { throw InvalidCombinationException.get("The content has to be an attribute for the subject."); }
+        if (!content.getType().isAttributeFor(subject.getCategory())) { throw InvalidParameterValueCombinationException.get("The content has to be an attribute for the subject."); }
     }
     
     

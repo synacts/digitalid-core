@@ -10,6 +10,8 @@ import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.Identity;
@@ -22,6 +24,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class parses and represents expressions.
@@ -186,7 +189,7 @@ abstract class Expression extends NonHostConcept {
                 parenthesesCounter++;
                 continue;
             } else if (c == '(') {
-                if (parenthesesCounter == 0) { throw new InvalidEncodingException("The string '" + string + "' has more opening than closing parentheses."); }
+                if (parenthesesCounter == 0) { throw InvalidParameterValueException.get("opening parentheses", string); }
                 parenthesesCounter--;
                 continue;
             }
@@ -194,8 +197,8 @@ abstract class Expression extends NonHostConcept {
             if (parenthesesCounter == 0 && characters.contains(c)) { return i; }
         }
         
-        if (parenthesesCounter > 0) { throw new InvalidEncodingException("The string '" + string + "' has more closing than opening parentheses."); }
-        if (quotation) { throw new InvalidEncodingException("The string '" + string + "' has more closing than opening quotation marks."); }
+        if (parenthesesCounter > 0) { throw InvalidParameterValueException.get("closing parentheses", string); }
+        if (quotation) { throw InvalidParameterValueException.get("closing quotation marks", string); }
         
         return -1;
     }
@@ -267,11 +270,11 @@ abstract class Expression extends NonHostConcept {
             if (index != -1) {
                 @Nonnull String identifier = string.substring(0, index).trim();
                 if (isQuoted(identifier)) { identifier = removeQuotes(identifier); }
-                if (!IdentifierImplementation.isValid(identifier)) { throw new InvalidEncodingException("The string '" + string + "' does not start with a valid identifier."); }
+                if (!IdentifierImplementation.isValid(identifier)) { throw InvalidParameterValueException.get("identifier", identifier); }
                 final @Nonnull SemanticType type = IdentifierImplementation.get(identifier).getIdentity().castTo(SemanticType.class).checkIsAttributeType();
                 final @Nonnull String substring = string.substring(index + symbol.length(), string.length()).trim();
                 if (isQuoted(substring) || substring.matches("\\d+")) { return new RestrictionExpression(entity, type, substring, symbol); }
-                else { throw new InvalidEncodingException("The string '" + substring + "' is neither a quoted string nor a number."); }
+                else { throw InvalidParameterValueException.get("substring", substring); }
             }
         }
         
@@ -284,10 +287,10 @@ abstract class Expression extends NonHostConcept {
             final @Nonnull Identity identity = IdentifierImplementation.get(identifier).getIdentity();
             if (identity instanceof Person) { return new ContactExpression(entity, Contact.get(entity, (Person) identity)); }
             if (identity instanceof SemanticType) { return new RestrictionExpression(entity, ((SemanticType) identity).checkIsAttributeType(), null, null); }
-            throw new InvalidEncodingException("The string '" + string + "' is a valid identifier but neither a person nor a semantic type.");
+            throw InvalidParameterValueException.get("identity", identifier);
         }
         
-        throw new InvalidEncodingException("The string '" + string + "' could not be parsed.");
+        throw InvalidParameterValueException.get("string", string);
     }
     
 }

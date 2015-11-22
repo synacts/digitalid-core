@@ -15,7 +15,7 @@ import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.entity.annotations.Matching;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidLengthException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
@@ -133,7 +133,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         @Pure
         @Override
         public @Nonnull HashWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException {
-            if (block.getLength() != LENGTH) { throw InvalidLengthException.get(LENGTH, block.getLength()); }
+            if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
             
             return new HashWrapper(block.getType(), new BigInteger(1, block.getBytes()));
         }

@@ -6,8 +6,7 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.concepts.agent.Agent;
-import net.digitalid.service.core.storage.ClientModule;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -19,12 +18,14 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.client.Client;
+import net.digitalid.service.core.storage.ClientModule;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class provides database access to the {@link Role roles} of the core service.
@@ -107,7 +108,7 @@ public final class RoleModule {
                 final long agentNumber = resultSet.getLong(4);
                 if (relation == null && recipient == null) { return NativeRole.get(client, number, issuer, agentNumber); }
                 if (relation != null && recipient != null) { return NonNativeRole.get(client, number, issuer, relation, recipient, agentNumber); }
-                else { throw new InvalidEncodingException("The relation and the recipient have to be either both null or non-null."); }
+                else { throw InvalidParameterValueCombinationException.get("The relation and the recipient have to be either both null or non-null."); }
             } else { throw new SQLException("The role of the client '" + client + "' with the number" + number + " could not be found."); }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);
@@ -207,7 +208,7 @@ public final class RoleModule {
                 final long agentNumber = resultSet.getLong(4);
                 if (relation == null && recipient == null) { return NativeRole.get(client, number, person, agentNumber); }
                 if (relation != null && recipient != null) { return NonNativeRole.get(client, number, person, relation, recipient, agentNumber); }
-                else { throw new InvalidEncodingException("The relation and the recipient have to be either both null or non-null."); }
+                else { throw InvalidParameterValueCombinationException.get("The relation and the recipient have to be either both null or non-null."); }
             } else { throw new PacketException(PacketErrorCode.IDENTIFIER, "No role for the person " + person.getAddress() + " could be found."); }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);

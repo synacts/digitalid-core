@@ -9,7 +9,7 @@ import net.digitalid.utility.system.auxiliary.StringUtility;
  * This exception is thrown when a collection contains less elements than expected.
  */
 @Immutable
-public class InvalidSizeException extends InvalidEncodingException {
+public class InvalidCollectionSizeException extends InvalidEncodingException {
     
     /* -------------------------------------------------- Expected Size -------------------------------------------------- */
     
@@ -48,12 +48,12 @@ public class InvalidSizeException extends InvalidEncodingException {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new invalid size exception with the given expected and encountered sizes.
+     * Creates a new invalid collection size exception with the given expected and encountered sizes.
      * 
      * @param expectedSize the expected size of the collection.
      * @param encounteredSize the encountered size of the collection.
      */
-    protected InvalidSizeException(int expectedSize, int encounteredSize) {
+    protected InvalidCollectionSizeException(int expectedSize, int encounteredSize) {
         super("A collection should contain at least " + StringUtility.prependWithNumber(expectedSize, "element") + " but contains only " + StringUtility.prependWithNumber(encounteredSize, "element") + ".");
         
         this.expectedSize = expectedSize;
@@ -61,16 +61,16 @@ public class InvalidSizeException extends InvalidEncodingException {
     }
     
     /**
-     * Returns a new invalid size exception with the given expected and encountered sizes.
+     * Returns a new invalid collection size exception with the given expected and encountered sizes.
      * 
      * @param expectedSize the expected size of the collection.
      * @param encounteredSize the encountered size of the collection.
      * 
-     * @return a new invalid size exception with the given expected and encountered sizes.
+     * @return a new invalid collection size exception with the given expected and encountered sizes.
      */
     @Pure
-    public static @Nonnull InvalidSizeException get(int expectedSize, int encounteredSize) {
-        return new InvalidSizeException(expectedSize, encounteredSize);
+    public static @Nonnull InvalidCollectionSizeException get(int expectedSize, int encounteredSize) {
+        return new InvalidCollectionSizeException(expectedSize, encounteredSize);
     }
     
 }

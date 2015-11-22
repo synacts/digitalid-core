@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
 import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.resolution.IdentityReply;
@@ -51,10 +51,10 @@ public abstract class QueryReply extends Reply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    protected QueryReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
+    protected QueryReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidOperationException {
         super(entity, signature, number);
         
-        if (isOnHost()) { throw new InvalidEncodingException("Query replies are never decoded on hosts."); }
+        if (isOnHost()) { throw InvalidOperationException.get("Query replies are never decoded on hosts."); }
     }
     
 }

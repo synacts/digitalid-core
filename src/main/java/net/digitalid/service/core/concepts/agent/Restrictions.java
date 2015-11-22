@@ -17,7 +17,7 @@ import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -357,7 +357,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     public @Nonnull Restrictions checkMatch(@Nonnull Agent agent) throws InvalidEncodingException {
-        if (!match(agent)) { throw InvalidCombinationException.get("The restrictions do not match the given agent."); }
+        if (!match(agent)) { throw InvalidParameterValueCombinationException.get("The restrictions do not match the given agent."); }
         return this;
     }
     
@@ -473,7 +473,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
             final @Nullable Context context = Context.XDF_CONVERTER.decodeNullable(entity, tuple.getNullableElement(3));
             final @Nullable Contact contact = Contact.XDF_CONVERTER.decodeNullable(entity, tuple.getNullableElement(4));
             
-            if (context != null && contact != null) { throw InvalidCombinationException.get("Both the context and the contact are non-null."); }
+            if (context != null && contact != null) { throw InvalidParameterValueCombinationException.get("Both the context and the contact are non-null."); }
             
             return new Restrictions(client, role, writing, context, contact);
         }

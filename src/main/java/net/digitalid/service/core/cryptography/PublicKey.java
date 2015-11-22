@@ -10,7 +10,7 @@ import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -636,7 +636,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
             final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
             final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
             
-            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO)).getHash())) { throw InvalidCombinationException.get("The proof that au, ai, av and ao are in the subgroup of ab is invalid."); }
+            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO)).getHash())) { throw InvalidParameterValueCombinationException.get("The proof that au, ai, av and ao are in the subgroup of ab is invalid."); }
             
             return new PublicKey(compositeGroup, e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup, g, y, zPlus1);
         }

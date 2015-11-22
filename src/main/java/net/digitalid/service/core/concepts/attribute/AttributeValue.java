@@ -14,8 +14,8 @@ import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.castable.CastableObject;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyParameterValueException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -152,11 +152,11 @@ public abstract class AttributeValue extends CastableObject implements Castable,
      * 
      * @return this attribute value.
      * 
-     * @throws InvalidCombinationException otherwise.
+     * @throws InvalidParameterValueCombinationException otherwise.
      */
     @Pure
-    public final @Nonnull AttributeValue checkMatches(@Nonnull Attribute attribute) throws InvalidCombinationException {
-        if (!matches(attribute)) { throw InvalidCombinationException.get("This value does not match the given attribute."); }
+    public final @Nonnull AttributeValue checkMatches(@Nonnull Attribute attribute) throws InvalidParameterValueCombinationException {
+        if (!matches(attribute)) { throw InvalidParameterValueCombinationException.get("This value does not match the given attribute."); }
         return this;
     }
     
@@ -167,15 +167,15 @@ public abstract class AttributeValue extends CastableObject implements Castable,
      * 
      * @return this attribute value.
      * 
-     * @throws InvalidReplyException otherwise.
+     * @throws InvalidReplyParameterValueException otherwise.
      * 
      * @ensure getContent().getType().equals(type) : "The content matches the given type.";
      */
     @Pure
-    public final @Nonnull AttributeValue checkContentType(@Nonnull @AttributeType SemanticType type) throws InvalidReplyException {
+    public final @Nonnull AttributeValue checkContentType(@Nonnull @AttributeType SemanticType type) throws InvalidReplyParameterValueException {
         assert type.isAttributeType() : "The type is an attribute type.";
         
-        if (!content.getType().equals(type)) { throw InvalidReplyException.get(null, "content type", type.getAddress(), content.getType().getAddress()); }
+        if (!content.getType().equals(type)) { throw InvalidReplyParameterValueException.get(null, "content type", type.getAddress(), content.getType().getAddress()); }
         return this;
     }
     

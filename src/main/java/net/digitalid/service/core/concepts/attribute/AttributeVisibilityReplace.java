@@ -12,7 +12,7 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidActionException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidConceptPropertyActionException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.handler.Action;
@@ -119,7 +119,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
         this.attribute = Attribute.get(entity, IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().castTo(SemanticType.class).checkIsAttributeFor(entity));
         this.oldVisibility = tuple.isElementNotNull(1) ? new PassiveExpression(nonHostEntity, tuple.getNonNullableElement(1)) : null;
         this.newVisibility = tuple.isElementNotNull(2) ? new PassiveExpression(nonHostEntity, tuple.getNonNullableElement(2)) : null;
-        if (Objects.equals(oldVisibility, newVisibility)) { throw InvalidActionException.get(this); }
+        if (Objects.equals(oldVisibility, newVisibility)) { throw InvalidConceptPropertyActionException.get(this); }
     }
     
     @Pure

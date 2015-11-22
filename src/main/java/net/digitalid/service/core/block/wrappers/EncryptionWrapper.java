@@ -18,7 +18,7 @@ import net.digitalid.service.core.cryptography.PrivateKey;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -276,7 +276,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         if (tuple.isElementNull(1)) {
             // The encryption is part of a response.
             this.recipient = null;
-            if (encryptedKey != null) { throw InvalidCombinationException.get("A response may not include an encrypted symmetric key."); }
+            if (encryptedKey != null) { throw InvalidParameterValueCombinationException.get("A response may not include an encrypted symmetric key."); }
             if (initializationVector != null) {
                 if (symmetricKey == null) { throw InvalidOperationException.get("A symmetric key is needed in order to decrypt the response."); }
                 this.symmetricKey = symmetricKey;
@@ -288,13 +288,13 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
             // The encryption is part of a request.
             this.recipient = HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
             if (!Server.hasHost(recipient)) { throw InvalidOperationException.get(recipient + " does not run on this server."); }
-            if (symmetricKey != null) { throw InvalidCombinationException.get("A response may not include a recipient."); }
+            if (symmetricKey != null) { throw InvalidParameterValueCombinationException.get("A response may not include a recipient."); }
             if (encryptedKey != null) {
-                if (initializationVector == null) { throw InvalidCombinationException.get("An initialization vector is needed to decrypt an element."); }
+                if (initializationVector == null) { throw InvalidParameterValueCombinationException.get("An initialization vector is needed to decrypt an element."); }
                 final @Nonnull PrivateKey privateKey = Server.getHost(recipient).getPrivateKeyChain().getKey(time);
                 this.symmetricKey = decrypt(privateKey, encryptedKey);
             } else {
-                if (initializationVector != null) { throw InvalidCombinationException.get("If a request is encrypted, a symmetric key has to be provided."); }
+                if (initializationVector != null) { throw InvalidParameterValueCombinationException.get("If a request is encrypted, a symmetric key has to be provided."); }
                 this.symmetricKey = null;
             }
         }

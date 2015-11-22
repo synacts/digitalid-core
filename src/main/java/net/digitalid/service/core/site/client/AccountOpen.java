@@ -23,9 +23,10 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
@@ -49,6 +50,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -134,16 +136,16 @@ public final class AccountOpen extends Action {
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
         
         this.category = Category.get(elements.getNonNullable(0));
-        if (!category.isInternalNonHostIdentity()) { throw new InvalidEncodingException("The category has to denote an internal non-host identity."); }
+        if (!category.isInternalNonHostIdentity()) { throw InvalidOperationException.get("The category has to denote an internal non-host identity but was " + category.name() + "."); }
         
         this.agentNumber = new Int64Wrapper(elements.getNonNullable(1)).getValue();
         
-        if (!(signature instanceof ClientSignatureWrapper)) { throw new InvalidEncodingException("The action to open an account has to be signed by a client."); }
+        if (!(signature instanceof ClientSignatureWrapper)) { throw InvalidOperationException.get("The action to open an account has to be signed by a client."); }
         this.commitment = ((ClientSignatureWrapper) signature).getCommitment();
         this.secret = null;
         
         this.name = new StringWrapper(elements.getNonNullable(2)).getString();
-        if (!Client.isValidName(name)) { throw new InvalidEncodingException("The name '" + name + "' is invalid."); }
+        if (!Client.isValidName(name)) { throw InvalidParameterValueException.get("name", name); }
     }
     
     @Pure

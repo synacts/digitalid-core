@@ -15,7 +15,9 @@ import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.InvalidDeclarationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -150,23 +152,23 @@ public final class SemanticType extends Type {
     void load() throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert !isLoaded() : "The type declaration is not loaded.";
         
-        if (categories != null) { throw new InvalidEncodingException("The semantic base may not be circular."); }
+        if (categories != null) { throw InvalidDeclarationException.get("The semantic base may not be circular.", getAddress()); }
         
         Cache.getAttributeValues(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(Cache.getStaleAttributeContent(this, null, CATEGORIES)).getElementsNotNull();
         final @Nonnull FreezableList<Category> categories = new FreezableArrayList<>(elements.size());
         for (final @Nonnull Block element : elements) { categories.add(Category.get(element)); }
-        if (!categories.containsDuplicates()) { throw new InvalidEncodingException("The list of categories may not contain duplicates."); }
+        if (!categories.containsDuplicates()) { throw InvalidParameterValueException.get("categories", categories); }
         this.categories = categories.freeze();
         
         try {
             this.cachingPeriod = new Time(Cache.getStaleAttributeContent(this, null, CACHING));
-            if (cachingPeriod.isNegative() || cachingPeriod.isGreaterThan(Time.TROPICAL_YEAR)) { throw new InvalidEncodingException("The caching period must be null or non-negative and less than a year."); }
+            if (cachingPeriod.isNegative() || cachingPeriod.isGreaterThan(Time.TROPICAL_YEAR)) { throw InvalidParameterValueException.get("caching period", cachingPeriod); }
         } catch (@Nonnull AttributeNotFoundException exception) {
             this.cachingPeriod = null;
         }
-        if (!categories.isEmpty() == (cachingPeriod == null)) { throw new InvalidEncodingException("If (and only if) this semantic type can be used as an attribute, the caching period may not be null."); }
+        if (!categories.isEmpty() == (cachingPeriod == null)) { throw InvalidParameterValueCombinationException.get("If (and only if) this semantic type can be used as an attribute, the caching period may not be null."); }
         
         try {
             this.semanticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().castTo(SemanticType.class);
@@ -178,8 +180,8 @@ public final class SemanticType extends Type {
             final @Nonnull ReadOnlyList<Block> list = new ListWrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getElementsNotNull();
             final @Nonnull FreezableList<SemanticType> parameters = new FreezableArrayList<>(list.size());
             for (final @Nonnull Block element : elements) { parameters.add(Mapper.getIdentity(IdentifierImplementation.create(element)).castTo(SemanticType.class)); }
-            if (!parameters.containsDuplicates()) { throw new InvalidEncodingException("The list of parameters may not contain duplicates."); }
-            if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) { throw new InvalidEncodingException("The number of required parameters must either be variable or match the given parameters."); }
+            if (!parameters.containsDuplicates()) { throw InvalidParameterValueException.get("parameters", parameters); }
+            if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) { throw InvalidParameterValueCombinationException.get("The number of required parameters must either be variable or match the given parameters."); }
             this.parameters = parameters.freeze();
             setLoaded();
             for (final @Nonnull SemanticType parameter : parameters) { parameter.ensureLoaded(); }
@@ -456,12 +458,12 @@ public final class SemanticType extends Type {
      * 
      * @return this semantic type.
      * 
-     * @throws InvalidEncodingException if this is not the case.
+     * @throws InvalidParameterValueException if this is not the case.
      */
     @Pure
     @LoadedRecipient
-    public @Nonnull SemanticType checkIsAttributeType() throws InvalidEncodingException {
-        if (!isAttributeType()) { throw new InvalidEncodingException(getAddress() + " is not an attribute type."); }
+    public @Nonnull SemanticType checkIsAttributeType() throws InvalidParameterValueException {
+        if (!isAttributeType()) { throw InvalidParameterValueException.get("attribute type", this); }
         return this;
     }
     
@@ -503,12 +505,12 @@ public final class SemanticType extends Type {
      * 
      * @return this semantic type.
      * 
-     * @throws InvalidEncodingException if this is not the case.
+     * @throws InvalidParameterValueCombinationException if this is not the case.
      */
     @Pure
     @LoadedRecipient
-    public @Nonnull SemanticType checkIsAttributeFor(@Nonnull Entity entity) throws InvalidEncodingException {
-        if (!isAttributeFor(entity)) { throw new InvalidEncodingException(getAddress() + " is not an attribute for the given entity."); }
+    public @Nonnull SemanticType checkIsAttributeFor(@Nonnull Entity entity) throws InvalidParameterValueCombinationException {
+        if (!isAttributeFor(entity)) { throw InvalidParameterValueCombinationException.get(getAddress() + " is not an attribute for the entity " + entity.getIdentity().getAddress() + "."); }
         return this;
     }
     
@@ -560,12 +562,12 @@ public final class SemanticType extends Type {
      * 
      * @return this semantic type.
      * 
-     * @throws InvalidEncodingException if this is not the case.
+     * @throws InvalidParameterValueException if this is not the case.
      */
     @Pure
     @LoadedRecipient
-    public @Nonnull SemanticType checkIsRoleType() throws InvalidEncodingException {
-        if (!isRoleType()) { throw new InvalidEncodingException(getAddress() + " is not a role type."); }
+    public @Nonnull SemanticType checkIsRoleType() throws InvalidParameterValueException {
+        if (!isRoleType()) { throw InvalidParameterValueException.get("role type", this); }
         return this;
     }
     

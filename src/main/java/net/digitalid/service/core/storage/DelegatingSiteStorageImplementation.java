@@ -10,8 +10,8 @@ import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
@@ -126,7 +126,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
             final @Nullable SiteStorage substorage = substorages.get(selfcontained.getType());
-            if (substorage == null) { throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + "."); } // TODO: Change to a PacketException?
+            if (substorage == null) { throw new PacketException(PacketErrorCode.CONTENT, "There is no table for the block of type " + selfcontained.getType() + "."); }
             substorage.addState(entity, selfcontained);
         }
     }

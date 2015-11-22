@@ -13,7 +13,7 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.annotations.Matching;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -319,7 +319,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
             final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrder.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(4));
             final @Nonnull Exponent x = Exponent.get(elements.getNonNullable(5));
             
-            if (!compositeGroup.getModulus().equals(p.multiply(q))) { throw InvalidCombinationException.get("The modulus of the composite group has to be the product of p and q."); }
+            if (!compositeGroup.getModulus().equals(p.multiply(q))) { throw InvalidParameterValueCombinationException.get("The modulus of the composite group has to be the product of p and q."); }
             
             return new PrivateKey(compositeGroup, p, q, d, squareGroup, x);
         }

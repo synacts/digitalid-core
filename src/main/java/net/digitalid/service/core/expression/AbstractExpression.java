@@ -10,12 +10,14 @@ import net.digitalid.service.core.concept.NonHostConcept;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models abstract expressions.
@@ -44,7 +46,7 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
         super(entity);
         
         this.expression = Expression.parse(entity, string);
-        if (!isValid()) { throw new InvalidEncodingException("The expression '" + string + "' is invalid as " + getClass().getSimpleName() + "."); }
+        if (!isValid()) { throw InvalidParameterValueException.get("expression", string); }
     }
     
     /**

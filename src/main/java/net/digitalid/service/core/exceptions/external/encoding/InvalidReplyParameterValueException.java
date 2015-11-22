@@ -7,22 +7,22 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**
- * This exception is thrown when a reply does not match the corresponding query.
+ * This exception is thrown when a reply parameter does not match the corresponding query.
  */
 @Immutable
-public class InvalidReplyException extends InvalidEncodingException {
+public class InvalidReplyParameterValueException extends InvalidEncodingException {
     
     /* -------------------------------------------------- Reply -------------------------------------------------- */
     
     /**
-     * Stores the reply which does not match the corresponding query.
+     * Stores the reply whose parameter does not match the corresponding query.
      */
     private final @Nullable Reply reply;
     
     /**
-     * Returns the reply which does not match the corresponding query.
+     * Returns the reply whose parameter does not match the corresponding query.
      * 
-     * @return the reply which does not match the corresponding query.
+     * @return the reply whose parameter does not match the corresponding query.
      */
     @Pure
     public final @Nullable Reply getReply() {
@@ -83,14 +83,14 @@ public class InvalidReplyException extends InvalidEncodingException {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new invalid reply exception with the given parameters.
+     * Creates a new invalid reply parameter exception with the given parameters.
      * 
-     * @param reply the reply which does not match the corresponding query.
+     * @param reply the reply whose parameter does not match the corresponding query.
      * @param parameter the parameter whose value is different than expected.
      * @param expectedValue the expected value in the reply.
      * @param encounteredValue the encountered value in the reply.
      */
-    protected InvalidReplyException(@Nullable Reply reply, @Nonnull String parameter, @Nonnull Object expectedValue, @Nonnull Object encounteredValue) {
+    protected InvalidReplyParameterValueException(@Nullable Reply reply, @Nonnull String parameter, @Nonnull Object expectedValue, @Nonnull Object encounteredValue) {
         super("A reply" + (reply == null ? "" : " of the type '" + reply.getClass().getSimpleName() + "'" + (reply.hasEntity() ? " of the user " + reply.getEntityNotNull().getIdentity().getAddress() : "")) + " does not match the corresponding query. (The expected " + parameter + " was " + expectedValue + " but the encountered " + parameter + " was " + encounteredValue + ".");
         
         this.reply = reply;
@@ -100,18 +100,18 @@ public class InvalidReplyException extends InvalidEncodingException {
     }
     
     /**
-     * Returns a new invalid reply exception with the given parameters.
+     * Returns a new invalid reply parameter exception with the given parameters.
      * 
-     * @param reply the reply which does not match the corresponding query.
+     * @param reply the reply whose parameter does not match the corresponding query.
      * @param parameter the parameter whose value is different than expected.
      * @param expectedValue the expected value in the reply.
      * @param encounteredValue the encountered value in the reply.
      * 
-     * @return a new invalid reply exception with the given parameters.
+     * @return a new invalid reply parameter exception with the given parameters.
      */
     @Pure
-    public static @Nonnull InvalidReplyException get(@Nullable Reply reply, @Nonnull String parameter, @Nonnull Object expectedValue, @Nonnull Object encounteredValue) {
-        return new InvalidReplyException(reply, parameter, expectedValue, encounteredValue);
+    public static @Nonnull InvalidReplyParameterValueException get(@Nullable Reply reply, @Nonnull String parameter, @Nonnull Object expectedValue, @Nonnull Object encounteredValue) {
+        return new InvalidReplyParameterValueException(reply, parameter, expectedValue, encounteredValue);
     }
     
 }

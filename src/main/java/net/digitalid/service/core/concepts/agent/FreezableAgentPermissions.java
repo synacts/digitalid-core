@@ -13,7 +13,7 @@ import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidValueException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
@@ -136,7 +136,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
             put(type, new BooleanWrapper(subelements.getNonNullable(1)).getValue());
         }
         
-        if (!areValid()) { throw InvalidValueException.get("agent permissions", this); }
+        if (!areValid()) { throw InvalidParameterValueException.get("agent permissions", this); }
     }
     
     @Pure
@@ -197,8 +197,8 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @throws InvalidEncodingException if this is not the case.
      */
     @Pure
-    public @Nonnull FreezableAgentPermissions checkIsSingle() throws InvalidValueException {
-        if (!isSingle()) { throw InvalidValueException.get("agent permissions", this); }
+    public @Nonnull FreezableAgentPermissions checkIsSingle() throws InvalidParameterValueException {
+        if (!isSingle()) { throw InvalidParameterValueException.get("agent permissions", this); }
         return this;
     }
     
@@ -216,8 +216,8 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @throws InvalidEncodingException if this is not the case.
      */
     @Pure
-    public @Nonnull FreezableAgentPermissions checkAreEmptyOrSingle() throws InvalidValueException {
-        if (!areEmptyOrSingle()) { throw InvalidValueException.get("agent permissions", this); }
+    public @Nonnull FreezableAgentPermissions checkAreEmptyOrSingle() throws InvalidParameterValueException {
+        if (!areEmptyOrSingle()) { throw InvalidParameterValueException.get("agent permissions", this); }
         return this;
     }
     

@@ -9,7 +9,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception is thrown when the type of a block is invalid.
  */
 @Immutable
-public class InvalidTypeException extends InvalidEncodingException {
+public class InvalidBlockTypeException extends InvalidEncodingException {
     
     /* -------------------------------------------------- Expected Type -------------------------------------------------- */
     
@@ -48,12 +48,12 @@ public class InvalidTypeException extends InvalidEncodingException {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new invalid type exception with the given expected and encountered types.
+     * Creates a new invalid block type exception with the given expected and encountered types.
      * 
      * @param expectedType the expected type of the block.
      * @param encounteredType the encountered type of the block.
      */
-    protected InvalidTypeException(@Nonnull SemanticType expectedType, @Nonnull SemanticType encounteredType) {
+    protected InvalidBlockTypeException(@Nonnull SemanticType expectedType, @Nonnull SemanticType encounteredType) {
         super("A block whose type is based on " + expectedType.getAddress() + " was expected but a block of type " + encounteredType.getAddress() + " was encountered.");
         
         this.expectedType = expectedType;
@@ -61,16 +61,16 @@ public class InvalidTypeException extends InvalidEncodingException {
     }
     
     /**
-     * Returns a new invalid type exception with the given expected and encountered types.
+     * Returns a new invalid block type exception with the given expected and encountered types.
      * 
      * @param expectedType the expected type of the block.
      * @param encounteredType the encountered type of the block.
      * 
-     * @return a new invalid type exception with the given expected and encountered types.
+     * @return a new invalid block type exception with the given expected and encountered types.
      */
     @Pure
-    public static @Nonnull InvalidTypeException get(@Nonnull SemanticType expectedType, @Nonnull SemanticType encounteredType) {
-        return new InvalidTypeException(expectedType, encounteredType);
+    public static @Nonnull InvalidBlockTypeException get(@Nonnull SemanticType expectedType, @Nonnull SemanticType encounteredType) {
+        return new InvalidBlockTypeException(expectedType, encounteredType);
     }
     
 }

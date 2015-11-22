@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.ExternalQuery;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -46,10 +46,10 @@ public abstract class CoreServiceExternalQuery extends ExternalQuery {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    protected CoreServiceExternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
+    protected CoreServiceExternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidParameterValueCombinationException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new InvalidEncodingException("The host of the subject and the recipient have to be the same for external queries of the core service."); }
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw InvalidParameterValueCombinationException.get("The host of the subject and the recipient have to be the same for external queries of the core service."); }
     }
     
     
