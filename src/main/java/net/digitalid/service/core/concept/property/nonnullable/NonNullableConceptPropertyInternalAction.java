@@ -214,12 +214,12 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @Pure
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull NonNullableConceptPropertyInternalAction<V, C, E> internalAction) {
-            return TupleWrapper.encode(internalAction.getType(), internalAction.property.getConcept(), ConvertToXDF.nonNullable(internalAction.oldTime, OLD_TIME), ConvertToXDF.nonNullable(internalAction.newTime, NEW_TIME), internalAction.setup.getValueConverters().getXDFConverter().encodeNonNullable(internalAction.oldValue).setType(internalAction.setup.getOldValueType()), internalAction.setup.getValueConverters().getXDFConverter().encodeNonNullable(internalAction.newValue).setType(internalAction.setup.getNewValueType()));
+            return TupleWrapper.encode(internalAction.getType(), internalAction.property.getConcept(), ConvertToXDF.nonNullable(OLD_TIME, internalAction.oldTime), ConvertToXDF.nonNullable(NEW_TIME, internalAction.newTime), internalAction.setup.getValueConverters().getXDFConverter().encodeNonNullable(internalAction.oldValue).setType(internalAction.setup.getOldValueType()), internalAction.setup.getValueConverters().getXDFConverter().encodeNonNullable(internalAction.newValue).setType(internalAction.setup.getNewValueType()));
         }
         
         @Pure
         @Override
-        public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> decodeNonNullable(@Nonnull ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>> pair, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> decodeNonNullable(@Nonnull ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>> pair, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
             
             final E entity = pair.getNonNullableElement0();

@@ -317,7 +317,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
         final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
         
-        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO));
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(ConvertToXDF.nonNullable(PublicKey.TU, tu), ConvertToXDF.nonNullable(PublicKey.TI, ti), ConvertToXDF.nonNullable(PublicKey.TV, tv), ConvertToXDF.nonNullable(PublicKey.TO, to));
         return t.getValue().equals(TupleWrapper.encode(TUPLE, elements.freeze()).getHash());
     }
     
@@ -589,22 +589,22 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull PublicKey publicKey) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(16);
-            elements.set(0, ConvertToXDF.nonNullable(publicKey.compositeGroup, COMPOSITE_GROUP));
-            elements.set(1, ConvertToXDF.nonNullable(publicKey.e, E));
-            elements.set(2, ConvertToXDF.nonNullable(publicKey.ab, AB));
-            elements.set(3, ConvertToXDF.nonNullable(publicKey.au, AU));
-            elements.set(4, ConvertToXDF.nonNullable(publicKey.ai, AI));
-            elements.set(5, ConvertToXDF.nonNullable(publicKey.av, AV));
-            elements.set(6, ConvertToXDF.nonNullable(publicKey.ao, AO));
-            elements.set(7, ConvertToXDF.nonNullable(publicKey.t, T));
-            elements.set(8, ConvertToXDF.nonNullable(publicKey.su, SU));
-            elements.set(9, ConvertToXDF.nonNullable(publicKey.si, SI));
-            elements.set(10, ConvertToXDF.nonNullable(publicKey.sv, SV));
-            elements.set(11, ConvertToXDF.nonNullable(publicKey.so, SO));
-            elements.set(12, ConvertToXDF.nonNullable(publicKey.squareGroup, SQUARE_GROUP));
-            elements.set(13, ConvertToXDF.nonNullable(publicKey.g, G));
-            elements.set(14, ConvertToXDF.nonNullable(publicKey.y, Y));
-            elements.set(15, ConvertToXDF.nonNullable(publicKey.zPlus1, Z));
+            elements.set(0, ConvertToXDF.nonNullable(COMPOSITE_GROUP, publicKey.compositeGroup));
+            elements.set(1, ConvertToXDF.nonNullable(E, publicKey.e));
+            elements.set(2, ConvertToXDF.nonNullable(AB, publicKey.ab));
+            elements.set(3, ConvertToXDF.nonNullable(AU, publicKey.au));
+            elements.set(4, ConvertToXDF.nonNullable(AI, publicKey.ai));
+            elements.set(5, ConvertToXDF.nonNullable(AV, publicKey.av));
+            elements.set(6, ConvertToXDF.nonNullable(AO, publicKey.ao));
+            elements.set(7, ConvertToXDF.nonNullable(T, publicKey.t));
+            elements.set(8, ConvertToXDF.nonNullable(SU, publicKey.su));
+            elements.set(9, ConvertToXDF.nonNullable(SI, publicKey.si));
+            elements.set(10, ConvertToXDF.nonNullable(SV, publicKey.sv));
+            elements.set(11, ConvertToXDF.nonNullable(SO, publicKey.so));
+            elements.set(12, ConvertToXDF.nonNullable(SQUARE_GROUP, publicKey.squareGroup));
+            elements.set(13, ConvertToXDF.nonNullable(G, publicKey.g));
+            elements.set(14, ConvertToXDF.nonNullable(Y, publicKey.y));
+            elements.set(15, ConvertToXDF.nonNullable(Z, publicKey.zPlus1));
             return TupleWrapper.encode(TYPE, elements.freeze());
         }
         
@@ -636,7 +636,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
             final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
             final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
             
-            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO)).getHash())) { throw InvalidParameterValueCombinationException.get("The proof that au, ai, av and ao are in the subgroup of ab is invalid."); }
+            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, ConvertToXDF.nonNullable(PublicKey.TU, tu), ConvertToXDF.nonNullable(PublicKey.TI, ti), ConvertToXDF.nonNullable(PublicKey.TV, tv), ConvertToXDF.nonNullable(PublicKey.TO, to)).getHash())) { throw InvalidParameterValueCombinationException.get("The proof that au, ai, av and ao are in the subgroup of ab is invalid."); }
             
             return new PublicKey(compositeGroup, e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup, g, y, zPlus1);
         }

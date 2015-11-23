@@ -17,8 +17,8 @@ import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -453,11 +453,11 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull Restrictions restrictions) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
-            elements.set(0, BooleanWrapper.encode(restrictions.client, CLIENT_TYPE));
-            elements.set(1, BooleanWrapper.encode(restrictions.role, ROLE_TYPE));
-            elements.set(2, BooleanWrapper.encode(restrictions.writing, WRITING_TYPE));
-            elements.set(3, ConvertToXDF.nullable(restrictions.context, CONTEXT_TYPE));
-            elements.set(4, ConvertToXDF.nullable(restrictions.contact, CONTACT_TYPE));
+            elements.set(0, BooleanWrapper.encode(CLIENT_TYPE, restrictions.client));
+            elements.set(1, BooleanWrapper.encode(ROLE_TYPE, restrictions.role));
+            elements.set(2, BooleanWrapper.encode(WRITING_TYPE, restrictions.writing));
+            elements.set(3, ConvertToXDF.nullable(CONTEXT_TYPE, restrictions.context));
+            elements.set(4, ConvertToXDF.nullable(CONTACT_TYPE, restrictions.contact));
             return TupleWrapper.encode(TYPE, elements.freeze());
         }
         

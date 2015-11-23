@@ -102,7 +102,7 @@ public final class KeyPair {
         final @Nonnull Exponent ro = compositeGroup.getRandomExponent();
         final @Nonnull Element to = ab.pow(ro);
         
-        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO));
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(ConvertToXDF.nonNullable(PublicKey.TU, tu), ConvertToXDF.nonNullable(PublicKey.TI, ti), ConvertToXDF.nonNullable(PublicKey.TV, tv), ConvertToXDF.nonNullable(PublicKey.TO, to));
         final @Nonnull Exponent t = Exponent.get(TupleWrapper.encode(PublicKey.TUPLE, elements.freeze()).getHash());
         
         final @Nonnull Exponent su = ru.subtract(t.multiply(eu));

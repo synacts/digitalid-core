@@ -297,12 +297,12 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull PrivateKey privateKey) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(6);
-            elements.set(0, ConvertToXDF.nonNullable(privateKey.compositeGroup, COMPOSITE_GROUP));
+            elements.set(0, ConvertToXDF.nonNullable(COMPOSITE_GROUP, privateKey.compositeGroup));
             elements.set(1, IntegerWrapper.encodeNonNullable(P, privateKey.p));
             elements.set(2, IntegerWrapper.encodeNonNullable(Q, privateKey.q));
-            elements.set(3, ConvertToXDF.nonNullable(privateKey.d, D));
-            elements.set(4, ConvertToXDF.nonNullable(privateKey.squareGroup, SQUARE_GROUP));
-            elements.set(5, ConvertToXDF.nonNullable(privateKey.x, X));
+            elements.set(3, ConvertToXDF.nonNullable(D, privateKey.d));
+            elements.set(4, ConvertToXDF.nonNullable(SQUARE_GROUP, privateKey.squareGroup));
+            elements.set(5, ConvertToXDF.nonNullable(X, privateKey.x));
             return TupleWrapper.encode(TYPE, elements.freeze());
         }
         

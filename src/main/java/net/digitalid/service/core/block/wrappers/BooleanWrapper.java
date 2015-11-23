@@ -150,13 +150,13 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
     /**
      * Encodes the given value into a new block of the given type.
      * 
-     * @param value the value to encode into the new block.
      * @param type the semantic type of the new block.
+     * @param value the value to encode into the new block.
      * 
      * @return a new block containing the given value.
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(boolean value, @Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type) {
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type, boolean value) {
         return XDF_CONVERTER.encodeNonNullable(new BooleanWrapper(type, value));
     }
     

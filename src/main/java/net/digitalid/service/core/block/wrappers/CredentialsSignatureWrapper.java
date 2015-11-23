@@ -903,7 +903,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         final @Nonnull Exponent t = Exponent.get(elements.getNonNullable(0).getHash().xor(ListWrapper.encode(ARRAYS, ts.freeze()).getHash()).xor(tf));
         
         final @Nonnull FreezableArray<Block> signature = FreezableArray.get(8);
-        signature.set(0, ConvertToXDF.nonNullable(t, T));
+        signature.set(0, ConvertToXDF.nonNullable(T, t));
         signature.set(1, ConvertToXDF.nonNullable(ru.subtract(t.multiply(u)), SU));
         if (rv != null) {
             signature.set(3, ConvertToXDF.nonNullable(rv.subtract(t.multiply(v)), SV));
@@ -944,7 +944,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         if (value != null) {
             assert f != null && rb != null : "If the credential is shortened, f and rb are not null (see the code above).";
-            signature.set(6, ConvertToXDF.nonNullable(f, F_PRIME));
+            signature.set(6, ConvertToXDF.nonNullable(F_PRIME, f));
             signature.set(7, ConvertToXDF.nonNullable(rb.subtract(t.multiply(Exponent.get(value))), SB_PRIME));
         }
         

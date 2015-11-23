@@ -43,15 +43,15 @@ public final class ConvertToXDF {
     /**
      * Returns the given non-nullable object as a block of the given type.
      * 
-     * @param object the non-nullable object to be converted to a block.
      * @param type the type which is to be set for the returned block.
+     * @param object the non-nullable object to be converted to a block.
      * 
      * @return the given non-nullable object as a block of the given type.
      * 
      * @require type.isBasedOn(object.getXDFConverter().getType()) : "The given type is based on the type of the object object.";
      */
     @Pure
-    public static @Nonnull <O extends XDF<O, ?>> Block nonNullable(@Nonnull O object, @Nonnull @Loaded SemanticType type) {
+    public static @Nonnull <O extends XDF<O, ?>> Block nonNullable(@Nonnull @Loaded SemanticType type, @Nonnull O object) {
         return nonNullable(object).setType(type);
     }
     
