@@ -216,8 +216,8 @@ final @Nonnull Block block = Cache.getFreshAttributeContent(identifier.getIdenti
 Digital ID uses an own encoding which is called the Extensible Data Format (XDF). Values are wrapped into blocks and can be unwrapped as follows:
 
 ```java
-final @Nonnull String string = new StringWrapper(block).getString(); // Decoding
-final @Nonnull Block block = new StringWrapper(AttributeType.NAME, string).toBlock(); // Encoding
+final @Nonnull String string = StringWrapper.decodeNonNullable(block); // Decoding
+final @Nonnull Block block = StringWrapper.encodeNonNullable(AttributeType.NAME, string); // Encoding
 ```
 
 Please note that the syntax might change in a [future release](#roadmap).

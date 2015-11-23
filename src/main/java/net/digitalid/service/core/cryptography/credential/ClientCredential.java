@@ -239,7 +239,7 @@ public final class ClientCredential extends Credential {
      */
     public @Nonnull ClientCredential getRandomizedCredential() {
         try {
-            final @Nonnull Exponent r = new Exponent(new BigInteger(Parameters.BLINDING_EXPONENT - Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
+            final @Nonnull Exponent r = Exponent.get(new BigInteger(Parameters.BLINDING_EXPONENT - Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
             return new ClientCredential(getPublicKey(), getIssuer(), getIssuance(), getRandomizedPermissions(), getRole(), getAttributeContent(), getRestrictions(), c.multiply(getPublicKey().getAb().pow(r)), e, b.subtract(e.multiply(r)), u, getI(), v, oneTime);
         } catch (@Nonnull InvalidSignatureException exception) {
             throw new ShouldNeverHappenError("The randomization of a client credential should yield another valid client credential.", exception);

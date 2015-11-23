@@ -116,9 +116,9 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
     private AttributeValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity.castTo(NonHostEntity.class), signature, recipient);
         
-        final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.attribute = Attribute.get(entity, IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().castTo(SemanticType.class).checkIsAttributeFor(entity));
-        this.published = new BooleanWrapper(tuple.getNonNullableElement(1)).getValue();
+        final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
+        this.attribute = Attribute.get(entity, IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0)).getIdentity().castTo(SemanticType.class).checkIsAttributeFor(entity));
+        this.published = BooleanWrapper.decode(tuple.getNonNullableElement(1));
         this.oldValue = tuple.isElementNotNull(2) ? AttributeValue.get(tuple.getNonNullableElement(2), true).checkMatches(attribute) : null;
         this.newValue = tuple.isElementNotNull(3) ? AttributeValue.get(tuple.getNonNullableElement(3), true).checkMatches(attribute) : null;
         if (Objects.equals(oldValue, newValue)) { throw InvalidConceptPropertyActionException.get(this); }
@@ -127,7 +127,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, attribute.getType().toBlock(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published).toBlock(), Block.toBlock(OLD_VALUE, oldValue), Block.toBlock(NEW_VALUE, newValue)).toBlock();
+        return TupleWrapper.encode(TYPE, attribute.getType().toBlock(SemanticType.ATTRIBUTE_IDENTIFIER), BooleanWrapper.encode(Attribute.PUBLISHED, published), Block.toBlock(OLD_VALUE, oldValue), Block.toBlock(NEW_VALUE, newValue));
     }
     
     @Pure

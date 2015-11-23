@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
@@ -15,7 +16,6 @@ import net.digitalid.service.core.cryptography.KeyPair;
 import net.digitalid.service.core.cryptography.PrivateKeyChain;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
 import net.digitalid.service.core.entity.HostAccount;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -31,6 +31,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.directory.Directory;
 
@@ -100,17 +101,17 @@ public final class Host extends Site {
         final @Nonnull File publicKeyFile = new File(path + ".public.xdf");
         
         if (privateKeyFile.exists() && publicKeyFile.exists()) {
-            this.privateKeyChain = new PrivateKeyChain(new SelfcontainedWrapper(new FileInputStream(privateKeyFile), true).getElement().checkType(PrivateKeyChain.TYPE));
-            this.publicKeyChain = new PublicKeyChain(new SelfcontainedWrapper(new FileInputStream(publicKeyFile), true).getElement().checkType(PublicKeyChain.TYPE));
+            this.privateKeyChain = PrivateKeyChain.XDF_CONVERTER.decodeNonNullable(None.OBJECT, SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(privateKeyFile), true).checkType(PrivateKeyChain.TYPE));
+            this.publicKeyChain = PublicKeyChain.XDF_CONVERTER.decodeNonNullable(None.OBJECT, SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(publicKeyFile), true).checkType(PublicKeyChain.TYPE));
         } else {
-            final @Nonnull KeyPair keyPair = new KeyPair();
+            final @Nonnull KeyPair keyPair = KeyPair.getRandom();
             final @Nonnull Time time = Time.getCurrent();
-            this.privateKeyChain = new PrivateKeyChain(time, keyPair.getPrivateKey());
-            this.publicKeyChain = new PublicKeyChain(time, keyPair.getPublicKey());
+            this.privateKeyChain = PrivateKeyChain.get(time, keyPair.getPrivateKey());
+            this.publicKeyChain = PublicKeyChain.get(time, keyPair.getPublicKey());
         }
         
-        final @Nonnull SelfcontainedWrapper privateKeyWrapper = new SelfcontainedWrapper(SelfcontainedWrapper.DEFAULT, privateKeyChain);
-        final @Nonnull SelfcontainedWrapper publicKeyWrapper = new SelfcontainedWrapper(SelfcontainedWrapper.DEFAULT, publicKeyChain);
+        final @Nonnull SelfcontainedWrapper privateKeyWrapper = SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, privateKeyChain);
+        final @Nonnull SelfcontainedWrapper publicKeyWrapper = SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, publicKeyChain);
         
         if (!privateKeyFile.exists() || !publicKeyFile.exists()) {
             privateKeyWrapper.write(new FileOutputStream(privateKeyFile), true);

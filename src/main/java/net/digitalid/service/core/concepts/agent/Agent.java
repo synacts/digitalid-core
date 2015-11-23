@@ -433,11 +433,11 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     @Pure
     @Override
     public final @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(3);
-        elements.set(0, new Int64Wrapper(NUMBER, getNumber()).toBlock());
-        elements.set(1, new BooleanWrapper(CLIENT, isClient()).toBlock());
-        elements.set(2, new BooleanWrapper(REMOVED, isRemoved()).toBlock());
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(3);
+        elements.set(0, Int64Wrapper.encode(NUMBER, getNumber()));
+        elements.set(1, BooleanWrapper.encode(CLIENT, isClient()));
+        elements.set(2, BooleanWrapper.encode(REMOVED, isRemoved()));
+        return TupleWrapper.encode(TYPE, elements.freeze());
     }
     
     /**
@@ -454,10 +454,10 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     public static @Nonnull Agent get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
-        final long number = new Int64Wrapper(elements.getNonNullable(0)).getValue();
-        final boolean client = new BooleanWrapper(elements.getNonNullable(1)).getValue();
-        final boolean removed = new BooleanWrapper(elements.getNonNullable(2)).getValue();
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
+        final long number = Int64Wrapper.decode(elements.getNonNullable(0));
+        final boolean client = BooleanWrapper.decode(elements.getNonNullable(1));
+        final boolean removed = BooleanWrapper.decode(elements.getNonNullable(2));
         return get(entity, number, client, removed);
     }
     

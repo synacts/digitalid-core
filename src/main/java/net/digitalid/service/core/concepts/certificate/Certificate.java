@@ -65,21 +65,21 @@ public final class Certificate extends NonHostConcept {
 //        Block attribute = getAttribute(vid, Vid.INCOMING_DELEGATIONS, time);
 //        if (attribute == null) { return false; }
 //        
-//        List<Block> incoming_delegations = new ListWrapper(new SelfcontainedWrapper(new SignatureWrapper(attribute, false).getElement()).getElement()).getElements();
+//        List<Block> incoming_delegations = ListWrapper.decodeNullableElements(SelfcontainedWrapper.decodeNonNullable(new SignatureWrapper(attribute, false).getElement()));
 //        for (final @Nonnull Block incoming_delegation : incoming_delegations) {
-//            Block[] elements = new TupleWrapper(incoming_delegation).getElementsNotNull(3);
-//            if (Mapper.getVid(new StringWrapper(elements[0]).getString()) == type) {
-//                String restriction = new StringWrapper(elements[2]).getString();
+//            Block[] elements = TupleWrapper.decode(incoming_delegation).getElementsNotNull(3);
+//            if (Mapper.getVid(StringWrapper.decodeNonNullable(elements[0])) == type) {
+//                String restriction = StringWrapper.decodeNonNullable(elements[2]);
 //                Expression expression = Expression.parse(restriction);
 //                if (expression.matches(value)) {
 //                    // Check that the delegating VID references the current VID with the same type and expression.
-//                    identifier = new StringWrapper(elements[1]).getString();
+//                    identifier = StringWrapper.decodeNonNullable(elements[1]);
 //                    attribute = getAttribute(Mapper.getVid(identifier), Vid.OUTGOING_DELEGATIONS, time);
 //                    if (attribute == null) { continue; }
-//                    List<Block> outgoing_delegations = new ListWrapper(new SelfcontainedWrapper(new SignatureWrapper(attribute, false).getElement()).getElement()).getElements();
+//                    List<Block> outgoing_delegations = ListWrapper.decodeNullableElements(SelfcontainedWrapper.decodeNonNullable(new SignatureWrapper(attribute, false).getElement()));
 //                    for (final @Nonnull Block outgoing_delegation : outgoing_delegations) {
-//                        elements = new TupleWrapper(outgoing_delegation).getElementsNotNull(3);
-//                        if (Mapper.getVid(new StringWrapper(elements[0]).getString()) == type && Mapper.getVid(new StringWrapper(elements[1]).getString()) == vid && new StringWrapper(elements[2]).getString().equalsIgnoreCase(restriction)) {
+//                        elements = TupleWrapper.decode(outgoing_delegation).getElementsNotNull(3);
+//                        if (Mapper.getVid(StringWrapper.decodeNonNullable(elements[0])) == type && Mapper.getVid(StringWrapper.decodeNonNullable(elements[1])) == vid && StringWrapper.decodeNonNullable(elements[2]).equalsIgnoreCase(restriction)) {
 //                            if (isAuthorized(identifier, value)) { return true; }
 //                        }
 //                    }

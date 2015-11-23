@@ -12,7 +12,6 @@ import net.digitalid.service.core.block.wrappers.exceptions.UnexpectedEndOfFileE
 import net.digitalid.service.core.block.wrappers.exceptions.UnsupportedBlockLengthException;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -30,6 +29,7 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code selfcontained@core.digitalid.net}.
@@ -182,7 +182,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * @return a new non-nullable selfcontained block containing the given element.
      */
     @Pure
-    public static @Nonnull @NonEncoding <V extends XDF<V, Object>> Block encodeNonNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
+    public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block encodeNonNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
         return XDF_CONVERTER.encodeNonNullable(new SelfcontainedWrapper(type, ConvertToXDF.nonNullable(element)));
     }
     
@@ -195,7 +195,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * @return a new nullable selfcontained block containing the given element.
      */
     @Pure
-    public static @Nullable @NonEncoding <V extends XDF<V, Object>> Block encodeNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nullable V element) {
+    public static @Nullable @NonEncoding <V extends XDF<V, ?>> Block encodeNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nullable V element) {
         return element == null ? null : encodeNonNullable(type, element);
     }
     

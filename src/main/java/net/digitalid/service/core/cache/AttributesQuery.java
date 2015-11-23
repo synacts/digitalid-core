@@ -105,16 +105,16 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
         this.attributeTypes = new FreezableAttributeTypeSet(elements.getNonNullable(0)).freeze();
         if (attributeTypes.isEmpty()) { throw InvalidParameterValueException.get("attribute types", attributeTypes); }
-        this.published = new BooleanWrapper(elements.getNonNullable(1)).getValue();
+        this.published = BooleanWrapper.decode(elements.getNonNullable(1));
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, attributeTypes, new BooleanWrapper(Attribute.PUBLISHED, published)).toBlock();
+        return TupleWrapper.encode(TYPE, attributeTypes, BooleanWrapper.encode(Attribute.PUBLISHED, published));
     }
     
     @Pure
@@ -134,7 +134,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     @Override
     @NonCommitting
     public @Nonnull AttributesReply executeOnHost() throws PacketException, SQLException {
-        final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<>(attributeTypes.size());
+        final @Nonnull FreezableList<AttributeValue> attributeValues = FreezableArrayList.getWithCapacity(attributeTypes.size());
         
         final @Nonnull Account account = getAccount();
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();

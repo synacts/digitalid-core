@@ -22,7 +22,7 @@ public final class CloningTest extends DatabaseSetup {
             Database.lock();
             final @Nonnull String[] strings = new String[] {"", "äöüéè", "This is a short string.", "This is a longer string in order to test different string lengths."};
             for (final @Nonnull String string : strings) {
-                final @Nonnull Block block = new StringWrapper(AttributeTypes.NAME, string).toBlock();
+                final @Nonnull Block block = StringWrapper.encodeNonNullable(AttributeTypes.NAME, string);
                 Assert.assertEquals(block, block.clone());
             }
         } finally {

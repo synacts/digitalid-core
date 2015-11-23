@@ -215,7 +215,7 @@ public class DatabaseTest {
             final @Nonnull String string2 = "World";
             
             try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("INSERT INTO test_block (block) VALUES (?)")) {
-                final @Nonnull Block block = new TupleWrapper(TUPLE, new StringWrapper(STRING1, string1), new StringWrapper(STRING2, string2)).toBlock();
+                final @Nonnull Block block = TupleWrapper.encode(TUPLE, StringWrapper.encodeNonNullable(STRING1, string1), StringWrapper.encodeNonNullable(STRING2, string2));
                 block.set(preparedStatement, 1);
                 preparedStatement.executeUpdate();
             }
@@ -224,9 +224,9 @@ public class DatabaseTest {
                 final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
                 Assert.assertTrue(resultSet.next());
                 final @Nonnull Block block = Block.getNotNull(TUPLE, resultSet, 1);
-                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
-                Assert.assertEquals(string1, new StringWrapper(elements.getNotNull(0)).getString());
-                Assert.assertEquals(string2, new StringWrapper(elements.getNotNull(1)).getString());
+                final @Nonnull ReadonlyArray<Block> elements = TupleWrapper.decode(block).getElementsNotNull(2);
+                Assert.assertEquals(string1, StringWrapper.decodeNonNullable(elements.getNotNull(0)));
+                Assert.assertEquals(string2, StringWrapper.decodeNonNullable(elements.getNotNull(1)));
             }
         }
     }

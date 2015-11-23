@@ -99,9 +99,9 @@ public final class PasswordModule implements StateModule {
             while (resultSet.next()) {
                 final @Nonnull Account account = Account.getNotNull(host, resultSet, 1);
                 final @Nonnull String password = resultSet.getString(2);
-                entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().getAddress(), new StringWrapper(Settings.TYPE, password)).toBlock());
+                entries.add(TupleWrapper.encode(MODULE_ENTRY, account.getIdentity().getAddress(), StringWrapper.encodeNonNullable(Settings.TYPE, password)));
             }
-            return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
+            return ListWrapper.encode(MODULE_FORMAT, entries.freeze());
         }
     }
     
@@ -112,11 +112,11 @@ public final class PasswordModule implements StateModule {
         
         final @Nonnull String SQL = "INSERT INTO " + host + "password (entity, password) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
-                preparedStatement.setLong(1, IdentifierImplementation.create(elements.getNonNullable(0)).getIdentity().castTo(InternalNonHostIdentity.class).getNumber());
-                preparedStatement.setString(2, new StringWrapper(elements.getNonNullable(1)).getString());
+                final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(2);
+                preparedStatement.setLong(1, IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(0)).getIdentity().castTo(InternalNonHostIdentity.class).getNumber());
+                preparedStatement.setString(2, StringWrapper.decodeNonNullable(elements.getNonNullable(1)));
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -139,7 +139,7 @@ public final class PasswordModule implements StateModule {
     @Override
     @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
-        return new TupleWrapper(STATE_FORMAT, restrictions.isClient() ? new StringWrapper(Settings.TYPE, get(entity)) : null).toBlock();
+        return TupleWrapper.encode(STATE_FORMAT, restrictions.isClient() ? StringWrapper.encodeNonNullable(Settings.TYPE, get(entity)) : null);
     }
     
     @Override
@@ -147,8 +147,8 @@ public final class PasswordModule implements StateModule {
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
-        final @Nullable Block element = new TupleWrapper(block).getNullableElement(0);
-        if (element != null) { set(entity, new StringWrapper(element).getString()); }
+        final @Nullable Block element = TupleWrapper.decode(block).getNullableElement(0);
+        if (element != null) { set(entity, StringWrapper.decodeNonNullable(element)); }
         
         Settings.reset(entity);
     }

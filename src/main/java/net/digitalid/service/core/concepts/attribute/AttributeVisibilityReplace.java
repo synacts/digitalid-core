@@ -115,8 +115,8 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
         
         final @Nonnull NonHostEntity nonHostEntity = entity.castTo(NonHostEntity.class);
         nonHostEntity.getIdentity().castTo(InternalPerson.class);
-        final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.attribute = Attribute.get(entity, IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().castTo(SemanticType.class).checkIsAttributeFor(entity));
+        final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
+        this.attribute = Attribute.get(entity, IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0)).getIdentity().castTo(SemanticType.class).checkIsAttributeFor(entity));
         this.oldVisibility = tuple.isElementNotNull(1) ? new PassiveExpression(nonHostEntity, tuple.getNonNullableElement(1)) : null;
         this.newVisibility = tuple.isElementNotNull(2) ? new PassiveExpression(nonHostEntity, tuple.getNonNullableElement(2)) : null;
         if (Objects.equals(oldVisibility, newVisibility)) { throw InvalidConceptPropertyActionException.get(this); }
@@ -125,7 +125,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, attribute.getType().toBlock(SemanticType.ATTRIBUTE_IDENTIFIER), Block.toBlock(OLD_VISIBILITY, oldVisibility), Block.toBlock(NEW_VISIBILITY, newVisibility)).toBlock();
+        return TupleWrapper.encode(TYPE, attribute.getType().toBlock(SemanticType.ATTRIBUTE_IDENTIFIER), Block.toBlock(OLD_VISIBILITY, oldVisibility), Block.toBlock(NEW_VISIBILITY, newVisibility));
     }
     
     @Pure

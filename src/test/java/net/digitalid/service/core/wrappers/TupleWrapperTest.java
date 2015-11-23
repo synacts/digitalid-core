@@ -25,19 +25,19 @@ public final class TupleWrapperTest extends DatabaseSetup {
         final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.XDF_TYPE);
         final @Nonnull SemanticType INT32 = SemanticType.map("int32@test.digitalid.net").load(Int32Wrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("tuple@test.digitalid.net").load(TupleWrapper.XDF_TYPE, STRING, INT32);
-        final @Nonnull Block string = new StringWrapper(STRING, "This is a short string.").toBlock();
-        final @Nonnull Block int32 = new Int32Wrapper(INT32, 123456789).toBlock();
+        final @Nonnull Block string = StringWrapper.encodeNonNullable(STRING, "This is a short string.");
+        final @Nonnull Block int32 = Int32Wrapper.encode(INT32, 123456789);
         
         final @Nonnull FreezableList<ReadOnlyArray<Block>> listOfElements = new FreezableLinkedList<>();
-        listOfElements.add(new FreezableArray<>(string, int32).freeze());
-        listOfElements.add(new FreezableArray<>(null, int32).freeze());
-        listOfElements.add(new FreezableArray<>(string, null).freeze());
-        listOfElements.add(new FreezableArray<Block>(null, null).freeze());
-        listOfElements.add(new FreezableArray<>(string).freeze());
+        listOfElements.add(FreezableArray.getNonNullable(string, int32).freeze());
+        listOfElements.add(FreezableArray.getNonNullable(null, int32).freeze());
+        listOfElements.add(FreezableArray.getNonNullable(string, null).freeze());
+        listOfElements.add(FreezableArray.<Block>getNonNullable(null, null).freeze());
+        listOfElements.add(FreezableArray.getNonNullable(string).freeze());
         
         for (final @Nonnull ReadOnlyArray<Block> elements : listOfElements) {
-            if (elements.size() == 2) { Assert.assertEquals(elements, new TupleWrapper(new TupleWrapper(TYPE, elements).toBlock()).getNullableElements()); }
-            else { Assert.assertEquals(elements.getNonNullable(0), new TupleWrapper(new TupleWrapper(TYPE, elements).toBlock()).getNonNullableElement(0)); }
+            if (elements.size() == 2) { Assert.assertEquals(elements, TupleWrapper.decode(TupleWrapper.encode(TYPE, elements)).getNullableElements()); }
+            else { Assert.assertEquals(elements.getNonNullable(0), TupleWrapper.decode(TupleWrapper.encode(TYPE, elements)).getNonNullableElement(0)); }
         }
     }
 }

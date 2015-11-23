@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.Blockable;
@@ -17,7 +18,6 @@ import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.database.SQLizable;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -34,6 +34,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models the commitment of a client.
@@ -126,12 +127,12 @@ public class Commitment implements Blockable, SQLizable {
     public Commitment(@Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
-        final @Nonnull HostIdentifier identifier = IdentifierImplementation.create(elements.getNonNullable(0)).castTo(HostIdentifier.class);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
+        final @Nonnull HostIdentifier identifier = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(0)).castTo(HostIdentifier.class);
         this.host = identifier.getIdentity();
-        this.time = new Time(elements.getNonNullable(1));
+        this.time = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(1));
         this.publicKey = (Server.hasHost(identifier) ? Server.getHost(identifier).getPublicKeyChain() : Cache.getPublicKeyChain(host)).getKey(time);
-        this.value = publicKey.getCompositeGroup().getElement(new IntegerWrapper(elements.getNonNullable(2)).getValue());
+        this.value = publicKey.getCompositeGroup().getElement(IntegerWrapper.decodeNonNullable(elements.getNonNullable(2)));
     }
     
     @Pure
@@ -143,11 +144,11 @@ public class Commitment implements Blockable, SQLizable {
     @Pure
     @Override
     public final @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(3);
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(3);
         elements.set(0, host.toBlock(HOST));
         elements.set(1, time.toBlock().setType(TIME));
         elements.set(2, value.toBlock().setType(VALUE));
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
+        return TupleWrapper.encode(TYPE, elements.freeze());
     }
     
     
@@ -270,7 +271,7 @@ public class Commitment implements Blockable, SQLizable {
         try {
             final @Nonnull HostIdentity host = IdentityImplementation.getNotNull(resultSet, startIndex + 0).castTo(HostIdentity.class);
             final @Nonnull Time time = Time.get(resultSet, startIndex + 1);
-            final @Nonnull BigInteger value = new IntegerWrapper(Block.getNotNull(Element.TYPE, resultSet, startIndex + 2)).getValue();
+            final @Nonnull BigInteger value = IntegerWrapper.decodeNonNullable(Block.getNotNull(Element.TYPE, resultSet, startIndex + 2));
             return new Commitment(host, time, value);
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {
             throw new SQLException("A problem occurred while retrieving a commitment.", exception);

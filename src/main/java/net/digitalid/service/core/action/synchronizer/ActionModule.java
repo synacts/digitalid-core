@@ -1,7 +1,5 @@
 package net.digitalid.service.core.action.synchronizer;
 
-import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.service.core.auxiliary.None;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +7,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.EmptyWrapper;
@@ -21,7 +20,6 @@ import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.concepts.contact.Context;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.EntityImplementation;
@@ -43,6 +41,7 @@ import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.host.Host;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
@@ -50,6 +49,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -127,9 +127,9 @@ public final class ActionModule implements StateModule {
                 if (resultSet.wasNull()) { number = null; }
                 final @Nonnull Identifier recipient = IdentifierImplementation.get(resultSet, 12);
                 final @Nonnull Block action = Block.getNotNull(Packet.SIGNATURE, resultSet, 13);
-                entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().toBlockable(InternalNonHostIdentity.IDENTIFIER), service.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), time, permissions, restrictions, (number != null ? new Int64Wrapper(Agent.NUMBER, number) : null), recipient.toBlock().setType(HostIdentity.IDENTIFIER).toBlockable(), action.toBlockable()).toBlock());
+                entries.add(TupleWrapper.encode(MODULE_ENTRY, account.getIdentity().toBlockable(InternalNonHostIdentity.IDENTIFIER), service.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), time, permissions, restrictions, (number != null ? Int64Wrapper.encode(Agent.NUMBER, number) : null), recipient.toBlock().setType(HostIdentity.IDENTIFIER).toBlockable(), action.toBlockable()));
             }
-            return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
+            return ListWrapper.encode(MODULE_FORMAT, entries.freeze());
         }
     }
     
@@ -139,18 +139,18 @@ public final class ActionModule implements StateModule {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("INSERT INTO " + host + "action (entity, service, time, " + Restrictions.COLUMNS + ", " + FreezableAgentPermissions.COLUMNS + ", agent, recipient, action) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull TupleWrapper tuple = new TupleWrapper(entry);
+                final @Nonnull TupleWrapper tuple = TupleWrapper.decode(entry);
                 final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(tuple.getNonNullableElement(0)).castTo(InternalNonHostIdentity.class);
                 identity.set(preparedStatement, 1);
                 IdentityImplementation.create(tuple.getNonNullableElement(1)).castTo(SemanticType.class).set(preparedStatement, 2);
-                new Time(tuple.getNonNullableElement(2)).set(preparedStatement, 3);
+                Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(2)).set(preparedStatement, 3);
                 new FreezableAgentPermissions(tuple.getNonNullableElement(3)).checkIsSingle().setEmptyOrSingle(preparedStatement, 4);
                 new Restrictions(NonHostAccount.get(host, identity), tuple.getNonNullableElement(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.castTo(InternalPerson.class)).)
-                if (tuple.isElementNull(5)) { preparedStatement.setLong(11, new Int64Wrapper(tuple.getNonNullableElement(5)).getValue()); }
+                if (tuple.isElementNull(5)) { preparedStatement.setLong(11, Int64Wrapper.decode(tuple.getNonNullableElement(5))); }
                 else { preparedStatement.setNull(11, Types.BIGINT); }
-                IdentifierImplementation.create(tuple.getNonNullableElement(6)).castTo(HostIdentifier.class).set(preparedStatement, 12);
+                IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(6)).castTo(HostIdentifier.class).set(preparedStatement, 12);
                 tuple.getNonNullableElement(7).set(preparedStatement, 13);
                 preparedStatement.addBatch();
             }
@@ -174,7 +174,7 @@ public final class ActionModule implements StateModule {
     @Override
     @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
-        return new EmptyWrapper(STATE_FORMAT).toBlock();
+        return EmptyWrapper.encode(STATE_FORMAT);
     }
     
     @Override

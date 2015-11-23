@@ -102,19 +102,19 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
     private PasswordValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
         this.password = Settings.get(entity.castTo(NonHostEntity.class));
-        this.oldValue = new StringWrapper(elements.getNonNullable(0)).getString();
-        this.newValue = new StringWrapper(elements.getNonNullable(1)).getString();
+        this.oldValue = StringWrapper.decodeNonNullable(elements.getNonNullable(0));
+        this.newValue = StringWrapper.decodeNonNullable(elements.getNonNullable(1));
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
-        elements.set(0, new StringWrapper(OLD_VALUE, oldValue).toBlock());
-        elements.set(1, new StringWrapper(NEW_VALUE, newValue).toBlock());
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(2);
+        elements.set(0, StringWrapper.encodeNonNullable(OLD_VALUE, oldValue));
+        elements.set(1, StringWrapper.encodeNonNullable(NEW_VALUE, newValue));
+        return TupleWrapper.encode(TYPE, elements.freeze());
     }
     
     @Pure

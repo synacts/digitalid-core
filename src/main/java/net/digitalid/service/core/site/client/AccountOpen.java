@@ -133,25 +133,25 @@ public final class AccountOpen extends Action {
         
         if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account."); }
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
         
         this.category = Category.get(elements.getNonNullable(0));
         if (!category.isInternalNonHostIdentity()) { throw InvalidOperationException.get("The category has to denote an internal non-host identity but was " + category.name() + "."); }
         
-        this.agentNumber = new Int64Wrapper(elements.getNonNullable(1)).getValue();
+        this.agentNumber = Int64Wrapper.decode(elements.getNonNullable(1));
         
         if (!(signature instanceof ClientSignatureWrapper)) { throw InvalidOperationException.get("The action to open an account has to be signed by a client."); }
         this.commitment = ((ClientSignatureWrapper) signature).getCommitment();
         this.secret = null;
         
-        this.name = new StringWrapper(elements.getNonNullable(2)).getString();
+        this.name = StringWrapper.decodeNonNullable(elements.getNonNullable(2));
         if (!Client.isValidName(name)) { throw InvalidParameterValueException.get("name", name); }
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, category.toBlock(), new Int64Wrapper(Agent.NUMBER, agentNumber).toBlock(), new StringWrapper(Client.NAME, name).toBlock()).toBlock();
+        return TupleWrapper.encode(TYPE, category.toBlock(), Int64Wrapper.encode(Agent.NUMBER, agentNumber), StringWrapper.encodeNonNullable(Client.NAME, name));
     }
     
     @Pure

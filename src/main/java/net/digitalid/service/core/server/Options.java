@@ -1,14 +1,12 @@
 package net.digitalid.service.core.server;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.site.host.Host;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
@@ -57,7 +55,7 @@ final class Options {
      * @return the selected host or a {@link EscapeOptionException} if the user escaped.
      */
     private static @Nonnull Host selectHost() throws EscapeOptionException {
-        final @Nonnull ReadOnlyList<Host> hosts = new FreezableArrayList<>((Collection<? extends Host>) Server.getHosts()).freeze();
+        final @Nonnull ReadOnlyList<Host> hosts = FreezableArrayList.getNonNullable((Collection<? extends Host>) Server.getHosts()).freeze();
         if (!hosts.isEmpty()) {
             Console.write("Please select one of the following hosts:");
             Console.write("- 0: [Escape]");

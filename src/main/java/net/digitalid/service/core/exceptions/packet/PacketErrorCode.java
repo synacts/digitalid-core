@@ -5,16 +5,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.Blockable;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;
-import net.digitalid.service.core.database.SQLizable;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -23,7 +25,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @see PacketException
  */
 @Immutable
-public enum PacketErrorCode implements Blockable, SQLizable {
+public enum PacketErrorCode implements XDF<PacketErrorCode, Object>, SQL<PacketErrorCode, Object> {
     
     /**
      * The error code for an internal problem.
@@ -176,7 +178,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new Int8Wrapper(TYPE, value).toBlock();
+        return Int8Wrapper.encode(TYPE, value);
     }
     
     

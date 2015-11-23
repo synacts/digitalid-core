@@ -14,6 +14,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
@@ -26,6 +27,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForHosts;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Replies the queried attribute values of the given subject that are accessible by the requester.
@@ -103,8 +105,8 @@ public final class AttributesReply extends CoreServiceQueryReply {
         super(entity, signature, number);
         
         final @Nonnull InternalIdentity subject = getSubject().getIdentity();
-        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElements();
-        final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<>(elements.size());
+        final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNullableElements(block);
+        final @Nonnull FreezableList<AttributeValue> attributeValues = FreezableArrayList.getWithCapacity(elements.size());
         final @Nonnull Time time = Time.getCurrent();
         for (final @Nullable Block element : elements) {
             if (element != null) {
@@ -131,11 +133,11 @@ public final class AttributesReply extends CoreServiceQueryReply {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(attributeValues.size());
+        final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(attributeValues.size());
         for (final @Nullable AttributeValue attributeValue : attributeValues) {
             elements.add(Block.toBlock(AttributeValue.TYPE, attributeValue));
         }
-        return new ListWrapper(TYPE, elements.freeze()).toBlock();
+        return ListWrapper.encode(TYPE, elements.freeze());
     }
     
     @Pure

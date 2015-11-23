@@ -11,6 +11,7 @@ import net.digitalid.service.core.block.wrappers.HashWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -18,6 +19,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models the randomized {@link FreezableAgentPermissions permissions} of {@link OutgoingRole outgoing roles}.
@@ -106,8 +108,8 @@ public final class RandomizedAgentPermissions implements Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         this.hash = block.getHash();
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
-        this.salt = new HashWrapper(elements.getNonNullable(0)).getValue();
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
+        this.salt = HashWrapper.decodeNonNullable(elements.getNonNullable(0));
         this.permissions = new FreezableAgentPermissions(elements.getNonNullable(1)).freeze();
     }
     
@@ -120,10 +122,10 @@ public final class RandomizedAgentPermissions implements Blockable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
-        elements.set(0, salt == null ? null : new HashWrapper(SALT, salt).toBlock());
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(2);
+        elements.set(0, HashWrapper.encodeNullable(SALT, salt));
         elements.set(1, Block.toBlock(PERMISSIONS, permissions));
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
+        return TupleWrapper.encode(TYPE, elements.freeze());
     }
     
     

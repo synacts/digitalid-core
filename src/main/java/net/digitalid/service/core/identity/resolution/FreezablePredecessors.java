@@ -82,7 +82,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     public FreezablePredecessors(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyList<Block> predecessors = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> predecessors = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block predecessor : predecessors) {
             add(new Predecessor(predecessor));
         }
@@ -97,11 +97,11 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableList<Block> predecessors = new FreezableArrayList<>(size());
+        final @Nonnull FreezableList<Block> predecessors = FreezableArrayList.getWithCapacity(size());
         for (final @Nonnull Predecessor predecessor : this) {
             predecessors.add(predecessor.toBlock());
         }
-        return new ListWrapper(TYPE, predecessors.freeze()).toBlock();
+        return ListWrapper.encode(TYPE, predecessors.freeze());
     }
     
     
@@ -123,7 +123,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     @Override
     @NonCommitting
     public @Nonnull @Frozen @NonNullableElements ReadOnlyList<NonHostIdentity> getIdentities() throws DatabaseException, PacketException, ExternalException, NetworkException {
-        final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<>(size());
+        final @Nonnull FreezableList<NonHostIdentity> identities = FreezableArrayList.getWithCapacity(size());
         for (final @Nonnull Predecessor predecessor : this) {
             final @Nullable NonHostIdentity identity = predecessor.getIdentity();
             if (identity != null) { identities.add(identity); }

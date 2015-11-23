@@ -111,23 +111,23 @@ public final class PushReturned extends ExternalAction {
     private PushReturned(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
         this.valid = BooleanWrapper.decode(elements.getNonNullable(0));
         
         final @Nonnull SignatureWrapper _signature = SignatureWrapper.decodeWithoutVerifying(elements.getNonNullable(1), false, null);
         if (!(_signature instanceof HostSignatureWrapper)) { throw InvalidParameterValueCombinationException.get("Replies have to be signed by a host."); }
-        final @Nonnull CompressionWrapper _compression = new CompressionWrapper(_signature.getNonNullableElement());
-        final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElement());
-        this.reply = Reply.get(entity.castTo(NonHostEntity.class), (HostSignatureWrapper) _signature, _content.getElement()).castTo(ActionReply.class);
+        final @Nonnull Block _compression = CompressionWrapper.decompressNonNullable(_signature.getNonNullableElement());
+        final @Nonnull Block _content = SelfcontainedWrapper.decodeNonNullable(_compression);
+        this.reply = Reply.get(entity.castTo(NonHostEntity.class), (HostSignatureWrapper) _signature, _content).castTo(ActionReply.class);
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(2);
         elements.set(0, BooleanWrapper.encode(valid, VALID));
         elements.set(1, reply.getSignatureNotNull().toBlock().setType(TYPE));
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
+        return TupleWrapper.encode(TYPE, elements.freeze());
     }
     
     @Pure

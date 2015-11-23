@@ -75,7 +75,7 @@ final class ContactsAdd extends CoreServiceInternalAction {
     private ContactsAdd(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
         this.context = Context.get(entity.castTo(NonHostEntity.class), elements.getNonNullable(0));
         this.contacts = new FreezableContacts(entity.castTo(NonHostEntity.class), elements.getNonNullable(1)).freeze();
     }
@@ -83,7 +83,7 @@ final class ContactsAdd extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, context, contacts).toBlock();
+        return TupleWrapper.encode(TYPE, context, contacts);
     }
     
     @Pure

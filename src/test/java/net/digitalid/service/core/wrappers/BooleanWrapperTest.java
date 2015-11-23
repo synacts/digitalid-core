@@ -18,7 +18,7 @@ public final class BooleanWrapperTest extends DatabaseSetup {
         final @Nonnull SemanticType TYPE = SemanticType.map("boolean@test.digitalid.net").load(BooleanWrapper.XDF_TYPE);
         final boolean[] values = new boolean[] {true, false};
         for (final boolean value : values) {
-            Assert.assertEquals(value, new BooleanWrapper(new BooleanWrapper(TYPE, value).toBlock()).getValue());
+            Assert.assertEquals(value, BooleanWrapper.decode(BooleanWrapper.encode(TYPE, value)));
         }
     }
     

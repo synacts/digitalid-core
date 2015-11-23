@@ -9,6 +9,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.CompressionWrapper;
 import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -25,6 +26,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class decrypts, verifies and decompresses responses on the client-side.
@@ -64,7 +66,7 @@ public final class Response extends Packet {
      */
     @NonCommitting
     public Response(@Nullable Request request, @Nonnull PacketException exception) throws DatabaseException, PacketException, ExternalException, NetworkException {
-        super(new FreezablePair<>(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<>(exception).freeze()).freeze(), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
+        super(new FreezablePair<>(FreezableArrayList.<Reply>getWithCapacity(1).freeze(), FreezableArrayList.get(exception).freeze()).freeze(), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
         
         this.request = request;
     }
@@ -187,15 +189,15 @@ public final class Response extends Packet {
     @RawRecipient
     @Nonnull HostSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
         assert signer != null : "This method is only called if the element is not an exception.";
-        return new HostSignatureWrapper(Packet.SIGNATURE, compression, subject, audit, signer);
+        return HostSignatureWrapper.sign(Packet.SIGNATURE, compression, subject, audit, signer);
     }
     
     
     @Override
     @RawRecipient
     void initialize(int size) {
-        this.replies = new FreezableArrayList<>(size);
-        this.exceptions = new FreezableArrayList<>(size);
+        this.replies = FreezableArrayList.getWithCapacity(size);
+        this.exceptions = FreezableArrayList.getWithCapacity(size);
         for (int i = 0; i < size; i++) {
             replies.add(null);
             exceptions.add(null);

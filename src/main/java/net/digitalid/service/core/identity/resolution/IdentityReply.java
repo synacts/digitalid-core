@@ -95,21 +95,21 @@ public final class IdentityReply extends CoreServiceQueryReply {
     private IdentityReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException {
         super(entity, signature, number);
         
-        final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
+        final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
         this.category = Category.get(tuple.getNonNullableElement(0));
         if (!category.isInternalNonHostIdentity()) { throw InvalidDeclarationException.get("The category is " + category.name() + " instead of an internal non-host identity.", getSubject(), this); }
         this.predecessors = new FreezablePredecessors(tuple.getNonNullableElement(1)).freeze();
-        this.successor = tuple.isElementNull(2) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(2)).castTo(InternalNonHostIdentifier.class);
+        this.successor = tuple.isElementNull(2) ? null : IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(2)).castTo(InternalNonHostIdentifier.class);
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(3);
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(3);
         elements.set(0, category.toBlock());
         elements.set(1, predecessors.toBlock());
         elements.set(2, Block.toBlock(SUCCESSOR, successor));
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
+        return TupleWrapper.encode(TYPE, elements.freeze());
     }
     
     @Pure

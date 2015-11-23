@@ -8,6 +8,7 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
@@ -18,6 +19,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Removes {@link FreezableAgentPermissions permissions} from an {@link Agent agent}.
@@ -78,7 +80,7 @@ final class AgentPermissionsRemove extends CoreServiceInternalAction {
     private AgentPermissionsRemove(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
         this.agent = Agent.get(entity.castTo(NonHostEntity.class), elements.getNonNullable(0));
         this.permissions = new FreezableAgentPermissions(elements.getNonNullable(1)).freeze();
     }
@@ -86,7 +88,7 @@ final class AgentPermissionsRemove extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, agent, permissions).toBlock();
+        return TupleWrapper.encode(TYPE, agent, permissions);
     }
     
     @Pure

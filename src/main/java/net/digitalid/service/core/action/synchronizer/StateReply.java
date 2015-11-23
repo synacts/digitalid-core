@@ -72,14 +72,14 @@ final class StateReply extends QueryReply {
     private StateReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, number);
         
-        this.state = new SelfcontainedWrapper(block).getElement();
+        this.state = SelfcontainedWrapper.decodeNonNullable(block);
         this.service = Service.getModule(state.getType()).getService();
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new SelfcontainedWrapper(TYPE, state).toBlock();
+        return SelfcontainedWrapper.encodeNonNullable(TYPE, state);
     }
     
     @Pure

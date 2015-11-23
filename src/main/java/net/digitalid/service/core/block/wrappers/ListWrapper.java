@@ -9,13 +9,14 @@ import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockOffsetException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidNullElementException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockOffsetException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.utility.annotations.reference.Captured;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -255,7 +256,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      * @require basedOnParameter(type, elements) : "Each element is either null or based on the parameter of the given type.";
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block... elements) {
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Captured @Nonnull @NonEncoding Block... elements) {
         return encode(type, FreezableArrayList.get(elements).freeze());
     }
     
@@ -271,7 +272,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      */
     @Pure
     @SuppressWarnings("unchecked")
-    public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull V... elements) {
+    public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Captured @Nonnull V... elements) {
         final @Nonnull FreezableList<Block> list = FreezableArrayList.getWithCapacity(elements.length);
         for (final @Nullable V element : elements) { list.add(ConvertToXDF.nullable(element)); }
         return encode(type, list.freeze());

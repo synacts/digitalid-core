@@ -22,9 +22,9 @@ public final class ListWrapperTest extends DatabaseSetup {
     public void testWrapping() throws InvalidEncodingException {
         final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("list@test.digitalid.net").load(ListWrapper.XDF_TYPE, STRING);
-        final @Nonnull Block block1 = new StringWrapper(STRING, "This is a short first block.").toBlock();
-        final @Nonnull Block block2 = new StringWrapper(STRING, "This is a longer second block in order to test different block lengths.").toBlock();
-        final @Nonnull Block block3 = new StringWrapper(STRING, "This is an even longer third block in order to test the wrapping of more than two blocks.").toBlock();
+        final @Nonnull Block block1 = StringWrapper.encodeNonNullable(STRING, "This is a short first block.");
+        final @Nonnull Block block2 = StringWrapper.encodeNonNullable(STRING, "This is a longer second block in order to test different block lengths.");
+        final @Nonnull Block block3 = StringWrapper.encodeNonNullable(STRING, "This is an even longer third block in order to test the wrapping of more than two blocks.");
         
         final @Nonnull FreezableList<ReadOnlyList<Block>> listOfElements = new FreezableLinkedList<>();
         {
@@ -45,7 +45,7 @@ public final class ListWrapperTest extends DatabaseSetup {
         }
         
         for (final @Nonnull ReadOnlyList<Block> elements : listOfElements) {
-            Assert.assertEquals(elements, new ListWrapper(new ListWrapper(TYPE, elements).toBlock()).getElements());
+            Assert.assertEquals(elements, ListWrapper.encode(ListWrapper.decodeNullableElements(TYPE, elements)));
         }
     }
     

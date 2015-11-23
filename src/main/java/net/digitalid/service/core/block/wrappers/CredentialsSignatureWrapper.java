@@ -34,8 +34,8 @@ import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.RoleModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
@@ -780,11 +780,11 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
                 final @Nonnull Exponent swb = Exponent.get(encryptions.getNonNullable(3));
                 if (swb.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT) { throw new InvalidSignatureException("The credentials signature is invalid: The value swb is too big."); }
                 
-                wis.set(0, ConvertToXDF.nonNullable(publicKey.getY().pow(swi).multiply(publicKey.getZPlus1().pow(si)).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(0)).pow(t)), PublicKey.W1));
-                wis.set(1, ConvertToXDF.nonNullable(publicKey.getG().pow(swi).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(1)).pow(t)), PublicKey.W2));
+                wis.set(0, ConvertToXDF.nonNullable(PublicKey.W1, publicKey.getY().pow(swi).multiply(publicKey.getZPlus1().pow(si)).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(0)).pow(t))));
+                wis.set(1, ConvertToXDF.nonNullable(PublicKey.W2, publicKey.getG().pow(swi).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(1)).pow(t))));
                 
-                wbs.set(0, ConvertToXDF.nonNullable(publicKey.getY().pow(swb).multiply(publicKey.getZPlus1().pow(sb)).multiply(publicKey.getSquareGroup().getElement(wbs.getNonNullable(0)).pow(t)), PublicKey.W1));
-                wbs.set(1, ConvertToXDF.nonNullable(publicKey.getG().pow(swb).multiply(publicKey.getSquareGroup().getElement(wbs.getNonNullable(1)).pow(t)), PublicKey.W2));
+                wbs.set(0, ConvertToXDF.nonNullable(PublicKey.W1, publicKey.getY().pow(swb).multiply(publicKey.getZPlus1().pow(sb)).multiply(publicKey.getSquareGroup().getElement(wbs.getNonNullable(0)).pow(t))));
+                wbs.set(1, ConvertToXDF.nonNullable(PublicKey.W2, publicKey.getG().pow(swb).multiply(publicKey.getSquareGroup().getElement(wbs.getNonNullable(1)).pow(t))));
                 
                 array.set(1, TupleWrapper.encode(TWI, wis.freeze()));
                 array.set(2, TupleWrapper.encode(TWB, wbs.freeze()));
@@ -904,9 +904,9 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull FreezableArray<Block> signature = FreezableArray.get(8);
         signature.set(0, ConvertToXDF.nonNullable(T, t));
-        signature.set(1, ConvertToXDF.nonNullable(ru.subtract(t.multiply(u)), SU));
+        signature.set(1, ConvertToXDF.nonNullable(SU, ru.subtract(t.multiply(u))));
         if (rv != null) {
-            signature.set(3, ConvertToXDF.nonNullable(rv.subtract(t.multiply(v)), SV));
+            signature.set(3, ConvertToXDF.nonNullable(SV, rv.subtract(t.multiply(v))));
         } else {
             signature.set(2, Restrictions.XDF_CONVERTER.encodeNonNullable(mainCredential.getRestrictionsNotNull()));
         }
@@ -918,17 +918,17 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             if (value == null || mainCredential.isRoleBased()) {
                 credential.set(1, randomizedCredentials[i].getRandomizedPermissions().toBlock());
             }
-            credential.set(2, ConvertToXDF.nonNullable(randomizedCredentials[i].getC(), C));
-            credential.set(3, ConvertToXDF.nonNullable(res[i].subtract(t.multiply(randomizedCredentials[i].getE())), SE));
-            credential.set(4, ConvertToXDF.nonNullable(rbs[i].subtract(t.multiply(randomizedCredentials[i].getB())), SB));
+            credential.set(2, ConvertToXDF.nonNullable(C, randomizedCredentials[i].getC()));
+            credential.set(3, ConvertToXDF.nonNullable(SE, res[i].subtract(t.multiply(randomizedCredentials[i].getE()))));
+            credential.set(4, ConvertToXDF.nonNullable(SB, rbs[i].subtract(t.multiply(randomizedCredentials[i].getB()))));
             if (randomizedCredentials[i].isOneTime()) {
-                credential.set(5, ConvertToXDF.nonNullable(randomizedCredentials[i].getI(), I));
+                credential.set(5, ConvertToXDF.nonNullable(I, randomizedCredentials[i].getI()));
             } else {
-                credential.set(6, ConvertToXDF.nonNullable(ris[i].subtract(t.multiply(randomizedCredentials[i].getI())), SI));
+                credential.set(6, ConvertToXDF.nonNullable(SI, ris[i].subtract(t.multiply(randomizedCredentials[i].getI()))));
                 
                 if (lodged) {
-                    final @Nonnull Block swi = ConvertToXDF.nonNullable(rrwis[i].subtract(t.multiply(rwis[i])), SWI);
-                    final @Nonnull Block swb = ConvertToXDF.nonNullable(rrwbs[i].subtract(t.multiply(rwbs[i])), SWB);
+                    final @Nonnull Block swi = ConvertToXDF.nonNullable(SWI, rrwis[i].subtract(t.multiply(rwis[i])));
+                    final @Nonnull Block swb = ConvertToXDF.nonNullable(SWB, rrwbs[i].subtract(t.multiply(rwbs[i])));
                     credential.set(7, TupleWrapper.encode(ENCRYPTION, wis[i], swi, wbs[i], swb));
                 }
             }
@@ -945,7 +945,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         if (value != null) {
             assert f != null && rb != null : "If the credential is shortened, f and rb are not null (see the code above).";
             signature.set(6, ConvertToXDF.nonNullable(F_PRIME, f));
-            signature.set(7, ConvertToXDF.nonNullable(rb.subtract(t.multiply(Exponent.get(value))), SB_PRIME));
+            signature.set(7, ConvertToXDF.nonNullable(SB_PRIME, rb.subtract(t.multiply(Exponent.get(value)))));
         }
         
         elements.set(3, TupleWrapper.encode(SIGNATURE, signature.freeze()));

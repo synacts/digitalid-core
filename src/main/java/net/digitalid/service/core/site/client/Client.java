@@ -3,10 +3,8 @@ package net.digitalid.service.core.site.client;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.sql.SQLException;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +30,6 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.entity.RoleModule;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -60,6 +57,7 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.directory.Directory;
 
@@ -177,10 +175,10 @@ public class Client extends Site implements Observer {
         
         final @Nonnull File file = new File(Directory.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
         if (file.exists()) {
-            this.secret = new Exponent(new SelfcontainedWrapper(new FileInputStream(file), true).getElement().checkType(SECRET));
+            this.secret = Exponent.get(SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(file), true).checkType(SECRET));
         } else {
-            this.secret = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
-            new SelfcontainedWrapper(SelfcontainedWrapper.DEFAULT, secret.toBlock().setType(SECRET)).write(new FileOutputStream(file), true);
+            this.secret = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
+            SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, secret.toBlock().setType(SECRET)).writeTo(new FileOutputStream(file), true);
         }
         
         // The role table needs to be created in advance.
@@ -288,7 +286,7 @@ public class Client extends Site implements Observer {
      */
     @Committing
     public final void rotateSecret() throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
-        final @Nonnull Exponent newSecret = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
+        final @Nonnull Exponent newSecret = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
         final @Nonnull ReadOnlyList<NativeRole> roles = getRoles();
         Database.commit();
         
@@ -303,7 +301,7 @@ public class Client extends Site implements Observer {
         
         this.secret = newSecret;
         final @Nonnull File file = new File(Directory.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
-        new SelfcontainedWrapper(SelfcontainedWrapper.DEFAULT, secret.toBlock().setType(SECRET)).write(new FileOutputStream(file), true);
+        SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, secret.toBlock().setType(SECRET)).writeTo(new FileOutputStream(file), true);
     }
     
     
@@ -415,7 +413,7 @@ public class Client extends Site implements Observer {
         accountOpen.initialize(newRole);
         Database.commit();
         
-        final @Nonnull FreezableList<ReadOnlyPair<Predecessor, Block>> states = new FreezableArrayList<>(roles.size() + identifiers.size());
+        final @Nonnull FreezableList<ReadOnlyPair<Predecessor, Block>> states = FreezableArrayList.getWithCapacity(roles.size() + identifiers.size());
         
         for (final @Nonnull NativeRole role : roles) {
             if (role.getIdentity().getCategory() != category) { throw new PacketException(PacketErrorCode.INTERNAL, "A role is of the wrong category."); }

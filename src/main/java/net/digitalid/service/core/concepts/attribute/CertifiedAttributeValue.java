@@ -61,7 +61,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
         
         assert content.getType().isAttributeFor(subject.getCategory()) : "The content is an attribute for the subject.";
         
-        this.signature = new HostSignatureWrapper(AttributeValue.TYPE, new SelfcontainedWrapper(AttributeValue.CONTENT, content), subject.getAddress(), null, issuer.getAddress());
+        this.signature = HostSignatureWrapper.sign(AttributeValue.TYPE, SelfcontainedWrapper.encodeNonNullable(AttributeValue.CONTENT, content), subject.getAddress(), null, issuer.getAddress());
         this.subject = subject;
         this.issuer = issuer;
     }

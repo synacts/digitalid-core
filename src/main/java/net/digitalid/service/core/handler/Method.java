@@ -227,7 +227,7 @@ public abstract class Method extends Handler {
         final @Nullable RequestAudit requestAudit = RequestAudit.get(this);
         final @Nonnull Response response;
         try {
-            response = Method.send(new FreezableArrayList<>(this).freeze(), requestAudit);
+            response = Method.send(FreezableArrayList.get(this).freeze(), requestAudit);
         } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
             if (requestAudit != null) { RequestAudit.release(this); }
             throw exception;
@@ -350,7 +350,7 @@ public abstract class Method extends Handler {
                 if (authentications.contains(FreezableAuthentications.IDENTITY_BASED_TYPE)) {
                     final @Nonnull ClientCredential credential = ClientCredential.getIdentityBased(role, permissions);
                     credentials = new FreezableArrayList<Credential>(credential);
-                    certificates = new FreezableArrayList<>(authentications.size() - 1);
+                    certificates = FreezableArrayList.getWithCapacity(authentications.size() - 1);
                     for (final @Nonnull SemanticType type : authentications) {
                         if (!type.equals(FreezableAuthentications.IDENTITY_BASED_TYPE)) {
                             final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
@@ -362,7 +362,7 @@ public abstract class Method extends Handler {
                     }
                     certificates.freeze();
                 } else {
-                    credentials = new FreezableArrayList<>(authentications.size());
+                    credentials = FreezableArrayList.getWithCapacity(authentications.size());
                     for (final @Nonnull SemanticType type : authentications) {
                         final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
                         if (attributeValue != null && attributeValue.isCertified()) {

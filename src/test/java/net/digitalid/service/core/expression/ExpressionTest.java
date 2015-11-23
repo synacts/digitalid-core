@@ -24,7 +24,7 @@ public final class ExpressionTest {
 ////            System.out.println();
 //        }
 //        
-//        Block attribute = new SelfcontainedWrapper("name@core.digitalid.net", new StringWrapper("Person").toBlock()).getBlock();
+//        Block attribute = SelfcontainedWrapper.encodeNonNullable("name@core.digitalid.net", StringWrapper.encodeNonNullable("Person")).getBlock();
 //        strings = new String[] {"", "name@core.digitalid.net", "(name@core.digitalid.net=\"person\" ) ", "name@core.digitalid.net \\ \"on\"", "name@core.digitalid.net ≠ \" ) \""};
 //        for (final @Nonnull String string : strings) {
 ////            System.out.println(string);

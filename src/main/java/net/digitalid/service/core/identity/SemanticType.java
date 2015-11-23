@@ -2,6 +2,7 @@ package net.digitalid.service.core.identity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.BytesWrapper;
@@ -142,7 +143,7 @@ public final class SemanticType extends Type {
     @OnMainThread
     @NonCommitting
     public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
-        return Mapper.mapSemanticType(new InternalNonHostIdentifier(identifier));
+        return Mapper.mapSemanticType(InternalNonHostIdentifier.get(identifier));
     }
     
     
@@ -156,14 +157,14 @@ public final class SemanticType extends Type {
         
         Cache.getAttributeValues(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);
         
-        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(Cache.getStaleAttributeContent(this, null, CATEGORIES)).getElementsNotNull();
-        final @Nonnull FreezableList<Category> categories = new FreezableArrayList<>(elements.size());
+        final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(Cache.getStaleAttributeContent(this, null, CATEGORIES));
+        final @Nonnull FreezableList<Category> categories = FreezableArrayList.getWithCapacity(elements.size());
         for (final @Nonnull Block element : elements) { categories.add(Category.get(element)); }
         if (!categories.containsDuplicates()) { throw InvalidParameterValueException.get("categories", categories); }
         this.categories = categories.freeze();
         
         try {
-            this.cachingPeriod = new Time(Cache.getStaleAttributeContent(this, null, CACHING));
+            this.cachingPeriod = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(this, null, CACHING));
             if (cachingPeriod.isNegative() || cachingPeriod.isGreaterThan(Time.TROPICAL_YEAR)) { throw InvalidParameterValueException.get("caching period", cachingPeriod); }
         } catch (@Nonnull AttributeNotFoundException exception) {
             this.cachingPeriod = null;
@@ -171,15 +172,15 @@ public final class SemanticType extends Type {
         if (!categories.isEmpty() == (cachingPeriod == null)) { throw InvalidParameterValueCombinationException.get("If (and only if) this semantic type can be used as an attribute, the caching period may not be null."); }
         
         try {
-            this.semanticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().castTo(SemanticType.class);
+            this.semanticBase = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().castTo(SemanticType.class);
             this.syntacticBase = semanticBase.syntacticBase;
             this.parameters = semanticBase.parameters;
             setLoaded();
         } catch (@Nonnull AttributeNotFoundException exception) {
-            this.syntacticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().castTo(SyntacticType.class);
-            final @Nonnull ReadOnlyList<Block> list = new ListWrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getElementsNotNull();
-            final @Nonnull FreezableList<SemanticType> parameters = new FreezableArrayList<>(list.size());
-            for (final @Nonnull Block element : elements) { parameters.add(Mapper.getIdentity(IdentifierImplementation.create(element)).castTo(SemanticType.class)); }
+            this.syntacticBase = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().castTo(SyntacticType.class);
+            final @Nonnull ReadOnlyList<Block> list = ListWrapper.decodeNonNullableElements(Cache.getStaleAttributeContent(this, null, PARAMETERS));
+            final @Nonnull FreezableList<SemanticType> parameters = FreezableArrayList.getWithCapacity(list.size());
+            for (final @Nonnull Block element : elements) { parameters.add(Mapper.getIdentity(IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, element)).castTo(SemanticType.class)); }
             if (!parameters.containsDuplicates()) { throw InvalidParameterValueException.get("parameters", parameters); }
             if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) { throw InvalidParameterValueCombinationException.get("The number of required parameters must either be variable or match the given parameters."); }
             this.parameters = parameters.freeze();
@@ -249,7 +250,7 @@ public final class SemanticType extends Type {
     @OnMainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @NonNullableElements @UniqueElements Category[] categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull @NonNullableElements @UniqueElements SemanticType... parameters) {
-        return load(new FreezableArray<>(categories).toFreezableList().freeze(), cachingPeriod, syntacticBase, new FreezableArray<>(parameters).toFreezableList().freeze());
+        return load(FreezableArray.getNonNullable(categories).toFreezableList().freeze(), cachingPeriod, syntacticBase, FreezableArray.getNonNullable(parameters).toFreezableList().freeze());
     }
     
     /**
@@ -265,7 +266,7 @@ public final class SemanticType extends Type {
     @OnMainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull SyntacticType syntacticBase, @Nonnull @NonNullableElements @UniqueElements SemanticType... parameters) {
-        return load(Category.NONE, null, syntacticBase, new FreezableArray<>(parameters).toFreezableList().freeze());
+        return load(Category.NONE, null, syntacticBase, FreezableArray.getNonNullable(parameters).toFreezableList().freeze());
     }
     
     /**
@@ -321,7 +322,7 @@ public final class SemanticType extends Type {
     @OnMainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @NonNullableElements @UniqueElements Category[] categories, @Nullable Time cachingPeriod, @Nonnull @Loaded SemanticType semanticBase) {
-        return load(new FreezableArray<>(categories).toFreezableList().freeze(), cachingPeriod, semanticBase);
+        return load(FreezableArray.getNonNullable(categories).toFreezableList().freeze(), cachingPeriod, semanticBase);
     }
     
     /**

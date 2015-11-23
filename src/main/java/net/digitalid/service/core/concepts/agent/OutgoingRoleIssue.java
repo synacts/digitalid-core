@@ -96,15 +96,15 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
             this.issuer = entity.getIdentity().castTo(InternalNonHostIdentity.class);
         }
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
         this.relation = IdentityImplementation.create(elements.getNonNullable(0)).castTo(SemanticType.class).checkIsRoleType();
-        this.agentNumber = new Int64Wrapper(elements.getNonNullable(1)).getValue();
+        this.agentNumber = Int64Wrapper.decode(elements.getNonNullable(1));
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, relation.toBlock().setType(SemanticType.IDENTIFIER), new Int64Wrapper(Agent.NUMBER, agentNumber).toBlock()).toBlock();
+        return TupleWrapper.encode(TYPE, relation.toBlock().setType(SemanticType.IDENTIFIER), Int64Wrapper.encode(Agent.NUMBER, agentNumber));
     }
     
     @Pure

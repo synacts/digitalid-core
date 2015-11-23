@@ -92,7 +92,7 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     private ClientAgentCommitmentReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
         this.clientAgent = Agent.get(entity.castTo(NonHostEntity.class), elements.getNonNullable(0)).castTo(ClientAgent.class);
         this.oldCommitment = new Commitment(elements.getNonNullable(1));
         this.newCommitment = new Commitment(elements.getNonNullable(2));
@@ -101,7 +101,7 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, clientAgent.toBlock(), oldCommitment.toBlock().setType(OLD_COMMITMENT), newCommitment.toBlock().setType(NEW_COMMITMENT)).toBlock();
+        return TupleWrapper.encode(TYPE, clientAgent.toBlock(), oldCommitment.toBlock().setType(OLD_COMMITMENT), newCommitment.toBlock().setType(NEW_COMMITMENT));
     }
     
     @Pure

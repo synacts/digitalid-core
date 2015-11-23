@@ -20,7 +20,7 @@ public final class Int32WrapperTest extends DatabaseSetup {
         final @Nonnull Random random = new Random();
         for (int i = 0; i < 10; i++) {
             final int value = random.nextInt();
-            Assert.assertEquals(value, new Int32Wrapper(new Int32Wrapper(TYPE, value).toBlock()).getValue());
+            Assert.assertEquals(value, Int32Wrapper.decode(Int32Wrapper.encode(TYPE, value)));
         }
     }
     

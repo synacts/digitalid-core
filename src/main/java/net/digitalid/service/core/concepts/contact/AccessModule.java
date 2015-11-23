@@ -83,7 +83,7 @@ final class AccessModule implements StateModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
-        return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
+        return ListWrapper.encode(MODULE_FORMAT, entries.freeze());
     }
     
     @Override
@@ -91,7 +91,7 @@ final class AccessModule implements StateModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block entry : entries) {
             // TODO: Add all entries to the database table(s).
         }
@@ -122,7 +122,7 @@ final class AccessModule implements StateModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
         }
-        return new ListWrapper(STATE_FORMAT, entries.freeze()).toBlock();
+        return ListWrapper.encode(STATE_FORMAT, entries.freeze());
     }
     
     @Override
@@ -130,7 +130,7 @@ final class AccessModule implements StateModule {
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block entry : entries) {
             // TODO: Add the entries of the given entity to the database table(s).
         }

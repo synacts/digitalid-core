@@ -21,7 +21,7 @@ public final class EncryptionWrapperTest extends ServerSetup {
         final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("encryption@test.digitalid.net").load(EncryptionWrapper.XDF_TYPE, STRING);
         
-        final @Nonnull Block[] blocks = new Block[] {null, new StringWrapper(STRING, "This is a secret message.").toBlock()};
+        final @Nonnull Block[] blocks = new Block[] {null, StringWrapper.encodeNonNullable(STRING, "This is a secret message.")};
         final @Nullable SymmetricKey[] symmetricKeys = new SymmetricKey[] {null, new SymmetricKey()};
         
         for (int i = 1; i < 3; i++) {

@@ -18,7 +18,6 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.concepts.error.ErrorModule;
 import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -45,6 +44,7 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.logger.Log;
 
@@ -107,9 +107,9 @@ public final class SynchronizerModule implements ClientModule {
             while (resultSet.next()) {
                 final @Nonnull Role role = Role.getNotNull(client, resultSet, 1);
                 final @Nonnull Service service = Service.get(resultSet, 2);
-                final @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(Block.getNotNull(Packet.CONTENT, resultSet, 3));
-                final @Nonnull SignatureWrapper signature = new SignatureWrapper(Packet.SIGNATURE, (Block) null, role.getIdentity().getAddress());
-                pendingActions.add(Method.get(role, signature, service.getRecipient(role), content.getElement()).castTo(InternalAction.class));
+                final @Nonnull Block content = SelfcontainedWrapper.decodeNonNullable(Block.getNotNull(Packet.CONTENT, resultSet, 3));
+                final @Nonnull SignatureWrapper signature = SignatureWrapper.encodeWithoutSigning(Packet.SIGNATURE, (Block) null, role.getIdentity().getAddress());
+                pendingActions.add(Method.get(role, signature, service.getRecipient(role), content).castTo(InternalAction.class));
             }
         }
     }
@@ -201,7 +201,7 @@ public final class SynchronizerModule implements ClientModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             role.set(preparedStatement, 1);
             action.getService().set(preparedStatement, 2);
-            new SelfcontainedWrapper(Packet.CONTENT, action).toBlock().set(preparedStatement, 3);
+            SelfcontainedWrapper.encodeNonNullable(Packet.CONTENT, action).set(preparedStatement, 3);
             preparedStatement.executeUpdate();
         }
         pendingActions.add(action);
@@ -219,7 +219,7 @@ public final class SynchronizerModule implements ClientModule {
         final @Nonnull Role role = action.getRole();
         final @Nonnull String SQL = "DELETE FROM " + role.getSite() + "synchronization_action WHERE time IN (SELECT time FROM " + role.getSite() + "synchronization_action WHERE entity = " + role + " AND service = " + action.getService() + " AND action = ? ORDER BY time LIMIT 1)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
-            new SelfcontainedWrapper(Packet.CONTENT, action).toBlock().set(preparedStatement, 1);
+            SelfcontainedWrapper.encodeNonNullable(Packet.CONTENT, action).set(preparedStatement, 1);
             final int count = preparedStatement.executeUpdate();
             if (count != 1) { throw new SQLException("Could not find the action to be removed from the pending actions. (The count is " + count + " instead of 1.)"); }
         }
@@ -245,7 +245,7 @@ public final class SynchronizerModule implements ClientModule {
         final @Nonnull String SQL = "DELETE FROM " + role.getSite() + "synchronization_action WHERE time IN (SELECT time FROM " + role.getSite() + "synchronization_action WHERE entity = " + role + " AND service = " + methods.getNonNullable(0).getService() + " AND action = ? ORDER BY time LIMIT 1)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             for (final @Nonnull Method method : methods) {
-                new SelfcontainedWrapper(Packet.CONTENT, method).toBlock().set(preparedStatement, 1);
+                SelfcontainedWrapper.encodeNonNullable(Packet.CONTENT, method).set(preparedStatement, 1);
                 preparedStatement.addBatch();
             }
             final int[] counts = preparedStatement.executeBatch();

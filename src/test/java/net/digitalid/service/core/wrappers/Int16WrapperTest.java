@@ -20,7 +20,7 @@ public final class Int16WrapperTest extends DatabaseSetup {
         final @Nonnull Random random = new Random();
         for (int i = 0; i < 10; i++) {
             final short value = (short) random.nextInt();
-            Assert.assertEquals(value, new Int16Wrapper(new Int16Wrapper(TYPE, value).toBlock()).getValue());
+            Assert.assertEquals(value, Int16Wrapper.decode(Int16Wrapper.encode(TYPE, value)));
         }
     }
     

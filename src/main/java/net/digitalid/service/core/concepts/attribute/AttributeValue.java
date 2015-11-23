@@ -90,7 +90,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, verified, null);
-        final @Nonnull Block content = new SelfcontainedWrapper(signature.getNonNullableElement()).getElement();
+        final @Nonnull Block content = SelfcontainedWrapper.decodeNonNullable(signature.getNonNullableElement());
         content.getType().checkIsAttributeType();
         
         if (signature.isSigned()) { return new CertifiedAttributeValue(content, signature); }

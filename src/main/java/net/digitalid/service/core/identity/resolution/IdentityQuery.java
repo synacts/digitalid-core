@@ -67,7 +67,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new EmptyWrapper(TYPE).toBlock();
+        return EmptyWrapper.encode(TYPE);
     }
     
     @Pure

@@ -131,13 +131,13 @@ final class CredentialReply extends CoreServiceQueryReply {
         
         if (!hasEntity()) { throw InvalidOperationException.get("A credential reply must have an entity."); }
         
-        final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
+        final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
         this.restrictions = tuple.isElementNotNull(0) ? new Restrictions(entity, tuple.getNonNullableElement(0)) : null;
-        this.issuance = new Time(tuple.getNonNullableElement(1));
+        this.issuance = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
         this.publicKey = Cache.getPublicKey(signature.getNonNullableSubject().getHostIdentifier(), issuance);
         this.c = publicKey.getCompositeGroup().getElement(tuple.getNonNullableElement(2));
-        this.e = new Exponent(tuple.getNonNullableElement(3));
-        this.i = new Exponent(tuple.getNonNullableElement(4));
+        this.e = Exponent.get(tuple.getNonNullableElement(3));
+        this.i = Exponent.get(tuple.getNonNullableElement(4));
         
         if (issuance.isLessThan(Time.HOUR.ago())) { throw InvalidParameterValueException.get("issuance time", issuance); }
     }
@@ -145,7 +145,7 @@ final class CredentialReply extends CoreServiceQueryReply {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, Block.toBlock(restrictions), issuance.toBlock(), c.toBlock().setType(C), e.toBlock().setType(E), i.toBlock().setType(I)).toBlock();
+        return TupleWrapper.encode(TYPE, Block.toBlock(restrictions), issuance.toBlock(), c.toBlock().setType(C), e.toBlock().setType(E), i.toBlock().setType(I));
     }
     
     @Pure
@@ -172,7 +172,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         assert hasSignature() : "This handler has a signature.";
         
         if (restrictions == null) { throw InvalidParameterValueCombinationException.get("The restrictions may not be null for internal credentials."); }
-        final @Nonnull Exponent v = new Exponent(restrictions.toBlock().getHash());
+        final @Nonnull Exponent v = Exponent.get(restrictions.toBlock().getHash());
         
         final @Nonnull InternalPerson issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().castTo(InternalPerson.class);
         return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, role, restrictions, c, e, Exponent.get(b), u, i, v);
@@ -198,7 +198,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         if (restrictions != null) { throw InvalidParameterValueCombinationException.get("The restrictions must be null for external credentials."); }
         
         final @Nonnull InternalNonHostIdentity issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().castTo(InternalNonHostIdentity.class);
-        return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, attributeContent, c, e, new Exponent(b), u, i, v, false);
+        return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, attributeContent, c, e, Exponent.get(b), u, i, v, false);
     }
     
     

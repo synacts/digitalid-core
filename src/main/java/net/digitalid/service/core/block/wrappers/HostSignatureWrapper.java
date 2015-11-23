@@ -15,7 +15,6 @@ import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.PrivateKey;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
@@ -38,6 +37,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
 
@@ -193,10 +193,10 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         final @Nonnull Time start = Time.getCurrent();
         
         final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(2);
-        subelements.set(0, ConvertToXDF.<Identifier>nonNullable(signer, SIGNER));
+        subelements.set(0, ConvertToXDF.<Identifier>nonNullable(SIGNER, signer));
         try {
             final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getNonNullableTime());
-            subelements.set(1, ConvertToXDF.nonNullable(privateKey.powD(elements.getNonNullable(0).getHash()), VALUE));
+            subelements.set(1, ConvertToXDF.nonNullable(VALUE, privateKey.powD(elements.getNonNullable(0).getHash())));
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);
         }

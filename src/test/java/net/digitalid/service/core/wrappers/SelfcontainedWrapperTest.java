@@ -6,9 +6,11 @@ import net.digitalid.service.core.block.wrappers.Int32Wrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,12 +25,12 @@ public final class SelfcontainedWrapperTest extends DatabaseSetup {
         final @Nonnull SemanticType INT32 = SemanticType.map("int32@core.digitalid.net").load(Int32Wrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("selfcontained@core.digitalid.net").load(SelfcontainedWrapper.XDF_TYPE);
         
-        final @Nonnull Block string = new StringWrapper(STRING, "This is a short string.").toBlock();
-        final @Nonnull Block int32 = new Int32Wrapper(INT32, 123456789).toBlock();
+        final @Nonnull Block string = StringWrapper.encodeNonNullable(STRING, "This is a short string.");
+        final @Nonnull Block int32 = Int32Wrapper.encode(INT32, 123456789);
         final @Nonnull Block[] blocks = new Block[] {string, int32};
         
         for (final @Nonnull Block block : blocks) {
-            Assert.assertEquals(block, new SelfcontainedWrapper(new SelfcontainedWrapper(TYPE, block).toBlock()).getElement());
+            Assert.assertEquals(block, SelfcontainedWrapper.decodeNonNullable(SelfcontainedWrapper.encodeNonNullable(TYPE, block)));
         }
     }
 }

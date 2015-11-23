@@ -35,7 +35,7 @@ public final class UncertifiedAttributeValue extends AttributeValue {
     public UncertifiedAttributeValue(@Nonnull Block content) {
         super(content);
         
-        this.signature = new SignatureWrapper(AttributeValue.TYPE, new SelfcontainedWrapper(AttributeValue.CONTENT, content), null);
+        this.signature = SignatureWrapper.encodeWithoutSigning(AttributeValue.TYPE, SelfcontainedWrapper.encodeNonNullable(AttributeValue.CONTENT, content), null);
     }
     
     /**

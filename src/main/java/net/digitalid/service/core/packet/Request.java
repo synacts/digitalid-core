@@ -177,14 +177,14 @@ public class Request extends Packet {
     @RawRecipient
     @NonCommitting
     @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, PacketException, ExternalException, NetworkException {
-        return new SignatureWrapper(Packet.SIGNATURE, compression, subject);
+        return SignatureWrapper.encodeWithoutSigning(Packet.SIGNATURE, compression, subject);
     }
     
     
     @Override
     @RawRecipient
     final void initialize(int size) {
-        this.methods = new FreezableArrayList<>(size);
+        this.methods = FreezableArrayList.getWithCapacity(size);
         for (int i = 0; i < size; i++) { methods.add(null); }
     }
     
@@ -320,7 +320,7 @@ public class Request extends Packet {
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, iteration, verified);
             } else if (exception.getError() == PacketErrorCode.SERVICE && !getMethod(0).isOnHost()) {
-                final @Nonnull HostIdentifier recipient = IdentifierImplementation.create(Cache.getReloadedAttributeContent(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).castTo(HostIdentifier.class);
+                final @Nonnull HostIdentifier recipient = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getReloadedAttributeContent(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).castTo(HostIdentifier.class);
                 if (this.recipient.equals(recipient)) { throw new PacketException(PacketErrorCode.EXTERNAL, "The recipient after a service error is still the same.", exception); }
                 return resend(methods, recipient, subject, iteration, verified);
             } else {

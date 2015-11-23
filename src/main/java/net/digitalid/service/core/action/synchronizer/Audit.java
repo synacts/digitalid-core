@@ -1,6 +1,7 @@
 package net.digitalid.service.core.action.synchronizer;
 
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
@@ -70,13 +71,13 @@ public abstract class Audit extends CastableObject implements Castable, XDF<Audi
     public static @Nonnull Audit get(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        final @Nonnull Time lastTime = new Time(tuple.getNonNullableElement(0));
+        final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
+        final @Nonnull Time lastTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0));
         if (tuple.isElementNull(1)) {
             return new RequestAudit(lastTime);
         } else {
-            final @Nonnull Time thisTime = new Time(tuple.getNonNullableElement(1));
-            final @Nonnull ReadOnlyList<Block> trail = new ListWrapper(tuple.getNonNullableElement(2)).getElementsNotNull();
+            final @Nonnull Time thisTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
+            final @Nonnull ReadOnlyList<Block> trail = ListWrapper.decodeNonNullableElements(tuple.getNonNullableElement(2));
             return new ResponseAudit(lastTime, thisTime, trail);
         }
     }
@@ -90,9 +91,9 @@ public abstract class Audit extends CastableObject implements Castable, XDF<Audi
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(3);
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(3);
         elements.set(0, lastTime.toBlock().setType(LAST_TIME));
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
+        return TupleWrapper.encode(TYPE, elements.freeze());
     }
     
     

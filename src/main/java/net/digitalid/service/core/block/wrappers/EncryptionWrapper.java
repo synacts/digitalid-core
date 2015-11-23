@@ -18,9 +18,9 @@ import net.digitalid.service.core.cryptography.PrivateKey;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -88,7 +88,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         @Nullable Block key = encryptions.get(pair);
         if (key == null) {
             final @Nonnull Time start = Time.getCurrent();
-            key = ConvertToXDF.nonNullable(publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()), KEY);
+            key = ConvertToXDF.nonNullable(KEY, publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()));
             encryptions.put(pair, key);
             Log.verbose("Symmetric key encrypted in " + start.ago().getValue() + " ms.");
         }

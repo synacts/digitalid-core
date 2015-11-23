@@ -9,7 +9,6 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
@@ -17,6 +16,7 @@ import net.digitalid.service.core.handler.ExternalAction;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.host.Host;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
@@ -24,6 +24,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -84,7 +85,7 @@ public final class PusherModule implements StateModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
-        return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
+        return ListWrapper.encode(MODULE_FORMAT, entries.freeze());
     }
     
     @Override
@@ -92,7 +93,7 @@ public final class PusherModule implements StateModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block entry : entries) {
             // TODO: Add all entries to the database table(s).
         }
@@ -123,7 +124,7 @@ public final class PusherModule implements StateModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
         }
-        return new ListWrapper(STATE_FORMAT, entries.freeze()).toBlock();
+        return ListWrapper.encode(STATE_FORMAT, entries.freeze());
     }
     
     @Override
@@ -131,7 +132,7 @@ public final class PusherModule implements StateModule {
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block entry : entries) {
             // TODO: Add the entries of the given entity to the database table(s).
         }

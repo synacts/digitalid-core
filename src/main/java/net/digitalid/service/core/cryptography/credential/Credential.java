@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.HashWrapper;
@@ -18,8 +19,8 @@ import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -94,13 +95,13 @@ public abstract class Credential {
         assert issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
         assert role == null || role.isRoleType() : "The role is either null or a role type.";
         
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(5);
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
         elements.set(0, issuer.toBlock(ISSUER));
         elements.set(1, issuance.toBlock().setType(ISSUANCE));
-        elements.set(2, new HashWrapper(HASH, randomizedPermissions.getHash()).toBlock());
+        elements.set(2, HashWrapper.encodeNonNullable(HASH, randomizedPermissions.getHash()));
         elements.set(3, Block.toBlock(ROLE, role));
         elements.set(4, SelfcontainedWrapper.toBlock(AttributeValue.CONTENT, attributeContent));
-        return new TupleWrapper(EXPOSED, elements.freeze()).toBlock();
+        return TupleWrapper.encode(EXPOSED, elements.freeze());
     }
     
     
@@ -214,7 +215,7 @@ public abstract class Credential {
         this.restrictions = restrictions;
         
         this.exposed = getExposed(issuer, issuance, randomizedPermissions, role, attributeContent);
-        this.o = new Exponent(this.exposed.getHash());
+        this.o = Exponent.get(this.exposed.getHash());
         this.i = i;
         
         assert invariant();
@@ -238,19 +239,19 @@ public abstract class Credential {
         assert randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE) : "The randomized permissions are either null or based on the indicated type.";
         assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
         
-        final @Nonnull TupleWrapper tuple = new TupleWrapper(exposed);
-        this.issuer = IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().castTo(InternalNonHostIdentity.class);
-        this.issuance = new Time(tuple.getNonNullableElement(1));
+        final @Nonnull TupleWrapper tuple = TupleWrapper.decode(exposed);
+        this.issuer = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0)).getIdentity().castTo(InternalNonHostIdentity.class);
+        this.issuance = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
         if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) { throw InvalidParameterValueException.get("issuance time", issuance); }
         this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier(), issuance);
-        final @Nonnull BigInteger hash = new HashWrapper(tuple.getNonNullableElement(2)).getValue();
+        final @Nonnull BigInteger hash = HashWrapper.decodeNonNullable(tuple.getNonNullableElement(2));
         if (randomizedPermissions != null) {
             this.randomizedPermissions = new RandomizedAgentPermissions(randomizedPermissions);
             if (!this.randomizedPermissions.getHash().equals(hash)) { throw InvalidParameterValueCombinationException.get("The hash of the given permissions has to equal the credential's exposed hash."); }
         } else {
             this.randomizedPermissions = new RandomizedAgentPermissions(hash);
         }
-        this.role = tuple.isElementNull(3) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(3)).getIdentity().castTo(SemanticType.class);
+        this.role = tuple.isElementNull(3) ? null : IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(3)).getIdentity().castTo(SemanticType.class);
         if (role != null && !role.isRoleType()) { throw InvalidParameterValueException.get("role", role); }
         this.attributeContent = SelfcontainedWrapper.toElement(tuple.getNullableElement(4));
         if (role != null && attributeContent != null) { throw InvalidParameterValueCombinationException.get("The role and the attribute may not both be not null."); }
@@ -261,8 +262,8 @@ public abstract class Credential {
         if (role != null && restrictions == null) { throw InvalidParameterValueCombinationException.get("If a role is given, the restrictions may not be null."); }
         
         this.exposed = exposed;
-        this.o = new Exponent(exposed.getHash());
-        this.i = i != null ? new Exponent(i) : null;
+        this.o = Exponent.get(exposed.getHash());
+        this.i = i != null ? Exponent.get(i) : null;
         
         if (isIdentityBased() && i != null) { throw InvalidParameterValueCombinationException.get("If the credential is identity-based, the value i has to be null."); }
         
@@ -523,7 +524,7 @@ public abstract class Credential {
             try {
                 string.append(attributeContent.getType().getAddress().getString());
                 if (attributeContent.getType().isBasedOn(StringWrapper.XDF_TYPE)) {
-                    string.append(": ").append(new StringWrapper(attributeContent).getString());
+                    string.append(": ").append(StringWrapper.decodeNonNullable(attributeContent));
                 }
             } catch (@Nonnull InvalidEncodingException exception) {
                 string.append("InvalidEncodingException"); // This should never happen.

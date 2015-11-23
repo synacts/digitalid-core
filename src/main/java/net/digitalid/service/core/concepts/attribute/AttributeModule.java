@@ -123,7 +123,7 @@ public final class AttributeModule implements StateModule {
     @Override
     @NonCommitting
     public @Nonnull Block exportModule(@Nonnull Host host) throws DatabaseException {
-        final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(2);
+        final @Nonnull FreezableArray<Block> tables = FreezableArray.get(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, type, published, value FROM " + host + "attribute_value")) {
@@ -133,9 +133,9 @@ public final class AttributeModule implements StateModule {
                     final @Nonnull Identity type = IdentityImplementation.getNotNull(resultSet, 2);
                     final boolean published = resultSet.getBoolean(3);
                     final @Nonnull Block value = Block.getNotNull(AttributeValue.TYPE, resultSet, 4);
-                    entries.add(new TupleWrapper(VALUE_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published), value.toBlockable()).toBlock());
+                    entries.add(TupleWrapper.encode(VALUE_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), BooleanWrapper.encode(Attribute.PUBLISHED, published), value.toBlockable()));
                 }
-                tables.set(0, new ListWrapper(VALUE_MODULE_TABLE, entries.freeze()).toBlock());
+                tables.set(0, ListWrapper.encode(VALUE_MODULE_TABLE, entries.freeze()));
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, type, visibility FROM " + host + "attribute_visibility")) {
@@ -144,13 +144,13 @@ public final class AttributeModule implements StateModule {
                     final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
                     final @Nonnull Identity type = IdentityImplementation.getNotNull(resultSet, 2);
                     final @Nonnull String visibility = resultSet.getString(3);
-                    entries.add(new TupleWrapper(VISIBILITY_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new StringWrapper(PassiveExpression.TYPE, visibility)).toBlock());
+                    entries.add(TupleWrapper.encode(VISIBILITY_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), StringWrapper.encodeNonNullable(PassiveExpression.TYPE, visibility)));
                 }
-                tables.set(1, new ListWrapper(VISIBILITY_MODULE_TABLE, entries.freeze()).toBlock());
+                tables.set(1, ListWrapper.encode(VISIBILITY_MODULE_TABLE, entries.freeze()));
             }
             
         }
-        return new TupleWrapper(MODULE_FORMAT, tables.freeze()).toBlock();
+        return TupleWrapper.encode(MODULE_FORMAT, tables.freeze());
     }
     
     @Override
@@ -158,16 +158,16 @@ public final class AttributeModule implements StateModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getNonNullableElements(2);
+        final @Nonnull ReadOnlyArray<Block> tables = TupleWrapper.decode(block).getNonNullableElements(2);
         final @Nonnull String prefix = "INSERT INTO " + host;
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(0));
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
+                final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(4);
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalIdentity.class).set(preparedStatement, 1);
                 IdentityImplementation.create(elements.getNonNullable(1)).castTo(SemanticType.class).checkIsAttributeType().set(preparedStatement, 2);
-                preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(2)).getValue());
+                preparedStatement.setBoolean(3, BooleanWrapper.decode(elements.getNonNullable(2)));
                 elements.getNonNullable(3).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
@@ -175,12 +175,12 @@ public final class AttributeModule implements StateModule {
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(1));
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
+                final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalIdentity.class).set(preparedStatement, 1);
                 IdentityImplementation.create(elements.getNonNullable(1)).castTo(SemanticType.class).checkIsAttributeType().set(preparedStatement, 2);
-                preparedStatement.setString(2, new StringWrapper(elements.getNonNullable(2)).getString());
+                preparedStatement.setString(2, StringWrapper.decodeNonNullable(elements.getNonNullable(2)));
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -227,7 +227,7 @@ public final class AttributeModule implements StateModule {
     @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(2);
+        final @Nonnull FreezableArray<Block> tables = FreezableArray.get(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT type, published, value FROM " + site + "attribute_value WHERE entity = " + entity + permissions.allTypesToString())) {
@@ -236,9 +236,9 @@ public final class AttributeModule implements StateModule {
                     final @Nonnull Identity type = IdentityImplementation.getNotNull(resultSet, 1);
                     final boolean published = resultSet.getBoolean(2);
                     final @Nonnull Block value = Block.getNotNull(AttributeValue.TYPE, resultSet, 3);
-                    entries.add(new TupleWrapper(VALUE_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published), value.toBlockable()).toBlock());
+                    entries.add(TupleWrapper.encode(VALUE_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), BooleanWrapper.encode(Attribute.PUBLISHED, published), value.toBlockable()));
                 }
-                tables.set(0, new ListWrapper(VALUE_STATE_TABLE, entries.freeze()).toBlock());
+                tables.set(0, ListWrapper.encode(VALUE_STATE_TABLE, entries.freeze()));
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT type, visibility FROM " + site + "attribute_visibility WHERE entity = " + entity + permissions.writeTypesToString())) {
@@ -246,13 +246,13 @@ public final class AttributeModule implements StateModule {
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityImplementation.getNotNull(resultSet, 1);
                     final @Nonnull String visibility = resultSet.getString(2);
-                    entries.add(new TupleWrapper(VISIBILITY_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new StringWrapper(PassiveExpression.TYPE, visibility)).toBlock());
+                    entries.add(TupleWrapper.encode(VISIBILITY_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), StringWrapper.encodeNonNullable(PassiveExpression.TYPE, visibility)));
                 }
-                tables.set(1, new ListWrapper(VISIBILITY_STATE_TABLE, entries.freeze()).toBlock());
+                tables.set(1, ListWrapper.encode(VISIBILITY_STATE_TABLE, entries.freeze()));
             }
             
         }
-        return new TupleWrapper(STATE_FORMAT, tables.freeze()).toBlock();
+        return TupleWrapper.encode(STATE_FORMAT, tables.freeze());
     }
     
     @Override
@@ -266,16 +266,16 @@ public final class AttributeModule implements StateModule {
             Database.onInsertIgnore(statement, site + "attribute_visibility", "entity", "type");
         }
         
-        final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getNonNullableElements(2);
+        final @Nonnull ReadOnlyArray<Block> tables = TupleWrapper.decode(block).getNonNullableElements(2);
         final @Nonnull String prefix = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + site;
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(0));
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
+                final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(SemanticType.class).checkIsAttributeFor(entity).set(preparedStatement, 2);
-                preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(1)).getValue());
+                preparedStatement.setBoolean(3, BooleanWrapper.decode(elements.getNonNullable(1)));
                 elements.getNonNullable(2).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
@@ -284,11 +284,11 @@ public final class AttributeModule implements StateModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(1));
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
+                final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(2);
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(SemanticType.class).checkIsAttributeFor(entity).set(preparedStatement, 2);
-                preparedStatement.setString(3, new StringWrapper(elements.getNonNullable(1)).getString());
+                preparedStatement.setString(3, StringWrapper.decodeNonNullable(elements.getNonNullable(1)));
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();

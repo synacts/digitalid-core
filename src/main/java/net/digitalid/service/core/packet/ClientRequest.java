@@ -11,6 +11,7 @@ import net.digitalid.service.core.block.wrappers.CompressionWrapper;
 import net.digitalid.service.core.concepts.agent.ClientAgentCommitmentReplace;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;
@@ -25,6 +26,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class compresses, signs and encrypts requests by clients.
@@ -82,7 +84,7 @@ public final class ClientRequest extends Request {
     @Override
     @RawRecipient
     @Nonnull ClientSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
-        return new ClientSignatureWrapper(Packet.SIGNATURE, compression, subject, audit, commitment);
+        return ClientSignatureWrapper.sign(Packet.SIGNATURE, compression, subject, audit, commitment);
     }
     
     

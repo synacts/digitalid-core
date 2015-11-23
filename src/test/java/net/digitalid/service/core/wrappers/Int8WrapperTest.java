@@ -20,7 +20,7 @@ public final class Int8WrapperTest extends DatabaseSetup {
         final @Nonnull Random random = new Random();
         for (int i = 0; i < 10; i++) {
             final byte value = (byte) random.nextInt();
-            Assert.assertEquals(value, new Int8Wrapper(new Int8Wrapper(TYPE, value).toBlock()).getValue());
+            Assert.assertEquals(value, Int8Wrapper.decode(Int8Wrapper.encode(TYPE, value)));
         }
     }
     

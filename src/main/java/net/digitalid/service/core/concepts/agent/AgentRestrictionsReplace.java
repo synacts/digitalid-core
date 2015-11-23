@@ -101,7 +101,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull NonHostEntity nonHostEntity = entity.castTo(NonHostEntity.class);
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
         this.agent = Agent.get(nonHostEntity, elements.getNonNullable(0));
         this.oldRestrictions = new Restrictions(nonHostEntity, elements.getNonNullable(1)).checkMatch(agent);
         this.newRestrictions = new Restrictions(nonHostEntity, elements.getNonNullable(2)).checkMatch(agent);
@@ -110,7 +110,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, agent.toBlock(), oldRestrictions.toBlock().setType(OLD_RESTRICTIONS), newRestrictions.toBlock().setType(NEW_RESTRICTIONS)).toBlock();
+        return TupleWrapper.encode(TYPE, agent.toBlock(), oldRestrictions.toBlock().setType(OLD_RESTRICTIONS), newRestrictions.toBlock().setType(NEW_RESTRICTIONS));
     }
     
     @Pure

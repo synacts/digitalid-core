@@ -102,18 +102,18 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
     private ClientAgentNameReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
         this.clientAgent = Agent.get(entity.castTo(NonHostEntity.class), elements.getNonNullable(0)).castTo(ClientAgent.class);
-        this.oldName = new StringWrapper(elements.getNonNullable(1)).getString();
+        this.oldName = StringWrapper.decodeNonNullable(elements.getNonNullable(1));
         if (!Client.isValidName(oldName)) { throw InvalidParameterValueException.get("old name", oldName); }
-        this.newName = new StringWrapper(elements.getNonNullable(2)).getString();
+        this.newName = StringWrapper.decodeNonNullable(elements.getNonNullable(2));
         if (!Client.isValidName(newName)) { throw InvalidParameterValueException.get("new name", newName); }
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, clientAgent, new StringWrapper(OLD_NAME, oldName), new StringWrapper(NEW_NAME, newName)).toBlock();
+        return TupleWrapper.encode(TYPE, clientAgent, StringWrapper.encodeNonNullable(OLD_NAME, oldName), StringWrapper.encodeNonNullable(NEW_NAME, newName));
     }
     
     @Pure

@@ -94,14 +94,14 @@ public final class Cache {
                 final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/net/digitalid/core/resources/core.digitalid.net.certificate.xdf");
                 final @Nonnull AttributeValue value;
                 if (inputStream != null) {
-                    value = AttributeValue.get(new SelfcontainedWrapper(inputStream, true).getElement().checkType(AttributeValue.TYPE), true);
+                    value = AttributeValue.get(SelfcontainedWrapper.decodeBlockFrom(inputStream, true).checkType(AttributeValue.TYPE), true);
                     Log.information("The public key chain of the root host was loaded from the provided resources.");
                 } else {
                     // Since the public key chain of 'core.digitalid.net' is not available, the host 'core.digitalid.net' is created on this server.
                     final @Nonnull Host host = new Host(HostIdentifier.DIGITALID);
                     value = new CertifiedAttributeValue(host.getPublicKeyChain(), HostIdentity.DIGITALID, PublicKeyChain.TYPE);
                     final @Nonnull File certificateFile = new File(Directory.getHostsDirectory().getPath() + File.separator + "core.digitalid.net.certificate.xdf");
-                    new SelfcontainedWrapper(SelfcontainedWrapper.DEFAULT, value).write(new FileOutputStream(certificateFile), true);
+                    SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, value).writeTo(new FileOutputStream(certificateFile), true);
                     Log.warning("The public key chain of the root host was not found and thus 'core.digitalid.net' was created on this machine.");
                 }
                 setCachedAttributeValue(HostIdentity.DIGITALID, null, Time.MIN, PublicKeyChain.TYPE, value, null);

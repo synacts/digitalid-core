@@ -141,7 +141,7 @@ public final class ContextModule implements StateModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
-        return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
+        return ListWrapper.encode(MODULE_FORMAT, entries.freeze());
     }
     
     @Override
@@ -149,7 +149,7 @@ public final class ContextModule implements StateModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block entry : entries) {
             // TODO: Add all entries to the database table(s).
         }
@@ -197,7 +197,7 @@ public final class ContextModule implements StateModule {
         // TODO: Extend this implementation and make sure the state is restricted according to the restrictions.
         // TODO: This might be a little bit complicated as the context for which the client is authorized needs to be aggregated.
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(2);
+        final @Nonnull FreezableArray<Block> tables = FreezableArray.get(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT context, name FROM " + site + "context_name WHERE entity = " + entity)) {
@@ -205,9 +205,9 @@ public final class ContextModule implements StateModule {
                 while (resultSet.next()) {
                     final @Nonnull Context context = Context.getNotNull(entity, resultSet, 1);
                     final @Nonnull String name = resultSet.getString(2);
-                    entries.add(new TupleWrapper(NAME_STATE_ENTRY, context, new StringWrapper(Context.NAME_TYPE, name)).toBlock());
+                    entries.add(TupleWrapper.encode(NAME_STATE_ENTRY, context, StringWrapper.encodeNonNullable(Context.NAME_TYPE, name)));
                 }
-                tables.set(0, new ListWrapper(NAME_STATE_TABLE, entries.freeze()).toBlock());
+                tables.set(0, ListWrapper.encode(NAME_STATE_TABLE, entries.freeze()));
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT context, contact FROM " + site + "context_contact WHERE entity = " + entity)) {
@@ -215,13 +215,13 @@ public final class ContextModule implements StateModule {
                 while (resultSet.next()) {
                     final @Nonnull Context context = Context.getNotNull(entity, resultSet, 1);
                     final @Nonnull Identity person = IdentityImplementation.getNotNull(resultSet, 2);
-                    entries.add(new TupleWrapper(CONTACT_STATE_ENTRY, context, person.toBlockable(Person.IDENTIFIER)).toBlock());
+                    entries.add(TupleWrapper.encode(CONTACT_STATE_ENTRY, context, person.toBlockable(Person.IDENTIFIER)));
                 }
-                tables.set(1, new ListWrapper(CONTACT_STATE_TABLE, entries.freeze()).toBlock());
+                tables.set(1, ListWrapper.encode(CONTACT_STATE_TABLE, entries.freeze()));
             }
             
         }
-        return new TupleWrapper(STATE_FORMAT, tables.freeze()).toBlock();
+        return TupleWrapper.encode(STATE_FORMAT, tables.freeze());
     }
     
     @Override
@@ -235,16 +235,16 @@ public final class ContextModule implements StateModule {
             Database.onInsertIgnore(statement, site + "context_contact", "entity", "context", "contact");
         }
         
-        final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getNonNullableElements(2);
+        final @Nonnull ReadOnlyArray<Block> tables = TupleWrapper.decode(block).getNonNullableElements(2);
         final @Nonnull String prefix = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + site;
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "context_name (entity, context, name) VALUES (?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(0));
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
+                final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(2);
                 Context.get(entity, elements.getNonNullable(0)).set(preparedStatement, 2);
-                preparedStatement.setString(3, new StringWrapper(elements.getNonNullable(1)).getString());
+                preparedStatement.setString(3, StringWrapper.decodeNonNullable(elements.getNonNullable(1)));
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -252,9 +252,9 @@ public final class ContextModule implements StateModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "context_contact (entity, context, contact) VALUES (?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(1));
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
+                final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(2);
                 Context.get(entity, elements.getNonNullable(0)).set(preparedStatement, 2);
                 IdentityImplementation.create(elements.getNonNullable(1)).castTo(Person.class).set(preparedStatement, 3);
                 preparedStatement.addBatch();

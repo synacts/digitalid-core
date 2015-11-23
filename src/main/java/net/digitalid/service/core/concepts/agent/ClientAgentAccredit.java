@@ -17,6 +17,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
@@ -33,6 +34,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Accredits a {@link ClientAgent client agent}.
@@ -118,7 +120,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     private ClientAgentAccredit(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(4);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(4);
         
         this.clientAgent = Agent.get(entity.castTo(NonHostEntity.class), elements.getNonNullable(0)).castTo(ClientAgent.class);
         if (!clientAgent.isRemoved()) { throw InvalidParameterValueCombinationException.get("The client agent has to be removed."); }
@@ -128,17 +130,17 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         if (!(signature instanceof ClientSignatureWrapper)) { throw InvalidParameterValueCombinationException.get("The action to accredit a client agent has to be signed by a client."); }
         this.commitment = ((ClientSignatureWrapper) signature).getCommitment();
         
-        this.name = new StringWrapper(elements.getNonNullable(2)).getString();
+        this.name = StringWrapper.decodeNonNullable(elements.getNonNullable(2));
         if (!Client.isValidName(name)) { throw InvalidParameterValueException.get("name", name); }
         
-        this.password = new StringWrapper(elements.getNonNullable(3)).getString();
+        this.password = StringWrapper.decodeNonNullable(elements.getNonNullable(3));
         if (!Settings.isValid(password)) { throw InvalidParameterValueException.get("password", password); }
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, clientAgent.toBlock(), permissions.toBlock(), new StringWrapper(Client.NAME, name).toBlock(), new StringWrapper(Settings.TYPE, password).toBlock()).toBlock();
+        return TupleWrapper.encode(TYPE, clientAgent.toBlock(), permissions.toBlock(), StringWrapper.encodeNonNullable(Client.NAME, name), StringWrapper.encodeNonNullable(Settings.TYPE, password));
     }
     
     @Pure

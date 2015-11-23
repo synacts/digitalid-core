@@ -78,7 +78,7 @@ public final class MemberModule implements HostModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
-        return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
+        return ListWrapper.encode(MODULE_FORMAT, entries.freeze());
     }
     
     @Override
@@ -86,7 +86,7 @@ public final class MemberModule implements HostModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block entry : entries) {
             // TODO: Add all entries to the database table(s).
         }

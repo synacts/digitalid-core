@@ -117,9 +117,9 @@ public final class HostCredentialModule implements HostModule {
                 final @Nonnull Block i = Block.getNotNull(I, resultSet, 4);
                 final @Nullable Block v = Block.get(V, resultSet, 5);
                 final @Nonnull Block signature = Block.getNotNull(Packet.SIGNATURE, resultSet, 6);
-                entries.add(new TupleWrapper(MODULE_ENTRY, time.toBlock(), identity.toBlock(InternalNonHostIdentity.IDENTIFIER), e, i, v, signature).toBlock());
+                entries.add(TupleWrapper.encode(MODULE_ENTRY, time.toBlock(), identity.toBlock(InternalNonHostIdentity.IDENTIFIER), e, i, v, signature));
             }
-            return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
+            return ListWrapper.encode(MODULE_FORMAT, entries.freeze());
         }
     }
     
@@ -129,10 +129,10 @@ public final class HostCredentialModule implements HostModule {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("INSERT INTO " + host + "credential (time, entity, e, i, v, signature) VALUES (?, ?, ?, ?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull TupleWrapper tuple = new TupleWrapper(entry);
-                new Time(tuple.getNonNullableElement(0)).set(preparedStatement, 1);
+                final @Nonnull TupleWrapper tuple = TupleWrapper.decode(entry);
+                Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0)).set(preparedStatement, 1);
                 IdentityImplementation.create(tuple.getNonNullableElement(1)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 2);
                 tuple.getNonNullableElement(2).set(preparedStatement, 3);
                 tuple.getNonNullableElement(3).set(preparedStatement, 4);

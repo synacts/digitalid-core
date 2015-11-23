@@ -74,9 +74,9 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(size());
+        final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(size());
         for (final @Nonnull Contact contact : this) { elements.add(contact.toBlock()); }
-        return new ListWrapper(TYPE, elements.freeze()).toBlock();
+        return ListWrapper.encode(TYPE, elements.freeze());
     }
     
     /**
@@ -91,7 +91,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
     public @NonFrozen FreezableContacts(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) { add(Contact.get(entity, element)); }
     }
     

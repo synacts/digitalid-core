@@ -38,11 +38,11 @@ public final class AttributeTest extends IdentitySetup {
         print("_01_testValueReplace");
         try {
             final @Nonnull Attribute attribute = Attribute.get(getRole(), AttributeTypes.NAME);
-            attribute.setValue(new UncertifiedAttributeValue(new StringWrapper(AttributeTypes.NAME, NAME)));
+            attribute.setValue(new UncertifiedAttributeValue(StringWrapper.encodeNonNullable(AttributeTypes.NAME, NAME)));
             attribute.reset(); // Not necessary but I want to test the database state.
             final @Nullable AttributeValue attributeValue = attribute.getValue();
             Assert.assertNotNull(attributeValue);
-            Assert.assertEquals(NAME, new StringWrapper(attributeValue.getContent()).getString());
+            Assert.assertEquals(NAME, StringWrapper.decodeNonNullable(attributeValue.getContent()));
             Database.commit();
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
             exception.printStackTrace();
@@ -89,7 +89,7 @@ public final class AttributeTest extends IdentitySetup {
         print("_04_testPublicAccess");
         try {
             final @Nonnull Block content = Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeTypes.NAME, false);
-            Assert.assertEquals(NAME, new StringWrapper(content).getString());
+            Assert.assertEquals(NAME, StringWrapper.decodeNonNullable(content));
             Database.commit();
         } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
             exception.printStackTrace();

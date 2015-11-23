@@ -19,7 +19,7 @@ public final class StringWrapperTest extends DatabaseSetup {
         final @Nonnull String[] strings = new String[] {"", "äöüéè", "This is a short string.", "This is a longer string in order to test different string lengths."};
         for (final @Nonnull String string : strings) {
 //            System.out.println(string);
-            Assert.assertEquals(string, new StringWrapper(new StringWrapper(TYPE, string).toBlock()).getString());
+            Assert.assertEquals(string, StringWrapper.encodeNonNullable(StringWrapper.decodeNonNullable(TYPE, string)));
         }
     }
     

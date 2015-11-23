@@ -59,13 +59,13 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
      */
     @NonCommitting
     AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
-        this(entity, new StringWrapper(block).getString());
+        this(entity, StringWrapper.decodeNonNullable(block));
     }
     
     @Pure
     @Override
     public final @Nonnull Block toBlock() {
-        return new StringWrapper(getType(), expression.toString()).toBlock();
+        return StringWrapper.encodeNonNullable(getType(), expression.toString());
     }
     
     

@@ -28,6 +28,7 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForHosts;
@@ -242,9 +243,9 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
             if (rs.next()) {
                 final @Nonnull Block block = Block.getNotNull(Packet.SIGNATURE, rs, 1);
                 final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, entity);
-                final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getNonNullableElement());
-                final @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(compression.getElement());
-                return get(entity, signature.toHostSignatureWrapper(), number, content.getElement());
+                final @Nonnull Block compression = CompressionWrapper.decompressNonNullable(signature.getNonNullableElement());
+                final @Nonnull Block content = SelfcontainedWrapper.decodeNonNullable(compression);
+                return get(entity, signature.toHostSignatureWrapper(), number, content);
             } else {
                 throw new SQLException("There exists no reply with the number " + number + ".");
             }

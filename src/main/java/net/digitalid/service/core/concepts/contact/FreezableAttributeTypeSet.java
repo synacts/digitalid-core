@@ -75,7 +75,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
     public FreezableAttributeTypeSet(@Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull SemanticType type = IdentityImplementation.create(element).castTo(SemanticType.class).checkIsAttributeType();
             add(type);
@@ -94,11 +94,11 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
     @Pure
     @Override
     public final @Nonnull Block toBlock() {
-        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(size());
+        final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(size());
         for (final @Nonnull SemanticType type : this) {
             elements.add(type.toBlock(SemanticType.ATTRIBUTE_IDENTIFIER));
         }
-        return new ListWrapper(getType(), elements.freeze()).toBlock();
+        return ListWrapper.encode(getType(), elements.freeze());
     }
     
     

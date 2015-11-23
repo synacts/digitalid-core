@@ -129,11 +129,11 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     public FreezableAgentPermissions(@Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
-            final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(element).getNonNullableElements(2);
+            final @Nonnull ReadOnlyArray<Block> subelements = TupleWrapper.decode(element).getNonNullableElements(2);
             final @Nonnull SemanticType type = IdentityImplementation.create(subelements.getNonNullable(0)).castTo(SemanticType.class).checkIsAttributeType();
-            put(type, new BooleanWrapper(subelements.getNonNullable(1)).getValue());
+            put(type, BooleanWrapper.decode(subelements.getNonNullable(1)));
         }
         
         if (!areValid()) { throw InvalidParameterValueException.get("agent permissions", this); }
@@ -150,12 +150,12 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableList<Block> elements = new FreezableLinkedList<>();
         for (final @Nonnull SemanticType semanticType : keySet()) {
-            final @Nonnull FreezableArray<Block> subelements = new FreezableArray<>(2);
+            final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(2);
             subelements.set(0, semanticType.toBlock(ATTRIBUTE_TYPE));
-            subelements.set(1, new BooleanWrapper(WRITING, get(semanticType)).toBlock());
-            elements.add(new TupleWrapper(PERMISSION, subelements.freeze()).toBlock());
+            subelements.set(1, BooleanWrapper.encode(WRITING, get(semanticType)));
+            elements.add(TupleWrapper.encode(PERMISSION, subelements.freeze()));
         }
-        return new ListWrapper(TYPE, elements.freeze()).toBlock();
+        return ListWrapper.encode(TYPE, elements.freeze());
     }
     
     

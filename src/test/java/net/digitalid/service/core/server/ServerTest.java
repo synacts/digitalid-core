@@ -27,9 +27,9 @@ public final class ServerTest extends ServerSetup {
 //        assertTrue(Category.isNaturalPerson(vid));
 //        
 //        // Attributes
-//        Block block = new SelfcontainedWrapper("name@core.digitalid.net", new StringWrapper("Person").toBlock()).getBlock();
+//        Block block = SelfcontainedWrapper.encodeNonNullable("name@core.digitalid.net", StringWrapper.encodeNonNullable("Person")).getBlock();
 //        Request.setAttribute(client, vid, new SignatureWrapper(block).getBlock(), "everybody");
-//        assertEquals("Person", new StringWrapper(Request.getAttributeNotNullUnwrapped(vid, Mapper.getVid("name@core.digitalid.net"))).getString());
+//        assertEquals("Person", StringWrapper.decodeNonNullable(Request.getAttributeNotNullUnwrapped(vid, Mapper.getVid("name@core.digitalid.net"))));
 //        
 //        // Contacts
 //        Request.addContact(client, vid, vid, 0);
@@ -48,16 +48,16 @@ public final class ServerTest extends ServerSetup {
 //        
 //        Request.openAccount(client, "other@test.digitalid.net", client.getName(), Category.NATURAL_PERSON);
 //        long other = Mapper.getVid("other@test.digitalid.net");
-//        block = new SelfcontainedWrapper("name@core.digitalid.net", new StringWrapper("Other").toBlock()).getBlock();
+//        block = SelfcontainedWrapper.encodeNonNullable("name@core.digitalid.net", StringWrapper.encodeNonNullable("Other")).getBlock();
 //        Request.setAttribute(client, other, new SignatureWrapper(block).getBlock(), "person@test.digitalid.net");
-//        assertEquals("Other", new StringWrapper(Request.getAttributeNotNullUnwrapped(client, vid, other, Mapper.getVid("name@core.digitalid.net"))).getString());
+//        assertEquals("Other", StringWrapper.decodeNonNullable(Request.getAttributeNotNullUnwrapped(client, vid, other, Mapper.getVid("name@core.digitalid.net"))));
 //        
 //        // Clients (2)
 //        List<Block> clients = Request.getClients(client, vid);
 //        assertTrue(clients.size() == 1);
-//        Block[] elements = new TupleWrapper(clients.get(0)).getElementsNotNull(5);
+//        Block[] elements = TupleWrapper.decode(clients.get(0)).getElementsNotNull(5);
 //        BigInteger commitment = new IntegerWrapper(elements[0]).getValue();
-//        assertEquals("Tester", new StringWrapper(elements[1]).getString());
+//        assertEquals("Tester", StringWrapper.decodeNonNullable(elements[1]));
 //        assertEquals(restrictions, new Restrictions(elements[2]));
 //        assertEquals(authorization, new AgentPermissions(elements[3]));
 //        assertEquals(authorization, new AgentPermissions(elements[4]));

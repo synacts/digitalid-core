@@ -141,7 +141,7 @@ abstract class Expression extends NonHostConcept {
     /**
      * Stores the characters for addition and subtraction.
      */
-    static final @Nonnull ReadOnlyList<Character> addition = new FreezableArrayList<>('+', '-').freeze();
+    static final @Nonnull ReadOnlyList<Character> addition = FreezableArrayList.get('+', '-').freeze();
     
     /**
      * Stores the character for multiplication.
@@ -151,12 +151,12 @@ abstract class Expression extends NonHostConcept {
     /**
      * Stores the characters for all binary operators.
      */
-    static final @Nonnull ReadOnlyList<Character> operators = new FreezableArrayList<>('+', '-', '*').freeze();
+    static final @Nonnull ReadOnlyList<Character> operators = FreezableArrayList.get('+', '-', '*').freeze();
     
     /**
      * Stores the symbols for restriction.
      */
-    static final @Nonnull ReadOnlyList<String> symbols = new FreezableArrayList<>("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\").freeze();
+    static final @Nonnull ReadOnlyList<String> symbols = FreezableArrayList.get("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\").freeze();
     
     /**
      * Returns the last index of one of the given characters in the given string considering quotation marks and parentheses.

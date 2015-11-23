@@ -130,7 +130,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         super(entity, signature, recipient);
         
         if (!(entity.getIdentity() instanceof InternalPerson)) { throw new PacketException(PacketErrorCode.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons."); }
-        final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
+        final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
         this.permissions = new RandomizedAgentPermissions(tuple.getNonNullableElement(0));
         if (tuple.isElementNull(1)) { this.relation = null; }
         else { this.relation = IdentityImplementation.create(tuple.getNonNullableElement(1)).castTo(SemanticType.class).checkIsRoleType(); }
@@ -142,7 +142,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, permissions, (relation != null ? relation.toBlockable(SemanticType.IDENTIFIER) : null)).toBlock();
+        return TupleWrapper.encode(TYPE, permissions, (relation != null ? relation.toBlockable(SemanticType.IDENTIFIER) : null));
     }
     
     @Pure
@@ -195,10 +195,10 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
             
             assert value != null : "See the constructor.";
             final @Nonnull Element f = group.getElement(value);
-            final @Nonnull Exponent i = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
-            final @Nonnull Exponent v = new Exponent(restrictions.toBlock().getHash());
-            final @Nonnull Exponent o = new Exponent(Credential.getExposed(account.getIdentity(), issuance, permissions, relation, null).getHash());
-            final @Nonnull Exponent e = new Exponent(BigInteger.probablePrime(Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
+            final @Nonnull Exponent i = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
+            final @Nonnull Exponent v = Exponent.get(restrictions.toBlock().getHash());
+            final @Nonnull Exponent o = Exponent.get(Credential.getExposed(account.getIdentity(), issuance, permissions, relation, null).getHash());
+            final @Nonnull Exponent e = Exponent.get(BigInteger.probablePrime(Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
             
             final @Nonnull Element c = f.multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)).multiply(publicKey.getAo().pow(o).inverse()).pow(e.inverse(group)).inverse();
             

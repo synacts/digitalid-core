@@ -80,7 +80,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     private AccountClose(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        this.successor = IdentifierImplementation.create(block).castTo(InternalNonHostIdentifier.class);
+        this.successor = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).castTo(InternalNonHostIdentifier.class);
         this.restrictions = new Restrictions(true, true, true, Context.getRoot(entity.castTo(NonHostEntity.class)));
     }
     

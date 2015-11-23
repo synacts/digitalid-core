@@ -1,6 +1,5 @@
 package net.digitalid.service.core.action.synchronizer;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -14,10 +13,10 @@ import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
@@ -25,6 +24,7 @@ import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.service.core.packet.Response;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -39,6 +39,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.NamedThreadFactory;
 
@@ -83,11 +84,11 @@ public final class ResponseAudit extends Audit {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(3);
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(3);
         elements.set(0, getLastTime().toBlock().setType(Audit.LAST_TIME));
         elements.set(1, thisTime.toBlock().setType(Audit.THIS_TIME));
-        elements.set(2, new ListWrapper(Audit.TRAIL, trail).toBlock());
-        return new TupleWrapper(Audit.TYPE, elements.freeze()).toBlock();
+        elements.set(2, ListWrapper.encode(Audit.TRAIL, trail));
+        return TupleWrapper.encode(Audit.TYPE, elements.freeze());
     }
     
     
@@ -195,7 +196,7 @@ public final class ResponseAudit extends Audit {
         
         suspendedModules.removeAll((FreezableSet<StateModule>) ignoredModules);
         if (!suspendedModules.freeze().isEmpty()) {
-            final @Nonnull FreezableList<Method> queries = new FreezableArrayList<>(suspendedModules.size());
+            final @Nonnull FreezableList<Method> queries = FreezableArrayList.getWithCapacity(suspendedModules.size());
             for (final @Nonnull StateModule module : suspendedModules) { queries.add(new StateQuery(role, module)); }
             final @Nonnull Response response = Method.send(queries.freeze(), new RequestAudit(SynchronizerModule.getLastTime(role, service)));
             for (int i = 0; i < response.getSize(); i++) {
@@ -243,7 +244,7 @@ public final class ResponseAudit extends Audit {
                 try {
                     Database.lock();
                     Log.debugging("Execute asynchronously the audit of " + method + ".");
-                    execute(role, service, method.getRecipient(), new FreezableArrayList<>(method).freeze(), emptyModuleSet);
+                    execute(role, service, method.getRecipient(), FreezableArrayList.get(method).freeze(), emptyModuleSet);
                 } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
                     Log.warning("Could not execute the audit of " + method + " asynchronously.", exception);
                     Database.rollback();

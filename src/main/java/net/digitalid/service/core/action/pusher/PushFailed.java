@@ -3,6 +3,7 @@ package net.digitalid.service.core.action.pusher;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
@@ -11,12 +12,12 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.ActionReply;
@@ -29,11 +30,13 @@ import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.service.core.packet.Response;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -116,14 +119,14 @@ public final class PushFailed extends ExternalAction {
     private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(4);
-        this.number = new Int64Wrapper(elements.getNonNullable(0)).getValue();
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(4);
+        this.number = Int64Wrapper.decode(elements.getNonNullable(0));
         
-        final @Nonnull InternalIdentifier _subject = IdentifierImplementation.create(elements.getNonNullable(1)).castTo(InternalIdentifier.class);
-        final @Nonnull HostIdentifier _recipient = IdentifierImplementation.create(elements.getNonNullable(2)).castTo(HostIdentifier.class);
-        final @Nonnull Block _block = new SelfcontainedWrapper(elements.getNonNullable(3)).getElement();
+        final @Nonnull InternalIdentifier _subject = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(1)).castTo(InternalIdentifier.class);
+        final @Nonnull HostIdentifier _recipient = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2)).castTo(HostIdentifier.class);
+        final @Nonnull Block _block = SelfcontainedWrapper.decodeNonNullable(elements.getNonNullable(3));
         try {
-            this.action = (ExternalAction) Method.get(entity, new SignatureWrapper(Packet.SIGNATURE, (Block) null, _subject), _recipient, _block);
+            this.action = (ExternalAction) Method.get(entity, SignatureWrapper.encodeWithoutSigning(Packet.SIGNATURE, (Block) null, _subject), _recipient, _block);
         } catch (@Nonnull PacketException | ClassCastException exception) {
             throw MaskingInvalidEncodingException.get(exception);
         }
@@ -132,12 +135,12 @@ public final class PushFailed extends ExternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(4);
-        elements.set(0, new Int64Wrapper(NUMBER, number).toBlock());
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(4);
+        elements.set(0, Int64Wrapper.encode(NUMBER, number));
         elements.set(1, action.getSubject().toBlock().setType(SUBJECT));
         elements.set(2, action.getRecipient().toBlock().setType(RECIPIENT));
-        elements.set(3, new SelfcontainedWrapper(ACTION, action.toBlock()).toBlock());
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
+        elements.set(3, SelfcontainedWrapper.encodeNonNullable(ACTION, action.toBlock()));
+        return TupleWrapper.encode(TYPE, elements.freeze());
     }
     
     @Pure

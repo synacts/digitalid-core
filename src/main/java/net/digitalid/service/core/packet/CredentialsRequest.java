@@ -11,6 +11,7 @@ import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -23,6 +24,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezableQuartet;
 import net.digitalid.utility.collections.tuples.ReadOnlyQuartet;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class compresses, signs and encrypts requests with credentials.
@@ -119,7 +121,7 @@ public final class CredentialsRequest extends Request {
     @RawRecipient
     @NonCommitting
     @Nonnull CredentialsSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, PacketException, ExternalException, NetworkException {
-        return new CredentialsSignatureWrapper(Packet.SIGNATURE, compression, subject, audit, credentials, certificates, lodged, value);
+        return CredentialsSignatureWrapper.sign(Packet.SIGNATURE, compression, subject, audit, credentials, certificates, lodged, value);
     }
     
     

@@ -18,14 +18,14 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.cache.AttributesQuery;
 import net.digitalid.service.core.cache.AttributesReply;
 import net.digitalid.service.core.concepts.certificate.CertificateIssue;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.HostAccount;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -52,6 +52,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * A packet compresses, signs and encrypts requests and responses.
@@ -148,12 +149,12 @@ public abstract class Packet {
         final @Nonnull FreezableList<Block> signatures = FreezableArrayList.getWithCapacity(size);
         for (int i = 0; i < size; i++) {
             final @Nullable Block block = getBlock(i);
-            final @Nullable SelfcontainedWrapper content = block == null ? null : new SelfcontainedWrapper(CONTENT, block);
-            final @Nullable CompressionWrapper compression = content == null ? null : new CompressionWrapper(COMPRESSION, content, CompressionWrapper.ZLIB);
+            final @Nullable Block content = block == null ? null : SelfcontainedWrapper.encodeNonNullable(CONTENT, block);
+            final @Nullable Block compression = content == null ? null : CompressionWrapper.compressNonNullable(COMPRESSION, content);
             if (compression != null || audit != null) {
-                if (subject == null || audit == null && block != null && block.getType().equals(PacketException.TYPE))
-                    signatures.add(new SignatureWrapper(Packet.SIGNATURE, compression, subject).toBlock());
-                else { signatures.add(getSignature(compression, subject, audit).toBlock()); }
+                if (subject == null || audit == null && block != null && block.getType().equals(PacketException.TYPE)) {
+                    signatures.add(ConvertToXDF.nonNullable(SignatureWrapper.encodeWithoutSigning(Packet.SIGNATURE, compression, subject)));
+                } else { signatures.add(getSignature(compression, subject, audit).toBlock()); }
                 audit = null;
             } else {
                 signatures.add(null);
@@ -191,7 +192,7 @@ public abstract class Packet {
         final @Nullable HostAccount account = recipient == null ? null : Server.getHost(recipient).getAccount();
         
         final @Nonnull ReadOnlyList<Block> elements;
-        try { elements = new ListWrapper(encryption.getElement()).getElements(); } catch (InvalidEncodingException exception) { throw new PacketException(PacketErrorCode.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
+        try { elements = ListWrapper.decodeNullableElements(encryption.getElement()); } catch (InvalidEncodingException exception) { throw new PacketException(PacketErrorCode.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
         
         this.size = elements.size();
         if (size == 0) { throw new PacketException(PacketErrorCode.ELEMENTS, "The encryption of a packet must contain at least one element.", null, isResponse); }

@@ -647,7 +647,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new Int64Wrapper(TYPE, number).toBlock();
+        return Int64Wrapper.encode(TYPE, number);
     }
     
     /**
@@ -662,7 +662,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        return get(entity, new Int64Wrapper(block).getValue());
+        return get(entity, Int64Wrapper.decode(block));
     }
     
     /* -------------------------------------------------- SQLizable -------------------------------------------------- */
