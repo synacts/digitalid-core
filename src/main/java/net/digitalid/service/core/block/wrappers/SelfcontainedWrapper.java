@@ -238,12 +238,8 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws DatabaseException, PacketException, ExternalException, NetworkException {
-        try {
-            return decodeNonNullable(readBlockFrom(inputStream, close));
-        } catch (@Nonnull IOException exception) {
-            throw NetworkException.get(exception);
-        }
+    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws IOException, DatabaseException, PacketException, ExternalException, NetworkException {
+        return decodeNonNullable(readBlockFrom(inputStream, close));
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */

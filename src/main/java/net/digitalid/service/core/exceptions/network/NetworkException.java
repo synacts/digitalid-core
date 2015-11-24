@@ -11,7 +11,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception indicates an error on the network layer.
  * 
  * @see ConfigurationException
- * @see FileNotFoundException
  * @see HostNotFoundException
  * @see ReceivingException
  * @see SendingException

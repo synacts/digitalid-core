@@ -3,9 +3,11 @@ package net.digitalid.service.core.site.host;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.attribute.Attribute;
@@ -90,7 +92,7 @@ public final class Host extends Site {
      */
     @Locked
     @Committing
-    public Host(@Nonnull HostIdentifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public Host(@Nonnull HostIdentifier identifier) throws IOException, DatabaseException, PacketException, ExternalException, NetworkException {
         super(identifier.asHostName());
         
         this.identifier = identifier;
@@ -110,12 +112,12 @@ public final class Host extends Site {
             this.publicKeyChain = PublicKeyChain.get(time, keyPair.getPublicKey());
         }
         
-        final @Nonnull SelfcontainedWrapper privateKeyWrapper = SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, privateKeyChain);
-        final @Nonnull SelfcontainedWrapper publicKeyWrapper = SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, publicKeyChain);
+        final @Nonnull Block privateKeyBlock = SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, privateKeyChain);
+        final @Nonnull Block publicKeyBlock = SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, publicKeyChain);
         
         if (!privateKeyFile.exists() || !publicKeyFile.exists()) {
-            privateKeyWrapper.write(new FileOutputStream(privateKeyFile), true);
-            publicKeyWrapper.write(new FileOutputStream(publicKeyFile), true);
+            privateKeyBlock.writeTo(new FileOutputStream(privateKeyFile), true);
+            publicKeyBlock.writeTo(new FileOutputStream(publicKeyFile), true);
         }
         
         CoreService.SERVICE.createTables(this);

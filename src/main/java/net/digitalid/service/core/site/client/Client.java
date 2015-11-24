@@ -3,6 +3,7 @@ package net.digitalid.service.core.site.client;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
@@ -29,7 +30,6 @@ import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.entity.RoleModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.network.FileNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -161,7 +161,7 @@ public class Client extends Site implements Observer {
      */
     @Locked
     @Committing
-    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Frozen ReadOnlyAgentPermissions preferredPermissions) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Frozen ReadOnlyAgentPermissions preferredPermissions) throws IOException, DatabaseException, PacketException, ExternalException, NetworkException {
         super(identifier);
         
         assert isValidIdentifier(identifier) : "The identifier is valid.";
@@ -173,15 +173,11 @@ public class Client extends Site implements Observer {
         this.preferredPermissions = preferredPermissions;
         
         final @Nonnull File file = new File(Directory.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
-        try {
-            if (file.exists()) {
-                this.secret = Exponent.get(SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(file), true).checkType(SECRET));
-            } else {
-                this.secret = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
-                SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, ConvertToXDF.nonNullable(SECRET, secret)).writeTo(new FileOutputStream(file), true);
-            }
-        } catch (@Nonnull java.io.FileNotFoundException exception) {
-            throw FileNotFoundException.get(exception, file);
+        if (file.exists()) {
+            this.secret = Exponent.get(SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(file), true).checkType(SECRET));
+        } else {
+            this.secret = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
+            SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, ConvertToXDF.nonNullable(SECRET, secret)).writeTo(new FileOutputStream(file), true);
         }
         
         // The role table needs to be created in advance.
