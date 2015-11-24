@@ -1,22 +1,28 @@
 package net.digitalid.service.core.exceptions.external.signature;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 
 /**
  * This exception is thrown when a signature is invalid.
+ * 
+ * @see InvalidHostSignatureException
+ * @see InvalidClientSignatureException
+ * @see InvalidCredentialsSignatureException
  */
 @Immutable
-public final class InvalidSignatureException extends ExternalException {
+public abstract class InvalidSignatureException extends SignatureException {
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new invalid signature exception with the given message.
+     * Creates a new invalid signature exception.
      * 
-     * @param message a string explaining the exception that occurred.
+     * @param signature the signature that is invalid.
      */
-    public InvalidSignatureException(@Nonnull String message) {
-        super(message);
+    protected InvalidSignatureException(@Nonnull SignatureWrapper signature) {
+        super(signature);
     }
     
 }

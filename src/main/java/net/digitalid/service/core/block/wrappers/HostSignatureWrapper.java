@@ -17,7 +17,8 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.external.signature.ExpiredHostSignatureException;
+import net.digitalid.service.core.exceptions.external.signature.InvalidHostSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -166,7 +167,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull Time start = Time.getCurrent();
         
-        if (getNonNullableTime().isLessThan(Time.TWO_YEARS.ago())) { throw new InvalidSignatureException("The host signature is out of date."); }
+        if (getNonNullableTime().isLessThan(Time.TWO_YEARS.ago())) { throw ExpiredHostSignatureException.get(this); }
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(getCache());
         final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();
@@ -179,7 +180,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         }
         
         final @Nonnull ReadOnlyArray<Block> subelements = TupleWrapper.decode(tuple.getNonNullableElement(1)).getNonNullableElements(2);
-        if (!publicKey.getCompositeGroup().getElement(subelements.getNonNullable(1)).pow(publicKey.getE()).getValue().equals(hash)) { throw new InvalidSignatureException("The host signature is not valid."); }
+        if (!publicKey.getCompositeGroup().getElement(subelements.getNonNullable(1)).pow(publicKey.getE()).getValue().equals(hash)) { throw InvalidHostSignatureException.get(this); }
         
         Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
         

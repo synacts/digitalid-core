@@ -16,10 +16,11 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenticationException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -383,8 +384,8 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * Checks this signature for recency (it may be signed at most half an hour ago).
      */
     @Pure
-    public void checkRecency() throws InactiveSignatureException {
-        if (time == null || time.isLessThan(Time.HALF_HOUR.ago())) { throw InactiveSignatureException.get("The signature was signed more than half an hour ago."); }
+    public void checkRecency() throws InactiveAuthenticationException {
+        if (time == null || time.isLessThan(Time.HALF_HOUR.ago())) { throw InactiveSignatureException.get(this); }
     }
     
     /* -------------------------------------------------- Signing -------------------------------------------------- */

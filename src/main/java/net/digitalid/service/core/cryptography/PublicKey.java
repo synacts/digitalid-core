@@ -10,8 +10,8 @@ import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -510,8 +510,8 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     @Pure
     public @Nonnull @BasedOn("verifiable.encryption@core.digitalid.net") Block getVerifiableEncryption(@Nonnull Exponent m, @Nonnull Exponent r) {
         final @Nonnull FreezableArray<Block> elements = FreezableArray.get(2);
-        elements.set(0, ConvertToXDF.nonNullable(y.pow(r).multiply(zPlus1.pow(m)), W1));
-        elements.set(1, ConvertToXDF.nonNullable(g.pow(r), W2));
+        elements.set(0, ConvertToXDF.nonNullable(W1, y.pow(r).multiply(zPlus1.pow(m))));
+        elements.set(1, ConvertToXDF.nonNullable(W2, g.pow(r)));
         return TupleWrapper.encode(VERIFIABLE_ENCRYPTION, elements.freeze());
     }
     

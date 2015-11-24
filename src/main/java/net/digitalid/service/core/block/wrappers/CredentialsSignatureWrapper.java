@@ -37,8 +37,10 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
-import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.external.signature.ExpiredCredentialsSignatureException;
+import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenticationException;
+import net.digitalid.service.core.exceptions.external.signature.InactiveCredentialException;
+import net.digitalid.service.core.exceptions.external.signature.InvalidCredentialsSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -506,11 +508,11 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     
     @Pure
     @Override
-    public void checkRecency() throws InactiveSignatureException {
+    public void checkRecency() throws InactiveAuthenticationException {
         super.checkRecency();
         final @Nonnull Time time = Time.HOUR.ago();
         for (final @Nonnull Credential credential : credentials) {
-            if (credential.getIssuance().isLessThan(time)) { throw InactiveSignatureException.get("One of the credentials is older than an hour."); }
+            if (credential.getIssuance().isLessThan(time)) { throw InactiveCredentialException.get(credential); }
         }
     }
     
@@ -716,7 +718,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull Time start = Time.getCurrent();
         
-        if (getNonNullableTime().isLessThan(Time.TROPICAL_YEAR.ago())) { throw new InvalidSignatureException("The credentials signature is out of date."); }
+        if (getNonNullableTime().isLessThan(Time.TROPICAL_YEAR.ago())) { throw ExpiredCredentialsSignatureException.get(this); }
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(getCache());
         final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();
@@ -724,12 +726,12 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         final @Nonnull TupleWrapper signature = TupleWrapper.decode(tuple.getNonNullableElement(3));
         final @Nonnull Exponent t = Exponent.get(signature.getNonNullableElement(0));
         final @Nonnull Exponent su = Exponent.get(signature.getNonNullableElement(1));
-        if (su.getBitLength() > Parameters.RANDOM_EXPONENT) { throw new InvalidSignatureException("The credentials signature is invalid: The value su is too big."); }
+        if (su.getBitLength() > Parameters.RANDOM_EXPONENT) { throw InvalidCredentialsSignatureException.get(this, "su"); }
         
         @Nullable Exponent v = null, sv = null;
         if (signature.isElementNull(2)) {
             sv = Exponent.get(signature.getNonNullableElement(3));
-            if (sv.getBitLength() > Parameters.RANDOM_EXPONENT) { throw new InvalidSignatureException("The credentials signature is invalid: The value sv is too big."); }
+            if (sv.getBitLength() > Parameters.RANDOM_EXPONENT) { throw InvalidCredentialsSignatureException.get(this, "sv"); }
         } else {
             v = Exponent.get(signature.getNonNullableElement(2).getHash());
         }
@@ -743,9 +745,9 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             final @Nonnull Element c = publicKey.getCompositeGroup().getElement(credential.getNonNullableElement(2));
             
             final @Nonnull Exponent se = Exponent.get(credential.getNonNullableElement(3));
-            if (se.getBitLength() > Parameters.RANDOM_CREDENTIAL_EXPONENT) { throw new InvalidSignatureException("The credentials signature is invalid: The value se is too big."); }
+            if (se.getBitLength() > Parameters.RANDOM_CREDENTIAL_EXPONENT) { throw InvalidCredentialsSignatureException.get(this, "se"); }
             final @Nonnull Exponent sb = Exponent.get(credential.getNonNullableElement(4));
-            if (sb.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT + 1) { throw new InvalidSignatureException("The credentials signature is invalid: The value sb is too big."); }
+            if (sb.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT + 1) { throw InvalidCredentialsSignatureException.get(this, "sb"); }
             
             @Nonnull Element hiddenElement = c.pow(se).multiply(publicKey.getAb().pow(sb)).multiply(publicKey.getAu().pow(su));
             @Nonnull Element shownElement = publicKey.getCompositeGroup().getElement(BigInteger.ONE);
@@ -753,7 +755,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             @Nullable Exponent si = null;
             if (credential.isElementNull(5)) {
                 si = Exponent.get(credential.getNonNullableElement(6));
-                if (si.getBitLength() > Parameters.RANDOM_EXPONENT) { throw new InvalidSignatureException("The credentials signature is invalid: The value si is too big."); }
+                if (si.getBitLength() > Parameters.RANDOM_EXPONENT) { throw InvalidCredentialsSignatureException.get(this, "si"); }
                 hiddenElement = hiddenElement.multiply(publicKey.getAi().pow(si));
             } else {
                 shownElement = publicKey.getAi().pow(Exponent.get(credential.getNonNullableElement(5)));
@@ -775,10 +777,10 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
                 final @Nonnull ReadOnlyArray<Block> encryptions = TupleWrapper.decode(credential.getNonNullableElement(7)).getNonNullableElements(4);
                 final @Nonnull FreezableArray<Block> wis = TupleWrapper.decode(encryptions.getNonNullable(0)).getNonNullableElements(2).clone();
                 final @Nonnull Exponent swi = Exponent.get(encryptions.getNonNullable(1));
-                if (swi.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT) { throw new InvalidSignatureException("The credentials signature is invalid: The value swi is too big."); }
+                if (swi.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT) { throw InvalidCredentialsSignatureException.get(this, "swi"); }
                 final @Nonnull FreezableArray<Block> wbs = TupleWrapper.decode(encryptions.getNonNullable(2)).getNonNullableElements(2).clone();
                 final @Nonnull Exponent swb = Exponent.get(encryptions.getNonNullable(3));
-                if (swb.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT) { throw new InvalidSignatureException("The credentials signature is invalid: The value swb is too big."); }
+                if (swb.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT) { throw InvalidCredentialsSignatureException.get(this, "swb"); }
                 
                 wis.set(0, ConvertToXDF.nonNullable(PublicKey.W1, publicKey.getY().pow(swi).multiply(publicKey.getZPlus1().pow(si)).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(0)).pow(t))));
                 wis.set(1, ConvertToXDF.nonNullable(PublicKey.W2, publicKey.getG().pow(swi).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(1)).pow(t))));
@@ -803,7 +805,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             tf = ConvertToXDF.nonNullable(publicKey.getCompositeGroup().getElement(value).pow(t).multiply(element)).getHash();
         }
         
-        if (!t.getValue().equals(hash.xor(ListWrapper.encode(ARRAYS, ts.freeze()).getHash()).xor(tf))) { throw new InvalidSignatureException("The credentials signature is invalid: The value t is not correct."); }
+        if (!t.getValue().equals(hash.xor(ListWrapper.encode(ARRAYS, ts.freeze()).getHash()).xor(tf))) { throw InvalidCredentialsSignatureException.get(this, null); }
         
         if (certificates != null) {
             for (final @Nonnull CertifiedAttributeValue certificate : certificates) {

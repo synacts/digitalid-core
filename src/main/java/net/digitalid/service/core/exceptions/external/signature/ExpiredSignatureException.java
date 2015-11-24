@@ -1,12 +1,28 @@
 package net.digitalid.service.core.exceptions.external.signature;
 
+import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+
 /**
- * Description.
+ * This exception is thrown when a signature has expired.
+ * 
+ * @see ExpiredHostSignatureException
+ * @see ExpiredClientSignatureException
+ * @see ExpiredCredentialsSignatureException
  */
-public class ExpiredSignatureException {
+@Immutable
+public abstract class ExpiredSignatureException extends SignatureException {
     
-    public ExpiredSignatureException() {
-        
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    /**
+     * Creates a new expired signature exception.
+     * 
+     * @param signature the signature that has expired.
+     */
+    protected ExpiredSignatureException(@Nonnull SignatureWrapper signature) {
+        super(signature);
     }
     
 }

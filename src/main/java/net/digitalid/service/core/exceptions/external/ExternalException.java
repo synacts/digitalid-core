@@ -2,6 +2,7 @@ package net.digitalid.service.core.exceptions.external;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenticationException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.system.logger.Log;
 
@@ -11,6 +12,7 @@ import net.digitalid.utility.system.logger.Log;
  * @see SignatureException
  * @see InvalidEncodingException
  * @see InvalidDeclarationException
+ * @see InactiveAuthenticationException
  * 
  * @see IdentityNotFoundException
  * @see SomethingNotFoundException

@@ -16,10 +16,10 @@ import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.external.signature.ExpiredClientSignatureException;
+import net.digitalid.service.core.exceptions.external.signature.InvalidClientSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -36,6 +36,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.logger.Log;
 
 /**
@@ -149,12 +150,12 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     
     @Pure
     @Override
-    public void verify() throws InvalidEncodingException, InvalidSignatureException {
+    public void verify() throws InvalidEncodingException, ExpiredClientSignatureException, InvalidClientSignatureException {
         assert !isVerified() : "This signature is not verified.";
         
         final @Nonnull Time start = Time.getCurrent();
         
-        if (getNonNullableTime().isLessThan(Time.TROPICAL_YEAR.ago())) { throw new InvalidSignatureException("The client signature is out of date."); }
+        if (getNonNullableTime().isLessThan(Time.TROPICAL_YEAR.ago())) { throw ExpiredClientSignatureException.get(this); }
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(getCache());
         final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();
@@ -164,7 +165,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         final @Nonnull Exponent s = Exponent.get(elements.getNonNullable(2));
         final @Nonnull BigInteger h = t.xor(hash);
         final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
-        if (!t.equals(ConvertToXDF.nonNullable(value).getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) { throw new InvalidSignatureException("The client signature is invalid."); }
+        if (!t.equals(ConvertToXDF.nonNullable(value).getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) { throw InvalidClientSignatureException.get(this); }
         
         Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
         
