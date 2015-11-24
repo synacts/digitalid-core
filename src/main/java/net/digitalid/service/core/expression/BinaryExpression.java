@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -50,7 +50,7 @@ final class BinaryExpression extends Expression {
      * @require operators.contains(operator) : "The operator is valid.";
      */
     @NonCommitting
-    BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, char operator) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, char operator) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity);
         
         assert operators.contains(operator) : "The operator is valid.";

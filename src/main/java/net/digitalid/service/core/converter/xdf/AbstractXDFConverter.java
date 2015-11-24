@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -136,7 +136,7 @@ public abstract class AbstractXDFConverter<O, E> {
     @Pure
     @Locked
     @NonCommitting
-    public abstract @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull @NonEncoding Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull @NonEncoding Block block) throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /**
      * Decodes the given nullable block.
@@ -151,7 +151,7 @@ public abstract class AbstractXDFConverter<O, E> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         if (block != null) { return decodeNonNullable(external, block); }
         else { return null; }
     }

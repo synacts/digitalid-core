@@ -12,7 +12,7 @@ import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.resolution.annotations.MappedRecipient;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -77,7 +77,7 @@ public interface Identifier extends Castable, XDF<Identifier, Object>, SQL<Ident
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull Identity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public @Nonnull Identity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     

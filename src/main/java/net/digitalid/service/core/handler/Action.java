@@ -11,7 +11,7 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.dataservice.SiteModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.site.client.AccountOpen;
@@ -75,7 +75,7 @@ public abstract class Action extends Method implements Auditable {
     
     @Override
     @NonCommitting
-    public abstract @Nullable ActionReply executeOnHost() throws PacketException, DatabaseException;
+    public abstract @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException;
     
     
     /**

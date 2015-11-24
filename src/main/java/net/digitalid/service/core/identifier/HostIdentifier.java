@@ -8,7 +8,7 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -89,7 +89,7 @@ public final class HostIdentifier extends InternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull HostIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public @Nonnull HostIdentity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException {
         return Mapper.getIdentity(this).castTo(HostIdentity.class);
     }
     

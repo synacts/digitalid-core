@@ -10,7 +10,7 @@ import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverte
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -97,7 +97,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull InternalIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public abstract @Nonnull InternalIdentity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /* -------------------------------------------------- Existence -------------------------------------------------- */
     
@@ -108,7 +108,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
      */
     @Pure
     @NonCommitting
-    public final boolean exists() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public final boolean exists() throws DatabaseException, RequestException, ExternalException, NetworkException {
         try {
             Mapper.getIdentity(this);
             return true;

@@ -8,7 +8,7 @@ import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.ExternalQuery;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -62,6 +62,6 @@ public abstract class CoreServiceExternalQuery extends ExternalQuery {
     
     @Override
     @NonCommitting
-    public abstract @Nonnull CoreServiceQueryReply executeOnHost() throws PacketException, SQLException;
+    public abstract @Nonnull CoreServiceQueryReply executeOnHost() throws RequestException, SQLException;
     
 }

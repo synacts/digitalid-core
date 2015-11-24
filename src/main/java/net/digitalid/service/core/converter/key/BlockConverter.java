@@ -7,7 +7,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -72,7 +72,7 @@ public final class BlockConverter<O, E> extends AbstractNonRequestingKeyConverte
     public @Nonnull O recover(@Nonnull E external, @Nonnull Block block) throws InvalidEncodingException {
         try {
             return XDFConverter.decodeNonNullable(external, block);
-        } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
             throw MaskingInvalidEncodingException.get(exception);
         }
     }

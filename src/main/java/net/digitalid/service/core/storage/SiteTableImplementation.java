@@ -13,7 +13,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -75,7 +75,7 @@ abstract class SiteTableImplementation<M extends DelegatingSiteStorageImplementa
     @Locked
     @Override
     @NonCommitting
-    public abstract void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public abstract void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     @Locked
     @Override

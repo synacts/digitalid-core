@@ -6,7 +6,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.AttributeType;
@@ -72,7 +72,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public FreezableAttributeTypeSet(@Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public FreezableAttributeTypeSet(@Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);

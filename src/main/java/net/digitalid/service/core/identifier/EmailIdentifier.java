@@ -13,7 +13,7 @@ import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverte
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.EmailPerson;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.resolution.Category;
@@ -81,7 +81,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Person getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public @Nonnull Person getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException {
         if (!providerExists()) { throw IdentityNotFoundException.get(this); }
         return Mapper.getIdentity(this).castTo(Person.class);
     }

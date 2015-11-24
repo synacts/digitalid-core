@@ -17,7 +17,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
@@ -90,7 +90,7 @@ public abstract class ConceptPropertyInternalAction<V, C extends Concept<C, E, ?
         this.publicKey = null;
     }
     
-    protected ConceptPropertyInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Service service) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    protected ConceptPropertyInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Service service) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.service = service;
@@ -109,7 +109,7 @@ public abstract class ConceptPropertyInternalAction<V, C extends Concept<C, E, ?
     @OnlyForHosts
     @NonCommitting
     // TODO: Must be adapted to work for non-core service internal actions.
-    public void executeOnHostInternalAction() throws PacketException, DatabaseException {
+    public void executeOnHostInternalAction() throws RequestException, DatabaseException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (signature instanceof CredentialsSignatureWrapper) { ((CredentialsSignatureWrapper) signature).checkIsLogded(); }
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());

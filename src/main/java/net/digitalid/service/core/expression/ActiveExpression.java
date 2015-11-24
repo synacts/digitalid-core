@@ -9,7 +9,7 @@ import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -36,7 +36,7 @@ public final class ActiveExpression extends AbstractExpression {
      * @param string the string which is to be parsed for the expression.
      */
     @NonCommitting
-    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, string);
     }
     
@@ -49,7 +49,7 @@ public final class ActiveExpression extends AbstractExpression {
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
     @NonCommitting
-    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, block);
     }
     
@@ -92,7 +92,7 @@ public final class ActiveExpression extends AbstractExpression {
     public static @Nonnull ActiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         try {
             return new ActiveExpression(entity, resultSet.getString(columnIndex));
-        } catch (@Nonnull IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull IOException | RequestException | ExternalException exception) {
             throw new SQLException("The expression returned by the database is invalid.", exception);
         }
     }

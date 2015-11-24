@@ -12,7 +12,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.Person;
@@ -254,7 +254,7 @@ abstract class Expression extends NonHostConcept {
      */
     @Pure
     @NonCommitting
-    static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, RequestException, ExternalException, NetworkException {
         if (string.trim().isEmpty()) { return new EmptyExpression(entity); }
         
         int index = lastIndexOf(string, addition);

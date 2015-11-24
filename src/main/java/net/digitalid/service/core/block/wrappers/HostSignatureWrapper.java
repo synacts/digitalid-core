@@ -20,7 +20,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingEx
 import net.digitalid.service.core.exceptions.external.signature.ExpiredHostSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidHostSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -162,7 +162,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public void verify() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public void verify() throws DatabaseException, RequestException, ExternalException, NetworkException {
         assert !isVerified() : "This signature is not verified.";
         
         final @Nonnull Time start = Time.getCurrent();

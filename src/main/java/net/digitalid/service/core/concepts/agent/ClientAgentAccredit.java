@@ -18,8 +18,8 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
@@ -90,7 +90,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      * @require Password.isValid(password) : "The password is valid.";
      */
     @NonCommitting
-    public ClientAgentAccredit(@Nonnull NativeRole role, @Nonnull String password) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public ClientAgentAccredit(@Nonnull NativeRole role, @Nonnull String password) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(role);
         
         assert Settings.isValid(password) : "The password is valid.";
@@ -117,7 +117,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private ClientAgentAccredit(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private ClientAgentAccredit(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(4);
@@ -158,7 +158,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    public @Nonnull Response send() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public @Nonnull Response send() throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(this).freeze(), null);
         response.checkReply(0);
         return response;
@@ -180,8 +180,8 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnHostInternalAction() throws PacketException, SQLException {
-        if (!Settings.get(getNonHostAccount()).getValue().equals(password)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The password is not correct."); }
+    public void executeOnHostInternalAction() throws RequestException, SQLException {
+        if (!Settings.get(getNonHostAccount()).getValue().equals(password)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The password is not correct."); }
         executeOnBoth();
     }
     
@@ -243,7 +243,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
             return new ClientAgentAccredit(entity, signature, recipient, block);
         }
         

@@ -10,7 +10,7 @@ import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -110,7 +110,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     @NonCommitting
-    abstract void load() throws DatabaseException, PacketException, ExternalException, NetworkException;
+    abstract void load() throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /**
      * Ensures that the type declaration is loaded.
@@ -118,7 +118,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
      * @ensure isLoaded() : "The type declaration is loaded.";
      */
     @NonCommitting
-    public final void ensureLoaded() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public final void ensureLoaded() throws DatabaseException, RequestException, ExternalException, NetworkException {
         if (!loaded) { load(); }
     }
     

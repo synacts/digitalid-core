@@ -21,8 +21,8 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingEx
 import net.digitalid.service.core.exceptions.external.signature.ExpiredClientSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidClientSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -107,7 +107,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(block, verified);
         
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
@@ -206,10 +206,10 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws PacketException, DatabaseException {
-        if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) { throw new PacketException(PacketErrorCode.KEYROTATION, "The client has to recommit its secret."); }
+    public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws RequestException, DatabaseException {
+        if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) { throw new RequestException(RequestErrorCode.KEYROTATION, "The client has to recommit its secret."); }
         final @Nullable ClientAgent agent = AgentModule.getClientAgent(entity, commitment);
-        if (agent == null) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The element was not signed by an authorized client."); }
+        if (agent == null) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The element was not signed by an authorized client."); }
         agent.checkNotRemoved();
         return agent;
     }

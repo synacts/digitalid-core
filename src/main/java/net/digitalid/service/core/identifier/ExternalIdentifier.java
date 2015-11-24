@@ -8,7 +8,7 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.ExternalIdentity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.Person;
@@ -111,7 +111,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull Person getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public abstract @Nonnull Person getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /* -------------------------------------------------- Category -------------------------------------------------- */
     

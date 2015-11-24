@@ -20,8 +20,8 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.reference.NonCapturable;
@@ -94,11 +94,11 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     }
     
     /**
-     * Checks that the authorization is restricted to clients and throws a {@link PacketException} if not.
+     * Checks that the authorization is restricted to clients and throws a {@link RequestException} if not.
      */
     @Pure
-    public void checkIsClient() throws PacketException {
-        if (!isClient()) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to clients."); }
+    public void checkIsClient() throws RequestException {
+        if (!isClient()) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The action is restricted to clients."); }
     }
     
     /* -------------------------------------------------- Role -------------------------------------------------- */
@@ -119,11 +119,11 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     }
     
     /**
-     * Checks that the authorization is restricted to agents that can assume incoming roles and throws a {@link PacketException} if not.
+     * Checks that the authorization is restricted to agents that can assume incoming roles and throws a {@link RequestException} if not.
      */
     @Pure
-    public void checkIsRole() throws PacketException {
-        if (!isRole()) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles."); }
+    public void checkIsRole() throws RequestException {
+        if (!isRole()) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles."); }
     }
     
     /* -------------------------------------------------- Writing -------------------------------------------------- */
@@ -144,11 +144,11 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     }
     
     /**
-     * Checks that the authorization is restricted to agents that can write to contexts and throws a {@link PacketException} if not.
+     * Checks that the authorization is restricted to agents that can write to contexts and throws a {@link RequestException} if not.
      */
     @Pure
-    public void checkIsWriting() throws PacketException {
-        if (!isWriting()) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can write to contexts."); }
+    public void checkIsWriting() throws RequestException {
+        if (!isWriting()) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The action is restricted to agents that can write to contexts."); }
     }
     
     /* -------------------------------------------------- Context -------------------------------------------------- */
@@ -182,14 +182,14 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     }
     
     /**
-     * Checks that these restrictions cover the given context and throws a {@link PacketException} if not.
+     * Checks that these restrictions cover the given context and throws a {@link RequestException} if not.
      * 
      * @param otherContext the context that needs to be covered.
      */
     @Pure
     @NonCommitting
-    public void checkCover(@Nonnull Context otherContext) throws DatabaseException, PacketException {
-        if (!cover(otherContext)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context."); }
+    public void checkCover(@Nonnull Context otherContext) throws DatabaseException, RequestException {
+        if (!cover(otherContext)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context."); }
     }
     
     /* -------------------------------------------------- Contact -------------------------------------------------- */
@@ -223,14 +223,14 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     }
     
     /**
-     * Checks that these restrictions cover the given contact and throws a {@link PacketException} if not.
+     * Checks that these restrictions cover the given contact and throws a {@link RequestException} if not.
      * 
      * @param otherContact the contact that needs to be covered.
      */
     @Pure
     @NonCommitting
-    public void checkCover(@Nonnull Contact otherContact) throws DatabaseException, PacketException {
-        if (!cover(otherContact)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact."); }
+    public void checkCover(@Nonnull Contact otherContact) throws DatabaseException, RequestException {
+        if (!cover(otherContact)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact."); }
     }
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
@@ -322,14 +322,14 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     }
     
     /**
-     * Checks whether these restrictions cover the given restrictions and throws a {@link PacketException} if not.
+     * Checks whether these restrictions cover the given restrictions and throws a {@link RequestException} if not.
      * 
      * @param restrictions the restrictions that need to be covered.
      */
     @Pure
     @NonCommitting
-    public void checkCover(@Nonnull Restrictions restrictions) throws DatabaseException, PacketException {
-        if (!cover(restrictions)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions."); }
+    public void checkCover(@Nonnull Restrictions restrictions) throws DatabaseException, RequestException {
+        if (!cover(restrictions)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions."); }
     }
     
     /* -------------------------------------------------- Matching -------------------------------------------------- */
@@ -463,7 +463,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Pure
         @Override
-        public @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @BasedOn("restrictions.agent@core.digitalid.net") Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+        public @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @BasedOn("restrictions.agent@core.digitalid.net") Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
             
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);

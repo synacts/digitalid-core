@@ -8,7 +8,7 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.NonHostIdentity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -36,7 +36,7 @@ public interface NonHostIdentifier extends Identifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull NonHostIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public @Nonnull NonHostIdentity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

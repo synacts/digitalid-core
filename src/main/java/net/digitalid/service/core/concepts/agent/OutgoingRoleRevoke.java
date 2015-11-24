@@ -10,8 +10,8 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonNativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceActionReply;
@@ -79,7 +79,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private OutgoingRoleRevoke(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private OutgoingRoleRevoke(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         if (signature instanceof HostSignatureWrapper) {
@@ -128,8 +128,8 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
-        if (!getSignatureNotNull().isSigned()) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The revocation of a role has to be signed."); }
+    public @Nullable CoreServiceActionReply executeOnHost() throws RequestException, SQLException {
+        if (!getSignatureNotNull().isSigned()) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The revocation of a role has to be signed."); }
         executeOnBoth();
         return null;
     }
@@ -198,7 +198,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
             return new OutgoingRoleRevoke(entity, signature, recipient, block);
         }
         

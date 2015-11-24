@@ -11,7 +11,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -36,7 +36,7 @@ public final class PassiveExpression extends AbstractExpression {
      * @param string the string which is to be parsed for the expression.
      */
     @NonCommitting
-    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, string);
     }
     
@@ -49,7 +49,7 @@ public final class PassiveExpression extends AbstractExpression {
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
     @NonCommitting
-    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, block);
     }
     
@@ -104,7 +104,7 @@ public final class PassiveExpression extends AbstractExpression {
     public static @Nonnull PassiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         try {
             return new PassiveExpression(entity, resultSet.getString(columnIndex));
-        } catch (@Nonnull IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull IOException | RequestException | ExternalException exception) {
             throw new SQLException("The expression returned by the database is invalid.", exception);
         }
     }

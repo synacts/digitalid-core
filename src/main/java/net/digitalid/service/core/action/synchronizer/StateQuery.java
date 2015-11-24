@@ -16,8 +16,8 @@ import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
@@ -55,7 +55,7 @@ final class StateQuery extends InternalQuery {
      * @param module the module whose state is queried.
      */
     @NonCommitting
-    StateQuery(@Nonnull Role role, @Nonnull StateModule module) throws DatabaseException, PacketException, InvalidEncodingException {
+    StateQuery(@Nonnull Role role, @Nonnull StateModule module) throws DatabaseException, RequestException, InvalidEncodingException {
         super(role, module.getService().getRecipient(role));
         
         this.module = module;
@@ -76,7 +76,7 @@ final class StateQuery extends InternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.module = Service.getModule(IdentityImplementation.create(block).castTo(SemanticType.class));
@@ -104,7 +104,7 @@ final class StateQuery extends InternalQuery {
     
     @Override
     @NonCommitting
-    public @Nonnull StateReply executeOnHost() throws PacketException, SQLException {
+    public @Nonnull StateReply executeOnHost() throws RequestException, SQLException {
         final @Nonnull Service service = module.getService();
         final @Nonnull NonHostAccount account = getNonHostAccount();
         if (module.getService().equals(CoreService.SERVICE)) {
@@ -114,7 +114,7 @@ final class StateQuery extends InternalQuery {
             final @Nonnull Credential credential = getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNonNullable(0);
             final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
             final @Nullable Restrictions restrictions = credential.getRestrictions();
-            if (permissions == null || restrictions == null) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "For state queries, neither the permissions nor the restrictions may be null."); }
+            if (permissions == null || restrictions == null) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "For state queries, neither the permissions nor the restrictions may be null."); }
             return new StateReply(account, module.getState(account, permissions, restrictions, null), service);
         }
     }
@@ -155,7 +155,7 @@ final class StateQuery extends InternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
             return new StateQuery(entity, signature, recipient, block);
         }
         

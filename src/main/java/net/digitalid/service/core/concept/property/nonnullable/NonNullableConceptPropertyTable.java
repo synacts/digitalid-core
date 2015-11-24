@@ -21,7 +21,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.property.ReadOnlyProperty;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -120,7 +120,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getDumpType()) : "The block is based on the dump type of this data collection.";
         
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
@@ -187,7 +187,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public void addState(@Nonnull E entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public void addState(@Nonnull E entity, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getStateType()) : "The block is based on the state type of this data collection.";
         
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();

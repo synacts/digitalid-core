@@ -27,8 +27,8 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.ActionReply;
 import net.digitalid.service.core.handler.Method;
@@ -107,7 +107,7 @@ public final class AccountOpen extends Action {
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
     @NonCommitting
-    AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(null, subject, subject.getHostIdentifier());
         
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
@@ -128,10 +128,10 @@ public final class AccountOpen extends Action {
      * @param block the content which is to be decoded.
      */
     @NonCommitting
-    private AccountOpen(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("open.account@core.digitalid.net") Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private AccountOpen(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("open.account@core.digitalid.net") Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account."); }
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account."); }
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
         
@@ -211,9 +211,9 @@ public final class AccountOpen extends Action {
     
     @Override
     @NonCommitting
-    public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
+    public @Nullable ActionReply executeOnHost() throws RequestException, SQLException {
         final @Nonnull InternalIdentifier subject = getSubject();
-        if (subject.isMapped()) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The account with the identifier " + subject + " already exists."); }
+        if (subject.isMapped()) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The account with the identifier " + subject + " already exists."); }
         
         // TODO: Include the resctriction mechanisms like the tokens.
         
@@ -257,8 +257,8 @@ public final class AccountOpen extends Action {
     
     @Override
     @NonCommitting
-    public @Nonnull Response send() throws DatabaseException, PacketException, ExternalException, NetworkException {
-        if (secret == null) { throw new PacketException(PacketErrorCode.INTERNAL, "The secret may not be null for sending."); }
+    public @Nonnull Response send() throws DatabaseException, RequestException, ExternalException, NetworkException {
+        if (secret == null) { throw new RequestException(RequestErrorCode.INTERNAL, "The secret may not be null for sending."); }
         return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
     }
     
@@ -314,7 +314,7 @@ public final class AccountOpen extends Action {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
             return new AccountOpen(entity, signature, recipient, block);
         }
         

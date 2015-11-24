@@ -15,8 +15,8 @@ import net.digitalid.service.core.exceptions.external.InvalidDeclarationExceptio
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.ExternalIdentifier;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -288,7 +288,7 @@ public final class Mapper {
         if (identity == null) { identity = loadIdentity(number); }
         try {
             if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }
-        } catch (@Nonnull PacketException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull RequestException | ExternalException | NetworkException exception) {
             throw new ShouldNeverHappenError("The type declaration and the referenced identities should already be cached.", exception);
         }
         return identity;
@@ -519,7 +519,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull @NonMapped InternalNonHostIdentifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull @NonMapped InternalNonHostIdentifier identifier) throws DatabaseException, RequestException, ExternalException, NetworkException {
         assert !isMapped(identifier) : "The identifier is not mapped.";
         
         if (Server.hasHost(identifier.getHostIdentifier())) { throw IdentityNotFoundException.get(identifier); }
@@ -528,8 +528,8 @@ public final class Mapper {
         final @Nonnull IdentityReply reply;
         try {
             reply = new IdentityQuery(identifier).sendNotNull();
-        } catch (@Nonnull PacketException exception) {
-            if (exception.getError() == PacketErrorCode.IDENTIFIER) { throw IdentityNotFoundException.get(identifier); else throw exception; }
+        } catch (@Nonnull RequestException exception) {
+            if (exception.getError() == RequestErrorCode.IDENTIFIER) { throw IdentityNotFoundException.get(identifier); else throw exception; }
         }
         final @Nonnull Category category = reply.getCategory();
         Log.verbose("The category of " + identifier + " is '" + category.name() + "'.");
@@ -591,7 +591,7 @@ public final class Mapper {
     @Pure
     @Locked
     @NonCommitting
-    private static @Nonnull Person establishExternalIdentity(@Nonnull @NonMapped ExternalIdentifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private static @Nonnull Person establishExternalIdentity(@Nonnull @NonMapped ExternalIdentifier identifier) throws DatabaseException, RequestException, ExternalException, NetworkException {
         assert !isMapped(identifier) : "The identifier is not mapped.";
         
         final @Nonnull Person person = mapExternalIdentity(identifier);
@@ -599,8 +599,8 @@ public final class Mapper {
             final @Nonnull InternalNonHostIdentity identity = Successor.getReloaded(identifier).getIdentity();
             if (!identity.equals(identifier.getIdentity())) { throw InvalidDeclarationException.get("The claimed successor " + identity.getAddress() + " of " + identifier + " does not link back.", identifier); }
             return identity.castTo(Person.class);
-        } catch (@Nonnull PacketException exception) {
-            if (exception.getError() == PacketErrorCode.EXTERNAL) { return person; }
+        } catch (@Nonnull RequestException exception) {
+            if (exception.getError() == RequestErrorCode.EXTERNAL) { return person; }
             else { throw exception; }
         }
     }
@@ -617,7 +617,7 @@ public final class Mapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws DatabaseException, RequestException, ExternalException, NetworkException {
         if (isMapped(identifier)) {
             Log.verbose("The identifier " + identifier + " is already mapped.");
             return identifiers.get(identifier);

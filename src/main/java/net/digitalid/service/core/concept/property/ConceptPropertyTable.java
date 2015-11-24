@@ -18,7 +18,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
@@ -131,7 +131,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      */
     @Locked
     @NonCommitting
-    public abstract void addState(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public abstract void addState(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /**
      * Removes all the entries of the given entity in this data collection.
@@ -163,7 +163,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         addState((E) entity, block);
     }
     

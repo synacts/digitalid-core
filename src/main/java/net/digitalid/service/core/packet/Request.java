@@ -20,8 +20,8 @@ import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidDeclarationException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
@@ -92,7 +92,7 @@ public class Request extends Packet {
      * @ensure getSize() == 1 : "The size of this request is 1.";
      */
     @NonCommitting
-    public Request(@Nonnull HostIdentifier identifier) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public Request(@Nonnull HostIdentifier identifier) throws DatabaseException, RequestException, ExternalException, NetworkException {
         this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new FreezableAttributeTypeSet(PublicKeyChain.TYPE).freeze(), true)).freeze(), identifier, null, identifier, null, null, 0);
     }
     
@@ -106,8 +106,8 @@ public class Request extends Packet {
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      */
     @NonCommitting
-    public Request(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws DatabaseException, PacketException, ExternalException, NetworkException {
-        this(methods, recipient, new SymmetricKey(), subject, null, null, 0);
+    public Request(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws DatabaseException, RequestException, ExternalException, NetworkException {
+        this(methods, recipient, SymmetricKey.getRandom(), subject, null, null, 0);
     }
     
     /**
@@ -122,7 +122,7 @@ public class Request extends Packet {
      * @param iteration how many times this request was resent.
      */
     @NonCommitting
-    Request(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nullable Object field, int iteration) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    Request(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nullable Object field, int iteration) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
         
         assert methods.isFrozen() : "The list of methods is frozen.";
@@ -130,7 +130,7 @@ public class Request extends Packet {
         assert !methods.containsNull() : "The list of methods does not contain null.";
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
         
-        if (iteration == 5) { throw new PacketException(PacketErrorCode.EXTERNAL, "The resending of a request was triggered five times."); }
+        if (iteration == 5) { throw new RequestException(RequestErrorCode.EXTERNAL, "The resending of a request was triggered five times."); }
         
         this.recipient = recipient;
         this.subject = subject;
@@ -144,7 +144,7 @@ public class Request extends Packet {
      * @param inputStream the input stream to read the request from.
      */
     @NonCommitting
-    public Request(@Nonnull InputStream inputStream) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public Request(@Nonnull InputStream inputStream) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(inputStream, null, true);
         
         final @Nullable HostIdentifier recipient = getEncryption().getRecipient();
@@ -177,7 +177,7 @@ public class Request extends Packet {
     @Override
     @RawRecipient
     @NonCommitting
-    @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, RequestException, ExternalException, NetworkException {
         return SignatureWrapper.encodeWithoutSigning(Packet.SIGNATURE, compression, subject);
     }
     
@@ -270,7 +270,7 @@ public class Request extends Packet {
      * @return the response to the resent request.
      */
     @NonCommitting
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws DatabaseException, RequestException, ExternalException, NetworkException {
         return new Request(methods, recipient, SymmetricKey.getRandom(), subject, null, null, iteration).send(verified);
     }
     
@@ -279,12 +279,12 @@ public class Request extends Packet {
      * 
      * @return the response to this request.
      * 
-     * @throws PacketException if the recipient responded with a packet error.
+     * @throws RequestException if the recipient responded with a packet error.
      * 
      * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
     @NonCommitting
-    public final @Nonnull Response send() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public final @Nonnull Response send() throws DatabaseException, RequestException, ExternalException, NetworkException {
         return send(true);
     }
     
@@ -295,22 +295,22 @@ public class Request extends Packet {
      * 
      * @return the response to this request.
      * 
-     * @throws PacketException if the recipient responded with a packet error.
+     * @throws RequestException if the recipient responded with a packet error.
      * 
      * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
     @NonCommitting
-    public final @Nonnull Response send(boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public final @Nonnull Response send(boolean verified) throws DatabaseException, RequestException, ExternalException, NetworkException {
         // TODO: Use the specific NetworkExceptions.
         try (@Nonnull Socket socket = new Socket("id." + getRecipient().getString(), Server.PORT)) {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
             this.write(socket.getOutputStream());
             return new Response(this, socket.getInputStream(), verified);
-        } catch (@Nonnull PacketException exception) {
-            if (exception.getError() == PacketErrorCode.KEYROTATION && this instanceof ClientRequest) {
+        } catch (@Nonnull RequestException exception) {
+            if (exception.getError() == RequestErrorCode.KEYROTATION && this instanceof ClientRequest) {
                 return ((ClientRequest) this).recommit(methods, iteration, verified);
-            } else if (exception.getError() == PacketErrorCode.RELOCATION && subject instanceof InternalNonHostIdentifier) {
-                if (getMethod(0).getType().equals(IdentityQuery.TYPE)) { throw new PacketException(PacketErrorCode.EXTERNAL, "The response to an identity query may not be a relocation exception."); }
+            } else if (exception.getError() == RequestErrorCode.RELOCATION && subject instanceof InternalNonHostIdentifier) {
+                if (getMethod(0).getType().equals(IdentityQuery.TYPE)) { throw new RequestException(RequestErrorCode.EXTERNAL, "The response to an identity query may not be a relocation exception."); }
                 @Nullable InternalNonHostIdentifier address = Successor.get((InternalNonHostIdentifier) subject);
                 if (address == null) {
                     address = Successor.getReloaded((InternalNonHostIdentifier) subject);
@@ -320,9 +320,9 @@ public class Request extends Packet {
                 }
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, iteration, verified);
-            } else if (exception.getError() == PacketErrorCode.SERVICE && !getMethod(0).isOnHost()) {
+            } else if (exception.getError() == RequestErrorCode.SERVICE && !getMethod(0).isOnHost()) {
                 final @Nonnull HostIdentifier recipient = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getReloadedAttributeContent(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).castTo(HostIdentifier.class);
-                if (this.recipient.equals(recipient)) { throw new PacketException(PacketErrorCode.EXTERNAL, "The recipient after a service error is still the same.", exception); }
+                if (this.recipient.equals(recipient)) { throw new RequestException(RequestErrorCode.EXTERNAL, "The recipient after a service error is still the same.", exception); }
                 return resend(methods, recipient, subject, iteration, verified);
             } else {
                 throw exception;

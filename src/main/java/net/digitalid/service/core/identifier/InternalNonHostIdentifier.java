@@ -8,7 +8,7 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.Type;
@@ -85,7 +85,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull InternalNonHostIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public @Nonnull InternalNonHostIdentity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nonnull InternalNonHostIdentity identity = Mapper.getIdentity(this).castTo(InternalNonHostIdentity.class);
         // If the returned identity is a type, its fields need to be loaded from the type's attributes.
         if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }

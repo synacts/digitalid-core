@@ -9,8 +9,8 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceExternalQuery;
@@ -79,9 +79,9 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     
     @Override
     @NonCommitting
-    public @Nonnull IdentityReply executeOnHost() throws PacketException, SQLException {
+    public @Nonnull IdentityReply executeOnHost() throws RequestException, SQLException {
         final @Nonnull InternalIdentifier subject = getSubject(); // The following exception should never be thrown as the condition is already checked in the packet class.
-        if (!(subject instanceof InternalNonHostIdentifier)) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity may only be queried of non-host identities."); }
+        if (!(subject instanceof InternalNonHostIdentifier)) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The identity may only be queried of non-host identities."); }
         return new IdentityReply((InternalNonHostIdentifier) subject);
     }
     
@@ -121,7 +121,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
             return new IdentityQuery(entity, signature, recipient, block);
         }
         

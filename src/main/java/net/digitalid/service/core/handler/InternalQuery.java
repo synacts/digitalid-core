@@ -6,8 +6,8 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.core.CoreServiceInternalQuery;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.site.client.Client;
@@ -50,11 +50,11 @@ public abstract class InternalQuery extends Query implements InternalMethod {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!isNonHost()) { throw new PacketException(PacketErrorCode.IDENTIFIER, "Internal queries have to belong to a non-host."); }
-        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal queries."); }
+        if (!isNonHost()) { throw new RequestException(RequestErrorCode.IDENTIFIER, "Internal queries have to belong to a non-host."); }
+        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal queries."); }
     }
     
     

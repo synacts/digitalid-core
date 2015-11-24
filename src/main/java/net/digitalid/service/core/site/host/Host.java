@@ -20,7 +20,7 @@ import net.digitalid.service.core.cryptography.PublicKeyChain;
 import net.digitalid.service.core.entity.HostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -92,7 +92,7 @@ public final class Host extends Site {
      */
     @Locked
     @Committing
-    public Host(@Nonnull HostIdentifier identifier) throws IOException, DatabaseException, PacketException, ExternalException, NetworkException {
+    public Host(@Nonnull HostIdentifier identifier) throws IOException, DatabaseException, RequestException, ExternalException, NetworkException {
         super(identifier.asHostName());
         
         this.identifier = identifier;

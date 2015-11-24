@@ -5,7 +5,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.site.host.Host;
@@ -65,6 +65,6 @@ abstract class HostTableImplementation<M extends DelegatingHostStorageImplementa
     @Locked
     @Override
     @NonCommitting
-    public abstract void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public abstract void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException;
     
 }

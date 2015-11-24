@@ -12,7 +12,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Pure;
@@ -62,7 +62,7 @@ public interface SiteStorage extends HostStorage {
      */
     @Locked
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /**
      * Removes all the entries of the given entity in this storage.

@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -77,6 +77,6 @@ public abstract class Query extends Method {
     @Override
     @OnlyForHosts
     @NonCommitting
-    public abstract @Nonnull QueryReply executeOnHost() throws PacketException, SQLException;
+    public abstract @Nonnull QueryReply executeOnHost() throws RequestException, SQLException;
     
 }

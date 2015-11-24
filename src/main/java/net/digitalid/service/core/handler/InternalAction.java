@@ -9,8 +9,8 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.site.client.Client;
@@ -59,11 +59,11 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!isNonHost()) { throw new PacketException(PacketErrorCode.IDENTIFIER, "Internal actions have to belong to a non-host."); }
-        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal actions."); }
+        if (!isNonHost()) { throw new RequestException(RequestErrorCode.IDENTIFIER, "Internal actions have to belong to a non-host."); }
+        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal actions."); }
     }
     
     
@@ -95,18 +95,18 @@ public abstract class InternalAction extends Action implements InternalMethod {
     /**
      * Executes this internal action on the host.
      * 
-     * @throws PacketException if the authorization is not sufficient.
+     * @throws RequestException if the authorization is not sufficient.
      * 
      * @require hasSignature() : "This handler has a signature.";
      */
     @OnlyForHosts
     @NonCommitting
-    protected abstract void executeOnHostInternalAction() throws PacketException, DatabaseException;
+    protected abstract void executeOnHostInternalAction() throws RequestException, DatabaseException;
     
     @Override
     @OnlyForHosts
     @NonCommitting
-    public final @Nullable ActionReply executeOnHost() throws PacketException, DatabaseException {
+    public final @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException {
         executeOnHostInternalAction();
         return null;
     }

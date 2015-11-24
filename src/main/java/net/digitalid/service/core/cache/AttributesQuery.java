@@ -21,7 +21,7 @@ import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
@@ -102,7 +102,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
@@ -133,7 +133,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     
     @Override
     @NonCommitting
-    public @Nonnull AttributesReply executeOnHost() throws PacketException, SQLException {
+    public @Nonnull AttributesReply executeOnHost() throws RequestException, SQLException {
         final @Nonnull FreezableList<AttributeValue> attributeValues = FreezableArrayList.getWithCapacity(attributeTypes.size());
         
         final @Nonnull Account account = getAccount();
@@ -223,7 +223,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
             return new AttributesQuery(entity, signature, recipient, block);
         }
         

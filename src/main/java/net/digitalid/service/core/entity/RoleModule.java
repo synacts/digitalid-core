@@ -8,8 +8,8 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
@@ -193,11 +193,11 @@ public final class RoleModule {
      * 
      * @return the role that the given client has for the given person.
      * 
-     * @throws PacketException if no such role can be found.
+     * @throws RequestException if no such role can be found.
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Role getRole(@Nonnull Client client, @Nonnull InternalPerson person) throws DatabaseException, PacketException {
+    public static @Nonnull Role getRole(@Nonnull Client client, @Nonnull InternalPerson person) throws DatabaseException, RequestException {
         final @Nonnull String SQL = "SELECT role, relation, recipient, agent FROM " + client + "role WHERE issuer = " + person;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
@@ -209,7 +209,7 @@ public final class RoleModule {
                 if (relation == null && recipient == null) { return NativeRole.get(client, number, person, agentNumber); }
                 if (relation != null && recipient != null) { return NonNativeRole.get(client, number, person, relation, recipient, agentNumber); }
                 else { throw InvalidParameterValueCombinationException.get("The relation and the recipient have to be either both null or non-null."); }
-            } else { throw new PacketException(PacketErrorCode.IDENTIFIER, "No role for the person " + person.getAddress() + " could be found."); }
+            } else { throw new RequestException(RequestErrorCode.IDENTIFIER, "No role for the person " + person.getAddress() + " could be found."); }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);
         }

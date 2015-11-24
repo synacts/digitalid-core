@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -53,13 +53,13 @@ public abstract class CastingKeyConverter<O extends S, E, K, D, S extends Castab
      * @return the object of the supertype with the given key.
      */
     @Pure
-    protected abstract @Nonnull S recoverSupertype(@Nonnull E external, @Nonnull @Validated K key) throws DatabaseException, PacketException, ExternalException, NetworkException;
+    protected abstract @Nonnull S recoverSupertype(@Nonnull E external, @Nonnull @Validated K key) throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /* -------------------------------------------------- Method -------------------------------------------------- */
     
     @Pure
     @Override
-    public final @Nonnull O recover(@Nonnull E external, @Nonnull K key) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public final @Nonnull O recover(@Nonnull E external, @Nonnull K key) throws DatabaseException, RequestException, ExternalException, NetworkException {
         return recoverSupertype(external, key).castTo(targetClass);
     }
     

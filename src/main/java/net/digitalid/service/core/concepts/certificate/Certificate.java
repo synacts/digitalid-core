@@ -8,7 +8,7 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concept.NonHostConcept;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.NonHostIdentity;
@@ -54,7 +54,7 @@ public final class Certificate extends NonHostConcept {
     @Pure
     @Locked
     @NonCommitting
-    public static boolean isAuthorized(@Nonnull InternalNonHostIdentity issuer, @Nonnull Block content) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public static boolean isAuthorized(@Nonnull InternalNonHostIdentity issuer, @Nonnull Block content) throws DatabaseException, RequestException, ExternalException, NetworkException {
 //        long vid = Mapper.getVid(identifier);
 //        long type = Mapper.getVid(new SelfcontainedWrapper(value).getIdentifier());
 //        

@@ -10,7 +10,7 @@ import net.digitalid.service.core.block.wrappers.CompressionWrapper;
 import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -44,7 +44,7 @@ public final class Response extends Packet {
     /**
      * Stores the exceptions of this response.
      */
-    private @Nonnull @Frozen @NonEmpty FreezableList<PacketException> exceptions;
+    private @Nonnull @Frozen @NonEmpty FreezableList<RequestException> exceptions;
     
     /**
      * Stores the signer of this response.
@@ -65,7 +65,7 @@ public final class Response extends Packet {
      * @ensure getSize() == 1 : "The size of this response is one.";
      */
     @NonCommitting
-    public Response(@Nullable Request request, @Nonnull PacketException exception) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public Response(@Nullable Request request, @Nonnull RequestException exception) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(new FreezablePair<>(FreezableArrayList.<Reply>getWithCapacity(1).freeze(), FreezableArrayList.get(exception).freeze()).freeze(), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
         
         this.request = request;
@@ -85,7 +85,7 @@ public final class Response extends Packet {
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the request.";
      */
     @NonCommitting
-    public Response(@Nonnull Request request, @Nonnull @Frozen @NonEmpty ReadOnlyList<Reply> replies, @Nonnull @Frozen @NonEmpty ReadOnlyList<PacketException> exceptions, @Nullable ResponseAudit audit) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public Response(@Nonnull Request request, @Nonnull @Frozen @NonEmpty ReadOnlyList<Reply> replies, @Nonnull @Frozen @NonEmpty ReadOnlyList<RequestException> exceptions, @Nullable ResponseAudit audit) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(new FreezablePair<>(replies, exceptions).freeze(), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
         
         assert replies.isFrozen() : "The list of replies is frozen.";
@@ -108,7 +108,7 @@ public final class Response extends Packet {
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the given request.";
      */
     @NonCommitting
-    public Response(@Nonnull Request request, @Nonnull InputStream inputStream, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public Response(@Nonnull Request request, @Nonnull InputStream inputStream, boolean verified) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(inputStream, request, verified);
         
         this.request = request;
@@ -164,9 +164,9 @@ public final class Response extends Packet {
     @RawRecipient
     @SuppressWarnings("unchecked")
     void setList(@Nonnull Object object) {
-        final @Nonnull ReadOnlyPair<ReadOnlyList<Reply>, ReadOnlyList<PacketException>> pair = (ReadOnlyPair<ReadOnlyList<Reply>, ReadOnlyList<PacketException>>) object;
+        final @Nonnull ReadOnlyPair<ReadOnlyList<Reply>, ReadOnlyList<RequestException>> pair = (ReadOnlyPair<ReadOnlyList<Reply>, ReadOnlyList<RequestException>>) object;
         this.replies = (FreezableList<Reply>) pair.getElement0();
-        this.exceptions = (FreezableList<PacketException>) pair.getElement1();
+        this.exceptions = (FreezableList<RequestException>) pair.getElement1();
     }
     
     @Override
@@ -217,10 +217,10 @@ public final class Response extends Packet {
      * 
      * @param index the index of the reply which is to be checked.
      * 
-     * @throws PacketException if the responding host encountered a packet error.
+     * @throws RequestException if the responding host encountered a packet error.
      */
     @Pure
-    public void checkReply(@ValidIndex int index) throws PacketException {
+    public void checkReply(@ValidIndex int index) throws RequestException {
         if (!exceptions.isNull(index)) { throw exceptions.getNonNullable(index); }
     }
     
@@ -231,10 +231,10 @@ public final class Response extends Packet {
      * 
      * @return the reply at the given position in this response or null if there was none.
      * 
-     * @throws PacketException if the responding host encountered a packet error.
+     * @throws RequestException if the responding host encountered a packet error.
      */
     @Pure
-    public @Nullable Reply getReply(@ValidIndex int index) throws PacketException {
+    public @Nullable Reply getReply(@ValidIndex int index) throws RequestException {
         checkReply(index);
         return replies.get(index);
     }
@@ -246,13 +246,13 @@ public final class Response extends Packet {
      * 
      * @return the reply at the given position in this response.
      * 
-     * @throws PacketException if the responding host encountered a packet error.
+     * @throws RequestException if the responding host encountered a packet error.
      * 
      * @require getReply(index) != null : "The reply at the given position is not null.";
      */
     @Pure
     @SuppressWarnings("unchecked")
-    public @Nonnull <T extends Reply> T getReplyNotNull(@ValidIndex int index) throws PacketException {
+    public @Nonnull <T extends Reply> T getReplyNotNull(@ValidIndex int index) throws RequestException {
         final @Nullable Reply reply = getReply(index);
         assert reply != null : "The reply is not null.";
         return (T) reply;
@@ -276,7 +276,7 @@ public final class Response extends Packet {
      * @param exception the exception which is to set at the index.
      */
     @RawRecipient
-    void setException(@ValidIndex int index, @Nonnull PacketException exception) {
+    void setException(@ValidIndex int index, @Nonnull RequestException exception) {
         exceptions.set(index, exception);
     }
     

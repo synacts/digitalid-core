@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.wrappers.Blockable;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.NonHostIdentity;
@@ -34,7 +34,7 @@ public interface ReadOnlyPredecessors extends ReadOnlyList<Predecessor>, Blockab
      */
     @Pure
     @NonCommitting
-    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<NonHostIdentity> getIdentities() throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<NonHostIdentity> getIdentities() throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /**
      * Sets these values as the predecessors of the given identifier.

@@ -1,4 +1,4 @@
-package net.digitalid.service.core.exceptions.packet;
+package net.digitalid.service.core.exceptions.request;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,10 +17,10 @@ import net.digitalid.utility.system.logger.Log;
 /**
  * This exception indicates an error in the encoding or content of a packet.
  * 
- * @see PacketErrorCode
+ * @see RequestErrorCode
  */
 @Immutable
-public final class PacketException extends Exception implements Blockable {
+public final class RequestException extends Exception implements Blockable {
     
     /**
      * Stores the semantic type {@code message.error.packet@core.digitalid.net}.
@@ -30,13 +30,13 @@ public final class PacketException extends Exception implements Blockable {
     /**
      * Stores the semantic type {@code error.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("error.packet@core.digitalid.net").load(TupleWrapper.XDF_TYPE, PacketErrorCode.TYPE, MESSAGE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("error.packet@core.digitalid.net").load(TupleWrapper.XDF_TYPE, RequestErrorCode.TYPE, MESSAGE);
     
     
     /**
      * Stores the error of this exception.
      */
-    private final @Nonnull PacketErrorCode error;
+    private final @Nonnull RequestErrorCode error;
     
     /**
      * Stores whether this exception was thrown remotely.
@@ -49,7 +49,7 @@ public final class PacketException extends Exception implements Blockable {
      * @param error the code indicating the kind of error.
      * @param message a string explaining the exception.
      */
-    public PacketException(@Nonnull PacketErrorCode error, @Nonnull String message) {
+    public RequestException(@Nonnull RequestErrorCode error, @Nonnull String message) {
         this(error, message, null);
     }
     
@@ -60,7 +60,7 @@ public final class PacketException extends Exception implements Blockable {
      * @param message a string explaining the exception.
      * @param cause the cause of the packet exception.
      */
-    public PacketException(@Nonnull PacketErrorCode error, @Nonnull String message, @Nullable Throwable cause) {
+    public RequestException(@Nonnull RequestErrorCode error, @Nonnull String message, @Nullable Throwable cause) {
         this(error, message, cause, false);
     }
     
@@ -72,7 +72,7 @@ public final class PacketException extends Exception implements Blockable {
      * @param cause the cause of the packet exception.
      * @param remote whether it was thrown remotely.
      */
-    public PacketException(@Nonnull PacketErrorCode error, @Nonnull String message, @Nullable Throwable cause, boolean remote) {
+    public RequestException(@Nonnull RequestErrorCode error, @Nonnull String message, @Nullable Throwable cause, boolean remote) {
         super("(" + error.getName() + ") " + message, cause);
         
         this.error = error;
@@ -90,13 +90,13 @@ public final class PacketException extends Exception implements Blockable {
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static PacketException create(@Nonnull Block block) throws InvalidEncodingException {
+    public static RequestException create(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
-        final @Nonnull PacketErrorCode error = PacketErrorCode.get(elements.getNonNullable(0));
+        final @Nonnull RequestErrorCode error = RequestErrorCode.get(elements.getNonNullable(0));
         final @Nonnull String message = StringWrapper.decodeNonNullable(elements.getNonNullable(1));
-        return new PacketException(error, "A host responded with a packet error. [" + message + "]", null, true);
+        return new RequestException(error, "A host responded with a packet error. [" + message + "]", null, true);
     }
     
     @Pure
@@ -121,7 +121,7 @@ public final class PacketException extends Exception implements Blockable {
      * @return the error of this exception.
      */
     @Pure
-    public @Nonnull PacketErrorCode getError() {
+    public @Nonnull RequestErrorCode getError() {
         return error;
     }
     

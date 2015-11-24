@@ -5,7 +5,7 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.BooleanWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -76,7 +76,7 @@ public final class FreezableAuthentications extends FreezableAttributeTypeSet im
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public FreezableAuthentications(@Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public FreezableAuthentications(@Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(block);
     }
     

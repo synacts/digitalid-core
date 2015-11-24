@@ -14,8 +14,8 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.service.CoreService;
@@ -59,10 +59,10 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    protected CoreServiceInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    protected CoreServiceInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal queries of the core service."); }
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal queries of the core service."); }
         
         this.publicKey = Cache.getPublicKey(getRecipient(), signature.getNonNullableTime());
     }
@@ -90,7 +90,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     
     @Override
     @NonCommitting
-    public @Nonnull CoreServiceQueryReply executeOnHost() throws PacketException, SQLException {
+    public @Nonnull CoreServiceQueryReply executeOnHost() throws RequestException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (isLodged() && signature instanceof CredentialsSignatureWrapper) { ((CredentialsSignatureWrapper) signature).checkIsLogded(); }
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), publicKey);

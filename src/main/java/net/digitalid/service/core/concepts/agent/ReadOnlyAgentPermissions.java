@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.Blockable;
 import net.digitalid.service.core.database.SQLizable;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -58,14 +58,14 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<SemanticType, Bool
     public boolean canRead(@Nonnull SemanticType type);
     
     /**
-     * Checks that an agent with these agent permissions can read the given type and throws a {@link PacketException} if not.
+     * Checks that an agent with these agent permissions can read the given type and throws a {@link RequestException} if not.
      * 
      * @param type the semantic type to check.
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
-    public void checkCanRead(@Nonnull SemanticType type) throws PacketException;
+    public void checkCanRead(@Nonnull SemanticType type) throws RequestException;
     
     /**
      * Returns whether an agent with agent these permissions can write the given type.
@@ -80,14 +80,14 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<SemanticType, Bool
     public boolean canWrite(@Nonnull SemanticType type);
     
     /**
-     * Checks that an agent with these agent permissions can write the given type and throws a {@link PacketException} if not.
+     * Checks that an agent with these agent permissions can write the given type and throws a {@link RequestException} if not.
      * 
      * @param type the semantic type to check.
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
-    public void checkCanWrite(@Nonnull SemanticType type) throws PacketException;
+    public void checkCanWrite(@Nonnull SemanticType type) throws RequestException;
     
     /**
      * Returns whether these agent permissions cover the given agent permissions.
@@ -100,12 +100,12 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<SemanticType, Bool
     public boolean cover(@Nonnull ReadOnlyAgentPermissions permissions);
     
     /**
-     * Checks that these agent permissions cover the given agent permissions and throws a {@link PacketException} if not.
+     * Checks that these agent permissions cover the given agent permissions and throws a {@link RequestException} if not.
      * 
      * @param permissions the agent permissions that need to be covered.
      */
     @Pure
-    public void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws PacketException;
+    public void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws RequestException;
     
     
     @Pure

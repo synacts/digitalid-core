@@ -19,8 +19,8 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalMethod;
 import net.digitalid.service.core.handler.Method;
@@ -63,12 +63,13 @@ public final class Worker implements Runnable {
      */
     @Override
     @Committing
+    @SuppressWarnings("ThrowableResultIgnored")
     public void run() {
         try {
             final @Nonnull Time start = Time.getCurrent();
             @Nullable InternalIdentifier subject = null;
             @Nullable InternalIdentifier signer = null;
-            @Nullable PacketErrorCode error = null;
+            @Nullable RequestErrorCode error = null;
             @Nullable Service service = null;
             @Nullable RequestAudit requestAudit = null;
             @Nonnull StringBuilder methods = new StringBuilder("Request");
@@ -95,7 +96,7 @@ public final class Worker implements Runnable {
                     
                     final int size = request.getSize();
                     final @Nonnull FreezableList<Reply> replies = FreezableArrayList.getWithCapacity(size);
-                    final @Nonnull FreezableList<PacketException> exceptions = FreezableArrayList.getWithCapacity(size);
+                    final @Nonnull FreezableList<RequestException> exceptions = FreezableArrayList.getWithCapacity(size);
                     
                     for (int i = 0; i < size; i++) {
                         replies.add(null);
@@ -116,9 +117,9 @@ public final class Worker implements Runnable {
                             if (method instanceof Action) { ActionModule.audit((Action) method); }
                             Database.commit();
                         } catch (@Nonnull SQLException exception) {
-                            exceptions.set(i, new PacketException(PacketErrorCode.INTERNAL, "An SQLException occurred.", exception));
+                            exceptions.set(i, new RequestException(RequestErrorCode.INTERNAL, "An SQLException occurred.", exception));
                             Database.rollback();
-                        } catch (@Nonnull PacketException exception) {
+                        } catch (@Nonnull RequestException exception) {
                             exceptions.set(i, exception);
                             Database.rollback();
                         }
@@ -130,7 +131,7 @@ public final class Worker implements Runnable {
                     final @Nullable ResponseAudit responseAudit;
                     if (requestAudit != null) {
                         final @Nonnull Time auditStart = Time.getCurrent();
-                        if (!(reference instanceof InternalMethod)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "An audit may only be requested by internal methods."); }
+                        if (!(reference instanceof InternalMethod)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "An audit may only be requested by internal methods."); }
                         final @Nullable ReadOnlyAgentPermissions permissions;
                         @Nullable Restrictions restrictions;
                         if (service.equals(CoreService.SERVICE)) {
@@ -145,7 +146,7 @@ public final class Worker implements Runnable {
                             final @Nonnull Credential credential = signature.toCredentialsSignatureWrapper().getCredentials().getNonNullable(0);
                             permissions = credential.getPermissions();
                             restrictions = credential.getRestrictions();
-                            if (permissions == null || restrictions == null) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null."); }
+                            if (permissions == null || restrictions == null) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null."); }
                         }
                         responseAudit = ActionModule.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
@@ -157,14 +158,14 @@ public final class Worker implements Runnable {
                     
                     response = new Response(request, replies.freeze(), exceptions.freeze(), responseAudit);
                 } catch (@Nonnull SQLException exception) {
-                    throw new PacketException(PacketErrorCode.INTERNAL, "An SQLException occurred.", exception);
+                    throw new RequestException(RequestErrorCode.INTERNAL, "An SQLException occurred.", exception);
                 } catch (@Nonnull IOException exception) {
-                    throw new PacketException(PacketErrorCode.EXTERNAL, "An IOException occurred.", exception);
+                    throw new RequestException(RequestErrorCode.EXTERNAL, "An IOException occurred.", exception);
                 } catch (@Nonnull ExternalException exception) {
-                    throw new PacketException(PacketErrorCode.EXTERNAL, "An ExternalException occurred.", exception);
+                    throw new RequestException(RequestErrorCode.EXTERNAL, "An ExternalException occurred.", exception);
                 }
-            } catch (@Nonnull PacketException exception) {
-                response = new Response(request, exception.isRemote() ? new PacketException(PacketErrorCode.EXTERNAL, "An external error occurred.", exception) : exception);
+            } catch (@Nonnull RequestException exception) {
+                response = new Response(request, exception.isRemote() ? new RequestException(RequestErrorCode.EXTERNAL, "An external error occurred.", exception) : exception);
                 error = exception.getError();
                 Database.rollback();
             } finally {
@@ -175,7 +176,7 @@ public final class Worker implements Runnable {
             response.write(socket.getOutputStream());
             
             Log.information(methods + (requestAudit != null ? " with audit" : "") + (service != null ? " of the " + service.getName() : "") + (subject != null ? " to " + subject : "") + (signer != null ? " by " + signer : "") + " handled in " + start.ago().getValue() + " ms" + (error != null ? " with the error " + error.getName() : "") + ".");
-        } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
             Log.warning("Could not send a response.", exception);
         } finally {
             try {

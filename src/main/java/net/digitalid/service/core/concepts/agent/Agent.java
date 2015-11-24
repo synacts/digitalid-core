@@ -14,8 +14,8 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -134,11 +134,11 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     }
     
     /**
-     * Checks that this agent is not removed and throws a {@link PacketException} otherwise.
+     * Checks that this agent is not removed and throws a {@link RequestException} otherwise.
      */
     @Pure
-    public final void checkNotRemoved() throws PacketException {
-        if (isRemoved()) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "The agent has been removed."); }
+    public final void checkNotRemoved() throws RequestException {
+        if (isRemoved()) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The agent has been removed."); }
     }
     
     /**
@@ -383,14 +383,14 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     }
     
     /**
-     * Checks whether this agent covers the given agent and throws a {@link PacketException} if not.
+     * Checks whether this agent covers the given agent and throws a {@link RequestException} if not.
      * 
      * @param agent the agent that needs to be covered.
      */
     @Pure
     @NonCommitting
-    public final void checkCovers(@Nonnull Agent agent) throws PacketException, SQLException {
-        if (!covers(agent)) { throw new PacketException(PacketErrorCode.AUTHORIZATION, "This agent does not cover the other agent."); }
+    public final void checkCovers(@Nonnull Agent agent) throws RequestException, SQLException {
+        if (!covers(agent)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "This agent does not cover the other agent."); }
     }
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */

@@ -16,8 +16,8 @@ import net.digitalid.service.core.entity.Role;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.service.CoreService;
@@ -64,10 +64,10 @@ public abstract class CoreServiceInternalAction extends InternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal actions of the core service."); }
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal actions of the core service."); }
         
         this.publicKey = Cache.getPublicKey(getRecipient(), signature.getNonNullableTime());
     }
@@ -112,7 +112,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     @Override
     @OnlyForHosts
     @NonCommitting
-    public void executeOnHostInternalAction() throws PacketException, DatabaseException {
+    public void executeOnHostInternalAction() throws RequestException, DatabaseException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (signature instanceof CredentialsSignatureWrapper) { ((CredentialsSignatureWrapper) signature).checkIsLogded(); }
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());

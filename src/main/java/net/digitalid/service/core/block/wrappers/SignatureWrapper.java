@@ -24,8 +24,8 @@ import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenti
 import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -247,7 +247,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public void verify() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public void verify() throws DatabaseException, RequestException, ExternalException, NetworkException {
         assert !isVerified() : "This signature is not verified.";
         
         setVerified();
@@ -335,7 +335,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull SignatureWrapper decodeWithVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nullable Entity entity) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull SignatureWrapper decodeWithVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nullable Entity entity) throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nonnull SignatureWrapper signatureWrapper = decodeWithoutVerifying(block, false, entity);
         signatureWrapper.verify();
         return signatureWrapper;
@@ -353,7 +353,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified, @Nullable Entity entity) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified, @Nullable Entity entity) throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(Block.get(IMPLEMENTATION, block)).getNullableElements(4);
         final @Nullable Block hostSignature = elements.getNullable(1);
         final @Nullable Block clientSignature = elements.getNullable(2);
@@ -450,12 +450,12 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * 
      * @return this signature wrapper as a {@link HostSignatureWrapper}.
      * 
-     * @throws PacketException if this signature wrapper is not an instance of {@link HostSignatureWrapper}.
+     * @throws RequestException if this signature wrapper is not an instance of {@link HostSignatureWrapper}.
      */
     @Pure
-    public final @Nonnull HostSignatureWrapper toHostSignatureWrapper() throws PacketException {
+    public final @Nonnull HostSignatureWrapper toHostSignatureWrapper() throws RequestException {
         if (this instanceof HostSignatureWrapper) { return (HostSignatureWrapper) this; }
-        throw new PacketException(PacketErrorCode.SIGNATURE, "The element was not signed by a host.");
+        throw new RequestException(RequestErrorCode.SIGNATURE, "The element was not signed by a host.");
     }
     
     /**
@@ -463,12 +463,12 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * 
      * @return this signature wrapper as a {@link ClientSignatureWrapper}.
      * 
-     * @throws PacketException if this signature wrapper is not an instance of {@link ClientSignatureWrapper}.
+     * @throws RequestException if this signature wrapper is not an instance of {@link ClientSignatureWrapper}.
      */
     @Pure
-    public final @Nonnull ClientSignatureWrapper toClientSignatureWrapper() throws PacketException {
+    public final @Nonnull ClientSignatureWrapper toClientSignatureWrapper() throws RequestException {
         if (this instanceof ClientSignatureWrapper) { return (ClientSignatureWrapper) this; }
-        throw new PacketException(PacketErrorCode.SIGNATURE, "The element was not signed by a client.");
+        throw new RequestException(RequestErrorCode.SIGNATURE, "The element was not signed by a client.");
     }
     
     /**
@@ -476,12 +476,12 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * 
      * @return this signature wrapper as a {@link CredentialsSignatureWrapper}.
      * 
-     * @throws PacketException if this signature wrapper is not an instance of {@link CredentialsSignatureWrapper}.
+     * @throws RequestException if this signature wrapper is not an instance of {@link CredentialsSignatureWrapper}.
      */
     @Pure
-    public final @Nonnull CredentialsSignatureWrapper toCredentialsSignatureWrapper() throws PacketException {
+    public final @Nonnull CredentialsSignatureWrapper toCredentialsSignatureWrapper() throws RequestException {
         if (this instanceof CredentialsSignatureWrapper) { return (CredentialsSignatureWrapper) this; }
-        throw new PacketException(PacketErrorCode.SIGNATURE, "The element was not signed with credentials.");
+        throw new RequestException(RequestErrorCode.SIGNATURE, "The element was not signed with credentials.");
     }
     
     /* -------------------------------------------------- Agent -------------------------------------------------- */
@@ -511,7 +511,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * 
      * @return the restricted agent that signed the wrapped element.
      * 
-     * @throws PacketException if no such agent is found or the check failed.
+     * @throws RequestException if no such agent is found or the check failed.
      * 
      * @see ClientSignatureWrapper#getAgentCheckedAndRestricted(net.digitalid.service.core.entity.NonHostEntity, net.digitalid.service.core.cryptography.PublicKey)
      * @see CredentialsSignatureWrapper#getAgentCheckedAndRestricted(net.digitalid.service.core.entity.NonHostEntity, net.digitalid.service.core.cryptography.PublicKey)
@@ -519,8 +519,8 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws DatabaseException, PacketException {
-        throw new PacketException(PacketErrorCode.AUTHORIZATION, "The element was not signed by an authorized agent.");
+    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws DatabaseException, RequestException {
+        throw new RequestException(RequestErrorCode.AUTHORIZATION, "The element was not signed by an authorized agent.");
     }
     
     /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */

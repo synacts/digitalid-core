@@ -3,7 +3,7 @@ package net.digitalid.service.core.converter.key;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.annotations.state.Validated;
@@ -68,6 +68,6 @@ public abstract class AbstractKeyConverter<O, E, K, D> {
      * @return the object with the given key.
      */
     @Pure
-    public abstract @Nonnull O recover(@Nonnull E external, @Nonnull @Validated K key) throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public abstract @Nonnull O recover(@Nonnull E external, @Nonnull @Validated K key) throws DatabaseException, RequestException, ExternalException, NetworkException;
     
 }

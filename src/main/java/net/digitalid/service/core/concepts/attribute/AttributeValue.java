@@ -18,7 +18,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterV
 import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyParameterValueException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.AttributeType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -86,7 +86,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AttributeValue get(@Nonnull Block block, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull AttributeValue get(@Nonnull Block block, boolean verified) throws DatabaseException, RequestException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, verified, null);
@@ -199,7 +199,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
      */
     @Pure
     @NonCommitting
-    public abstract void verify() throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public abstract void verify() throws DatabaseException, RequestException, ExternalException, NetworkException;
     
     /**
      * Returns whether the signature of this attribute value is verified.
@@ -230,7 +230,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
     public static @Nonnull AttributeValue get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         try {
             return AttributeValue.get(Block.getNotNull(TYPE, resultSet, columnIndex), true);
-        } catch (@Nonnull IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull IOException | RequestException | ExternalException exception) {
             throw new SQLException("The attribute value returned by the database is invalid.", exception);
         }
     }

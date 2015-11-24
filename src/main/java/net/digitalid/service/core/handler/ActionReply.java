@@ -14,7 +14,7 @@ import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.core.CoreServiceActionReply;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -61,7 +61,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * 
      * @param action the external action that was sent.
      * 
-     * @throws PacketException if the authorization is not sufficient.
+     * @throws RequestException if the authorization is not sufficient.
      * 
      * @require hasSignature() : "This handler has a signature.";
      * @require action.getReplyClass().isInstance(this) : "This object is an instance of the action's reply class.";
@@ -70,7 +70,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * @require ((HostSignatureWrapper) getSignatureNotNull()).getSigner().equals(action.getRecipient()) : "The reply is signed by the action's recipient.";
      */
     @NonCommitting
-    public abstract void executeByPusher(@Nonnull ExternalAction action) throws PacketException, SQLException;
+    public abstract void executeByPusher(@Nonnull ExternalAction action) throws RequestException, SQLException;
     
     /**
      * Executes this action reply by the synchronizer.

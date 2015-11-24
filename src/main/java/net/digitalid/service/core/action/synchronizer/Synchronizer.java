@@ -13,7 +13,7 @@ import net.digitalid.service.core.entity.Role;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.packet.Response;
@@ -128,7 +128,7 @@ public final class Synchronizer extends Thread {
      */
     @Locked
     @Committing
-    static void reloadSuspended(@Nonnull Role role, @Nonnull StateModule module) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    static void reloadSuspended(@Nonnull Role role, @Nonnull StateModule module) throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nonnull Service service = module.getService();
         assert isSuspended(role, service) : "The service is suspended.";
         
@@ -158,7 +158,7 @@ public final class Synchronizer extends Thread {
      */
     @NonLocked
     @Committing
-    public static void reload(@Nonnull Role role, @Nonnull StateModule module) throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
+    public static void reload(@Nonnull Role role, @Nonnull StateModule module) throws InterruptedException, DatabaseException, RequestException, ExternalException, NetworkException {
         assert !Database.isLocked() : "The database is not locked.";
         
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
@@ -188,7 +188,7 @@ public final class Synchronizer extends Thread {
      */
     @NonLocked
     @Committing
-    public static void refresh(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
+    public static void refresh(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, DatabaseException, RequestException, ExternalException, NetworkException {
         assert !Database.isLocked() : "The database is not locked.";
         
         if (suspend(role, service)) {

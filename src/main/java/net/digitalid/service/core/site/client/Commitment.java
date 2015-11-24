@@ -20,7 +20,7 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.HostIdentity;
@@ -93,7 +93,7 @@ public class Commitment implements Blockable, SQLizable {
      * @param value the value of this commitment.
      */
     @NonCommitting
-    public Commitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public Commitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value) throws DatabaseException, RequestException, ExternalException, NetworkException {
         this.host = host;
         this.time = time;
         this.publicKey = Cache.getPublicKeyChain(host).getKey(time);
@@ -124,7 +124,7 @@ public class Commitment implements Blockable, SQLizable {
      */
     @Locked
     @NonCommitting
-    public Commitment(@Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public Commitment(@Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
@@ -201,7 +201,7 @@ public class Commitment implements Blockable, SQLizable {
      * @return the new secret commitment.
      */
     @Pure
-    public final @Nonnull SecretCommitment addSecret(@Nonnull Exponent secret) throws PacketException {
+    public final @Nonnull SecretCommitment addSecret(@Nonnull Exponent secret) throws RequestException {
         return new SecretCommitment(host, time, value, publicKey, secret);
     }
     
@@ -273,7 +273,7 @@ public class Commitment implements Blockable, SQLizable {
             final @Nonnull Time time = Time.get(resultSet, startIndex + 1);
             final @Nonnull BigInteger value = IntegerWrapper.decodeNonNullable(Block.getNotNull(Element.TYPE, resultSet, startIndex + 2));
             return new Commitment(host, time, value);
-        } catch (@Nonnull IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull IOException | RequestException | ExternalException exception) {
             throw new SQLException("A problem occurred while retrieving a commitment.", exception);
         }
      }

@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.concepts.error.ErrorModule;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.packet.ClientRequest;
@@ -86,7 +86,7 @@ public final class Sender extends Thread {
                         Log.debugging("Send the methods " + methods + " with a " + requestAudit + ".");
                         response = Method.send(methods, requestAudit);
                         Database.commit();
-                    } catch (@Nonnull SQLException | PacketException | ExternalException exception) {
+                    } catch (@Nonnull SQLException | RequestException | ExternalException exception) {
                         Log.warning("Could not send the methods " + methods + ".", exception);
                         Database.rollback();
                         for (final @Nonnull Method method : methods) { ErrorModule.add("Could not send", (InternalAction) method); }
@@ -111,7 +111,7 @@ public final class Sender extends Thread {
                                     ErrorModule.add("Could not execute on success", action);
                                     Database.commit();
                                 }
-                            } catch (@Nonnull PacketException exception) {
+                            } catch (@Nonnull RequestException exception) {
                                 Log.warning("Could not execute on the host the action " + action + ".", exception);
                                 ErrorModule.add("Could not execute on the host", action);
                                 Database.commit();
@@ -145,7 +145,7 @@ public final class Sender extends Thread {
                             Log.debugging("Execute on the client the action " + reference + ".");
                             reference.executeOnClient();
                             Database.commit();
-                        } catch (@Nonnull SQLException | PacketException exception) {
+                        } catch (@Nonnull SQLException | RequestExceptionexception) {
                             Log.warning("Could not execute on the client the action " + reference + ".", exception);
                             Database.rollback();
                             ErrorModule.add("Could not execute on the client", reference);
@@ -167,7 +167,7 @@ public final class Sender extends Thread {
                     Database.unlock();
                 }
             }
-        } catch (@Nonnull InterruptedException | SQLException | PacketException | ExternalException exception) {
+        } catch (@Nonnull InterruptedException | SQLException | RequestException | ExternalException exception) {
             Log.warning("Could not commit the transaction or reload the state.", exception);
             try {
                 Database.lock();
@@ -206,7 +206,7 @@ public final class Sender extends Thread {
      * @see ClientRequest
      */
     @NonCommitting
-    public static @Nullable RequestAudit runAsynchronously(final @Nonnull InternalAction action, final @Nullable RequestAudit audit) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public static @Nullable RequestAudit runAsynchronously(final @Nonnull InternalAction action, final @Nullable RequestAudit audit) throws DatabaseException, RequestException, ExternalException, NetworkException {
         // TODO: This will almost certainly not work with the locking mechanism of SQLite. The problem could propably be solved with savepoints and partial rollbacks, however.
         
         Log.error("The sender should not yet be run asynchronously.");
@@ -242,7 +242,7 @@ public final class Sender extends Thread {
                     final @Nonnull ResponseAudit responseAudit = response.getAuditNotNull();
                     responseAudit.execute(action.getRole(), action.getService(), action.getRecipient(), methods, ResponseAudit.emptyModuleSet);
                     return audit != null ? new RequestAudit(responseAudit.getThisTime()) : null;
-                } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+                } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
                     Database.rollback();
                     throw exception;
                 } finally {
@@ -256,7 +256,7 @@ public final class Sender extends Thread {
             return task.get();
         } catch (@Nonnull InterruptedException | ExecutionException exception) {
             Log.error("Could not execute the action asynchronously.", exception);
-            throw new PacketException(PacketErrorCode.INTERNAL, "The action could not be executed asynchronously.", exception);
+            throw new RequestException(RequestErrorCode.INTERNAL, "The action could not be executed asynchronously.", exception);
         }
     }
     

@@ -3,7 +3,7 @@ package net.digitalid.service.core.server;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.service.core.storage.Service;
@@ -150,7 +150,7 @@ final class Options {
                 final @Nonnull HostIdentifier identifier = new HostIdentifier(string);
                 try {
                     new Host(identifier);
-                } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+                } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
                     Console.write("Could not create the host " + identifier + " (" + exception + ").");
                     Database.rollback();
                 }

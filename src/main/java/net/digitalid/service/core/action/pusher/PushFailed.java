@@ -18,8 +18,8 @@ import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.ActionReply;
 import net.digitalid.service.core.handler.ExternalAction;
 import net.digitalid.service.core.handler.Method;
@@ -116,7 +116,7 @@ public final class PushFailed extends ExternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(4);
@@ -127,7 +127,7 @@ public final class PushFailed extends ExternalAction {
         final @Nonnull Block _block = SelfcontainedWrapper.decodeNonNullable(elements.getNonNullable(3));
         try {
             this.action = (ExternalAction) Method.get(entity, SignatureWrapper.encodeWithoutSigning(Packet.SIGNATURE, (Block) null, _subject), _recipient, _block);
-        } catch (@Nonnull PacketException | ClassCastException exception) {
+        } catch (@Nonnull RequestException | ClassCastException exception) {
             throw MaskingInvalidEncodingException.get(exception);
         }
     }
@@ -179,8 +179,8 @@ public final class PushFailed extends ExternalAction {
     
     
     @Override
-    public @Nullable ActionReply executeOnHost() throws PacketException {
-        throw new PacketException(PacketErrorCode.METHOD, "Failed push actions cannot be executed on a host.");
+    public @Nullable ActionReply executeOnHost() throws RequestException {
+        throw new RequestException(RequestErrorCode.METHOD, "Failed push actions cannot be executed on a host.");
     }
     
     @Pure
@@ -210,8 +210,8 @@ public final class PushFailed extends ExternalAction {
     }
     
     @Override
-    public @Nullable Response send() throws PacketException {
-        throw new PacketException(PacketErrorCode.INTERNAL, "Failed push actions cannot be sent.");
+    public @Nullable Response send() throws RequestException {
+        throw new RequestException(RequestErrorCode.INTERNAL, "Failed push actions cannot be sent.");
     }
     
     
@@ -270,7 +270,7 @@ public final class PushFailed extends ExternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
             return new PushFailed(entity, signature, recipient, block);
         }
         

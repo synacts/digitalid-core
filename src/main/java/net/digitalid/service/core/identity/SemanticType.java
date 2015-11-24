@@ -21,7 +21,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterV
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
@@ -150,7 +150,7 @@ public final class SemanticType extends Type {
     @Override
     @NonCommitting
     @NonLoadedRecipient
-    void load() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    void load() throws DatabaseException, RequestException, ExternalException, NetworkException {
         assert !isLoaded() : "The type declaration is not loaded.";
         
         if (categories != null) { throw InvalidDeclarationException.get("The semantic base may not be circular.", getAddress()); }

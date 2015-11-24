@@ -13,7 +13,7 @@ import net.digitalid.service.core.concepts.attribute.AttributeTypes;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.setup.IdentitySetup;
 import net.digitalid.service.core.site.client.Client;
@@ -39,7 +39,7 @@ public final class AgentTest extends IdentitySetup {
     
     @BeforeClass
     @Committing
-    public static void accreditClientAgent() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public static void accreditClientAgent() throws DatabaseException, RequestException, ExternalException, NetworkException {
         print("accreditClientAgent");
         try {
             final @Nonnull FreezableAgentPermissions agentPermissions = new FreezableAgentPermissions();
@@ -50,7 +50,7 @@ public final class AgentTest extends IdentitySetup {
             
             client = new Client("object", "Object Client", agentPermissions);
             role = client.accredit(getSubject(), "");
-        } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;
@@ -59,7 +59,7 @@ public final class AgentTest extends IdentitySetup {
     
     @After
     @Committing
-    public void testAgentStateEquality() throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
+    public void testAgentStateEquality() throws InterruptedException, DatabaseException, RequestException, ExternalException, NetworkException {
         try {
             role.waitForCompletion(CoreService.SERVICE);
             Thread.sleep(1l);
@@ -70,13 +70,13 @@ public final class AgentTest extends IdentitySetup {
             final @Nonnull Block beforeState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
             Database.commit();
             
-            try { role.reloadState(CoreService.SERVICE); } catch (InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException e) { e.printStackTrace(); throw e; }
+            try { role.reloadState(CoreService.SERVICE); } catch (InterruptedException | DatabaseException | RequestException | ExternalException | NetworkException e) { e.printStackTrace(); throw e; }
             
             final @Nonnull Block afterState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
             Database.commit();
             
             Assert.assertEquals(beforeState, afterState);
-        } catch (@Nonnull InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull InterruptedException | DatabaseException | RequestException | ExternalException | NetworkException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;
@@ -85,14 +85,14 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _01_testUnremoveAgent() throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
+    public void _01_testUnremoveAgent() throws InterruptedException, DatabaseException, RequestException, ExternalException, NetworkException {
         print("_01_testUnremoveAgent");
         try {
             getRole().refreshState(CoreService.SERVICE);
             getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).unremove();
             getRole().waitForCompletion(CoreService.SERVICE);
             Assert.assertTrue(role.reloadOrRefreshState(CoreService.SERVICE));
-        } catch (@Nonnull InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull InterruptedException | DatabaseException | RequestException | ExternalException | NetworkException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;
@@ -101,7 +101,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _02_testPermissionsAdd() throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
+    public void _02_testPermissionsAdd() throws InterruptedException, DatabaseException, RequestException, ExternalException, NetworkException {
         print("_02_testPermissionsAdd");
         try {
             final @Nonnull FreezableAgentPermissions agentPermissions = new FreezableAgentPermissions();
@@ -119,7 +119,7 @@ public final class AgentTest extends IdentitySetup {
             Assert.assertTrue(permissions.canWrite(AttributeTypes.EMAIL));
             Assert.assertTrue(permissions.canRead(AttributeTypes.PHONE));
             Assert.assertFalse(permissions.canWrite(AttributeTypes.PHONE));
-        } catch (@Nonnull InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull InterruptedException | DatabaseException | RequestException | ExternalException | NetworkException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;
@@ -154,7 +154,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _04_testRestrictionsReplace() throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
+    public void _04_testRestrictionsReplace() throws InterruptedException, DatabaseException, RequestException, ExternalException, NetworkException {
         print("_04_testRestrictionsReplace");
         try {
             getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).setRestrictions(new Restrictions(true, true, true, Context.getRoot(getRole())));
@@ -166,7 +166,7 @@ public final class AgentTest extends IdentitySetup {
             
             Assert.assertTrue(restrictions.isRole());
             Assert.assertTrue(restrictions.isWriting());
-        } catch (@Nonnull InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull InterruptedException | DatabaseException | RequestException | ExternalException | NetworkException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;
@@ -175,7 +175,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _05_testCommitmentReplace() throws InterruptedException, DatabaseException, PacketException, ExternalException, NetworkException {
+    public void _05_testCommitmentReplace() throws InterruptedException, DatabaseException, RequestException, ExternalException, NetworkException {
         print("_05_testCommitmentReplace");
         try {
             final @Nonnull ClientAgent clientAgent = role.getAgent();
@@ -188,7 +188,7 @@ public final class AgentTest extends IdentitySetup {
             Database.commit();
             
             Assert.assertNotEquals(oldCommitment, newCommitment);
-        } catch (@Nonnull InterruptedException | DatabaseException | PacketException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull InterruptedException | DatabaseException | RequestException | ExternalException | NetworkException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;

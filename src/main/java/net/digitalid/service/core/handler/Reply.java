@@ -21,8 +21,8 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
@@ -125,7 +125,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
          */
         @Pure
         @NonCommitting
-        protected abstract Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
+        protected abstract Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException;
         
     }
     
@@ -155,15 +155,15 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      * 
      * @return a reply that decodes the given block.
      * 
-     * @throws PacketException if no handler is found for the given content type.
+     * @throws RequestException if no handler is found for the given content type.
      * 
      * @ensure return.hasSignature() : "The returned reply has a signature.";
      */
     @Pure
     @NonCommitting
-    private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nullable Reply.Factory factory = converters.get(block.getType());
-        if (factory == null) { throw new PacketException(PacketErrorCode.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true); }
+        if (factory == null) { throw new RequestException(RequestErrorCode.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true); }
         else { return factory.create(entity, signature, number, block); }
     }
     
@@ -176,13 +176,13 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      * 
      * @return a reply that decodes the given block.
      * 
-     * @throws PacketException if no handler is found for the given content type.
+     * @throws RequestException if no handler is found for the given content type.
      * 
      * @ensure return.hasSignature() : "The returned reply has a signature.";
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         return get(entity, signature, store(signature), block);
     }
     
@@ -236,7 +236,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      */
     @Pure
     @NonCommitting
-    public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException, RequestException, ExternalException, NetworkException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) { return null; }
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {

@@ -12,8 +12,8 @@ import net.digitalid.service.core.concepts.agent.ClientAgentCommitmentReplace;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -54,7 +54,7 @@ public final class ClientRequest extends Request {
      * @require methods.getNotNull(0).isOnClient() : "The methods are on a client.";
      */
     @NonCommitting
-    public ClientRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public ClientRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment) throws DatabaseException, RequestException, ExternalException, NetworkException {
         this(methods, subject, audit, commitment, 0);
     }
     
@@ -68,7 +68,7 @@ public final class ClientRequest extends Request {
      * @param iteration how many times this request was resent.
      */
     @NonCommitting
-    private ClientRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment, int iteration) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private ClientRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment, int iteration) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(methods, subject.getHostIdentifier(), getSymmetricKey(subject.getHostIdentifier(), Time.HOUR), subject, audit, commitment, iteration);
     }
     
@@ -96,8 +96,8 @@ public final class ClientRequest extends Request {
     
     @Override
     @NonCommitting
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
-        if (!subject.getHostIdentifier().equals(recipient)) { throw new PacketException(PacketErrorCode.INTERNAL, "The host of the subject " + subject + " does not match the recipient " + recipient + "."); }
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws DatabaseException, RequestException, ExternalException, NetworkException {
+        if (!subject.getHostIdentifier().equals(recipient)) { throw new RequestException(RequestErrorCode.INTERNAL, "The host of the subject " + subject + " does not match the recipient " + recipient + "."); }
         return new ClientRequest(methods, subject, getAudit(), commitment).send(verified);
     }
     
@@ -111,7 +111,7 @@ public final class ClientRequest extends Request {
      * @return the response to the resent request with the new commitment.
      */
     @NonCommitting
-    @Nonnull Response recommit(@Nonnull FreezableList<Method> methods, int iteration, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    @Nonnull Response recommit(@Nonnull FreezableList<Method> methods, int iteration, boolean verified) throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nonnull NativeRole role = methods.getNonNullable(0).getRole().toNativeRole();
         final @Nonnull Client client = role.getClient();
         final @Nonnull Commitment oldCommitment = role.getAgent().getCommitment();

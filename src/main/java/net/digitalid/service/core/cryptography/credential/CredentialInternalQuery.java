@@ -28,8 +28,8 @@ import net.digitalid.service.core.entity.NonNativeRole;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceInternalQuery;
@@ -126,17 +126,17 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!(entity.getIdentity() instanceof InternalPerson)) { throw new PacketException(PacketErrorCode.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons."); }
+        if (!(entity.getIdentity() instanceof InternalPerson)) { throw new RequestException(RequestErrorCode.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons."); }
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
         this.permissions = new RandomizedAgentPermissions(tuple.getNonNullableElement(0));
         if (tuple.isElementNull(1)) { this.relation = null; }
         else { this.relation = IdentityImplementation.create(tuple.getNonNullableElement(1)).castTo(SemanticType.class).checkIsRoleType(); }
         if (signature instanceof ClientSignatureWrapper) { this.value = ((ClientSignatureWrapper) signature).getCommitment().getValue().getValue(); }
         else if (signature instanceof CredentialsSignatureWrapper) { this.value = ((CredentialsSignatureWrapper) signature).getValue(); }
-        else { throw new PacketException(PacketErrorCode.SIGNATURE, "A credential request must be signed by a client or with credentials."); }
+        else { throw new RequestException(RequestErrorCode.SIGNATURE, "A credential request must be signed by a client or with credentials."); }
     }
     
     @Pure
@@ -254,7 +254,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
             return new CredentialInternalQuery(entity, signature, recipient, block);
         }
         

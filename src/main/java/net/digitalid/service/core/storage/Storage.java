@@ -2,8 +2,8 @@ package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
@@ -38,9 +38,9 @@ public final class Storage {
      * @return the site storage whose state type matches the given type.
      */
     @Pure
-    public static @Nonnull SiteStorage get(@Nonnull SemanticType stateType) throws PacketException {
+    public static @Nonnull SiteStorage get(@Nonnull SemanticType stateType) throws RequestException {
         final @Nullable SiteStorage storage = storages.get(stateType);
-        if (storage == null) { throw new PacketException(PacketErrorCode.SERVICE, "There exists no site storage with the state type " + stateType.getAddress() + "."); }
+        if (storage == null) { throw new RequestException(RequestErrorCode.SERVICE, "There exists no site storage with the state type " + stateType.getAddress() + "."); }
         return storage;
     }
     

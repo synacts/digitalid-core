@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
 import net.digitalid.utility.database.exceptions.DatabaseException;
@@ -20,7 +20,7 @@ import org.junit.Test;
 public final class SelfcontainedWrapperTest extends DatabaseSetup {
     
     @Test
-    public void testWrapping() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public void testWrapping() throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nonnull SemanticType STRING = SemanticType.map("string@core.digitalid.net").load(StringWrapper.XDF_TYPE);
         final @Nonnull SemanticType INT32 = SemanticType.map("int32@core.digitalid.net").load(Int32Wrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("selfcontained@core.digitalid.net").load(SelfcontainedWrapper.XDF_TYPE);

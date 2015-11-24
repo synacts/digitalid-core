@@ -20,8 +20,8 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidDeclarationException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
@@ -77,7 +77,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @param states the states to merge into the new account.
      */
     @NonCommitting
-    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @NonNullableElements ReadOnlyList<ReadOnlyPair<Predecessor, Block>> states) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @NonNullableElements ReadOnlyList<ReadOnlyPair<Predecessor, Block>> states) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(role);
         
         this.states = states;
@@ -97,11 +97,11 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AccountInitialize(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    private AccountInitialize(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull InternalNonHostIdentifier subject = getSubject().castTo(InternalNonHostIdentifier.class);
-        if (isOnHost() && FreezablePredecessors.exist(subject)) { throw new PacketException(PacketErrorCode.METHOD, "The subject " + subject + " is already initialized."); }
+        if (isOnHost() && FreezablePredecessors.exist(subject)) { throw new RequestException(RequestErrorCode.METHOD, "The subject " + subject + " is already initialized."); }
         
         final @Nonnull Category category = entity.getIdentity().getCategory();
         final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
@@ -179,7 +179,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             }
             Mapper.mergeIdentities(identities.freeze(), entity.getIdentity());
             predecessors.set(getSubject().castTo(InternalNonHostIdentifier.class), null);
-        } catch (@Nonnull IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull IOException | RequestException | ExternalException exception) {
             throw new SQLException("A problem occurred while adding a state.", exception);
         }
         
@@ -234,7 +234,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
             return new AccountInitialize(entity, signature, recipient, block);
         }
         

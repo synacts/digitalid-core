@@ -7,7 +7,7 @@ import java.util.jar.JarFile;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.site.client.Client;
@@ -126,7 +126,7 @@ public final class Server {
         if (digitalid.exists() && digitalid.isFile()) {
             try {
                 if (!new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".tables.xdf").exists()) { new Host(HostIdentifier.DIGITALID); }
-            } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+            } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
                 throw new InitializationError("Could not load the host configured in the file '" + digitalid.getName() + "'.", exception);
             }
         }
@@ -138,7 +138,7 @@ public final class Server {
                 try {
                     final @Nonnull HostIdentifier identifier = new HostIdentifier(name.substring(0, name.length() - 12));
                     if (!new File(Directory.getHostsDirectory().getPath() + File.separator + identifier.getString() + ".tables.xdf").exists()) { new Host(identifier); }
-                } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+                } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
                     throw new InitializationError("Could not load the host configured in the file '" + name + "'.", exception);
                 }
             }
@@ -180,7 +180,7 @@ public final class Server {
             for (final @Nonnull String argument : arguments) {
                 try {
                     new Host(new HostIdentifier(argument));
-                } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+                } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
                     throw new InitializationError("Could not create the host '" + argument + "'.", exception);
                 }
             }
@@ -190,7 +190,7 @@ public final class Server {
             
             Cache.getPublicKeyChain(HostIdentity.DIGITALID);
             Database.commit();
-        } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
             throw new InitializationError("Could not retrieve the public key chain of 'digitalid.net'.", exception);
         } finally {
             Database.unlock();

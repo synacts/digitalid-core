@@ -1,4 +1,4 @@
-package net.digitalid.service.core.exceptions.packet;
+package net.digitalid.service.core.exceptions.request;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,7 +25,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @see PacketException
  */
 @Immutable
-public enum PacketErrorCode implements XDF<PacketErrorCode, Object>, SQL<PacketErrorCode, Object> {
+public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<RequestErrorCode, Object> {
     
     /**
      * The error code for an internal problem.
@@ -80,6 +80,7 @@ public enum PacketErrorCode implements XDF<PacketErrorCode, Object>, SQL<PacketE
     /**
      * The error code for an invalid reply type.
      */
+    @Deprecated
     REPLY(10),
     
     /**
@@ -135,10 +136,10 @@ public enum PacketErrorCode implements XDF<PacketErrorCode, Object>, SQL<PacketE
      * @require isValid(value) : "The value is a valid packet error.";
      */
     @Pure
-    public static @Nonnull PacketErrorCode get(byte value) {
+    public static @Nonnull RequestErrorCode get(byte value) {
         assert isValid(value) : "The value is a valid packet error.";
         
-        for (final @Nonnull PacketErrorCode error : values()) {
+        for (final @Nonnull RequestErrorCode error : values()) {
             if (error.value == value) { return error; }
         }
         
@@ -161,7 +162,7 @@ public enum PacketErrorCode implements XDF<PacketErrorCode, Object>, SQL<PacketE
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static @Nonnull PacketErrorCode get(@Nonnull Block block) throws InvalidEncodingException {
+    public static @Nonnull RequestErrorCode get(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final byte value = Int8Wrapper.decode(block);
@@ -194,7 +195,7 @@ public enum PacketErrorCode implements XDF<PacketErrorCode, Object>, SQL<PacketE
      * 
      * @param value the value encoding the packet error.
      */
-    private PacketErrorCode(int value) {
+    private RequestErrorCode(int value) {
         this.value = (byte) value;
     }
     
@@ -237,7 +238,7 @@ public enum PacketErrorCode implements XDF<PacketErrorCode, Object>, SQL<PacketE
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PacketErrorCode get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nonnull RequestErrorCode get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         final @Nonnull byte value = resultSet.getByte(columnIndex);
         if (!isValid(value)) { throw new SQLException("'" + value + "' is not a valid packet error."); }
         return get(value);

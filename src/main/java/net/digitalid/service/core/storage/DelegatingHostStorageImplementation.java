@@ -7,8 +7,8 @@ import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.site.host.Host;
@@ -114,12 +114,12 @@ abstract class DelegatingHostStorageImplementation extends DelegatingClientStora
     @Locked
     @Override
     @NonCommitting
-    public final void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public final void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
             final @Nullable HostStorage substorage = substorages.get(selfcontained.getType());
-            if (substorage == null) { throw new PacketException(PacketErrorCode.CONTENT, "There is no substorage for the block of type " + selfcontained.getType() + "."); }
+            if (substorage == null) { throw new RequestException(RequestErrorCode.CONTENT, "There is no substorage for the block of type " + selfcontained.getType() + "."); }
             substorage.importAll(host, selfcontained);
         }
     }

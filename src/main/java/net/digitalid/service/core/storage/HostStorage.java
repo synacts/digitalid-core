@@ -6,7 +6,7 @@ import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.site.host.Host;
@@ -55,6 +55,6 @@ public interface HostStorage extends ClientStorage {
      */
     @Locked
     @NonCommitting
-    public void importAll(@Nonnull Host host, @Nonnull @NonEncoding Block block) throws DatabaseException, PacketException, ExternalException, NetworkException;
+    public void importAll(@Nonnull Host host, @Nonnull @NonEncoding Block block) throws DatabaseException, RequestException, ExternalException, NetworkException;
     
 }

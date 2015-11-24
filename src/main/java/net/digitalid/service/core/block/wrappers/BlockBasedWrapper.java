@@ -10,7 +10,7 @@ import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -75,7 +75,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
             try {
                 final @Nullable Block block = Block.SQL_CONVERTER.restoreNullable(getType(), resultSet, columnIndex);
                 return block == null ? null : XDFConverter.decodeNonNullable(none, block);
-            } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+            } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
                 throw new SQLException("Could not decode a block from the database.", exception);
             }
         }

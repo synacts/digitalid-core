@@ -17,7 +17,7 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
@@ -142,7 +142,7 @@ public final class ResponseAudit extends Audit {
      * @param ignoredModules the modules that are ignored when executing the trail.
      */
     @Committing
-    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<StateModule> ignoredModules) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<StateModule> ignoredModules) throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nonnull FreezableSet<StateModule> suspendedModules = FreezableHashSet.get();
         for (final @Nonnull Block block : trail) {
             final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
@@ -245,7 +245,7 @@ public final class ResponseAudit extends Audit {
                     Database.lock();
                     Log.debugging("Execute asynchronously the audit of " + method + ".");
                     execute(role, service, method.getRecipient(), FreezableArrayList.get(method).freeze(), emptyModuleSet);
-                } catch (@Nonnull DatabaseException | PacketException | ExternalException | NetworkException exception) {
+                } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
                     Log.warning("Could not execute the audit of " + method + " asynchronously.", exception);
                     Database.rollback();
                 } finally {

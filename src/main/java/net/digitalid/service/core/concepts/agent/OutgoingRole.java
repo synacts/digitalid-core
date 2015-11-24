@@ -16,7 +16,7 @@ import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -267,7 +267,7 @@ public final class OutgoingRole extends Agent {
     }
     
     /**
-     * Checks whether this outgoing role covers the given credential and throws a {@link PacketException} if not.
+     * Checks whether this outgoing role covers the given credential and throws a {@link RequestException} if not.
      * 
      * @param credential the credential that needs to be covered.
      * 
@@ -275,7 +275,7 @@ public final class OutgoingRole extends Agent {
      * @require credential.getRestrictions() != null : "The restrictions of the credential are not null.";
      */
     @NonCommitting
-    public void checkCovers(@Nonnull Credential credential) throws DatabaseException, PacketException {
+    public void checkCovers(@Nonnull Credential credential) throws DatabaseException, RequestException {
         final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
         assert permissions != null : "The permissions of the credential are not null.";
         final @Nullable Restrictions restrictions = credential.getRestrictions();

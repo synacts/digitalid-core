@@ -9,7 +9,7 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identifier.NonHostIdentifier;
@@ -145,7 +145,7 @@ public final class Predecessor implements Blockable {
      */
     @Pure
     @NonCommitting
-    @Nullable NonHostIdentity getIdentity() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    @Nullable NonHostIdentity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException {
         if (identifier.isMapped()) { return identifier.getMappedIdentity(); }
         if (!predecessors.getIdentities().isEmpty()) { return identifier.getIdentity().castTo(NonHostIdentity.class); }
         return null;

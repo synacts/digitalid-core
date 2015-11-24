@@ -12,7 +12,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -92,7 +92,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
      * @require signature.isSigned() : "The signature is signed.";
      */
     @NonCommitting
-    CertifiedAttributeValue(@Nonnull Block content, @Nonnull SignatureWrapper signature) throws DatabaseException, PacketException, ExternalException, NetworkException {
+    CertifiedAttributeValue(@Nonnull Block content, @Nonnull SignatureWrapper signature) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(content);
         
         if (signature instanceof HostSignatureWrapper) { this.signature = (HostSignatureWrapper) signature; }
@@ -120,7 +120,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
     @Locked
     @Override
     @NonCommitting
-    public void verify() throws DatabaseException, PacketException, ExternalException, NetworkException {
+    public void verify() throws DatabaseException, RequestException, ExternalException, NetworkException {
         signature.verify();
         Certificate.isAuthorized(getIssuer(), getContent());
     }
