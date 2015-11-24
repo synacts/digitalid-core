@@ -1,12 +1,40 @@
 package net.digitalid.service.core.exceptions.network;
 
+import java.net.UnknownHostException;
+import javax.annotation.Nonnull;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+
 /**
- * Description.
+ * This exception indicates that a host was not found.
  */
-public class HostNotFoundException {
+@Immutable
+public class HostNotFoundException extends NetworkException {
     
-    public HostNotFoundException() {
-        
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    /**
+     * Creates a new host not found exception.
+     * 
+     * @param exception the original exception.
+     * @param host the host that was not found.
+     */
+    protected HostNotFoundException(@Nonnull UnknownHostException exception, @Nonnull HostIdentifier host) {
+        super(exception, host);
+    }
+    
+    /**
+     * Returns a new host not found exception.
+     * 
+     * @param exception the original exception.
+     * @param host the host that was not found.
+     * 
+     * @return a new host not found exception.
+     */
+    @Pure
+    public static final @Nonnull HostNotFoundException get(@Nonnull UnknownHostException exception, @Nonnull HostIdentifier host) {
+        return new HostNotFoundException(exception, host);
     }
     
 }

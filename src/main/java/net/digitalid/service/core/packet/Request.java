@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.action.synchronizer.RequestAudit;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.CompressionWrapper;
@@ -270,7 +271,7 @@ public class Request extends Packet {
      */
     @NonCommitting
     @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws DatabaseException, PacketException, ExternalException, NetworkException {
-        return new Request(methods, recipient, new SymmetricKey(), subject, null, null, iteration).send(verified);
+        return new Request(methods, recipient, SymmetricKey.getRandom(), subject, null, null, iteration).send(verified);
     }
     
     /**

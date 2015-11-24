@@ -182,7 +182,7 @@ public abstract class Packet {
         
         final boolean isResponse = (this instanceof Response);
         final @Nullable Response response = isResponse ? (Response) this : null;
-        try { this.wrapper = new SelfcontainedWrapper(inputStream, false); } catch (InvalidEncodingException exception) { throw new PacketException(PacketErrorCode.PACKET, "The packet could not be decoded.", exception, isResponse); }
+        try { this.wrapper = SelfcontainedWrapper.decodeBlockFrom(inputStream, false); } catch (InvalidEncodingException exception) { throw new PacketException(PacketErrorCode.PACKET, "The packet could not be decoded.", exception, isResponse); }
         
         try { this.encryption = new EncryptionWrapper(wrapper.getElement().checkType(ENCRYPTION), isResponse ? request.getEncryption().getSymmetricKey() : null); } catch (InvalidEncodingException exception) { throw new PacketException(PacketErrorCode.ENCRYPTION, "The encryption could not be decoded.", exception, isResponse); }
         Replay.check(encryption);

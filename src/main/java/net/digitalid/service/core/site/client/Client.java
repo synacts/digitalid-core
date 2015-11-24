@@ -16,13 +16,11 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.cache.Cache;
-import net.digitalid.service.core.concept.Aspect;
-import net.digitalid.service.core.concept.Instance;
-import net.digitalid.service.core.concept.Observer;
 import net.digitalid.service.core.concepts.agent.ClientAgent;
 import net.digitalid.service.core.concepts.agent.ClientAgentAccredit;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.contact.Context;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
@@ -31,6 +29,7 @@ import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.entity.RoleModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.FileNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -174,11 +173,15 @@ public class Client extends Site implements Observer {
         this.preferredPermissions = preferredPermissions;
         
         final @Nonnull File file = new File(Directory.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
-        if (file.exists()) {
-            this.secret = Exponent.get(SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(file), true).checkType(SECRET));
-        } else {
-            this.secret = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
-            SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, secret.toBlock().setType(SECRET)).writeTo(new FileOutputStream(file), true);
+        try {
+            if (file.exists()) {
+                this.secret = Exponent.get(SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(file), true).checkType(SECRET));
+            } else {
+                this.secret = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
+                SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, ConvertToXDF.nonNullable(SECRET, secret)).writeTo(new FileOutputStream(file), true);
+            }
+        } catch (@Nonnull java.io.FileNotFoundException exception) {
+            throw FileNotFoundException.get(exception, file);
         }
         
         // The role table needs to be created in advance.
