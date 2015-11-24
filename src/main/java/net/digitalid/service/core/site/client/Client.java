@@ -65,7 +65,7 @@ import net.digitalid.utility.system.directory.Directory;
  * 
  * TODO: Make sure that the client secret gets rotated!
  */
-public class Client extends Site implements Observer {
+public class Client extends Site {
     
     /**
      * Stops the background threads of the client without shutting down.

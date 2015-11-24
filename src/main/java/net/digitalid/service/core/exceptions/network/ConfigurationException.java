@@ -2,7 +2,6 @@ package net.digitalid.service.core.exceptions.network;
 
 import java.net.SocketException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -21,7 +20,7 @@ public class ConfigurationException extends NetworkException {
      * @param exception the cause of the configuration exception.
      * @param host the host whose socket could not be configured.
      */
-    protected ConfigurationException(@Nonnull SocketException exception, @Nullable HostIdentifier host) {
+    protected ConfigurationException(@Nonnull SocketException exception, @Nonnull HostIdentifier host) {
         super(exception, host);
     }
     
@@ -34,7 +33,7 @@ public class ConfigurationException extends NetworkException {
      * @return a new configuration exception.
      */
     @Pure
-    public static final @Nonnull ConfigurationException get(@Nonnull SocketException exception, @Nullable HostIdentifier host) {
+    public static final @Nonnull ConfigurationException get(@Nonnull SocketException exception, @Nonnull HostIdentifier host) {
         return new ConfigurationException(exception, host);
     }
     
