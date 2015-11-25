@@ -19,9 +19,9 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyTypeException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
@@ -163,7 +163,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
     @NonCommitting
     private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         final @Nullable Reply.Factory factory = converters.get(block.getType());
-        if (factory == null) { throw new RequestException(RequestErrorCode.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true); }
+        if (factory == null) { throw InvalidReplyTypeException.get(block.getType()); }
         else { return factory.create(entity, signature, number, block); }
     }
     

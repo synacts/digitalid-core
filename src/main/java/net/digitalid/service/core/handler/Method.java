@@ -186,6 +186,7 @@ public abstract class Method extends Handler {
      * @return whether this method matches the given reply.
      */
     @Pure
+    // TODO: Make the return type void and throw a InvalidReplyParameterValueException instead?
     public abstract boolean matches(@Nullable Reply reply);
     
     

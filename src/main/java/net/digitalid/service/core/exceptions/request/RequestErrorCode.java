@@ -78,12 +78,6 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     METHOD(9),
     
     /**
-     * The error code for an invalid reply type.
-     */
-    @Deprecated
-    REPLY(10),
-    
-    /**
      * The error code for an invalid audit.
      */
     AUDIT(11),

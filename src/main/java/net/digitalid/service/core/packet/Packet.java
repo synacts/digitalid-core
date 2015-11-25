@@ -25,6 +25,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.HostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyParameterValueException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -240,7 +241,7 @@ public abstract class Packet {
                                 } else {
                                     final @Nonnull Method method = request.getMethod(i);
                                     final @Nonnull Reply reply = Reply.get(method.hasEntity() ? method.getNonHostEntity() : null, (HostSignatureWrapper) signature, block);
-                                    if (!method.matches(reply)) { throw new RequestException(RequestErrorCode.REPLY, "A reply does not match its corresponding method.", null, isResponse); }
+                                    if (!method.matches(reply)) { throw InvalidReplyParameterValueException.get(reply, "matches", null, null); } // TODO: Move the exception to the matches() method.
                                     response.setReply(i, reply);
                                 }
                             } else { throw new RequestException(RequestErrorCode.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed by a host.", null, isResponse); }
@@ -278,7 +279,7 @@ public abstract class Packet {
             }
             
             if (response == null) { throw new RequestException(RequestErrorCode.ELEMENTS, "None of the elements may be null in requests.", null, isResponse); }
-            else if (!request.getMethod(i).matches(null)) { throw new RequestException(RequestErrorCode.REPLY, "A reply was expected but none was received.", null, isResponse); }
+            else if (!request.getMethod(i).matches(null)) { throw InvalidReplyParameterValueException.get(null, "matches", "non-null", "null"); } // TODO: Improve the exception for "A reply was expected but none was received.".
         }
         
         if (response != null && size < request.getSize()) {
