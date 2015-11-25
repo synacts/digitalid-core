@@ -34,7 +34,6 @@ import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.RoleModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.external.signature.ExpiredCredentialsSignatureException;
@@ -416,7 +415,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         final @Nullable Restrictions restrictions;
         final @Nullable Block restrictionsBlock = tuple.getNullableElement(2);
         if (restrictionsBlock != null) {
-            if (entity == null) { throw InvalidOperationException.get("The restrictions of a credentials signature cannot be decoded without an entity."); }
+            if (entity == null) { throw InvalidParameterValueCombinationException.get("The restrictions of a credentials signature cannot be decoded without an entity."); }
             final @Nonnull NonHostEntity nonHostEntity;
             if (entity instanceof HostEntity) {
                 final @Nonnull Host host = ((HostEntity) entity).getHost();

@@ -33,7 +33,7 @@ public class ReceivingException extends NetworkException {
      * @return a new receiving exception.
      */
     @Pure
-    public static final @Nonnull ReceivingException get(@Nonnull IOException exception, @Nonnull HostIdentifier host) {
+    public static @Nonnull ReceivingException get(@Nonnull IOException exception, @Nonnull HostIdentifier host) {
         return new ReceivingException(exception, host);
     }
     

@@ -33,7 +33,7 @@ public class SendingException extends NetworkException {
      * @return a new sending exception.
      */
     @Pure
-    public static final @Nonnull SendingException get(@Nonnull IOException exception, @Nonnull HostIdentifier host) {
+    public static @Nonnull SendingException get(@Nonnull IOException exception, @Nonnull HostIdentifier host) {
         return new SendingException(exception, host);
     }
     

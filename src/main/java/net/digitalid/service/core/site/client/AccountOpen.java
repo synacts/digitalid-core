@@ -258,7 +258,7 @@ public final class AccountOpen extends Action {
     @Override
     @NonCommitting
     public @Nonnull Response send() throws DatabaseException, RequestException, ExternalException, NetworkException {
-        if (secret == null) { throw new RequestException(RequestErrorCode.INTERNAL, "The secret may not be null for sending."); }
+        if (secret == null) { throw InvalidOperationException.get("The secret may not be null for sending."); }
         return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
     }
     

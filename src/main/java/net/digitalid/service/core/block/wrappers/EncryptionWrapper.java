@@ -19,7 +19,7 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidMethodRecipientException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -278,7 +278,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
             this.recipient = null;
             if (encryptedKey != null) { throw InvalidParameterValueCombinationException.get("A response may not include an encrypted symmetric key."); }
             if (initializationVector != null) {
-                if (symmetricKey == null) { throw InvalidOperationException.get("A symmetric key is needed in order to decrypt the response."); }
+                if (symmetricKey == null) { throw InvalidParameterValueCombinationException.get("A symmetric key is needed in order to decrypt the response."); }
                 this.symmetricKey = symmetricKey;
             } else {
                 // It can happen that a requester expects an encryption but the host is not able to decipher the symmetric key and thus cannot encrypt the response.
@@ -287,7 +287,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         } else {
             // The encryption is part of a request.
             this.recipient = HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
-            if (!Server.hasHost(recipient)) { throw InvalidOperationException.get(recipient + " does not run on this server."); }
+            if (!Server.hasHost(recipient)) { throw InvalidMethodRecipientException.get(recipient); }
             if (symmetricKey != null) { throw InvalidParameterValueCombinationException.get("A response may not include a recipient."); }
             if (encryptedKey != null) {
                 if (initializationVector == null) { throw InvalidParameterValueCombinationException.get("An initialization vector is needed to decrypt an element."); }

@@ -17,7 +17,6 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenticationException;
@@ -102,8 +101,8 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @ensure element.getType().isBasedOn(getSemanticType().getParameters().getNonNullable(0)) : "The element is based on the parameter of the semantic type.";
      */
     @Pure
-    public final @Nonnull Block getNonNullableElement() throws InvalidOperationException {
-        if (element == null) { throw InvalidOperationException.get("The signed element is null."); }
+    public final @Nonnull Block getNonNullableElement() throws InvalidParameterValueCombinationException {
+        if (element == null) { throw InvalidParameterValueCombinationException.get("The signed element is null."); }
         return element;
     }
     

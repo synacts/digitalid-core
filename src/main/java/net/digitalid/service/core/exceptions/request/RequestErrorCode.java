@@ -12,6 +12,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterV
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
@@ -20,12 +21,14 @@ import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
- * This class enumerates the various packet errors.
+ * This class enumerates the various request error codes.
  * 
- * @see PacketException
+ * @see RequestException
  */
 @Immutable
 public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<RequestErrorCode, Object> {
+    
+    /* -------------------------------------------------- Error Codes -------------------------------------------------- */
     
     /**
      * The error code for an internal problem.
@@ -36,6 +39,16 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
      * The error code for an external problem.
      */
     EXTERNAL(1),
+    
+    /**
+     * The error code for a database problem.
+     */
+    DATABASE(1),
+    
+    /**
+     * The error code for a network problem.
+     */
+    NETWORK(1),
     
     /**
      * The error code for an invalid packet.
@@ -80,40 +93,40 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     /**
      * The error code for an invalid audit.
      */
-    AUDIT(11),
+    AUDIT(10),
     
     /**
      * The error code for a replayed packet.
      */
-    REPLAY(12),
-    
-    /**
-     * The error code for an invalid identifier as subject.
-     */
-    IDENTIFIER(13),
-    
-    /**
-     * The error code for a relocated identity.
-     */
-    RELOCATION(14),
-    
-    /**
-     * The error code for an insufficient authorization.
-     */
-    AUTHORIZATION(15),
+    REPLAY(11),
     
     /**
      * The error code for a required key rotation.
      */
-    KEYROTATION(16);
+    KEYROTATION(15),
+    
+    /**
+     * The error code for an invalid identifier as subject.
+     */
+    IDENTIFIER(12),
+    
+    /**
+     * The error code for a relocated identity.
+     */
+    RELOCATION(13),
+    
+    /**
+     * The error code for an insufficient authorization.
+     */
+    AUTHORIZATION(14);
     
     
     /**
-     * Returns whether the given value is a valid packet error.
+     * Returns whether the given value is a valid request error.
      *
      * @param value the value to check.
      * 
-     * @return whether the given value is a valid packet error.
+     * @return whether the given value is a valid request error.
      */
     @Pure
     public static boolean isValid(byte value) {
@@ -121,37 +134,37 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     }
     
     /**
-     * Returns the packet error encoded by the given value.
+     * Returns the request error encoded by the given value.
      * 
-     * @param value the value encoding the packet error.
+     * @param value the value encoding the request error.
      * 
-     * @return the packet error encoded by the given value.
+     * @return the request error encoded by the given value.
      * 
-     * @require isValid(value) : "The value is a valid packet error.";
+     * @require isValid(value) : "The value is a valid request error.";
      */
     @Pure
     public static @Nonnull RequestErrorCode get(byte value) {
-        assert isValid(value) : "The value is a valid packet error.";
+        assert isValid(value) : "The value is a valid request error.";
         
         for (final @Nonnull RequestErrorCode error : values()) {
             if (error.value == value) { return error; }
         }
         
-        throw new ShouldNeverHappenError("The value '" + value + "' does not encode a packet error.");
+        throw new ShouldNeverHappenError("The value '" + value + "' does not encode a request error.");
     }
     
     
     /**
-     * Stores the semantic type {@code code.error.packet@core.digitalid.net}.
+     * Stores the semantic type {@code code.error.request@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("code.error.packet@core.digitalid.net").load(Int8Wrapper.XDF_TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("code.error.request@core.digitalid.net").load(Int8Wrapper.XDF_TYPE);
     
     /**
-     * Returns the packet error encoded by the given block.
+     * Returns the request error encoded by the given block.
      * 
-     * @param block the block containing the packet error.
+     * @param block the block containing the request error.
      * 
-     * @return the packet error encoded by the given block.
+     * @return the request error encoded by the given block.
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
@@ -176,39 +189,42 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
         return Int8Wrapper.encode(TYPE, value);
     }
     
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
-     * Stores the byte representation of this packet error.
-     * 
-     * @invariant isValid(value) : "The value is a valid packet error.";
+     * Stores the value of this request error.
      */
-    private final byte value;
+    private final @Validated byte value;
     
     /**
-     * Creates a new packet error with the given value.
+     * Returns the value of this request error.
      * 
-     * @param value the value encoding the packet error.
+     * @return the value of this request error.
+     */
+    @Pure
+    public @Validated byte getValue() {
+        return value;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return String.valueOf(value);
+    }
+    
+    /**
+     * Creates a new request error with the given value.
+     * 
+     * @param value the value encoding the request error.
      */
     private RequestErrorCode(int value) {
         this.value = (byte) value;
     }
     
     /**
-     * Returns the byte representation of this packet error.
+     * Returns the name of this request error.
      * 
-     * @return the byte representation of this packet error.
-     * 
-     * @ensure isValid(value) : "The value is a valid packet error.";
-     */
-    @Pure
-    public byte getValue() {
-        return value;
-    }
-    
-    /**
-     * Returns the name of this packet error.
-     * 
-     * @return the name of this packet error.
+     * @return the name of this request error.
      */
     @Pure
     public @Nonnull String getName() {
@@ -234,7 +250,7 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     @NonCommitting
     public static @Nonnull RequestErrorCode get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
         final @Nonnull byte value = resultSet.getByte(columnIndex);
-        if (!isValid(value)) { throw new SQLException("'" + value + "' is not a valid packet error."); }
+        if (!isValid(value)) { throw new SQLException("'" + value + "' is not a valid request error."); }
         return get(value);
     }
     
@@ -242,12 +258,6 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
         preparedStatement.setByte(parameterIndex, value);
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull String toString() {
-        return String.valueOf(value);
     }
     
 }

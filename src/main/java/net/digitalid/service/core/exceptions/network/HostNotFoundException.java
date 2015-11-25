@@ -33,7 +33,7 @@ public class HostNotFoundException extends NetworkException {
      * @return a new host not found exception.
      */
     @Pure
-    public static final @Nonnull HostNotFoundException get(@Nonnull UnknownHostException exception, @Nonnull HostIdentifier host) {
+    public static @Nonnull HostNotFoundException get(@Nonnull UnknownHostException exception, @Nonnull HostIdentifier host) {
         return new HostNotFoundException(exception, host);
     }
     

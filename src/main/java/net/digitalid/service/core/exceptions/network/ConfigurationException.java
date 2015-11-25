@@ -33,7 +33,7 @@ public class ConfigurationException extends NetworkException {
      * @return a new configuration exception.
      */
     @Pure
-    public static final @Nonnull ConfigurationException get(@Nonnull SocketException exception, @Nonnull HostIdentifier host) {
+    public static @Nonnull ConfigurationException get(@Nonnull SocketException exception, @Nonnull HostIdentifier host) {
         return new ConfigurationException(exception, host);
     }
     
