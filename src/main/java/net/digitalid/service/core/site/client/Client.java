@@ -30,7 +30,7 @@ import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.entity.RoleModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.ExternalIdentifier;
@@ -415,7 +415,7 @@ public class Client extends Site {
         final @Nonnull FreezableList<ReadOnlyPair<Predecessor, Block>> states = FreezableArrayList.getWithCapacity(roles.size() + identifiers.size());
         
         for (final @Nonnull NativeRole role : roles) {
-            if (role.getIdentity().getCategory() != category) { throw InvalidOperationException.get("A role is of the wrong category."); }
+            if (role.getIdentity().getCategory() != category) { throw InternalException.get("A role is of the wrong category."); }
             Synchronizer.reload(role, CoreService.SERVICE);
             final @Nonnull ClientAgent clientAgent = role.getAgent();
             final @Nonnull Block state = CoreService.SERVICE.getState(role, clientAgent.getPermissions(), clientAgent.getRestrictions(), clientAgent);

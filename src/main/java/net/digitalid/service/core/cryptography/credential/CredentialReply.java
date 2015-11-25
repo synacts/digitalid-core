@@ -18,7 +18,7 @@ import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -129,7 +129,7 @@ final class CredentialReply extends CoreServiceQueryReply {
     private CredentialReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
         super(entity, signature, number);
         
-        if (!hasEntity()) { throw InvalidOperationException.get("A credential reply must have an entity."); }
+        if (!hasEntity()) { throw InternalException.get("A credential reply must have an entity."); }
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
         this.restrictions = tuple.isElementNotNull(0) ? new Restrictions(entity, tuple.getNonNullableElement(0)) : null;

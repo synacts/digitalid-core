@@ -11,11 +11,10 @@ import net.digitalid.utility.system.logger.Log;
  * 
  * @see SignatureException
  * @see InvalidEncodingException
- * @see InvalidDeclarationException
- * @see InactiveAuthenticationException
- * 
  * @see IdentityNotFoundException
  * @see SomethingNotFoundException
+ * @see InvalidDeclarationException
+ * @see InactiveAuthenticationException
  */
 @Immutable
 public abstract class ExternalException extends Exception {

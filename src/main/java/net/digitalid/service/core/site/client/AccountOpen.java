@@ -24,7 +24,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
@@ -136,11 +136,11 @@ public final class AccountOpen extends Action {
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
         
         this.category = Category.get(elements.getNonNullable(0));
-        if (!category.isInternalNonHostIdentity()) { throw InvalidOperationException.get("The category has to denote an internal non-host identity but was " + category.name() + "."); }
+        if (!category.isInternalNonHostIdentity()) { throw InternalException.get("The category has to denote an internal non-host identity but was " + category.name() + "."); }
         
         this.agentNumber = Int64Wrapper.decode(elements.getNonNullable(1));
         
-        if (!(signature instanceof ClientSignatureWrapper)) { throw InvalidOperationException.get("The action to open an account has to be signed by a client."); }
+        if (!(signature instanceof ClientSignatureWrapper)) { throw InternalException.get("The action to open an account has to be signed by a client."); }
         this.commitment = ((ClientSignatureWrapper) signature).getCommitment();
         this.secret = null;
         
@@ -258,7 +258,7 @@ public final class AccountOpen extends Action {
     @Override
     @NonCommitting
     public @Nonnull Response send() throws DatabaseException, RequestException, ExternalException, NetworkException {
-        if (secret == null) { throw InvalidOperationException.get("The secret may not be null for sending."); }
+        if (secret == null) { throw InternalException.get("The secret may not be null for sending."); }
         return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
     }
     

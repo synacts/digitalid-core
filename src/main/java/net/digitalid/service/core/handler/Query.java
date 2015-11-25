@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -48,10 +48,10 @@ public abstract class Query extends Method {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    protected Query(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidOperationException {
+    protected Query(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InternalException {
         super(entity, signature, recipient);
         
-        if (!isOnHost()) { throw InvalidOperationException.get("Queries are only decoded on hosts."); }
+        if (!isOnHost()) { throw InternalException.get("Queries are only decoded on hosts."); }
     }
     
     

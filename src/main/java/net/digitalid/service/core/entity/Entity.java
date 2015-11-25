@@ -14,7 +14,7 @@ import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidOperationException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
@@ -106,7 +106,7 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
             } else {
                 // Entities are encoded through their identity, which is not enough to recover roles.
                 // (There can exist several roles for the same identity through different paths.)
-                throw InvalidOperationException.get("Roles cannot be recovered from a block.");
+                throw InternalException.get("Roles cannot be recovered from a block.");
             }
         }
         
@@ -142,7 +142,7 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
                 } else if (site instanceof Client) {
                     return Role.get((Client) site, key);
                 } else {
-                    throw InvalidOperationException.get("The site is always a host or a client.");
+                    throw InternalException.get("The site is always a host or a client.");
                 }
             } catch (@Nonnull DatabaseException exception) {
                 throw MaskingInvalidEncodingException.get(exception);
