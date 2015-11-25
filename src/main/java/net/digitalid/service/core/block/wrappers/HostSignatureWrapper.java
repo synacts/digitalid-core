@@ -162,7 +162,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public void verify() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public void verify() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert !isVerified() : "This signature is not verified.";
         
         final @Nonnull Time start = Time.getCurrent();

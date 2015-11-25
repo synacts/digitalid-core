@@ -89,7 +89,7 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private ClientAgentCommitmentReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    private ClientAgentCommitmentReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
@@ -199,7 +199,7 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
             return new ClientAgentCommitmentReplace(entity, signature, recipient, block);
         }
         

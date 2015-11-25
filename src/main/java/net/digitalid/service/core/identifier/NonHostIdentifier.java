@@ -36,7 +36,7 @@ public interface NonHostIdentifier extends Identifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull NonHostIdentity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException;
+    public @Nonnull NonHostIdentity getIdentity() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

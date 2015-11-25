@@ -68,6 +68,6 @@ public abstract class AbstractKeyConverter<O, E, K, D> {
      * @return the object with the given key.
      */
     @Pure
-    public abstract @Nonnull O recover(@Nonnull E external, @Nonnull @Validated K key) throws DatabaseException, RequestException, ExternalException, NetworkException;
+    public abstract @Nonnull O recover(@Nonnull E external, @Nonnull @Validated K key) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
     
 }

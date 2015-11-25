@@ -378,7 +378,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(type, element, subject, audit);
         
         assert credentials.isFrozen() : "The credentials are frozen.";
@@ -404,7 +404,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    CredentialsSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("credentials.signature@core.digitalid.net") Block credentialsSignature, boolean verified, @Nullable Entity entity) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    CredentialsSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("credentials.signature@core.digitalid.net") Block credentialsSignature, boolean verified, @Nullable Entity entity) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(block, verified);
         
         assert credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
@@ -487,7 +487,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <E extends XDF<E, ?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable E element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public static @Nonnull <E extends XDF<E, ?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable E element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         return new CredentialsSignatureWrapper(type, ConvertToXDF.nullable(element), subject, audit, credentials, certificates, lodged, value);
     }
     
@@ -712,7 +712,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public void verify() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public void verify() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert !isVerified() : "This signature is not verified.";
         
         final @Nonnull Time start = Time.getCurrent();

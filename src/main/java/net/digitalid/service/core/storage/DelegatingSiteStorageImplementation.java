@@ -121,7 +121,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
     @Locked
     @Override
     @NonCommitting
-    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);

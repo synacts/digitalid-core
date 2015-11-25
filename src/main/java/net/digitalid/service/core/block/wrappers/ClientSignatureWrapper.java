@@ -107,7 +107,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(block, verified);
         
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";

@@ -102,7 +102,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
@@ -223,7 +223,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
             return new AttributesQuery(entity, signature, recipient, block);
         }
         

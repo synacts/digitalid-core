@@ -36,7 +36,7 @@ public final class PassiveExpression extends AbstractExpression {
      * @param string the string which is to be parsed for the expression.
      */
     @NonCommitting
-    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, string);
     }
     
@@ -49,7 +49,7 @@ public final class PassiveExpression extends AbstractExpression {
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
     @NonCommitting
-    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, block);
     }
     

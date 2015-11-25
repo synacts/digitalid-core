@@ -69,7 +69,7 @@ final class StateReply extends QueryReply {
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
     @NonCommitting
-    private StateReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    private StateReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, number);
         
         this.state = SelfcontainedWrapper.decodeNonNullable(block);
@@ -102,7 +102,7 @@ final class StateReply extends QueryReply {
      * @require isOnClient() : "This method is called on a client.";
      */
     @NonCommitting
-    void updateState() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    void updateState() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final @Nonnull StateModule module = Service.getModule(state.getType());
         final @Nonnull Role role = getRole();
         module.removeState(role);
@@ -139,7 +139,7 @@ final class StateReply extends QueryReply {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
             return new StateReply(entity, signature, number, block);
         }
         

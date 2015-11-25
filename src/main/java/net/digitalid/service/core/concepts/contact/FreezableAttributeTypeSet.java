@@ -72,7 +72,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public FreezableAttributeTypeSet(@Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public FreezableAttributeTypeSet(@Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);

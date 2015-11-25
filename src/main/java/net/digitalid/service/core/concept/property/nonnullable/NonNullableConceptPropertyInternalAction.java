@@ -102,7 +102,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         return new NonNullableConceptPropertyInternalAction<>(property.getConceptPropertySetup(), property, property.getTime(), Time.getCurrent(), oldValue, newValue); // TODO: Let all the arguments be determined by the caller.
     }
     
-    private NonNullableConceptPropertyInternalAction(@Nonnull E entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block content, @Nonnull NonNullableConceptPropertySetup<V, C, E> setup) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    private NonNullableConceptPropertyInternalAction(@Nonnull E entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block content, @Nonnull NonNullableConceptPropertySetup<V, C, E> setup) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient, setup.getConceptSetup().getService());
         
         this.setup = setup;
@@ -219,7 +219,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         
         @Pure
         @Override
-        public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> decodeNonNullable(@Nonnull ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>> pair, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+        public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> decodeNonNullable(@Nonnull ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>> pair, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
             
             final E entity = pair.getNonNullableElement0();

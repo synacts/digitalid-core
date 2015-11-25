@@ -184,7 +184,7 @@ public class Service extends DelegatingSiteStorageImplementation implements XDF<
      */
     @Pure
     @NonCommitting
-    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false));
     }
     

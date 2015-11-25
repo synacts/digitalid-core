@@ -100,7 +100,7 @@ public final class SynchronizerModule implements ClientModule {
      * @param client the client whose pending actions are to be loaded.
      */
     @NonCommitting
-    public static void load(@Nonnull Client client) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public static void load(@Nonnull Client client) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         // TODO: If the same client runs in several processes (on different machines), make sure the pending actions and suspended modules are loaded only once.
         final @Nonnull String SQL = "SELECT entity, service, action FROM " + client + "synchronization_action ORDER BY time ASC";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {

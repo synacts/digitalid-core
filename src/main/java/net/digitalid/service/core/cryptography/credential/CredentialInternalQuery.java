@@ -126,7 +126,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient);
         
         if (!(entity.getIdentity() instanceof InternalPerson)) { throw new RequestException(RequestErrorCode.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons."); }
@@ -254,7 +254,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
             return new CredentialInternalQuery(entity, signature, recipient, block);
         }
         

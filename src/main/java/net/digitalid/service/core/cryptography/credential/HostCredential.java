@@ -30,7 +30,7 @@ public final class HostCredential extends Credential {
      * @require i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
      */
     @NonCommitting
-    public HostCredential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public HostCredential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(exposed, randomizedPermissions, restrictions, i);
     }
     

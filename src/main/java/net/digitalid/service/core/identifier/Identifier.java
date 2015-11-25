@@ -77,7 +77,7 @@ public interface Identifier extends Castable, XDF<Identifier, Object>, SQL<Ident
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull Identity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException;
+    public @Nonnull Identity getIdentity() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
     
     /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     

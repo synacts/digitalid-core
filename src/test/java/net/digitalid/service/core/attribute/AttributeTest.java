@@ -53,12 +53,12 @@ public final class AttributeTest extends IdentitySetup {
     
     @Committing
     @Test(expected = AttributeNotFoundException.class)
-    public void _02_testNonPublicAccess() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public void _02_testNonPublicAccess() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         print("_02_testNonPublicAccess");
         try {
             Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeTypes.NAME, false);
             Database.commit();
-        } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
             if (!(exception instanceof AttributeNotFoundException)) { exception.printStackTrace(); }
             Database.rollback();
             throw exception;
@@ -67,7 +67,7 @@ public final class AttributeTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _03_testVisibilityReplace() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public void _03_testVisibilityReplace() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         print("_03_testVisibilityReplace");
         try {
             final @Nonnull PassiveExpression passiveExpression = new PassiveExpression(getRole(), "everybody");
@@ -76,7 +76,7 @@ public final class AttributeTest extends IdentitySetup {
             attribute.reset(); // Not necessary but I want to test the database state.
             Assert.assertEquals(passiveExpression, attribute.getVisibility());
             Database.commit();
-        } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;
@@ -85,13 +85,13 @@ public final class AttributeTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _04_testPublicAccess() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public void _04_testPublicAccess() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         print("_04_testPublicAccess");
         try {
             final @Nonnull Block content = Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeTypes.NAME, false);
             Assert.assertEquals(NAME, StringWrapper.decodeNonNullable(content));
             Database.commit();
-        } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;

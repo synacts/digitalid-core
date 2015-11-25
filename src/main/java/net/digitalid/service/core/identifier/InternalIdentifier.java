@@ -97,7 +97,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull InternalIdentity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException;
+    public abstract @Nonnull InternalIdentity getIdentity() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
     
     /* -------------------------------------------------- Existence -------------------------------------------------- */
     
@@ -108,7 +108,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
      */
     @Pure
     @NonCommitting
-    public final boolean exists() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public final boolean exists() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         try {
             Mapper.getIdentity(this);
             return true;

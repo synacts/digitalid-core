@@ -114,7 +114,7 @@ abstract class DelegatingHostStorageImplementation extends DelegatingClientStora
     @Locked
     @Override
     @NonCommitting
-    public final void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public final void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);

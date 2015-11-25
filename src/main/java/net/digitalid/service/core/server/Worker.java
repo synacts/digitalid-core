@@ -176,7 +176,7 @@ public final class Worker implements Runnable {
             response.write(socket.getOutputStream());
             
             Log.information(methods + (requestAudit != null ? " with audit" : "") + (service != null ? " of the " + service.getName() : "") + (subject != null ? " to " + subject : "") + (signer != null ? " by " + signer : "") + " handled in " + start.ago().getValue() + " ms" + (error != null ? " with the error " + error.getName() : "") + ".");
-        } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
             Log.warning("Could not send a response.", exception);
         } finally {
             try {

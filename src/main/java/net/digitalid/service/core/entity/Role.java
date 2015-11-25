@@ -193,7 +193,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @NonLocked
     @Committing
-    public final void reloadState(@Nonnull StateModule module) throws InterruptedException, DatabaseException, RequestException, ExternalException, NetworkException {
+    public final void reloadState(@Nonnull StateModule module) throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         Synchronizer.reload(this, module);
         if (Database.isMultiAccess() && (module.equals(CoreService.SERVICE) || module.equals(AgentModule.MODULE))) {
             getAgent().reset();
@@ -208,7 +208,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @NonLocked
     @Committing
-    public final void refreshState(@Nonnull Service service) throws InterruptedException, DatabaseException, RequestException, ExternalException, NetworkException {
+    public final void refreshState(@Nonnull Service service) throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         Synchronizer.refresh(this, service);
         if (Database.isMultiAccess() && service.equals(CoreService.SERVICE)) {
             getAgent().reset();
@@ -225,7 +225,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @NonLocked
     @Committing
-    public boolean reloadOrRefreshState(@Nonnull Service... services) throws InterruptedException, DatabaseException, RequestException, ExternalException, NetworkException {
+    public boolean reloadOrRefreshState(@Nonnull Service... services) throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final @Nonnull Time[] times = new Time[services.length];
         try {
             Database.lock();

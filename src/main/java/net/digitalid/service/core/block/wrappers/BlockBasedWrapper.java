@@ -75,7 +75,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
             try {
                 final @Nullable Block block = Block.SQL_CONVERTER.restoreNullable(getType(), resultSet, columnIndex);
                 return block == null ? null : XDFConverter.decodeNonNullable(none, block);
-            } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
+            } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
                 throw new SQLException("Could not decode a block from the database.", exception);
             }
         }

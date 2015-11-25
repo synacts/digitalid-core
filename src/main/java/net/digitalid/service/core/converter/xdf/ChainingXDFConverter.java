@@ -82,7 +82,7 @@ public class ChainingXDFConverter<O, E, K, D> extends AbstractXDFConverter<O, E>
     
     @Pure
     @Override
-    public final @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public final @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
         
         final @Nonnull K key = XDFConverter.decodeNonNullable(keyConverter.decompose(external), block);

@@ -92,7 +92,7 @@ public final class Host extends Site {
      */
     @Locked
     @Committing
-    public Host(@Nonnull HostIdentifier identifier) throws IOException, DatabaseException, RequestException, ExternalException, NetworkException {
+    public Host(@Nonnull HostIdentifier identifier) throws IOException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(identifier.asHostName());
         
         this.identifier = identifier;

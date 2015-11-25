@@ -72,7 +72,7 @@ public final class BlockConverter<O, E> extends AbstractNonRequestingKeyConverte
     public @Nonnull O recover(@Nonnull E external, @Nonnull Block block) throws InvalidEncodingException {
         try {
             return XDFConverter.decodeNonNullable(external, block);
-        } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
             throw MaskingInvalidEncodingException.get(exception);
         }
     }

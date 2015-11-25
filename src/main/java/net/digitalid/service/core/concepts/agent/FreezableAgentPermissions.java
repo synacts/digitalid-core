@@ -126,7 +126,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public FreezableAgentPermissions(@Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public FreezableAgentPermissions(@Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);

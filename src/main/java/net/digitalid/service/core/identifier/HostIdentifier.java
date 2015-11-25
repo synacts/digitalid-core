@@ -89,7 +89,7 @@ public final class HostIdentifier extends InternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull HostIdentity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public @Nonnull HostIdentity getIdentity() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         return Mapper.getIdentity(this).castTo(HostIdentity.class);
     }
     

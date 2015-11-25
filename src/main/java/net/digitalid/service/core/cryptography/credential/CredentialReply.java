@@ -126,7 +126,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
     @NonCommitting
-    private CredentialReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    private CredentialReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, number);
         
         if (!hasEntity()) { throw InternalException.get("A credential reply must have an entity."); }
@@ -168,7 +168,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      * @require hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    @Nonnull ClientCredential getInternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull BigInteger b, @Nonnull Exponent u) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    @Nonnull ClientCredential getInternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull BigInteger b, @Nonnull Exponent u) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert hasSignature() : "This handler has a signature.";
         
         if (restrictions == null) { throw InvalidParameterValueCombinationException.get("The restrictions may not be null for internal credentials."); }
@@ -192,7 +192,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      * @require hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    @Nonnull ClientCredential getExternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull BigInteger b, @Nonnull Exponent u, @Nonnull Exponent v) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    @Nonnull ClientCredential getExternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull BigInteger b, @Nonnull Exponent u, @Nonnull Exponent v) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert hasSignature() : "This handler has a signature.";
         
         if (restrictions != null) { throw InvalidParameterValueCombinationException.get("The restrictions must be null for external credentials."); }
@@ -242,7 +242,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
             return new CredentialReply(entity, signature, number, block);
         }
         

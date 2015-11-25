@@ -463,7 +463,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Pure
         @Override
-        public @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @BasedOn("restrictions.agent@core.digitalid.net") Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+        public @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @BasedOn("restrictions.agent@core.digitalid.net") Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
             
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);

@@ -85,7 +85,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull InternalNonHostIdentity getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public @Nonnull InternalNonHostIdentity getIdentity() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final @Nonnull InternalNonHostIdentity identity = Mapper.getIdentity(this).castTo(InternalNonHostIdentity.class);
         // If the returned identity is a type, its fields need to be loaded from the type's attributes.
         if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }

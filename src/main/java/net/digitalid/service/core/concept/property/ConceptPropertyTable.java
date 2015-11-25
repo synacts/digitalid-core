@@ -131,7 +131,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      */
     @Locked
     @NonCommitting
-    public abstract void addState(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws DatabaseException, RequestException, ExternalException, NetworkException;
+    public abstract void addState(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
     
     /**
      * Removes all the entries of the given entity in this data collection.
@@ -163,7 +163,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         addState((E) entity, block);
     }
     

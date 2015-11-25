@@ -107,7 +107,7 @@ public final class AccountOpen extends Action {
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
     @NonCommitting
-    AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(null, subject, subject.getHostIdentifier());
         
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
@@ -128,7 +128,7 @@ public final class AccountOpen extends Action {
      * @param block the content which is to be decoded.
      */
     @NonCommitting
-    private AccountOpen(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("open.account@core.digitalid.net") Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    private AccountOpen(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("open.account@core.digitalid.net") Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient);
         
         if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account."); }
@@ -257,7 +257,7 @@ public final class AccountOpen extends Action {
     
     @Override
     @NonCommitting
-    public @Nonnull Response send() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public @Nonnull Response send() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         if (secret == null) { throw InternalException.get("The secret may not be null for sending."); }
         return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
     }
@@ -314,7 +314,7 @@ public final class AccountOpen extends Action {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
             return new AccountOpen(entity, signature, recipient, block);
         }
         

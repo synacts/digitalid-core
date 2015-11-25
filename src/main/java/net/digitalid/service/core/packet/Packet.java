@@ -138,7 +138,7 @@ public abstract class Packet {
      */
     @NonCommitting
     @SuppressWarnings("AssignmentToMethodParameter")
-    Packet(@Nonnull Object list, int size, @Nullable Object field, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    Packet(@Nonnull Object list, int size, @Nullable Object field, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert !(this instanceof Request) || audit == null || audit instanceof RequestAudit : "If this is a request, the audit is either null or a request audit.";
         assert !(this instanceof Response) || audit == null || audit instanceof ResponseAudit : "If this is a response, the audit is either null or a response audit.";
         
@@ -177,7 +177,7 @@ public abstract class Packet {
      * @require (request != null) == (this instanceof Response) : "If the request is not null, this packet is a response.";
      */
     @NonCommitting
-    Packet(@Nonnull InputStream inputStream, @Nullable Request request, boolean verified) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    Packet(@Nonnull InputStream inputStream, @Nullable Request request, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert (request == null) == (this instanceof Request) : "If the request is null, this packet is itself a request.";
         assert (request != null) == (this instanceof Response) : "If the request is not null, this packet is a response.";
         
@@ -395,7 +395,7 @@ public abstract class Packet {
     @Pure
     @RawRecipient
     @NonCommitting
-    abstract @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, RequestException, ExternalException, NetworkException;
+    abstract @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
     
     
     /**

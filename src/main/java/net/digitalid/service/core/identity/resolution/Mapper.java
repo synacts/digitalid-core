@@ -519,7 +519,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull @NonMapped InternalNonHostIdentifier identifier) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull @NonMapped InternalNonHostIdentifier identifier) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert !isMapped(identifier) : "The identifier is not mapped.";
         
         if (Server.hasHost(identifier.getHostIdentifier())) { throw IdentityNotFoundException.get(identifier); }
@@ -591,7 +591,7 @@ public final class Mapper {
     @Pure
     @Locked
     @NonCommitting
-    private static @Nonnull Person establishExternalIdentity(@Nonnull @NonMapped ExternalIdentifier identifier) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    private static @Nonnull Person establishExternalIdentity(@Nonnull @NonMapped ExternalIdentifier identifier) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert !isMapped(identifier) : "The identifier is not mapped.";
         
         final @Nonnull Person person = mapExternalIdentity(identifier);
@@ -617,7 +617,7 @@ public final class Mapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         if (isMapped(identifier)) {
             Log.verbose("The identifier " + identifier + " is already mapped.");
             return identifiers.get(identifier);

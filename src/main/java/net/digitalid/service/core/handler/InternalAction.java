@@ -59,7 +59,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient);
         
         if (!isNonHost()) { throw new RequestException(RequestErrorCode.IDENTIFIER, "Internal actions have to belong to a non-host."); }

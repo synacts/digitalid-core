@@ -27,6 +27,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -224,12 +225,12 @@ public abstract class Method extends Handler {
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     @NonCommitting
-    public @Nonnull Response send() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public @Nonnull Response send() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final @Nullable RequestAudit requestAudit = RequestAudit.get(this);
         final @Nonnull Response response;
         try {
             response = Method.send(FreezableArrayList.get(this).freeze(), requestAudit);
-        } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
+        } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
             if (requestAudit != null) { RequestAudit.release(this); }
             throw exception;
         }
@@ -249,7 +250,7 @@ public abstract class Method extends Handler {
      */
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public final @Nonnull <T extends Reply> T sendNotNull() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public final @Nonnull <T extends Reply> T sendNotNull() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert !matches(null) : "This method does not match null.";
         
         return (T) send().getReplyNotNull(0);
@@ -313,7 +314,7 @@ public abstract class Method extends Handler {
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     @NonCommitting
-    public static @Nonnull Response send(@Nonnull ReadOnlyList<Method> methods, @Nullable RequestAudit audit) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public static @Nonnull Response send(@Nonnull ReadOnlyList<Method> methods, @Nullable RequestAudit audit) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert areSimilar(methods) : "The methods are similar to each other.";
         
         final @Nonnull Method reference = methods.getNonNullable(0);
@@ -436,7 +437,7 @@ public abstract class Method extends Handler {
          */
         @Pure
         @NonCommitting
-        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException;
+        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
         
     }
     
@@ -475,7 +476,7 @@ public abstract class Method extends Handler {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final @Nullable Method.Factory factory = converters.get(block.getType());
         if (factory == null) { throw new RequestException(RequestErrorCode.METHOD, "No method could be found for the type " + block.getType().getAddress() + "."); }
         else { return factory.create(entity, signature, recipient, block); }

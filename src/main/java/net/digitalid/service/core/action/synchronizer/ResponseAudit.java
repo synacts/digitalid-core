@@ -142,7 +142,7 @@ public final class ResponseAudit extends Audit {
      * @param ignoredModules the modules that are ignored when executing the trail.
      */
     @Committing
-    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<StateModule> ignoredModules) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<StateModule> ignoredModules) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final @Nonnull FreezableSet<StateModule> suspendedModules = FreezableHashSet.get();
         for (final @Nonnull Block block : trail) {
             final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
@@ -245,7 +245,7 @@ public final class ResponseAudit extends Audit {
                     Database.lock();
                     Log.debugging("Execute asynchronously the audit of " + method + ".");
                     execute(role, service, method.getRecipient(), FreezableArrayList.get(method).freeze(), emptyModuleSet);
-                } catch (@Nonnull DatabaseException | RequestException | ExternalException | NetworkException exception) {
+                } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
                     Log.warning("Could not execute the audit of " + method + " asynchronously.", exception);
                     Database.rollback();
                 } finally {

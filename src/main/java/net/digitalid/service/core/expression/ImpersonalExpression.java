@@ -33,7 +33,7 @@ public final class ImpersonalExpression extends AbstractExpression {
      * @param string the string which is to be parsed for the expression.
      */
     @NonCommitting
-    public ImpersonalExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public ImpersonalExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, string);
     }
     
@@ -46,7 +46,7 @@ public final class ImpersonalExpression extends AbstractExpression {
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
     @NonCommitting
-    public ImpersonalExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public ImpersonalExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, block);
     }
     

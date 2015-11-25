@@ -111,7 +111,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull Person getIdentity() throws DatabaseException, RequestException, ExternalException, NetworkException;
+    public abstract @Nonnull Person getIdentity() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
     
     /* -------------------------------------------------- Category -------------------------------------------------- */
     

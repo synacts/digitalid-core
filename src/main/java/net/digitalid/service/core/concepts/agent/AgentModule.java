@@ -349,7 +349,7 @@ public final class AgentModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         final @Nonnull ReadOnlyArray<Block> tables = TupleWrapper.decode(block).getNonNullableElements(8);
@@ -612,7 +612,7 @@ public final class AgentModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nonnull Site site = entity.getSite();

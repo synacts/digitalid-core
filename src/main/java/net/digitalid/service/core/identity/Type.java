@@ -110,7 +110,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     @NonCommitting
-    abstract void load() throws DatabaseException, RequestException, ExternalException, NetworkException;
+    abstract void load() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
     
     /**
      * Ensures that the type declaration is loaded.
@@ -118,7 +118,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
      * @ensure isLoaded() : "The type declaration is loaded.";
      */
     @NonCommitting
-    public final void ensureLoaded() throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public final void ensureLoaded() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         if (!loaded) { load(); }
     }
     

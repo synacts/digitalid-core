@@ -86,7 +86,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AttributeValue get(@Nonnull Block block, boolean verified) throws DatabaseException, RequestException, ExternalException, NetworkException {
+    public static @Nonnull AttributeValue get(@Nonnull Block block, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, verified, null);
@@ -199,7 +199,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
      */
     @Pure
     @NonCommitting
-    public abstract void verify() throws DatabaseException, RequestException, ExternalException, NetworkException;
+    public abstract void verify() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
     
     /**
      * Returns whether the signature of this attribute value is verified.
