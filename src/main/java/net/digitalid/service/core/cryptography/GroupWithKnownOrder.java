@@ -10,6 +10,7 @@ import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
@@ -130,7 +131,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         
         @Pure
         @Override
-        public @Nonnull GroupWithKnownOrder decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("known.group@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull GroupWithKnownOrder decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("known.group@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
             
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);

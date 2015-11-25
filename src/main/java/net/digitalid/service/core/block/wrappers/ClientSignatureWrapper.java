@@ -17,9 +17,9 @@ import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.signature.ExpiredClientSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidClientSignatureException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -150,7 +150,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     
     @Pure
     @Override
-    public void verify() throws InvalidEncodingException, ExpiredClientSignatureException, InvalidClientSignatureException {
+    public void verify() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert !isVerified() : "This signature is not verified.";
         
         final @Nonnull Time start = Time.getCurrent();

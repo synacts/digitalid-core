@@ -17,6 +17,7 @@ import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -132,7 +133,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         
         @Pure
         @Override
-        public @Nonnull HashWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull HashWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
             
             return new HashWrapper(block.getType(), new BigInteger(1, block.getBytes()));
@@ -198,7 +199,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      * @ensure return.bitLength() <= Parameters.HASH : "The length of the returned value is at most Parameters.HASH.";
      */
     @Pure
-    public static @Nonnull @NonNegative BigInteger decodeNonNullable(@Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull @NonNegative BigInteger decodeNonNullable(@Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
@@ -212,7 +213,7 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      * @ensure return == null || return.bitLength() <= Parameters.HASH : "The returned value is either null or its length is at most Parameters.HASH.";
      */
     @Pure
-    public static @Nullable @NonNegative BigInteger decodeNullable(@Nullable @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nullable @NonNegative BigInteger decodeNullable(@Nullable @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return block == null ? null : decodeNonNullable(block);
     }
     

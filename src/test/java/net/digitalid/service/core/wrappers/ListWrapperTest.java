@@ -19,7 +19,7 @@ import org.junit.Test;
 public final class ListWrapperTest extends DatabaseSetup {
 
     @Test
-    public void testWrapping() throws InvalidEncodingException {
+    public void testWrapping() throws InvalidEncodingException, InternalException {
         final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("list@test.digitalid.net").load(ListWrapper.XDF_TYPE, STRING);
         final @Nonnull Block block1 = StringWrapper.encodeNonNullable(STRING, "This is a short first block.");

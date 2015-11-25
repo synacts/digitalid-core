@@ -16,6 +16,7 @@ import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -211,7 +212,7 @@ public class Service extends DelegatingSiteStorageImplementation implements XDF<
         
         @Pure
         @Override
-        public @Nonnull Service recover(@Nonnull Object none, @Nonnull SemanticType type) throws InvalidEncodingException {
+        public @Nonnull Service recover(@Nonnull Object none, @Nonnull SemanticType type) throws InvalidEncodingException, InternalException {
             try {
                 return getService(type);
             } catch (@Nonnull RequestException exception) {

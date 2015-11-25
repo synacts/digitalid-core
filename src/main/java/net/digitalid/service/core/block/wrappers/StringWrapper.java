@@ -15,6 +15,7 @@ import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -143,7 +144,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
         
         @Pure
         @Override
-        public @Nonnull StringWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull StringWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             final @Nonnull byte[] bytes = block.getBytes(1);
             return new StringWrapper(block.getType(), bytes);
         }
@@ -202,7 +203,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @return the value contained in the given block.
      */
     @Pure
-    public static @Nonnull String decodeNonNullable(@Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull String decodeNonNullable(@Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
@@ -214,7 +215,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @return the value contained in the given block.
      */
     @Pure
-    public static @Nullable String decodeNullable(@Nullable @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nullable String decodeNullable(@Nullable @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return block == null ? null : decodeNonNullable(block);
     }
     

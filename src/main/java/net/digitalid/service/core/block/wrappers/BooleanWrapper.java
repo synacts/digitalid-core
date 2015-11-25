@@ -15,6 +15,7 @@ import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -121,7 +122,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         
         @Pure
         @Override
-        public @Nonnull BooleanWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull BooleanWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
             
             return new BooleanWrapper(block.getType(), block.getByte(0) != 0);
@@ -168,7 +169,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
      * @return the value contained in the given block.
      */
     @Pure
-    public static boolean decode(@Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static boolean decode(@Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     

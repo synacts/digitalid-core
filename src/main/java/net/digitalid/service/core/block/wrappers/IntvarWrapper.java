@@ -14,8 +14,9 @@ import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockOffsetException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -97,7 +98,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * @ensure return == 1 || return == 2 || return == 4 || return == 8 : "The result is either 1, 2, 4 or 8.";
      */
     @Pure
-    public static int decodeLength(@Nonnull Block block, @NonNegative int offset) throws InvalidEncodingException {
+    public static int decodeLength(@Nonnull Block block, @NonNegative int offset) throws InvalidEncodingException, InternalException {
         assert offset >= 0 : "The offset is not negative.";
         
         if (offset >= block.getLength()) { throw InvalidBlockOffsetException.get(offset, 0, block); }
@@ -115,7 +116,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * @ensure return == 1 || return == 2 || return == 4 || return == 8 : "The result is either 1, 2, 4 or 8.";
      */
     @Pure
-    static int decodeLength(@Nonnull @NonEmpty byte[] bytes) throws InvalidEncodingException {
+    static int decodeLength(@Nonnull @NonEmpty byte[] bytes) throws InvalidEncodingException, InternalException {
         assert bytes.length > 0 : "The byte array is not empty.";
         
         return 1 << ((bytes[0] & 0xFF) >>> 6);
@@ -138,7 +139,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * @ensure value <= MAX_VALUE : "The first two bits are zero.";
      */
     @Pure
-    public static @NonNegative long decodeValue(@Nonnull Block block, @NonNegative int offset, int length) throws InvalidEncodingException {
+    public static @NonNegative long decodeValue(@Nonnull Block block, @NonNegative int offset, int length) throws InvalidEncodingException, InternalException {
         assert offset >= 0 : "The offset is not negative.";
         assert length == decodeLength(block, offset) : "The length is correct.";
         
@@ -169,7 +170,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * @ensure value <= MAX_VALUE : "The first two bits are zero.";
      */
     @Pure
-    static @NonNegative long decodeValue(@Nonnull byte[] bytes, int length) throws InvalidEncodingException {
+    static @NonNegative long decodeValue(@Nonnull byte[] bytes, int length) throws InvalidEncodingException, InternalException {
         assert bytes.length >= length : "The byte array is big enough.";
         assert length == decodeLength(bytes) : "The length is correct.";
         
@@ -287,7 +288,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         
         @Pure
         @Override
-        public @Nonnull IntvarWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull IntvarWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             final int length = block.getLength();
             
             if (length != decodeLength(block, 0)) { throw InvalidBlockLengthException.get(decodeLength(block, 0), length); }
@@ -341,7 +342,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * @ensure value <= MAX_VALUE : "The first two bits are zero.";
      */
     @Pure
-    public static @NonNegative long decode(@Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @NonNegative long decode(@Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     

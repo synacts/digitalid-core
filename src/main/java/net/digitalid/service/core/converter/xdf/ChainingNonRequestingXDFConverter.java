@@ -5,6 +5,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -79,7 +80,7 @@ public class ChainingNonRequestingXDFConverter<O, E, K, D> extends AbstractNonRe
     
     @Pure
     @Override
-    public final @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull Block block) throws InvalidEncodingException {
+    public final @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull Block block) throws InvalidEncodingException, InternalException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
         
         final @Nonnull K key = XDFConverter.decodeNonNullable(keyConverter.decompose(external), block);

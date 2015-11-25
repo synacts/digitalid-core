@@ -9,6 +9,7 @@ import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -66,7 +67,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
         
         @Pure
         @Override
-        public @Nonnull GroupWithUnknownOrder recover(@Nonnull Object object, @Nonnull BigInteger modulus) throws InvalidEncodingException {
+        public @Nonnull GroupWithUnknownOrder recover(@Nonnull Object object, @Nonnull BigInteger modulus) throws InvalidEncodingException, InternalException {
             return new GroupWithUnknownOrder(modulus);
         }
         

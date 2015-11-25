@@ -12,6 +12,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengt
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockOffsetException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidNullElementException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -184,7 +185,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         
         @Pure
         @Override
-        public @Nonnull ListWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull ListWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             
             int offset = IntvarWrapper.decodeLength(block, 0);
@@ -286,7 +287,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      * @return the nullable elements contained in the given block.
      */
     @Pure
-    public static @Nonnull @NullableElements @Frozen ReadOnlyList<Block> decodeNullableElements(@Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull @NullableElements @Frozen ReadOnlyList<Block> decodeNullableElements(@Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).getNullableElements();
     }
     
@@ -298,7 +299,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      * @return the non-nullable elements contained in the given block.
      */
     @Pure
-    public static @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> decodeNonNullableElements(@Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> decodeNonNullableElements(@Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).getNonNullableElements();
     }
     

@@ -16,7 +16,7 @@ import org.junit.Test;
 public final class IntegerWrapperTest extends DatabaseSetup {
     
     @Test
-    public void testWrapping() throws InvalidEncodingException {
+    public void testWrapping() throws InvalidEncodingException, InternalException {
         final @Nonnull SemanticType TYPE = SemanticType.map("integer@test.digitalid.net").load(IntegerWrapper.XDF_TYPE);
         final @Nonnull Random random = new Random();
         for (int i = 0; i < 10000; i = (i + 1) * 3) {

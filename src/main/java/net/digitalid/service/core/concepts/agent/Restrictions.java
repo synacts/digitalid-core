@@ -356,7 +356,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      * @throws InvalidEncodingException otherwise.
      */
     @Pure
-    public @Nonnull Restrictions checkMatch(@Nonnull Agent agent) throws InvalidEncodingException {
+    public @Nonnull Restrictions checkMatch(@Nonnull Agent agent) throws InvalidEncodingException, InternalException {
         if (!match(agent)) { throw InvalidParameterValueCombinationException.get("The restrictions do not match the given agent."); }
         return this;
     }

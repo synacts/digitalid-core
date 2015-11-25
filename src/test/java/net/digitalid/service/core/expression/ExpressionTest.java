@@ -15,7 +15,7 @@ public final class ExpressionTest {
      */
     @Test
     @Committing
-    public void testParsing() throws InvalidEncodingException, SQLException, Exception {
+    public void testParsing() throws InvalidEncodingException, InternalException, SQLException, Exception {
 //        String[] strings = new String[] {"", " ( everybody)", "person@test.digitalid.net + person@test.digitalid.net - person@test.digitalid.net", "person@test.digitalid.net + (person@test.digitalid.net - person@test.digitalid.net)", "person@test.digitalid.net + name@core.digitalid.net * person@test.digitalid.net"};
 //        for (final @Nonnull String string : strings) {
 ////            System.out.println(string);

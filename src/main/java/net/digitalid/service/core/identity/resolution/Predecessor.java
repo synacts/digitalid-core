@@ -87,7 +87,7 @@ public final class Predecessor implements Blockable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    public Predecessor(@Nonnull Block block) throws InvalidEncodingException {
+    public Predecessor(@Nonnull Block block) throws InvalidEncodingException, InternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);

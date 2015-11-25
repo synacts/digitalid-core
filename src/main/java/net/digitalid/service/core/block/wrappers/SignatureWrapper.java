@@ -22,6 +22,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterV
 import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenticationException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -284,7 +285,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @param block the block that contains the signed element.
      * @param verified whether the signature is already verified.
      */
-    SignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified) throws InvalidEncodingException {
+    SignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified) throws InvalidEncodingException, InternalException {
         super(block.getType());
         
         this.cache = Block.get(IMPLEMENTATION, block);
@@ -554,7 +555,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         
         @Pure
         @Override
-        public @Nonnull SignatureWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull SignatureWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             return new SignatureWrapper(block, false);
         }
         

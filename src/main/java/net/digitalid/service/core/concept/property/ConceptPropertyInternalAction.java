@@ -16,6 +16,7 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalAction;
@@ -75,7 +76,7 @@ public abstract class ConceptPropertyInternalAction<V, C extends Concept<C, E, ?
      * @return the active public key of the recipient.
      */
     @Pure
-    public final @Nonnull PublicKey getPublicKey() {
+    public final @Nullable PublicKey getPublicKey() {
         return publicKey;
     }
     

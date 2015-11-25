@@ -16,7 +16,7 @@ import org.junit.Test;
 public final class CompressionWrapperTest extends DatabaseSetup {
     
     @Test
-    public void testWrapping() throws InvalidEncodingException {
+    public void testWrapping() throws InvalidEncodingException, InternalException {
         final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("compression@test.digitalid.net").load(CompressionWrapper.XDF_TYPE, STRING);
         final @Nonnull Block[] blocks = new Block[] {StringWrapper.encodeNonNullable(STRING, ""), StringWrapper.encodeNonNullable(STRING, "This is a short string."), StringWrapper.encodeNonNullable(STRING, "This is a longer string in order to test different block lengths.")};

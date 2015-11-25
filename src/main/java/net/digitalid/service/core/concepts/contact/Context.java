@@ -632,7 +632,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param string a string encoding the context number.
      */
     @Pure
-    public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull String string) throws InvalidEncodingException {
+    public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull String string) throws InvalidEncodingException, InternalException {
         try { return get(entity, Long.parseLong(string)); } catch (@Nonnull NumberFormatException exception) { throw InvalidParameterValueException.get("context key", string); }
     }
     
@@ -659,7 +659,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
+    public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException, InternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         return get(entity, Int64Wrapper.decode(block));

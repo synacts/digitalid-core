@@ -3,6 +3,7 @@ package net.digitalid.service.core.converter.key;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -50,13 +51,13 @@ public abstract class CastingNonRequestingKeyConverter<O extends S, E, K, D, S e
      * @return the object of the supertype with the given key.
      */
     @Pure
-    protected abstract @Nonnull S recoverSupertype(@Nonnull E external, @Nonnull @Validated K key) throws InvalidEncodingException;
+    protected abstract @Nonnull S recoverSupertype(@Nonnull E external, @Nonnull @Validated K key) throws InvalidEncodingException, InternalException;
     
     /* -------------------------------------------------- Method -------------------------------------------------- */
     
     @Pure
     @Override
-    public final @Nonnull O recover(@Nonnull E external, @Nonnull K key) throws InvalidEncodingException {
+    public final @Nonnull O recover(@Nonnull E external, @Nonnull K key) throws InvalidEncodingException, InternalException {
         return recoverSupertype(external, key).castTo(targetClass);
     }
     

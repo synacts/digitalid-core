@@ -8,10 +8,11 @@ import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidNullElementException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockOffsetException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidCollectionSizeException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidNullElementException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -321,7 +322,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         
         @Pure
         @Override
-        public @Nonnull TupleWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("tuple@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull TupleWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("tuple@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             final @Nonnull @NonNullableElements ReadOnlyList<SemanticType> parameters = block.getType().getParameters();
             final int size = parameters.size();
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(size);
@@ -419,7 +420,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * @return the tuple contained in the given block.
      */
     @Pure
-    public static @Nonnull TupleWrapper decode(@Nonnull @NonEncoding @BasedOn("tuple@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull TupleWrapper decode(@Nonnull @NonEncoding @BasedOn("tuple@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block);
     }
     

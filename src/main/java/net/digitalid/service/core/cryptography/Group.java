@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -75,7 +76,7 @@ public abstract class Group<G extends Group<G>> implements XDF<G, Object>, SQL<G
      * @return a new element with the encoded value in this group.
      */
     @Pure
-    public final @Nonnull Element getElement(@Nonnull @BasedOn("element.group@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public final @Nonnull Element getElement(@Nonnull @BasedOn("element.group@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return Element.get(this, block);
     }
     

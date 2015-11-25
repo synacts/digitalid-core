@@ -218,7 +218,7 @@ public final class Cache {
      * @return the expiration time of the given attribute value.
      */
     @Pure
-    private static @Nonnull Time getExpiration(@Nonnull SemanticType type, @Nullable AttributeValue value, @Nonnull AttributesReply reply) throws InvalidEncodingException {
+    private static @Nonnull Time getExpiration(@Nonnull SemanticType type, @Nullable AttributeValue value, @Nonnull AttributesReply reply) throws InvalidEncodingException, InternalException {
         if (value != null && !value.getContent().getType().equals(type)) { throw InvalidReplyParameterValueException.get(reply, "attribute type", type.getAddress(), value.getContent().getType().getAddress()); }
         return type.getCachingPeriodNotNull().add(value instanceof CertifiedAttributeValue ? ((CertifiedAttributeValue) value).getTime() : reply.getSignatureNotNull().getNonNullableTime());
     }

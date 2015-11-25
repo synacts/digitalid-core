@@ -40,6 +40,7 @@ import net.digitalid.service.core.exceptions.external.signature.ExpiredCredentia
 import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenticationException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveCredentialException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidCredentialsSignatureException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;

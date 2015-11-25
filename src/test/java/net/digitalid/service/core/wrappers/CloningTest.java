@@ -17,7 +17,7 @@ import org.junit.Test;
 public final class CloningTest extends DatabaseSetup {
     
     @Test
-    public void testCloning() throws InvalidEncodingException, SQLException {
+    public void testCloning() throws InvalidEncodingException, InternalException, SQLException {
         try {
             Database.lock();
             final @Nonnull String[] strings = new String[] {"", "äöüéè", "This is a short string.", "This is a longer string in order to test different string lengths."};

@@ -451,7 +451,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static @Nonnull Agent get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
+    public static @Nonnull Agent get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException, InternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);

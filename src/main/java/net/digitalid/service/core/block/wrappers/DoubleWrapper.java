@@ -15,6 +15,7 @@ import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -120,7 +121,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
         
         @Pure
         @Override
-        public @Nonnull DoubleWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("double@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull DoubleWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("double@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
             
             return new DoubleWrapper(block.getType(), Double.longBitsToDouble(block.decodeValue()));
@@ -167,7 +168,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * @return the value contained in the given block.
      */
     @Pure
-    public static double decode(@Nonnull @NonEncoding @BasedOn("double@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static double decode(@Nonnull @NonEncoding @BasedOn("double@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     

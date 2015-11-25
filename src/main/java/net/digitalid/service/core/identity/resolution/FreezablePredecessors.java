@@ -79,7 +79,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    public FreezablePredecessors(@Nonnull Block block) throws InvalidEncodingException {
+    public FreezablePredecessors(@Nonnull Block block) throws InvalidEncodingException, InternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> predecessors = ListWrapper.decodeNonNullableElements(block);

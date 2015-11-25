@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -29,11 +30,11 @@ public abstract class AbstractNonRequestingXDFConverter<O, E> extends AbstractXD
     
     @Pure
     @Override
-    public abstract @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull @NonEncoding Block block) throws InvalidEncodingException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull @NonEncoding Block block) throws InvalidEncodingException, InternalException;
     
     @Pure
     @Override
-    public final @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
+    public final @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws InvalidEncodingException, InternalException {
         return block == null ? null : decodeNonNullable(external, block);
     }
     

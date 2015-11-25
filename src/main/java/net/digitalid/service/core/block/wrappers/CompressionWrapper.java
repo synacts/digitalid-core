@@ -16,6 +16,7 @@ import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -148,7 +149,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         
         @Pure
         @Override
-        public @Nonnull CompressionWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull CompressionWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             try {
                 final @Nonnull Time start = Time.getCurrent();
@@ -220,7 +221,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      * @return the element contained in the given block.
      */
     @Pure
-    public static @Nonnull @NonEncoding Block decompressNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull @NonEncoding Block decompressNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).element;
     }
     
@@ -232,7 +233,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      * @return the element contained in the given block.
      */
     @Pure
-    public static @Nullable @NonEncoding Block decompressNullable(@Nullable @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nullable @NonEncoding Block decompressNullable(@Nullable @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return block == null ? null : decompressNonNullable(block);
     }
     

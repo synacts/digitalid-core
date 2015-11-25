@@ -221,7 +221,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         
         @Pure
         @Override
-        public @Nonnull Category recover(@Nonnull Object none, @Nonnull @Validated Byte value) throws InvalidEncodingException {
+        public @Nonnull Category recover(@Nonnull Object none, @Nonnull @Validated Byte value) throws InvalidEncodingException, InternalException {
             return Category.get(value);
         }
         

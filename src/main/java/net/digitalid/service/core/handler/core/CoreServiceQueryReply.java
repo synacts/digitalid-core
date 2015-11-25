@@ -47,7 +47,7 @@ public abstract class CoreServiceQueryReply extends QueryReply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    protected CoreServiceQueryReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
+    protected CoreServiceQueryReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException, InternalException {
         super(entity, signature, number);
     }
     

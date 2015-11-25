@@ -13,8 +13,9 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.annotations.Matching;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -308,7 +309,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         
         @Pure
         @Override
-        public @Nonnull PrivateKey decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("private.key.host@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull PrivateKey decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("private.key.host@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
             
             final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(5);

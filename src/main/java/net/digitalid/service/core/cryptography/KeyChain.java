@@ -8,9 +8,10 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -197,7 +198,7 @@ public abstract class KeyChain<C extends KeyChain<C, K>, K extends XDF<K, Object
         
         @Pure
         @Override
-        public @Nonnull C decodeNonNullable(@Nonnull Object none, @Nonnull Block block) throws InvalidEncodingException {
+        public @Nonnull C decodeNonNullable(@Nonnull Object none, @Nonnull Block block) throws InvalidEncodingException, InternalException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
             
             final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);

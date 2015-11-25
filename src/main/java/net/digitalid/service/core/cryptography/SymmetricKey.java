@@ -27,6 +27,7 @@ import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
@@ -207,7 +208,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
      * @require offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
      */
     @Pure
-    public final @Capturable @Nonnull @NonEmpty byte[] decrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, @NonNegative int offset, @Positive int length) throws InvalidEncodingException {
+    public final @Capturable @Nonnull @NonEmpty byte[] decrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, @NonNegative int offset, @Positive int length) throws InvalidEncodingException, InternalException {
         assert offset >= 0 : "The offset is not negative.";
         assert length > 0 : "The length is positive.";
         assert offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
@@ -253,7 +254,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
         
         @Pure
         @Override
-        public @Nonnull SymmetricKey recover(@Nonnull Object none, @Nonnull BigInteger value) throws InvalidEncodingException {
+        public @Nonnull SymmetricKey recover(@Nonnull Object none, @Nonnull BigInteger value) throws InvalidEncodingException, InternalException {
             return new SymmetricKey(value);
         }
         

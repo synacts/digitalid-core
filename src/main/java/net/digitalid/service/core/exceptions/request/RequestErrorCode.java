@@ -169,7 +169,7 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static @Nonnull RequestErrorCode get(@Nonnull Block block) throws InvalidEncodingException {
+    public static @Nonnull RequestErrorCode get(@Nonnull Block block) throws InvalidEncodingException, InternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final byte value = Int8Wrapper.decode(block);

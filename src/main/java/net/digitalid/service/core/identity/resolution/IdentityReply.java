@@ -92,7 +92,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    private IdentityReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException {
+    private IdentityReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException, InternalException {
         super(entity, signature, number);
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);

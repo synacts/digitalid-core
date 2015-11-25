@@ -14,7 +14,7 @@ import org.junit.Test;
 public class EmptyWrapperTest extends DatabaseSetup {
     
     @Test
-    public void testWrapping() throws InvalidEncodingException {
+    public void testWrapping() throws InvalidEncodingException, InternalException {
         final @Nonnull SemanticType TYPE = SemanticType.map("empty@test.digitalid.net").load(EmptyWrapper.XDF_TYPE);
         new EmptyWrapper(new EmptyWrapper(TYPE).toBlock());
     }

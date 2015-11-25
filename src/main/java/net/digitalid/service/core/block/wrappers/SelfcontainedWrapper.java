@@ -14,6 +14,7 @@ import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -267,7 +268,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * 
      * @ensure return.getType().equals(DEFAULT) : "The returned block is selfcontained.";
      */
-    private static @Nonnull Block readBlockFrom(@Nonnull InputStream inputStream, boolean close) throws InvalidEncodingException, IOException {
+    private static @Nonnull Block readBlockFrom(@Nonnull InputStream inputStream, boolean close) throws InvalidEncodingException, InternalException, IOException {
         try {
             final @Nonnull byte[] intvarOfIdentifier = new byte[8];
             read(inputStream, intvarOfIdentifier, 0, 1);

@@ -12,6 +12,7 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -93,7 +94,7 @@ public final class Element extends Number<Element, Group<?>> {
      * @return a new element in the given group with the value given in the block.
      */
     @Pure
-    public static @Nonnull Element get(@Nonnull Group<?> group, @Nonnull @BasedOn("element.group@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull Element get(@Nonnull Group<?> group, @Nonnull @BasedOn("element.group@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         return new Element(group, IntegerWrapper.decodeNonNullable(block));
@@ -224,7 +225,7 @@ public final class Element extends Number<Element, Group<?>> {
         
         @Pure
         @Override
-        public @Nonnull Element recover(@Nonnull Group<?> group, @Nonnull BigInteger value) throws InvalidEncodingException {
+        public @Nonnull Element recover(@Nonnull Group<?> group, @Nonnull BigInteger value) throws InvalidEncodingException, InternalException {
             return new Element(group, value);
         }
         

@@ -3,14 +3,15 @@ package net.digitalid.service.core.converter.xdf;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.key.AbstractKeyConverter;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class implements an XDF converter that converts an object to its key and this key to XDF with another converter.

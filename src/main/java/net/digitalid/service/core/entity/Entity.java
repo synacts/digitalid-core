@@ -14,8 +14,8 @@ import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -100,7 +100,7 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
         
         @Pure
         @Override
-        public @Nonnull Entity recoverSupertype(@Nonnull Site site, @Nonnull InternalIdentity identity) throws InvalidEncodingException {
+        public @Nonnull Entity recoverSupertype(@Nonnull Site site, @Nonnull InternalIdentity identity) throws InvalidEncodingException, InternalException {
             if (site instanceof Host) {
                 return Account.get((Host) site, identity);
             } else {
@@ -135,7 +135,7 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
         
         @Pure
         @Override
-        public @Nonnull Entity recoverSupertype(@Nonnull Site site, @Nonnull Long key) throws InvalidEncodingException {
+        public @Nonnull Entity recoverSupertype(@Nonnull Site site, @Nonnull Long key) throws InvalidEncodingException, InternalException {
             try {
                 if (site instanceof Host) {
                     return Account.get((Host) site, Mapper.getIdentity(key).castTo(InternalIdentity.class));

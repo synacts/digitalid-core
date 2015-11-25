@@ -167,7 +167,7 @@ abstract class Expression extends NonHostConcept {
      * @return the last index of one of the given characters in the given string considering quotation marks and parentheses.
      */
     @Pure
-    private static int lastIndexOf(@Nonnull String string, @Nonnull ReadOnlyList<Character> characters) throws InvalidEncodingException {
+    private static int lastIndexOf(@Nonnull String string, @Nonnull ReadOnlyList<Character> characters) throws InvalidEncodingException, InternalException {
         int parenthesesCounter = 0;
         boolean quotation = false;
         

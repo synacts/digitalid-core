@@ -21,6 +21,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidMethodRecipientException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -108,7 +109,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
      * 
      * @return the symmetric key with the decrypted value of the given encrypted key.
      */
-    private static @Nonnull SymmetricKey decrypt(@Nonnull PrivateKey privateKey, @Nonnull Block key) throws InvalidEncodingException {
+    private static @Nonnull SymmetricKey decrypt(@Nonnull PrivateKey privateKey, @Nonnull Block key) throws InvalidEncodingException, InternalException {
         final @Nonnull @Frozen ReadOnlyPair<PrivateKey, Block> pair = FreezablePair.get(privateKey, key).freeze();
         @Nullable SymmetricKey symmetricKey = decryptions.get(pair);
         if (symmetricKey == null) {
@@ -261,7 +262,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
      * @param block the block that contains the encrypted element.
      * @param symmetricKey the symmetric key used for decryption or null if the element is encrypted for a host or not at all.
      */
-    private EncryptionWrapper(@Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block, @Nullable SymmetricKey symmetricKey) throws InvalidEncodingException {
+    private EncryptionWrapper(@Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block, @Nullable SymmetricKey symmetricKey) throws InvalidEncodingException, InternalException {
         super(block.getType());
         
         this.cache = Block.get(IMPLEMENTATION, block);
@@ -344,7 +345,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
      * @return a new encryption wrapper with the given parameters.
      */
     @Pure
-    public static @Nonnull EncryptionWrapper decrypt(@Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block, @Nullable SymmetricKey symmetricKey) throws InvalidEncodingException {
+    public static @Nonnull EncryptionWrapper decrypt(@Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block, @Nullable SymmetricKey symmetricKey) throws InvalidEncodingException, InternalException {
         return new EncryptionWrapper(block, symmetricKey);
     }
     
@@ -434,7 +435,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         
         @Pure
         @Override
-        public @Nonnull EncryptionWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull EncryptionWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             return new EncryptionWrapper(block, null);
         }
         

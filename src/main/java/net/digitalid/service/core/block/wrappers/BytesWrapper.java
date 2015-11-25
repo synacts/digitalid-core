@@ -16,6 +16,7 @@ import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -169,7 +170,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         
         @Pure
         @Override
-        public @Nonnull BytesWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull BytesWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             return new BytesWrapper(block);
         }
         
@@ -227,7 +228,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * @return the bytes contained in the given block.
      */
     @Pure
-    public static @Capturable @Nonnull byte[] decodeNonNullable(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Capturable @Nonnull byte[] decodeNonNullable(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).getBytes();
     }
     
@@ -239,7 +240,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * @return the bytes contained in the given block.
      */
     @Pure
-    public static @Capturable @Nullable byte[] decodeNullable(@Nullable @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Capturable @Nullable byte[] decodeNullable(@Nullable @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return block == null ? null : decodeNonNullable(block);
     }
     
@@ -251,7 +252,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * @return the bytes contained in the given block.
      */
     @Pure
-    public static @Capturable @Nonnull InputStream decodeNonNullableAsInputStream(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Capturable @Nonnull InputStream decodeNonNullableAsInputStream(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).getBytesAsInputStream();
     }
     
@@ -263,7 +264,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * @return the bytes contained in the given block.
      */
     @Pure
-    public static @Capturable @Nullable InputStream decodeNullableAsInputStream(@Nullable @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Capturable @Nullable InputStream decodeNullableAsInputStream(@Nullable @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return block == null ? null : decodeNonNullableAsInputStream(block);
     }
     

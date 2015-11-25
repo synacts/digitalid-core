@@ -18,6 +18,7 @@ import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -157,10 +158,12 @@ public final class Worker implements Runnable {
                     }
                     
                     response = new Response(request, replies.freeze(), exceptions.freeze(), responseAudit);
-                } catch (@Nonnull SQLException exception) {
-                    throw new RequestException(RequestErrorCode.INTERNAL, "An SQLException occurred.", exception);
-                } catch (@Nonnull IOException exception) {
-                    throw new RequestException(RequestErrorCode.EXTERNAL, "An IOException occurred.", exception);
+                } catch (@Nonnull DatabaseException exception) {
+                    throw new RequestException(RequestErrorCode.DATABASE, "A DatabaseException occurred.", exception);
+                } catch (@Nonnull NetworkException exception) {
+                    throw new RequestException(RequestErrorCode.NETWORK, "A NetworkException occurred.", exception);
+                } catch (@Nonnull InternalException exception) {
+                    throw new RequestException(RequestErrorCode.INTERNAL, "An InternalException occurred.", exception);
                 } catch (@Nonnull ExternalException exception) {
                     throw new RequestException(RequestErrorCode.EXTERNAL, "An ExternalException occurred.", exception);
                 }

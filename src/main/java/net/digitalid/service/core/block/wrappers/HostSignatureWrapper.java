@@ -19,6 +19,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.signature.ExpiredHostSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidHostSignatureException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -117,7 +118,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * @param hostSignature the host signature to be decoded.
      * @param verified whether the signature is already verified.
      */
-    HostSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("host.signature@core.digitalid.net") Block hostSignature, boolean verified) throws InvalidEncodingException {
+    HostSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("host.signature@core.digitalid.net") Block hostSignature, boolean verified) throws InvalidEncodingException, InternalException {
         super(block, verified);
         
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";

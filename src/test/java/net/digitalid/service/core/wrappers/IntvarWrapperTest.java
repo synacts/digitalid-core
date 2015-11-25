@@ -14,7 +14,7 @@ import org.junit.Test;
 public final class IntvarWrapperTest extends DatabaseSetup {
     
     @Test
-    public void testWrapping() throws InvalidEncodingException {
+    public void testWrapping() throws InvalidEncodingException, InternalException {
         final @Nonnull SemanticType TYPE = SemanticType.map("intvar@test.digitalid.net").load(IntvarWrapper.XDF_TYPE);
         long value = 0;
         while (Long.numberOfLeadingZeros(value) >= 2) {

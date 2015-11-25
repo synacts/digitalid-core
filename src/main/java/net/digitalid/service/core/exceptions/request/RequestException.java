@@ -90,7 +90,7 @@ public final class RequestException extends Exception implements Blockable {
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static RequestException create(@Nonnull Block block) throws InvalidEncodingException {
+    public static RequestException create(@Nonnull Block block) throws InvalidEncodingException, InternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);

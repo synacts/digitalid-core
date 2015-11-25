@@ -10,6 +10,7 @@ import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -54,7 +55,7 @@ public final class Exponent extends Number<Exponent, Object> {
      * @return a new exponent from the given block.
      */
     @Pure
-    public static @Nonnull Exponent get(@Nonnull @BasedOn("exponent.group@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull Exponent get(@Nonnull @BasedOn("exponent.group@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return new Exponent(IntegerWrapper.decodeNonNullable(block));
     }
     
@@ -141,7 +142,7 @@ public final class Exponent extends Number<Exponent, Object> {
         
         @Pure
         @Override
-        public @Nonnull Exponent recover(@Nonnull Object none, @Nonnull BigInteger value) throws InvalidEncodingException {
+        public @Nonnull Exponent recover(@Nonnull Object none, @Nonnull BigInteger value) throws InvalidEncodingException, InternalException {
             return new Exponent(value);
         }
         

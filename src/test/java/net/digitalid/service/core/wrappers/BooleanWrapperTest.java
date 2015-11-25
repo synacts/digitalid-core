@@ -14,7 +14,7 @@ import org.junit.Test;
 public final class BooleanWrapperTest extends DatabaseSetup {
     
     @Test
-    public void testWrapping() throws InvalidEncodingException {
+    public void testWrapping() throws InvalidEncodingException, InternalException {
         final @Nonnull SemanticType TYPE = SemanticType.map("boolean@test.digitalid.net").load(BooleanWrapper.XDF_TYPE);
         final boolean[] values = new boolean[] {true, false};
         for (final boolean value : values) {

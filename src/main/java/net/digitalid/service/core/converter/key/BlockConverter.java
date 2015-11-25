@@ -6,6 +6,7 @@ import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -69,10 +70,10 @@ public final class BlockConverter<O, E> extends AbstractNonRequestingKeyConverte
     
     @Pure
     @Override
-    public @Nonnull O recover(@Nonnull E external, @Nonnull Block block) throws InvalidEncodingException {
+    public @Nonnull O recover(@Nonnull E external, @Nonnull Block block) throws InvalidEncodingException, InternalException {
         try {
             return XDFConverter.decodeNonNullable(external, block);
-        } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
+        } catch (@Nonnull DatabaseException | NetworkException | ExternalException | RequestException exception) {
             throw MaskingInvalidEncodingException.get(exception);
         }
     }

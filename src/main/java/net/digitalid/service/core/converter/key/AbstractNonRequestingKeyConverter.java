@@ -3,6 +3,7 @@ package net.digitalid.service.core.converter.key;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.concept.ConceptKeyConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.annotations.state.Validated;
@@ -26,6 +27,6 @@ public abstract class AbstractNonRequestingKeyConverter<O, E, K, D> extends Abst
     
     @Pure
     @Override
-    public abstract @Nonnull O recover(@Nonnull E external, @Nonnull @Validated K key) throws InvalidEncodingException;
+    public abstract @Nonnull O recover(@Nonnull E external, @Nonnull @Validated K key) throws InvalidEncodingException, InternalException;
     
 }

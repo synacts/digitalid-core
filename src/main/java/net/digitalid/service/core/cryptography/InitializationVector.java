@@ -13,6 +13,7 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -103,7 +104,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         
         @Pure
         @Override
-        public @Nonnull InitializationVector recover(@Nonnull Object none, @Nonnull @Validated byte[] bytes) throws InvalidEncodingException {
+        public @Nonnull InitializationVector recover(@Nonnull Object none, @Nonnull @Validated byte[] bytes) throws InvalidEncodingException, InternalException {
             return new InitializationVector(bytes);
         }
         

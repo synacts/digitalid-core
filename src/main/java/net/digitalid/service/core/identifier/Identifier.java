@@ -110,7 +110,7 @@ public interface Identifier extends Castable, XDF<Identifier, Object>, SQL<Ident
         
         @Pure
         @Override
-        public @Nonnull Identifier recoverSupertype(@Nonnull Object none, @Nonnull @Validated String string) throws InvalidEncodingException {
+        public @Nonnull Identifier recoverSupertype(@Nonnull Object none, @Nonnull @Validated String string) throws InvalidEncodingException, InternalException {
             return IdentifierImplementation.get(string);
         }
         
