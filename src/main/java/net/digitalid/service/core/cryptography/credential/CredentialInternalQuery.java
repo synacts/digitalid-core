@@ -129,14 +129,14 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient);
         
-        if (!(entity.getIdentity() instanceof InternalPerson)) { throw new RequestException(RequestErrorCode.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons."); }
+        if (!(entity.getIdentity() instanceof InternalPerson)) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons."); }
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
         this.permissions = new RandomizedAgentPermissions(tuple.getNonNullableElement(0));
         if (tuple.isElementNull(1)) { this.relation = null; }
         else { this.relation = IdentityImplementation.create(tuple.getNonNullableElement(1)).castTo(SemanticType.class).checkIsRoleType(); }
         if (signature instanceof ClientSignatureWrapper) { this.value = ((ClientSignatureWrapper) signature).getCommitment().getValue().getValue(); }
         else if (signature instanceof CredentialsSignatureWrapper) { this.value = ((CredentialsSignatureWrapper) signature).getValue(); }
-        else { throw new RequestException(RequestErrorCode.SIGNATURE, "A credential request must be signed by a client or with credentials."); }
+        else { throw RequestException.get(RequestErrorCode.SIGNATURE, "A credential request must be signed by a client or with credentials."); }
     }
     
     @Pure

@@ -19,11 +19,11 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -98,7 +98,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     public void checkIsClient() throws RequestException {
-        if (!isClient()) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The action is restricted to clients."); }
+        if (!isClient()) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The action is restricted to clients."); }
     }
     
     /* -------------------------------------------------- Role -------------------------------------------------- */
@@ -123,7 +123,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     public void checkIsRole() throws RequestException {
-        if (!isRole()) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles."); }
+        if (!isRole()) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles."); }
     }
     
     /* -------------------------------------------------- Writing -------------------------------------------------- */
@@ -148,7 +148,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      */
     @Pure
     public void checkIsWriting() throws RequestException {
-        if (!isWriting()) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The action is restricted to agents that can write to contexts."); }
+        if (!isWriting()) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The action is restricted to agents that can write to contexts."); }
     }
     
     /* -------------------------------------------------- Context -------------------------------------------------- */
@@ -189,7 +189,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Context otherContext) throws DatabaseException, RequestException {
-        if (!cover(otherContext)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context."); }
+        if (!cover(otherContext)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context."); }
     }
     
     /* -------------------------------------------------- Contact -------------------------------------------------- */
@@ -230,7 +230,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Contact otherContact) throws DatabaseException, RequestException {
-        if (!cover(otherContact)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact."); }
+        if (!cover(otherContact)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact."); }
     }
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
@@ -329,7 +329,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Restrictions restrictions) throws DatabaseException, RequestException {
-        if (!cover(restrictions)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions."); }
+        if (!cover(restrictions)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions."); }
     }
     
     /* -------------------------------------------------- Matching -------------------------------------------------- */
@@ -445,13 +445,13 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         /**
          * Creates a new XDF converter.
          */
-        private XDFConverter() {
+        protected XDFConverter() {
             super(TYPE);
         }
         
         @Pure
         @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull Restrictions restrictions) {
+        public final @Nonnull Block encodeNonNullable(@Nonnull Restrictions restrictions) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
             elements.set(0, BooleanWrapper.encode(CLIENT_TYPE, restrictions.client));
             elements.set(1, BooleanWrapper.encode(ROLE_TYPE, restrictions.role));
@@ -463,7 +463,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Pure
         @Override
-        public @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @BasedOn("restrictions.agent@core.digitalid.net") Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+        public final @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
             
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
@@ -487,7 +487,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     
     @Pure
     @Override
-    public @Nonnull XDFConverter getXDFConverter() {
+    public final @Nonnull XDFConverter getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -507,13 +507,13 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         /**
          * Creates a new SQL converter.
          */
-        private SQLConverter() {
+        protected SQLConverter() {
             super(DECLARATION);
         }
         
         @Pure
         @Override
-        public void storeNonNullable(@Nonnull Restrictions restrictions, @NonCapturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+        public final void storeNonNullable(@Nonnull Restrictions restrictions, @NonCapturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
             BooleanWrapper.store(restrictions.client, values, index);
             BooleanWrapper.store(restrictions.role, values, index);
             BooleanWrapper.store(restrictions.writing, values, index);
@@ -523,7 +523,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+        public final void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
             BooleanWrapper.store(restrictions.client, preparedStatement, parameterIndex);
             BooleanWrapper.store(restrictions.role, preparedStatement, parameterIndex);
             BooleanWrapper.store(restrictions.writing, preparedStatement, parameterIndex);
@@ -534,7 +534,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
+        public final @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
             final boolean client = BooleanWrapper.restore(resultSet, columnIndex);
             final boolean clientWasNull = resultSet.wasNull();
             final boolean role = BooleanWrapper.restore(resultSet, columnIndex);
@@ -559,7 +559,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     
     @Pure
     @Override
-    public @Nonnull SQLConverter getSQLConverter() {
+    public final @Nonnull SQLConverter getSQLConverter() {
         return SQL_CONVERTER;
     }
     

@@ -157,7 +157,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         if (signature instanceof CredentialsSignatureWrapper) {
             ((CredentialsSignatureWrapper) signature).checkCover(getRequiredPermissionsToExecuteMethod());
         } else if (signature instanceof ClientSignatureWrapper) {
-            throw new RequestException(RequestErrorCode.AUTHORIZATION, "Access requests may not be signed by clients.");
+            throw RequestException.get(RequestErrorCode.AUTHORIZATION, "Access requests may not be signed by clients.");
         }
         executeOnClient();
         return null;

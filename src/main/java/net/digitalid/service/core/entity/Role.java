@@ -245,7 +245,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
                 if (times[i].isLessThan(cutoff)) { reloadState(services[i]); }
                 else { refreshState(services[i]); }
             } catch (@Nonnull RequestException exception) {
-                if (exception.getError() == RequestErrorCode.AUDIT) { return false; }
+                if (exception.getCode() == RequestErrorCode.AUDIT) { return false; }
                 else { throw exception; }
             }
         }

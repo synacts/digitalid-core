@@ -422,7 +422,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractWrapper.XDFConverter<EncryptionWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<EncryptionWrapper> {
         
         /**
          * Creates a new factory with the given type.

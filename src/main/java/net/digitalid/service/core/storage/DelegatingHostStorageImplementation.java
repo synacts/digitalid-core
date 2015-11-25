@@ -119,7 +119,7 @@ abstract class DelegatingHostStorageImplementation extends DelegatingClientStora
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
             final @Nullable HostStorage substorage = substorages.get(selfcontained.getType());
-            if (substorage == null) { throw new RequestException(RequestErrorCode.CONTENT, "There is no substorage for the block of type " + selfcontained.getType() + "."); }
+            if (substorage == null) { throw RequestException.get(RequestErrorCode.CONTENT, "There is no substorage for the block of type " + selfcontained.getType() + "."); }
             substorage.importAll(host, selfcontained);
         }
     }

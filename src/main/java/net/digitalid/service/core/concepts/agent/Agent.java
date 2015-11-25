@@ -138,7 +138,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Pure
     public final void checkNotRemoved() throws RequestException {
-        if (isRemoved()) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The agent has been removed."); }
+        if (isRemoved()) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The agent has been removed."); }
     }
     
     /**
@@ -390,7 +390,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     @Pure
     @NonCommitting
     public final void checkCovers(@Nonnull Agent agent) throws RequestException, SQLException {
-        if (!covers(agent)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "This agent does not cover the other agent."); }
+        if (!covers(agent)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "This agent does not cover the other agent."); }
     }
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */

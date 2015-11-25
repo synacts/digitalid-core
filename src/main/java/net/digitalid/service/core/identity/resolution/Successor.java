@@ -7,8 +7,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.ExternalIdentifier;
@@ -76,7 +76,7 @@ public final class Successor {
             }
             
             if (successor != null) { set(identifier, successor, reply); }
-            else { throw new RequestException(RequestErrorCode.EXTERNAL, "The identity with the identifier " + identifier + " has not been relocated."); }
+            else { throw RequestException.get(/* RequestErrorCode.EXTERNAL */, "The identity with the identifier " + identifier + " has not been relocated."); }
         }
         return successor;
     }

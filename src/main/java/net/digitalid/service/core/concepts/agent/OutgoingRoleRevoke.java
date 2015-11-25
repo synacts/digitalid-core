@@ -129,7 +129,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     @Override
     @NonCommitting
     public @Nullable CoreServiceActionReply executeOnHost() throws RequestException, SQLException {
-        if (!getSignatureNotNull().isSigned()) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The revocation of a role has to be signed."); }
+        if (!getSignatureNotNull().isSigned()) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The revocation of a role has to be signed."); }
         executeOnBoth();
         return null;
     }

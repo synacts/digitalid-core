@@ -73,10 +73,10 @@ public final class IdentityReply extends CoreServiceQueryReply {
     IdentityReply(@Nonnull InternalNonHostIdentifier subject) throws DatabaseException, RequestException {
         super(subject);
         
-        if (!subject.isMapped()) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host."); }
+        if (!subject.isMapped()) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host."); }
         this.category = subject.getMappedIdentity().getCategory();
         if (!category.isInternalNonHostIdentity()) { throw new SQLException("The category is " + category.name() + " instead of an internal non-host identity."); }
-        if (!FreezablePredecessors.exist(subject)) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The identity with the identifier " + subject + " is not yet initialized."); }
+        if (!FreezablePredecessors.exist(subject)) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The identity with the identifier " + subject + " is not yet initialized."); }
         this.predecessors = FreezablePredecessors.get(subject);
         this.successor = Successor.get(subject);
     }

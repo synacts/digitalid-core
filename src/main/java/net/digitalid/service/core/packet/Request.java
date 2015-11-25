@@ -131,7 +131,7 @@ public class Request extends Packet {
         assert !methods.containsNull() : "The list of methods does not contain null.";
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
         
-        if (iteration == 5) { throw new RequestException(RequestErrorCode.EXTERNAL, "The resending of a request was triggered five times."); }
+        if (iteration == 5) { throw RequestException.get(/* RequestErrorCode.EXTERNAL */, "The resending of a request was triggered five times."); }
         
         this.recipient = recipient;
         this.subject = subject;
@@ -308,10 +308,10 @@ public class Request extends Packet {
             this.write(socket.getOutputStream());
             return new Response(this, socket.getInputStream(), verified);
         } catch (@Nonnull RequestException exception) {
-            if (exception.getError() == RequestErrorCode.KEYROTATION && this instanceof ClientRequest) {
+            if (exception.getCode() == RequestErrorCode.KEYROTATION && this instanceof ClientRequest) {
                 return ((ClientRequest) this).recommit(methods, iteration, verified);
-            } else if (exception.getError() == RequestErrorCode.RELOCATION && subject instanceof InternalNonHostIdentifier) {
-                if (getMethod(0).getType().equals(IdentityQuery.TYPE)) { throw new RequestException(RequestErrorCode.EXTERNAL, "The response to an identity query may not be a relocation exception."); }
+            } else if (exception.getCode() == RequestErrorCode.RELOCATION && subject instanceof InternalNonHostIdentifier) {
+                if (getMethod(0).getType().equals(IdentityQuery.TYPE)) { throw RequestException.get(/* RequestErrorCode.EXTERNAL */, "The response to an identity query may not be a relocation exception."); }
                 @Nullable InternalNonHostIdentifier address = Successor.get((InternalNonHostIdentifier) subject);
                 if (address == null) {
                     address = Successor.getReloaded((InternalNonHostIdentifier) subject);
@@ -321,9 +321,9 @@ public class Request extends Packet {
                 }
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, iteration, verified);
-            } else if (exception.getError() == RequestErrorCode.SERVICE && !getMethod(0).isOnHost()) {
+            } else if (exception.getCode() == RequestErrorCode.SERVICE && !getMethod(0).isOnHost()) {
                 final @Nonnull HostIdentifier recipient = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getReloadedAttributeContent(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).castTo(HostIdentifier.class);
-                if (this.recipient.equals(recipient)) { throw new RequestException(RequestErrorCode.EXTERNAL, "The recipient after a service error is still the same.", exception); }
+                if (this.recipient.equals(recipient)) { throw RequestException.get(/* RequestErrorCode.EXTERNAL */, "The recipient after a service error is still the same.", exception); }
                 return resend(methods, recipient, subject, iteration, verified);
             } else {
                 throw exception;

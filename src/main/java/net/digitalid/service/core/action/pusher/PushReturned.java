@@ -17,6 +17,7 @@ import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -165,7 +166,7 @@ public final class PushReturned extends ExternalAction {
     
     @Override
     public @Nullable ActionReply executeOnHost() throws RequestException {
-        throw new RequestException(RequestErrorCode.METHOD, "Returned push replies cannot be executed on a host.");
+        throw RequestException.get(RequestErrorCode.METHOD, "Returned push replies cannot be executed on a host.");
     }
     
     @Pure
@@ -196,8 +197,8 @@ public final class PushReturned extends ExternalAction {
     }
     
     @Override
-    public @Nullable Response send() throws RequestException {
-        throw new RequestException(RequestErrorCode.INTERNAL, "Returned push replies cannot be sent.");
+    public @Nullable Response send() throws InternalException {
+        throw InternalException.get("Returned push replies cannot be sent.");
     }
     
     

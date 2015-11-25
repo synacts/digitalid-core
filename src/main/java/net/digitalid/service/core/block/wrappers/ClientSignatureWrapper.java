@@ -207,9 +207,9 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     @Override
     @NonCommitting
     public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws RequestException, DatabaseException {
-        if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) { throw new RequestException(RequestErrorCode.KEYROTATION, "The client has to recommit its secret."); }
+        if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) { throw RequestException.get(RequestErrorCode.KEYROTATION, "The client has to recommit its secret."); }
         final @Nullable ClientAgent agent = AgentModule.getClientAgent(entity, commitment);
-        if (agent == null) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The element was not signed by an authorized client."); }
+        if (agent == null) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The element was not signed by an authorized client."); }
         agent.checkNotRemoved();
         return agent;
     }

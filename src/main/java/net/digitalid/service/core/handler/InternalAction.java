@@ -62,8 +62,8 @@ public abstract class InternalAction extends Action implements InternalMethod {
     protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient);
         
-        if (!isNonHost()) { throw new RequestException(RequestErrorCode.IDENTIFIER, "Internal actions have to belong to a non-host."); }
-        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal actions."); }
+        if (!isNonHost()) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "Internal actions have to belong to a non-host."); }
+        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal actions."); }
     }
     
     

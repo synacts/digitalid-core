@@ -11,8 +11,8 @@ import net.digitalid.service.core.block.wrappers.CompressionWrapper;
 import net.digitalid.service.core.concepts.agent.ClientAgentCommitmentReplace;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -97,7 +97,7 @@ public final class ClientRequest extends Request {
     @Override
     @NonCommitting
     @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        if (!subject.getHostIdentifier().equals(recipient)) { throw new RequestException(RequestErrorCode.INTERNAL, "The host of the subject " + subject + " does not match the recipient " + recipient + "."); }
+        if (!subject.getHostIdentifier().equals(recipient)) { throw InternalException.get("The host of the subject " + subject + " does not match the recipient " + recipient + "."); }
         return new ClientRequest(methods, subject, getAudit(), commitment).send(verified);
     }
     

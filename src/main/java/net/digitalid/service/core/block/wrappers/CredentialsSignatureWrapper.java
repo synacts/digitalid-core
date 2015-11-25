@@ -330,7 +330,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public void checkIsLogded() throws RequestException {
-        if (!isLodged()) { throw new RequestException(RequestErrorCode.SIGNATURE, "The credentials signature has to be lodged."); }
+        if (!isLodged()) { throw RequestException.get(RequestErrorCode.SIGNATURE, "The credentials signature has to be lodged."); }
     }
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
@@ -573,7 +573,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public void checkIssuer(@Nonnull InternalPerson issuer) throws RequestException {
-        if (!isIdentityBased() || isRoleBased() || !issuer.equals(getIssuer())) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The credential was not issued by " + issuer.getAddress() + "."); }
+        if (!isIdentityBased() || isRoleBased() || !issuer.equals(getIssuer())) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The credential was not issued by " + issuer.getAddress() + "."); }
     }
     
     /* -------------------------------------------------- Attribute Content -------------------------------------------------- */
@@ -632,7 +632,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public void checkCanRead(@Nonnull @AttributeType SemanticType type) throws RequestException {
-        if (!canRead(type)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "Not all credentials can read " + type.getAddress() + "."); }
+        if (!canRead(type)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "Not all credentials can read " + type.getAddress() + "."); }
     }
     
     /**
@@ -658,7 +658,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public void checkCanWrite(@Nonnull @AttributeType SemanticType type) throws RequestException {
-        if (!canWrite(type)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "Not all credentials can write " + type.getAddress() + "."); }
+        if (!canWrite(type)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "Not all credentials can write " + type.getAddress() + "."); }
     }
     
     /**
@@ -684,7 +684,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws RequestException {
-        if (!cover(permissions)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "Not all credentials cover " + permissions + "."); }
+        if (!cover(permissions)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "Not all credentials cover " + permissions + "."); }
     }
     
     /* -------------------------------------------------- Verifying -------------------------------------------------- */
@@ -981,7 +981,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
                 return outgoingRole;
             }
         }
-        throw new RequestException(RequestErrorCode.AUTHORIZATION, "The credential does not belong to an authorized role.");
+        throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The credential does not belong to an authorized role.");
     }
     
 }

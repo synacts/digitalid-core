@@ -324,8 +324,8 @@ public abstract class Method extends Handler {
         final boolean lodged = reference.isLodged();
         final @Nullable BigInteger value = reference.getValue();
         
-        if (reference.isOnHost() && !reference.canBeSentByHosts()) { throw new RequestException(RequestErrorCode.INTERNAL, "These methods cannot be sent by hosts."); }
-        if (reference.isOnClient() && reference.canOnlyBeSentByHosts()) { throw new RequestException(RequestErrorCode.INTERNAL, "These methods cannot be sent by clients."); }
+        if (reference.isOnHost() && !reference.canBeSentByHosts()) { throw InternalException.get("These methods cannot be sent by hosts."); }
+        if (reference.isOnClient() && reference.canOnlyBeSentByHosts()) { throw InternalException.get("These methods cannot be sent by clients."); }
         
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadOnlyAuthentications authentications;
@@ -388,18 +388,18 @@ public abstract class Method extends Handler {
                 }
             } else {
                 assert reference instanceof InternalMethod;
-                if (!(entity instanceof Role)) { throw new RequestException(RequestErrorCode.INTERNAL, "The entity has to be a role in case of internal methods."); }
+                if (!(entity instanceof Role)) { throw InternalException.get("The entity has to be a role in case of internal methods."); }
                 final @Nonnull Role role = (Role) entity;
                 final @Nonnull Agent agent = role.getAgent();
                 
                 final @Nonnull Restrictions restrictions = agent.getRestrictions();
                 for (final @Nonnull Method method : methods) {
-                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictionsToExecuteMethod())) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The restrictions of the role do not cover the required restrictions."); }
+                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictionsToExecuteMethod())) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The restrictions of the role do not cover the required restrictions."); }
                 }
                 
                 if (reference.getService().equals(CoreService.SERVICE)) {
                     if (role.isNative()) {
-                        if (!agent.getPermissions().cover(getRequiredPermissions(methods))) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The permissions of the client agent do not cover the required permissions."); }
+                        if (!agent.getPermissions().cover(getRequiredPermissions(methods))) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The permissions of the client agent do not cover the required permissions."); }
                         return new ClientRequest(methods, subject, audit, role.toNativeRole().getAgent().getCommitment().addSecret(role.getClient().getSecret())).send();
                     } else {
                         final @Nonnull ClientCredential credential = ClientCredential.getRoleBased(role.toNonNativeRole(), getRequiredPermissions(methods));
@@ -478,7 +478,7 @@ public abstract class Method extends Handler {
     @NonCommitting
     public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final @Nullable Method.Factory factory = converters.get(block.getType());
-        if (factory == null) { throw new RequestException(RequestErrorCode.METHOD, "No method could be found for the type " + block.getType().getAddress() + "."); }
+        if (factory == null) { throw RequestException.get(RequestErrorCode.METHOD, "No method could be found for the type " + block.getType().getAddress() + "."); }
         else { return factory.create(entity, signature, recipient, block); }
     }
     

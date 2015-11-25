@@ -126,7 +126,7 @@ abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorage
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
             final @Nullable SiteStorage substorage = substorages.get(selfcontained.getType());
-            if (substorage == null) { throw new RequestException(RequestErrorCode.CONTENT, "There is no table for the block of type " + selfcontained.getType() + "."); }
+            if (substorage == null) { throw RequestException.get(RequestErrorCode.CONTENT, "There is no table for the block of type " + selfcontained.getType() + "."); }
             substorage.addState(entity, selfcontained);
         }
     }

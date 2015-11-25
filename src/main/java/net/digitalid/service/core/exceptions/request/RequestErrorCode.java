@@ -1,23 +1,22 @@
 package net.digitalid.service.core.exceptions.request;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -31,19 +30,9 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     /* -------------------------------------------------- Error Codes -------------------------------------------------- */
     
     /**
-     * The error code for an internal problem.
-     */
-    INTERNAL(0),
-    
-    /**
-     * The error code for an external problem.
-     */
-    EXTERNAL(1),
-    
-    /**
      * The error code for a database problem.
      */
-    DATABASE(1),
+    DATABASE(0),
     
     /**
      * The error code for a network problem.
@@ -51,155 +40,113 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     NETWORK(1),
     
     /**
+     * The error code for an internal problem.
+     */
+    INTERNAL(2),
+    
+    /**
+     * The error code for an external problem.
+     */
+    EXTERNAL(3),
+    
+    /**
+     * The error code for a request problem.
+     */
+    REQUEST(4),
+    
+    /**
      * The error code for an invalid packet.
      */
-    PACKET(2),
-    
-    /**
-     * The error code for an invalid encryption.
-     */
-    ENCRYPTION(3),
-    
-    /**
-     * The error code for invalid elements.
-     */
-    ELEMENTS(4),
-    
-    /**
-     * The error code for an invalid signature.
-     */
-    SIGNATURE(5),
-    
-    /**
-     * The error code for an invalid compression.
-     */
-    COMPRESSION(6),
-    
-    /**
-     * The error code for an invalid content.
-     */
-    CONTENT(7),
-    
-    /**
-     * The error code for an invalid service.
-     */
-    SERVICE(8),
-    
-    /**
-     * The error code for an invalid method type.
-     */
-    METHOD(9),
-    
-    /**
-     * The error code for an invalid audit.
-     */
-    AUDIT(10),
+    PACKET(5),
     
     /**
      * The error code for a replayed packet.
      */
-    REPLAY(11),
+    REPLAY(6),
+    
+    /**
+     * The error code for an invalid encryption.
+     */
+    ENCRYPTION(7),
+    
+    /**
+     * The error code for invalid elements.
+     */
+    ELEMENTS(8),
+    
+    /**
+     * The error code for an invalid audit.
+     */
+    AUDIT(9),
+    
+    /**
+     * The error code for an invalid signature.
+     */
+    SIGNATURE(10),
     
     /**
      * The error code for a required key rotation.
      */
-    KEYROTATION(15),
+    KEYROTATION(11),
+    
+    /**
+     * The error code for an invalid compression.
+     */
+    COMPRESSION(12),
+    
+    /**
+     * The error code for an invalid content.
+     */
+    CONTENT(13),
+    
+    /**
+     * The error code for an invalid method type.
+     */
+    METHOD(14),
     
     /**
      * The error code for an invalid identifier as subject.
      */
-    IDENTIFIER(12),
+    IDENTIFIER(15),
     
     /**
      * The error code for a relocated identity.
      */
-    RELOCATION(13),
+    RELOCATION(16),
+    
+    /**
+     * The error code for a relocated service provider.
+     */
+    SERVICE(17),
     
     /**
      * The error code for an insufficient authorization.
      */
-    AUTHORIZATION(14);
-    
-    
-    /**
-     * Returns whether the given value is a valid request error.
-     *
-     * @param value the value to check.
-     * 
-     * @return whether the given value is a valid request error.
-     */
-    @Pure
-    public static boolean isValid(byte value) {
-        return value >= 0 && value <= 15;
-    }
-    
-    /**
-     * Returns the request error encoded by the given value.
-     * 
-     * @param value the value encoding the request error.
-     * 
-     * @return the request error encoded by the given value.
-     * 
-     * @require isValid(value) : "The value is a valid request error.";
-     */
-    @Pure
-    public static @Nonnull RequestErrorCode get(byte value) {
-        assert isValid(value) : "The value is a valid request error.";
-        
-        for (final @Nonnull RequestErrorCode error : values()) {
-            if (error.value == value) { return error; }
-        }
-        
-        throw new ShouldNeverHappenError("The value '" + value + "' does not encode a request error.");
-    }
-    
-    
-    /**
-     * Stores the semantic type {@code code.error.request@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("code.error.request@core.digitalid.net").load(Int8Wrapper.XDF_TYPE);
-    
-    /**
-     * Returns the request error encoded by the given block.
-     * 
-     * @param block the block containing the request error.
-     * 
-     * @return the request error encoded by the given block.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     */
-    @Pure
-    public static @Nonnull RequestErrorCode get(@Nonnull Block block) throws InvalidEncodingException, InternalException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
-        final byte value = Int8Wrapper.decode(block);
-        if (!isValid(value)) { throw InvalidParameterValueException.get("value", value); }
-        return get(value);
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        return Int8Wrapper.encode(TYPE, value);
-    }
+    AUTHORIZATION(18);
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
-     * Stores the value of this request error.
+     * Returns whether the given value is a valid request error code.
+     *
+     * @param value the value to check.
+     * 
+     * @return whether the given value is a valid request error code.
+     */
+    @Pure
+    public static boolean isValid(byte value) {
+        return value >= 0 && value <= 18;
+    }
+    
+    /**
+     * Stores the value of this request error code.
      */
     private final @Validated byte value;
     
     /**
-     * Returns the value of this request error.
+     * Returns the value of this request error code.
      * 
-     * @return the value of this request error.
+     * @return the value of this request error code.
      */
     @Pure
     public @Validated byte getValue() {
@@ -212,6 +159,8 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
         return String.valueOf(value);
     }
     
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
     /**
      * Creates a new request error with the given value.
      * 
@@ -220,6 +169,26 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     private RequestErrorCode(int value) {
         this.value = (byte) value;
     }
+    
+    /**
+     * Returns the request error code encoded by the given value.
+     * 
+     * @param value the value encoding the request error code.
+     * 
+     * @return the request error code encoded by the given value.
+     */
+    @Pure
+    public static @Nonnull RequestErrorCode get(@Validated byte value) {
+        assert isValid(value) : "The value is a valid request error.";
+        
+        for (final @Nonnull RequestErrorCode code : values()) {
+            if (code.value == value) { return code; }
+        }
+        
+        throw new ShouldNeverHappenError("The value '" + value + "' does not encode a request error code.");
+    }
+    
+    /* -------------------------------------------------- Name -------------------------------------------------- */
     
     /**
      * Returns the name of this request error.
@@ -232,32 +201,74 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
         return string.substring(0, 1).toUpperCase() + string.substring(1);
     }
     
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
-     * Stores the data type used to store instances of this class in the database.
+     * Stores the key converter of this class.
      */
-    public static final @Nonnull String FORMAT = Database.getConfiguration().TINYINT();
+    private static final @Nonnull AbstractNonRequestingKeyConverter<RequestErrorCode, Object, Byte, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<RequestErrorCode, Object, Byte, Object>() {
+        
+        @Pure
+        @Override
+        public boolean isValid(@Nonnull Byte value) {
+            return RequestErrorCode.isValid(value);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull @Validated Byte convert(@Nonnull RequestErrorCode code) {
+            return code.value;
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull RequestErrorCode recover(@Nonnull Object none, @Nonnull @Validated Byte value) throws InvalidEncodingException, InternalException {
+            return RequestErrorCode.get(value);
+        }
+        
+    };
+    
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
-     * Returns the given column of the result set as an instance of this class.
-     * 
-     * @param resultSet the result set to retrieve the data from.
-     * @param columnIndex the index of the column containing the data.
-     * 
-     * @return the given column of the result set as an instance of this class.
+     * Stores the semantic type {@code code.error.request@core.digitalid.net}.
      */
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("code.error.request@core.digitalid.net").load(Int8Wrapper.XDF_TYPE);
+    
+    /**
+     * Stores the XDF converter of this class.
+     */
+    public static final @Nonnull AbstractNonRequestingXDFConverter<RequestErrorCode, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, Int8Wrapper.getValueXDFConverter(TYPE));
+    
     @Pure
-    @NonCommitting
-    public static @Nonnull RequestErrorCode get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
-        final @Nonnull byte value = resultSet.getByte(columnIndex);
-        if (!isValid(value)) { throw new SQLException("'" + value + "' is not a valid request error."); }
-        return get(value);
+    @Override
+    public @Nonnull AbstractNonRequestingXDFConverter<RequestErrorCode, Object> getXDFConverter() {
+        return XDF_CONVERTER;
     }
     
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+    
+    /**
+     * Stores the declaration of this class.
+     */
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("request_error_code", Int8Wrapper.SQL_TYPE);
+    
+    /**
+     * Stores the SQL converter of this class.
+     */
+    public static final @Nonnull AbstractSQLConverter<RequestErrorCode, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int8Wrapper.getValueSQLConverter(DECLARATION));
+    
+    @Pure
     @Override
-    @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
-        preparedStatement.setByte(parameterIndex, value);
+    public @Nonnull AbstractSQLConverter<RequestErrorCode, Object> getSQLConverter() {
+        return SQL_CONVERTER;
     }
+    
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    /**
+     * Stores the converters of this class.
+     */
+    public static final @Nonnull NonRequestingConverters<RequestErrorCode, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

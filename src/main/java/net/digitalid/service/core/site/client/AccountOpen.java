@@ -131,7 +131,7 @@ public final class AccountOpen extends Action {
     private AccountOpen(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("open.account@core.digitalid.net") Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account."); }
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account."); }
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
         
@@ -213,7 +213,7 @@ public final class AccountOpen extends Action {
     @NonCommitting
     public @Nullable ActionReply executeOnHost() throws RequestException, SQLException {
         final @Nonnull InternalIdentifier subject = getSubject();
-        if (subject.isMapped()) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The account with the identifier " + subject + " already exists."); }
+        if (subject.isMapped()) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The account with the identifier " + subject + " already exists."); }
         
         // TODO: Include the resctriction mechanisms like the tokens.
         

@@ -10,7 +10,8 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.concepts.error.ErrorModule;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.request.RequestErrorCode;
+import net.digitalid.service.core.exceptions.internal.InternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
@@ -25,6 +26,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.logger.Log;
 
 /**
@@ -256,7 +258,7 @@ public final class Sender extends Thread {
             return task.get();
         } catch (@Nonnull InterruptedException | ExecutionException exception) {
             Log.error("Could not execute the action asynchronously.", exception);
-            throw new RequestException(RequestErrorCode.INTERNAL, "The action could not be executed asynchronously.", exception);
+            throw InternalException.get("The action could not be executed asynchronously.", exception); // TODO: Think about which exception to throw here.
         }
     }
     

@@ -183,21 +183,21 @@ public abstract class Packet {
         
         final boolean isResponse = (this instanceof Response);
         final @Nullable Response response = isResponse ? (Response) this : null;
-        try { this.wrapper = SelfcontainedWrapper.decodeBlockFrom(inputStream, false); } catch (InvalidEncodingException exception) { throw new RequestException(RequestErrorCode.PACKET, "The packet could not be decoded.", exception, isResponse); }
+        try { this.wrapper = SelfcontainedWrapper.decodeBlockFrom(inputStream, false); } catch (InvalidEncodingException exception) { throw RequestException.get(RequestErrorCode.PACKET, "The packet could not be decoded.", exception, isResponse); }
         
-        try { this.encryption = new EncryptionWrapper(wrapper.getElement().checkType(ENCRYPTION), isResponse ? request.getEncryption().getSymmetricKey() : null); } catch (InvalidEncodingException exception) { throw new RequestException(RequestErrorCode.ENCRYPTION, "The encryption could not be decoded.", exception, isResponse); }
+        try { this.encryption = new EncryptionWrapper(wrapper.getElement().checkType(ENCRYPTION), isResponse ? request.getEncryption().getSymmetricKey() : null); } catch (InvalidEncodingException exception) { throw RequestException.get(RequestErrorCode.ENCRYPTION, "The encryption could not be decoded.", exception, isResponse); }
         Replay.check(encryption);
         
         final @Nullable HostIdentifier recipient = encryption.getRecipient();
-        if (isResponse != (recipient == null)) { throw new RequestException(RequestErrorCode.ENCRYPTION, "The recipient of a request may not be null.", null, isResponse); }
+        if (isResponse != (recipient == null)) { throw RequestException.get(RequestErrorCode.ENCRYPTION, "The recipient of a request may not be null.", null, isResponse); }
         final @Nullable HostAccount account = recipient == null ? null : Server.getHost(recipient).getAccount();
         
         final @Nonnull ReadOnlyList<Block> elements;
-        try { elements = ListWrapper.decodeNullableElements(encryption.getElement()); } catch (InvalidEncodingException exception) { throw new RequestException(RequestErrorCode.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
+        try { elements = ListWrapper.decodeNullableElements(encryption.getElement()); } catch (InvalidEncodingException exception) { throw RequestException.get(RequestErrorCode.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
         
         this.size = elements.size();
-        if (size == 0) { throw new RequestException(RequestErrorCode.ELEMENTS, "The encryption of a packet must contain at least one element.", null, isResponse); }
-        if (isResponse && size > request.getSize()) { throw new RequestException(RequestErrorCode.ELEMENTS, "The response contains more elements than the request.", null, isResponse); }
+        if (size == 0) { throw RequestException.get(RequestErrorCode.ELEMENTS, "The encryption of a packet must contain at least one element.", null, isResponse); }
+        if (isResponse && size > request.getSize()) { throw RequestException.get(RequestErrorCode.ELEMENTS, "The response contains more elements than the request.", null, isResponse); }
         
         initialize(size);
         
@@ -206,35 +206,35 @@ public abstract class Packet {
         for (int i = 0; i < size; i++) {
             if (!elements.isNull(i)) {
                 final @Nonnull SignatureWrapper signature;
-                try { signature = verified ? SignatureWrapper.decodeWithVerifying(elements.getNonNullable(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNonNullable(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new RequestException(RequestErrorCode.SIGNATURE, "A signature is invalid.", exception, isResponse); }
-                try { signature.checkRecency(); } catch (InactiveSignatureException exception) { throw new RequestException(RequestErrorCode.SIGNATURE, "One of the signatures is no longer active.", exception, isResponse); }
+                try { signature = verified ? SignatureWrapper.decodeWithVerifying(elements.getNonNullable(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNonNullable(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw RequestException.get(RequestErrorCode.SIGNATURE, "A signature is invalid.", exception, isResponse); }
+                try { signature.checkRecency(); } catch (InactiveSignatureException exception) { throw RequestException.get(RequestErrorCode.SIGNATURE, "One of the signatures is no longer active.", exception, isResponse); }
                 
                 final @Nullable Audit _audit = signature.getAudit();
                 if (_audit != null) {
                     audit = isResponse ? _audit.castTo(ResponseAudit.class) : _audit.castTo(RequestAudit.class);
-                    if (!signature.isSigned()) { throw new RequestException(RequestErrorCode.SIGNATURE, "A packet that contains an audit has to be signed."); }
+                    if (!signature.isSigned()) { throw RequestException.get(RequestErrorCode.SIGNATURE, "A packet that contains an audit has to be signed."); }
                 }
                 
                 final @Nullable Block element = signature.getNullableElement();
                 if (element != null) {
                     final @Nonnull CompressionWrapper compression;
-                    try { compression = new CompressionWrapper(element); } catch (InvalidEncodingException exception) { throw new RequestException(RequestErrorCode.COMPRESSION, "The compression could not be decoded.", exception, isResponse); }
+                    try { compression = new CompressionWrapper(element); } catch (InvalidEncodingException exception) { throw RequestException.get(RequestErrorCode.COMPRESSION, "The compression could not be decoded.", exception, isResponse); }
                     
                     final @Nonnull SelfcontainedWrapper content;
-                    try { content = new SelfcontainedWrapper(compression.getElement()); } catch (InvalidEncodingException exception) { throw new RequestException(RequestErrorCode.CONTENT, "The content could not be decoded.", exception, isResponse); }
+                    try { content = new SelfcontainedWrapper(compression.getElement()); } catch (InvalidEncodingException exception) { throw RequestException.get(RequestErrorCode.CONTENT, "The content could not be decoded.", exception, isResponse); }
                     
                     final @Nonnull Block block = content.getElement();
                     final @Nonnull SemanticType type = block.getType();
                     if (response != null) {
-                        if (signature.hasSubject() && !signature.getNonNullableSubject().equals(request.getSubject())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The subject of the request was " + request.getSubject() + ", the response from " + request.getRecipient() + " was about " + signature.getNonNullableSubject() + " though.", null, isResponse); }
+                        if (signature.hasSubject() && !signature.getNonNullableSubject().equals(request.getSubject())) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The subject of the request was " + request.getSubject() + ", the response from " + request.getRecipient() + " was about " + signature.getNonNullableSubject() + " though.", null, isResponse); }
                         
                         if (signature.isSigned()) {
                             if (reference == null) { reference = signature; }
-                            else if (!signature.isSignedLike(reference)) { throw new RequestException(RequestErrorCode.SIGNATURE, "All the signed signatures of a response have to be signed alike.", null, isResponse); }
+                            else if (!signature.isSignedLike(reference)) { throw RequestException.get(RequestErrorCode.SIGNATURE, "All the signed signatures of a response have to be signed alike.", null, isResponse); }
                             
                             if (signature instanceof HostSignatureWrapper) {
                                 final @Nonnull Identifier signer = ((HostSignatureWrapper) signature).getSigner();
-                                if (!signer.equals(request.getRecipient())) { throw new RequestException(RequestErrorCode.SIGNATURE, "The response from the host " + request.getRecipient() + " was signed by " + signer + ".", null, isResponse); }
+                                if (!signer.equals(request.getRecipient())) { throw RequestException.get(RequestErrorCode.SIGNATURE, "The response from the host " + request.getRecipient() + " was signed by " + signer + ".", null, isResponse); }
                                 
                                 if (type.equals(RequestException.TYPE)) {
                                     response.setException(i, RequestException.create(block));
@@ -244,18 +244,18 @@ public abstract class Packet {
                                     if (!method.matches(reply)) { throw InvalidReplyParameterValueException.get(reply, "matches", null, null); } // TODO: Move the exception to the matches() method.
                                     response.setReply(i, reply);
                                 }
-                            } else { throw new RequestException(RequestErrorCode.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed by a host.", null, isResponse); }
+                            } else { throw RequestException.get(RequestErrorCode.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed by a host.", null, isResponse); }
                         } else {
                             if (type.equals(RequestException.TYPE)) { response.setException(i, RequestException.create(block)); }
-                            else { throw new RequestException(RequestErrorCode.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed.", null, isResponse); }
+                            else { throw RequestException.get(RequestErrorCode.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed.", null, isResponse); }
                         }
                     } else {
-                        if (!signature.hasSubject()) { throw new RequestException(RequestErrorCode.SIGNATURE, "Each signature in a request must have a subject.", null, isResponse); }
+                        if (!signature.hasSubject()) { throw RequestException.get(RequestErrorCode.SIGNATURE, "Each signature in a request must have a subject.", null, isResponse); }
                         final @Nonnull InternalIdentifier subject = signature.getNonNullableSubject();
-                        if (subject instanceof HostIdentifier && !type.equals(AttributesQuery.TYPE) && !type.equals(CertificateIssue.TYPE)) { throw new RequestException(RequestErrorCode.METHOD, "A host can only be the subject of an attributes query and a certificate issuance but not " + type.getAddress() + ".", null, isResponse); }
+                        if (subject instanceof HostIdentifier && !type.equals(AttributesQuery.TYPE) && !type.equals(CertificateIssue.TYPE)) { throw RequestException.get(RequestErrorCode.METHOD, "A host can only be the subject of an attributes query and a certificate issuance but not " + type.getAddress() + ".", null, isResponse); }
                         
                         if (reference == null) { reference = signature; }
-                        else if (!signature.isSignedLike(reference)) { throw new RequestException(RequestErrorCode.SIGNATURE, "All the signatures of a request have to be signed alike.", null, isResponse); }
+                        else if (!signature.isSignedLike(reference)) { throw RequestException.get(RequestErrorCode.SIGNATURE, "All the signatures of a request have to be signed alike.", null, isResponse); }
                         
                         final @Nonnull Entity entity;
                         assert recipient != null && account != null : "In case of requests, both the recipient and the account are set (see the code above).";
@@ -265,43 +265,43 @@ public abstract class Packet {
                             entity = Account.get(account.getHost(), subject.getIdentity());
                             if (subject instanceof InternalNonHostIdentifier) {
                                 final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) subject;
-                                if (!type.equals(AccountInitialize.TYPE) && !FreezablePredecessors.exist(internalNonHostIdentifier)) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The subject " + subject + " is not yet initialized."); }
+                                if (!type.equals(AccountInitialize.TYPE) && !FreezablePredecessors.exist(internalNonHostIdentifier)) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The subject " + subject + " is not yet initialized."); }
                                 final @Nullable InternalNonHostIdentifier successor = Successor.get(internalNonHostIdentifier);
-                                if (successor != null) { throw new RequestException(RequestErrorCode.RELOCATION, "The subject " + subject + " has been relocated to " + successor + ".", null, isResponse); }
+                                if (successor != null) { throw RequestException.get(RequestErrorCode.RELOCATION, "The subject " + subject + " has been relocated to " + successor + ".", null, isResponse); }
                             }
                         }
                         final @Nonnull Method method = Method.get(entity, signature, recipient, block);
-                        if (!account.getHost().supports(method.getService())) { throw new RequestException(RequestErrorCode.METHOD, "The host " + recipient + " does not support the service '" + method.getService().getName() + "'.", null, isResponse); }
+                        if (!account.getHost().supports(method.getService())) { throw RequestException.get(RequestErrorCode.METHOD, "The host " + recipient + " does not support the service '" + method.getService().getName() + "'.", null, isResponse); }
                         ((Request) this).setMethod(i, method);
                     }
                     continue;
                 }
             }
             
-            if (response == null) { throw new RequestException(RequestErrorCode.ELEMENTS, "None of the elements may be null in requests.", null, isResponse); }
+            if (response == null) { throw RequestException.get(RequestErrorCode.ELEMENTS, "None of the elements may be null in requests.", null, isResponse); }
             else if (!request.getMethod(i).matches(null)) { throw InvalidReplyParameterValueException.get(null, "matches", "non-null", "null"); } // TODO: Improve the exception for "A reply was expected but none was received.".
         }
         
         if (response != null && size < request.getSize()) {
             response.getReply(0); // If the first element encodes a packet error, it is thrown by retrieving the reply.
-            throw new RequestException(RequestErrorCode.ELEMENTS, "The response contains fewer elements than the request.", null, isResponse);
+            throw RequestException.get(RequestErrorCode.ELEMENTS, "The response contains fewer elements than the request.", null, isResponse);
         }
         
         if (!encryption.isEncrypted()) {
-            if (size > 1) { throw new RequestException(RequestErrorCode.ELEMENTS, "If the packet is not encrypted, only one element may be provided.", null, isResponse); }
+            if (size > 1) { throw RequestException.get(RequestErrorCode.ELEMENTS, "If the packet is not encrypted, only one element may be provided.", null, isResponse); }
             
             if (response != null) {
                 final @Nullable Reply reply = response.getReply(0); // If the only element encodes a packet error, it is thrown by retrieving the reply.
-                if (!(reply instanceof AttributesReply && reply.getSubject() instanceof HostIdentifier)) { throw new RequestException(RequestErrorCode.ENCRYPTION, "The response should be encrypted but is not.", null, isResponse); }
+                if (!(reply instanceof AttributesReply && reply.getSubject() instanceof HostIdentifier)) { throw RequestException.get(RequestErrorCode.ENCRYPTION, "The response should be encrypted but is not.", null, isResponse); }
             } else {
                 final @Nonnull Method method = ((Request) this).getMethod(0);
-                if (!(method instanceof AttributesQuery && method.getSubject() instanceof HostIdentifier)) { throw new RequestException(RequestErrorCode.ENCRYPTION, "The request should be encrypted but is not.", null, isResponse); }
+                if (!(method instanceof AttributesQuery && method.getSubject() instanceof HostIdentifier)) { throw RequestException.get(RequestErrorCode.ENCRYPTION, "The request should be encrypted but is not.", null, isResponse); }
             }
         }
         
         if (isResponse) {
-            if (audit == null && request.getAudit() != null) { throw new RequestException(RequestErrorCode.AUDIT, "An audit was requested but none was received.", null, isResponse); }
-            if (audit != null && request.getAudit() == null) { throw new RequestException(RequestErrorCode.AUDIT, "No audit was requested but one was received.", null, isResponse); }
+            if (audit == null && request.getAudit() != null) { throw RequestException.get(RequestErrorCode.AUDIT, "An audit was requested but none was received.", null, isResponse); }
+            if (audit != null && request.getAudit() == null) { throw RequestException.get(RequestErrorCode.AUDIT, "No audit was requested but one was received.", null, isResponse); }
         }
         this.audit = audit;
         

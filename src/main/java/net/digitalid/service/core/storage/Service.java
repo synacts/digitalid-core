@@ -71,7 +71,7 @@ public class Service extends DelegatingSiteStorageImplementation implements XDF<
     @Pure
     public static @Nonnull Service getService(@Nonnull SemanticType type) throws RequestException {
         final @Nullable Service service = services.get(type);
-        if (service == null) { throw new RequestException(RequestErrorCode.SERVICE, "No service with the type " + type.getAddress() + " is installed."); }
+        if (service == null) { throw RequestException.get(RequestErrorCode.SERVICE, "No service with the type " + type.getAddress() + " is installed."); }
         return service;
     }
     

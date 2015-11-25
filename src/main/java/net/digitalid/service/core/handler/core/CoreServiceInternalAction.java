@@ -67,7 +67,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal actions of the core service."); }
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal actions of the core service."); }
         
         this.publicKey = Cache.getPublicKey(getRecipient(), signature.getNonNullableTime());
     }

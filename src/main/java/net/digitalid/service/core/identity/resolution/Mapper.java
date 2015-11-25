@@ -14,6 +14,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidDeclarationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -529,7 +530,7 @@ public final class Mapper {
         try {
             reply = new IdentityQuery(identifier).sendNotNull();
         } catch (@Nonnull RequestException exception) {
-            if (exception.getError() == RequestErrorCode.IDENTIFIER) { throw IdentityNotFoundException.get(identifier); else throw exception; }
+            if (exception.getCode() == RequestErrorCode.IDENTIFIER) { throw IdentityNotFoundException.get(identifier); else throw exception; }
         }
         final @Nonnull Category category = reply.getCategory();
         Log.verbose("The category of " + identifier + " is '" + category.name() + "'.");
@@ -600,7 +601,8 @@ public final class Mapper {
             if (!identity.equals(identifier.getIdentity())) { throw InvalidDeclarationException.get("The claimed successor " + identity.getAddress() + " of " + identifier + " does not link back.", identifier); }
             return identity.castTo(Person.class);
         } catch (@Nonnull RequestException exception) {
-            if (exception.getError() == RequestErrorCode.EXTERNAL) { return person; }
+            // TODO: Why is the external request error captured? Document (and change)!
+            if (exception.getCode() == RequestErrorCode.EXTERNAL) { return person; }
             else { throw exception; }
         }
     }

@@ -118,7 +118,7 @@ public final class Worker implements Runnable {
                             if (method instanceof Action) { ActionModule.audit((Action) method); }
                             Database.commit();
                         } catch (@Nonnull SQLException exception) {
-                            exceptions.set(i, new RequestException(RequestErrorCode.INTERNAL, "An SQLException occurred.", exception));
+                            exceptions.set(i, RequestException.get(RequestErrorCode.DATABASE, "An SQLException occurred.", exception));
                             Database.rollback();
                         } catch (@Nonnull RequestException exception) {
                             exceptions.set(i, exception);
@@ -132,7 +132,7 @@ public final class Worker implements Runnable {
                     final @Nullable ResponseAudit responseAudit;
                     if (requestAudit != null) {
                         final @Nonnull Time auditStart = Time.getCurrent();
-                        if (!(reference instanceof InternalMethod)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "An audit may only be requested by internal methods."); }
+                        if (!(reference instanceof InternalMethod)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "An audit may only be requested by internal methods."); }
                         final @Nullable ReadOnlyAgentPermissions permissions;
                         @Nullable Restrictions restrictions;
                         if (service.equals(CoreService.SERVICE)) {
@@ -147,7 +147,7 @@ public final class Worker implements Runnable {
                             final @Nonnull Credential credential = signature.toCredentialsSignatureWrapper().getCredentials().getNonNullable(0);
                             permissions = credential.getPermissions();
                             restrictions = credential.getRestrictions();
-                            if (permissions == null || restrictions == null) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null."); }
+                            if (permissions == null || restrictions == null) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null."); }
                         }
                         responseAudit = ActionModule.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
@@ -159,17 +159,17 @@ public final class Worker implements Runnable {
                     
                     response = new Response(request, replies.freeze(), exceptions.freeze(), responseAudit);
                 } catch (@Nonnull DatabaseException exception) {
-                    throw new RequestException(RequestErrorCode.DATABASE, "A DatabaseException occurred.", exception);
+                    throw RequestException.get(RequestErrorCode.DATABASE, "A DatabaseException occurred.", exception);
                 } catch (@Nonnull NetworkException exception) {
-                    throw new RequestException(RequestErrorCode.NETWORK, "A NetworkException occurred.", exception);
+                    throw RequestException.get(RequestErrorCode.NETWORK, "A NetworkException occurred.", exception);
                 } catch (@Nonnull InternalException exception) {
-                    throw new RequestException(RequestErrorCode.INTERNAL, "An InternalException occurred.", exception);
+                    throw RequestException.get(RequestErrorCode.INTERNAL, "An InternalException occurred.", exception);
                 } catch (@Nonnull ExternalException exception) {
-                    throw new RequestException(RequestErrorCode.EXTERNAL, "An ExternalException occurred.", exception);
+                    throw RequestException.get(RequestErrorCode.EXTERNAL, "An ExternalException occurred.", exception);
                 }
             } catch (@Nonnull RequestException exception) {
-                response = new Response(request, exception.isRemote() ? new RequestException(RequestErrorCode.EXTERNAL, "An external error occurred.", exception) : exception);
-                error = exception.getError();
+                response = new Response(request, exception.isDecoded() ? RequestException.get(RequestErrorCode.REQUEST, "An external request error occurred.", exception) : exception);
+                error = exception.getCode();
                 Database.rollback();
             } finally {
                 Database.unlock();

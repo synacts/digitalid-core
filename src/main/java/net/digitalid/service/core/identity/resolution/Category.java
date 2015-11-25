@@ -9,6 +9,7 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -72,7 +73,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
      */
     public static final @Nonnull @Frozen ReadOnlyList<Category> NONE = FreezableArrayList.<Category>getWithCapacity(0).freeze();
     
-    /* -------------------------------------------------- Validity -------------------------------------------------- */
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Returns whether the given value is a valid category.
@@ -85,8 +86,6 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     public static boolean isValid(byte value) {
         return value >= 0 && value <= 6;
     }
-    
-    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the byte representation of this category.

@@ -55,8 +55,8 @@ public abstract class InternalQuery extends Query implements InternalMethod {
     protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity, signature, recipient);
         
-        if (!isNonHost()) { throw new RequestException(RequestErrorCode.IDENTIFIER, "Internal queries have to belong to a non-host."); }
-        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) { throw new RequestException(RequestErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal queries."); }
+        if (!isNonHost()) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "Internal queries have to belong to a non-host."); }
+        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal queries."); }
     }
     
     

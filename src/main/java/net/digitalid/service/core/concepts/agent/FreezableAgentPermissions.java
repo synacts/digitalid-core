@@ -233,7 +233,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public void checkCanRead(@Nonnull SemanticType type) throws RequestException {
-        if (!canRead(type)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "These agent permissions cannot read " + type.getAddress() + "."); }
+        if (!canRead(type)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "These agent permissions cannot read " + type.getAddress() + "."); }
     }
     
     @Pure
@@ -247,7 +247,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public void checkCanWrite(@Nonnull SemanticType type) throws RequestException {
-        if (!canWrite(type)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "These agent permissions cannot write " + type.getAddress() + "."); }
+        if (!canWrite(type)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "These agent permissions cannot write " + type.getAddress() + "."); }
     }
     
     @Pure
@@ -270,7 +270,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws RequestException {
-        if (!cover(permissions)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "These agent permissions do not cover " + permissions + "."); }
+        if (!cover(permissions)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "These agent permissions do not cover " + permissions + "."); }
     }
     
     

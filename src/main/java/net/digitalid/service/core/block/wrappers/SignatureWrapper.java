@@ -455,7 +455,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     public final @Nonnull HostSignatureWrapper toHostSignatureWrapper() throws RequestException {
         if (this instanceof HostSignatureWrapper) { return (HostSignatureWrapper) this; }
-        throw new RequestException(RequestErrorCode.SIGNATURE, "The element was not signed by a host.");
+        throw RequestException.get(RequestErrorCode.SIGNATURE, "The element was not signed by a host.");
     }
     
     /**
@@ -468,7 +468,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     public final @Nonnull ClientSignatureWrapper toClientSignatureWrapper() throws RequestException {
         if (this instanceof ClientSignatureWrapper) { return (ClientSignatureWrapper) this; }
-        throw new RequestException(RequestErrorCode.SIGNATURE, "The element was not signed by a client.");
+        throw RequestException.get(RequestErrorCode.SIGNATURE, "The element was not signed by a client.");
     }
     
     /**
@@ -481,7 +481,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     public final @Nonnull CredentialsSignatureWrapper toCredentialsSignatureWrapper() throws RequestException {
         if (this instanceof CredentialsSignatureWrapper) { return (CredentialsSignatureWrapper) this; }
-        throw new RequestException(RequestErrorCode.SIGNATURE, "The element was not signed with credentials.");
+        throw RequestException.get(RequestErrorCode.SIGNATURE, "The element was not signed with credentials.");
     }
     
     /* -------------------------------------------------- Agent -------------------------------------------------- */
@@ -520,7 +520,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Locked
     @NonCommitting
     public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws DatabaseException, RequestException {
-        throw new RequestException(RequestErrorCode.AUTHORIZATION, "The element was not signed by an authorized agent.");
+        throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The element was not signed by an authorized agent.");
     }
     
     /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */

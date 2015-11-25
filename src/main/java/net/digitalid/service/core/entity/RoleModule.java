@@ -209,7 +209,7 @@ public final class RoleModule {
                 if (relation == null && recipient == null) { return NativeRole.get(client, number, person, agentNumber); }
                 if (relation != null && recipient != null) { return NonNativeRole.get(client, number, person, relation, recipient, agentNumber); }
                 else { throw InvalidParameterValueCombinationException.get("The relation and the recipient have to be either both null or non-null."); }
-            } else { throw new RequestException(RequestErrorCode.IDENTIFIER, "No role for the person " + person.getAddress() + " could be found."); }
+            } else { throw RequestException.get(RequestErrorCode.IDENTIFIER, "No role for the person " + person.getAddress() + " could be found."); }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);
         }

@@ -3,6 +3,7 @@ package net.digitalid.service.core.exceptions.internal;
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * An internal exception indicates a wrong use of the library.
@@ -19,6 +20,8 @@ public class InternalException extends Exception {
      */
     protected InternalException(@Nonnull String message) {
         super(message);
+        
+        Log.error("An internal exception occurred.", this);
     }
     
     /**

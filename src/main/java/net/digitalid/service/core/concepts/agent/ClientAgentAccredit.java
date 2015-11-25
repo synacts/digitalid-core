@@ -181,7 +181,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     @Override
     @NonCommitting
     public void executeOnHostInternalAction() throws RequestException, SQLException {
-        if (!Settings.get(getNonHostAccount()).getValue().equals(password)) { throw new RequestException(RequestErrorCode.AUTHORIZATION, "The password is not correct."); }
+        if (!Settings.get(getNonHostAccount()).getValue().equals(password)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "The password is not correct."); }
         executeOnBoth();
     }
     
