@@ -13,7 +13,6 @@ import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -26,6 +25,10 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class wraps a {@code short} for encoding and decoding a block of the syntactic type {@code int16@core.digitalid.net}.
@@ -196,8 +199,12 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(short value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        preparedStatement.setShort(parameterIndex.getAndIncrementValue(), value);
+    public static void store(short value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            preparedStatement.setShort(parameterIndex.getAndIncrementValue(), value);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /**
@@ -210,8 +217,12 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      */
     @Pure
     @NonCommitting
-    public static short restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-        return resultSet.getShort(columnIndex.getAndIncrementValue());
+    public static short restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException {
+        try {
+            return resultSet.getShort(columnIndex.getAndIncrementValue());
+        } catch (@Nonnull SQLException exception) {
+            throw FailedRestoringException.get(exception);
+        }
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
@@ -240,16 +251,20 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull Int16Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull Int16Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Int16Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-            final short value = restore(resultSet, columnIndex);
-            return resultSet.wasNull() ? null : new Int16Wrapper(getType(), value);
+        public @Nullable Int16Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+            try {
+                final short value = restore(resultSet, columnIndex);
+                return resultSet.wasNull() ? null : new Int16Wrapper(getType(), value);
+            } catch (@Nonnull SQLException exception) {
+                throw FailedRestoringException.get(exception);
+            }
         }
         
     }

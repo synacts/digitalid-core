@@ -21,6 +21,8 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.database.exceptions.state.CorruptParameterValueCombinationException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class models internal non-host identifiers.
@@ -78,7 +80,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof InternalNonHostIdentity) { return (InternalNonHostIdentity) identity; }
-        else { throw DatabaseException.get("The mapped identity has a wrong type."); }
+        else { throw CorruptParameterValueCombinationException.get("The mapped identity has a wrong type."); }
     }
     
     @Pure

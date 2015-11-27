@@ -16,7 +16,6 @@ import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -31,8 +30,10 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.database.table.Table;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This interface models a digital identity.
@@ -192,7 +193,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
         @Locked
         @Override
         @NonCommitting
-        public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+        public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateException {
             super.executeAfterCreation(statement, table, site, unique, prefix);
             if (unique && mergeable) {
                 Mapper.addReference(table.getName(site), getName(prefix), table.getDeclaration().getPrimaryKeyColumnNames().toArray());
@@ -202,7 +203,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
         @Locked
         @Override
         @NonCommitting
-        public void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+        public void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateException {
             super.executeBeforeDeletion(statement, table, site, unique, prefix);
             if (unique && mergeable) {
                 Mapper.removeReference(table.getName(site), getName(prefix), table.getDeclaration().getPrimaryKeyColumnNames().toArray());

@@ -6,7 +6,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +20,8 @@ import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.operation.FailedCommitException;
+import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
 import net.digitalid.utility.system.directory.annotations.IsDirectory;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.logger.Log;
@@ -39,7 +40,7 @@ public final class Loader {
      */
     @Locked
     @Committing
-    private static void loadClasses(@Nonnull @IsDirectory File directory, @Nonnull String prefix) throws ClassNotFoundException, SQLException {
+    private static void loadClasses(@Nonnull @IsDirectory File directory, @Nonnull String prefix) throws ClassNotFoundException, FailedCommitException {
         final @Nonnull File[] files = directory.listFiles();
         for (final @Nonnull File file : files) {
             final @Nonnull String fileName = file.getName();
@@ -61,7 +62,7 @@ public final class Loader {
      */
     @Locked
     @Committing
-    public static void loadJarFile(@Nonnull JarFile jarFile) throws ClassNotFoundException, SQLException, MalformedURLException {
+    public static void loadJarFile(@Nonnull JarFile jarFile) throws ClassNotFoundException, FailedCommitException, MalformedURLException {
         final @Nonnull URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{ new File(jarFile.getName()).toURI().toURL() }, Loader.class.getClassLoader());
         final @Nonnull Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
@@ -112,7 +113,7 @@ public final class Loader {
                 roots.add(root);
                 Log.debugging("All classes in '" + root + "' have been loaded.");
             }
-        } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | SQLException exception) {
+        } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | FailedOperationException exception) {
             throw InitializationError.get("Could not load all classes.", exception);
         } finally {
             Database.unlock();

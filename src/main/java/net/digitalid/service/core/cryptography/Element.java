@@ -12,13 +12,13 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * An element is a number in a certain group.

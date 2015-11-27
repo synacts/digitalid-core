@@ -15,7 +15,6 @@ import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -29,6 +28,11 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptNullValueException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.utility.system.logger.Log;
 
 /**
@@ -260,8 +264,12 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNonNullable(@Nonnull String value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        preparedStatement.setString(parameterIndex.getAndIncrementValue(), value);
+    public static void storeNonNullable(@Nonnull String value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            preparedStatement.setString(parameterIndex.getAndIncrementValue(), value);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /**
@@ -272,9 +280,13 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNullable(@Nullable String value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        if (value != null) { storeNonNullable(value, preparedStatement, parameterIndex); }
-        else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
+    public static void storeNullable(@Nullable String value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            if (value != null) { storeNonNullable(value, preparedStatement, parameterIndex); }
+            else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /**
@@ -287,8 +299,12 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nullable String restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-        return resultSet.getString(columnIndex.getAndIncrementValue());
+    public static @Nullable String restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException {
+        try {
+            return resultSet.getString(columnIndex.getAndIncrementValue());
+        } catch (@Nonnull SQLException exception) {
+            throw FailedRestoringException.get(exception);
+        }
     }
     
     /**
@@ -301,9 +317,9 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull String restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
+    public static @Nonnull String restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptNullValueException {
         final @Nullable String value = restoreNullable(resultSet, columnIndex);
-        if (value == null) { throw new SQLException("A value which should not be null was null."); }
+        if (value == null) { throw CorruptNullValueException.get(); }
         return value;
     }
     
@@ -333,14 +349,14 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull StringWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull StringWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
             StringWrapper.storeNonNullable(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable StringWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
+        public @Nullable StringWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
             final @Nullable String value = StringWrapper.restoreNullable(resultSet, columnIndex);
             return value == null ? null : new StringWrapper(getType(), value);
         }

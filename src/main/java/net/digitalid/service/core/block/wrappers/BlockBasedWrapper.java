@@ -2,13 +2,11 @@ package net.digitalid.service.core.block.wrappers;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -19,6 +17,11 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.ConvertToSQL;
 import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.database.exceptions.state.MaskingCorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class implements methods that all wrappers whose storable mechanisms use a {@link Block block} share.
@@ -65,19 +68,19 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
         
         @Override
         @NonCommitting
-        public final void storeNonNullable(@Nonnull W wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+        public final void storeNonNullable(@Nonnull W wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
             ConvertToSQL.nonNullable(ConvertToXDF.nonNullable(wrapper), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable W restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
+        public final @Nullable W restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
             try {
                 final @Nullable Block block = Block.SQL_CONVERTER.restoreNullable(getType(), resultSet, columnIndex);
                 return block == null ? null : XDFConverter.decodeNonNullable(none, block);
-            } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-                throw new SQLException("Could not decode a block from the database.", exception);
+            } catch (@Nonnull DatabaseException | NetworkException | ExternalException | RequestException exception) {
+                throw MaskingCorruptStateException.get(exception);
             }
         }
         

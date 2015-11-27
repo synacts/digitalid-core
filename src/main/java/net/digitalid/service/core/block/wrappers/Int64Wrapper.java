@@ -15,7 +15,6 @@ import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -29,6 +28,10 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class wraps a {@code long} for encoding and decoding a block of the syntactic type {@code int64@core.digitalid.net}.
@@ -199,8 +202,12 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(long value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        preparedStatement.setLong(parameterIndex.getAndIncrementValue(), value);
+    public static void store(long value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            preparedStatement.setLong(parameterIndex.getAndIncrementValue(), value);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /**
@@ -213,8 +220,12 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      */
     @Pure
     @NonCommitting
-    public static long restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-        return resultSet.getLong(columnIndex.getAndIncrementValue());
+    public static long restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException {
+        try {
+            return resultSet.getLong(columnIndex.getAndIncrementValue());
+        } catch (@Nonnull SQLException exception) {
+            throw FailedRestoringException.get(exception);
+        }
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
@@ -243,16 +254,20 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull Int64Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull Int64Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Int64Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-            final long value = restore(resultSet, columnIndex);
-            return resultSet.wasNull() ? null : new Int64Wrapper(getType(), value);
+        public @Nullable Int64Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+            try {
+                final long value = restore(resultSet, columnIndex);
+                return resultSet.wasNull() ? null : new Int64Wrapper(getType(), value);
+            } catch (@Nonnull SQLException exception) {
+                throw FailedRestoringException.get(exception);
+            }
         }
         
     }

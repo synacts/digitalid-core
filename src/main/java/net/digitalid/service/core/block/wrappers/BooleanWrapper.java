@@ -15,7 +15,6 @@ import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -30,6 +29,10 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class wraps a {@code boolean} for encoding and decoding a block of the syntactic type {@code boolean@core.digitalid.net}.
@@ -200,8 +203,12 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(boolean value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        preparedStatement.setBoolean(parameterIndex.getAndIncrementValue(), value);
+    public static void store(boolean value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            preparedStatement.setBoolean(parameterIndex.getAndIncrementValue(), value);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /**
@@ -214,8 +221,12 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
      */
     @Pure
     @NonCommitting
-    public static boolean restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-        return resultSet.getBoolean(columnIndex.getAndIncrementValue());
+    public static boolean restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException {
+        try {
+            return resultSet.getBoolean(columnIndex.getAndIncrementValue());
+        } catch (@Nonnull SQLException exception) {
+            throw FailedRestoringException.get(exception);
+        }
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
@@ -244,16 +255,20 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull BooleanWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull BooleanWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable BooleanWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-            final boolean value = restore(resultSet, columnIndex);
-            return resultSet.wasNull() ? null : new BooleanWrapper(getType(), value);
+        public @Nullable BooleanWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+            try {
+                final boolean value = restore(resultSet, columnIndex);
+                return resultSet.wasNull() ? null : new BooleanWrapper(getType(), value);
+            } catch (@Nonnull SQLException exception) {
+                throw FailedRestoringException.get(exception);
+            }
         }
         
     }

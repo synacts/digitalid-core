@@ -2,14 +2,12 @@ package net.digitalid.service.core.block.wrappers;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.reference.NonCapturable;
@@ -22,6 +20,10 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * A value wrapper wraps a primitive value.
@@ -179,14 +181,14 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends AbstractWr
         
         @Override
         @NonCommitting
-        public final void storeNonNullable(@Nonnull V value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+        public final void storeNonNullable(@Nonnull V value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
             SQLConverter.storeNonNullable(wrapper.wrap(SQLConverter.getType(), value), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable V restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
+        public final @Nullable V restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
             final @Nullable W wrapper = SQLConverter.restoreNullable(none, resultSet, columnIndex);
             return wrapper == null ? null : this.wrapper.unwrap(wrapper);
         }

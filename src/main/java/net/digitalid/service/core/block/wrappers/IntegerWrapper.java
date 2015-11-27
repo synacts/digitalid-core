@@ -13,7 +13,6 @@ import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -27,6 +26,11 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptNullValueException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class wraps an {@link BigInteger integer} for encoding and decoding a block of the syntactic type {@code integer@core.digitalid.net}.
@@ -235,8 +239,12 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNonNullable(@Nonnull BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), value.toByteArray());
+    public static void storeNonNullable(@Nonnull BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), value.toByteArray());
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /**
@@ -247,9 +255,13 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNullable(@Nullable BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        if (value != null) { storeNonNullable(value, preparedStatement, parameterIndex); }
-        else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
+    public static void storeNullable(@Nullable BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            if (value != null) { storeNonNullable(value, preparedStatement, parameterIndex); }
+            else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /**
@@ -262,9 +274,13 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nullable BigInteger restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-        final @Nullable byte [] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
-        return bytes == null ? null : new BigInteger(bytes);
+    public static @Nullable BigInteger restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException {
+        try {
+            final @Nullable byte [] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
+            return bytes == null ? null : new BigInteger(bytes);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedRestoringException.get(exception);
+        }
     }
     
     /**
@@ -277,9 +293,9 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull BigInteger restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
+    public static @Nonnull BigInteger restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptNullValueException {
         final @Nullable BigInteger value = restoreNullable(resultSet, columnIndex);
-        if (value == null) { throw new SQLException("A value which should not be null was null."); }
+        if (value == null) { throw CorruptNullValueException.get(); }
         return value;
     }
     
@@ -309,16 +325,24 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull IntegerWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-            preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), wrapper.bytes);
+        public void storeNonNullable(@Nonnull IntegerWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+            try {
+                preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), wrapper.bytes);
+            } catch (@Nonnull SQLException exception) {
+                throw FailedStoringException.get(exception);
+            }
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable IntegerWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-            final @Nullable byte[] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
-            return bytes == null ? null : new IntegerWrapper(getType(), bytes, new BigInteger(bytes));
+        public @Nullable IntegerWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+            try {
+                final @Nullable byte[] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
+                return bytes == null ? null : new IntegerWrapper(getType(), bytes, new BigInteger(bytes));
+            } catch (@Nonnull SQLException exception) {
+                throw FailedRestoringException.get(exception);
+            }
         }
         
     }

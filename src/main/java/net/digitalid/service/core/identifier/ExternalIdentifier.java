@@ -21,7 +21,9 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.database.exceptions.state.CorruptParameterValueCombinationException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class models external identifiers.
@@ -105,7 +107,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof Person) { return (Person) identity; }
-        else { throw DatabaseException.get("The mapped identity has a wrong type."); }
+        else { throw CorruptParameterValueCombinationException.get("The mapped identity has a wrong type."); }
     }
     
     @Pure

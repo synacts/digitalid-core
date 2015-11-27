@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -19,9 +18,10 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.Declaration;
 import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
 import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
-import net.digitalid.utility.database.exceptions.state.MaskingCorruptStateException;
-import net.digitalid.utility.database.exceptions.state.CorruptStateException;
 import net.digitalid.utility.database.exceptions.state.CorruptParameterValueException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.database.exceptions.state.MaskingCorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class implements an SQL converter that is based on another SQL converter.

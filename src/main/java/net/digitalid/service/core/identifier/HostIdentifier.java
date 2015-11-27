@@ -20,6 +20,8 @@ import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.database.exceptions.state.CorruptParameterValueCombinationException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class models host identifiers.
@@ -83,7 +85,7 @@ public final class HostIdentifier extends InternalIdentifier {
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof HostIdentity) { return (HostIdentity) identity; }
-        else { throw DatabaseException.get("The mapped identity has a wrong type."); }
+        else { throw CorruptParameterValueCombinationException.get("The mapped identity has a wrong type."); }
     }
     
     @Pure

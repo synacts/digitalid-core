@@ -19,7 +19,6 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -38,6 +37,11 @@ import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.CombiningDeclaration;
 import net.digitalid.utility.database.declaration.Declaration;
 import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptParameterValueCombinationException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class models the restrictions of an agent.
@@ -523,7 +527,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Override
         @NonCommitting
-        public final void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+        public final void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
             BooleanWrapper.store(restrictions.client, preparedStatement, parameterIndex);
             BooleanWrapper.store(restrictions.role, preparedStatement, parameterIndex);
             BooleanWrapper.store(restrictions.writing, preparedStatement, parameterIndex);
@@ -534,21 +538,25 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-            final boolean client = BooleanWrapper.restore(resultSet, columnIndex);
-            final boolean clientWasNull = resultSet.wasNull();
-            final boolean role = BooleanWrapper.restore(resultSet, columnIndex);
-            final boolean roleWasNull = resultSet.wasNull();
-            final boolean writing = BooleanWrapper.restore(resultSet, columnIndex);
-            final boolean writingWasNull = resultSet.wasNull();
-            final @Nullable Context context = Context.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
-            final @Nullable Contact contact = Contact.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
-            
-            if (clientWasNull && roleWasNull && writingWasNull && context == null && contact == null) { return null; }
-            if (clientWasNull || roleWasNull || writingWasNull) { throw new SQLException("Found inconsistent restrictions ('client' = '" + client + ", 'role' = '" + role + "', 'writing' = '" + writing + "')."); }
-            if (context != null && contact != null) { throw CorruptParameterValueCombinationException.get("Both the context and the contact are non-null."); }
-            
-            return new Restrictions(client, role, writing, context, contact);
+        public final @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+            try {
+                final boolean client = BooleanWrapper.restore(resultSet, columnIndex);
+                final boolean clientWasNull = resultSet.wasNull();
+                final boolean role = BooleanWrapper.restore(resultSet, columnIndex);
+                final boolean roleWasNull = resultSet.wasNull();
+                final boolean writing = BooleanWrapper.restore(resultSet, columnIndex);
+                final boolean writingWasNull = resultSet.wasNull();
+                final @Nullable Context context = Context.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
+                final @Nullable Contact contact = Contact.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
+                
+                if (clientWasNull && roleWasNull && writingWasNull && context == null && contact == null) { return null; }
+                if (clientWasNull || roleWasNull || writingWasNull) { throw CorruptParameterValueCombinationException.get("Found inconsistent restrictions ('client' = '" + client + ", 'role' = '" + role + "', 'writing' = '" + writing + "')."); }
+                if (context != null && contact != null) { throw CorruptParameterValueCombinationException.get("Both the context and the contact are non-null."); }
+                
+                return new Restrictions(client, role, writing, context, contact);
+            } catch (@Nonnull SQLException exception) {
+                throw FailedRestoringException.get(exception);
+            }
         }
         
     }

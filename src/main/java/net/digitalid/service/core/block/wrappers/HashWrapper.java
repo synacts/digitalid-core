@@ -17,7 +17,6 @@ import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -32,6 +31,11 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptNullValueException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class wraps a {@link BigInteger} for encoding and decoding a block of the syntactic type {@code hash@core.digitalid.net}.
@@ -256,8 +260,12 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNonNullable(@Nonnull BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), value.toByteArray());
+    public static void storeNonNullable(@Nonnull BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), value.toByteArray());
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /**
@@ -268,9 +276,13 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNullable(@Nullable BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        if (value != null) { storeNonNullable(value, preparedStatement, parameterIndex); }
-        else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
+    public static void storeNullable(@Nullable BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            if (value != null) { storeNonNullable(value, preparedStatement, parameterIndex); }
+            else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /**
@@ -283,9 +295,13 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nullable BigInteger restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-        final @Nullable byte [] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
-        return bytes == null || bytes.length > LENGTH ? null : new BigInteger(1, bytes);
+    public static @Nullable BigInteger restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException {
+        try {
+            final @Nullable byte [] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
+            return bytes == null || bytes.length > LENGTH ? null : new BigInteger(1, bytes);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedRestoringException.get(exception);
+        }
     }
     
     /**
@@ -298,9 +314,9 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull BigInteger restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
+    public static @Nonnull BigInteger restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptNullValueException {
         final @Nullable BigInteger value = restoreNullable(resultSet, columnIndex);
-        if (value == null) { throw new SQLException("A value which should not be null was null."); }
+        if (value == null) { throw CorruptNullValueException.get(); }
         return value;
     }
     
@@ -330,14 +346,14 @@ public final class HashWrapper extends ValueWrapper<HashWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull HashWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull HashWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
             HashWrapper.storeNonNullable(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable HashWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
+        public @Nullable HashWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
             final @Nullable BigInteger value = HashWrapper.restoreNullable(resultSet, columnIndex);
             return value == null ? null : new HashWrapper(getType(), value);
         }

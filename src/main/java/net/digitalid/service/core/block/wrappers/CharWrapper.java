@@ -15,7 +15,6 @@ import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -29,6 +28,11 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptNullValueException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.utility.system.logger.Log;
 
 /**
@@ -205,8 +209,12 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(char value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        preparedStatement.setString(parameterIndex.getAndIncrementValue(), String.valueOf(value));
+    public static void store(char value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            preparedStatement.setString(parameterIndex.getAndIncrementValue(), String.valueOf(value));
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /**
@@ -219,10 +227,14 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      */
     @Pure
     @NonCommitting
-    public static char restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-        final @Nullable String value = resultSet.getString(columnIndex.getAndIncrementValue());
-        if (value == null) { throw new SQLException("A value which should not be null was null."); }
-        return value.charAt(0);
+    public static char restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptNullValueException {
+        try {
+            final @Nullable String value = resultSet.getString(columnIndex.getAndIncrementValue());
+            if (value == null) { throw CorruptNullValueException.get(); }
+            return value.charAt(0);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedRestoringException.get(exception);
+        }
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
@@ -251,16 +263,20 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull CharWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull CharWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable CharWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-            final char value = restore(resultSet, columnIndex);
-            return resultSet.wasNull() ? null : new CharWrapper(getType(), value);
+        public @Nullable CharWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+            try {
+                final char value = restore(resultSet, columnIndex);
+                return resultSet.wasNull() ? null : new CharWrapper(getType(), value);
+            } catch (@Nonnull SQLException exception) {
+                throw FailedRestoringException.get(exception);
+            }
         }
         
     }

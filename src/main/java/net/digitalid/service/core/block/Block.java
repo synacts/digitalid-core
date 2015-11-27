@@ -24,7 +24,6 @@ import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockTypeException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.NonNegative;
@@ -44,7 +43,11 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * A block is a sequence of bytes that is encoded according to some syntactic type.
@@ -761,19 +764,27 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         }
         
         @Override
-        public void storeNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-            if (Database.getConfiguration().supportsBinaryStream()) {
-                preparedStatement.setBinaryStream(parameterIndex.getAndIncrementValue(), block.getInputStream(), block.getLength());
-            } else {
-                preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), block.getBytes());
+        public void storeNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+            try {
+                if (Database.getConfiguration().supportsBinaryStream()) {
+                    preparedStatement.setBinaryStream(parameterIndex.getAndIncrementValue(), block.getInputStream(), block.getLength());
+                } else {
+                    preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), block.getBytes());
+                }
+            } catch (@Nonnull SQLException exception) {
+                throw FailedStoringException.get(exception);
             }
         }
         
         @Pure
         @Override
-        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
-            final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
-            return resultSet.wasNull() ? null : Block.get(type, bytes);
+        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+            try {
+                final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
+                return resultSet.wasNull() ? null : Block.get(type, bytes);
+            } catch (@Nonnull SQLException exception) {
+                throw FailedRestoringException.get(exception);
+            }
         }
         
     }

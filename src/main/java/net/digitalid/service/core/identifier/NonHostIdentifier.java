@@ -16,6 +16,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This interface models non-host identifiers.
