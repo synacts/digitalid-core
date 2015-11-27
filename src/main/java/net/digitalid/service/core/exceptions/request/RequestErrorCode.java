@@ -185,7 +185,7 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
             if (code.value == value) { return code; }
         }
         
-        throw new ShouldNeverHappenError("The value '" + value + "' does not encode a request error code.");
+        throw ShouldNeverHappenError.get("The value '" + value + "' does not encode a request error code.");
     }
     
     /* -------------------------------------------------- Name -------------------------------------------------- */

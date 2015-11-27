@@ -186,7 +186,7 @@ public final class PushReturned extends ExternalAction {
     
     @Override
     public void executeOnFailure() {
-        throw new ShouldNeverHappenError("Returned push replies should never be pushed themselves.");
+        throw ShouldNeverHappenError.get("Returned push replies should never be pushed themselves.");
     }
     
     

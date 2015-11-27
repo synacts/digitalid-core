@@ -92,7 +92,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
                 element.writeTo(new DeflaterOutputStream(cache), true);
                 Log.verbose("Element with " + element.getLength() + " bytes compressed in " + start.ago().getValue() + " ms.");
             } catch (@Nonnull IOException exception) {
-                throw new ShouldNeverHappenError("The given element could not be compressed.", exception);
+                throw ShouldNeverHappenError.get("The given element could not be compressed.", exception);
             }
         }
         return cache;
@@ -113,7 +113,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         try {
             getCache().writeTo(block.getOutputStream());
         } catch (@Nonnull IOException exception) {
-            throw new ShouldNeverHappenError("The compressed element could not be written.", exception);
+            throw ShouldNeverHappenError.get("The compressed element could not be written.", exception);
         }
     }
     

@@ -97,7 +97,7 @@ public abstract class Account extends EntityImplementation {
         } else if (identity instanceof InternalNonHostIdentity) {
             return NonHostAccount.get(host, (InternalNonHostIdentity) identity);
         } else {
-            throw new ShouldNeverHappenError("An internal identity is either a host or a non-host.");
+            throw ShouldNeverHappenError.get("An internal identity is either a host or a non-host.");
         }
     }
     

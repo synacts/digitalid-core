@@ -33,7 +33,7 @@ public final class Successor {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_successor (identifier " + IdentifierImplementation.FORMAT + " NOT NULL, successor " + IdentifierImplementation.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
         } catch (@Nonnull SQLException exception) {
-            throw new InitializationError("The database tables of the predecessors could not be created.", exception);
+            throw InitializationError.get("The database tables of the predecessors could not be created.", exception);
         }
     }
     

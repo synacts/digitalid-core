@@ -220,7 +220,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_reply (reply " + Database.getConfiguration().PRIMARY_KEY() + ", time " + Time.FORMAT + " NOT NULL, signature " + Block.FORMAT + " NOT NULL)");
         } catch (@Nonnull SQLException exception) {
-            throw new InitializationError("The database table of the reply logger could not be created.", exception);
+            throw InitializationError.get("The database table of the reply logger could not be created.", exception);
         }
     }
     

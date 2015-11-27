@@ -200,7 +200,7 @@ public final class PushFailed extends ExternalAction {
     @Override
     @NonCommitting
     public void executeOnFailure() throws DatabaseException {
-        throw new ShouldNeverHappenError("Failed push actions should never be pushed themselves.");
+        throw ShouldNeverHappenError.get("Failed push actions should never be pushed themselves.");
     }
     
     

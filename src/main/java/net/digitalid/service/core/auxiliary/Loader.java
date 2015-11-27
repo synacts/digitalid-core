@@ -113,7 +113,7 @@ public final class Loader {
                 Log.debugging("All classes in '" + root + "' have been loaded.");
             }
         } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | SQLException exception) {
-            throw new InitializationError("Could not load all classes.", exception);
+            throw InitializationError.get("Could not load all classes.", exception);
         } finally {
             Database.unlock();
         }

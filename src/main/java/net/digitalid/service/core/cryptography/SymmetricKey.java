@@ -82,14 +82,14 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
                         instanceField.setAccessible(true);
                         defaultPolicy.add((Permission) instanceField.get(null));
                     } catch (@Nonnull ClassNotFoundException | NoSuchFieldException | IllegalArgumentException | SecurityException | IllegalAccessException exception) {
-                        throw new InitializationError("Your system allows only a maximal key length of " + length + " bits for symmetric encryption but a length of " + Parameters.ENCRYPTION_KEY + " bits is required for security reasons."
+                        throw InitializationError.get("Your system allows only a maximal key length of " + length + " bits for symmetric encryption but a length of " + Parameters.ENCRYPTION_KEY + " bits is required for security reasons."
                                 + "Please install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files from http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html for Java 7."
                                 + "(All you have to do is to download the files and replace with them 'local_policy.jar' and 'US_export_policy.jar' in '" + System.getProperty("java.home") + File.separator + "lib" + File.separator + "security" + File.separator + "'.)", exception);
                     }
                 }
             }
         } catch (@Nonnull NoSuchAlgorithmException exception) {
-            throw new InitializationError("Your system does not support the Advanced Encryption Standard (AES). Unfortunately, you are not able to use Digital ID for now.", exception);
+            throw InitializationError.get("Your system does not support the Advanced Encryption Standard (AES). Unfortunately, you are not able to use Digital ID for now.", exception);
         }
     }
     
@@ -191,7 +191,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
             cipher.init(Cipher.ENCRYPT_MODE, key, initializationVector);
             return cipher.doFinal(bytes, offset, length);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException exception) {
-            throw new ShouldNeverHappenError("Could not encrypt the given bytes.", exception);
+            throw ShouldNeverHappenError.get("Could not encrypt the given bytes.", exception);
         }
     }
     

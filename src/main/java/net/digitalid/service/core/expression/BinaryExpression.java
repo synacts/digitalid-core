@@ -142,7 +142,7 @@ final class BinaryExpression extends Expression {
         } else if (operator == '*') {
             parentheses = this.operator != '*';
         } else {
-            throw new ShouldNeverHappenError("The operator '" + operator + "' is invalid.");
+            throw ShouldNeverHappenError.get("The operator '" + operator + "' is invalid.");
         }
         
         return parentheses ? "(" + string + ")" : string;

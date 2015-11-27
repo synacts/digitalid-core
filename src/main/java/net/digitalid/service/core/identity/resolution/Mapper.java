@@ -176,7 +176,7 @@ public final class Mapper {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_identifier (identifier " + IdentifierImplementation.FORMAT + " NOT NULL, identity " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (identifier), FOREIGN KEY (identity) " + Mapper.REFERENCE + ")");
             addReference("general_identifier", "identity");
         } catch (@Nonnull SQLException exception) {
-            throw new InitializationError("The database tables of the mapper could not be created.", exception);
+            throw InitializationError.get("The database tables of the mapper could not be created.", exception);
         }
     }
     
@@ -205,7 +205,7 @@ public final class Mapper {
                 case ARTIFICIAL_PERSON: return new ArtificialPerson(number, address.castTo(InternalNonHostIdentifier.class));
                 case EMAIL_PERSON: return new EmailPerson(number, address.castTo(EmailIdentifier.class));
                 case MOBILE_PERSON: return new MobilePerson(number, address.castTo(MobileIdentifier.class));
-                default: throw new ShouldNeverHappenError("The category '" + category.name() + "' is not supported.");
+                default: throw ShouldNeverHappenError.get("The category '" + category.name() + "' is not supported.");
             }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The address " + address + " does not match the category '" + category.name() + "'.", exception);
@@ -290,7 +290,7 @@ public final class Mapper {
         try {
             if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }
         } catch (@Nonnull RequestException | ExternalException | NetworkException exception) {
-            throw new ShouldNeverHappenError("The type declaration and the referenced identities should already be cached.", exception);
+            throw ShouldNeverHappenError.get("The type declaration and the referenced identities should already be cached.", exception);
         }
         return identity;
     }
@@ -422,7 +422,7 @@ public final class Mapper {
         try {
             return mapIdentity(identifier, Category.HOST, null).castTo(HostIdentity.class);
         } catch (@Nonnull InvalidEncodingException exception) {
-            throw new ShouldNeverHappenError("The host with the identifier " + identifier + " could not be mapped.", exception);
+            throw ShouldNeverHappenError.get("The host with the identifier " + identifier + " could not be mapped.", exception);
         }
     }
     
@@ -443,7 +443,7 @@ public final class Mapper {
             identifiers.put(identifier, type);
             return type;
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
-            throw new InitializationError("The syntactic type with the identifier " + identifier + " could not be mapped.", exception);
+            throw InitializationError.get("The syntactic type with the identifier " + identifier + " could not be mapped.", exception);
         }
     }
     
@@ -464,7 +464,7 @@ public final class Mapper {
             identifiers.put(identifier, type);
             return type;
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
-            throw new InitializationError("The semantic type with the identifier " + identifier + " could not be mapped.", exception);
+            throw InitializationError.get("The semantic type with the identifier " + identifier + " could not be mapped.", exception);
         }
     }
     

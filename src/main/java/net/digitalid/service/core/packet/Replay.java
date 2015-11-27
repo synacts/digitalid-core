@@ -29,7 +29,7 @@ public final class Replay {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_replay (vector " + InitializationVector.FORMAT + " NOT NULL PRIMARY KEY, time " + Time.FORMAT + " NOT NULL" + Database.getConfiguration().INDEX("time") + ")");
             Database.getConfiguration().createIndex(statement, "general_replay", "time");
         } catch (@Nonnull SQLException exception) {
-            throw new InitializationError("The database table of the replay checker could not be created.", exception);
+            throw InitializationError.get("The database table of the replay checker could not be created.", exception);
         }
         
         Database.addRegularPurging("general_replay", Time.HALF_HOUR.add(Time.MINUTE));

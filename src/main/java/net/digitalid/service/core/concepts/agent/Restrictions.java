@@ -546,6 +546,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
             
             if (clientWasNull && roleWasNull && writingWasNull && context == null && contact == null) { return null; }
             if (clientWasNull || roleWasNull || writingWasNull) { throw new SQLException("Found inconsistent restrictions ('client' = '" + client + ", 'role' = '" + role + "', 'writing' = '" + writing + "')."); }
+            if (context != null && contact != null) { throw CorruptParameterValueCombinationException.get("Both the context and the contact are non-null."); }
             
             return new Restrictions(client, role, writing, context, contact);
         }

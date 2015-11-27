@@ -600,7 +600,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
             instance.update(bytes, offset, length);
             return new BigInteger(1, instance.digest());
         } catch (@Nonnull NoSuchAlgorithmException exception) {
-            throw new ShouldNeverHappenError("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
+            throw ShouldNeverHappenError.get("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
         }
     }
     

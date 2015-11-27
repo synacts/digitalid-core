@@ -37,7 +37,7 @@ public final class Listener extends Thread {
         try {
             serverSocket = new ServerSocket(port);
         } catch (@Nonnull IOException exception) {
-            throw new InitializationError("The server could not bind to Digital ID's port (" + Server.PORT + ").", exception);
+            throw InitializationError.get("The server could not bind to Digital ID's port (" + Server.PORT + ").", exception);
         }
     }
     

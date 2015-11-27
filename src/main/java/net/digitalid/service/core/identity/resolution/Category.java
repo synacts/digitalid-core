@@ -134,7 +134,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
             if (category.value == value) { return category; }
         }
         
-        throw new ShouldNeverHappenError("The value '" + value + "' does not encode a category.");
+        throw ShouldNeverHappenError.get("The value '" + value + "' does not encode a category.");
     }
     
     /* -------------------------------------------------- Queries -------------------------------------------------- */

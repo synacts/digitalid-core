@@ -28,6 +28,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyParam
 import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.external.notfound.CertificateNotFoundException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Reply;
@@ -74,7 +75,7 @@ public final class Cache {
             Mapper.addReference("general_cache", "identity", "identity", "role", "type", "found");
             Mapper.addReference("general_cache", "role", "identity", "role", "type", "found");
         } catch (@Nonnull SQLException exception) {
-            throw new InitializationError("Could not initialize the cache.", exception);
+            throw InitializationError.get("Could not initialize the cache.", exception);
         }
     }
     
@@ -108,7 +109,7 @@ public final class Cache {
             }
             Database.commit();
         } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-            throw new InitializationError("Could not initialize the cache.", exception);
+            throw InitializationError.get("Could not initialize the cache.", exception);
         } finally {
             Database.unlock();
         }
@@ -218,7 +219,7 @@ public final class Cache {
      * @return the expiration time of the given attribute value.
      */
     @Pure
-    private static @Nonnull Time getExpiration(@Nonnull SemanticType type, @Nullable AttributeValue value, @Nonnull AttributesReply reply) throws InvalidEncodingException, InternalException {
+    private static @Nonnull Time getExpiration(@Nonnull SemanticType type, @Nullable AttributeValue value, @Nonnull AttributesReply reply) throws InvalidEncodingException {
         if (value != null && !value.getContent().getType().equals(type)) { throw InvalidReplyParameterValueException.get(reply, "attribute type", type.getAddress(), value.getContent().getType().getAddress()); }
         return type.getCachingPeriodNotNull().add(value instanceof CertifiedAttributeValue ? ((CertifiedAttributeValue) value).getTime() : reply.getSignatureNotNull().getNonNullableTime());
     }

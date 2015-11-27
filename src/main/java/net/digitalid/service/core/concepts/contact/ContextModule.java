@@ -453,7 +453,7 @@ public final class ContextModule implements StateModule {
 //            i++;
 //        }
 //        
-//        throw new ShouldNeverHappenError("The requested element of the set could not be found.");
+//        throw ShouldNeverHappenError.get("The requested element of the set could not be found.");
 //    }
 //    
 //    /**

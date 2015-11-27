@@ -2,13 +2,12 @@ package net.digitalid.service.core.converter.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.service.core.exceptions.internal.InternalException;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -18,6 +17,11 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.Declaration;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.MaskingCorruptStateException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.database.exceptions.state.CorruptParameterValueException;
 
 /**
  * This class implements an SQL converter that is based on another SQL converter.
@@ -124,7 +128,7 @@ public class ChainingSQLConverter<O, E, K, D> extends AbstractSQLConverter<O, E>
     
     @Override
     @NonCommitting
-    public final void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+    public final void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
         SQLConverter.storeNonNullable(keyConverter.convert(object), preparedStatement, parameterIndex);
     }
     
@@ -133,14 +137,14 @@ public class ChainingSQLConverter<O, E, K, D> extends AbstractSQLConverter<O, E>
     @Pure
     @Override
     @NonCommitting
-    public final @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
+    public final @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
         final @Nullable K key = SQLConverter.restoreNullable(keyConverter.decompose(external), resultSet, columnIndex);
         if (key == null) { return null; }
+        if (!keyConverter.isValid(key)) { throw CorruptParameterValueException.get("key", key); }
         try {
-            if (!keyConverter.isValid(key)) { throw InvalidParameterValueException.get("key", key); }
             return keyConverter.recover(external, key);
         } catch (@Nonnull InvalidEncodingException exception) {
-            throw new SQLException(exception);
+            throw MaskingCorruptStateException.get(exception);
         }
     }
     

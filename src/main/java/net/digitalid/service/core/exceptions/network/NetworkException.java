@@ -51,4 +51,12 @@ public abstract class NetworkException extends Exception {
         Log.warning("A network exception occurred.", this);
     }
     
+    /* -------------------------------------------------- Cause -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull IOException getCause() {
+        return (IOException) super.getCause();
+    }
+    
 }

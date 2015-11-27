@@ -14,7 +14,7 @@ public class MaskingInvalidEncodingException extends InvalidEncodingException {
     /**
      * Creates a new masking invalid encoding exception that masks the given cause.
      * 
-     * @param cause the caused to be masked as a masking invalid encoding exception.
+     * @param cause the cause to be masked as a masking invalid encoding exception.
      */
     protected MaskingInvalidEncodingException(@Nonnull Exception cause) {
         super(StringUtility.prependWithIndefiniteArticle(cause.getClass().getSimpleName(), true) + " is masked as an invalid encoding exception.", cause);
@@ -23,7 +23,7 @@ public class MaskingInvalidEncodingException extends InvalidEncodingException {
     /**
      * Returns a new masking invalid encoding exception that masks the given cause.
      * 
-     * @param cause the caused to be masked as a masking invalid encoding exception.
+     * @param cause the cause to be masked as a masking invalid encoding exception.
      * 
      * @return a new masking invalid encoding exception that masks the given cause.
      */

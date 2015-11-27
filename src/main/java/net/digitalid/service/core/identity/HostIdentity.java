@@ -40,7 +40,7 @@ public final class HostIdentity extends IdentityImplementation implements Intern
         try {
             return Mapper.mapHostIdentity(identifier);
         } catch (@Nonnull DatabaseException exception) {
-            throw new InitializationError("The host identity with the identifier " + identifier + " could not be mapped.", exception);
+            throw InitializationError.get("The host identity with the identifier " + identifier + " could not be mapped.", exception);
         }
     }
     

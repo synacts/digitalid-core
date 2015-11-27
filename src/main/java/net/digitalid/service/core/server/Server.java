@@ -127,7 +127,7 @@ public final class Server {
             try {
                 if (!new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".tables.xdf").exists()) { new Host(HostIdentifier.DIGITALID); }
             } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-                throw new InitializationError("Could not load the host configured in the file '" + digitalid.getName() + "'.", exception);
+                throw InitializationError.get("Could not load the host configured in the file '" + digitalid.getName() + "'.", exception);
             }
         }
         
@@ -139,7 +139,7 @@ public final class Server {
                     final @Nonnull HostIdentifier identifier = new HostIdentifier(name.substring(0, name.length() - 12));
                     if (!new File(Directory.getHostsDirectory().getPath() + File.separator + identifier.getString() + ".tables.xdf").exists()) { new Host(identifier); }
                 } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-                    throw new InitializationError("Could not load the host configured in the file '" + name + "'.", exception);
+                    throw InitializationError.get("Could not load the host configured in the file '" + name + "'.", exception);
                 }
             }
         }
@@ -158,7 +158,7 @@ public final class Server {
                 try {
                     Loader.loadJarFile(new JarFile(file));
                 } catch (@Nonnull IOException | ClassNotFoundException | SQLException exception) {
-                    throw new InitializationError("Could not load the service in the file '" + file.getName() + "'.", exception);
+                    throw InitializationError.get("Could not load the service in the file '" + file.getName() + "'.", exception);
                 }
             }
         }
@@ -181,7 +181,7 @@ public final class Server {
                 try {
                     new Host(new HostIdentifier(argument));
                 } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-                    throw new InitializationError("Could not create the host '" + argument + "'.", exception);
+                    throw InitializationError.get("Could not create the host '" + argument + "'.", exception);
                 }
             }
             
@@ -191,7 +191,7 @@ public final class Server {
             Cache.getPublicKeyChain(HostIdentity.DIGITALID);
             Database.commit();
         } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-            throw new InitializationError("Could not retrieve the public key chain of 'digitalid.net'.", exception);
+            throw InitializationError.get("Could not retrieve the public key chain of 'digitalid.net'.", exception);
         } finally {
             Database.unlock();
         }
@@ -250,7 +250,7 @@ public final class Server {
                 }
             }
         } catch (@Nonnull SQLException | IOException exception) {
-            throw new InitializationError("Could not load the database configuration.", exception);
+            throw InitializationError.get("Could not load the database configuration.", exception);
         }
         
         Database.initialize(configuration, false);

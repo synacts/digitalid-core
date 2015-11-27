@@ -86,7 +86,7 @@ abstract class DelegatingClientStorageImplementation implements ClientStorage {
             this.service = service;
             this.name = service.getName() + "_" + name;
         } else {
-            throw new ShouldNeverHappenError("Only the service class should call this constructor with null.");
+            throw ShouldNeverHappenError.get("Only the service class should call this constructor with null.");
         }
         
         assert isValidName(this.name) : "The name is valid.";

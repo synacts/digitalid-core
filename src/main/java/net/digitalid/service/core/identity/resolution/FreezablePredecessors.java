@@ -163,7 +163,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_predecessors (identifier " + IdentifierImplementation.FORMAT + " NOT NULL, predecessors " + Block.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
             Database.onInsertIgnore(statement, "general_predecessors", "identifier");
         } catch (@Nonnull SQLException exception) {
-            throw new InitializationError("The database tables of the predecessors could not be created.", exception);
+            throw InitializationError.get("The database tables of the predecessors could not be created.", exception);
         }
     }
     

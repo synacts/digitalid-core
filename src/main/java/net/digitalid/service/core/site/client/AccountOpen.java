@@ -233,7 +233,7 @@ public final class AccountOpen extends Action {
     @Override
     @NonCommitting
     public void executeOnClient() throws DatabaseException {
-        throw new ShouldNeverHappenError("The action to open an account should never be executed on a client.");
+        throw ShouldNeverHappenError.get("The action to open an account should never be executed on a client.");
     }
     
     

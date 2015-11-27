@@ -49,7 +49,7 @@ public abstract class EntityImplementation<S extends Site> extends CastableObjec
         } else if (site instanceof Client) {
             return Role.getNotNull((Client) site, resultSet, columnIndex);
         } else {
-            throw new ShouldNeverHappenError("A site is either a host or a client.");
+            throw ShouldNeverHappenError.get("A site is either a host or a client.");
         }
     }
     

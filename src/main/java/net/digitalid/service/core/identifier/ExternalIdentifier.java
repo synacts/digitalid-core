@@ -91,7 +91,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
         switch (scheme) {
             case "email": return EmailIdentifier.get(string);
             case "mobile": return MobileIdentifier.get(string);
-            default: throw new ShouldNeverHappenError("The scheme '" + scheme + "' is not valid.");
+            default: throw ShouldNeverHappenError.get("The scheme '" + scheme + "' is not valid.");
         }
     }
     
