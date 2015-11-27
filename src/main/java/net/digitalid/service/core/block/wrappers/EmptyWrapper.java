@@ -29,8 +29,8 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
-import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
-import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueRestoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.utility.database.exceptions.state.CorruptStateException;
 import net.digitalid.utility.system.exceptions.InternalException;
 
@@ -167,11 +167,11 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+    public static void store(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         try {
             preparedStatement.setBoolean(parameterIndex.getAndIncrementValue(), true);
         } catch (@Nonnull SQLException exception) {
-            throw FailedStoringException.get(exception);
+            throw FailedValueStoringException.get(exception);
         }
     }
     
@@ -183,11 +183,11 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
      */
     @Pure
     @NonCommitting
-    public static void restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException {
+    public static void restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
         try {
             resultSet.getBoolean(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
-            throw FailedRestoringException.get(exception);
+            throw FailedValueRestoringException.get(exception);
         }
     }
     
@@ -217,7 +217,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull EmptyWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        public void storeNonNullable(@Nonnull EmptyWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             // The entry is set to true just to indicate that it is not null. 
             store(preparedStatement, parameterIndex);
         }
@@ -225,12 +225,12 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         @Pure
         @Override
         @NonCommitting
-        public @Nullable EmptyWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+        public @Nullable EmptyWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
             try {
                 restore(resultSet, columnIndex);
                 return resultSet.wasNull() ? null : new EmptyWrapper(getType());
             } catch (@Nonnull SQLException exception) {
-                throw FailedRestoringException.get(exception);
+                throw FailedValueRestoringException.get(exception);
             }
         }
         

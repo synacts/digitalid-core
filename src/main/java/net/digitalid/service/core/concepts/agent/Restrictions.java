@@ -37,10 +37,10 @@ import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.CombiningDeclaration;
 import net.digitalid.utility.database.declaration.Declaration;
 import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
-import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
-import net.digitalid.utility.database.exceptions.state.CorruptParameterValueCombinationException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueRestoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.database.exceptions.state.value.CorruptParameterValueCombinationException;
 import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
@@ -527,7 +527,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Override
         @NonCommitting
-        public final void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        public final void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             BooleanWrapper.store(restrictions.client, preparedStatement, parameterIndex);
             BooleanWrapper.store(restrictions.role, preparedStatement, parameterIndex);
             BooleanWrapper.store(restrictions.writing, preparedStatement, parameterIndex);
@@ -538,7 +538,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+        public final @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
             try {
                 final boolean client = BooleanWrapper.restore(resultSet, columnIndex);
                 final boolean clientWasNull = resultSet.wasNull();
@@ -555,7 +555,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
                 
                 return new Restrictions(client, role, writing, context, contact);
             } catch (@Nonnull SQLException exception) {
-                throw FailedRestoringException.get(exception);
+                throw FailedValueRestoringException.get(exception);
             }
         }
         

@@ -43,8 +43,8 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
-import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
-import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueRestoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.utility.database.exceptions.state.CorruptStateException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.exceptions.InternalException;
@@ -764,7 +764,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         }
         
         @Override
-        public void storeNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        public void storeNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             try {
                 if (Database.getConfiguration().supportsBinaryStream()) {
                     preparedStatement.setBinaryStream(parameterIndex.getAndIncrementValue(), block.getInputStream(), block.getLength());
@@ -772,18 +772,18 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
                     preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), block.getBytes());
                 }
             } catch (@Nonnull SQLException exception) {
-                throw FailedStoringException.get(exception);
+                throw FailedValueStoringException.get(exception);
             }
         }
         
         @Pure
         @Override
-        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
             try {
                 final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
                 return resultSet.wasNull() ? null : Block.get(type, bytes);
             } catch (@Nonnull SQLException exception) {
-                throw FailedRestoringException.get(exception);
+                throw FailedValueRestoringException.get(exception);
             }
         }
         

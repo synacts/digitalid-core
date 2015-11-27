@@ -32,9 +32,9 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.declaration.SQLType;
-import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
-import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
-import net.digitalid.utility.database.exceptions.state.CorruptNullValueException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueRestoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
+import net.digitalid.utility.database.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.utility.database.exceptions.state.CorruptStateException;
 import net.digitalid.utility.system.exceptions.InternalException;
 
@@ -316,11 +316,11 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * @param parameterIndex the statement index at which the bytes are to be stored.
      */
     @NonCommitting
-    public static void storeNonNullable(@Nonnull byte[] bytes, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+    public static void storeNonNullable(@Nonnull byte[] bytes, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         try {
             preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), bytes);
         } catch (@Nonnull SQLException exception) {
-            throw FailedStoringException.get(exception);
+            throw FailedValueStoringException.get(exception);
         }
     }
     
@@ -332,12 +332,12 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * @param parameterIndex the statement index at which the bytes are to be stored.
      */
     @NonCommitting
-    public static void storeNullable(@Nullable byte[] bytes, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+    public static void storeNullable(@Nullable byte[] bytes, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         try {
             if (bytes != null) { storeNonNullable(bytes, preparedStatement, parameterIndex); }
             else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
         } catch (@Nonnull SQLException exception) {
-            throw FailedStoringException.get(exception);
+            throw FailedValueStoringException.get(exception);
         }
     }
     
@@ -351,11 +351,11 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nullable byte[] restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException {
+    public static @Nullable byte[] restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
         try {
             return resultSet.getBytes(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
-            throw FailedRestoringException.get(exception);
+            throw FailedValueRestoringException.get(exception);
         }
     }
     
@@ -369,7 +369,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull byte[] restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptNullValueException {
+    public static @Nonnull byte[] restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptNullValueException {
         final @Nullable byte[] bytes = restoreNullable(resultSet, columnIndex);
         if (bytes == null) { throw CorruptNullValueException.get(); }
         return bytes;
@@ -401,7 +401,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull BytesWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        public void storeNonNullable(@Nonnull BytesWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             try {
                 if (Database.getConfiguration().supportsBinaryStream()) {
                     preparedStatement.setBinaryStream(parameterIndex.getAndIncrementValue(), wrapper.getBytesAsInputStream(), wrapper.determineLength());
@@ -409,14 +409,14 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
                     preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), wrapper.getBytes());
                 }
             } catch (@Nonnull SQLException exception) {
-                throw FailedStoringException.get(exception);
+                throw FailedValueStoringException.get(exception);
             }
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable BytesWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+        public @Nullable BytesWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
             final @Nullable byte[] bytes = BytesWrapper.restoreNullable(resultSet, columnIndex);
             return bytes == null ? null : new BytesWrapper(getType(), bytes);
         }

@@ -20,8 +20,8 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
-import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
-import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueRestoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.utility.database.exceptions.state.CorruptStateException;
 import net.digitalid.utility.system.exceptions.InternalException;
 
@@ -181,14 +181,14 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends AbstractWr
         
         @Override
         @NonCommitting
-        public final void storeNonNullable(@Nonnull V value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        public final void storeNonNullable(@Nonnull V value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             SQLConverter.storeNonNullable(wrapper.wrap(SQLConverter.getType(), value), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable V restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+        public final @Nullable V restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
             final @Nullable W wrapper = SQLConverter.restoreNullable(none, resultSet, columnIndex);
             return wrapper == null ? null : this.wrapper.unwrap(wrapper);
         }

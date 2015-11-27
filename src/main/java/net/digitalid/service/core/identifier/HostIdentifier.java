@@ -20,7 +20,7 @@ import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.utility.database.exceptions.state.CorruptParameterValueCombinationException;
+import net.digitalid.utility.database.exceptions.state.value.CorruptParameterValueCombinationException;
 import net.digitalid.utility.system.exceptions.InternalException;
 
 /**

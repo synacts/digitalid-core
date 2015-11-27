@@ -16,9 +16,9 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.declaration.Declaration;
-import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
-import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
-import net.digitalid.utility.database.exceptions.state.CorruptParameterValueException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueRestoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
+import net.digitalid.utility.database.exceptions.state.value.CorruptParameterValueException;
 import net.digitalid.utility.database.exceptions.state.CorruptStateException;
 import net.digitalid.utility.database.exceptions.state.MaskingCorruptStateException;
 import net.digitalid.utility.system.exceptions.InternalException;
@@ -128,7 +128,7 @@ public class ChainingSQLConverter<O, E, K, D> extends AbstractSQLConverter<O, E>
     
     @Override
     @NonCommitting
-    public final void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+    public final void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         SQLConverter.storeNonNullable(keyConverter.convert(object), preparedStatement, parameterIndex);
     }
     
@@ -137,7 +137,7 @@ public class ChainingSQLConverter<O, E, K, D> extends AbstractSQLConverter<O, E>
     @Pure
     @Override
     @NonCommitting
-    public final @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
+    public final @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
         final @Nullable K key = SQLConverter.restoreNullable(keyConverter.decompose(external), resultSet, columnIndex);
         if (key == null) { return null; }
         if (!keyConverter.isValid(key)) { throw CorruptParameterValueException.get("key", key); }
