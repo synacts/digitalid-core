@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.internal.InternalException;
+import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;

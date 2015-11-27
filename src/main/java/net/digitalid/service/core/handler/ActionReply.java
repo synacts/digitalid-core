@@ -13,7 +13,7 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.internal.InternalException;
+import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.core.CoreServiceActionReply;
 import net.digitalid.utility.annotations.state.Immutable;

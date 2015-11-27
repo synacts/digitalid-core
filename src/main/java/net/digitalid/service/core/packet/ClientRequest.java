@@ -11,7 +11,7 @@ import net.digitalid.service.core.block.wrappers.CompressionWrapper;
 import net.digitalid.service.core.concepts.agent.ClientAgentCommitmentReplace;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.internal.InternalException;
+import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Method;

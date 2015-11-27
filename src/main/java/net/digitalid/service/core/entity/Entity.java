@@ -15,7 +15,7 @@ import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
-import net.digitalid.service.core.exceptions.internal.InternalException;
+import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalIdentity;

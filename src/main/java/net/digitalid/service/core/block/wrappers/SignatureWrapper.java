@@ -22,7 +22,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterV
 import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenticationException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
-import net.digitalid.service.core.exceptions.internal.InternalException;
+import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
