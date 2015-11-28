@@ -9,6 +9,12 @@ import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.core.site.Site;
 import net.digitalid.service.core.action.synchronizer.ResponseAudit;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.action.synchronizer.SynchronizerModule;
@@ -30,7 +36,6 @@ import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.entity.RoleModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.ExternalIdentifier;
@@ -52,13 +57,8 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.directory.Directory;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * A client is configured with an identifier and a secret.

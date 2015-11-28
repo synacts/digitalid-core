@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -24,8 +26,6 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.system.errors.InitializationError;
 
 /**

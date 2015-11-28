@@ -2,6 +2,8 @@ package net.digitalid.service.core.server;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -10,8 +12,6 @@ import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.system.console.Console;
 import net.digitalid.utility.system.console.Option;
 import net.digitalid.utility.system.console.exceptions.EscapeOptionException;

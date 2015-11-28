@@ -4,7 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.IdentityImplementation;
@@ -14,7 +15,6 @@ import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**

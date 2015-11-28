@@ -1,8 +1,8 @@
 package net.digitalid.service.core.setup;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
@@ -16,8 +16,6 @@ import net.digitalid.service.core.identity.NaturalPerson;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.configuration.Database;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;

@@ -12,7 +12,6 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockOffse
 import net.digitalid.service.core.exceptions.external.encoding.InvalidCollectionSizeException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidNullElementException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -28,6 +27,7 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class wraps a {@link ReadOnlyArray tuple} for encoding and decoding a block of the syntactic type {@code tuple@core.digitalid.net}.

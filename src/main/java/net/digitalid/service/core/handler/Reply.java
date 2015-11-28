@@ -10,6 +10,11 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.CompressionWrapper;
@@ -30,11 +35,6 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnlyForHosts;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.errors.InitializationError;
 
 /**

@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
@@ -40,7 +43,6 @@ import net.digitalid.service.core.exceptions.external.signature.ExpiredCredentia
 import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenticationException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveCredentialException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidCredentialsSignatureException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -65,9 +67,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.utility.system.logger.Log;
 
 /**

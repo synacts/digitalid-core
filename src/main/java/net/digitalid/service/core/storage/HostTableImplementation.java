@@ -1,9 +1,12 @@
 package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.declaration.Declaration;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -12,10 +15,7 @@ import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.declaration.Declaration;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class implements a database table that can be exported and imported on {@link Host hosts}.

@@ -2,6 +2,9 @@ package net.digitalid.service.core.cache;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
@@ -25,9 +28,6 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnlyForHosts;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Replies the queried attribute values of the given subject that are accessible by the requester.

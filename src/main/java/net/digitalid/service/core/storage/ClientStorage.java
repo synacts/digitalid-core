@@ -1,12 +1,12 @@
 package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.core.site.Site;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.site.Site;
 
 /**
  * This interface models a storage that can be created and deleted on {@link Client clients} and {@link Host hosts}.

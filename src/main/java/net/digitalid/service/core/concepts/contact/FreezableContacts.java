@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.entity.NonHostEntity;
@@ -22,7 +23,6 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a set of {@link Contact contacts}.

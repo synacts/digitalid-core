@@ -2,6 +2,11 @@ package net.digitalid.service.core.identity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
@@ -41,11 +46,6 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnMainThread;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models a semantic type.

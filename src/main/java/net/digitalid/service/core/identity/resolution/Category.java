@@ -1,6 +1,9 @@
 package net.digitalid.service.core.identity.resolution;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
@@ -9,7 +12,6 @@ import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -17,10 +19,8 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
-import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class enumerates the various categories of digital identities.

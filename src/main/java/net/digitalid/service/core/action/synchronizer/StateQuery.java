@@ -3,13 +3,13 @@ package net.digitalid.service.core.action.synchronizer;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.credential.Credential;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
@@ -25,9 +25,9 @@ import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Queries the state of the given module for the given role.

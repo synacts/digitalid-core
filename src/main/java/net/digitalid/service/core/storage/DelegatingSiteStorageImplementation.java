@@ -2,6 +2,10 @@ package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
@@ -27,10 +31,6 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnMainThread;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class implements a storage that delegates the retrieval of an {@link Entity entity's} state to substorages on {@link Host hosts} and {@link Client clients}.

@@ -1,9 +1,9 @@
 package net.digitalid.service.core.property.nullable;
 
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.Locked;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;

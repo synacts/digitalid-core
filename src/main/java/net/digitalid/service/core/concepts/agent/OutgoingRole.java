@@ -4,6 +4,10 @@ import java.sql.ResultSet;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.action.pusher.Pusher;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.annotations.OnlyForActions;
@@ -15,7 +19,6 @@ import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
@@ -24,9 +27,6 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models an outgoing role that acts on behalf of an {@link Identity identity}.

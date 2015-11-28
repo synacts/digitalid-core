@@ -1,10 +1,10 @@
 package net.digitalid.service.core.database;
 
 import java.io.IOException;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.configuration.MySQLConfiguration;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.configuration.MySQLConfiguration;
 import org.junit.BeforeClass;
 
 /**

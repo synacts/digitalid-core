@@ -5,6 +5,9 @@ import java.net.Socket;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.action.synchronizer.ActionModule;
 import net.digitalid.service.core.action.synchronizer.RequestAudit;
 import net.digitalid.service.core.action.synchronizer.ResponseAudit;
@@ -18,7 +21,6 @@ import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -33,9 +35,7 @@ import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.utility.system.logger.Log;
 
 /**

@@ -1,8 +1,8 @@
 package net.digitalid.service.core.action.pusher;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.handler.ExternalAction;
-import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.system.logger.Log;
 
 /**

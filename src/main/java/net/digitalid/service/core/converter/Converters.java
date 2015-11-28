@@ -1,12 +1,12 @@
 package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class allows to store several converters in a single object.

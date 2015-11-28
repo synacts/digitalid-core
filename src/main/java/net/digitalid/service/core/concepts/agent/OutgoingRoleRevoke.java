@@ -3,6 +3,7 @@ package net.digitalid.service.core.concepts.agent;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
@@ -23,7 +24,6 @@ import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Revokes the given role from the given subject.

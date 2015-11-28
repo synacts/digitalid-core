@@ -5,15 +5,15 @@ import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.converter.SQL;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.converter.SQL;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class models a multiplicative group.

@@ -13,6 +13,11 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
@@ -28,7 +33,6 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyParam
 import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.external.notfound.CertificateNotFoundException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Reply;
@@ -49,13 +53,9 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.system.directory.Directory;
 import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.utility.system.logger.Log;
 
 /**

@@ -2,6 +2,7 @@ package net.digitalid.service.core.concepts.agent;
 
 import java.sql.PreparedStatement;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.block.wrappers.Blockable;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -10,7 +11,6 @@ import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.readonly.ReadOnlyMap;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This interface provides read-only access to {@link FreezableAgentPermissions agent permissions} and should <em>never</em> be cast away.

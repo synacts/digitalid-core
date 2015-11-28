@@ -1,6 +1,8 @@
 package net.digitalid.service.core.converter.sql;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.key.BlockConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
@@ -9,8 +11,6 @@ import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.declaration.Declaration;
 
 /**
  * This class implements the methods that all SQL converters which store their data as a {@link Block block} in the {@link Database database} share.

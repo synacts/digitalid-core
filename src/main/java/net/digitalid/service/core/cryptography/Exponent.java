@@ -2,6 +2,8 @@ package net.digitalid.service.core.cryptography;
 
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
@@ -10,13 +12,11 @@ import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
-import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * An exponent is a number that raises elements of an arbitrary group.

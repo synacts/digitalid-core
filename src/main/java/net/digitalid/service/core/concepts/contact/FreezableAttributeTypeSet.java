@@ -2,6 +2,7 @@ package net.digitalid.service.core.concepts.contact;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
@@ -23,7 +24,6 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a freezable set of attribute types.

@@ -1,6 +1,8 @@
 package net.digitalid.service.core.cryptography;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
@@ -17,8 +19,6 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
-import net.digitalid.utility.database.declaration.ColumnDeclaration;
 
 /**
  * This class models a {@link KeyChain key chain} of {@link PrivateKey private keys}.

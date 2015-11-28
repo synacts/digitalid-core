@@ -5,13 +5,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.system.errors.InitializationError;
 
 /**

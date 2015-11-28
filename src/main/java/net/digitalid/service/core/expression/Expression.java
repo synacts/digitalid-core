@@ -2,6 +2,8 @@ package net.digitalid.service.core.expression;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
 import net.digitalid.service.core.concept.NonHostConcept;
@@ -23,8 +25,6 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class parses and represents expressions.

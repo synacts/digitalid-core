@@ -10,6 +10,13 @@ import java.util.Random;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnlyForClients;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.core.site.Site;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.annotations.OnlyForActions;
 import net.digitalid.service.core.block.Block;
@@ -34,13 +41,6 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnlyForClients;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.utility.database.site.Site;
 
 /**
  * This class models the contexts for {@link Contact contacts}.

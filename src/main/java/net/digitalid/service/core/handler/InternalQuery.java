@@ -1,6 +1,8 @@
 package net.digitalid.service.core.handler;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.Entity;
@@ -14,8 +16,6 @@ import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * Internal queries can only be sent by {@link Client clients} and are always signed identity-based.

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
@@ -15,7 +16,6 @@ import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableSet;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models active expressions.

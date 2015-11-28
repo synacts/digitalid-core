@@ -1,6 +1,9 @@
 package net.digitalid.service.core.concepts.attribute;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.Blockable;
@@ -17,9 +20,6 @@ import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class facilitates the encoding and decoding of certified attribute values.

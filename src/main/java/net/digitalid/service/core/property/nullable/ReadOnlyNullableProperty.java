@@ -2,12 +2,12 @@ package net.digitalid.service.core.property.nullable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.property.ReadOnlyProperty;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This is the read-only abstract class for properties that stores a nullable replaceable value.

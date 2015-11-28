@@ -1,6 +1,9 @@
 package net.digitalid.service.core.concept.property;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.property.extensible.ExtensibleConceptProperty;
@@ -8,10 +11,7 @@ import net.digitalid.service.core.concept.property.indexed.IndexedConceptPropert
 import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.service.core.concept.property.nullable.NullableConceptProperty;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This interface is implemented by all {@link ReadOnlyProperty properties} that belong to a {@link Concept concept}.

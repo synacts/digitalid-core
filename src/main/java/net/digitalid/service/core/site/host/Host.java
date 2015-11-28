@@ -5,6 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.core.site.Site;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
@@ -30,11 +35,6 @@ import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.directory.Directory;
 
 /**

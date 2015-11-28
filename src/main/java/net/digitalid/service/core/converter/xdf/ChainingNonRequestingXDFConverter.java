@@ -5,10 +5,10 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class implements a non-requesting XDF converter that is based on another non-requesting XDF converter.

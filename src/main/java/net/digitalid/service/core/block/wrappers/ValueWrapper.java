@@ -4,6 +4,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
+import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
+import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
@@ -17,12 +23,6 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
-import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueRestoringException;
-import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
-import net.digitalid.utility.database.exceptions.state.CorruptStateException;
 import net.digitalid.utility.system.exceptions.InternalException;
 
 /**

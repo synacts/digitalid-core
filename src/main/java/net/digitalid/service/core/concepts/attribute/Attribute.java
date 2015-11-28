@@ -3,6 +3,10 @@ package net.digitalid.service.core.concepts.attribute;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.converter.SQL;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.block.wrappers.BooleanWrapper;
 import net.digitalid.service.core.concept.GeneralConcept;
@@ -18,10 +22,6 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.collections.freezable.FreezableSet;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.converter.SQL;
 
 /**
  * This class models an attribute with its value and visibility.

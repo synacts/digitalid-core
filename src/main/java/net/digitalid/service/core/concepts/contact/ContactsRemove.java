@@ -2,6 +2,8 @@ package net.digitalid.service.core.concepts.contact;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnlyForClients;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
@@ -19,8 +21,6 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnlyForClients;
 
 /**
  * Removes {@link FreezableContacts contacts} from a {@link Context context}.

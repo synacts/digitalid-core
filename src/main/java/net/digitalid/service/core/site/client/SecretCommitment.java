@@ -6,10 +6,10 @@ import net.digitalid.service.core.block.wrappers.ClientSignatureWrapper;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.PublicKey;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class extends the {@link Commitment commitment} of a {@link Client client} with its {@link Client#getSecret() secret}.

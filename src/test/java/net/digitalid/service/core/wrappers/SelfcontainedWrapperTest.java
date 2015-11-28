@@ -1,6 +1,7 @@
 package net.digitalid.service.core.wrappers;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.Int32Wrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
@@ -10,7 +11,6 @@ import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import org.junit.Assert;
 import org.junit.Test;
 

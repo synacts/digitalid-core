@@ -2,6 +2,7 @@ package net.digitalid.service.core.identity.resolution;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.block.wrappers.Blockable;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -14,7 +15,6 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This interface provides read-only access to {@link FreezablePredecessors predecessors} and should <em>never</em> be cast away.

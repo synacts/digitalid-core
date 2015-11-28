@@ -3,6 +3,10 @@ package net.digitalid.service.core.handler.core;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnlyForClients;
+import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.cache.Cache;
@@ -13,7 +17,6 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
@@ -24,9 +27,6 @@ import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnlyForClients;
-import net.digitalid.utility.database.annotations.OnlyForHosts;
 
 /**
  * This class models the {@link InternalAction internal actions} of the {@link CoreService core service}.

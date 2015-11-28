@@ -2,12 +2,13 @@ package net.digitalid.service.core.action.synchronizer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnlyForHosts;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.annotations.HasSubject;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -20,10 +21,9 @@ import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnlyForHosts;
 
 /**
  * Queries the audit of the given service for the given role.

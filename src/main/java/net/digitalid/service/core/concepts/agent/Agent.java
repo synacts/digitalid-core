@@ -6,6 +6,11 @@ import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnlyForClients;
+import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.core.site.Site;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.BooleanWrapper;
@@ -27,11 +32,6 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnlyForClients;
-import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.utility.database.site.Site;
 
 /**
  * This class models an agent that acts on behalf of an {@link Identity identity}.

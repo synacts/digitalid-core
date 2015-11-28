@@ -18,6 +18,9 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
@@ -27,7 +30,6 @@ import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
@@ -35,11 +37,9 @@ import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
-import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * Symmetric keys are used to encrypt and decrypt byte arrays with the Advanced Encryption Standard (AES).

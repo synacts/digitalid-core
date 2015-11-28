@@ -2,12 +2,14 @@ package net.digitalid.service.core.concepts.settings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.wrappers.EmptyWrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.concept.Concept;
-import net.digitalid.service.core.concept.ConceptSetup;
 import net.digitalid.service.core.concept.ConceptIndex;
+import net.digitalid.service.core.concept.ConceptSetup;
 import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptPropertySetup;
 import net.digitalid.service.core.concepts.agent.Agent;
@@ -21,8 +23,6 @@ import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models a password of a digital identity.

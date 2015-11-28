@@ -2,6 +2,13 @@ package net.digitalid.service.core.concept;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnlyForClients;
+import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.castable.CastableObject;
 import net.digitalid.service.core.concept.property.ConceptProperty;
@@ -18,13 +25,6 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnlyForClients;
-import net.digitalid.utility.database.annotations.OnlyForHosts;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class models a concept in the {@link Database database}.

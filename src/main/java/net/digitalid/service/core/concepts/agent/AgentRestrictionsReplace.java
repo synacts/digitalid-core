@@ -2,6 +2,7 @@ package net.digitalid.service.core.concepts.agent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
@@ -18,7 +19,6 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Replaces the {@link Restrictions restrictions} of an {@link Agent agent}.

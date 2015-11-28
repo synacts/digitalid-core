@@ -3,8 +3,8 @@ package net.digitalid.service.core.concepts.attribute;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.resolution.Category;
 
 /**
  * This class stores commonly used attribute types.

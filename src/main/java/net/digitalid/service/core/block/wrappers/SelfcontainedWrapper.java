@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
@@ -14,7 +17,6 @@ import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -28,9 +30,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code selfcontained@core.digitalid.net}.

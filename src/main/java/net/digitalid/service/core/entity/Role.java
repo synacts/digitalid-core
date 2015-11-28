@@ -4,6 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.NonLocked;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.action.synchronizer.SynchronizerModule;
 import net.digitalid.service.core.auxiliary.Time;
@@ -11,7 +16,6 @@ import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.AgentModule;
 import net.digitalid.service.core.cryptography.credential.ClientCredential;
 import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
@@ -29,10 +33,6 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.NonLocked;
-import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models a role on the client-side.

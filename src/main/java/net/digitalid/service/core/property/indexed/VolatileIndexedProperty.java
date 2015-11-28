@@ -3,6 +3,8 @@ package net.digitalid.service.core.property.indexed;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -10,8 +12,6 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.collections.readonly.ReadOnlyMap;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.Locked;
 
 /**
  * The property stores indexed values in volatile memory.

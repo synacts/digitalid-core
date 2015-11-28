@@ -1,12 +1,12 @@
 package net.digitalid.service.core.property.nonnullable;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptProperty;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.Locked;
 
 /**
  * This is the writable abstract class for properties that stores a non-null replaceable value.

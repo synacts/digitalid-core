@@ -2,11 +2,11 @@ package net.digitalid.service.core.service;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalPerson;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**

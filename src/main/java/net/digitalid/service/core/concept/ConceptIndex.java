@@ -4,18 +4,18 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.annotations.OnlyForSingleAccess;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.concept.property.ConceptPropertyTable;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.annotations.OnlyForSingleAccess;
-import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class indexes the instances of a {@link Concept concept} by their {@link Entity entity} and key.

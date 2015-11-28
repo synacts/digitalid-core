@@ -1,6 +1,7 @@
 package net.digitalid.service.core.identity;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
@@ -10,7 +11,6 @@ import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This interface models an internal non-host identity.

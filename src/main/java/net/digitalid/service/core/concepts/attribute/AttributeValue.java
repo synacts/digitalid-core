@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
@@ -24,9 +27,6 @@ import net.digitalid.service.core.identity.annotations.AttributeType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * This class facilitates the encoding and decoding of attribute values.

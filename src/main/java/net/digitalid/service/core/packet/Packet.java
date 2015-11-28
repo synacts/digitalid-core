@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.action.synchronizer.RequestAudit;
 import net.digitalid.service.core.action.synchronizer.ResponseAudit;
@@ -52,8 +54,6 @@ import net.digitalid.utility.collections.annotations.index.ValidIndex;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.exceptions.DatabaseException;
 
 /**
  * A packet compresses, signs and encrypts requests and responses.

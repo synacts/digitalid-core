@@ -7,6 +7,10 @@ import java.sql.Statement;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.core.site.Site;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
@@ -47,10 +51,6 @@ import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.utility.database.site.Site;
 
 /**
  * This class provides database access to the {@link InternalAction internal actions} of the core service.

@@ -1,9 +1,10 @@
 package net.digitalid.service.core.attribute;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.cache.Cache;
@@ -11,14 +12,12 @@ import net.digitalid.service.core.concepts.attribute.Attribute;
 import net.digitalid.service.core.concepts.attribute.AttributeTypes;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
-import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.setup.IdentitySetup;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.configuration.Database;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;

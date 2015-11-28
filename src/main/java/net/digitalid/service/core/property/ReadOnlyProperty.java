@@ -2,6 +2,7 @@ package net.digitalid.service.core.property;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.property.extensible.ReadOnlyExtensibleProperty;
 import net.digitalid.service.core.property.indexed.ReadOnlyIndexedProperty;
 import net.digitalid.service.core.property.nonnullable.ReadOnlyNonNullableProperty;
@@ -11,7 +12,6 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.system.logger.Log;
 
 /**

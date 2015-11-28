@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.concepts.agent.RandomizedAgentPermissions;
@@ -30,7 +31,6 @@ import net.digitalid.utility.collections.annotations.size.NonEmpty;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**

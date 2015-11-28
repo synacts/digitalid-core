@@ -1,12 +1,12 @@
 package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.OnMainThread;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.annotations.OnMainThread;
 
 /**
  * Site modules contain {@link SiteTable site tables} and are used on both {@link Host hosts} and {@link Client clients}.

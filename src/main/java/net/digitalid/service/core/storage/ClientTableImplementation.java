@@ -2,17 +2,17 @@ package net.digitalid.service.core.storage;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.declaration.Declaration;
+import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.SpecificTable;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.declaration.Declaration;
-import net.digitalid.utility.database.site.Site;
-import net.digitalid.utility.database.table.SpecificTable;
 
 /**
  * This class implements a database table that can be created and deleted on {@link Client clients} and {@link Host hosts}.

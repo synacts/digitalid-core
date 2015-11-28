@@ -6,6 +6,17 @@ import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.declaration.ColumnDeclaration;
+import net.digitalid.database.core.declaration.CombiningDeclaration;
+import net.digitalid.database.core.declaration.Declaration;
+import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
+import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
+import net.digitalid.database.core.exceptions.state.CorruptStateException;
+import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueCombinationException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.BooleanWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
@@ -30,17 +41,6 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
-import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.database.declaration.ColumnDeclaration;
-import net.digitalid.utility.database.declaration.CombiningDeclaration;
-import net.digitalid.utility.database.declaration.Declaration;
-import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueRestoringException;
-import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
-import net.digitalid.utility.database.exceptions.state.CorruptStateException;
-import net.digitalid.utility.database.exceptions.state.value.CorruptParameterValueCombinationException;
 import net.digitalid.utility.system.exceptions.InternalException;
 
 /**

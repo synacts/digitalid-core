@@ -2,6 +2,7 @@ package net.digitalid.service.core.expression;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
@@ -11,7 +12,6 @@ import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableSet;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models context expressions.

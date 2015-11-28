@@ -3,6 +3,7 @@ package net.digitalid.service.core.handler;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.action.pusher.Pusher;
 import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
@@ -10,15 +11,14 @@ import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.core.CoreServiceActionReply;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class models a {@link Reply reply} to an {@link ExternalAction external action}.

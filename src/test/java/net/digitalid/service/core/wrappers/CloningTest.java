@@ -2,12 +2,12 @@ package net.digitalid.service.core.wrappers;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.concepts.attribute.AttributeTypes;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.setup.DatabaseSetup;
-import net.digitalid.utility.database.configuration.Database;
 import org.junit.Assert;
 import org.junit.Test;
 

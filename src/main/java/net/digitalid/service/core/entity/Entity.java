@@ -3,6 +3,13 @@ package net.digitalid.service.core.entity;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.declaration.ColumnDeclaration;
+import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.core.site.Site;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.castable.Castable;
@@ -15,7 +22,6 @@ import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
-import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -25,13 +31,7 @@ import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
-import net.digitalid.utility.database.converter.SQL;
-import net.digitalid.utility.database.declaration.ColumnDeclaration;
-import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.utility.database.site.Site;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept} or {@link Handler handler}.

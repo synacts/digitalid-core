@@ -6,7 +6,6 @@ import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptPropertyTable;
 import net.digitalid.service.core.property.ValueValidator;
-import net.digitalid.service.core.property.nullable.NullableProperty;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**
