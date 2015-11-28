@@ -48,8 +48,8 @@
                     <links>
                         <link>https://docs.digitalid.net/utility/annotations/1.0.0/</link>
                         <link>https://docs.digitalid.net/utility/collections/1.0.0/</link>
-                        <link>https://docs.digitalid.net/utility/database/1.0.0/</link>
                         <link>https://docs.digitalid.net/utility/system/1.0.0/</link>
+                        <link>https://docs.digitalid.net/database/core/1.0.0/</link>
                         <link>http://docs.oracle.com/javase/7/docs/api/</link>
                     </links>
                     <tagletArtifacts>
@@ -97,12 +97,12 @@
         </dependency>
         <dependency>
             <groupId>net.digitalid</groupId>
-            <artifactId>digitalid-utility-database</artifactId>
+            <artifactId>digitalid-utility-system</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>net.digitalid</groupId>
-            <artifactId>digitalid-utility-system</artifactId>
+            <artifactId>digitalid-database-core</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
