@@ -1,8 +1,8 @@
 package net.digitalid.service.core.database;
 
 import java.io.IOException;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.configuration.PostgreSQLConfiguration;
 import net.digitalid.utility.annotations.state.Pure;
 import org.junit.BeforeClass;

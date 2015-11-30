@@ -2,10 +2,10 @@ package net.digitalid.service.core.concepts.agent;
 
 import java.sql.Statement;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.site.Site;
-import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.storage.ClientModule;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;

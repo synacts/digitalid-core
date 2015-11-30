@@ -1,4 +1,4 @@
-package net.digitalid.service.core.service;
+package net.digitalid.service.core;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

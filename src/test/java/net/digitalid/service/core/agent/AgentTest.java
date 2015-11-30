@@ -2,8 +2,9 @@ package net.digitalid.service.core.agent;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.configuration.Database;
+import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ClientAgent;
@@ -15,7 +16,6 @@ import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
-import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.setup.IdentitySetup;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.client.Commitment;

@@ -2,7 +2,7 @@ package net.digitalid.service.core.wrappers;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.Database;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.concepts.attribute.AttributeTypes;

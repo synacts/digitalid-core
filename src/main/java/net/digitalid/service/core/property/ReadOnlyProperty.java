@@ -2,7 +2,7 @@ package net.digitalid.service.core.property;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.Database;
 import net.digitalid.service.core.property.extensible.ReadOnlyExtensibleProperty;
 import net.digitalid.service.core.property.indexed.ReadOnlyIndexedProperty;
 import net.digitalid.service.core.property.nonnullable.ReadOnlyNonNullableProperty;

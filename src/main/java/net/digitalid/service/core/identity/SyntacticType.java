@@ -2,8 +2,6 @@ package net.digitalid.service.core.identity;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.utility.system.thread.annotations.MainThread;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
@@ -29,6 +27,7 @@ import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 
 /**
  * This class models a syntactic type.

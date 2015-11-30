@@ -2,8 +2,8 @@ package net.digitalid.service.core.contact;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.concepts.contact.FreezableContacts;

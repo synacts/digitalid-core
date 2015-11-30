@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.cache.Cache;
@@ -19,7 +20,6 @@ import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
 

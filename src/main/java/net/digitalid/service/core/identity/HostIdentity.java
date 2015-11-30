@@ -3,8 +3,6 @@ package net.digitalid.service.core.identity;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.utility.system.thread.annotations.MainThread;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
@@ -19,6 +17,7 @@ import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 
 /**
  * This class models a host identity.

@@ -2,8 +2,8 @@ package net.digitalid.service.core.entity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.Observer;

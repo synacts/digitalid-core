@@ -9,10 +9,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.utility.system.thread.annotations.MainThread;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.reference.GeneralReference;
@@ -61,6 +60,7 @@ import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.exceptions.InternalException;
 import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 
 /**
  * The mapper maps between {@link Identifier identifiers} and {@link Identity identities}.

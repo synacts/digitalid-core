@@ -1,8 +1,8 @@
 package net.digitalid.service.core.identifier;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;

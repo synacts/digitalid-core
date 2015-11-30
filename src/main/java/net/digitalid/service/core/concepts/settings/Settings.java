@@ -2,8 +2,9 @@ package net.digitalid.service.core.concepts.settings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.configuration.Database;
+import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.wrappers.EmptyWrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
@@ -20,7 +21,6 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.property.RequiredAuthorization;
 import net.digitalid.service.core.property.ValueValidator;
-import net.digitalid.service.core.service.CoreService;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 

@@ -2,8 +2,8 @@ package net.digitalid.service.core.server;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;

@@ -2,9 +2,9 @@ package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.site.Site;
 import net.digitalid.utility.annotations.state.Immutable;

@@ -6,10 +6,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.utility.system.thread.annotations.MainThread;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.site.Site;
 import net.digitalid.service.core.auxiliary.None;
@@ -40,6 +39,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 
 /**
  * This class models a database table that stores a non-nullable {@link ReadOnlyProperty property} of a {@link Concept concept}.

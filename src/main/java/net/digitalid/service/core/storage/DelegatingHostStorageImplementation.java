@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
@@ -26,6 +25,7 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 
 /**
  * This class implements a storage that delegates the export and import to substorages on {@link Host hosts}.

@@ -2,15 +2,15 @@ package net.digitalid.service.core.site.host;
 
 import java.sql.Statement;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.site.Site;
+import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.storage.HostModule;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;

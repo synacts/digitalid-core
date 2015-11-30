@@ -1,8 +1,9 @@
 package net.digitalid.service.core.setup;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.configuration.Database;
+import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
@@ -13,7 +14,6 @@ import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.NaturalPerson;
-import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Pure;
 import org.junit.After;
