@@ -3,7 +3,7 @@ package net.digitalid.service.core.identity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
@@ -140,7 +140,7 @@ public final class SemanticType extends Type {
      * 
      * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
      */
-    @OnMainThread
+    @MainThread
     @NonCommitting
     public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
         return Mapper.mapSemanticType(InternalNonHostIdentifier.get(identifier));
@@ -204,11 +204,11 @@ public final class SemanticType extends Type {
      * @require categories.isEmpty() == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      * @require syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size() : "The number of required parameters has either to be variable or to match the given parameters.";
      */
-    @OnMainThread
+    @MainThread
     @NonLoadedRecipient
     public @Nonnull SemanticType load(@Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<SemanticType> parameters) {
         assert !isLoaded() : "The type declaration is not loaded.";
-        assert Database.isMainThread() : "This method may only be called in the main thread.";
+        assert Threading.isMainThread() : "This method may only be called in the main thread.";
         
         assert categories.isFrozen() : "The categories have to be frozen.";
         assert !categories.containsNull(): "The categories may not contain null.";
@@ -247,7 +247,7 @@ public final class SemanticType extends Type {
      * @require (categories.length == 0) == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      * @require syntacticBase.getNumberOfParameters() == -1 && parameters.length > 0 || syntacticBase.getNumberOfParameters() == parameters.length : "The number of required parameters has either to be variable or to match the given parameters.";
      */
-    @OnMainThread
+    @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @NonNullableElements @UniqueElements Category[] categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull @NonNullableElements @UniqueElements SemanticType... parameters) {
         return load(FreezableArray.getNonNullable(categories).toFreezableList().freeze(), cachingPeriod, syntacticBase, FreezableArray.getNonNullable(parameters).toFreezableList().freeze());
@@ -263,7 +263,7 @@ public final class SemanticType extends Type {
      * 
      * @require syntacticBase.getNumberOfParameters() == -1 && parameters.length > 0 || syntacticBase.getNumberOfParameters() == parameters.length : "The number of required parameters has either to be variable or to match the given parameters.";
      */
-    @OnMainThread
+    @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull SyntacticType syntacticBase, @Nonnull @NonNullableElements @UniqueElements SemanticType... parameters) {
         return load(Category.NONE, null, syntacticBase, FreezableArray.getNonNullable(parameters).toFreezableList().freeze());
@@ -281,11 +281,11 @@ public final class SemanticType extends Type {
      * @require cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      * @require categories.isEmpty() == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      */
-    @OnMainThread
+    @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull @Loaded SemanticType semanticBase) {
         assert !isLoaded() : "The type declaration is not loaded.";
-        assert Database.isMainThread() : "This method may only be called in the main thread.";
+        assert Threading.isMainThread() : "This method may only be called in the main thread.";
         
         assert categories.isFrozen() : "The categories have to be frozen.";
         assert !categories.containsNull() : "The categories may not contain null.";
@@ -319,7 +319,7 @@ public final class SemanticType extends Type {
      * @require cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      * @require (categories.length == 0) == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      */
-    @OnMainThread
+    @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @NonNullableElements @UniqueElements Category[] categories, @Nullable Time cachingPeriod, @Nonnull @Loaded SemanticType semanticBase) {
         return load(FreezableArray.getNonNullable(categories).toFreezableList().freeze(), cachingPeriod, semanticBase);
@@ -332,7 +332,7 @@ public final class SemanticType extends Type {
      * 
      * @return this semantic type.
      */
-    @OnMainThread
+    @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @Loaded SemanticType semanticBase) {
         return load(Category.NONE, null, semanticBase);

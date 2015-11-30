@@ -3,8 +3,8 @@ package net.digitalid.service.core.handler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForClients;
-import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.site.annotations.Clients;
+import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
@@ -42,7 +42,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @param role the role to which this handler belongs.
      * @param recipient the recipient of this method.
      */
-    @OnlyForClients
+    @Clients
     protected InternalAction(@Nonnull Role role, @Nonnull HostIdentifier recipient) {
         super(role, role.getIdentity().getAddress(), recipient);
     }
@@ -99,12 +99,12 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * 
      * @require hasSignature() : "This handler has a signature.";
      */
-    @OnlyForHosts
+    @Hosts
     @NonCommitting
     protected abstract void executeOnHostInternalAction() throws RequestException, DatabaseException;
     
     @Override
-    @OnlyForHosts
+    @Hosts
     @NonCommitting
     public final @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException {
         executeOnHostInternalAction();
@@ -137,14 +137,14 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @return the reverse of this action or null if this action cannot be reversed.
      */
     @Pure
-    @OnlyForClients
+    @Clients
     public abstract @Nullable InternalAction getReverse() throws DatabaseException;
     
     /**
      * Reverses this internal action on the client if this action can be reversed.
      */
     @NonCommitting
-    @OnlyForClients
+    @Clients
     public final void reverseOnClient() throws DatabaseException {
         assert isOnClient() : "This method is called on a client.";
         

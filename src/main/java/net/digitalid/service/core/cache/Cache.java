@@ -67,7 +67,7 @@ public final class Cache {
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
     static {
-        assert Database.isMainThread() : "This static block is called in the main thread.";
+        assert Threading.isMainThread() : "This static block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_cache (identity " + Mapper.FORMAT + " NOT NULL, role " + Mapper.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, found BOOLEAN NOT NULL, time " + Time.FORMAT + " NOT NULL, value " + AttributeValue.FORMAT + ", reply " + Reply.FORMAT + ", PRIMARY KEY (identity, role, type, found), FOREIGN KEY (identity) " + Mapper.REFERENCE + ", FOREIGN KEY (role) " + Mapper.REFERENCE + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ", FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
@@ -82,11 +82,11 @@ public final class Cache {
     /**
      * Initializes the cache with the public key of {@code digitalid.net}.
      * 
-     * @require Database.isMainThread() : "This method is called in the main thread.";
+     * @require Threading.isMainThread() : "This method is called in the main thread.";
      */
     @Committing
     public static void initialize() {
-        assert Database.isMainThread() : "This method is called in the main thread.";
+        assert Threading.isMainThread() : "This method is called in the main thread.";
         
         try {
             Database.lock();

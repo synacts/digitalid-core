@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForClients;
+import net.digitalid.service.core.site.annotations.Clients;
 import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.site.Site;
@@ -452,7 +452,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param contacts the contacts to be added to this context.
      */
     @Committing
-    @OnlyForClients
+    @Clients
     public void addContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws DatabaseException {
         if (!contacts.isEmpty()) { Synchronizer.execute(new ContactsAdd(this, contacts)); }
     }
@@ -476,7 +476,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param contacts the contacts to be removed from this context.
      */
     @Committing
-    @OnlyForClients
+    @Clients
     public void removeContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws DatabaseException {
         if (!contacts.isEmpty()) { Synchronizer.execute(new ContactsRemove(this, contacts)); }
     }

@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForClients;
+import net.digitalid.service.core.site.annotations.Clients;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.site.Site;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
@@ -147,7 +147,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      * @require !isRemoved() : "This agent is not removed.";
      */
     @Committing
-    @OnlyForClients
+    @Clients
     public final void remove() throws DatabaseException {
         assert !isRemoved() : "This agent is not removed.";
         
@@ -219,7 +219,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      * @param permissions the permissions to be added to this agent.
      */
     @Committing
-    @OnlyForClients
+    @Clients
     public final void addPermissions(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws DatabaseException {
         if (!permissions.isEmpty()) { Synchronizer.execute(new AgentPermissionsAdd(this, permissions)); }
     }
@@ -243,7 +243,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      * @param permissions the permissions to be removed from this agent.
      */
     @Committing
-    @OnlyForClients
+    @Clients
     public final void removePermissions(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws DatabaseException {
         if (!permissions.isEmpty()) { Synchronizer.execute(new AgentPermissionsRemove(this, permissions)); }
     }
@@ -292,7 +292,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      * @require newRestrictions.match(this) : "The new restrictions match this agent.";
      */
     @Committing
-    @OnlyForClients
+    @Clients
     public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws DatabaseException {
         final @Nonnull Restrictions oldRestrictions = getRestrictions();
         if (!newRestrictions.equals(oldRestrictions)) {

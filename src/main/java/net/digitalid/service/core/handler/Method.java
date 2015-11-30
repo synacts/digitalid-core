@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.action.synchronizer.RequestAudit;
 import net.digitalid.service.core.auxiliary.Time;
@@ -177,7 +177,7 @@ public abstract class Method extends Handler {
      * 
      * @ensure matches(return) : "This method matches the returned reply.";
      */
-    @OnlyForHosts
+    @Hosts
     @NonCommitting
     public abstract @Nullable Reply executeOnHost() throws RequestException, DatabaseException;
     

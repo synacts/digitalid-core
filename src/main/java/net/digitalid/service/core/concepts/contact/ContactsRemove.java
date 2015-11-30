@@ -3,7 +3,7 @@ package net.digitalid.service.core.concepts.contact;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForClients;
+import net.digitalid.service.core.site.annotations.Clients;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
@@ -50,7 +50,7 @@ final class ContactsRemove extends CoreServiceInternalAction {
      * @param context the context whose contacts are to be reduced.
      * @param contacts the contacts to be removed from the given context.
      */
-    @OnlyForClients
+    @Clients
     ContactsRemove(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) {
         super(context.getRole());
         

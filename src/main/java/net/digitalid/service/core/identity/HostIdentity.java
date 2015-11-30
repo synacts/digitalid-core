@@ -3,7 +3,7 @@ package net.digitalid.service.core.identity;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
@@ -33,9 +33,9 @@ public final class HostIdentity extends IdentityImplementation implements Intern
      * 
      * @param identifier the identifier which is to be mapped.
      */
-    @OnMainThread
+    @MainThread
     private static @Nonnull HostIdentity map(@Nonnull HostIdentifier identifier) {
-        assert Database.isMainThread() : "This method may only be called in the main thread.";
+        assert Threading.isMainThread() : "This method may only be called in the main thread.";
         
         try {
             return Mapper.mapHostIdentity(identifier);

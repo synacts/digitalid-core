@@ -157,7 +157,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     
     
     static {
-        assert Database.isMainThread() : "This static block is called in the main thread.";
+        assert Threading.isMainThread() : "This static block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_predecessors (identifier " + IdentifierImplementation.FORMAT + " NOT NULL, predecessors " + Block.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");

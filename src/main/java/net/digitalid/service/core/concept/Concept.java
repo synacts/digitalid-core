@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForClients;
-import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.site.annotations.Clients;
+import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
@@ -72,7 +72,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> e
      * @return the account to which this concept belongs.
      */
     @Pure
-    @OnlyForHosts
+    @Hosts
     public final @Nonnull Account getAccount() {
         assert isOnHost() : "This concept is on a host.";
         
@@ -97,7 +97,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> e
      * @return the role to which this concept belongs.
      */
     @Pure
-    @OnlyForClients
+    @Clients
     public final @Nonnull Role getRole() {
         assert isOnClient(): "This concept is on a client.";
         

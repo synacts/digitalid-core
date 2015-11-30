@@ -1,7 +1,7 @@
 package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -38,7 +38,7 @@ public final class SiteModule extends DelegatingSiteStorageImplementation {
      * @return a new site module with the given service and name.
      */
     @Pure
-    @OnMainThread
+    @MainThread
     public static @Nonnull SiteModule get(@Nonnull Service service, @Nonnull @Validated String name) {
         return new SiteModule(service, name);
     }

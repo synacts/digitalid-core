@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
@@ -46,7 +46,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      * 
      * @return the dump type of this table by deriving the identifier from the property name.
      */
-    @OnMainThread
+    @MainThread
     private static @Nonnull @Loaded SemanticType mapDumpType(@Nonnull ConceptPropertySetup<?, ?, ?> propertySetup) {
         final @Nonnull String identifier = propertySetup.getPropertyName() + propertySetup.getPropertyTable().getModule().getDumpType().getAddress().getStringWithDot();
         // TODO: should propertySetup.getValueConverters().getXDFConverter().getType() be replaced with propertySetup.getPropertyType()?
@@ -61,7 +61,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      * 
      * @return the state type of this table by deriving the identifier from the property name.
      */
-    @OnMainThread
+    @MainThread
     private static @Nonnull @Loaded SemanticType mapStateType(@Nonnull ConceptPropertySetup<?, ?, ?> propertySetup) {
         final @Nonnull String identifier = propertySetup.getPropertyName() + propertySetup.getPropertyTable().getModule().getStateType().getAddress().getStringWithDot();
         // TODO: should propertySetup.getValueConverters().getXDFConverter().getType() be replaced with propertySetup.getPropertyType()?

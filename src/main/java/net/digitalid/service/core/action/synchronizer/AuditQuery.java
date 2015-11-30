@@ -3,7 +3,7 @@ package net.digitalid.service.core.action.synchronizer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.annotations.HasSubject;
@@ -71,7 +71,7 @@ final class AuditQuery extends InternalQuery {
      * @param recipient the recipient of this method.
      * @param block the content which is to be decoded.
      */
-    @OnlyForHosts
+    @Hosts
     @NonCommitting
     private AuditQuery(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("query.audit@core.digitalid.net") Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity.castTo(NonHostEntity.class), signature, recipient);

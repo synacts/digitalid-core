@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForHosts;
 import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
@@ -31,11 +30,13 @@ import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
+import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
 import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.thread.Threading;
 
 /**
  * This class models replies to {@link Method methods} and stores them in the {@link Database database}.
@@ -60,7 +61,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      * @param account the account to which this reply belongs.
      * @param subject the subject of this handler.
      */
-    @OnlyForHosts
+    @Hosts
     protected Reply(@Nullable Account account, @Nonnull InternalIdentifier subject) {
         super(account, subject);
         
@@ -215,7 +216,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      * Initializes the reply logger by creating the corresponding database tables if necessary.
      */
     static {
-        assert Database.isMainThread() : "This method block is called in the main thread.";
+        assert Threading.isMainThread() : "This method block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_reply (reply " + Database.getConfiguration().PRIMARY_KEY() + ", time " + Time.FORMAT + " NOT NULL, signature " + Block.FORMAT + " NOT NULL)");

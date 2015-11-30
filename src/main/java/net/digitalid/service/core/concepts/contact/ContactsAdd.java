@@ -3,7 +3,7 @@ package net.digitalid.service.core.concepts.contact;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForClients;
+import net.digitalid.service.core.site.annotations.Clients;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
@@ -50,7 +50,7 @@ final class ContactsAdd extends CoreServiceInternalAction {
      * @param context the context whose contacts are to be extended.
      * @param contacts the contacts to be added to the given context.
      */
-    @OnlyForClients
+    @Clients
     ContactsAdd(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) {
         super(context.getRole());
         

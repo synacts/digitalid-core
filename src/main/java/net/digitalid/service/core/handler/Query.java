@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
@@ -75,7 +75,7 @@ public abstract class Query extends Method {
     
     
     @Override
-    @OnlyForHosts
+    @Hosts
     @NonCommitting
     public abstract @Nonnull QueryReply executeOnHost() throws RequestException, SQLException;
     

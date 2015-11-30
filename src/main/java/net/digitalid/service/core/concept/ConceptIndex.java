@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForSingleAccess;
+import net.digitalid.database.core.annotations.SingleAccess;
 import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.concept.property.ConceptPropertyTable;
@@ -36,7 +36,7 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity, K>
      * @param entity the entity whose entries are to be removed.
      */
     // TODO: Make sure this method is called in the right places!
-    @OnlyForSingleAccess
+    @SingleAccess
     public static void remove(@Nonnull Entity entity) {
         assert Database.isSingleAccess() : "The database is in single-access mode.";
         

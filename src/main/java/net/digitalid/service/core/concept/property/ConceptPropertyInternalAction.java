@@ -4,8 +4,8 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForClients;
-import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.site.annotations.Clients;
+import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
@@ -82,7 +82,7 @@ public abstract class ConceptPropertyInternalAction<V, C extends Concept<C, E, ?
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    @OnlyForClients
+    @Clients
     protected ConceptPropertyInternalAction(@Nonnull Role role, @Nonnull Service service) throws DatabaseException {
         super(role, service.getRecipient(role));
         
@@ -107,7 +107,7 @@ public abstract class ConceptPropertyInternalAction<V, C extends Concept<C, E, ?
     protected abstract void executeOnBoth() throws DatabaseException;
     
     @Override
-    @OnlyForHosts
+    @Hosts
     @NonCommitting
     // TODO: Must be adapted to work for non-core service internal actions.
     public void executeOnHostInternalAction() throws RequestException, DatabaseException {
@@ -140,7 +140,7 @@ public abstract class ConceptPropertyInternalAction<V, C extends Concept<C, E, ?
     
     @Override
     @NonCommitting
-    @OnlyForClients
+    @Clients
     public final void executeOnClient() throws DatabaseException {
         executeOnBoth();
     }

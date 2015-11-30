@@ -1,7 +1,7 @@
 package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -22,7 +22,7 @@ public final class HostModule extends DelegatingHostStorageImplementation {
      * @param service the service to which the new module belongs.
      * @param name the name of the new module without any prefix.
      */
-    @OnMainThread
+    @MainThread
     private HostModule(@Nonnull Service service, @Nonnull @Validated String name) {
         super(service, name);
         
@@ -38,7 +38,7 @@ public final class HostModule extends DelegatingHostStorageImplementation {
      * @return a new host module with the given service and name.
      */
     @Pure
-    @OnMainThread
+    @MainThread
     public static @Nonnull HostModule get(@Nonnull Service service, @Nonnull @Validated String name) {
         return new HostModule(service, name);
     }

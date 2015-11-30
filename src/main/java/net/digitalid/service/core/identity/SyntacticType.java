@@ -2,7 +2,7 @@ package net.digitalid.service.core.identity;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
@@ -103,7 +103,7 @@ public final class SyntacticType extends Type {
      * 
      * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
      */
-    @OnMainThread
+    @MainThread
     public static @Nonnull @NonLoaded SyntacticType map(@Nonnull String identifier) {
         return Mapper.mapSyntacticType(new InternalNonHostIdentifier(identifier));
     }
@@ -133,11 +133,11 @@ public final class SyntacticType extends Type {
      * @require numberOfParameters >= -1 : "The number of parameters is at least -1.";
      * @require numberOfParameters <= 127 : "The number of parameters is at most 127.";
      */
-    @OnMainThread
+    @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SyntacticType load(int numberOfParameters) {
         assert !isLoaded() : "The type declaration is not loaded.";
-        assert Database.isMainThread() : "This method may only be called in the main thread.";
+        assert Threading.isMainThread() : "This method may only be called in the main thread.";
         
         assert numberOfParameters >= -1 : "The number of parameters is at least -1.";
         assert numberOfParameters <= 127 : "The number of parameters is at most 127.";

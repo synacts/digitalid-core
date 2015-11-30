@@ -28,7 +28,7 @@ import net.digitalid.utility.system.exceptions.InternalException;
 public final class Successor {
     
     static {
-        assert Database.isMainThread() : "This static block is called in the main thread.";
+        assert Threading.isMainThread() : "This static block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_successor (identifier " + IdentifierImplementation.FORMAT + " NOT NULL, successor " + IdentifierImplementation.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");

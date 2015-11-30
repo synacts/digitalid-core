@@ -4,8 +4,6 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForClients;
-import net.digitalid.database.core.annotations.OnlyForHosts;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
@@ -24,6 +22,8 @@ import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.site.annotations.Clients;
+import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -109,8 +109,8 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     @NonCommitting
     protected abstract void executeOnBoth() throws DatabaseException;
     
+    @Hosts
     @Override
-    @OnlyForHosts
     @NonCommitting
     public void executeOnHostInternalAction() throws RequestException, DatabaseException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
@@ -140,9 +140,9 @@ public abstract class CoreServiceInternalAction extends InternalAction {
         executeOnBoth();
     }
     
+    @Clients
     @Override
     @NonCommitting
-    @OnlyForClients
     public final void executeOnClient() throws DatabaseException {
         executeOnBoth();
     }

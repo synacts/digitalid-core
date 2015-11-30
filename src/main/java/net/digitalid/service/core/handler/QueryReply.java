@@ -2,7 +2,7 @@ package net.digitalid.service.core.handler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
@@ -26,7 +26,7 @@ public abstract class QueryReply extends Reply {
      * 
      * @param account the account to which this query reply belongs.
      */
-    @OnlyForHosts
+    @Hosts
     protected QueryReply(@Nonnull Account account) {
         super(account, account.getIdentity().getAddress());
     }

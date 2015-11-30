@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.site.Site;
@@ -54,7 +54,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
      * 
      * @param propertySetup
      */
-    @OnMainThread
+    @MainThread
     NonNullableConceptPropertyTable(@Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup) {
         super(propertySetup);
     }

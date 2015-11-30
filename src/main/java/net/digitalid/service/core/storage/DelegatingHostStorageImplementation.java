@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
@@ -69,7 +69,7 @@ abstract class DelegatingHostStorageImplementation extends DelegatingClientStora
      * @param service the service to which the new module belongs.
      * @param name the name of the new module without any prefix.
      */
-    @OnMainThread
+    @MainThread
     protected DelegatingHostStorageImplementation(@Nullable Service service, @Nonnull @Validated String name) {
         super(service, name);
         

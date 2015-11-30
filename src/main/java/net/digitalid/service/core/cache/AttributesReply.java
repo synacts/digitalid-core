@@ -3,7 +3,7 @@ package net.digitalid.service.core.cache;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
@@ -77,7 +77,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @require !attributeValues.isEmpty() : "The attribute values are not empty.";
      * @require areVerified(attributeValues) : "All the attribute values which are not null are verified.";
      */
-    @OnlyForHosts
+    @Hosts
     @NonCommitting
     AttributesReply(@Nonnull Account account, @Nonnull ReadOnlyList<AttributeValue> attributeValues) {
         super(account);

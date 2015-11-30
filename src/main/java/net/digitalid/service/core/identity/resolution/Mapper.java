@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.annotations.OnMainThread;
+import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
@@ -168,7 +168,7 @@ public final class Mapper {
     
     
     static {
-        assert Database.isMainThread() : "This static block is called in the main thread.";
+        assert Threading.isMainThread() : "This static block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             // Make sure that no type initializations are triggered during the creation of the database tables! (This is why the format of the category column is not taken from the category class.)
@@ -433,9 +433,9 @@ public final class Mapper {
      * 
      * @return the syntactic type of the mapped identifier.
      */
-    @OnMainThread
+    @MainThread
     static @Nonnull SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier) {
-        assert Database.isMainThread() : "This method may only be called in the main thread.";
+        assert Threading.isMainThread() : "This method may only be called in the main thread.";
         
         try {
             final @Nonnull SyntacticType type = mapIdentity(identifier, Category.SYNTACTIC_TYPE, null).castTo(SyntacticType.class);
@@ -454,9 +454,9 @@ public final class Mapper {
      * 
      * @return the semantic type of the mapped identifier.
      */
-    @OnMainThread
+    @MainThread
     static @Nonnull SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier) {
-        assert Database.isMainThread() : "This method may only be called in the main thread.";
+        assert Threading.isMainThread() : "This method may only be called in the main thread.";
         
         try {
             final @Nonnull SemanticType type = mapIdentity(identifier, Category.SEMANTIC_TYPE, null).castTo(SemanticType.class);
