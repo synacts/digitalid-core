@@ -2,7 +2,7 @@ package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.declaration.Declaration;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;

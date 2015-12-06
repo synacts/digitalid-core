@@ -1,4 +1,4 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.value.integer;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,17 +7,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.declaration.SQLType;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
-import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
+import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
+import net.digitalid.service.core.block.wrappers.AbstractWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper.ValueSQLConverter;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
@@ -33,23 +34,19 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.exceptions.InternalException;
-import net.digitalid.utility.system.logger.Log;
 
 /**
- * This class wraps a {@code char} for encoding and decoding a block of the syntactic type {@code char@core.digitalid.net}.
- * <p>
- * <em>Important:</em> SQL injections have to be prevented by the caller of this wrapper!
- * Only a warning is issued when the character might be used in an unprepared SQL statement.
+ * This class wraps a {@code byte} for encoding and decoding a block of the syntactic type {@code int8@core.digitalid.net}.
  */
 @Immutable
-public final class CharWrapper extends ValueWrapper<CharWrapper> {
+public final class Integer08Wrapper extends ValueWrapper<Integer08Wrapper> {
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this wrapper.
      */
-    private final char value;
+    private final byte value;
     
     /**
      * Returns the value of this wrapper.
@@ -57,7 +54,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * @return the value of this wrapper.
      */
     @Pure
-    public char getValue() {
+    public byte getValue() {
         return value;
     }
     
@@ -69,7 +66,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * @param type the semantic type of the new wrapper.
      * @param value the value of the new wrapper.
      */
-    private CharWrapper(@Nonnull @Loaded @BasedOn("char@core.digitalid.net") SemanticType type, char value) {
+    private Integer08Wrapper(@Nonnull @Loaded @BasedOn("int8@core.digitalid.net") SemanticType type, byte value) {
         super(type);
         
         this.value = value;
@@ -78,9 +75,9 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
-     * The byte length of a char.
+     * The byte length of an int8.
      */
-    public static final int LENGTH = 2;
+    public static final int LENGTH = 1;
     
     @Pure
     @Override
@@ -100,9 +97,9 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
     /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
     
     /**
-     * Stores the syntactic type {@code char@core.digitalid.net}.
+     * Stores the syntactic type {@code int8@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("char@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("int8@core.digitalid.net").load(0);
     
     @Pure
     @Override
@@ -116,23 +113,23 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * The XDF converter for this wrapper.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<CharWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<Integer08Wrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private XDFConverter(@Nonnull @BasedOn("char@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @BasedOn("int8@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
-        public @Nonnull CharWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("char@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+        public @Nonnull Integer08Wrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("int8@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
             
-            return new CharWrapper(block.getType(), (char) block.decodeValue());
+            return new Integer08Wrapper(getType(), (byte) block.decodeValue());
         }
         
     }
@@ -146,9 +143,9 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
     /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
     
     /**
-     * Stores the semantic type {@code semantic.char@core.digitalid.net}.
+     * Stores the semantic type {@code semantic.int8@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.char@core.digitalid.net").load(XDF_TYPE);
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int8@core.digitalid.net").load(XDF_TYPE);
     
     /**
      * Stores a static XDF converter for performance reasons.
@@ -164,8 +161,8 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * @return a new block containing the given value.
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("char@core.digitalid.net") SemanticType type, char value) {
-        return XDF_CONVERTER.encodeNonNullable(new CharWrapper(type, value));
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("int8@core.digitalid.net") SemanticType type, byte value) {
+        return XDF_CONVERTER.encodeNonNullable(new Integer08Wrapper(type, value));
     }
     
     /**
@@ -176,7 +173,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * @return the value contained in the given block.
      */
     @Pure
-    public static char decode(@Nonnull @NonEncoding @BasedOn("char@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+    public static byte decode(@Nonnull @NonEncoding @BasedOn("int8@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
@@ -185,8 +182,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
     @Pure
     @Override
     public @Nonnull String toString() {
-        Log.warning("The character '" + value + "' might be used in an unprepared SQL statement and might cause an injection.", new Exception());
-        return "'" + value + "'";
+        return String.valueOf(value);
     }
     
     /**
@@ -196,9 +192,8 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * @param values a mutable array in which the value is to be stored.
      * @param index the array index at which the value is to be stored.
      */
-    public static void store(char value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
-        Log.warning("The character '" + value + "' might be used in an unprepared SQL statement and might cause an injection.", new Exception());
-        values.set(index.getAndIncrementValue(), "'" + value + "'");
+    public static void store(byte value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+        values.set(index.getAndIncrementValue(), String.valueOf(value));
     }
     
     /**
@@ -209,9 +204,9 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(char value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void store(byte value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         try {
-            preparedStatement.setString(parameterIndex.getAndIncrementValue(), String.valueOf(value));
+            preparedStatement.setByte(parameterIndex.getAndIncrementValue(), value);
         } catch (@Nonnull SQLException exception) {
             throw FailedValueStoringException.get(exception);
         }
@@ -227,11 +222,9 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      */
     @Pure
     @NonCommitting
-    public static char restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptNullValueException {
+    public static byte restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
         try {
-            final @Nullable String value = resultSet.getString(columnIndex.getAndIncrementValue());
-            if (value == null) { throw CorruptNullValueException.get(); }
-            return value.charAt(0);
+            return resultSet.getByte(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
             throw FailedValueRestoringException.get(exception);
         }
@@ -242,13 +235,13 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.CHAR;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.TINYINT;
     
     /**
      * The SQL converter for this wrapper.
      */
     @Immutable
-    public static final class SQLConverter extends AbstractWrapper.SQLConverter<CharWrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<Integer08Wrapper> {
         
         /**
          * Creates a new SQL converter with the given column declaration.
@@ -263,17 +256,17 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull CharWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull Integer08Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable CharWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable Integer08Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
             try {
-                final char value = restore(resultSet, columnIndex);
-                return resultSet.wasNull() ? null : new CharWrapper(getType(), value);
+                final byte value = restore(resultSet, columnIndex);
+                return resultSet.wasNull() ? null : new Integer08Wrapper(getType(), value);
             } catch (@Nonnull SQLException exception) {
                 throw FailedValueRestoringException.get(exception);
             }
@@ -298,17 +291,17 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * The wrapper for this wrapper.
      */
     @Immutable
-    public static class Wrapper extends ValueWrapper.Wrapper<Character, CharWrapper> {
+    public static class Wrapper extends ValueWrapper.Wrapper<Byte, Integer08Wrapper> {
         
         @Pure
         @Override
-        protected @Nonnull CharWrapper wrap(@Nonnull SemanticType type, @Nonnull Character value) {
-            return new CharWrapper(type, value);
+        protected @Nonnull Integer08Wrapper wrap(@Nonnull SemanticType type, @Nonnull Byte value) {
+            return new Integer08Wrapper(type, value);
         }
         
         @Pure
         @Override
-        protected @Nonnull Character unwrap(@Nonnull CharWrapper wrapper) {
+        protected @Nonnull Byte unwrap(@Nonnull Integer08Wrapper wrapper) {
             return wrapper.value;
         }
         
@@ -320,7 +313,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
     public static final @Nonnull Wrapper WRAPPER = new Wrapper();
     
     /* -------------------------------------------------- Value Converters -------------------------------------------------- */
-        
+    
     /**
      * Returns the value XDF converter of this wrapper.
      * 
@@ -329,7 +322,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * @return the value XDF converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueXDFConverter<Character, CharWrapper> getValueXDFConverter(@Nonnull @BasedOn("char@core.digitalid.net") SemanticType type) {
+    public static @Nonnull ValueXDFConverter<Byte, Integer08Wrapper> getValueXDFConverter(@Nonnull @BasedOn("int8@core.digitalid.net") SemanticType type) {
         return new ValueXDFConverter<>(WRAPPER, new XDFConverter(type));
     }
     
@@ -341,7 +334,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<Character, CharWrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull ValueSQLConverter<Byte, Integer08Wrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
         return new ValueSQLConverter<>(WRAPPER, new SQLConverter(declaration));
     }
     
@@ -354,7 +347,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
      * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull NonRequestingConverters<Character, Object> getValueConverters(@Nonnull @BasedOn("char@core.digitalid.net") SemanticType type, @Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull NonRequestingConverters<Byte, Object> getValueConverters(@Nonnull @BasedOn("int8@core.digitalid.net") SemanticType type, @Nonnull @Matching ColumnDeclaration declaration) {
         return NonRequestingConverters.get(getValueXDFConverter(type), getValueSQLConverter(declaration));
     }
     

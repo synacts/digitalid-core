@@ -4,7 +4,7 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.storage.ClientModule;
 import net.digitalid.service.core.storage.Service;

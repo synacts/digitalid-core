@@ -1,4 +1,4 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,17 +7,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.declaration.SQLType;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueException;
+import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
-import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
+import net.digitalid.service.core.block.wrappers.AbstractWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper.ValueSQLConverter;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
@@ -42,7 +43,8 @@ import net.digitalid.utility.system.exceptions.InternalException;
  * This class wraps a {@code long} for encoding and decoding a block of the syntactic type {@code intvar@core.digitalid.net}.
  */
 @Immutable
-public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
+@Deprecated // TODO: Move the static methods to the block class.
+public final class VariableInteger extends ValueWrapper<VariableInteger> {
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
@@ -80,7 +82,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * 
      * @require value <= MAX_VALUE : "The first two bits have to be zero.";
      */
-    private IntvarWrapper(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, @NonNegative long value) {
+    private VariableInteger(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, @NonNegative long value) {
         super(type);
         
         assert value >= 0 : "The value is non-negative.";
@@ -279,7 +281,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * The XDF converter for this wrapper.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<IntvarWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<VariableInteger> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -292,13 +294,13 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         
         @Pure
         @Override
-        public @Nonnull IntvarWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+        public @Nonnull VariableInteger decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             final int length = block.getLength();
             
             if (length != decodeLength(block, 0)) { throw InvalidBlockLengthException.get(decodeLength(block, 0), length); }
             
             final long value = decodeValue(block, 0, length);
-            return new IntvarWrapper(block.getType(), value);
+            return new VariableInteger(block.getType(), value);
         }
         
     }
@@ -333,7 +335,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, @NonNegative long value) {
-        return XDF_CONVERTER.encodeNonNullable(new IntvarWrapper(type, value));
+        return XDF_CONVERTER.encodeNonNullable(new VariableInteger(type, value));
     }
     
     /**
@@ -414,7 +416,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * The SQL converter for this wrapper.
      */
     @Immutable
-    public static final class SQLConverter extends AbstractWrapper.SQLConverter<IntvarWrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<VariableInteger> {
         
         /**
          * Creates a new SQL converter with the given column declaration.
@@ -429,19 +431,19 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull IntvarWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull VariableInteger wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable IntvarWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable VariableInteger restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
             try {
                 final long value = restore(resultSet, columnIndex);
                 if (resultSet.wasNull()) { return null; }
                 if (value < 0 || value > MAX_VALUE) { throw CorruptParameterValueException.get("value", value); }
-                else { return new IntvarWrapper(getType(), value); }
+                else { return new VariableInteger(getType(), value); }
             } catch (@Nonnull SQLException exception) {
                 throw FailedValueRestoringException.get(exception);
             }
@@ -466,7 +468,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * The wrapper for this wrapper.
      */
     @Immutable
-    public static class Wrapper extends ValueWrapper.Wrapper<Long, IntvarWrapper> {
+    public static class Wrapper extends ValueWrapper.Wrapper<Long, VariableInteger> {
         
         @Pure
         @Override
@@ -476,15 +478,15 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         
         @Pure
         @Override
-        protected @Nonnull IntvarWrapper wrap(@Nonnull SemanticType type, @Nonnull @Validated Long value) {
+        protected @Nonnull VariableInteger wrap(@Nonnull SemanticType type, @Nonnull @Validated Long value) {
             assert isValid(value) : "The value is valid.";
             
-            return new IntvarWrapper(type, value);
+            return new VariableInteger(type, value);
         }
         
         @Pure
         @Override
-        protected @Nonnull @Validated Long unwrap(@Nonnull IntvarWrapper wrapper) {
+        protected @Nonnull @Validated Long unwrap(@Nonnull VariableInteger wrapper) {
             return wrapper.value;
         }
         
@@ -505,7 +507,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * @return the value XDF converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueXDFConverter<Long, IntvarWrapper> getValueXDFConverter(@Nonnull @BasedOn("intvar@core.digitalid.net") SemanticType type) {
+    public static @Nonnull ValueXDFConverter<Long, VariableInteger> getValueXDFConverter(@Nonnull @BasedOn("intvar@core.digitalid.net") SemanticType type) {
         return new ValueXDFConverter<>(WRAPPER, new XDFConverter(type));
     }
     
@@ -517,7 +519,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<Long, IntvarWrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull ValueSQLConverter<Long, VariableInteger> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
         return new ValueSQLConverter<>(WRAPPER, new SQLConverter(declaration));
     }
     

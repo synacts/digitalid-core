@@ -9,8 +9,8 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.Blockable;
-import net.digitalid.service.core.block.wrappers.HashWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.binary.Binary256Wrapper;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -32,7 +32,7 @@ public final class RandomizedAgentPermissions implements Blockable {
     /**
      * Stores the semantic type {@code salt.randomized.permission.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SALT = SemanticType.map("salt.randomized.permission.agent@core.digitalid.net").load(HashWrapper.XDF_TYPE);
+    private static final @Nonnull SemanticType SALT = SemanticType.map("salt.randomized.permission.agent@core.digitalid.net").load(Binary256Wrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code permissions.randomized.permission.agent@core.digitalid.net}.
@@ -47,7 +47,7 @@ public final class RandomizedAgentPermissions implements Blockable {
     /**
      * Stores the semantic type {@code hash.randomized.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType HASH = SemanticType.map("hash.randomized.permission.agent@core.digitalid.net").load(HashWrapper.XDF_TYPE);
+    public static final @Nonnull SemanticType HASH = SemanticType.map("hash.randomized.permission.agent@core.digitalid.net").load(Binary256Wrapper.XDF_TYPE);
     
     
     /**
@@ -109,7 +109,7 @@ public final class RandomizedAgentPermissions implements Blockable {
         
         this.hash = block.getHash();
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
-        this.salt = HashWrapper.decodeNonNullable(elements.getNonNullable(0));
+        this.salt = Binary256Wrapper.decodeNonNullable(elements.getNonNullable(0));
         this.permissions = new FreezableAgentPermissions(elements.getNonNullable(1)).freeze();
     }
     
@@ -123,7 +123,7 @@ public final class RandomizedAgentPermissions implements Blockable {
     @Override
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = FreezableArray.get(2);
-        elements.set(0, HashWrapper.encodeNullable(SALT, salt));
+        elements.set(0, Binary256Wrapper.encodeNullable(SALT, salt));
         elements.set(1, Block.toBlock(PERMISSIONS, permissions));
         return TupleWrapper.encode(TYPE, elements.freeze());
     }

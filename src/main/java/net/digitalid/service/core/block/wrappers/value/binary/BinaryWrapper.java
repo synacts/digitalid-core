@@ -1,4 +1,4 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.value.binary;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -10,17 +10,19 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.declaration.SQLType;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
+import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
+import net.digitalid.service.core.block.wrappers.AbstractWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper.ValueSQLConverter;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
@@ -44,7 +46,7 @@ import net.digitalid.utility.system.exceptions.InternalException;
  * @invariant (bytes == null) != (block == null) : "Either the bytes or the block is null.";
  */
 @Immutable
-public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
+public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
     
     /* -------------------------------------------------- Bytes -------------------------------------------------- */
     
@@ -96,7 +98,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * @param type the semantic type of the new wrapper.
      * @param bytes the bytes of the new wrapper.
      */
-    private BytesWrapper(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Captured @Nonnull byte[] bytes) {
+    private BinaryWrapper(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Captured @Nonnull byte[] bytes) {
         super(type);
         
         this.bytes = bytes;
@@ -108,7 +110,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * 
      * @param block the block of the new wrapper.
      */
-    private BytesWrapper(@Nonnull @BasedOn("bytes@core.digitalid.net") Block block) {
+    private BinaryWrapper(@Nonnull @BasedOn("bytes@core.digitalid.net") Block block) {
         super(block.getType());
         
         this.bytes = null;
@@ -161,7 +163,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * The XDF converter for this wrapper.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<BytesWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<BinaryWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -174,8 +176,8 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         
         @Pure
         @Override
-        public @Nonnull BytesWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
-            return new BytesWrapper(block);
+        public @Nonnull BinaryWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+            return new BinaryWrapper(block);
         }
         
     }
@@ -208,7 +210,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Captured @Nonnull byte[] bytes) {
-        return XDF_CONVERTER.encodeNonNullable(new BytesWrapper(type, bytes));
+        return XDF_CONVERTER.encodeNonNullable(new BinaryWrapper(type, bytes));
     }
     
     /**
@@ -386,7 +388,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * The SQL converter for this wrapper.
      */
     @Immutable
-    public static final class SQLConverter extends AbstractWrapper.SQLConverter<BytesWrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<BinaryWrapper> {
 
         /**
          * Creates a new SQL converter with the given column declaration.
@@ -401,7 +403,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull BytesWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull BinaryWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             try {
                 if (Database.getConfiguration().supportsBinaryStream()) {
                     preparedStatement.setBinaryStream(parameterIndex.getAndIncrementValue(), wrapper.getBytesAsInputStream(), wrapper.determineLength());
@@ -416,9 +418,9 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
         @Pure
         @Override
         @NonCommitting
-        public @Nullable BytesWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
-            final @Nullable byte[] bytes = BytesWrapper.restoreNullable(resultSet, columnIndex);
-            return bytes == null ? null : new BytesWrapper(getType(), bytes);
+        public @Nullable BinaryWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+            final @Nullable byte[] bytes = BinaryWrapper.restoreNullable(resultSet, columnIndex);
+            return bytes == null ? null : new BinaryWrapper(getType(), bytes);
         }
         
     }
@@ -440,17 +442,17 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * The wrapper for this wrapper.
      */
     @Immutable
-    public static class Wrapper extends ValueWrapper.Wrapper<byte[], BytesWrapper> {
+    public static class Wrapper extends ValueWrapper.Wrapper<byte[], BinaryWrapper> {
         
         @Pure
         @Override
-        protected @Nonnull BytesWrapper wrap(@Nonnull SemanticType type, @Nonnull byte[] value) {
-            return new BytesWrapper(type, value);
+        protected @Nonnull BinaryWrapper wrap(@Nonnull SemanticType type, @Nonnull byte[] value) {
+            return new BinaryWrapper(type, value);
         }
         
         @Pure
         @Override
-        protected @Nonnull byte[] unwrap(@Nonnull BytesWrapper wrapper) {
+        protected @Nonnull byte[] unwrap(@Nonnull BinaryWrapper wrapper) {
             return wrapper.getBytes();
         }
         
@@ -471,7 +473,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * @return the value XDF converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueXDFConverter<byte[], BytesWrapper> getValueXDFConverter(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
+    public static @Nonnull ValueXDFConverter<byte[], BinaryWrapper> getValueXDFConverter(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
         return new ValueXDFConverter<>(WRAPPER, new XDFConverter(type));
     }
     
@@ -483,7 +485,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<byte[], BytesWrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull ValueSQLConverter<byte[], BinaryWrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
         return new ValueSQLConverter<>(WRAPPER, new SQLConverter(declaration));
     }
     

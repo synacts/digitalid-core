@@ -9,7 +9,7 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;

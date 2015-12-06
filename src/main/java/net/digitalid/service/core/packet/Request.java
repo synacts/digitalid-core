@@ -13,7 +13,7 @@ import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.CompressionWrapper;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.cache.AttributesQuery;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concepts.contact.FreezableAttributeTypeSet;

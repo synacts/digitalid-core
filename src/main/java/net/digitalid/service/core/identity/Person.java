@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
@@ -87,7 +87,7 @@ public abstract class Person extends NonHostIdentityImplementation {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Person, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Person.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<Person, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Person.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

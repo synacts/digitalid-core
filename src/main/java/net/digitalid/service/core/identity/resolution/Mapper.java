@@ -14,8 +14,8 @@ import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.database.core.reference.GeneralReference;
-import net.digitalid.database.core.reference.ReferenceOption;
+import net.digitalid.database.core.sql.statement.table.create.SQLReferenceOption;
+import net.digitalid.database.core.table.GeneralReference;
 import net.digitalid.database.core.table.GeneralTable;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -100,7 +100,7 @@ public final class Mapper {
      * merged! (If the column can only contain {@link Type types}, this is not necessary.)
      * Additionally, it might be a good idea to establish an index on the referencing column.
      */
-    public static final @Nonnull GeneralReference REFERENCE = GeneralReference.get(IDENTITY_TABLE, IDENTITY_COLUMN, ReferenceOption.RESTRICT, ReferenceOption.RESTRICT);
+    public static final @Nonnull GeneralReference REFERENCE = GeneralReference.get(IDENTITY_TABLE, IDENTITY_COLUMN, SQLReferenceOption.RESTRICT, SQLReferenceOption.RESTRICT);
     
     /**
      * Stores the registered triplets of tables, columns and unique constraint that reference a person.

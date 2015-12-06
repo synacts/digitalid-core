@@ -9,12 +9,12 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.ClientSignatureWrapper;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.block.wrappers.annotations.HasSubject;
+import net.digitalid.service.core.block.wrappers.signature.ClientSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
+import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ClientAgent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
@@ -138,7 +138,7 @@ public final class AccountOpen extends Action {
         this.category = Category.get(elements.getNonNullable(0));
         if (!category.isInternalNonHostIdentity()) { throw InternalException.get("The category has to denote an internal non-host identity but was " + category.name() + "."); }
         
-        this.agentNumber = Int64Wrapper.decode(elements.getNonNullable(1));
+        this.agentNumber = Integer64Wrapper.decode(elements.getNonNullable(1));
         
         if (!(signature instanceof ClientSignatureWrapper)) { throw InternalException.get("The action to open an account has to be signed by a client."); }
         this.commitment = ((ClientSignatureWrapper) signature).getCommitment();
@@ -151,7 +151,7 @@ public final class AccountOpen extends Action {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return TupleWrapper.encode(TYPE, category.toBlock(), Int64Wrapper.encode(Agent.NUMBER, agentNumber), StringWrapper.encodeNonNullable(Client.NAME, name));
+        return TupleWrapper.encode(TYPE, category.toBlock(), Integer64Wrapper.encode(Agent.NUMBER, agentNumber), StringWrapper.encodeNonNullable(Client.NAME, name));
     }
     
     @Pure

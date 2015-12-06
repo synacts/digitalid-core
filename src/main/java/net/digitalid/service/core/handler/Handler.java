@@ -3,7 +3,7 @@ package net.digitalid.service.core.handler;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.castable.CastableObject;
 import net.digitalid.service.core.converter.xdf.XDF;

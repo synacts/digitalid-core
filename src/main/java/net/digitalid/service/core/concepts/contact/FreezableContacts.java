@@ -5,8 +5,9 @@ import java.sql.ResultSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -22,6 +23,7 @@ import net.digitalid.utility.collections.converter.IterableConverter;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
 import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 
 /**

@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
@@ -144,7 +144,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Type, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Type.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<Type, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Type.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

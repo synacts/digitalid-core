@@ -41,17 +41,12 @@ public final class Server {
     /**
      * Stores the version of the Digital ID implementation.
      */
-    public static final @Nonnull String VERSION = "0.6.2";
+    public static final @Nonnull String VERSION = "0.6.4";
     
     /**
      * Stores the date of the Digital ID implementation.
      */
-    public static final @Nonnull String DATE = "22 July 2015";
-    
-    /**
-     * Stores the authors of the Digital ID implementation.
-     */
-    public static final @Nonnull String AUTHORS = "Kaspar Etter (kaspar.etter@digitalid.net)";
+    public static final @Nonnull String DATE = "1 December 2015";
     
     /**
      * Stores the server listens on the given port number.
@@ -225,7 +220,7 @@ public final class Server {
         Thread.currentThread().setName("Main");
         
         Directory.initialize(Directory.DEFAULT);
-        Logger.initialize(new DefaultLogger(Level.INFORMATION, "Server"));
+        Logger.initialize(DefaultLogger.get(Level.INFORMATION, "Server", VERSION));
         
         final @Nonnull Configuration configuration;
         try {

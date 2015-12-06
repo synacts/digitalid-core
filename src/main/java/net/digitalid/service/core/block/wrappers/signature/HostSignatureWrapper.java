@@ -1,4 +1,4 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.signature;
 
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
@@ -11,6 +11,7 @@ import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;

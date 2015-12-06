@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.IntegerWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;

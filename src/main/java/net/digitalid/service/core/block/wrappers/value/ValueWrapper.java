@@ -1,4 +1,4 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.value;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +12,7 @@ import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValu
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.block.wrappers.AbstractWrapper;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;

@@ -15,13 +15,13 @@ import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.annotations.OnlyForActions;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.Blockable;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
+import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.NonHostConcept;
@@ -102,7 +102,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     /**
      * Stores the semantic type {@code context@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("context@core.digitalid.net").load(Int64Wrapper.XDF_TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("context@core.digitalid.net").load(Integer64Wrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code flat.context@core.digitalid.net}.
@@ -647,7 +647,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return Int64Wrapper.encode(TYPE, number);
+        return Integer64Wrapper.encode(TYPE, number);
     }
     
     /**
@@ -662,7 +662,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException, InternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        return get(entity, Int64Wrapper.decode(block));
+        return get(entity, Integer64Wrapper.decode(block));
     }
     
     /* -------------------------------------------------- SQLizable -------------------------------------------------- */

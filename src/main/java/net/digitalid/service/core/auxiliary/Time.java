@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
@@ -582,12 +582,12 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the semantic type {@code time@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("time@core.digitalid.net").load(Int64Wrapper.XDF_TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("time@core.digitalid.net").load(Integer64Wrapper.XDF_TYPE);
     
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractNonRequestingXDFConverter<Time, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, Int64Wrapper.getValueXDFConverter(TYPE));
+    public static final @Nonnull AbstractNonRequestingXDFConverter<Time, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, Integer64Wrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
@@ -600,12 +600,12 @@ public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Compara
     /**
      * Stores the declaration of this class.
      */
-    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("time", Int64Wrapper.SQL_TYPE);
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("time", Integer64Wrapper.SQL_TYPE);
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Time, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<Time, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override

@@ -1,7 +1,7 @@
 package net.digitalid.service.core.concept;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.factory.ConceptConverters;

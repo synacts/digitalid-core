@@ -12,7 +12,7 @@ import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.action.synchronizer.RequestAudit;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;

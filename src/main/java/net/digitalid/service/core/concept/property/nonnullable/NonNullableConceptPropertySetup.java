@@ -1,7 +1,7 @@
 package net.digitalid.service.core.concept.property.nonnullable;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.ConceptSetup;
 import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction;

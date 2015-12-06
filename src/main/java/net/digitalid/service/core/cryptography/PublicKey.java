@@ -7,7 +7,7 @@ import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;

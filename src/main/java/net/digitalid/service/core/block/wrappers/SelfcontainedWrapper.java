@@ -9,10 +9,12 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.VariableInteger;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.wrappers.exceptions.UnexpectedEndOfFileException;
 import net.digitalid.service.core.block.wrappers.exceptions.UnsupportedBlockLengthException;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -273,20 +275,20 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
             final @Nonnull byte[] intvarOfIdentifier = new byte[8];
             read(inputStream, intvarOfIdentifier, 0, 1);
             
-            final int intvarOfIdentifierLength = IntvarWrapper.decodeLength(intvarOfIdentifier);
+            final int intvarOfIdentifierLength = VariableInteger.decodeLength(intvarOfIdentifier);
             read(inputStream, intvarOfIdentifier, 1, intvarOfIdentifierLength - 1);
             
-            final int identifierLength = longToInt(IntvarWrapper.decodeValue(intvarOfIdentifier, intvarOfIdentifierLength));
+            final int identifierLength = longToInt(VariableInteger.decodeValue(intvarOfIdentifier, intvarOfIdentifierLength));
             final @Nonnull byte[] identifier = new byte[identifierLength];
             read(inputStream, identifier, 0, identifierLength);
             
             final @Nonnull byte[] intvarOfElement = new byte[8];
             read(inputStream, intvarOfElement, 0, 1);
             
-            final int intvarOfElementLength = IntvarWrapper.decodeLength(intvarOfElement);
+            final int intvarOfElementLength = VariableInteger.decodeLength(intvarOfElement);
             read(inputStream, intvarOfElement, 1, intvarOfElementLength - 1);
             
-            final int elementLength = longToInt(IntvarWrapper.decodeValue(intvarOfElement, intvarOfElementLength));
+            final int elementLength = longToInt(VariableInteger.decodeValue(intvarOfElement, intvarOfElementLength));
             final int length = longToInt((long) intvarOfIdentifierLength + identifierLength + intvarOfElementLength + elementLength);
             final @Nonnull byte[] bytes = new byte[length];
             

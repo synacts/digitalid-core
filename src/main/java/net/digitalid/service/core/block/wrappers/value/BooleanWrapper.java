@@ -1,22 +1,24 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.value;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.declaration.SQLType;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
+import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
+import net.digitalid.service.core.block.wrappers.AbstractWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper.ValueSQLConverter;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
@@ -34,17 +36,17 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
- * This class wraps a {@code long} for encoding and decoding a block of the syntactic type {@code int64@core.digitalid.net}.
+ * This class wraps a {@code boolean} for encoding and decoding a block of the syntactic type {@code boolean@core.digitalid.net}.
  */
 @Immutable
-public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
+public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this wrapper.
      */
-    private final long value;
+    private final boolean value;
     
     /**
      * Returns the value of this wrapper.
@@ -52,7 +54,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @return the value of this wrapper.
      */
     @Pure
-    public long getValue() {
+    public boolean getValue() {
         return value;
     }
     
@@ -64,7 +66,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @param type the semantic type of the new wrapper.
      * @param value the value of the new wrapper.
      */
-    private Int64Wrapper(@Nonnull @Loaded @BasedOn("int64@core.digitalid.net") SemanticType type, long value) {
+    private BooleanWrapper(@Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type, boolean value) {
         super(type);
         
         this.value = value;
@@ -73,9 +75,9 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
-     * The byte length of an int64.
+     * The byte length of a boolean.
      */
-    public static final int LENGTH = 8;
+    public static final int LENGTH = 1;
     
     @Pure
     @Override
@@ -89,15 +91,15 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
-        block.encodeValue(value);
+        block.setByte(0, (byte) (value ? 1 : 0));
     }
     
     /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
     
     /**
-     * Stores the syntactic type {@code int64@core.digitalid.net}.
+     * Stores the syntactic type {@code boolean@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("int64@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("boolean@core.digitalid.net").load(0);
     
     @Pure
     @Override
@@ -111,23 +113,23 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * The XDF converter for this wrapper.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<Int64Wrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<BooleanWrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private XDFConverter(@Nonnull @BasedOn("int64@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @BasedOn("boolean@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
-        public @Nonnull Int64Wrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("int64@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+        public @Nonnull BooleanWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
             
-            return new Int64Wrapper(getType(), block.decodeValue());
+            return new BooleanWrapper(block.getType(), block.getByte(0) != 0);
         }
         
     }
@@ -141,15 +143,15 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
     /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
     
     /**
-     * Stores the semantic type {@code semantic.int64@core.digitalid.net}.
+     * Stores the semantic type {@code semantic.boolean@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int64@core.digitalid.net").load(XDF_TYPE);
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.boolean@core.digitalid.net").load(XDF_TYPE);
     
     /**
      * Stores a static XDF converter for performance reasons.
      */
     private static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter(SEMANTIC);
-    
+
     /**
      * Encodes the given value into a new block of the given type.
      * 
@@ -159,8 +161,8 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @return a new block containing the given value.
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("int64@core.digitalid.net") SemanticType type, long value) {
-        return XDF_CONVERTER.encodeNonNullable(new Int64Wrapper(type, value));
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type, boolean value) {
+        return XDF_CONVERTER.encodeNonNullable(new BooleanWrapper(type, value));
     }
     
     /**
@@ -171,7 +173,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @return the value contained in the given block.
      */
     @Pure
-    public static long decode(@Nonnull @NonEncoding @BasedOn("int64@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+    public static boolean decode(@Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
@@ -180,7 +182,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return String.valueOf(value);
+        return Database.getConfiguration().BOOLEAN(value);
     }
     
     /**
@@ -190,8 +192,8 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @param values a mutable array in which the value is to be stored.
      * @param index the array index at which the value is to be stored.
      */
-    public static void store(long value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
-        values.set(index.getAndIncrementValue(), String.valueOf(value));
+    public static void store(boolean value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+        values.set(index.getAndIncrementValue(), Database.getConfiguration().BOOLEAN(value));
     }
     
     /**
@@ -202,9 +204,9 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(long value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void store(boolean value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         try {
-            preparedStatement.setLong(parameterIndex.getAndIncrementValue(), value);
+            preparedStatement.setBoolean(parameterIndex.getAndIncrementValue(), value);
         } catch (@Nonnull SQLException exception) {
             throw FailedValueStoringException.get(exception);
         }
@@ -220,9 +222,9 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      */
     @Pure
     @NonCommitting
-    public static long restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
+    public static boolean restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
         try {
-            return resultSet.getLong(columnIndex.getAndIncrementValue());
+            return resultSet.getBoolean(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
             throw FailedValueRestoringException.get(exception);
         }
@@ -233,13 +235,13 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.BIGINT;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.BOOLEAN;
     
     /**
      * The SQL converter for this wrapper.
      */
     @Immutable
-    public static final class SQLConverter extends AbstractWrapper.SQLConverter<Int64Wrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<BooleanWrapper> {
         
         /**
          * Creates a new SQL converter with the given column declaration.
@@ -254,17 +256,17 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull Int64Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull BooleanWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Int64Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable BooleanWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
             try {
-                final long value = restore(resultSet, columnIndex);
-                return resultSet.wasNull() ? null : new Int64Wrapper(getType(), value);
+                final boolean value = restore(resultSet, columnIndex);
+                return resultSet.wasNull() ? null : new BooleanWrapper(getType(), value);
             } catch (@Nonnull SQLException exception) {
                 throw FailedValueRestoringException.get(exception);
             }
@@ -289,17 +291,17 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * The wrapper for this wrapper.
      */
     @Immutable
-    public static class Wrapper extends ValueWrapper.Wrapper<Long, Int64Wrapper> {
+    public static class Wrapper extends ValueWrapper.Wrapper<Boolean, BooleanWrapper> {
         
         @Pure
         @Override
-        protected @Nonnull Int64Wrapper wrap(@Nonnull SemanticType type, @Nonnull Long value) {
-            return new Int64Wrapper(type, value);
+        protected @Nonnull BooleanWrapper wrap(@Nonnull SemanticType type, @Nonnull Boolean value) {
+            return new BooleanWrapper(type, value);
         }
         
         @Pure
         @Override
-        protected @Nonnull Long unwrap(@Nonnull Int64Wrapper wrapper) {
+        protected @Nonnull Boolean unwrap(@Nonnull BooleanWrapper wrapper) {
             return wrapper.value;
         }
         
@@ -311,7 +313,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
     public static final @Nonnull Wrapper WRAPPER = new Wrapper();
     
     /* -------------------------------------------------- Value Converters -------------------------------------------------- */
-    
+   
     /**
      * Returns the value XDF converter of this wrapper.
      * 
@@ -320,7 +322,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @return the value XDF converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueXDFConverter<Long, Int64Wrapper> getValueXDFConverter(@Nonnull @BasedOn("int64@core.digitalid.net") SemanticType type) {
+    public static @Nonnull ValueXDFConverter<Boolean, BooleanWrapper> getValueXDFConverter(@Nonnull @BasedOn("boolean@core.digitalid.net") SemanticType type) {
         return new ValueXDFConverter<>(WRAPPER, new XDFConverter(type));
     }
     
@@ -332,7 +334,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<Long, Int64Wrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull ValueSQLConverter<Boolean, BooleanWrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
         return new ValueSQLConverter<>(WRAPPER, new SQLConverter(declaration));
     }
     
@@ -345,7 +347,7 @@ public final class Int64Wrapper extends ValueWrapper<Int64Wrapper> {
      * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull NonRequestingConverters<Long, Object> getValueConverters(@Nonnull @BasedOn("int64@core.digitalid.net") SemanticType type, @Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull NonRequestingConverters<Boolean, Object> getValueConverters(@Nonnull @BasedOn("boolean@core.digitalid.net") SemanticType type, @Nonnull @Matching ColumnDeclaration declaration) {
         return NonRequestingConverters.get(getValueXDFConverter(type), getValueSQLConverter(declaration));
     }
     

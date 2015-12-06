@@ -2,9 +2,9 @@ package net.digitalid.service.core.wrappers;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.Int32Wrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer32Wrapper;
+import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
@@ -23,10 +23,10 @@ public final class TupleWrapperTest extends DatabaseSetup {
     @Test
     public void testWrapping() throws InvalidEncodingException, InternalException {
         final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.XDF_TYPE);
-        final @Nonnull SemanticType INT32 = SemanticType.map("int32@test.digitalid.net").load(Int32Wrapper.XDF_TYPE);
+        final @Nonnull SemanticType INT32 = SemanticType.map("int32@test.digitalid.net").load(Integer32Wrapper.XDF_TYPE);
         final @Nonnull SemanticType TYPE = SemanticType.map("tuple@test.digitalid.net").load(TupleWrapper.XDF_TYPE, STRING, INT32);
         final @Nonnull Block string = StringWrapper.encodeNonNullable(STRING, "This is a short string.");
-        final @Nonnull Block int32 = Int32Wrapper.encode(INT32, 123456789);
+        final @Nonnull Block int32 = Integer32Wrapper.encode(INT32, 123456789);
         
         final @Nonnull FreezableList<ReadOnlyArray<Block>> listOfElements = new FreezableLinkedList<>();
         listOfElements.add(FreezableArray.getNonNullable(string, int32).freeze());

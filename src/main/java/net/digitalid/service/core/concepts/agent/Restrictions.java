@@ -18,8 +18,8 @@ import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValu
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueCombinationException;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.BooleanWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.BooleanWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.converter.Converters;

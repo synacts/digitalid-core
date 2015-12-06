@@ -1,4 +1,4 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.value.integer;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,14 +7,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.declaration.SQLType;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
+import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.block.wrappers.AbstractWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
@@ -22,6 +24,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingEx
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -31,17 +34,17 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
- * This class wraps a {@code short} for encoding and decoding a block of the syntactic type {@code int16@core.digitalid.net}.
+ * This class wraps an {@code int} for encoding and decoding a block of the syntactic type {@code int32@core.digitalid.net}.
  */
 @Immutable
-public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
+public final class Integer32Wrapper extends ValueWrapper<Integer32Wrapper> {
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this wrapper.
      */
-    private final short value;
+    private final int value;
     
     /**
      * Returns the value of this wrapper.
@@ -49,7 +52,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @return the value of this wrapper.
      */
     @Pure
-    public short getValue() {
+    public int getValue() {
         return value;
     }
     
@@ -61,7 +64,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @param type the semantic type of the new wrapper.
      * @param value the value of the new wrapper.
      */
-    private Int16Wrapper(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type, short value) {
+    private Integer32Wrapper(@Nonnull @Loaded @BasedOn("int32@core.digitalid.net") SemanticType type, int value) {
         super(type);
         
         this.value = value;
@@ -70,9 +73,9 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
-     * The byte length of an int16.
+     * The byte length of an int32.
      */
-    public static final int LENGTH = 2;
+    public static final int LENGTH = 4;
     
     @Pure
     @Override
@@ -92,9 +95,9 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
     /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
     
     /**
-     * Stores the syntactic type {@code int16@core.digitalid.net}.
+     * Stores the syntactic type {@code int32@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("int16@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("int32@core.digitalid.net").load(0);
     
     @Pure
     @Override
@@ -108,23 +111,23 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * The XDF converter for this wrapper.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<Int16Wrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<Integer32Wrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private XDFConverter(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @BasedOn("int32@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
-        public @Nonnull Int16Wrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("int16@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+        public @Nonnull Integer32Wrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("int32@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
             
-            return new Int16Wrapper(getType(), (short) block.decodeValue());
+            return new Integer32Wrapper(getType(), (int) block.decodeValue());
         }
         
     }
@@ -138,9 +141,9 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
     /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
     
     /**
-     * Stores the semantic type {@code semantic.int16@core.digitalid.net}.
+     * Stores the semantic type {@code semantic.int32@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int16@core.digitalid.net").load(XDF_TYPE);
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int32@core.digitalid.net").load(XDF_TYPE);
     
     /**
      * Stores a static XDF converter for performance reasons.
@@ -156,8 +159,8 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @return a new block containing the given value.
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type, short value) {
-        return XDF_CONVERTER.encodeNonNullable(new Int16Wrapper(type, value));
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("int32@core.digitalid.net") SemanticType type, int value) {
+        return XDF_CONVERTER.encodeNonNullable(new Integer32Wrapper(type, value));
     }
     
     /**
@@ -168,7 +171,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @return the value contained in the given block.
      */
     @Pure
-    public static short decode(@Nonnull @NonEncoding @BasedOn("int16@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+    public static int decode(@Nonnull @NonEncoding @BasedOn("int32@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
@@ -187,7 +190,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @param values a mutable array in which the value is to be stored.
      * @param index the array index at which the value is to be stored.
      */
-    public static void store(short value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+    public static void store(int value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
         values.set(index.getAndIncrementValue(), String.valueOf(value));
     }
     
@@ -199,9 +202,9 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(short value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void store(int value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         try {
-            preparedStatement.setShort(parameterIndex.getAndIncrementValue(), value);
+            preparedStatement.setInt(parameterIndex.getAndIncrementValue(), value);
         } catch (@Nonnull SQLException exception) {
             throw FailedValueStoringException.get(exception);
         }
@@ -217,9 +220,9 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      */
     @Pure
     @NonCommitting
-    public static short restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
+    public static int restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
         try {
-            return resultSet.getShort(columnIndex.getAndIncrementValue());
+            return resultSet.getInt(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
             throw FailedValueRestoringException.get(exception);
         }
@@ -230,13 +233,13 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.SMALLINT;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.INT;
     
     /**
      * The SQL converter for this wrapper.
      */
     @Immutable
-    public static final class SQLConverter extends AbstractWrapper.SQLConverter<Int16Wrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<Integer32Wrapper> {
         
         /**
          * Creates a new SQL converter with the given column declaration.
@@ -251,17 +254,17 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull Int16Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull Integer32Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Int16Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable Integer32Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
             try {
-                final short value = restore(resultSet, columnIndex);
-                return resultSet.wasNull() ? null : new Int16Wrapper(getType(), value);
+                final int value = restore(resultSet, columnIndex);
+                return resultSet.wasNull() ? null : new Integer32Wrapper(getType(), value);
             } catch (@Nonnull SQLException exception) {
                 throw FailedValueRestoringException.get(exception);
             }
@@ -286,17 +289,17 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * The wrapper for this wrapper.
      */
     @Immutable
-    public static class Wrapper extends ValueWrapper.Wrapper<Short, Int16Wrapper> {
+    public static class Wrapper extends ValueWrapper.Wrapper<Integer, Integer32Wrapper> {
         
         @Pure
         @Override
-        protected @Nonnull Int16Wrapper wrap(@Nonnull SemanticType type, @Nonnull Short value) {
-            return new Int16Wrapper(type, value);
+        protected @Nonnull Integer32Wrapper wrap(@Nonnull SemanticType type, @Nonnull Integer value) {
+            return new Integer32Wrapper(type, value);
         }
         
         @Pure
         @Override
-        protected @Nonnull Short unwrap(@Nonnull Int16Wrapper wrapper) {
+        protected @Nonnull Integer unwrap(@Nonnull Integer32Wrapper wrapper) {
             return wrapper.value;
         }
         
@@ -317,7 +320,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @return the value XDF converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueXDFConverter<Short, Int16Wrapper> getValueXDFConverter(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
+    public static @Nonnull ValueXDFConverter<Integer, Integer32Wrapper> getValueXDFConverter(@Nonnull @BasedOn("int32@core.digitalid.net") SemanticType type) {
         return new ValueXDFConverter<>(WRAPPER, new XDFConverter(type));
     }
     
@@ -329,7 +332,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<Short, Int16Wrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull ValueSQLConverter<Integer, Integer32Wrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
         return new ValueSQLConverter<>(WRAPPER, new SQLConverter(declaration));
     }
     
@@ -342,7 +345,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull NonRequestingConverters<Short, Object> getValueConverters(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type, @Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull NonRequestingConverters<Integer, Object> getValueConverters(@Nonnull @BasedOn("int32@core.digitalid.net") SemanticType type, @Nonnull @Matching ColumnDeclaration declaration) {
         return NonRequestingConverters.get(getValueXDFConverter(type), getValueSQLConverter(declaration));
     }
     

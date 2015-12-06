@@ -8,9 +8,9 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.BytesWrapper;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
+import net.digitalid.service.core.block.wrappers.value.binary.BinaryWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.converter.Converters;
@@ -84,7 +84,7 @@ public final class SemanticType extends Type {
     /**
      * Stores the semantic type {@code unknown@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(BytesWrapper.XDF_TYPE);
+    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(BinaryWrapper.XDF_TYPE);
     
     
     /**
@@ -603,7 +603,7 @@ public final class SemanticType extends Type {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<SemanticType, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(SemanticType.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<SemanticType, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(SemanticType.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

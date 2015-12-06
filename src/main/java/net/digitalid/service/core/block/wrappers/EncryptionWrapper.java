@@ -12,6 +12,8 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;

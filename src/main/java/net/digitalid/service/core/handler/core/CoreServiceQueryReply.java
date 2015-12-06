@@ -3,7 +3,7 @@ package net.digitalid.service.core.handler.core;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.CoreService;
-import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;

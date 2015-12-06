@@ -10,15 +10,15 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.EmptyWrapper;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.ListWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.EmptyWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
@@ -127,7 +127,7 @@ public final class ActionModule implements StateModule {
                 if (resultSet.wasNull()) { number = null; }
                 final @Nonnull Identifier recipient = IdentifierImplementation.get(resultSet, 12);
                 final @Nonnull Block action = Block.getNotNull(Packet.SIGNATURE, resultSet, 13);
-                entries.add(TupleWrapper.encode(MODULE_ENTRY, account.getIdentity().toBlockable(InternalNonHostIdentity.IDENTIFIER), service.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), time, permissions, restrictions, (number != null ? Int64Wrapper.encode(Agent.NUMBER, number) : null), recipient.toBlock().setType(HostIdentity.IDENTIFIER).toBlockable(), action.toBlockable()));
+                entries.add(TupleWrapper.encode(MODULE_ENTRY, account.getIdentity().toBlockable(InternalNonHostIdentity.IDENTIFIER), service.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), time, permissions, restrictions, (number != null ? Integer64Wrapper.encode(Agent.NUMBER, number) : null), recipient.toBlock().setType(HostIdentity.IDENTIFIER).toBlockable(), action.toBlockable()));
             }
             return ListWrapper.encode(MODULE_FORMAT, entries.freeze());
         }
@@ -148,7 +148,7 @@ public final class ActionModule implements StateModule {
                 Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(2)).set(preparedStatement, 3);
                 new FreezableAgentPermissions(tuple.getNonNullableElement(3)).checkIsSingle().setEmptyOrSingle(preparedStatement, 4);
                 new Restrictions(NonHostAccount.get(host, identity), tuple.getNonNullableElement(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.castTo(InternalPerson.class)).)
-                if (tuple.isElementNull(5)) { preparedStatement.setLong(11, Int64Wrapper.decode(tuple.getNonNullableElement(5))); }
+                if (tuple.isElementNull(5)) { preparedStatement.setLong(11, Integer64Wrapper.decode(tuple.getNonNullableElement(5))); }
                 else { preparedStatement.setNull(11, Types.BIGINT); }
                 IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(6)).castTo(HostIdentifier.class).set(preparedStatement, 12);
                 tuple.getNonNullableElement(7).set(preparedStatement, 13);

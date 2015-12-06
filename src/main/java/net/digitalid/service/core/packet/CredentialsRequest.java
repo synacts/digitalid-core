@@ -8,7 +8,7 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.action.synchronizer.RequestAudit;
 import net.digitalid.service.core.block.wrappers.CompressionWrapper;
-import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.signature.CredentialsSignatureWrapper;
 import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.cryptography.credential.Credential;

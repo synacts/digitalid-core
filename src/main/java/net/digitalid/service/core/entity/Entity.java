@@ -9,9 +9,9 @@ import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.service.core.auxiliary.None;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.converter.Converters;
@@ -172,7 +172,7 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
          * @param name the name of the new entity declaration.
          */
         protected Declaration(@Nonnull @Validated String name) {
-            super(name, Int64Wrapper.SQL_TYPE, null);
+            super(name, Integer64Wrapper.SQL_TYPE, null);
         }
         
         @Pure
@@ -206,7 +206,7 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Entity, Site> SQL_CONVERTER = ChainingSQLConverter.get(new Entity.LongConverter<>(Entity.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<Entity, Site> SQL_CONVERTER = ChainingSQLConverter.get(new Entity.LongConverter<>(Entity.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

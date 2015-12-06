@@ -1,4 +1,4 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.value.integer;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,16 +7,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.declaration.SQLType;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
+import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
+import net.digitalid.service.core.block.wrappers.AbstractWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
@@ -24,7 +24,6 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingEx
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -34,17 +33,17 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
- * This class wraps a {@code double} for encoding and decoding a block of the syntactic type {@code double@core.digitalid.net}.
+ * This class wraps a {@code short} for encoding and decoding a block of the syntactic type {@code int16@core.digitalid.net}.
  */
 @Immutable
-public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
+public final class Integer16Wrapper extends ValueWrapper<Integer16Wrapper> {
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Stores the value of this wrapper.
      */
-    private final double value;
+    private final short value;
     
     /**
      * Returns the value of this wrapper.
@@ -52,7 +51,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * @return the value of this wrapper.
      */
     @Pure
-    public double getValue() {
+    public short getValue() {
         return value;
     }
     
@@ -64,7 +63,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * @param type the semantic type of the new wrapper.
      * @param value the value of the new wrapper.
      */
-    private DoubleWrapper(@Nonnull @Loaded @BasedOn("double@core.digitalid.net") SemanticType type, double value) {
+    private Integer16Wrapper(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type, short value) {
         super(type);
         
         this.value = value;
@@ -73,9 +72,9 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
     /**
-     * The byte length of a double.
+     * The byte length of an int16.
      */
-    public static final int LENGTH = 8;
+    public static final int LENGTH = 2;
     
     @Pure
     @Override
@@ -89,15 +88,15 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
-        block.encodeValue(Double.doubleToRawLongBits(value));
+        block.encodeValue(value);
     }
     
     /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
     
     /**
-     * Stores the syntactic type {@code double@core.digitalid.net}.
+     * Stores the syntactic type {@code int16@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("double@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("int16@core.digitalid.net").load(0);
     
     @Pure
     @Override
@@ -111,23 +110,23 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * The XDF converter for this wrapper.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<DoubleWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<Integer16Wrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private XDFConverter(@Nonnull @BasedOn("double@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
-        public @Nonnull DoubleWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("double@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+        public @Nonnull Integer16Wrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("int16@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
             
-            return new DoubleWrapper(block.getType(), Double.longBitsToDouble(block.decodeValue()));
+            return new Integer16Wrapper(getType(), (short) block.decodeValue());
         }
         
     }
@@ -141,9 +140,9 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
     /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
     
     /**
-     * Stores the semantic type {@code semantic.double@core.digitalid.net}.
+     * Stores the semantic type {@code semantic.int16@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.double@core.digitalid.net").load(XDF_TYPE);
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int16@core.digitalid.net").load(XDF_TYPE);
     
     /**
      * Stores a static XDF converter for performance reasons.
@@ -159,8 +158,8 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * @return a new block containing the given value.
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("double@core.digitalid.net") SemanticType type, double value) {
-        return XDF_CONVERTER.encodeNonNullable(new DoubleWrapper(type, value));
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type, short value) {
+        return XDF_CONVERTER.encodeNonNullable(new Integer16Wrapper(type, value));
     }
     
     /**
@@ -171,7 +170,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * @return the value contained in the given block.
      */
     @Pure
-    public static double decode(@Nonnull @NonEncoding @BasedOn("double@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+    public static short decode(@Nonnull @NonEncoding @BasedOn("int16@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
@@ -190,7 +189,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * @param values a mutable array in which the value is to be stored.
      * @param index the array index at which the value is to be stored.
      */
-    public static void store(double value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+    public static void store(short value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
         values.set(index.getAndIncrementValue(), String.valueOf(value));
     }
     
@@ -202,9 +201,9 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(double value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void store(short value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         try {
-            preparedStatement.setDouble(parameterIndex.getAndIncrementValue(), value);
+            preparedStatement.setShort(parameterIndex.getAndIncrementValue(), value);
         } catch (@Nonnull SQLException exception) {
             throw FailedValueStoringException.get(exception);
         }
@@ -220,9 +219,9 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      */
     @Pure
     @NonCommitting
-    public static double restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
+    public static short restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
         try {
-            return resultSet.getDouble(columnIndex.getAndIncrementValue());
+            return resultSet.getShort(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
             throw FailedValueRestoringException.get(exception);
         }
@@ -233,13 +232,13 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.DOUBLE;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.SMALLINT;
     
     /**
      * The SQL converter for this wrapper.
      */
     @Immutable
-    public static final class SQLConverter extends AbstractWrapper.SQLConverter<DoubleWrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<Integer16Wrapper> {
         
         /**
          * Creates a new SQL converter with the given column declaration.
@@ -254,17 +253,17 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull DoubleWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull Integer16Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable DoubleWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable Integer16Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
             try {
-                final double value = restore(resultSet, columnIndex);
-                return resultSet.wasNull() ? null : new DoubleWrapper(getType(), value);
+                final short value = restore(resultSet, columnIndex);
+                return resultSet.wasNull() ? null : new Integer16Wrapper(getType(), value);
             } catch (@Nonnull SQLException exception) {
                 throw FailedValueRestoringException.get(exception);
             }
@@ -289,17 +288,17 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * The wrapper for this wrapper.
      */
     @Immutable
-    public static class Wrapper extends ValueWrapper.Wrapper<Double, DoubleWrapper> {
+    public static class Wrapper extends ValueWrapper.Wrapper<Short, Integer16Wrapper> {
         
         @Pure
         @Override
-        protected @Nonnull DoubleWrapper wrap(@Nonnull SemanticType type, @Nonnull Double value) {
-            return new DoubleWrapper(type, value);
+        protected @Nonnull Integer16Wrapper wrap(@Nonnull SemanticType type, @Nonnull Short value) {
+            return new Integer16Wrapper(type, value);
         }
         
         @Pure
         @Override
-        protected @Nonnull Double unwrap(@Nonnull DoubleWrapper wrapper) {
+        protected @Nonnull Short unwrap(@Nonnull Integer16Wrapper wrapper) {
             return wrapper.value;
         }
         
@@ -320,7 +319,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * @return the value XDF converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueXDFConverter<Double, DoubleWrapper> getValueXDFConverter(@Nonnull @BasedOn("double@core.digitalid.net") SemanticType type) {
+    public static @Nonnull ValueXDFConverter<Short, Integer16Wrapper> getValueXDFConverter(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
         return new ValueXDFConverter<>(WRAPPER, new XDFConverter(type));
     }
     
@@ -332,7 +331,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<Double, DoubleWrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull ValueSQLConverter<Short, Integer16Wrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
         return new ValueSQLConverter<>(WRAPPER, new SQLConverter(declaration));
     }
     
@@ -345,7 +344,7 @@ public final class DoubleWrapper extends ValueWrapper<DoubleWrapper> {
      * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull NonRequestingConverters<Double, Object> getValueConverters(@Nonnull @BasedOn("double@core.digitalid.net") SemanticType type, @Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull NonRequestingConverters<Short, Object> getValueConverters(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type, @Nonnull @Matching ColumnDeclaration declaration) {
         return NonRequestingConverters.get(getValueXDFConverter(type), getValueSQLConverter(declaration));
     }
     

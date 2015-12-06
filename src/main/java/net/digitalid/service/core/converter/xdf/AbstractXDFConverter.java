@@ -12,6 +12,7 @@ import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.system.exceptions.InternalException;
@@ -72,7 +73,7 @@ public abstract class AbstractXDFConverter<O, E> {
      * @ensure return.getType().equals(getType()) : "The returned block has the indicated type.";
      */
     @Pure
-    public abstract @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull O object);
+    public abstract @Capturable @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull O object);
     
     /**
      * Encodes the given nullable object as a new block.
@@ -84,7 +85,7 @@ public abstract class AbstractXDFConverter<O, E> {
      * @ensure return == null || return.getType().equals(getType()) : "The returned block is either null or has the indicated type.";
      */
     @Pure
-    public final @Nullable @NonEncoding Block encodeNullable(@Nullable O object) {
+    public final @Capturable @Nullable @NonEncoding Block encodeNullable(@Nullable O object) {
         return object == null ? null : encodeNonNullable(object);
     }
     
@@ -102,7 +103,7 @@ public abstract class AbstractXDFConverter<O, E> {
      */
     @Pure
     @SuppressWarnings("unchecked")
-    final @Nonnull @NonEncoding Block encodeNonNullableWithCast(@Nonnull Object object) {
+    final @Capturable @Nonnull @NonEncoding Block encodeNonNullableWithCast(@Nonnull Object object) {
         return encodeNonNullable((O) object);
     }
     
@@ -118,7 +119,7 @@ public abstract class AbstractXDFConverter<O, E> {
      */
     @Pure
     @SuppressWarnings("unchecked")
-    final @Nullable @NonEncoding Block encodeNullableWithCast(@Nullable Object object) {
+    final @Capturable @Nullable @NonEncoding Block encodeNullableWithCast(@Nullable Object object) {
         return encodeNullable((O) object);
     }
     

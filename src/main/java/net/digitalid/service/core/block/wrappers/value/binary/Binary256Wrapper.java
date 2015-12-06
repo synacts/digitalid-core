@@ -1,6 +1,6 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.value.binary;
 
-import java.nio.charset.Charset;
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,24 +8,29 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.declaration.SQLType;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
+import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueSQLConverter;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueXDFConverter;
+import net.digitalid.service.core.block.wrappers.AbstractWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper.ValueSQLConverter;
+import net.digitalid.service.core.block.wrappers.value.ValueWrapper.ValueXDFConverter;
 import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.entity.annotations.Matching;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -33,78 +38,62 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.exceptions.InternalException;
-import net.digitalid.utility.system.logger.Log;
 
 /**
- * This class wraps a {@link String string} for encoding and decoding a block of the syntactic type {@code string@core.digitalid.net}.
- * <p>
- * <em>Important:</em> SQL injections have to be prevented by the caller of this wrapper!
- * Only a warning is issued when the character might be used in an unprepared SQL statement.
+ * This class wraps a {@link BigInteger} for encoding and decoding a block of the syntactic type {@code hash@core.digitalid.net}.
  */
 @Immutable
-public final class StringWrapper extends ValueWrapper<StringWrapper> {
+public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
-     * Stores the value as a byte array.
-     */
-    private final @Nonnull byte[] bytes;
-    
-    /**
      * Stores the value of this wrapper.
      */
-    private final @Nonnull String value;
+    private final @Nonnull @NonNegative BigInteger value;
     
     /**
      * Returns the value of this wrapper.
      * 
      * @return the value of this wrapper.
+     * 
+     * @ensure value.bitLength() <= Parameters.HASH : "The length of the value is at most Parameters.HASH.";
      */
     @Pure
-    public @Nonnull String getValue() {
+    public @Nonnull @NonNegative BigInteger getValue() {
         return value;
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Stores the character set used to encode and decode strings.
-     */
-    public static final @Nonnull Charset CHARSET = Charset.forName("UTF-16BE");
-    
-    /**
-     * Creates a new wrapper with the given type and bytes.
-     * 
-     * @param type the semantic type of the new wrapper.
-     * @param bytes the value as a byte array.
-     */
-    private StringWrapper(@Nonnull @Loaded @BasedOn("string@core.digitalid.net") SemanticType type, @Nonnull byte[] bytes) {
-        super(type);
-        
-        this.bytes = bytes;
-        this.value = new String(bytes, 0, bytes.length, CHARSET);
-    }
-    
-    /**
      * Creates a new wrapper with the given type and value.
      * 
      * @param type the semantic type of the new wrapper.
      * @param value the value of the new wrapper.
+     * 
+     * @require value.bitLength() <= Parameters.HASH : "The length of the value is at most Parameters.HASH.";
      */
-    private StringWrapper(@Nonnull @Loaded @BasedOn("string@core.digitalid.net") SemanticType type, @Nonnull String value) {
+    private Binary256Wrapper(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type, @Nonnull @NonNegative BigInteger value) {
         super(type);
         
-        this.bytes = value.getBytes(CHARSET);
+        assert value.signum() >= 0 : "The value is positive.";
+        assert value.bitLength() <= Parameters.HASH : "The length of the value is at most Parameters.HASH.";
+        
         this.value = value;
     }
     
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
     
+    /**
+     * The byte length of a hash.
+     */
+    public static final int LENGTH = 64;
+    
     @Pure
     @Override
     public int determineLength() {
-        return bytes.length + 1;
+        return LENGTH;
     }
     
     @Pure
@@ -113,15 +102,17 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
-        block.setBytes(1, bytes);
+        final @Nonnull byte[] bytes = value.toByteArray();
+        final int offset = bytes.length > LENGTH ? 1 : 0;
+        block.setBytes(LENGTH - bytes.length + offset, bytes, offset, bytes.length - offset);
     }
     
     /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */
     
     /**
-     * Stores the syntactic type {@code string@core.digitalid.net}.
+     * Stores the syntactic type {@code hash@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("string@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType XDF_TYPE = SyntacticType.map("hash@core.digitalid.net").load(0);
     
     @Pure
     @Override
@@ -135,22 +126,23 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * The XDF converter for this wrapper.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<StringWrapper> {
+    public static final class XDFConverter extends AbstractWrapper.NonRequestingXDFConverter<Binary256Wrapper> {
         
         /**
          * Creates a new XDF converter with the given type.
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private XDFConverter(@Nonnull @Loaded @BasedOn("string@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
-        public @Nonnull StringWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
-            final @Nonnull byte[] bytes = block.getBytes(1);
-            return new StringWrapper(block.getType(), bytes);
+        public @Nonnull Binary256Wrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+            if (block.getLength() != LENGTH) { throw InvalidBlockLengthException.get(LENGTH, block.getLength()); }
+            
+            return new Binary256Wrapper(block.getType(), new BigInteger(1, block.getBytes()));
         }
         
     }
@@ -164,9 +156,9 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
     /* -------------------------------------------------- XDF Utility -------------------------------------------------- */
     
     /**
-     * Stores the semantic type {@code semantic.string@core.digitalid.net}.
+     * Stores the semantic type {@code semantic.int64@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.string@core.digitalid.net").load(XDF_TYPE);
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.hash@core.digitalid.net").load(XDF_TYPE);
     
     /**
      * Stores a static XDF converter for performance reasons.
@@ -180,10 +172,12 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @param value the value to encode into the new block.
      * 
      * @return a new non-nullable block containing the given value.
+     * 
+     * @require value.bitLength() <= Parameters.HASH : "The length of the value is at most Parameters.HASH.";
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("string@core.digitalid.net") SemanticType type, @Nonnull String value) {
-        return XDF_CONVERTER.encodeNonNullable(new StringWrapper(type, value));
+    public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type, @Nonnull @NonNegative BigInteger value) {
+        return XDF_CONVERTER.encodeNonNullable(new Binary256Wrapper(type, value));
     }
     
     /**
@@ -193,9 +187,11 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @param value the value to encode into the new block.
      * 
      * @return a new nullable block containing the given value.
+     * 
+     * @require value == null || value.bitLength() <= Parameters.HASH : "The value is either null or its length is at most Parameters.HASH.";
      */
     @Pure
-    public static @Nullable @NonEncoding Block encodeNullable(@Nonnull @Loaded @BasedOn("string@core.digitalid.net") SemanticType type, @Nullable String value) {
+    public static @Nullable @NonEncoding Block encodeNullable(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type, @Nullable @NonNegative BigInteger value) {
         return value == null ? null : encodeNonNullable(type, value);
     }
     
@@ -205,9 +201,11 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @param block the block to be decoded.
      * 
      * @return the value contained in the given block.
+     * 
+     * @ensure return.bitLength() <= Parameters.HASH : "The length of the returned value is at most Parameters.HASH.";
      */
     @Pure
-    public static @Nonnull String decodeNonNullable(@Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+    public static @Nonnull @NonNegative BigInteger decodeNonNullable(@Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
@@ -217,9 +215,11 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @param block the block to be decoded.
      * 
      * @return the value contained in the given block.
+     * 
+     * @ensure return == null || return.bitLength() <= Parameters.HASH : "The returned value is either null or its length is at most Parameters.HASH.";
      */
     @Pure
-    public static @Nullable String decodeNullable(@Nullable @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
+    public static @Nullable @NonNegative BigInteger decodeNullable(@Nullable @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
         return block == null ? null : decodeNonNullable(block);
     }
     
@@ -228,8 +228,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
     @Pure
     @Override
     public @Nonnull String toString() {
-        Log.warning("The string '" + value + "' might be used in an unprepared SQL statement and might cause an injection.", new Exception());
-        return "'" + value + "'";
+        return Block.toString(value.toByteArray());
     }
     
     /**
@@ -239,9 +238,8 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @param values a mutable array in which the value is to be stored.
      * @param index the array index at which the value is to be stored.
      */
-    public static void storeNonNullable(@Nonnull String value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
-        Log.warning("The string '" + value + "' might be used in an unprepared SQL statement and might cause an injection.", new Exception());
-        values.set(index.getAndIncrementValue(), "'" + value + "'");
+    public static void storeNonNullable(@Nonnull BigInteger value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+        values.set(index.getAndIncrementValue(), Block.toString(value.toByteArray()));
     }
     
     /**
@@ -251,7 +249,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @param values a mutable array in which the value is to be stored.
      * @param index the array index at which the value is to be stored.
      */
-    public static void storeNullable(@Nullable String value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+    public static void storeNullable(@Nullable BigInteger value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
         if (value != null) { storeNonNullable(value, values, index); }
         else { values.set(index.getAndIncrementValue(), "NULL"); }
     }
@@ -264,9 +262,9 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNonNullable(@Nonnull String value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void storeNonNullable(@Nonnull BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         try {
-            preparedStatement.setString(parameterIndex.getAndIncrementValue(), value);
+            preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), value.toByteArray());
         } catch (@Nonnull SQLException exception) {
             throw FailedValueStoringException.get(exception);
         }
@@ -280,7 +278,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNullable(@Nullable String value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void storeNullable(@Nullable BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         try {
             if (value != null) { storeNonNullable(value, preparedStatement, parameterIndex); }
             else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
@@ -299,9 +297,10 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nullable String restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
+    public static @Nullable BigInteger restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
         try {
-            return resultSet.getString(columnIndex.getAndIncrementValue());
+            final @Nullable byte [] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
+            return bytes == null || bytes.length > LENGTH ? null : new BigInteger(1, bytes);
         } catch (@Nonnull SQLException exception) {
             throw FailedValueRestoringException.get(exception);
         }
@@ -317,8 +316,8 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull String restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptNullValueException {
-        final @Nullable String value = restoreNullable(resultSet, columnIndex);
+    public static @Nonnull BigInteger restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptNullValueException {
+        final @Nullable BigInteger value = restoreNullable(resultSet, columnIndex);
         if (value == null) { throw CorruptNullValueException.get(); }
         return value;
     }
@@ -328,13 +327,13 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.STRING;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.HASH;
     
     /**
      * The SQL converter for this wrapper.
      */
     @Immutable
-    public static final class SQLConverter extends AbstractWrapper.SQLConverter<StringWrapper> {
+    public static final class SQLConverter extends AbstractWrapper.SQLConverter<Binary256Wrapper> {
         
         /**
          * Creates a new SQL converter with the given column declaration.
@@ -349,16 +348,16 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull StringWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
-            StringWrapper.storeNonNullable(wrapper.value, preparedStatement, parameterIndex);
+        public void storeNonNullable(@Nonnull Binary256Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+            Binary256Wrapper.storeNonNullable(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable StringWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
-            final @Nullable String value = StringWrapper.restoreNullable(resultSet, columnIndex);
-            return value == null ? null : new StringWrapper(getType(), value);
+        public @Nullable Binary256Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+            final @Nullable BigInteger value = Binary256Wrapper.restoreNullable(resultSet, columnIndex);
+            return value == null ? null : new Binary256Wrapper(getType(), value);
         }
         
     }
@@ -380,17 +379,25 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * The wrapper for this wrapper.
      */
     @Immutable
-    public static class Wrapper extends ValueWrapper.Wrapper<String, StringWrapper> {
+    public static class Wrapper extends ValueWrapper.Wrapper<BigInteger, Binary256Wrapper> {
         
         @Pure
         @Override
-        protected @Nonnull StringWrapper wrap(@Nonnull SemanticType type, @Nonnull String value) {
-            return new StringWrapper(type, value);
+        protected boolean isValid(@Nonnull BigInteger value) {
+            return value.signum() >= 0 && value.bitLength() <= Parameters.HASH;
         }
         
         @Pure
         @Override
-        protected @Nonnull String unwrap(@Nonnull StringWrapper wrapper) {
+        protected @Nonnull Binary256Wrapper wrap(@Nonnull SemanticType type, @Nonnull BigInteger value) {
+            assert isValid(value) : "The value is valid.";
+            
+            return new Binary256Wrapper(type, value);
+        }
+        
+        @Pure
+        @Override
+        protected @Nonnull BigInteger unwrap(@Nonnull Binary256Wrapper wrapper) {
             return wrapper.value;
         }
         
@@ -411,7 +418,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @return the value XDF converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueXDFConverter<String, StringWrapper> getValueXDFConverter(@Nonnull @BasedOn("string@core.digitalid.net") SemanticType type) {
+    public static @Nonnull ValueXDFConverter<BigInteger, Binary256Wrapper> getValueXDFConverter(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
         return new ValueXDFConverter<>(WRAPPER, new XDFConverter(type));
     }
     
@@ -423,7 +430,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<String, StringWrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull ValueSQLConverter<BigInteger, Binary256Wrapper> getValueSQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
         return new ValueSQLConverter<>(WRAPPER, new SQLConverter(declaration));
     }
     
@@ -436,7 +443,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull NonRequestingConverters<String, Object> getValueConverters(@Nonnull @BasedOn("string@core.digitalid.net") SemanticType type, @Nonnull @Matching ColumnDeclaration declaration) {
+    public static @Nonnull NonRequestingConverters<BigInteger, Object> getValueConverters(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type, @Nonnull @Matching ColumnDeclaration declaration) {
         return NonRequestingConverters.get(getValueXDFConverter(type), getValueSQLConverter(declaration));
     }
     

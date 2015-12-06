@@ -5,9 +5,9 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.Int8Wrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer08Wrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
+import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
@@ -112,14 +112,14 @@ public final class SyntacticType extends Type {
     /**
      * Stores the semantic type {@code parameters.syntactic.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.syntactic.type@core.digitalid.net").load(new Category[] {Category.SYNTACTIC_TYPE}, Time.TROPICAL_YEAR, Int8Wrapper.XDF_TYPE);
+    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.syntactic.type@core.digitalid.net").load(new Category[] {Category.SYNTACTIC_TYPE}, Time.TROPICAL_YEAR, Integer08Wrapper.XDF_TYPE);
     
     @Override
     @NonCommitting
     void load() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         assert !isLoaded() : "The type declaration is not loaded.";
         
-        this.numberOfParameters = Int8Wrapper.decode(Cache.getStaleAttributeContent(this, null, PARAMETERS));
+        this.numberOfParameters = Integer08Wrapper.decode(Cache.getStaleAttributeContent(this, null, PARAMETERS));
         if (numberOfParameters < -1) { throw InvalidDeclarationException.get("The number of parameters has to be at least -1 but was " + numberOfParameters + ".", getAddress()); }
         setLoaded();
     }
@@ -177,7 +177,7 @@ public final class SyntacticType extends Type {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<SyntacticType, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(SyntacticType.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<SyntacticType, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(SyntacticType.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

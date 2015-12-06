@@ -11,9 +11,9 @@ import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.key.CastingKeyConverter;
@@ -185,7 +185,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
          * @param mergeable whether the identities can be merged.
          */
         protected Declaration(@Nonnull @Validated String name, boolean mergeable) {
-            super(name, Int64Wrapper.SQL_TYPE, Mapper.REFERENCE);
+            super(name, Integer64Wrapper.SQL_TYPE, Mapper.REFERENCE);
             
             this.mergeable = mergeable;
         }
@@ -222,7 +222,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Identity.class), Int64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Identity.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

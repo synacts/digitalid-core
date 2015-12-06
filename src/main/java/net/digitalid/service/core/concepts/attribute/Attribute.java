@@ -8,7 +8,7 @@ import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
-import net.digitalid.service.core.block.wrappers.BooleanWrapper;
+import net.digitalid.service.core.block.wrappers.value.BooleanWrapper;
 import net.digitalid.service.core.concept.GeneralConcept;
 import net.digitalid.service.core.concept.property.nullable.NullableConceptProperty;
 import net.digitalid.service.core.concept.property.nullable.NullableConceptPropertyTable;

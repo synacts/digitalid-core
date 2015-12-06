@@ -1,4 +1,4 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.signature;
 
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
@@ -10,6 +10,8 @@ import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.binary.Binary256Wrapper;
 import net.digitalid.service.core.concepts.agent.AgentModule;
 import net.digitalid.service.core.concepts.agent.ClientAgent;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
@@ -52,7 +54,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     /**
      * Stores the semantic type {@code hash.client.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType HASH = SemanticType.map("hash.client.signature@core.digitalid.net").load(HashWrapper.XDF_TYPE);
+    private static final @Nonnull SemanticType HASH = SemanticType.map("hash.client.signature@core.digitalid.net").load(Binary256Wrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code client.signature@core.digitalid.net}.
@@ -161,7 +163,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(tuple.getNonNullableElement(2)).getNonNullableElements(3);
-        final @Nonnull BigInteger t = HashWrapper.decodeNonNullable(elements.getNonNullable(1));
+        final @Nonnull BigInteger t = Binary256Wrapper.decodeNonNullable(elements.getNonNullable(1));
         final @Nonnull Exponent s = Exponent.get(elements.getNonNullable(2));
         final @Nonnull BigInteger h = t.xor(hash);
         final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
@@ -183,7 +185,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         subelements.set(0, commitment.toBlock());
         final @Nonnull Exponent r = commitment.getPublicKey().getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT);
         final @Nonnull BigInteger t = ConvertToXDF.nonNullable(commitment.getPublicKey().getAu().pow(r)).getHash();
-        subelements.set(1, HashWrapper.encodeNonNullable(HASH, t));
+        subelements.set(1, Binary256Wrapper.encodeNonNullable(HASH, t));
         final @Nonnull Exponent h = Exponent.get(t.xor(elements.getNonNullable(0).getHash()));
         final @Nonnull Exponent s = r.subtract(commitment.getSecret().multiply(h));
         subelements.set(2, ConvertToXDF.nonNullable(s));

@@ -1,7 +1,7 @@
 package net.digitalid.service.core.exceptions.external.signature;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 

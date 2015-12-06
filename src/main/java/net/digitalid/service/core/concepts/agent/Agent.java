@@ -9,12 +9,12 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.BooleanWrapper;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.BooleanWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
@@ -79,7 +79,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     /**
      * Stores the semantic type {@code number.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType NUMBER = SemanticType.map("number.agent@core.digitalid.net").load(Int64Wrapper.XDF_TYPE);
+    public static final @Nonnull SemanticType NUMBER = SemanticType.map("number.agent@core.digitalid.net").load(Integer64Wrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code client.agent@core.digitalid.net}.
@@ -434,7 +434,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     @Override
     public final @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = FreezableArray.get(3);
-        elements.set(0, Int64Wrapper.encode(NUMBER, getNumber()));
+        elements.set(0, Integer64Wrapper.encode(NUMBER, getNumber()));
         elements.set(1, BooleanWrapper.encode(CLIENT, isClient()));
         elements.set(2, BooleanWrapper.encode(REMOVED, isRemoved()));
         return TupleWrapper.encode(TYPE, elements.freeze());
@@ -455,7 +455,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
-        final long number = Int64Wrapper.decode(elements.getNonNullable(0));
+        final long number = Integer64Wrapper.decode(elements.getNonNullable(0));
         final boolean client = BooleanWrapper.decode(elements.getNonNullable(1));
         final boolean removed = BooleanWrapper.decode(elements.getNonNullable(2));
         return get(entity, number, client, removed);

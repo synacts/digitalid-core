@@ -6,10 +6,10 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.signature.HostSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -100,13 +100,13 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
         this.relation = IdentityImplementation.create(elements.getNonNullable(0)).castTo(SemanticType.class).checkIsRoleType();
-        this.agentNumber = Int64Wrapper.decode(elements.getNonNullable(1));
+        this.agentNumber = Integer64Wrapper.decode(elements.getNonNullable(1));
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return TupleWrapper.encode(TYPE, relation.toBlock().setType(SemanticType.IDENTIFIER), Int64Wrapper.encode(Agent.NUMBER, agentNumber));
+        return TupleWrapper.encode(TYPE, relation.toBlock().setType(SemanticType.IDENTIFIER), Integer64Wrapper.encode(Agent.NUMBER, agentNumber));
     }
     
     @Pure

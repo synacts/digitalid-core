@@ -9,10 +9,10 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.HashWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.binary.Binary256Wrapper;
+import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concepts.agent.RandomizedAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
@@ -98,7 +98,7 @@ public abstract class Credential {
         final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
         elements.set(0, issuer.toBlock(ISSUER));
         elements.set(1, issuance.toBlock().setType(ISSUANCE));
-        elements.set(2, HashWrapper.encodeNonNullable(HASH, randomizedPermissions.getHash()));
+        elements.set(2, Binary256Wrapper.encodeNonNullable(HASH, randomizedPermissions.getHash()));
         elements.set(3, Block.toBlock(ROLE, role));
         elements.set(4, SelfcontainedWrapper.toBlock(AttributeValue.CONTENT, attributeContent));
         return TupleWrapper.encode(EXPOSED, elements.freeze());
@@ -244,7 +244,7 @@ public abstract class Credential {
         this.issuance = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
         if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) { throw InvalidParameterValueException.get("issuance time", issuance); }
         this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier(), issuance);
-        final @Nonnull BigInteger hash = HashWrapper.decodeNonNullable(tuple.getNonNullableElement(2));
+        final @Nonnull BigInteger hash = Binary256Wrapper.decodeNonNullable(tuple.getNonNullableElement(2));
         if (randomizedPermissions != null) {
             this.randomizedPermissions = new RandomizedAgentPermissions(randomizedPermissions);
             if (!this.randomizedPermissions.getHash().equals(hash)) { throw InvalidParameterValueCombinationException.get("The hash of the given permissions has to equal the credential's exposed hash."); }

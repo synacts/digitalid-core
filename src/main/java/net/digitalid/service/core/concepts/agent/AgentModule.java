@@ -10,14 +10,14 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.BooleanWrapper;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.ListWrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.BooleanWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
+import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.concepts.contact.ContextModule;
@@ -258,7 +258,7 @@ public final class AgentModule implements StateModule {
                     final long number = resultSet.getLong(2);
                     final boolean client = resultSet.getBoolean(3);
                     final boolean removed = resultSet.getBoolean(4);
-                    entries.add(TupleWrapper.encode(AGENT_MODULE_ENTRY, identity, Int64Wrapper.encode(Agent.NUMBER, number), BooleanWrapper.encode(Agent.CLIENT, client), BooleanWrapper.encode(Agent.REMOVED, removed)));
+                    entries.add(TupleWrapper.encode(AGENT_MODULE_ENTRY, identity, Integer64Wrapper.encode(Agent.NUMBER, number), BooleanWrapper.encode(Agent.CLIENT, client), BooleanWrapper.encode(Agent.REMOVED, removed)));
                 }
                 tables.set(0, ListWrapper.encode(AGENT_MODULE_TABLE, entries.freeze()));
             }
@@ -269,7 +269,7 @@ public final class AgentModule implements StateModule {
                     final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final @Nonnull FreezableAgentPermissions permissions = FreezableAgentPermissions.getEmptyOrSingle(resultSet, 3);
-                    entries.add(TupleWrapper.encode(AGENT_PERMISSION_MODULE_ENTRY, identity, Int64Wrapper.encode(Agent.NUMBER, number), permissions));
+                    entries.add(TupleWrapper.encode(AGENT_PERMISSION_MODULE_ENTRY, identity, Integer64Wrapper.encode(Agent.NUMBER, number), permissions));
                 }
                 tables.set(1, ListWrapper.encode(AGENT_PERMISSION_MODULE_TABLE, entries.freeze()));
             }
@@ -280,7 +280,7 @@ public final class AgentModule implements StateModule {
                     final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
                     final long stronger = resultSet.getLong(2);
                     final long weaker = resultSet.getLong(3);
-                    entries.add(TupleWrapper.encode(AGENT_PERMISSION_ORDER_MODULE_ENTRY, identity, Int64Wrapper.encode(AGENT_PERMISSION_ORDER_STRONGER, stronger), Int64Wrapper.encode(AGENT_PERMISSION_ORDER_WEAKER, weaker)));
+                    entries.add(TupleWrapper.encode(AGENT_PERMISSION_ORDER_MODULE_ENTRY, identity, Integer64Wrapper.encode(AGENT_PERMISSION_ORDER_STRONGER, stronger), Integer64Wrapper.encode(AGENT_PERMISSION_ORDER_WEAKER, weaker)));
                 }
                 tables.set(2, ListWrapper.encode(AGENT_PERMISSION_ORDER_MODULE_TABLE, entries.freeze()));
             }
@@ -291,7 +291,7 @@ public final class AgentModule implements StateModule {
                     final @Nonnull NonHostAccount account = NonHostAccount.getNotNull(host, resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final @Nonnull Restrictions restrictions = Restrictions.get(account, resultSet, 3);
-                    entries.add(TupleWrapper.encode(AGENT_RESTRICTIONS_MODULE_ENTRY, account.getIdentity(), Int64Wrapper.encode(Agent.NUMBER, number), restrictions));
+                    entries.add(TupleWrapper.encode(AGENT_RESTRICTIONS_MODULE_ENTRY, account.getIdentity(), Integer64Wrapper.encode(Agent.NUMBER, number), restrictions));
                 }
                 tables.set(3, ListWrapper.encode(AGENT_RESTRICTIONS_MODULE_TABLE, entries.freeze()));
             }
@@ -302,7 +302,7 @@ public final class AgentModule implements StateModule {
                     final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
                     final long stronger = resultSet.getLong(2);
                     final long weaker = resultSet.getLong(3);
-                    entries.add(TupleWrapper.encode(AGENT_RESTRICTIONS_ORDER_MODULE_ENTRY, identity, Int64Wrapper.encode(AGENT_RESTRICTIONS_ORDER_STRONGER, stronger), Int64Wrapper.encode(AGENT_RESTRICTIONS_ORDER_WEAKER, weaker)));
+                    entries.add(TupleWrapper.encode(AGENT_RESTRICTIONS_ORDER_MODULE_ENTRY, identity, Integer64Wrapper.encode(AGENT_RESTRICTIONS_ORDER_STRONGER, stronger), Integer64Wrapper.encode(AGENT_RESTRICTIONS_ORDER_WEAKER, weaker)));
                 }
                 tables.set(4, ListWrapper.encode(AGENT_RESTRICTIONS_ORDER_MODULE_TABLE, entries.freeze()));
             }
@@ -314,7 +314,7 @@ public final class AgentModule implements StateModule {
                     final long number = resultSet.getLong(2);
                     final @Nonnull Commitment commitment = Commitment.get(resultSet, 3);
                     final @Nonnull String name = resultSet.getString(6);
-                    entries.add(TupleWrapper.encode(CLIENT_MODULE_ENTRY, identity, Int64Wrapper.encode(Agent.NUMBER, number), commitment, StringWrapper.encodeNonNullable(Client.NAME, name)));
+                    entries.add(TupleWrapper.encode(CLIENT_MODULE_ENTRY, identity, Integer64Wrapper.encode(Agent.NUMBER, number), commitment, StringWrapper.encodeNonNullable(Client.NAME, name)));
                 }
                 tables.set(5, ListWrapper.encode(CLIENT_MODULE_TABLE, entries.freeze()));
             }
@@ -326,7 +326,7 @@ public final class AgentModule implements StateModule {
                     final long number = resultSet.getLong(2);
                     final @Nonnull Identity relation = IdentityImplementation.getNotNull(resultSet, 3);
                     final @Nonnull Context context = Context.getNotNull(account, resultSet, 4);
-                    entries.add(TupleWrapper.encode(OUTGOING_ROLE_MODULE_ENTRY, account.getIdentity(), Int64Wrapper.encode(Agent.NUMBER, number), relation.toBlockable(Role.RELATION), context));
+                    entries.add(TupleWrapper.encode(OUTGOING_ROLE_MODULE_ENTRY, account.getIdentity(), Integer64Wrapper.encode(Agent.NUMBER, number), relation.toBlockable(Role.RELATION), context));
                 }
                 tables.set(6, ListWrapper.encode(OUTGOING_ROLE_MODULE_TABLE, entries.freeze()));
             }
@@ -338,7 +338,7 @@ public final class AgentModule implements StateModule {
                     final @Nonnull Identity issuer = IdentityImplementation.getNotNull(resultSet, 2);
                     final @Nonnull Identity relation = IdentityImplementation.getNotNull(resultSet, 3);
                     final long number = resultSet.getLong(4);
-                    entries.add(TupleWrapper.encode(INCOMING_ROLE_MODULE_ENTRY, identity, issuer.toBlockable(Role.ISSUER), relation.toBlockable(Role.RELATION), Int64Wrapper.encode(Role.AGENT, number)));
+                    entries.add(TupleWrapper.encode(INCOMING_ROLE_MODULE_ENTRY, identity, issuer.toBlockable(Role.ISSUER), relation.toBlockable(Role.RELATION), Integer64Wrapper.encode(Role.AGENT, number)));
                 }
                 tables.set(7, ListWrapper.encode(INCOMING_ROLE_MODULE_TABLE, entries.freeze()));
             }
@@ -360,7 +360,7 @@ public final class AgentModule implements StateModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(4);
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(1)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(1)));
                 preparedStatement.setBoolean(3, BooleanWrapper.decode(elements.getNonNullable(2)));
                 preparedStatement.setBoolean(4, BooleanWrapper.decode(elements.getNonNullable(3)));
                 preparedStatement.addBatch();
@@ -373,7 +373,7 @@ public final class AgentModule implements StateModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(1)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(1)));
                 new FreezableAgentPermissions(elements.getNonNullable(2)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
@@ -385,8 +385,8 @@ public final class AgentModule implements StateModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(1)));
-                preparedStatement.setLong(3, Int64Wrapper.decode(elements.getNonNullable(2)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(1)));
+                preparedStatement.setLong(3, Integer64Wrapper.decode(elements.getNonNullable(2)));
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -398,7 +398,7 @@ public final class AgentModule implements StateModule {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
                 final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class);
                 identity.set(preparedStatement, 1);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(1)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(1)));
                 new Restrictions(NonHostAccount.get(host, identity), elements.getNonNullable(2)).set(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
@@ -410,8 +410,8 @@ public final class AgentModule implements StateModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(1)));
-                preparedStatement.setLong(3, Int64Wrapper.decode(elements.getNonNullable(2)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(1)));
+                preparedStatement.setLong(3, Integer64Wrapper.decode(elements.getNonNullable(2)));
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -422,7 +422,7 @@ public final class AgentModule implements StateModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(4);
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(1)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(1)));
                 new Commitment(elements.getNonNullable(2)).set(preparedStatement, 3);
                 preparedStatement.setString(6, StringWrapper.decodeNonNullable(elements.getNonNullable(3)));
                 preparedStatement.addBatch();
@@ -436,7 +436,7 @@ public final class AgentModule implements StateModule {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(4);
                 final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class);
                 identity.set(preparedStatement, 1);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(1)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(1)));
                 IdentityImplementation.create(elements.getNonNullable(2)).castTo(SemanticType.class).checkIsRoleType().set(preparedStatement, 3);
                 Context.get(NonHostAccount.get(host, identity), elements.getNonNullable(3)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
@@ -451,7 +451,7 @@ public final class AgentModule implements StateModule {
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 1);
                 IdentityImplementation.create(elements.getNonNullable(1)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 2);
                 IdentityImplementation.create(elements.getNonNullable(2)).castTo(SemanticType.class).checkIsRoleType().set(preparedStatement, 3);
-                preparedStatement.setLong(4, Int64Wrapper.decode(elements.getNonNullable(3)));
+                preparedStatement.setLong(4, Integer64Wrapper.decode(elements.getNonNullable(3)));
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -556,20 +556,20 @@ public final class AgentModule implements StateModule {
                     final long number = resultSet.getLong(1);
                     final boolean client = resultSet.getBoolean(2);
                     final boolean removed = resultSet.getBoolean(3);
-                    entries.add(TupleWrapper.encode(AGENT_STATE_ENTRY, Int64Wrapper.encode(Agent.NUMBER, number), BooleanWrapper.encode(Agent.CLIENT, client), BooleanWrapper.encode(Agent.REMOVED, removed)));
+                    entries.add(TupleWrapper.encode(AGENT_STATE_ENTRY, Integer64Wrapper.encode(Agent.NUMBER, number), BooleanWrapper.encode(Agent.CLIENT, client), BooleanWrapper.encode(Agent.REMOVED, removed)));
                 }
                 tables.set(0, ListWrapper.encode(AGENT_STATE_TABLE, entries.freeze()));
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + FreezableAgentPermissions.COLUMNS + from + "agent_permission" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
-                while (resultSet.next()) { entries.add(TupleWrapper.encode(AGENT_PERMISSION_STATE_ENTRY, Int64Wrapper.encode(Agent.NUMBER, resultSet.getLong(1)), FreezableAgentPermissions.getEmptyOrSingle(resultSet, 2))); }
+                while (resultSet.next()) { entries.add(TupleWrapper.encode(AGENT_PERMISSION_STATE_ENTRY, Integer64Wrapper.encode(Agent.NUMBER, resultSet.getLong(1)), FreezableAgentPermissions.getEmptyOrSingle(resultSet, 2))); }
                 tables.set(1, ListWrapper.encode(AGENT_PERMISSION_STATE_TABLE, entries.freeze()));
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Restrictions.COLUMNS + from + "agent_restrictions" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
-                while (resultSet.next()) { entries.add(TupleWrapper.encode(AGENT_RESTRICTIONS_STATE_ENTRY, Int64Wrapper.encode(Agent.NUMBER, resultSet.getLong(1)), Restrictions.get(entity, resultSet, 2))); }
+                while (resultSet.next()) { entries.add(TupleWrapper.encode(AGENT_RESTRICTIONS_STATE_ENTRY, Integer64Wrapper.encode(Agent.NUMBER, resultSet.getLong(1)), Restrictions.get(entity, resultSet, 2))); }
                 tables.set(2, ListWrapper.encode(AGENT_RESTRICTIONS_STATE_TABLE, entries.freeze()));
             }
             
@@ -579,7 +579,7 @@ public final class AgentModule implements StateModule {
                     final long number = resultSet.getLong(1);
                     final @Nonnull Commitment commitment = Commitment.get(resultSet, 2);
                     final @Nonnull String name = resultSet.getString(5);
-                    entries.add(TupleWrapper.encode(CLIENT_STATE_ENTRY, Int64Wrapper.encode(Agent.NUMBER, number), commitment, StringWrapper.encodeNonNullable(Client.NAME, name)));
+                    entries.add(TupleWrapper.encode(CLIENT_STATE_ENTRY, Integer64Wrapper.encode(Agent.NUMBER, number), commitment, StringWrapper.encodeNonNullable(Client.NAME, name)));
                 }
                 tables.set(3, ListWrapper.encode(CLIENT_STATE_TABLE, entries.freeze()));
             }
@@ -590,7 +590,7 @@ public final class AgentModule implements StateModule {
                     final long number = resultSet.getLong(1);
                     final @Nonnull Identity relation = IdentityImplementation.getNotNull(resultSet, 2);
                     final @Nonnull Context context = Context.getNotNull(entity, resultSet, 3);
-                    entries.add(TupleWrapper.encode(OUTGOING_ROLE_STATE_ENTRY, Int64Wrapper.encode(Agent.NUMBER, number), relation.toBlockable(Role.RELATION), context));
+                    entries.add(TupleWrapper.encode(OUTGOING_ROLE_STATE_ENTRY, Integer64Wrapper.encode(Agent.NUMBER, number), relation.toBlockable(Role.RELATION), context));
                 }
                 tables.set(4, ListWrapper.encode(OUTGOING_ROLE_STATE_TABLE, entries.freeze()));
             }
@@ -601,7 +601,7 @@ public final class AgentModule implements StateModule {
                     final @Nonnull Identity issuer = IdentityImplementation.getNotNull(resultSet, 1);
                     final @Nonnull Identity relation = IdentityImplementation.getNotNull(resultSet, 2);
                     final long number = resultSet.getLong(3);
-                    entries.add(TupleWrapper.encode(INCOMING_ROLE_STATE_ENTRY, issuer.toBlockable(Role.ISSUER), relation.toBlockable(Role.RELATION), Int64Wrapper.encode(Role.AGENT, number)));
+                    entries.add(TupleWrapper.encode(INCOMING_ROLE_STATE_ENTRY, issuer.toBlockable(Role.ISSUER), relation.toBlockable(Role.RELATION), Integer64Wrapper.encode(Role.AGENT, number)));
                 }
                 tables.set(5, ListWrapper.encode(INCOMING_ROLE_STATE_TABLE, entries.freeze()));
             }
@@ -633,7 +633,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(0));
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(0)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(0)));
                 preparedStatement.setBoolean(3, BooleanWrapper.decode(elements.getNonNullable(1)));
                 preparedStatement.setBoolean(4, BooleanWrapper.decode(elements.getNonNullable(2)));
                 preparedStatement.addBatch();
@@ -646,7 +646,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(1));
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(2);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(0)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(0)));
                 new FreezableAgentPermissions(elements.getNonNullable(1)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
@@ -658,7 +658,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(2));
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(2);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(0)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(0)));
                 new Restrictions(entity, elements.getNonNullable(1)).set(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
@@ -670,7 +670,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(3));
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(0)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(0)));
                 new Commitment(elements.getNonNullable(1)).set(preparedStatement, 3);
                 preparedStatement.setString(6, StringWrapper.decodeNonNullable(elements.getNonNullable(2)));
                 preparedStatement.addBatch();
@@ -683,7 +683,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(tables.getNonNullable(4));
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
-                preparedStatement.setLong(2, Int64Wrapper.decode(elements.getNonNullable(0)));
+                preparedStatement.setLong(2, Integer64Wrapper.decode(elements.getNonNullable(0)));
                 IdentityImplementation.create(elements.getNonNullable(1)).castTo(SemanticType.class).checkIsRoleType().set(preparedStatement, 3);
                 Context.get(entity, elements.getNonNullable(2)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
@@ -698,7 +698,7 @@ public final class AgentModule implements StateModule {
                 final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(entry).getNonNullableElements(3);
                 IdentityImplementation.create(elements.getNonNullable(0)).castTo(InternalNonHostIdentity.class).set(preparedStatement, 2);
                 IdentityImplementation.create(elements.getNonNullable(1)).castTo(SemanticType.class).checkIsRoleType().set(preparedStatement, 3);
-                preparedStatement.setLong(4, Int64Wrapper.decode(elements.getNonNullable(2)));
+                preparedStatement.setLong(4, Integer64Wrapper.decode(elements.getNonNullable(2)));
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();

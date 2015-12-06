@@ -5,7 +5,7 @@ import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;

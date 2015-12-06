@@ -1,11 +1,14 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.structure;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.VariableInteger;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.block.wrappers.AbstractWrapper;
+import net.digitalid.service.core.block.wrappers.BlockBasedWrapper;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
@@ -113,13 +116,13 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     @Pure
     @Override
     public int determineLength() {
-        int length = IntvarWrapper.determineLength(elements.size());
+        int length = VariableInteger.determineLength(elements.size());
         for (final @Nullable Block element : elements) {
             if (element == null) {
                 length += 1;
             } else {
                 final int elementLength = element.getLength();
-                final int intvarLength = IntvarWrapper.determineLength(elementLength);
+                final int intvarLength = VariableInteger.determineLength(elementLength);
                 length += intvarLength + elementLength;
             }
         }
@@ -133,17 +136,17 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
         final int size = elements.size();
-        int offset = IntvarWrapper.determineLength(size);
-        IntvarWrapper.encode(block, 0, offset, size);
+        int offset = VariableInteger.determineLength(size);
+        VariableInteger.encode(block, 0, offset, size);
         
         for (final @Nullable Block element : elements) {
             if (element == null) {
                 offset += 1;
             } else {
                 final int elementLength = element.getLength();
-                final int intvarLength = IntvarWrapper.determineLength(elementLength);
+                final int intvarLength = VariableInteger.determineLength(elementLength);
                 
-                IntvarWrapper.encode(block, offset, intvarLength, elementLength);
+                VariableInteger.encode(block, offset, intvarLength, elementLength);
                 offset += intvarLength;
                 element.writeTo(block, offset, elementLength);
                 offset += elementLength;
@@ -188,14 +191,14 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         public @Nonnull ListWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException, InternalException {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             
-            int offset = IntvarWrapper.decodeLength(block, 0);
-            final int size = (int) IntvarWrapper.decodeValue(block, 0, offset);
+            int offset = VariableInteger.decodeLength(block, 0);
+            final int size = (int) VariableInteger.decodeValue(block, 0, offset);
             
             final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(size);
             
             for (int i = 0; i < size; i++) {
-                final int intvarLength = IntvarWrapper.decodeLength(block, offset);
-                final int elementLength = (int) IntvarWrapper.decodeValue(block, offset, intvarLength);
+                final int intvarLength = VariableInteger.decodeLength(block, offset);
+                final int elementLength = (int) VariableInteger.decodeValue(block, offset, intvarLength);
                 offset += intvarLength;
                 if (elementLength == 0) {
                     elements.add(null);

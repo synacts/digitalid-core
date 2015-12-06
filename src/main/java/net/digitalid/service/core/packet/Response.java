@@ -9,7 +9,7 @@ import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.action.synchronizer.ResponseAudit;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.CompressionWrapper;
-import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;

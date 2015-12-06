@@ -8,10 +8,10 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.dataservice.StateModule;
@@ -51,7 +51,7 @@ public final class PushFailed extends ExternalAction {
     /**
      * Stores the semantic type {@code number.failed.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NUMBER = SemanticType.map("number.failed.push@core.digitalid.net").load(Int64Wrapper.XDF_TYPE);
+    private static final @Nonnull SemanticType NUMBER = SemanticType.map("number.failed.push@core.digitalid.net").load(Integer64Wrapper.XDF_TYPE);
     
     /**
      * Stores the semantic type {@code subject.failed.push@core.digitalid.net}.
@@ -121,7 +121,7 @@ public final class PushFailed extends ExternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(4);
-        this.number = Int64Wrapper.decode(elements.getNonNullable(0));
+        this.number = Integer64Wrapper.decode(elements.getNonNullable(0));
         
         final @Nonnull InternalIdentifier _subject = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(1)).castTo(InternalIdentifier.class);
         final @Nonnull HostIdentifier _recipient = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(2)).castTo(HostIdentifier.class);
@@ -137,7 +137,7 @@ public final class PushFailed extends ExternalAction {
     @Override
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = FreezableArray.get(4);
-        elements.set(0, Int64Wrapper.encode(NUMBER, number));
+        elements.set(0, Integer64Wrapper.encode(NUMBER, number));
         elements.set(1, action.getSubject().toBlock().setType(SUBJECT));
         elements.set(2, action.getRecipient().toBlock().setType(RECIPIENT));
         elements.set(3, SelfcontainedWrapper.encodeNonNullable(ACTION, action.toBlock()));

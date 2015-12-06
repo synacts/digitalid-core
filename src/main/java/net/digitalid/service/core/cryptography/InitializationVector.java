@@ -7,8 +7,8 @@ import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.BytesWrapper;
 import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
+import net.digitalid.service.core.block.wrappers.value.binary.BinaryWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
@@ -115,12 +115,12 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /**
      * Stores the semantic type {@code initialization.vector@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("initialization.vector@core.digitalid.net").load(BytesWrapper.XDF_TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("initialization.vector@core.digitalid.net").load(BinaryWrapper.XDF_TYPE);
     
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractNonRequestingXDFConverter<InitializationVector, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, BytesWrapper.getValueXDFConverter(TYPE));
+    public static final @Nonnull AbstractNonRequestingXDFConverter<InitializationVector, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, BinaryWrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
@@ -133,12 +133,12 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /**
      * Stores the declaration of this class.
      */
-    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("vector", BytesWrapper.SQL_TYPE);
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("vector", BinaryWrapper.SQL_TYPE);
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<InitializationVector, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, BytesWrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull AbstractSQLConverter<InitializationVector, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, BinaryWrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override

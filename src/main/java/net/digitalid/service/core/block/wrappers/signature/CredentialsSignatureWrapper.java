@@ -1,4 +1,4 @@
-package net.digitalid.service.core.block.wrappers;
+package net.digitalid.service.core.block.wrappers.signature;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -13,6 +13,9 @@ import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concepts.agent.AgentModule;
 import net.digitalid.service.core.concepts.agent.OutgoingRole;

@@ -17,7 +17,7 @@ import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.exceptions.operation.FailedCommitException;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.server.Server;
