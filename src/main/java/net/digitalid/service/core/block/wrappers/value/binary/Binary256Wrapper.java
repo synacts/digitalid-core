@@ -327,7 +327,7 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.HASH;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.BINARY256;
     
     /**
      * The SQL converter for this wrapper.

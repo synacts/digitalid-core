@@ -235,7 +235,7 @@ public final class Decimal32Wrapper extends ValueWrapper<Decimal32Wrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.FLOAT;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.DECIMAL32;
     
     /**
      * The SQL converter for this wrapper.

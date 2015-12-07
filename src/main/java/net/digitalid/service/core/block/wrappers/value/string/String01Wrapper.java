@@ -244,7 +244,7 @@ public final class String01Wrapper extends ValueWrapper<String01Wrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.CHAR;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.STRING01;
     
     /**
      * The SQL converter for this wrapper.

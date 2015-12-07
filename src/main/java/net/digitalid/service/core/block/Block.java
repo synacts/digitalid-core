@@ -742,7 +742,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     /**
      * Stores the declaration of this class.
      */
-    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("block", SQLType.BLOB);
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("block", SQLType.BINARY);
     
     /**
      * The SQL converter for this class.

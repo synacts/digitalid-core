@@ -233,7 +233,7 @@ public final class Integer32Wrapper extends ValueWrapper<Integer32Wrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.INT;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.INTEGER32;
     
     /**
      * The SQL converter for this wrapper.

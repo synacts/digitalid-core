@@ -382,7 +382,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.BLOB;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.BINARY;
     
     /**
      * The SQL converter for this wrapper.

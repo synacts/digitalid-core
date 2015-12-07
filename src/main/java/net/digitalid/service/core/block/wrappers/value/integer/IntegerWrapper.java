@@ -306,7 +306,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.BLOB;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.BINARY;
     
     /**
      * The SQL converter for this wrapper.

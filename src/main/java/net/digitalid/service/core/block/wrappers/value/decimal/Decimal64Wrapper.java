@@ -235,7 +235,7 @@ public final class Decimal64Wrapper extends ValueWrapper<Decimal64Wrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.DOUBLE;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.DECIMAL64;
     
     /**
      * The SQL converter for this wrapper.

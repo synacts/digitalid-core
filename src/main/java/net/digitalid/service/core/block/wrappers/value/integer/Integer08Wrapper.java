@@ -235,7 +235,7 @@ public final class Integer08Wrapper extends ValueWrapper<Integer08Wrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.TINYINT;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.INTEGER08;
     
     /**
      * The SQL converter for this wrapper.

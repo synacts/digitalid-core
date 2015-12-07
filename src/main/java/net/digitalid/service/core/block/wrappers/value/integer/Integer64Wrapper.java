@@ -235,7 +235,7 @@ public final class Integer64Wrapper extends ValueWrapper<Integer64Wrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.BIGINT;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.INTEGER64;
     
     /**
      * The SQL converter for this wrapper.

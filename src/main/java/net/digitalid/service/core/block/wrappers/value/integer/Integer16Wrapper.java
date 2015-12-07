@@ -232,7 +232,7 @@ public final class Integer16Wrapper extends ValueWrapper<Integer16Wrapper> {
     /**
      * Stores the SQL type of this wrapper.
      */
-    public static final @Nonnull SQLType SQL_TYPE = SQLType.SMALLINT;
+    public static final @Nonnull SQLType SQL_TYPE = SQLType.INTEGER16;
     
     /**
      * The SQL converter for this wrapper.

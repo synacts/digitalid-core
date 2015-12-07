@@ -6,6 +6,7 @@ import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.auxiliary.None;
+import net.digitalid.service.core.auxiliary.ShortString;
 import net.digitalid.service.core.block.wrappers.value.EmptyWrapper;
 import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.concept.Concept;
@@ -113,6 +114,7 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
     /**
      * Stores the value validator of the password property.
      */
+    // TODO: No longer necessary for the new class ShortString.
     public static final @Nonnull ValueValidator<String> VALUE_VALIDATOR = new ValueValidator<String>() {
         @Pure
         @Override
@@ -126,11 +128,11 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
     /**
      * Stores the setup of the password property.
      */
-    private static final @Nonnull NonNullableConceptPropertySetup<String, Settings, NonHostEntity> VALUE_PROPERTY_SETUP = NonNullableConceptPropertySetup.get(SETUP, "password", StringWrapper.getValueConverters(StringWrapper.SEMANTIC), REQUIRED_AUTHORIZATION, VALUE_VALIDATOR, "");
+    private static final @Nonnull NonNullableConceptPropertySetup<ShortString, Settings, NonHostEntity> VALUE_PROPERTY_SETUP = NonNullableConceptPropertySetup.get(SETUP, "password", StringWrapper.getValueConverters(StringWrapper.SEMANTIC), REQUIRED_AUTHORIZATION, VALUE_VALIDATOR, "");
     
     /**
      * Stores the password of these settings.
      */
-    public final @Nonnull NonNullableConceptProperty<String, Settings, NonHostEntity> password = NonNullableConceptProperty.get(VALUE_PROPERTY_SETUP, this);
+    public final @Nonnull NonNullableConceptProperty<ShortString, Settings, NonHostEntity> password = NonNullableConceptProperty.get(VALUE_PROPERTY_SETUP, this);
     
 }

@@ -133,7 +133,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /**
      * Stores the declaration of this class.
      */
-    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("vector", BinaryWrapper.SQL_TYPE);
+    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("initialization_vector", BinaryWrapper.SQL_TYPE);
     
     /**
      * Stores the SQL converter of this class.
