@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.system.exceptions.CustomException;
 
 /**
  * This exception indicates an error on the network layer.
@@ -16,7 +16,7 @@ import net.digitalid.utility.system.logger.Log;
  * @see SendingException
  */
 @Immutable
-public abstract class NetworkException extends Exception {
+public abstract class NetworkException extends CustomException {
     
     /* -------------------------------------------------- Host -------------------------------------------------- */
     
@@ -47,8 +47,6 @@ public abstract class NetworkException extends Exception {
         super("A network exception occurred during the communication with " + host + ".", exception);
         
         this.host = host;
-        
-        Log.warning("A network exception occurred.", this);
     }
     
     /* -------------------------------------------------- Cause -------------------------------------------------- */

@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenticationException;
 import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.system.exceptions.CustomException;
 
 /**
  * An external exception is caused by another party.
@@ -17,7 +17,7 @@ import net.digitalid.utility.system.logger.Log;
  * @see InactiveAuthenticationException
  */
 @Immutable
-public abstract class ExternalException extends Exception {
+public abstract class ExternalException extends CustomException {
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
@@ -29,8 +29,6 @@ public abstract class ExternalException extends Exception {
      */
     protected ExternalException(@Nonnull String message, @Nullable Exception cause) {
         super(message, cause);
-        
-        Log.warning("An external exception occurred.", this);
     }
     
     /**
@@ -39,7 +37,7 @@ public abstract class ExternalException extends Exception {
      * @param message a string explaining the problem which has occurred.
      */
     protected ExternalException(@Nonnull String message) {
-        this(message, null);
+        super(message);
     }
     
 }

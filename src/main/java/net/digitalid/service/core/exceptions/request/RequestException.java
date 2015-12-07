@@ -13,8 +13,8 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.system.exceptions.CustomException;
 import net.digitalid.utility.system.exceptions.InternalException;
-import net.digitalid.utility.system.logger.Log;
 
 /**
  * This exception indicates an error in the encoding or content of a request.
@@ -22,7 +22,7 @@ import net.digitalid.utility.system.logger.Log;
  * @see RequestErrorCode
  */
 @Immutable
-public final class RequestException extends Exception implements XDF<RequestException, Object> {
+public final class RequestException extends CustomException implements XDF<RequestException, Object> {
     
     /* -------------------------------------------------- Code -------------------------------------------------- */
     
@@ -69,13 +69,10 @@ public final class RequestException extends Exception implements XDF<RequestExce
      * @param decoded whether the exception was decoded from a block.
      */
     protected RequestException(@Nonnull RequestErrorCode code, @Nonnull String message, @Nullable Exception cause, boolean decoded) {
-        super("(" + code.getName() + ") " + message, cause);
+        super("(" + code.getName() + ") " + message + (decoded ? " (decoded)" : ""), cause);
         
         this.code = code;
         this.decoded = decoded;
-        
-        if (decoded) { Log.warning("A request exception was decoded.", this); }
-        else { Log.warning("A request exception occurred.", this); }
     }
     
     /**
