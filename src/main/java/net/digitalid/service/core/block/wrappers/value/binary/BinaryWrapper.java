@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
+import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
+import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
@@ -405,7 +405,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
         @NonCommitting
         public void storeNonNullable(@Nonnull BinaryWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
             try {
-                if (Database.getConfiguration().supportsBinaryStream()) {
+                if (Database.getInstance().supportsBinaryStreams()) {
                     preparedStatement.setBinaryStream(parameterIndex.getAndIncrementValue(), wrapper.getBytesAsInputStream(), wrapper.determineLength());
                 } else {
                     preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), wrapper.getBytes());

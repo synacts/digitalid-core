@@ -78,7 +78,6 @@ public final class Worker implements Runnable {
             @Nullable Request request = null;
             @Nonnull Response response;
             try {
-                Database.lock();
                 try {
                     request = new Request(socket.getInputStream());
                     Log.verbose("Request decoded in " + Time.getCurrent().subtract(start).getValue() + " ms.");
@@ -117,7 +116,7 @@ public final class Worker implements Runnable {
                             replies.set(i, method.executeOnHost());
                             if (method instanceof Action) { ActionModule.audit((Action) method); }
                             Database.commit();
-                        } catch (@Nonnull SQLException exception) {
+                        } catch (@Nonnull DatabaseException exception) {
                             exceptions.set(i, RequestException.get(RequestErrorCode.DATABASE, "An SQLException occurred.", exception));
                             Database.rollback();
                         } catch (@Nonnull RequestException exception) {
@@ -159,20 +158,18 @@ public final class Worker implements Runnable {
                     
                     response = new Response(request, replies.freeze(), exceptions.freeze(), responseAudit);
                 } catch (@Nonnull DatabaseException exception) {
-                    throw RequestException.get(RequestErrorCode.DATABASE, "A DatabaseException occurred.", exception);
+                    throw RequestException.get(RequestErrorCode.DATABASE, "A database exception occurred.", exception);
                 } catch (@Nonnull NetworkException exception) {
-                    throw RequestException.get(RequestErrorCode.NETWORK, "A NetworkException occurred.", exception);
+                    throw RequestException.get(RequestErrorCode.NETWORK, "A network exception occurred.", exception);
                 } catch (@Nonnull InternalException exception) {
-                    throw RequestException.get(RequestErrorCode.INTERNAL, "An InternalException occurred.", exception);
+                    throw RequestException.get(RequestErrorCode.INTERNAL, "An internal exception occurred.", exception);
                 } catch (@Nonnull ExternalException exception) {
-                    throw RequestException.get(RequestErrorCode.EXTERNAL, "An ExternalException occurred.", exception);
+                    throw RequestException.get(RequestErrorCode.EXTERNAL, "An external exception occurred.", exception);
                 }
             } catch (@Nonnull RequestException exception) {
                 response = new Response(request, exception.isDecoded() ? RequestException.get(RequestErrorCode.REQUEST, "An external request error occurred.", exception) : exception);
                 error = exception.getCode();
                 Database.rollback();
-            } finally {
-                Database.unlock();
             }
             
             // The database transaction is intentionally committed before returning the response so that slow or malicious clients cannot block the database.

@@ -10,7 +10,7 @@ import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
+import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
