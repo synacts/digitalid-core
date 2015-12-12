@@ -3,6 +3,7 @@ package net.digitalid.service.core.exceptions.external.encoding;
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 
 /**
  * This exception is thrown when a value decoded from a block is invalid.

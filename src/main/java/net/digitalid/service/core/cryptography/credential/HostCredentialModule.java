@@ -17,7 +17,6 @@ import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostAccount;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.IdentityImplementation;
@@ -33,6 +32,7 @@ import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 
 /**
  * This class provides database access to the {@link Credential credentials} issued by a {@link Host host}.

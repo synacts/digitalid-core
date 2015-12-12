@@ -21,8 +21,6 @@ import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.external.signature.InactiveAuthenticationException;
@@ -45,7 +43,9 @@ import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.system.exceptions.InternalException;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code signature@core.digitalid.net}.

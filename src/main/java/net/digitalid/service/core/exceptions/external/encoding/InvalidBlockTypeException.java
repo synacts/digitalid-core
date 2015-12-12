@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 
 /**
  * This exception is thrown when the type of a block is invalid.

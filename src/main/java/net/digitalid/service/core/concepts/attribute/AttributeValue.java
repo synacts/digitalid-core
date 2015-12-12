@@ -13,10 +13,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
-import net.digitalid.service.core.castable.Castable;
-import net.digitalid.service.core.castable.CastableObject;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyParameterValueException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
@@ -27,6 +24,9 @@ import net.digitalid.service.core.identity.annotations.AttributeType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.index.MutableIndex;
+import net.digitalid.utility.system.castable.Castable;
+import net.digitalid.utility.system.castable.CastableObject;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 
 /**
  * This class facilitates the encoding and decoding of attribute values.

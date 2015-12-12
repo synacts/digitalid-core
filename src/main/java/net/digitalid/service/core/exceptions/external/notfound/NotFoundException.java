@@ -1,12 +1,12 @@
 package net.digitalid.service.core.exceptions.external.notfound;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.AttributeType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 
 /**
  * This exception is thrown when something cannot be found.
@@ -15,7 +15,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @see CertificateNotFoundException
  */
 @Immutable
-public abstract class SomethingNotFoundException extends ExternalException {
+public abstract class NotFoundException extends ExternalException {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
@@ -60,7 +60,7 @@ public abstract class SomethingNotFoundException extends ExternalException {
      * @param identity the identity whose something could not be found.
      * @param type the type of the something that could not be found.
      */
-    protected SomethingNotFoundException(@Nonnull String something, @Nonnull InternalIdentity identity, @Nonnull @AttributeType SemanticType type) {
+    protected NotFoundException(@Nonnull String something, @Nonnull InternalIdentity identity, @Nonnull @AttributeType SemanticType type) {
         super("The " + something + " " + type.getAddress() + " of " + identity.getAddress() + " could not be found.");
         
         assert type.isAttributeType() : "The type is an attribute type.";

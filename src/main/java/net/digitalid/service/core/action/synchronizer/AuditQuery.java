@@ -10,8 +10,6 @@ import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.handler.Method;
@@ -24,6 +22,8 @@ import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 
 /**
  * Queries the audit of the given service for the given role.

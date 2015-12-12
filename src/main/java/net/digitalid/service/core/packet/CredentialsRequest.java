@@ -12,7 +12,6 @@ import net.digitalid.service.core.block.wrappers.signature.CredentialsSignatureW
 import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.cryptography.credential.Credential;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Method;
@@ -25,6 +24,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezableQuartet;
 import net.digitalid.utility.collections.tuples.ReadOnlyQuartet;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 
 /**
  * This class compresses, signs and encrypts requests with credentials.

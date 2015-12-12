@@ -16,7 +16,6 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.service.core.storage.Service;
@@ -25,6 +24,7 @@ import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 
 /**
  * This class provides database access to the {@link AttributeValue certificates} of the core service.

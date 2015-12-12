@@ -11,7 +11,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception is thrown when an attribute cannot be found.
  */
 @Immutable
-public class AttributeNotFoundException extends SomethingNotFoundException {
+public class AttributeNotFoundException extends NotFoundException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

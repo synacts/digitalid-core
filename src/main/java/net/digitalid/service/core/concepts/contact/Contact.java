@@ -17,7 +17,6 @@ import net.digitalid.service.core.concept.Observer;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.ExternalPerson;
@@ -31,6 +30,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 
 /**
  * Contacts have certain {@link FreezableContactPermissions permissions} and {@link FreezableAuthentications authentications}.

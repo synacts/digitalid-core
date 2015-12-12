@@ -10,7 +10,7 @@ import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.resolution.IdentityReply;
 import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.system.exceptions.InternalException;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
  * This class models a {@link Reply reply} to a {@link Query query}.

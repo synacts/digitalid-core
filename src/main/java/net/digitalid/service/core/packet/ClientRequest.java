@@ -12,7 +12,6 @@ import net.digitalid.service.core.block.wrappers.CompressionWrapper;
 import net.digitalid.service.core.block.wrappers.signature.ClientSignatureWrapper;
 import net.digitalid.service.core.concepts.agent.ClientAgentCommitmentReplace;
 import net.digitalid.service.core.entity.NativeRole;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.Method;
@@ -26,7 +25,8 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.system.exceptions.InternalException;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
  * This class compresses, signs and encrypts requests by clients.

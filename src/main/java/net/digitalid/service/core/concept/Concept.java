@@ -7,8 +7,6 @@ import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.service.core.castable.Castable;
-import net.digitalid.service.core.castable.CastableObject;
 import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.concept.property.ConceptPropertyTable;
 import net.digitalid.service.core.converter.xdf.XDF;
@@ -25,6 +23,8 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.system.castable.Castable;
+import net.digitalid.utility.system.castable.CastableObject;
 
 /**
  * This class models a concept in the {@link Database database}.

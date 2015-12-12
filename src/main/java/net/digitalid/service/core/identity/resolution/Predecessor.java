@@ -8,8 +8,6 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.Blockable;
 import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
@@ -21,6 +19,8 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 
 /**
  * This class models a predecessor of an identifier.

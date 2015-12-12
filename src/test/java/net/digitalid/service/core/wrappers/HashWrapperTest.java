@@ -4,9 +4,9 @@ import java.math.BigInteger;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.value.binary.Binary256Wrapper;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
+import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 import org.junit.Assert;
 import org.junit.Test;
 

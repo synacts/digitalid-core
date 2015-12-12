@@ -24,7 +24,6 @@ import net.digitalid.service.core.cryptography.KeyPair;
 import net.digitalid.service.core.cryptography.PrivateKeyChain;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
 import net.digitalid.service.core.entity.HostAccount;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -36,6 +35,7 @@ import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.system.directory.Directory;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 
 /**
  * A host stores a {@link KeyPair} and is run by a {@link Server}.

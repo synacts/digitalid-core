@@ -21,7 +21,6 @@ import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.signature.ExpiredClientSignatureException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidClientSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -38,7 +37,8 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.system.exceptions.InternalException;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 import net.digitalid.utility.system.logger.Log;
 
 /**

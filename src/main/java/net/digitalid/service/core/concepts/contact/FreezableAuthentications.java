@@ -5,7 +5,6 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.value.BooleanWrapper;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.Category;
@@ -13,6 +12,7 @@ import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 
 /**
  * This class models the authentications of contacts as a set of attribute types.

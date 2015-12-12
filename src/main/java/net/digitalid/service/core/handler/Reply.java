@@ -22,7 +22,6 @@ import net.digitalid.service.core.block.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidReplyTypeException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -36,6 +35,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
 import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 import net.digitalid.utility.system.thread.Threading;
 
 /**

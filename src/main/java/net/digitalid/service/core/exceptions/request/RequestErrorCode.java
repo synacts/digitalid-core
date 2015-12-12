@@ -2,22 +2,20 @@ package net.digitalid.service.core.exceptions.request;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.ChainingSQLConverter;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer08Wrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class enumerates the various request error codes.
@@ -222,7 +220,7 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
         
         @Pure
         @Override
-        public @Nonnull RequestErrorCode recover(@Nonnull Object none, @Nonnull @Validated Byte value) throws InvalidEncodingException, InternalException {
+        public @Nonnull RequestErrorCode recover(@Nonnull Object none, @Nonnull @Validated Byte value) {
             return RequestErrorCode.get(value);
         }
         

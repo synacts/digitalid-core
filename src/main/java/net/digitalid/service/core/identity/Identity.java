@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.ChainingSQLConverter;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
@@ -14,17 +15,12 @@ import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionExc
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
-import net.digitalid.service.core.castable.Castable;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.key.CastingKeyConverter;
 import net.digitalid.service.core.converter.key.CastingNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.external.encoding.MaskingInvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -33,7 +29,11 @@ import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.system.exceptions.InternalException;
+import net.digitalid.utility.system.castable.Castable;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.system.exceptions.external.MaskingInvalidEncodingException;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
  * This interface models a digital identity.
@@ -143,7 +143,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
         
         @Pure
         @Override
-        public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Long key) throws InvalidEncodingException, InternalException {
+        public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Long key) throws InvalidEncodingException {
             try {
                 return Mapper.getIdentity(key);
             } catch (@Nonnull DatabaseException exception) {

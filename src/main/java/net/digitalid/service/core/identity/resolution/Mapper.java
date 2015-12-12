@@ -18,9 +18,7 @@ import net.digitalid.database.core.sql.statement.table.create.SQLReferenceOption
 import net.digitalid.database.core.table.GeneralReference;
 import net.digitalid.database.core.table.GeneralTable;
 import net.digitalid.service.core.cache.Cache;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.external.InvalidDeclarationException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.declaration.InvalidDeclarationException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
@@ -58,7 +56,9 @@ import net.digitalid.utility.collections.tuples.FreezableTriplet;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.system.exceptions.InternalException;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.annotations.MainThread;
 

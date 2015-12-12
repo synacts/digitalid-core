@@ -2,16 +2,15 @@ package net.digitalid.service.core.identity.resolution;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.ChainingSQLConverter;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer08Wrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -20,7 +19,6 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class enumerates the various categories of digital identities.
@@ -220,7 +218,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         
         @Pure
         @Override
-        public @Nonnull Category recover(@Nonnull Object none, @Nonnull @Validated Byte value) throws InvalidEncodingException, InternalException {
+        public @Nonnull Category recover(@Nonnull Object none, @Nonnull @Validated Byte value) {
             return Category.get(value);
         }
         

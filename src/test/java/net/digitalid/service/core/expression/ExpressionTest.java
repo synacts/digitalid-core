@@ -2,7 +2,7 @@ package net.digitalid.service.core.expression;
 
 import java.sql.SQLException;
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
+import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 import org.junit.Test;
 
 /**

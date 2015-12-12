@@ -19,7 +19,6 @@ import net.digitalid.service.core.cryptography.credential.annotations.Active;
 import net.digitalid.service.core.entity.NonNativeRole;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.entity.annotations.OfInternalPerson;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.signature.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
@@ -32,6 +31,7 @@ import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 
 /**
  * This class models credentials on the client-side.

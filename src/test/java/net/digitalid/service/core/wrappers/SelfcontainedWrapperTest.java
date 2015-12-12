@@ -6,11 +6,11 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer32Wrapper;
 import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 import org.junit.Assert;
 import org.junit.Test;
 

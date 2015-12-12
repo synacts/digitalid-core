@@ -4,6 +4,7 @@ import java.security.SecureRandom;
 import javax.annotation.Nonnull;
 import javax.crypto.spec.IvParameterSpec;
 import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.ChainingSQLConverter;
 import net.digitalid.database.core.converter.SQL;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.Block;
@@ -11,16 +12,13 @@ import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
 import net.digitalid.service.core.block.wrappers.value.binary.BinaryWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * The random initialization vector ensures that multiple {@link EncryptionWrapper encryptions} of the same {@link Block block} are different.
@@ -104,7 +102,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         
         @Pure
         @Override
-        public @Nonnull InitializationVector recover(@Nonnull Object none, @Nonnull @Validated byte[] bytes) throws InvalidEncodingException, InternalException {
+        public @Nonnull InitializationVector recover(@Nonnull Object none, @Nonnull @Validated byte[] bytes) {
             return new InitializationVector(bytes);
         }
         

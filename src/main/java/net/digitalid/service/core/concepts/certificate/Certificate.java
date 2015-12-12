@@ -9,7 +9,6 @@ import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.concept.NonHostConcept;
 import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
@@ -17,6 +16,7 @@ import net.digitalid.service.core.identity.NonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 
 /**
  * Description.

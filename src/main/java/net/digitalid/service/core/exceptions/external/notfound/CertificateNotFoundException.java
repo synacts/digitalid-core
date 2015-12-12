@@ -11,7 +11,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception is thrown when a certificate cannot be found.
  */
 @Immutable
-public class CertificateNotFoundException extends SomethingNotFoundException {
+public class CertificateNotFoundException extends NotFoundException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

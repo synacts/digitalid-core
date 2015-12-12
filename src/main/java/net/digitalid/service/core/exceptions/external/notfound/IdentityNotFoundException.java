@@ -1,11 +1,11 @@
 package net.digitalid.service.core.exceptions.external.notfound;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.exceptions.external.ExternalException;
 
 /**
  * This exception is thrown when an {@link Identity identity} cannot be found.
