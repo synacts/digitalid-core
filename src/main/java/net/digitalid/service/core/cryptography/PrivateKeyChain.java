@@ -1,14 +1,14 @@
 package net.digitalid.service.core.cryptography;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
+import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -111,11 +111,11 @@ public final class PrivateKeyChain extends KeyChain<PrivateKeyChain, PrivateKey>
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PrivateKeyChain, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
+    public static final @Nonnull SQLConverter<PrivateKeyChain, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<PrivateKeyChain, Object> getSQLConverter() {
+    public @Nonnull SQLConverter<PrivateKeyChain, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

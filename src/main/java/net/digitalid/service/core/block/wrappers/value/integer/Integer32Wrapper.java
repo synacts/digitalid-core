@@ -1,7 +1,5 @@
 package net.digitalid.service.core.block.wrappers.value.integer;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -9,7 +7,6 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
@@ -202,7 +199,7 @@ public final class Integer32Wrapper extends ValueWrapper<Integer32Wrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(int value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void store(int value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             preparedStatement.setInt(parameterIndex.getAndIncrementValue(), value);
         } catch (@Nonnull SQLException exception) {
@@ -220,7 +217,7 @@ public final class Integer32Wrapper extends ValueWrapper<Integer32Wrapper> {
      */
     @Pure
     @NonCommitting
-    public static int restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
+    public static int restore(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException {
         try {
             return resultSet.getInt(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
@@ -254,14 +251,14 @@ public final class Integer32Wrapper extends ValueWrapper<Integer32Wrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull Integer32Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull Integer32Wrapper wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Integer32Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable Integer32Wrapper restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             try {
                 final int value = restore(resultSet, columnIndex);
                 return resultSet.wasNull() ? null : new Integer32Wrapper(getType(), value);

@@ -3,13 +3,13 @@ package net.digitalid.service.core.identity;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.Identifier;
@@ -132,7 +132,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<Type, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(Type.class), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
+    public static final @Nonnull RequestingXDFConverter<Type, Object> XDF_CONVERTER = ChainingRequestingXDFConverter.get(new Identity.IdentifierConverter<>(Type.class), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
@@ -144,7 +144,7 @@ public abstract class Type extends NonHostIdentityImplementation implements Inte
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Type, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Type.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<Type, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Type.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

@@ -5,7 +5,7 @@ import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.annotations.BasedOn;

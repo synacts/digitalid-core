@@ -12,17 +12,17 @@ import net.digitalid.utility.system.exceptions.external.InvalidEncodingException
 import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
- * This class is like {@link AbstractXDFConverter} except that the decoding of {@link Block blocks} throws less exceptions.
+ * This class is like {@link RequestingXDFConverter} except that the decoding of {@link Block blocks} throws less exceptions.
  * This converter does not allow file, network and database requests during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.block.Block) decoding}.
  */
 @Immutable
-public abstract class AbstractNonRequestingXDFConverter<O, E> extends AbstractXDFConverter<O, E> {
+public abstract class NonRequestingXDFConverter<O, E> extends RequestingXDFConverter<O, E> {
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingXDFConverter<O, E> setType(@Nonnull SemanticType type) {
+    public @Nonnull NonRequestingXDFConverter<O, E> setType(@Nonnull SemanticType type) {
         return SubtypingNonRequestingXDFConverter.get(type, this);
     }
     
@@ -45,7 +45,7 @@ public abstract class AbstractNonRequestingXDFConverter<O, E> extends AbstractXD
      * 
      * @param type the semantic type that corresponds to the class that implements XDF.
      */
-    protected AbstractNonRequestingXDFConverter(@Nonnull @Loaded SemanticType type) {
+    protected NonRequestingXDFConverter(@Nonnull @Loaded SemanticType type) {
         super(type);
     }
     

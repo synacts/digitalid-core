@@ -3,9 +3,9 @@ package net.digitalid.service.core.storage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.CoreService;
@@ -14,9 +14,9 @@ import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concepts.attribute.Attribute;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
+import net.digitalid.service.core.converter.key.NonRequestingKeyConverter;
+import net.digitalid.service.core.converter.xdf.ChainingRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -202,7 +202,7 @@ public class Service extends DelegatingSiteStorageImplementation implements XDF<
     /**
      * Stores the key converter of this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<Service, Object, SemanticType, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Service, Object, SemanticType, Object>() {
+    private static final @Nonnull NonRequestingKeyConverter<Service, Object, SemanticType, Object> KEY_CONVERTER = new NonRequestingKeyConverter<Service, Object, SemanticType, Object>() {
         
         @Pure
         @Override
@@ -227,11 +227,11 @@ public class Service extends DelegatingSiteStorageImplementation implements XDF<
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<Service, Object> XDF_CONVERTER = ChainingXDFConverter.get(KEY_CONVERTER, SemanticType.XDF_CONVERTER);
+    public static final @Nonnull RequestingXDFConverter<Service, Object> XDF_CONVERTER = ChainingRequestingXDFConverter.get(KEY_CONVERTER, SemanticType.XDF_CONVERTER);
     
     @Pure
     @Override
-    public @Nonnull AbstractXDFConverter<Service, Object> getXDFConverter() {
+    public @Nonnull RequestingXDFConverter<Service, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -245,11 +245,11 @@ public class Service extends DelegatingSiteStorageImplementation implements XDF<
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Service, Object> SQL_CONVERTER = ChainingSQLConverter.get(DECLARATION, KEY_CONVERTER, SemanticType.SQL_CONVERTER);
+    public static final @Nonnull SQLConverter<Service, Object> SQL_CONVERTER = ChainingSQLConverter.get(DECLARATION, KEY_CONVERTER, SemanticType.SQL_CONVERTER);
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<Service, Object> getSQLConverter() {
+    public @Nonnull SQLConverter<Service, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

@@ -1,6 +1,6 @@
 package net.digitalid.service.core.auxiliary;
 
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.utility.annotations.state.Immutable;
 

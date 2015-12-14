@@ -1,8 +1,6 @@
 package net.digitalid.service.core.block.wrappers.value.integer;
 
 import java.math.BigInteger;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,7 +8,6 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
@@ -241,7 +238,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNonNullable(@Nonnull BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void storeNonNullable(@Nonnull BigInteger value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), value.toByteArray());
         } catch (@Nonnull SQLException exception) {
@@ -257,7 +254,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNullable(@Nullable BigInteger value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void storeNullable(@Nullable BigInteger value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             if (value != null) { storeNonNullable(value, preparedStatement, parameterIndex); }
             else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
@@ -276,7 +273,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nullable BigInteger restoreNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
+    public static @Nullable BigInteger restoreNullable(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException {
         try {
             final @Nullable byte [] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
             return bytes == null ? null : new BigInteger(bytes);
@@ -295,7 +292,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull BigInteger restoreNonNullable(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptNullValueException {
+    public static @Nonnull BigInteger restoreNonNullable(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptNullValueException {
         final @Nullable BigInteger value = restoreNullable(resultSet, columnIndex);
         if (value == null) { throw CorruptNullValueException.get(); }
         return value;
@@ -327,7 +324,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull IntegerWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull IntegerWrapper wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
             try {
                 preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), wrapper.bytes);
             } catch (@Nonnull SQLException exception) {
@@ -338,7 +335,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         @Pure
         @Override
         @NonCommitting
-        public @Nullable IntegerWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable IntegerWrapper restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             try {
                 final @Nullable byte[] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
                 return bytes == null ? null : new IntegerWrapper(getType(), bytes, new BigInteger(bytes));

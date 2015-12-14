@@ -20,7 +20,7 @@ import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
 import net.digitalid.service.core.cache.AttributesQuery;
 import net.digitalid.service.core.cache.AttributesReply;
 import net.digitalid.service.core.concepts.certificate.CertificateIssue;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
@@ -154,7 +154,7 @@ public abstract class Packet {
             final @Nullable Block compression = content == null ? null : CompressionWrapper.compressNonNullable(COMPRESSION, content);
             if (compression != null || audit != null) {
                 if (subject == null || audit == null && block != null && block.getType().equals(RequestException.TYPE)) {
-                    signatures.add(ConvertToXDF.nonNullable(SignatureWrapper.encodeWithoutSigning(Packet.SIGNATURE, compression, subject)));
+                    signatures.add(Encode.nonNullable(SignatureWrapper.encodeWithoutSigning(Packet.SIGNATURE, compression, subject)));
                 } else { signatures.add(getSignature(compression, subject, audit).toBlock()); }
                 audit = null;
             } else {

@@ -1,6 +1,7 @@
 package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.converter.key.KeyConverter;
 import net.digitalid.service.core.concept.ConceptKeyConverter;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
@@ -19,11 +20,11 @@ import net.digitalid.utility.system.exceptions.internal.InternalException;
  *            In case no external information is needed for the recovery of the key, declare it as an {@link Object}.
  * 
  * @see NonConvertingKeyConverter
+ * @see XDFBasedKeyConverter
  * @see ConceptKeyConverter
- * @see BlockKeyConverter
  */
 @Stateless
-public abstract class AbstractNonRequestingKeyConverter<O, E, K, D> extends AbstractKeyConverter<O, E, K, D> {
+public abstract class NonRequestingKeyConverter<O, E, K, D> extends RequestingKeyConverter<O, E, K, D> implements KeyConverter<O, E, K, D> {
     
     @Pure
     @Override

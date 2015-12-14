@@ -1,6 +1,5 @@
 package net.digitalid.service.core.concepts.agent;
 
-import java.sql.ResultSet;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -420,7 +419,7 @@ public final class OutgoingRole extends Agent {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex, boolean removed, boolean restrictable) throws DatabaseException {
+    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result, boolean removed, boolean restrictable) throws DatabaseException {
         return get(entity, resultSet.getLong(columnIndex), removed, restrictable);
     }
     

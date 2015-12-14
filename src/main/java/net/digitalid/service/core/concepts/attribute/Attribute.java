@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.block.wrappers.value.BooleanWrapper;
 import net.digitalid.service.core.concept.GeneralConcept;

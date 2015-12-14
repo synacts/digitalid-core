@@ -2,15 +2,15 @@ package net.digitalid.service.core.cryptography;
 
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.key.NonRequestingKeyConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -132,7 +132,7 @@ public final class Exponent extends Number<Exponent, Object> {
     /**
      * Stores the key converter of this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<Exponent, Object, BigInteger, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Exponent, Object, BigInteger, Object>() {
+    private static final @Nonnull NonRequestingKeyConverter<Exponent, Object, BigInteger, Object> KEY_CONVERTER = new NonRequestingKeyConverter<Exponent, Object, BigInteger, Object>() {
         
         @Pure
         @Override
@@ -158,11 +158,11 @@ public final class Exponent extends Number<Exponent, Object> {
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractNonRequestingXDFConverter<Exponent, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, IntegerWrapper.getValueXDFConverter(TYPE));
+    public static final @Nonnull NonRequestingXDFConverter<Exponent, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, IntegerWrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingXDFConverter<Exponent, Object> getXDFConverter() {
+    public @Nonnull NonRequestingXDFConverter<Exponent, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -176,11 +176,11 @@ public final class Exponent extends Number<Exponent, Object> {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Exponent, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, IntegerWrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<Exponent, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, IntegerWrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<Exponent, Object> getSQLConverter() {
+    public @Nonnull SQLConverter<Exponent, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

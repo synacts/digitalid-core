@@ -6,9 +6,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
@@ -16,10 +16,10 @@ import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.key.CastingKeyConverter;
 import net.digitalid.service.core.converter.key.CastingNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
+import net.digitalid.service.core.converter.key.CastingRequestingKeyConverter;
+import net.digitalid.service.core.converter.xdf.ChainingRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -95,7 +95,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
      * This class allows to convert an identity to its address and recover it again by downcasting the identity returned by the overridden method to the given target class.
      */
     @Immutable
-    public static final class IdentifierConverter<I extends Identity> extends CastingKeyConverter<I, Object, Identifier, Object, Identity> {
+    public static final class IdentifierConverter<I extends Identity> extends CastingRequestingKeyConverter<I, Object, Identifier, Object, Identity> {
         
         /**
          * Creates a new identity-identifier converter with the given target class.
@@ -163,7 +163,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<Identity, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(Identity.class), Identifier.XDF_CONVERTER);
+    public static final @Nonnull RequestingXDFConverter<Identity, Object> XDF_CONVERTER = ChainingRequestingXDFConverter.get(new Identity.IdentifierConverter<>(Identity.class), Identifier.XDF_CONVERTER);
     
     /* -------------------------------------------------- Declaration -------------------------------------------------- */
     
@@ -222,7 +222,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Identity.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<Identity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(Identity.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

@@ -12,7 +12,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoded;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
@@ -195,7 +195,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      */
     @Pure
     public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block compressNonNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return XDF_CONVERTER.encodeNonNullable(new CompressionWrapper(type, ConvertToXDF.nonNullable(element)));
+        return XDF_CONVERTER.encodeNonNullable(new CompressionWrapper(type, Encode.nonNullable(element)));
     }
     
     /**

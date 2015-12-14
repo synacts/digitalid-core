@@ -1,15 +1,15 @@
 package net.digitalid.service.core.exceptions.request;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer08Wrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.key.NonRequestingKeyConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -204,7 +204,7 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     /**
      * Stores the key converter of this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<RequestErrorCode, Object, Byte, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<RequestErrorCode, Object, Byte, Object>() {
+    private static final @Nonnull NonRequestingKeyConverter<RequestErrorCode, Object, Byte, Object> KEY_CONVERTER = new NonRequestingKeyConverter<RequestErrorCode, Object, Byte, Object>() {
         
         @Pure
         @Override
@@ -236,11 +236,11 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractNonRequestingXDFConverter<RequestErrorCode, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, Integer08Wrapper.getValueXDFConverter(TYPE));
+    public static final @Nonnull NonRequestingXDFConverter<RequestErrorCode, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, Integer08Wrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingXDFConverter<RequestErrorCode, Object> getXDFConverter() {
+    public @Nonnull NonRequestingXDFConverter<RequestErrorCode, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -254,11 +254,11 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<RequestErrorCode, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Integer08Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<RequestErrorCode, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Integer08Wrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<RequestErrorCode, Object> getSQLConverter() {
+    public @Nonnull SQLConverter<RequestErrorCode, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

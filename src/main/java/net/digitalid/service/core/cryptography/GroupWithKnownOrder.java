@@ -2,14 +2,14 @@ package net.digitalid.service.core.cryptography;
 
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -111,7 +111,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<GroupWithKnownOrder, Object> {
+    public static final class XDFConverter extends NonRequestingXDFConverter<GroupWithKnownOrder, Object> {
         
         /**
          * Creates a new XDF converter.
@@ -168,11 +168,11 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<GroupWithKnownOrder, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
+    public static final @Nonnull SQLConverter<GroupWithKnownOrder, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<GroupWithKnownOrder, Object> getSQLConverter() {
+    public @Nonnull SQLConverter<GroupWithKnownOrder, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

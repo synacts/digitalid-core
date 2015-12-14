@@ -1,6 +1,5 @@
 package net.digitalid.service.core.concepts.agent;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -29,7 +28,6 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 
@@ -523,7 +521,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public final void set(@NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
     
@@ -535,7 +533,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Agent agent, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public static void set(@Nullable Agent agent, @NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         if (agent == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
         else { agent.set(preparedStatement, parameterIndex); }
     }

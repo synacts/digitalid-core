@@ -28,7 +28,7 @@ import net.digitalid.service.core.concepts.agent.ClientAgent;
 import net.digitalid.service.core.concepts.agent.ClientAgentAccredit;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.contact.Context;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
@@ -177,7 +177,7 @@ public class Client extends Site {
             this.secret = Exponent.get(SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(file), true).checkType(SECRET));
         } else {
             this.secret = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
-            SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, ConvertToXDF.nonNullable(SECRET, secret)).writeTo(new FileOutputStream(file), true);
+            SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, Encode.nonNullable(SECRET, secret)).writeTo(new FileOutputStream(file), true);
         }
         
         // The role table needs to be created in advance.

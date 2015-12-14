@@ -9,7 +9,7 @@ import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.wrappers.AbstractWrapper;
 import net.digitalid.service.core.block.wrappers.BlockBasedWrapper;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockLengthException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockOffsetException;
@@ -278,7 +278,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     @SuppressWarnings("unchecked")
     public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Captured @Nonnull V... elements) {
         final @Nonnull FreezableList<Block> list = FreezableArrayList.getWithCapacity(elements.length);
-        for (final @Nullable V element : elements) { list.add(ConvertToXDF.nullable(element)); }
+        for (final @Nullable V element : elements) { list.add(Encode.nullable(element)); }
         return encode(type, list.freeze());
     }
     

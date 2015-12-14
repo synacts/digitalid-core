@@ -1,13 +1,11 @@
 package net.digitalid.service.core.concepts.attribute;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
@@ -23,7 +21,6 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.AttributeType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.castable.Castable;
 import net.digitalid.utility.system.castable.CastableObject;
 import net.digitalid.utility.system.exceptions.external.ExternalException;
@@ -227,7 +224,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AttributeValue get(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nonnull AttributeValue get(@NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         try {
             return AttributeValue.get(Block.getNotNull(TYPE, resultSet, columnIndex), true);
         } catch (@Nonnull IOException | RequestException | ExternalException exception) {
@@ -237,7 +234,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public final void set(@NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         toBlock().set(preparedStatement, parameterIndex);
     }
     
@@ -249,7 +246,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable AttributeValue attributeValue, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public static void set(@Nullable AttributeValue attributeValue, @NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         Block.set(Block.toBlock(attributeValue), preparedStatement, parameterIndex);
     }
     

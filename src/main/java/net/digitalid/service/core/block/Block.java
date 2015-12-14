@@ -6,18 +6,17 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
+import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
+import net.digitalid.database.core.interfaces.SelectionResult;
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.block.annotations.Encoded;
 import net.digitalid.service.core.block.annotations.Encoding;
@@ -26,7 +25,7 @@ import net.digitalid.service.core.block.annotations.NonEncoded;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.annotations.NonEncodingRecipient;
 import net.digitalid.service.core.block.wrappers.AbstractWrapper;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
@@ -40,11 +39,8 @@ import net.digitalid.utility.annotations.reference.Captured;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.annotations.index.ValidIndex;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.system.exceptions.internal.InternalException;
@@ -706,7 +702,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * The XDF converter for this class.
      */
     @Immutable
-    public static class XDFConverter extends AbstractNonRequestingXDFConverter<Block, Object> {
+    public static class XDFConverter extends NonRequestingXDFConverter<Block, Object> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -745,58 +741,30 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("block", SQLType.BINARY);
     
     /**
-     * The SQL converter for this class.
-     */
-    @Immutable
-    public static final class SQLConverter extends AbstractSQLConverter<Block, SemanticType> {
-        
-        /**
-         * Creates a new SQL converter.
-         */
-        private SQLConverter() {
-            super(DECLARATION);
-        }
-        
-        @Pure
-        @Override
-        public void storeNonNullable(@Nonnull Block block, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
-            values.set(index.getAndIncrementValue(), block.toString());
-        }
-        
-        @Override
-        public void storeNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
-            try {
-                if (Database.getConfiguration().supportsBinaryStream()) {
-                    preparedStatement.setBinaryStream(parameterIndex.getAndIncrementValue(), block.getInputStream(), block.getLength());
-                } else {
-                    preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), block.getBytes());
-                }
-            } catch (@Nonnull SQLException exception) {
-                throw FailedValueStoringException.get(exception);
-            }
-        }
-        
-        @Pure
-        @Override
-        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
-            try {
-                final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
-                return resultSet.wasNull() ? null : Block.get(type, bytes);
-            } catch (@Nonnull SQLException exception) {
-                throw FailedValueRestoringException.get(exception);
-            }
-        }
-        
-    }
-    
-    /**
      * Stores the SQL converter which is used to store and restore blocks.
      */
-    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
+    public static final @Nonnull SQLConverter<Block, SemanticType> SQL_CONVERTER = new SQLConverter<Block, SemanticType>(DECLARATION) {
+        
+        @Override
+        public void storeNonNullable(@Nonnull Block block, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+            if (Database.getInstance().supportsBinaryStreams()) {
+                collector.setBinaryStream(block.getInputStream(), block.getLength());
+            } else {
+                collector.setBinary(block.getBytes());
+            }
+        }
+        
+        @Override
+        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
+            final @Nullable byte[] bytes = result.getBinary();
+            return bytes == null ? null : Block.get(type, bytes);
+        }
+        
+    };
     
     @Pure
     @Override
-    public @Nonnull SQLConverter getSQLConverter() {
+    public @Nonnull SQLConverter<Block, SemanticType> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

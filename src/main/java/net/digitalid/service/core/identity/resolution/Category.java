@@ -1,15 +1,15 @@
 package net.digitalid.service.core.identity.resolution;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer08Wrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.key.NonRequestingKeyConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -202,7 +202,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     /**
      * Stores the key converter of this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<Category, Object, Byte, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Category, Object, Byte, Object>() {
+    private static final @Nonnull NonRequestingKeyConverter<Category, Object, Byte, Object> KEY_CONVERTER = new NonRequestingKeyConverter<Category, Object, Byte, Object>() {
         
         @Pure
         @Override
@@ -234,11 +234,11 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractNonRequestingXDFConverter<Category, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, Integer08Wrapper.getValueXDFConverter(TYPE));
+    public static final @Nonnull NonRequestingXDFConverter<Category, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, Integer08Wrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingXDFConverter<Category, Object> getXDFConverter() {
+    public @Nonnull NonRequestingXDFConverter<Category, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -252,11 +252,11 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Category, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Integer08Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<Category, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Integer08Wrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<Category, Object> getSQLConverter() {
+    public @Nonnull SQLConverter<Category, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

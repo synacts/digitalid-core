@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
@@ -32,7 +32,6 @@ import net.digitalid.service.core.packet.Packet;
 import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.exceptions.external.ExternalException;
@@ -237,7 +236,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      */
     @Pure
     @NonCommitting
-    public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nullable Reply get(@Nullable NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) { return null; }
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {
@@ -255,7 +254,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public void set(@NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         if (number == null) { preparedStatement.setNull(parameterIndex, java.sql.Types.BIGINT); }
         else { preparedStatement.setLong(parameterIndex, number); }
     }
@@ -268,7 +267,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public static void set(@Nullable Reply reply, @NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         if (reply == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
         else { reply.set(preparedStatement, parameterIndex); }
     }

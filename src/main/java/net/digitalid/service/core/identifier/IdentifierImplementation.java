@@ -4,9 +4,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -125,7 +125,7 @@ public abstract class IdentifierImplementation extends CastableObject implements
     
     @Pure
     @Override
-    public final @Nonnull AbstractNonRequestingXDFConverter<Identifier, Object> getXDFConverter() {
+    public final @Nonnull NonRequestingXDFConverter<Identifier, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -133,7 +133,7 @@ public abstract class IdentifierImplementation extends CastableObject implements
     
     @Pure
     @Override
-    public final @Nonnull AbstractSQLConverter<Identifier, Object> getSQLConverter() {
+    public final @Nonnull SQLConverter<Identifier, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

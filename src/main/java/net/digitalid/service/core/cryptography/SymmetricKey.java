@@ -18,15 +18,15 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.key.NonRequestingKeyConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.math.NonNegative;
@@ -244,7 +244,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     /**
      * Stores the key converter of this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<SymmetricKey, Object, BigInteger, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<SymmetricKey, Object, BigInteger, Object>() {
+    private static final @Nonnull NonRequestingKeyConverter<SymmetricKey, Object, BigInteger, Object> KEY_CONVERTER = new NonRequestingKeyConverter<SymmetricKey, Object, BigInteger, Object>() {
         
         @Pure
         @Override
@@ -270,11 +270,11 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractNonRequestingXDFConverter<SymmetricKey, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, IntegerWrapper.getValueXDFConverter(TYPE));
+    public static final @Nonnull NonRequestingXDFConverter<SymmetricKey, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, IntegerWrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingXDFConverter<SymmetricKey, Object> getXDFConverter() {
+    public @Nonnull NonRequestingXDFConverter<SymmetricKey, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -288,11 +288,11 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<SymmetricKey, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, IntegerWrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<SymmetricKey, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, IntegerWrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<SymmetricKey, Object> getSQLConverter() {
+    public @Nonnull SQLConverter<SymmetricKey, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

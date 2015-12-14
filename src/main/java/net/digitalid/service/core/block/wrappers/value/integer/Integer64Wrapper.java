@@ -1,7 +1,5 @@
 package net.digitalid.service.core.block.wrappers.value.integer;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -9,7 +7,6 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
@@ -204,7 +201,7 @@ public final class Integer64Wrapper extends ValueWrapper<Integer64Wrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(long value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void store(long value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             preparedStatement.setLong(parameterIndex.getAndIncrementValue(), value);
         } catch (@Nonnull SQLException exception) {
@@ -222,7 +219,7 @@ public final class Integer64Wrapper extends ValueWrapper<Integer64Wrapper> {
      */
     @Pure
     @NonCommitting
-    public static long restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
+    public static long restore(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException {
         try {
             return resultSet.getLong(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
@@ -256,14 +253,14 @@ public final class Integer64Wrapper extends ValueWrapper<Integer64Wrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull Integer64Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull Integer64Wrapper wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Integer64Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable Integer64Wrapper restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             try {
                 final long value = restore(resultSet, columnIndex);
                 return resultSet.wasNull() ? null : new Integer64Wrapper(getType(), value);

@@ -1,8 +1,8 @@
 package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.database.core.converter.sql.SQLConverter;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -25,7 +25,7 @@ public class Converters<O, E> {
     /**
      * Stores the XDF converter.
      */
-    private final @Nonnull AbstractXDFConverter<O, E> XDFConverter;
+    private final @Nonnull RequestingXDFConverter<O, E> XDFConverter;
     
     /**
      * Returns the XDF converter.
@@ -33,7 +33,7 @@ public class Converters<O, E> {
      * @return the XDF converter.
      */
     @Pure
-    public @Nonnull AbstractXDFConverter<O, E> getXDFConverter() {
+    public @Nonnull RequestingXDFConverter<O, E> getXDFConverter() {
         return XDFConverter;
     }
     
@@ -42,7 +42,7 @@ public class Converters<O, E> {
     /**
      * Stores the SQL converter.
      */
-    private final @Nonnull AbstractSQLConverter<O, E> SQLConverter;
+    private final @Nonnull SQLConverter<O, E> SQLConverter;
     
     /**
      * Returns the SQL converter.
@@ -50,7 +50,7 @@ public class Converters<O, E> {
      * @return the SQL converter.
      */
     @Pure
-    public @Nonnull AbstractSQLConverter<O, E> getSQLConverter() {
+    public @Nonnull SQLConverter<O, E> getSQLConverter() {
         return SQLConverter;
     }
     
@@ -62,7 +62,7 @@ public class Converters<O, E> {
      * @param XDFConverter the XDF converter.
      * @param SQLConverter the SQL converter.
      */
-    protected Converters(@Nonnull AbstractXDFConverter<O, E> XDFConverter, @Nonnull AbstractSQLConverter<O, E> SQLConverter) {
+    protected Converters(@Nonnull RequestingXDFConverter<O, E> XDFConverter, @Nonnull SQLConverter<O, E> SQLConverter) {
         this.XDFConverter = XDFConverter;
         this.SQLConverter = SQLConverter;
     }
@@ -76,7 +76,7 @@ public class Converters<O, E> {
      * @return a new object with the given converters.
      */
     @Pure
-    public static @Nonnull <O, E> Converters<O, E> get(@Nonnull AbstractXDFConverter<O, E> XDFConverter, @Nonnull AbstractSQLConverter<O, E> SQLConverter) {
+    public static @Nonnull <O, E> Converters<O, E> get(@Nonnull RequestingXDFConverter<O, E> XDFConverter, @Nonnull SQLConverter<O, E> SQLConverter) {
         return new Converters<>(XDFConverter, SQLConverter);
     }
     

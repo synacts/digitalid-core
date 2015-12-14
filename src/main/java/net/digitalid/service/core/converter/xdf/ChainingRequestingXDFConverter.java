@@ -3,7 +3,7 @@ package net.digitalid.service.core.converter.xdf;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.converter.key.AbstractKeyConverter;
+import net.digitalid.service.core.converter.key.RequestingKeyConverter;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -26,19 +26,41 @@ import net.digitalid.utility.system.exceptions.internal.InternalException;
  * @see SubtypingXDFConverter
  */
 @Immutable
-public class ChainingXDFConverter<O, E, K, D> extends AbstractXDFConverter<O, E> {
+public class ChainingRequestingXDFConverter<O, E, K, D> extends RequestingXDFConverter<O, E> {
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
      * Stores the key converter used to convert and recover the object.
      */
-    private final @Nonnull AbstractKeyConverter<O, ? super E, K, D> keyConverter;
+    private final @Nonnull RequestingKeyConverter<O, ? super E, K, D> keyConverter;
+    
+    /**
+     * Returns the key converter used to convert and recover the object.
+     * 
+     * @return the key converter used to convert and recover the object.
+     */
+    @Pure
+    public final @Nonnull RequestingKeyConverter<O, ? super E, K, D> getKeyConverter() {
+        return keyConverter;
+    }
+    
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the XDF converter used to encode and decode the object's key.
      */
-    private final @Nonnull AbstractXDFConverter<K, ? super D> XDFConverter;
+    private final @Nonnull RequestingXDFConverter<K, ? super D> XDFConverter;
+    
+    /**
+     * Returns the XDF converter used to encode and decode the object's key.
+     * 
+     * @return the XDF converter used to encode and decode the object's key.
+     */
+    @Pure
+    public final @Nonnull RequestingXDFConverter<K, ? super D> getXDFConverter() {
+        return XDFConverter;
+    }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -51,7 +73,7 @@ public class ChainingXDFConverter<O, E, K, D> extends AbstractXDFConverter<O, E>
      * 
      * @require type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
      */
-    protected ChainingXDFConverter(@Nonnull SemanticType type, @Nonnull AbstractKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull AbstractXDFConverter<K, ? super D> XDFConverter) {
+    protected ChainingRequestingXDFConverter(@Nonnull SemanticType type, @Nonnull RequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull RequestingXDFConverter<K, ? super D> XDFConverter) {
         super(type);
         
         assert type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
@@ -61,7 +83,23 @@ public class ChainingXDFConverter<O, E, K, D> extends AbstractXDFConverter<O, E>
     }
     
     /**
-     * Creates a new chaining XDF converter with the given parameters.
+     * Returns a new chaining XDF converter with the given parameters.
+     * 
+     * @param type the semantic type that corresponds to the encoding class.
+     * @param keyConverter the key converter used to convert and recover the object.
+     * @param XDFConverter the XDF converter used to encode and decode the object's key.
+     * 
+     * @return a new chaining XDF converter with the given parameters.
+     * 
+     * @require type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
+     */
+    @Pure
+    public static @Nonnull <O, E, K, D> ChainingRequestingXDFConverter<O, E, K, D> get(@Nonnull SemanticType type, @Nonnull RequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull RequestingXDFConverter<K, ? super D> XDFConverter) {
+        return new ChainingRequestingXDFConverter<>(type, keyConverter, XDFConverter);
+    }
+    
+    /**
+     * Returns a new chaining XDF converter with the given parameters.
      * 
      * @param keyConverter the key converter used to convert and recover the object.
      * @param XDFConverter the XDF converter used to encode and decode the object's key.
@@ -69,11 +107,11 @@ public class ChainingXDFConverter<O, E, K, D> extends AbstractXDFConverter<O, E>
      * @return a new chaining XDF converter with the given parameters.
      */
     @Pure
-    public static @Nonnull <O, E, K, D> ChainingXDFConverter<O, E, K, D> get(@Nonnull AbstractKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull AbstractXDFConverter<K, ? super D> XDFConverter) {
-        return new ChainingXDFConverter<>(XDFConverter.getType(), keyConverter, XDFConverter);
+    public static @Nonnull <O, E, K, D> ChainingRequestingXDFConverter<O, E, K, D> get(@Nonnull RequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull RequestingXDFConverter<K, ? super D> XDFConverter) {
+        return new ChainingRequestingXDFConverter<>(XDFConverter.getType(), keyConverter, XDFConverter);
     }
     
-    /* -------------------------------------------------- Methods -------------------------------------------------- */
+    /* -------------------------------------------------- Conversions -------------------------------------------------- */
     
     @Pure
     @Override

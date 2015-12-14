@@ -1,7 +1,5 @@
 package net.digitalid.service.core.concepts.contact;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Collection;
@@ -696,7 +694,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nullable Context get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nullable Context get(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) { return null; }
         else { return get(entity, number); }
@@ -713,13 +711,13 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Context getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nonnull Context getNotNull(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         return get(entity, resultSet.getLong(columnIndex));
     }
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public void set(@NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
     
@@ -731,7 +729,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Context context, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public static void set(@Nullable Context context, @NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         if (context == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
         else { context.set(preparedStatement, parameterIndex); }
     }

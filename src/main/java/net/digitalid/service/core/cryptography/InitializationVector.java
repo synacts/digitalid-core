@@ -3,17 +3,17 @@ package net.digitalid.service.core.cryptography;
 import java.security.SecureRandom;
 import javax.annotation.Nonnull;
 import javax.crypto.spec.IvParameterSpec;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
 import net.digitalid.service.core.block.wrappers.value.binary.BinaryWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.key.NonRequestingKeyConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -86,7 +86,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /**
      * Stores the key converter of this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<InitializationVector, Object, byte[], Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<InitializationVector, Object, byte[], Object>() {
+    private static final @Nonnull NonRequestingKeyConverter<InitializationVector, Object, byte[], Object> KEY_CONVERTER = new NonRequestingKeyConverter<InitializationVector, Object, byte[], Object>() {
         
         @Pure
         @Override
@@ -118,11 +118,11 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractNonRequestingXDFConverter<InitializationVector, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, BinaryWrapper.getValueXDFConverter(TYPE));
+    public static final @Nonnull NonRequestingXDFConverter<InitializationVector, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, BinaryWrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingXDFConverter<InitializationVector, Object> getXDFConverter() {
+    public @Nonnull NonRequestingXDFConverter<InitializationVector, Object> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -136,11 +136,11 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<InitializationVector, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, BinaryWrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<InitializationVector, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, BinaryWrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<InitializationVector, Object> getSQLConverter() {
+    public @Nonnull SQLConverter<InitializationVector, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

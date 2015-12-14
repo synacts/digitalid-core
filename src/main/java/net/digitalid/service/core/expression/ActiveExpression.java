@@ -1,7 +1,6 @@
 package net.digitalid.service.core.expression;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -89,7 +88,7 @@ public final class ActiveExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull ActiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nonnull ActiveExpression get(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         try {
             return new ActiveExpression(entity, resultSet.getString(columnIndex));
         } catch (@Nonnull IOException | RequestException | ExternalException exception) {

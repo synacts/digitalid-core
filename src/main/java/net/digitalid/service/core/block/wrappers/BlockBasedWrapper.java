@@ -1,25 +1,21 @@
 package net.digitalid.service.core.block.wrappers;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.ConvertToSQL;
+import net.digitalid.database.core.converter.sql.Store;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
-import net.digitalid.database.core.exceptions.state.MaskingCorruptStateException;
+import net.digitalid.database.core.exceptions.state.value.MaskingCorruptValueException;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.exceptions.external.ExternalException;
 import net.digitalid.utility.system.exceptions.internal.InternalException;
 
@@ -68,19 +64,19 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
         
         @Override
         @NonCommitting
-        public final void storeNonNullable(@Nonnull W wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
-            ConvertToSQL.nonNullable(ConvertToXDF.nonNullable(wrapper), preparedStatement, parameterIndex);
+        public final void storeNonNullable(@Nonnull W wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+            Store.nonNullable(Encode.nonNullable(wrapper), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable W restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public final @Nullable W restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             try {
                 final @Nullable Block block = Block.SQL_CONVERTER.restoreNullable(getType(), resultSet, columnIndex);
                 return block == null ? null : XDFConverter.decodeNonNullable(none, block);
             } catch (@Nonnull DatabaseException | NetworkException | ExternalException | RequestException exception) {
-                throw MaskingCorruptStateException.get(exception);
+                throw MaskingCorruptValueException.get(exception);
             }
         }
         
@@ -94,7 +90,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
     @Override
     @SuppressWarnings("unchecked")
     public final @Nonnull String toString() {
-        return ConvertToXDF.nonNullable((W) this).toString();
+        return Encode.nonNullable((W) this).toString();
     }
     
 }

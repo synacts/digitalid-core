@@ -3,7 +3,7 @@ package net.digitalid.service.core.converter.key;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -22,14 +22,14 @@ import net.digitalid.utility.system.exceptions.internal.InternalException;
  *            In case no external information is needed for the recovery of an object, declare it as an {@link Object}.
  */
 @Immutable
-public final class BlockConverter<O, E> extends AbstractNonRequestingKeyConverter<O, E, Block, SemanticType> {
+public final class XDFBasedKeyConverter<O, E> extends NonRequestingKeyConverter<O, E, Block, SemanticType> {
     
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the XDF converter used to encode and decode the block.
      */
-    private final @Nonnull AbstractXDFConverter<O, E> XDFConverter;
+    private final @Nonnull RequestingXDFConverter<O, E> XDFConverter;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -38,7 +38,7 @@ public final class BlockConverter<O, E> extends AbstractNonRequestingKeyConverte
      * 
      * @param XDFConverter the XDF converter used to encode and decode the block.
      */
-    private BlockConverter(@Nonnull AbstractXDFConverter<O, E> XDFConverter) {
+    private XDFBasedKeyConverter(@Nonnull RequestingXDFConverter<O, E> XDFConverter) {
         this.XDFConverter = XDFConverter;
     }
     
@@ -50,8 +50,8 @@ public final class BlockConverter<O, E> extends AbstractNonRequestingKeyConverte
      * @return a new object-block converter with the given XDF converter.
      */
     @Pure
-    public static @Nonnull <O, E> BlockConverter<O, E> get(@Nonnull AbstractXDFConverter<O, E> XDFConverter) {
-        return new BlockConverter<>(XDFConverter);
+    public static @Nonnull <O, E> XDFBasedKeyConverter<O, E> get(@Nonnull RequestingXDFConverter<O, E> XDFConverter) {
+        return new XDFBasedKeyConverter<>(XDFConverter);
     }
     
     /* -------------------------------------------------- Conversions -------------------------------------------------- */

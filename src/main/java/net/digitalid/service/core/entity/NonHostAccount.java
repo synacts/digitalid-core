@@ -1,6 +1,5 @@
 package net.digitalid.service.core.entity;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,7 +17,6 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.collections.index.MutableIndex;
 
 /**
  * This class models a non-host account.
@@ -95,7 +93,7 @@ public final class NonHostAccount extends Account implements NonHostEntity {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull NonHostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nonnull NonHostAccount getNotNull(@Nonnull Host host, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
         if (identity instanceof InternalNonHostIdentity) { return get(host, (InternalNonHostIdentity) identity); }
         else { throw new SQLException("The identity of " + identity.getAddress() + " is not a non-host."); }

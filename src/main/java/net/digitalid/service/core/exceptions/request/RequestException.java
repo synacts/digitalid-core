@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -118,7 +118,7 @@ public final class RequestException extends CustomException implements XDF<Reque
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<RequestException, Object> {
+    public static final class XDFConverter extends NonRequestingXDFConverter<RequestException, Object> {
         
         /**
          * Creates a new XDF converter.

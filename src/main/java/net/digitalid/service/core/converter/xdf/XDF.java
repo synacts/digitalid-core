@@ -18,6 +18,6 @@ public interface XDF<O, E> {
      * @return the converter to encode and decode objects of this class.
      */
     @Pure
-    public @Nonnull AbstractXDFConverter<O, E> getXDFConverter();
+    public @Nonnull RequestingXDFConverter<O, E> getXDFConverter();
     
 }

@@ -1,6 +1,5 @@
 package net.digitalid.service.core.expression;
 
-import java.sql.PreparedStatement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
@@ -117,7 +116,7 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public final void set(@NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         preparedStatement.setString(parameterIndex, toString());
     }
     

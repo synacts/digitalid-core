@@ -1,12 +1,12 @@
 package net.digitalid.service.core.identity;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.identifier.ExternalIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
@@ -68,7 +68,7 @@ public abstract class ExternalPerson extends Person implements ExternalIdentity 
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<ExternalPerson, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(ExternalPerson.class), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
+    public static final @Nonnull RequestingXDFConverter<ExternalPerson, Object> XDF_CONVERTER = ChainingRequestingXDFConverter.get(new Identity.IdentifierConverter<>(ExternalPerson.class), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
@@ -80,7 +80,7 @@ public abstract class ExternalPerson extends Person implements ExternalIdentity 
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<ExternalPerson, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(ExternalPerson.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<ExternalPerson, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(ExternalPerson.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

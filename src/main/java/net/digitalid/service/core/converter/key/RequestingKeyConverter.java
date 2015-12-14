@@ -23,7 +23,7 @@ import net.digitalid.utility.system.exceptions.internal.InternalException;
  * @see AbstractNonRequestingKeyConverter
  */
 @Stateless
-public abstract class AbstractKeyConverter<O, E, K, D> {
+public abstract class RequestingKeyConverter<O, E, K, D> {
     
     /**
      * Returns whether the given key is valid.

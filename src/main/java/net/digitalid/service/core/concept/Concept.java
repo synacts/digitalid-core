@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.concept.property.ConceptPropertyTable;

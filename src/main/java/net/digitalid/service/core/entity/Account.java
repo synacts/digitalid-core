@@ -1,6 +1,5 @@
 package net.digitalid.service.core.entity;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,7 +13,6 @@ import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -112,7 +110,7 @@ public abstract class Account extends EntityImplementation {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Account getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nonnull Account getNotNull(@Nonnull Host host, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
         if (identity instanceof InternalIdentity) { return get(host, (InternalIdentity) identity); }
         else { throw new SQLException("The identity of " + identity.getAddress() + " is not internal."); }

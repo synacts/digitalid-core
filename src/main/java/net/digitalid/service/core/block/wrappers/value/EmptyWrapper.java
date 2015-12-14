@@ -1,7 +1,5 @@
 package net.digitalid.service.core.block.wrappers.value;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,7 +8,6 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
@@ -168,7 +165,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void store(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             preparedStatement.setBoolean(parameterIndex.getAndIncrementValue(), true);
         } catch (@Nonnull SQLException exception) {
@@ -184,7 +181,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
      */
     @Pure
     @NonCommitting
-    public static void restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
+    public static void restore(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException {
         try {
             resultSet.getBoolean(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
@@ -218,7 +215,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull EmptyWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull EmptyWrapper wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
             // The entry is set to true just to indicate that it is not null. 
             store(preparedStatement, parameterIndex);
         }
@@ -226,7 +223,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         @Pure
         @Override
         @NonCommitting
-        public @Nullable EmptyWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable EmptyWrapper restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             try {
                 restore(resultSet, columnIndex);
                 return resultSet.wasNull() ? null : new EmptyWrapper(getType());

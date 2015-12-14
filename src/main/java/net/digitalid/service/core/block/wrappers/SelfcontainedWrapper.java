@@ -15,7 +15,7 @@ import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.wrappers.exceptions.UnexpectedEndOfFileException;
 import net.digitalid.service.core.block.wrappers.exceptions.UnsupportedBlockLengthException;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
@@ -80,7 +80,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     private SelfcontainedWrapper(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block element) {
         super(type);
         
-        this.tuple = TupleWrapper.encode(IMPLEMENTATION, ConvertToXDF.<Identity>nonNullable(element.getType(), SemanticType.IDENTIFIER), element);
+        this.tuple = TupleWrapper.encode(IMPLEMENTATION, Encode.<Identity>nonNullable(element.getType(), SemanticType.IDENTIFIER), element);
         this.element = element;
     }
     
@@ -186,7 +186,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      */
     @Pure
     public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block encodeNonNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return XDF_CONVERTER.encodeNonNullable(new SelfcontainedWrapper(type, ConvertToXDF.nonNullable(element)));
+        return XDF_CONVERTER.encodeNonNullable(new SelfcontainedWrapper(type, Encode.nonNullable(element)));
     }
     
     /**

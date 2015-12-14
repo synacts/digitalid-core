@@ -1,7 +1,5 @@
 package net.digitalid.service.core.concepts.contact;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -22,7 +20,6 @@ import net.digitalid.utility.collections.converter.IterableConverter;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.system.exceptions.external.ExternalException;
 
@@ -146,7 +143,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull @NonFrozen FreezableContacts get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Capturable @Nonnull @NonFrozen FreezableContacts get(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         final @Nonnull FreezableContacts contacts = new FreezableContacts();
         while (resultSet.next()) { contacts.add(Contact.getNotNull(entity, resultSet, columnIndex)); }
         return contacts;
@@ -160,7 +157,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
      */
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public void set(@NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         for (final @Nonnull Contact contact : this) {
             contact.set(preparedStatement, parameterIndex);
             preparedStatement.addBatch();

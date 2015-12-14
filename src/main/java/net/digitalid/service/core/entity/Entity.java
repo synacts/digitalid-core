@@ -5,9 +5,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
@@ -16,8 +16,8 @@ import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.converter.key.CastingNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
@@ -156,7 +156,7 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<Entity, Site> XDF_CONVERTER = ChainingXDFConverter.get(new Entity.IdentityConverter<>(Entity.class), InternalIdentity.XDF_CONVERTER);
+    public static final @Nonnull RequestingXDFConverter<Entity, Site> XDF_CONVERTER = ChainingRequestingXDFConverter.get(new Entity.IdentityConverter<>(Entity.class), InternalIdentity.XDF_CONVERTER);
     
     /* -------------------------------------------------- Declaration -------------------------------------------------- */
     
@@ -206,7 +206,7 @@ public interface Entity extends Castable, XDF<Entity, Site>, SQL<Entity, Site> {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Entity, Site> SQL_CONVERTER = ChainingSQLConverter.get(new Entity.LongConverter<>(Entity.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<Entity, Site> SQL_CONVERTER = ChainingSQLConverter.get(new Entity.LongConverter<>(Entity.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

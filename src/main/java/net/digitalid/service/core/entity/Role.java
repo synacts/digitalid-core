@@ -1,6 +1,5 @@
 package net.digitalid.service.core.entity;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,7 +29,6 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.elements.UniqueElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.system.exceptions.external.ExternalException;
 
@@ -330,7 +328,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @Pure
     @NonCommitting
-    public static @Nullable Role get(@Nonnull Client client, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nullable Role get(@Nonnull Client client, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) { return null; }
         return RoleModule.load(client, number);
@@ -347,7 +345,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Role getNotNull(@Nonnull Client client, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nonnull Role getNotNull(@Nonnull Client client, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         return RoleModule.load(client, resultSet.getLong(columnIndex));
     }
     

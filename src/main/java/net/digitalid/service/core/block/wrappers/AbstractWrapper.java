@@ -2,14 +2,13 @@ package net.digitalid.service.core.block.wrappers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
@@ -112,14 +111,14 @@ public abstract class AbstractWrapper<W extends AbstractWrapper<W>> implements X
         if (object == this) { return true; }
         if (object == null || !(object instanceof AbstractWrapper)) { return false; }
         final @Nonnull AbstractWrapper<?> other = (AbstractWrapper<?>) object;
-        return this.getClass().equals(other.getClass()) && ConvertToXDF.nonNullable((W) this).equals(ConvertToXDF.nonNullable((W) other));
+        return this.getClass().equals(other.getClass()) && Encode.nonNullable((W) this).equals(Encode.nonNullable((W) other));
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
     public final int hashCode() {
-        return ConvertToXDF.nonNullable((W) this).hashCode();
+        return Encode.nonNullable((W) this).hashCode();
     }
     
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
@@ -128,7 +127,7 @@ public abstract class AbstractWrapper<W extends AbstractWrapper<W>> implements X
      * The XDF converter for wrappers.
      */
     @Immutable
-    public abstract static class XDFConverter<W extends AbstractWrapper<W>> extends AbstractXDFConverter<W, Object> {
+    public abstract static class XDFConverter<W extends AbstractWrapper<W>> extends RequestingXDFConverter<W, Object> {
         
         /**
          * Creates a new XDF converter with the given type.
@@ -187,7 +186,7 @@ public abstract class AbstractWrapper<W extends AbstractWrapper<W>> implements X
      * The SQL converter for wrappers.
      */
     @Immutable
-    public abstract static class SQLConverter<W extends AbstractWrapper<W>> extends AbstractSQLConverter<W, Object> {
+    public abstract static class SQLConverter<W extends AbstractWrapper<W>> extends net.digitalid.database.core.converter.sql.SQLConverter<W, Object> {
         
         /**
          * Stores the semantic type of the restored wrappers.

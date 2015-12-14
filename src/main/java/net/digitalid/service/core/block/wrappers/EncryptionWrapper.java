@@ -15,7 +15,7 @@ import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.service.core.cache.Cache;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.InitializationVector;
@@ -91,7 +91,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         @Nullable Block key = encryptions.get(pair);
         if (key == null) {
             final @Nonnull Time start = Time.getCurrent();
-            key = ConvertToXDF.nonNullable(KEY, publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()));
+            key = Encode.nonNullable(KEY, publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()));
             encryptions.put(pair, key);
             Log.verbose("Symmetric key encrypted in " + start.ago().getValue() + " ms.");
         }
@@ -335,7 +335,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     @Locked
     @NonCommitting
     public static @Nonnull <V extends XDF<V, ?>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        return new EncryptionWrapper(type, ConvertToXDF.nonNullable(element), recipient, symmetricKey);
+        return new EncryptionWrapper(type, Encode.nonNullable(element), recipient, symmetricKey);
     }
     
     /**
@@ -367,15 +367,15 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     private @Nonnull Block getCache() {
         if (cache == null) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
-            elements.set(0, ConvertToXDF.nonNullable(time));
-            elements.set(1, ConvertToXDF.<Identifier>nullable(recipient, RECIPIENT));
+            elements.set(0, Encode.nonNullable(time));
+            elements.set(1, Encode.<Identifier>nullable(recipient, RECIPIENT));
             
             if (recipient != null && symmetricKey != null) {
                 assert publicKey != null : "The public key is not null because this method is only called for encoding a block.";
                 elements.set(2, encrypt(publicKey, symmetricKey));
             }
             
-            elements.set(3, ConvertToXDF.nullable(initializationVector));
+            elements.set(3, Encode.nullable(initializationVector));
             
             if (symmetricKey != null && initializationVector != null) {
                 final @Nonnull Time start = Time.getCurrent();

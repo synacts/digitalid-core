@@ -3,8 +3,8 @@ package net.digitalid.service.core.identity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
@@ -15,8 +15,8 @@ import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.ChainingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.declaration.InvalidDeclarationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
@@ -591,7 +591,7 @@ public final class SemanticType extends Type {
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractXDFConverter<SemanticType, Object> XDF_CONVERTER = ChainingXDFConverter.get(new Identity.IdentifierConverter<>(SemanticType.class), Identifier.XDF_CONVERTER);
+    public static final @Nonnull RequestingXDFConverter<SemanticType, Object> XDF_CONVERTER = ChainingRequestingXDFConverter.get(new Identity.IdentifierConverter<>(SemanticType.class), Identifier.XDF_CONVERTER);
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
@@ -603,7 +603,7 @@ public final class SemanticType extends Type {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<SemanticType, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(SemanticType.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<SemanticType, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(SemanticType.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

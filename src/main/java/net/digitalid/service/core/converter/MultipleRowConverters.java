@@ -1,8 +1,8 @@
 package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.MultipleRowSQLConverter;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.database.core.converter.sql.MultipleRowSQLConverter;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -33,7 +33,7 @@ public final class MultipleRowConverters<O, E> extends Converters<O, E> {
      * @param XDFConverter the XDF converter.
      * @param SQLConverter the SQL converter.
      */
-    protected MultipleRowConverters(@Nonnull AbstractXDFConverter<O, E> XDFConverter, @Nonnull MultipleRowSQLConverter<O, E> SQLConverter) {
+    protected MultipleRowConverters(@Nonnull RequestingXDFConverter<O, E> XDFConverter, @Nonnull MultipleRowSQLConverter<O, E> SQLConverter) {
         super(XDFConverter, SQLConverter);
     }
     
@@ -46,7 +46,7 @@ public final class MultipleRowConverters<O, E> extends Converters<O, E> {
      * @return a new object with the given converters.
      */
     @Pure
-    public static @Nonnull <O, E> MultipleRowConverters<O, E> get(@Nonnull AbstractXDFConverter<O, E> XDFConverter, @Nonnull MultipleRowSQLConverter<O, E> SQLConverter) {
+    public static @Nonnull <O, E> MultipleRowConverters<O, E> get(@Nonnull RequestingXDFConverter<O, E> XDFConverter, @Nonnull MultipleRowSQLConverter<O, E> SQLConverter) {
         return new MultipleRowConverters<>(XDFConverter, SQLConverter);
     }
     

@@ -1,8 +1,8 @@
 package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.database.core.converter.sql.SQLConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -21,8 +21,8 @@ public final class NonRequestingConverters<O, E> extends Converters<O, E> {
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingXDFConverter<O, E> getXDFConverter() {
-        return (AbstractNonRequestingXDFConverter<O, E>) super.getXDFConverter();
+    public @Nonnull NonRequestingXDFConverter<O, E> getXDFConverter() {
+        return (NonRequestingXDFConverter<O, E>) super.getXDFConverter();
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
@@ -33,7 +33,7 @@ public final class NonRequestingConverters<O, E> extends Converters<O, E> {
      * @param XDFConverter the XDF converter.
      * @param SQLConverter the SQL converter.
      */
-    protected NonRequestingConverters(@Nonnull AbstractNonRequestingXDFConverter<O, E> XDFConverter, @Nonnull AbstractSQLConverter<O, E> SQLConverter) {
+    protected NonRequestingConverters(@Nonnull NonRequestingXDFConverter<O, E> XDFConverter, @Nonnull SQLConverter<O, E> SQLConverter) {
         super(XDFConverter, SQLConverter);
     }
     
@@ -46,7 +46,7 @@ public final class NonRequestingConverters<O, E> extends Converters<O, E> {
      * @return a new object with the given converters.
      */
     @Pure
-    public static @Nonnull <O, E> NonRequestingConverters<O, E> get(@Nonnull AbstractNonRequestingXDFConverter<O, E> XDFConverter, @Nonnull AbstractSQLConverter<O, E> SQLConverter) {
+    public static @Nonnull <O, E> NonRequestingConverters<O, E> get(@Nonnull NonRequestingXDFConverter<O, E> XDFConverter, @Nonnull SQLConverter<O, E> SQLConverter) {
         return new NonRequestingConverters<>(XDFConverter, SQLConverter);
     }
     

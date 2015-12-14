@@ -1,7 +1,5 @@
 package net.digitalid.service.core.block.wrappers.value;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,7 +8,8 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
+import net.digitalid.database.core.interfaces.SelectionResult;
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
@@ -204,12 +203,8 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(boolean value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
-        try {
-            preparedStatement.setBoolean(parameterIndex.getAndIncrementValue(), value);
-        } catch (@Nonnull SQLException exception) {
-            throw FailedValueStoringException.get(exception);
-        }
+    public static void store(boolean value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        collector.setBoolean(value);
     }
     
     /**
@@ -222,12 +217,8 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
      */
     @Pure
     @NonCommitting
-    public static boolean restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
-        try {
-            return resultSet.getBoolean(columnIndex.getAndIncrementValue());
-        } catch (@Nonnull SQLException exception) {
-            throw FailedValueRestoringException.get(exception);
-        }
+    public static boolean restore(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException {
+        return result.getBoolean();
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
@@ -256,14 +247,14 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull BooleanWrapper wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull BooleanWrapper wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable BooleanWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable BooleanWrapper restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             try {
                 final boolean value = restore(resultSet, columnIndex);
                 return resultSet.wasNull() ? null : new BooleanWrapper(getType(), value);

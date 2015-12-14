@@ -2,16 +2,16 @@ package net.digitalid.service.core.cryptography;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
+import net.digitalid.service.core.converter.xdf.Encode;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -318,7 +318,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
         final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
         
-        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(ConvertToXDF.nonNullable(PublicKey.TU, tu), ConvertToXDF.nonNullable(PublicKey.TI, ti), ConvertToXDF.nonNullable(PublicKey.TV, tv), ConvertToXDF.nonNullable(PublicKey.TO, to));
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(Encode.nonNullable(PublicKey.TU, tu), Encode.nonNullable(PublicKey.TI, ti), Encode.nonNullable(PublicKey.TV, tv), Encode.nonNullable(PublicKey.TO, to));
         return t.getValue().equals(TupleWrapper.encode(TUPLE, elements.freeze()).getHash());
     }
     
@@ -511,8 +511,8 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     @Pure
     public @Nonnull @BasedOn("verifiable.encryption@core.digitalid.net") Block getVerifiableEncryption(@Nonnull Exponent m, @Nonnull Exponent r) {
         final @Nonnull FreezableArray<Block> elements = FreezableArray.get(2);
-        elements.set(0, ConvertToXDF.nonNullable(W1, y.pow(r).multiply(zPlus1.pow(m))));
-        elements.set(1, ConvertToXDF.nonNullable(W2, g.pow(r)));
+        elements.set(0, Encode.nonNullable(W1, y.pow(r).multiply(zPlus1.pow(m))));
+        elements.set(1, Encode.nonNullable(W2, g.pow(r)));
         return TupleWrapper.encode(VERIFIABLE_ENCRYPTION, elements.freeze());
     }
     
@@ -577,7 +577,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<PublicKey, Object> {
+    public static final class XDFConverter extends NonRequestingXDFConverter<PublicKey, Object> {
         
         /**
          * Creates a new XDF converter.
@@ -590,22 +590,22 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull PublicKey publicKey) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(16);
-            elements.set(0, ConvertToXDF.nonNullable(COMPOSITE_GROUP, publicKey.compositeGroup));
-            elements.set(1, ConvertToXDF.nonNullable(E, publicKey.e));
-            elements.set(2, ConvertToXDF.nonNullable(AB, publicKey.ab));
-            elements.set(3, ConvertToXDF.nonNullable(AU, publicKey.au));
-            elements.set(4, ConvertToXDF.nonNullable(AI, publicKey.ai));
-            elements.set(5, ConvertToXDF.nonNullable(AV, publicKey.av));
-            elements.set(6, ConvertToXDF.nonNullable(AO, publicKey.ao));
-            elements.set(7, ConvertToXDF.nonNullable(T, publicKey.t));
-            elements.set(8, ConvertToXDF.nonNullable(SU, publicKey.su));
-            elements.set(9, ConvertToXDF.nonNullable(SI, publicKey.si));
-            elements.set(10, ConvertToXDF.nonNullable(SV, publicKey.sv));
-            elements.set(11, ConvertToXDF.nonNullable(SO, publicKey.so));
-            elements.set(12, ConvertToXDF.nonNullable(SQUARE_GROUP, publicKey.squareGroup));
-            elements.set(13, ConvertToXDF.nonNullable(G, publicKey.g));
-            elements.set(14, ConvertToXDF.nonNullable(Y, publicKey.y));
-            elements.set(15, ConvertToXDF.nonNullable(Z, publicKey.zPlus1));
+            elements.set(0, Encode.nonNullable(COMPOSITE_GROUP, publicKey.compositeGroup));
+            elements.set(1, Encode.nonNullable(E, publicKey.e));
+            elements.set(2, Encode.nonNullable(AB, publicKey.ab));
+            elements.set(3, Encode.nonNullable(AU, publicKey.au));
+            elements.set(4, Encode.nonNullable(AI, publicKey.ai));
+            elements.set(5, Encode.nonNullable(AV, publicKey.av));
+            elements.set(6, Encode.nonNullable(AO, publicKey.ao));
+            elements.set(7, Encode.nonNullable(T, publicKey.t));
+            elements.set(8, Encode.nonNullable(SU, publicKey.su));
+            elements.set(9, Encode.nonNullable(SI, publicKey.si));
+            elements.set(10, Encode.nonNullable(SV, publicKey.sv));
+            elements.set(11, Encode.nonNullable(SO, publicKey.so));
+            elements.set(12, Encode.nonNullable(SQUARE_GROUP, publicKey.squareGroup));
+            elements.set(13, Encode.nonNullable(G, publicKey.g));
+            elements.set(14, Encode.nonNullable(Y, publicKey.y));
+            elements.set(15, Encode.nonNullable(Z, publicKey.zPlus1));
             return TupleWrapper.encode(TYPE, elements.freeze());
         }
         
@@ -637,7 +637,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
             final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
             final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
             
-            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, ConvertToXDF.nonNullable(PublicKey.TU, tu), ConvertToXDF.nonNullable(PublicKey.TI, ti), ConvertToXDF.nonNullable(PublicKey.TV, tv), ConvertToXDF.nonNullable(PublicKey.TO, to)).getHash())) { throw InvalidParameterValueCombinationException.get("The proof that au, ai, av and ao are in the subgroup of ab is invalid."); }
+            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, Encode.nonNullable(PublicKey.TU, tu), Encode.nonNullable(PublicKey.TI, ti), Encode.nonNullable(PublicKey.TV, tv), Encode.nonNullable(PublicKey.TO, to)).getHash())) { throw InvalidParameterValueCombinationException.get("The proof that au, ai, av and ao are in the subgroup of ab is invalid."); }
             
             return new PublicKey(compositeGroup, e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup, g, y, zPlus1);
         }
@@ -665,11 +665,11 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PublicKey, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
+    public static final @Nonnull SQLConverter<PublicKey, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<PublicKey, Object> getSQLConverter() {
+    public @Nonnull SQLConverter<PublicKey, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

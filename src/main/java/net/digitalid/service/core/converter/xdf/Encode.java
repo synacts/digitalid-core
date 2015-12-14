@@ -12,7 +12,7 @@ import net.digitalid.utility.annotations.state.Stateless;
  * This is a utility class to encode objects that implement {@link XDF}.
  */
 @Stateless
-public final class ConvertToXDF {
+public final class Encode {
     
     /* -------------------------------------------------- Normal Encoding -------------------------------------------------- */
     

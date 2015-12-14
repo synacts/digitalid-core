@@ -1,7 +1,5 @@
 package net.digitalid.service.core.concepts.contact;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
@@ -236,7 +234,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nullable Contact get(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         final @Nullable Identity identity = IdentityImplementation.get(resultSet, columnIndex);
         if (identity == null) { return null; }
         if (identity instanceof Person) { return get(entity, (Person) identity); }
@@ -254,7 +252,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws DatabaseException {
+    public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
         final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
         if (identity instanceof Person) { return get(entity, (Person) identity); }
         else { throw new SQLException("A non-person was stored as a contact."); }
@@ -262,7 +260,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public void set(@NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         preparedStatement.setLong(parameterIndex, person.getKey());
     }
     
@@ -274,7 +272,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Contact contact, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws DatabaseException {
+    public static void set(@Nullable Contact contact, @NonCapturable @Nonnull ValueCollector collector) throws DatabaseException {
         if (contact == null) { preparedStatement.setNull(parameterIndex, Types.BIGINT); }
         else { contact.set(preparedStatement, parameterIndex); }
     }

@@ -15,8 +15,8 @@ import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidConceptPropertyActionException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
@@ -202,7 +202,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
      */
     // TODO: must be re-done and merged with Method.Factory.
     @Immutable
-    public static final class XDFConverter<V, C extends Concept<C, E, ?>, E extends Entity> extends AbstractXDFConverter<NonNullableConceptPropertyInternalAction<V, C, E>, ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>>> {
+    public static final class XDFConverter<V, C extends Concept<C, E, ?>, E extends Entity> extends RequestingXDFConverter<NonNullableConceptPropertyInternalAction<V, C, E>, ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>>> {
         
         /**
          * Creates a new XDF converter.
@@ -214,7 +214,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @Pure
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull NonNullableConceptPropertyInternalAction<V, C, E> internalAction) {
-            return TupleWrapper.encode(internalAction.getType(), internalAction.property.getConcept(), ConvertToXDF.nonNullable(OLD_TIME, internalAction.oldTime), ConvertToXDF.nonNullable(NEW_TIME, internalAction.newTime), internalAction.setup.getValueConverters().getXDFConverter().encodeNonNullable(internalAction.oldValue).setType(internalAction.setup.getOldValueType()), internalAction.setup.getValueConverters().getXDFConverter().encodeNonNullable(internalAction.newValue).setType(internalAction.setup.getNewValueType()));
+            return TupleWrapper.encode(internalAction.getType(), internalAction.property.getConcept(), Encode.nonNullable(OLD_TIME, internalAction.oldTime), Encode.nonNullable(NEW_TIME, internalAction.newTime), internalAction.setup.getValueConverters().getXDFConverter().encodeNonNullable(internalAction.oldValue).setType(internalAction.setup.getOldValueType()), internalAction.setup.getValueConverters().getXDFConverter().encodeNonNullable(internalAction.newValue).setType(internalAction.setup.getNewValueType()));
         }
         
         @Pure

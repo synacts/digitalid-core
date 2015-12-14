@@ -1,7 +1,5 @@
 package net.digitalid.service.core.block;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -9,7 +7,6 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueException;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.service.core.auxiliary.None;
@@ -379,7 +376,7 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(long value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static void store(long value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             preparedStatement.setLong(parameterIndex.getAndIncrementValue(), value);
         } catch (@Nonnull SQLException exception) {
@@ -397,7 +394,7 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      */
     @Pure
     @NonCommitting
-    public static long restore(@Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException {
+    public static long restore(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException {
         try {
             return resultSet.getLong(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
@@ -431,14 +428,14 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull VariableInteger wrapper, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull VariableInteger wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable VariableInteger restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public @Nullable VariableInteger restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             try {
                 final long value = restore(resultSet, columnIndex);
                 if (resultSet.wasNull()) { return null; }

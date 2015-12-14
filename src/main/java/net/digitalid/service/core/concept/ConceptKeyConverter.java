@@ -1,7 +1,7 @@
 package net.digitalid.service.core.concept;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
+import net.digitalid.service.core.converter.key.NonRequestingKeyConverter;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -16,7 +16,7 @@ import net.digitalid.utility.annotations.state.Validated;
  * @param <K> the type of the keys which the objects are converted to and recovered from (with an external object).
  */
 @Immutable
-public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Entity, K> extends AbstractNonRequestingKeyConverter<C, E, K, E> {
+public final class ConceptKeyConverter<C extends Concept<C, E, K>, E extends Entity, K> extends NonRequestingKeyConverter<C, E, K, E> {
     
     /* -------------------------------------------------- Concept Index -------------------------------------------------- */
     

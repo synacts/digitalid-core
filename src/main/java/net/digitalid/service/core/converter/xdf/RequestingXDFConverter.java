@@ -29,7 +29,7 @@ import net.digitalid.utility.system.exceptions.internal.InternalException;
  * @see AbstractNonRequestingXDFConverter
  */
 @Immutable
-public abstract class AbstractXDFConverter<O, E> {
+public abstract class RequestingXDFConverter<O, E> {
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
@@ -56,8 +56,8 @@ public abstract class AbstractXDFConverter<O, E> {
      * @require type.isBasedOn(getType()) : "The given type is based on the type of this converter.";
      */
     @Pure
-    public @Nonnull AbstractXDFConverter<O, E> setType(@Nonnull SemanticType type) {
-        return SubtypingXDFConverter.get(type, this);
+    public @Nonnull RequestingXDFConverter<O, E> setType(@Nonnull SemanticType type) {
+        return SubtypingRequestingXDFConverter.get(type, this);
     }
     
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
@@ -164,7 +164,7 @@ public abstract class AbstractXDFConverter<O, E> {
      * 
      * @param type the semantic type that corresponds to the class that implements XDF.
      */
-    protected AbstractXDFConverter(@Nonnull @Loaded SemanticType type) {
+    protected RequestingXDFConverter(@Nonnull @Loaded SemanticType type) {
         this.type = type;
     }
     

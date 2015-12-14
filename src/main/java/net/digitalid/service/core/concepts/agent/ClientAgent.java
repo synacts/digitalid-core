@@ -1,6 +1,5 @@
 package net.digitalid.service.core.concepts.agent;
 
-import java.sql.ResultSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
@@ -265,7 +264,7 @@ public final class ClientAgent extends Agent {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull ClientAgent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex, boolean removed) throws DatabaseException {
+    public static @Nonnull ClientAgent get(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result, boolean removed) throws DatabaseException {
         return get(entity, resultSet.getLong(columnIndex), removed);
     }
     

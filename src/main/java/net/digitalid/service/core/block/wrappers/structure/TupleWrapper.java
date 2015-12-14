@@ -9,7 +9,7 @@ import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.wrappers.AbstractWrapper;
 import net.digitalid.service.core.block.wrappers.BlockBasedWrapper;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidBlockOffsetException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidCollectionSizeException;
@@ -411,7 +411,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull XDF<?, ?>... elements) {
         final @Nonnull FreezableArray<Block> array = FreezableArray.get(elements.length);
-        for (int i = 0; i < elements.length; i++) { array.set(i, ConvertToXDF.nullableWithCast(elements[i])); }
+        for (int i = 0; i < elements.length; i++) { array.set(i, Encode.nullableWithCast(elements[i])); }
         return encode(type, array.freeze());
     }
     

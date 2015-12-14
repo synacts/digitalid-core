@@ -16,7 +16,7 @@ import net.digitalid.service.core.block.wrappers.AbstractWrapper;
 import net.digitalid.service.core.block.wrappers.BlockBasedWrapper;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.concepts.agent.Agent;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
@@ -322,7 +322,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      */
     @Pure
     public static @Nonnull <V extends XDF<V, ?>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier subject) {
-        return new SignatureWrapper(type, ConvertToXDF.nonNullable(element), subject, null);
+        return new SignatureWrapper(type, Encode.nonNullable(element), subject, null);
     }
     
     /**
@@ -418,10 +418,10 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     final @Nonnull Block getCache() {
         if (cache == null) {
             final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(4);
-            subelements.set(0, ConvertToXDF.<Identifier>nullable(subject, SUBJECT));
-            subelements.set(1, ConvertToXDF.nullable(time));
+            subelements.set(0, Encode.<Identifier>nullable(subject, SUBJECT));
+            subelements.set(1, Encode.nullable(time));
             subelements.set(2, element);
-            subelements.set(3, ConvertToXDF.nullable(audit));
+            subelements.set(3, Encode.nullable(audit));
             
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(4);
             elements.set(0, TupleWrapper.encode(CONTENT, subelements.freeze()));

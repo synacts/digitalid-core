@@ -13,7 +13,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.cache.Cache;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.PrivateKey;
@@ -147,7 +147,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public static @Nonnull <V extends XDF<V, ?>> HostSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
-        return new HostSignatureWrapper(type, ConvertToXDF.nullable(element), subject, audit, signer);
+        return new HostSignatureWrapper(type, Encode.nullable(element), subject, audit, signer);
     }
     
     /* -------------------------------------------------- Checks -------------------------------------------------- */
@@ -196,10 +196,10 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         final @Nonnull Time start = Time.getCurrent();
         
         final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(2);
-        subelements.set(0, ConvertToXDF.<Identifier>nonNullable(SIGNER, signer));
+        subelements.set(0, Encode.<Identifier>nonNullable(SIGNER, signer));
         try {
             final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getNonNullableTime());
-            subelements.set(1, ConvertToXDF.nonNullable(VALUE, privateKey.powD(elements.getNonNullable(0).getHash())));
+            subelements.set(1, Encode.nonNullable(VALUE, privateKey.powD(elements.getNonNullable(0).getHash())));
         } catch (@Nonnull InvalidEncodingException exception) {
             throw ShouldNeverHappenError.get("There should always be a key for the current time.", exception);
         }

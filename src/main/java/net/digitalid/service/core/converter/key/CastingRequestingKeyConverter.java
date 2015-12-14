@@ -23,7 +23,7 @@ import net.digitalid.utility.system.exceptions.internal.InternalException;
  * @param <S> the supertype from which the objects returned by the abstract (and thus overridden) method are downcast.
  */
 @Immutable
-public abstract class CastingKeyConverter<O extends S, E, K, D, S extends Castable> extends AbstractKeyConverter<O, E, K, D> {
+public abstract class CastingRequestingKeyConverter<O extends S, E, K, D, S extends Castable> extends RequestingKeyConverter<O, E, K, D> {
     
     /* -------------------------------------------------- Target Class -------------------------------------------------- */
     
@@ -39,7 +39,7 @@ public abstract class CastingKeyConverter<O extends S, E, K, D, S extends Castab
      * 
      * @param targetClass the target class to which the recovered object is cast.
      */
-    protected CastingKeyConverter(@Nonnull Class<O> targetClass) {
+    protected CastingRequestingKeyConverter(@Nonnull Class<O> targetClass) {
         this.targetClass = targetClass;
     }
     

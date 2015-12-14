@@ -16,7 +16,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @see NonConvertingKeyConverter
  */
 @Immutable
-public final class SubtypingXDFConverter<O, E> extends ChainingXDFConverter<O, E, O, E> {
+public final class SubtypingRequestingXDFConverter<O, E> extends ChainingRequestingXDFConverter<O, E, O, E> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -28,12 +28,12 @@ public final class SubtypingXDFConverter<O, E> extends ChainingXDFConverter<O, E
      * 
      * @require type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
      */
-    private SubtypingXDFConverter(@Nonnull SemanticType type, @Nonnull AbstractXDFConverter<O, E> XDFConverter) {
+    private SubtypingRequestingXDFConverter(@Nonnull SemanticType type, @Nonnull RequestingXDFConverter<O, E> XDFConverter) {
         super(type, NonConvertingKeyConverter.<O, E>get(), XDFConverter);
     }
     
     /**
-     * Creates a new subtyping XDF converter with the given parameters.
+     * Returns a new subtyping XDF converter with the given parameters.
      * 
      * @param type the semantic type that is used for the encoded blocks.
      * @param XDFConverter the XDF converter used to encode and decode the objects.
@@ -43,8 +43,8 @@ public final class SubtypingXDFConverter<O, E> extends ChainingXDFConverter<O, E
      * @require type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
      */
     @Pure
-    public static @Nonnull <O, E> SubtypingXDFConverter<O, E> get(@Nonnull SemanticType type, @Nonnull AbstractXDFConverter<O, E> XDFConverter) {
-        return new SubtypingXDFConverter<>(type, XDFConverter);
+    public static @Nonnull <O, E> SubtypingRequestingXDFConverter<O, E> get(@Nonnull SemanticType type, @Nonnull RequestingXDFConverter<O, E> XDFConverter) {
+        return new SubtypingRequestingXDFConverter<>(type, XDFConverter);
     }
     
 }

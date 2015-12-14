@@ -1,13 +1,13 @@
 package net.digitalid.service.core.cryptography;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
@@ -144,7 +144,7 @@ public abstract class KeyChain<C extends KeyChain<C, K>, K extends XDF<K, Object
      * The XDF converter for this class.
      */
     @Immutable
-    public static abstract class XDFConverter<C extends KeyChain<C, K>, K extends XDF<K, Object>> extends AbstractNonRequestingXDFConverter<C, Object> {
+    public static abstract class XDFConverter<C extends KeyChain<C, K>, K extends XDF<K, Object>> extends NonRequestingXDFConverter<C, Object> {
         
         /**
          * Stores the type of the key chain items.
@@ -154,7 +154,7 @@ public abstract class KeyChain<C extends KeyChain<C, K>, K extends XDF<K, Object
         /**
          * Stores the converter that recovers a key from a block.
          */
-        private final @Nonnull AbstractNonRequestingXDFConverter<K, Object> XDFConverter;
+        private final @Nonnull NonRequestingXDFConverter<K, Object> XDFConverter;
         
         /**
          * Creates a new XDF converter with the given parameters.
@@ -163,7 +163,7 @@ public abstract class KeyChain<C extends KeyChain<C, K>, K extends XDF<K, Object
          * @param itemType the type of the key chain items.
          * @param XDFConverter the converter that recovers a key from a block.
          */
-        protected XDFConverter(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull AbstractNonRequestingXDFConverter<K, Object> XDFConverter) {
+        protected XDFConverter(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull NonRequestingXDFConverter<K, Object> XDFConverter) {
             super(chainType);
             
             this.itemType = itemType;
@@ -189,8 +189,8 @@ public abstract class KeyChain<C extends KeyChain<C, K>, K extends XDF<K, Object
             final @Nonnull FreezableArrayList<Block> elements = FreezableArrayList.getWithCapacity(items.size());
             for (final @Nonnull ReadOnlyPair<Time, K> item : items) {
                 final @Nonnull FreezableArray<Block> pair = FreezableArray.get(2);
-                pair.set(0, ConvertToXDF.nonNullable(item.getNonNullableElement0()));
-                pair.set(1, ConvertToXDF.nonNullable(item.getNonNullableElement1()));
+                pair.set(0, Encode.nonNullable(item.getNonNullableElement0()));
+                pair.set(1, Encode.nonNullable(item.getNonNullableElement1()));
                 elements.add(TupleWrapper.encode(itemType, pair.freeze()));
             }
             return ListWrapper.encode(getType(), elements.freeze());

@@ -1,30 +1,29 @@
 package net.digitalid.service.core.concepts.agent;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.declaration.CombiningDeclaration;
 import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueCombinationException;
+import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
+import net.digitalid.database.core.interfaces.SelectionResult;
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.block.wrappers.value.BooleanWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.Encode;
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
@@ -35,10 +34,7 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.exceptions.external.ExternalException;
 import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.system.exceptions.internal.InternalException;
@@ -444,7 +440,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractXDFConverter<Restrictions, NonHostEntity> {
+    public static final class XDFConverter extends RequestingXDFConverter<Restrictions, NonHostEntity> {
         
         /**
          * Creates a new XDF converter.
@@ -460,8 +456,8 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
             elements.set(0, BooleanWrapper.encode(CLIENT_TYPE, restrictions.client));
             elements.set(1, BooleanWrapper.encode(ROLE_TYPE, restrictions.role));
             elements.set(2, BooleanWrapper.encode(WRITING_TYPE, restrictions.writing));
-            elements.set(3, ConvertToXDF.nullable(CONTEXT_TYPE, restrictions.context));
-            elements.set(4, ConvertToXDF.nullable(CONTACT_TYPE, restrictions.contact));
+            elements.set(3, Encode.nullable(CONTEXT_TYPE, restrictions.context));
+            elements.set(4, Encode.nullable(CONTACT_TYPE, restrictions.contact));
             return TupleWrapper.encode(TYPE, elements.freeze());
         }
         
@@ -503,72 +499,44 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     public static final @Nonnull Declaration DECLARATION = CombiningDeclaration.get(ColumnDeclaration.get("client", BooleanWrapper.SQL_TYPE), ColumnDeclaration.get("role", BooleanWrapper.SQL_TYPE), ColumnDeclaration.get("writing", BooleanWrapper.SQL_TYPE), Context.DECLARATION.nullable(), Contact.DECLARATION.nullable()).prefixedWith("restrictions");
     
     /**
-     * The SQL converter for this class.
-     */
-    @Immutable
-    public static final class SQLConverter extends AbstractSQLConverter<Restrictions, NonHostEntity> {
-        
-        /**
-         * Creates a new SQL converter.
-         */
-        protected SQLConverter() {
-            super(DECLARATION);
-        }
-        
-        @Pure
-        @Override
-        public final void storeNonNullable(@Nonnull Restrictions restrictions, @NonCapturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
-            BooleanWrapper.store(restrictions.client, values, index);
-            BooleanWrapper.store(restrictions.role, values, index);
-            BooleanWrapper.store(restrictions.writing, values, index);
-            Context.SQL_CONVERTER.storeNullable(restrictions.context, values, index);
-            Contact.SQL_CONVERTER.storeNullable(restrictions.contact, values, index);
-        }
-        
-        @Override
-        @NonCommitting
-        public final void storeNonNullable(@Nonnull Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
-            BooleanWrapper.store(restrictions.client, preparedStatement, parameterIndex);
-            BooleanWrapper.store(restrictions.role, preparedStatement, parameterIndex);
-            BooleanWrapper.store(restrictions.writing, preparedStatement, parameterIndex);
-            Context.SQL_CONVERTER.storeNullable(restrictions.context, preparedStatement, parameterIndex);
-            Contact.SQL_CONVERTER.storeNullable(restrictions.contact, preparedStatement, parameterIndex);
-        }
-        
-        @Pure
-        @Override
-        @NonCommitting
-        public final @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
-            try {
-                final boolean client = BooleanWrapper.restore(resultSet, columnIndex);
-                final boolean clientWasNull = resultSet.wasNull();
-                final boolean role = BooleanWrapper.restore(resultSet, columnIndex);
-                final boolean roleWasNull = resultSet.wasNull();
-                final boolean writing = BooleanWrapper.restore(resultSet, columnIndex);
-                final boolean writingWasNull = resultSet.wasNull();
-                final @Nullable Context context = Context.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
-                final @Nullable Contact contact = Contact.SQL_CONVERTER.restoreNullable(entity, resultSet, columnIndex);
-                
-                if (clientWasNull && roleWasNull && writingWasNull && context == null && contact == null) { return null; }
-                if (clientWasNull || roleWasNull || writingWasNull) { throw CorruptParameterValueCombinationException.get("Found inconsistent restrictions ('client' = '" + client + ", 'role' = '" + role + "', 'writing' = '" + writing + "')."); }
-                if (context != null && contact != null) { throw CorruptParameterValueCombinationException.get("Both the context and the contact are non-null."); }
-                
-                return new Restrictions(client, role, writing, context, contact);
-            } catch (@Nonnull SQLException exception) {
-                throw FailedValueRestoringException.get(exception);
-            }
-        }
-        
-    }
-    
-    /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter SQL_CONVERTER = new SQLConverter();
+    public static final @Nonnull SQLConverter<Restrictions, NonHostEntity> SQL_CONVERTER = new SQLConverter<Restrictions, NonHostEntity>(DECLARATION) {
+        
+        @Override
+        @NonCommitting
+        public final void storeNonNullable(@Nonnull Restrictions restrictions, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+            BooleanWrapper.store(restrictions.client, collector);
+            BooleanWrapper.store(restrictions.role, collector);
+            BooleanWrapper.store(restrictions.writing, collector);
+            Context.SQL_CONVERTER.storeNullable(restrictions.context, collector);
+            Contact.SQL_CONVERTER.storeNullable(restrictions.contact, collector);
+        }
+        
+        @Override
+        @NonCommitting
+        public final @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
+            final boolean client = BooleanWrapper.restore(result);
+            final boolean clientWasNull = result.wasNull();
+            final boolean role = BooleanWrapper.restore(result);
+            final boolean roleWasNull = result.wasNull();
+            final boolean writing = BooleanWrapper.restore(result);
+            final boolean writingWasNull = result.wasNull();
+            final @Nullable Context context = Context.SQL_CONVERTER.restoreNullable(entity, result);
+            final @Nullable Contact contact = Contact.SQL_CONVERTER.restoreNullable(entity, result);
+            
+            if (clientWasNull && roleWasNull && writingWasNull && context == null && contact == null) { return null; }
+            if (clientWasNull || roleWasNull || writingWasNull) { throw CorruptParameterValueCombinationException.get("Found inconsistent restrictions ('client' = '" + client + ", 'role' = '" + role + "', 'writing' = '" + writing + "')."); }
+            if (context != null && contact != null) { throw CorruptParameterValueCombinationException.get("Both the context and the contact are non-null."); }
+            
+            return new Restrictions(client, role, writing, context, contact);
+        }
+        
+    };
     
     @Pure
     @Override
-    public final @Nonnull SQLConverter getSQLConverter() {
+    public final @Nonnull SQLConverter<Restrictions, NonHostEntity> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

@@ -1,19 +1,14 @@
 package net.digitalid.service.core.block.wrappers.value;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.block.wrappers.AbstractWrapper;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.reference.NonCapturable;
@@ -100,7 +95,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends AbstractWr
      * The XDF converter for encoding and decoding values.
      */
     @Immutable
-    public final static class ValueXDFConverter<V, W extends ValueWrapper<W>> extends AbstractNonRequestingXDFConverter<V, Object> {
+    public final static class ValueXDFConverter<V, W extends ValueWrapper<W>> extends NonRequestingXDFConverter<V, Object> {
         
         /**
          * Stores the wrapper to wrap and unwrap the values.
@@ -149,7 +144,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends AbstractWr
      * The SQL converter for storing and restoring values.
      */
     @Immutable
-    public final static class ValueSQLConverter<V, W extends ValueWrapper<W>> extends AbstractSQLConverter<V, Object> {
+    public final static class ValueSQLConverter<V, W extends ValueWrapper<W>> extends SQLConverter<V, Object> {
         
         /**
          * Stores the wrapper to wrap and unwrap the values.
@@ -182,14 +177,14 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends AbstractWr
         
         @Override
         @NonCommitting
-        public final void storeNonNullable(@Nonnull V value, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+        public final void storeNonNullable(@Nonnull V value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
             SQLConverter.storeNonNullable(wrapper.wrap(SQLConverter.getType(), value), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable V restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        public final @Nullable V restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             final @Nullable W wrapper = SQLConverter.restoreNullable(none, resultSet, columnIndex);
             return wrapper == null ? null : this.wrapper.unwrap(wrapper);
         }

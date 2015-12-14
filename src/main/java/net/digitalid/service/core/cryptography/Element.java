@@ -2,16 +2,16 @@ package net.digitalid.service.core.cryptography;
 
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.key.NonRequestingKeyConverter;
 import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -209,7 +209,7 @@ public final class Element extends Number<Element, Group<?>> {
     /**
      * Stores the key converter of this class.
      */
-    private static final @Nonnull AbstractNonRequestingKeyConverter<Element, Group<?>, BigInteger, Object> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Element, Group<?>, BigInteger, Object>() {
+    private static final @Nonnull NonRequestingKeyConverter<Element, Group<?>, BigInteger, Object> KEY_CONVERTER = new NonRequestingKeyConverter<Element, Group<?>, BigInteger, Object>() {
         
         @Pure
         @Override
@@ -241,11 +241,11 @@ public final class Element extends Number<Element, Group<?>> {
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull AbstractNonRequestingXDFConverter<Element, Group<?>> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, IntegerWrapper.getValueXDFConverter(TYPE));
+    public static final @Nonnull NonRequestingXDFConverter<Element, Group<?>> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, IntegerWrapper.getValueXDFConverter(TYPE));
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingXDFConverter<Element, Group<?>> getXDFConverter() {
+    public @Nonnull NonRequestingXDFConverter<Element, Group<?>> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
@@ -259,11 +259,11 @@ public final class Element extends Number<Element, Group<?>> {
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<Element, Group<?>> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, IntegerWrapper.getValueSQLConverter(DECLARATION));
+    public static final @Nonnull SQLConverter<Element, Group<?>> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, IntegerWrapper.getValueSQLConverter(DECLARATION));
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<Element, Group<?>> getSQLConverter() {
+    public @Nonnull SQLConverter<Element, Group<?>> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

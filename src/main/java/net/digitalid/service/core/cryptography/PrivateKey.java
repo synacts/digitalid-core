@@ -3,17 +3,17 @@ package net.digitalid.service.core.cryptography;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.converter.AbstractSQLConverter;
-import net.digitalid.database.core.converter.SQL;
+import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
-import net.digitalid.service.core.converter.sql.XDFConverterBasedSQLConverter;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
-import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
+import net.digitalid.service.core.converter.xdf.Encode;
+import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -285,7 +285,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
      * The XDF converter for this class.
      */
     @Immutable
-    public static final class XDFConverter extends AbstractNonRequestingXDFConverter<PrivateKey, Object> {
+    public static final class XDFConverter extends NonRequestingXDFConverter<PrivateKey, Object> {
         
         /**
          * Creates a new XDF converter.
@@ -298,12 +298,12 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull PrivateKey privateKey) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(6);
-            elements.set(0, ConvertToXDF.nonNullable(COMPOSITE_GROUP, privateKey.compositeGroup));
+            elements.set(0, Encode.nonNullable(COMPOSITE_GROUP, privateKey.compositeGroup));
             elements.set(1, IntegerWrapper.encodeNonNullable(P, privateKey.p));
             elements.set(2, IntegerWrapper.encodeNonNullable(Q, privateKey.q));
-            elements.set(3, ConvertToXDF.nonNullable(D, privateKey.d));
-            elements.set(4, ConvertToXDF.nonNullable(SQUARE_GROUP, privateKey.squareGroup));
-            elements.set(5, ConvertToXDF.nonNullable(X, privateKey.x));
+            elements.set(3, Encode.nonNullable(D, privateKey.d));
+            elements.set(4, Encode.nonNullable(SQUARE_GROUP, privateKey.squareGroup));
+            elements.set(5, Encode.nonNullable(X, privateKey.x));
             return TupleWrapper.encode(TYPE, elements.freeze());
         }
         
@@ -348,11 +348,11 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull AbstractSQLConverter<PrivateKey, Object> SQL_CONVERTER = XDFConverterBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
+    public static final @Nonnull SQLConverter<PrivateKey, Object> SQL_CONVERTER = XDFBasedSQLConverter.get(DECLARATION, XDF_CONVERTER);
     
     @Pure
     @Override
-    public @Nonnull AbstractSQLConverter<PrivateKey, Object> getSQLConverter() {
+    public @Nonnull SQLConverter<PrivateKey, Object> getSQLConverter() {
         return SQL_CONVERTER;
     }
     

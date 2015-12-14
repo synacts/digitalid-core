@@ -1,7 +1,7 @@
 package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.converter.xdf.SubtypingXDFConverter;
+import net.digitalid.service.core.converter.xdf.SubtypingRequestingXDFConverter;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 
@@ -11,10 +11,10 @@ import net.digitalid.utility.annotations.state.Stateless;
  * @param <O> the type of the objects that this converter can convert and recover.
  * @param <E> the type of the external object that is needed to recover an object.
  * 
- * @see SubtypingXDFConverter
+ * @see SubtypingRequestingXDFConverter
  */
 @Stateless
-public final class NonConvertingKeyConverter<O, E> extends AbstractNonRequestingKeyConverter<O, E, O, E> {
+public final class NonConvertingKeyConverter<O, E> extends NonRequestingKeyConverter<O, E, O, E> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
