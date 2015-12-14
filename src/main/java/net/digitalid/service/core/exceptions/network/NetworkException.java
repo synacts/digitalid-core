@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.CustomException;
+import net.digitalid.utility.system.exceptions.DigitalIDException;
 
 /**
  * This exception indicates an error on the network layer.
@@ -16,7 +16,7 @@ import net.digitalid.utility.system.exceptions.CustomException;
  * @see SendingException
  */
 @Immutable
-public abstract class NetworkException extends CustomException {
+public abstract class NetworkException extends DigitalIDException {
     
     /* -------------------------------------------------- Host -------------------------------------------------- */
     

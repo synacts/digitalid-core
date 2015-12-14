@@ -437,17 +437,9 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     public static final @Nonnull SemanticType TYPE = SemanticType.map("restrictions.agent@core.digitalid.net").load(TupleWrapper.XDF_TYPE, CLIENT_TYPE, ROLE_TYPE, WRITING_TYPE, CONTEXT_TYPE, CONTACT_TYPE);
     
     /**
-     * The XDF converter for this class.
+     * Stores the XDF converter of this class.
      */
-    @Immutable
-    public static final class XDFConverter extends RequestingXDFConverter<Restrictions, NonHostEntity> {
-        
-        /**
-         * Creates a new XDF converter.
-         */
-        protected XDFConverter() {
-            super(TYPE);
-        }
+    public static final @Nonnull RequestingXDFConverter<Restrictions, NonHostEntity> XDF_CONVERTER = new RequestingXDFConverter<Restrictions, NonHostEntity>(TYPE) {
         
         @Pure
         @Override
@@ -478,16 +470,11 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
             return new Restrictions(client, role, writing, context, contact);
         }
         
-    }
-    
-    /**
-     * Stores the XDF converter of this class.
-     */
-    public static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter();
+    };
     
     @Pure
     @Override
-    public final @Nonnull XDFConverter getXDFConverter() {
+    public final @Nonnull RequestingXDFConverter<Restrictions, NonHostEntity> getXDFConverter() {
         return XDF_CONVERTER;
     }
     
