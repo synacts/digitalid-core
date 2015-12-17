@@ -12,7 +12,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.system.exceptions.CustomException;
+import net.digitalid.utility.system.exceptions.DigitalIDException;
 import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.system.exceptions.internal.InternalException;
 
@@ -22,7 +22,7 @@ import net.digitalid.utility.system.exceptions.internal.InternalException;
  * @see RequestErrorCode
  */
 @Immutable
-public final class RequestException extends CustomException implements XDF<RequestException, Object> {
+public final class RequestException extends DigitalIDException implements XDF<RequestException, Object> {
     
     /* -------------------------------------------------- Code -------------------------------------------------- */
     
