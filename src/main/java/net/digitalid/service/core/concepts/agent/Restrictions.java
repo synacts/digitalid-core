@@ -16,6 +16,7 @@ import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueC
 import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.block.wrappers.value.BooleanWrapper;
@@ -30,6 +31,9 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterV
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
+import net.digitalid.service.core.factory.Factory;
+import net.digitalid.service.core.factory.Tuple2Factory;
+import net.digitalid.service.core.format.Tuple2Format;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -156,6 +160,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     /**
      * Stores the context to which the authorization is restricted (or null).
      */
+    @ProvideForReconstruction("entity")
     private final @Nullable Context context;
     
     /**
@@ -477,6 +482,30 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     public final @Nonnull RequestingXDFConverter<Restrictions, NonHostEntity> getXDFConverter() {
         return XDF_CONVERTER;
     }
+    
+    /* -------------------------------------------------- Converter (Experimental) -------------------------------------------------- */
+    
+    /**
+     * Stores the SQL converter of this class.
+     */
+    public static final @Nonnull Factory<Restrictions, NonHostEntity> FACTORY = new Tuple2Factory</*O*/ Restrictions, /*E*/ NonHostEntity, /*O1*/ Boolean, /*E1*/ Object, /*O2*/ Context, /*E2*/ NonHostEntity>("restrictions", BooleanWrapper.getConverter("client"), Context.CONVERTER.nullable()) {
+        
+        @Override
+        @NonCommitting
+        public final void consumeNonNullable(@Nonnull Restrictions restrictions, @NonCapturable @Nonnull Tuple2Format<?, Boolean, Object, Context, NonHostEntity> format) throws FailedValueStoringException, InternalException {
+            format.consume1(restrictions.client);
+            format.consume2(restrictions.context);
+            // or:
+            format.consume(Pair.get(restrictions.client, restrictions.context));
+        }
+        
+        @Override
+        @NonCommitting
+        public final @Nullable Restrictions produceNullable(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull Tuple2Format<?, Boolean, Object, Context, NonHostEntity> format) throws FailedValueRestoringException, CorruptValueException, InternalException {
+            return new Restrictions(format.produce1(None.OBJECT), format.produce2(entity));
+        }
+        
+    };
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     

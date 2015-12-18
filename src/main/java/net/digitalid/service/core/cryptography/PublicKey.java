@@ -165,6 +165,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /**
      * Stores the composite group for encryption and signing.
      */
+    @CanBeUsedForReconstruction
     private final @Nonnull GroupWithUnknownOrder compositeGroup;
     
     /**
@@ -199,6 +200,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /**
      * Stores the base for blinding.
      */
+    @ProvideForReconstruction("compositeGroup")
     private final @Nonnull Element ab;
     
     /**
@@ -216,6 +218,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /**
      * Stores the base of the client's secret.
      */
+    @ProvideForReconstruction("compositeGroup")
     private final @Nonnull Element au;
     
     /**
@@ -344,6 +347,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     /**
      * Stores the generator of the square group.
      */
+    @ProvideForReconstruction("squareGroup")
     private final @Nonnull Element g;
     
     /**
