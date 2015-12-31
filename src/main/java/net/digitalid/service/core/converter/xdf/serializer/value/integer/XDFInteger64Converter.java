@@ -6,7 +6,7 @@ import net.digitalid.utility.system.converter.Format;
 import net.digitalid.utility.system.converter.Serializer;
 import net.digitalid.service.core.identity.SemanticType;
 
-public class Integer64Serializer implements Serializer<Block> {
+public class XDFInteger64Converter implements Serializer<Block> {
     
     @Override
     public Block store(Object object, Format<Block> format, String fieldName, String clazzName) {
