@@ -44,18 +44,18 @@ public class XDFKeyConverter<T, F> extends XDFConverter<Object> {
     @SuppressWarnings("unchecked")
     @Override
     protected @Nonnull Object convertFromNonNullable(@Nonnull Block block, @Nonnull Class<?> actualType, @Nonnull Map<Class<? extends Annotation>, Object> metaData) throws RestoringException {
-        Class<T> type = mapper.getMapType();
-        XDFConverter<?> converter = getRestoringTypeConverter(type);
-        T object = (T) converter.convertFromNonNullable(block, type, metaData);
+        final @Nonnull Class<T> type = mapper.getMapType();
+        final @Nonnull XDFConverter<?> converter = getRestoringTypeConverter(type);
+        final @Nonnull T object = (T) converter.convertFromNonNullable(block, type, metaData);
         return mapper.mapFrom(object);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public @Nonnull Block convertToNonNullable(@Nonnull Object value, @Nonnull Class<?> actualType, @Nonnull String fieldName, @Nullable String parentName, @Nonnull Map<Class<? extends Annotation>, Object> metaData) throws StoringException {
-        T mappedValue = mapper.mapTo((F) value);
-        Class<?> type = mappedValue.getClass();
-        XDFConverter converter = getStoringTypeConverter(type);
+        final @Nonnull T mappedValue = mapper.mapTo((F) value);
+        final @Nonnull Class<T> type = mapper.getMapType();
+        final @Nonnull XDFConverter converter = getStoringTypeConverter(type);
         return converter.convertToNonNullable(mappedValue, type, fieldName, parentName, metaData);
     }
 }
