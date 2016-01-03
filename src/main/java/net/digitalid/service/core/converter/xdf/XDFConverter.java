@@ -84,11 +84,11 @@ public abstract class XDFConverter<T> extends Converter<XDFConverter<?>> {
     /* -------------------------------------------------- Convert From -------------------------------------------------- */
     
     /**
-     * Converts a nullable XDF block into a non-nullable object.
+     * Converts a nullable XDF block into a nullable object.
      * 
      * @param block the block which is converted.
      * @param type the type of the object which should be converted.
-     * @param metaData the metadata of the field which should be converted.
+     * @param metaData the meta data of the field which should be converted.
      *              
      * @return a nullable object converted from a nullable XDF block.
      * 
@@ -106,7 +106,7 @@ public abstract class XDFConverter<T> extends Converter<XDFConverter<?>> {
      * 
      * @param block the block which is converted.
      * @param type the type of the object which should be converted.
-     * @param metaData the metadata of the field which should be converted.
+     * @param metaData the meta data of the field which should be converted.
      * 
      * @return a non-nullable object converted from a non-nullable XDF block.
      *
@@ -148,7 +148,10 @@ public abstract class XDFConverter<T> extends Converter<XDFConverter<?>> {
             default:
                 throw new RuntimeException("Structure '" + structure + "' is unknown. Known types are: '" + Arrays.toString(Structure.values()) + "'.");
         }
-        return convertible;
+        if (!type.isInstance(convertible)) {
+            throw RestoringException.get(type, "The converter failed to convert the XDF block into the type '" + type + "'");
+        }
+        return type.cast(convertible);
     }
 
     /* -------------------------------------------------- Convert To -------------------------------------------------- */
