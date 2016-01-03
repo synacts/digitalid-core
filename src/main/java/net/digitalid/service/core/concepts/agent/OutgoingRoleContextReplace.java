@@ -19,7 +19,7 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * Replaces the context of a {@link OutgoingRole outgoing role}.

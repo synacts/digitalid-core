@@ -20,7 +20,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * Adds {@link FreezableContacts contacts} to a {@link Context context}.

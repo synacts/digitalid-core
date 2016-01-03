@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * This exception is thrown when the action to change a property is invalid.

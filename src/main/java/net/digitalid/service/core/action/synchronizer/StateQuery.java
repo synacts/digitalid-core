@@ -26,8 +26,8 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * Queries the state of the given module for the given role.

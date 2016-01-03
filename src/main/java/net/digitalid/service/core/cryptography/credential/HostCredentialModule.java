@@ -32,7 +32,7 @@ import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * This class provides database access to the {@link Credential credentials} issued by a {@link Host host}.

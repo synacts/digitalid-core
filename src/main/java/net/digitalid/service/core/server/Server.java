@@ -26,7 +26,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.system.console.Console;
 import net.digitalid.utility.system.directory.Directory;
 import net.digitalid.utility.system.errors.InitializationError;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 import net.digitalid.utility.system.loader.Loader;
 import net.digitalid.utility.system.logger.DefaultLogger;
 import net.digitalid.utility.system.logger.Level;

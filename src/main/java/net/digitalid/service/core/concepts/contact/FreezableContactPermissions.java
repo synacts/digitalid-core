@@ -9,7 +9,7 @@ import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * This class models the permissions of contacts as a set of attribute types.

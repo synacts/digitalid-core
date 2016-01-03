@@ -35,7 +35,7 @@ import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.system.directory.Directory;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * A host stores a {@link KeyPair} and is run by a {@link Server}.

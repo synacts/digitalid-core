@@ -15,8 +15,8 @@ import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.NonHostIdentity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This interface models non-host identifiers.

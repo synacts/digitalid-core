@@ -9,7 +9,7 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class extends the {@link Commitment commitment} of a {@link Client client} with its {@link Client#getSecret() secret}.

@@ -12,8 +12,8 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This interface models a storage that can be exported and imported on {@link Host hosts}.

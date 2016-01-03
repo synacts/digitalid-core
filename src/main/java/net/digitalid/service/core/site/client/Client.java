@@ -57,8 +57,8 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.system.directory.Directory;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * A client is configured with an identifier and a secret.

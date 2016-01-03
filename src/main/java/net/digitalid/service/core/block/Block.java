@@ -42,8 +42,8 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.index.ValidIndex;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * A block is a sequence of bytes that is encoded according to some syntactic type.

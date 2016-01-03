@@ -17,8 +17,8 @@ import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identifier.NonHostIdentifier;
 import net.digitalid.utility.system.errors.InitializationError;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class models the successor of an {@link Identifier identifier}.

@@ -36,9 +36,9 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.external.MaskingInvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * An action of this type is added to the audit if the {@link Pusher} failed to send an external action.

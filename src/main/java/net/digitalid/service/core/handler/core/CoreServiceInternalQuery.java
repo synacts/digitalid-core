@@ -21,7 +21,7 @@ import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * This class models the {@link InternalQuery internal queries} of the {@link CoreService core service}.

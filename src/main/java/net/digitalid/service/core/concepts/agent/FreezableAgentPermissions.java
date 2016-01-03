@@ -40,8 +40,8 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * This class models the permissions of agents as a mapping from attribute types to writings.

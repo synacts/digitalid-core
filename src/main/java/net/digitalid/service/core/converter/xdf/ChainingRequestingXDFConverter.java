@@ -10,8 +10,8 @@ import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class implements an XDF converter that converts an object to its key and this key to XDF with another converter.

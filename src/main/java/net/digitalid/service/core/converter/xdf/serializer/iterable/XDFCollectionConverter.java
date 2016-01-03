@@ -21,8 +21,8 @@ import net.digitalid.utility.system.converter.annotations.GenericTypes;
 import net.digitalid.utility.system.converter.exceptions.RestoringException;
 import net.digitalid.utility.system.converter.exceptions.StoringException;
 import net.digitalid.utility.system.converter.exceptions.TypeUnknownException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * Converts a convertible object with a single iterable field into an XDF list block.

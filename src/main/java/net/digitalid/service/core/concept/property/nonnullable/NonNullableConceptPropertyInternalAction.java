@@ -33,8 +33,8 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class models the {@link InternalAction internal action} of a {@link NonNullableConceptProperty non-nullable concept property}. 

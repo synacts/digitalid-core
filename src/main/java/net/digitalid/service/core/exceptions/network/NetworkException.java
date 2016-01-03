@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.DigitalIDException;
+import net.digitalid.utility.exceptions.DigitalIDException;
 
 /**
  * This exception indicates an error on the network layer.

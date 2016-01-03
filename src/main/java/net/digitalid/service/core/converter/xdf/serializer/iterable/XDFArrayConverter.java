@@ -11,8 +11,8 @@ import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.system.converter.exceptions.RestoringException;
 import net.digitalid.utility.system.converter.exceptions.StoringException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 public class XDFArrayConverter extends XDFIterableConverter<Object[]> {
     

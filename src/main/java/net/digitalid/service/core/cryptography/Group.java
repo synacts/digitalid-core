@@ -12,8 +12,8 @@ import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class models a multiplicative group.

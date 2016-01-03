@@ -17,7 +17,7 @@ import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * This class provides database access to the members of the core service.

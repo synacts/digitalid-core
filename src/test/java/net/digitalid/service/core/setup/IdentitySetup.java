@@ -15,7 +15,7 @@ import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.NaturalPerson;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;

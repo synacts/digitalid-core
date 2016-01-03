@@ -30,10 +30,10 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.system.castable.Castable;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.external.MaskingInvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This interface models a digital identity.

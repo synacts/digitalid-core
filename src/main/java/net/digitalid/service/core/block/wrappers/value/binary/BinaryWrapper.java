@@ -37,8 +37,8 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class wraps {@code byte[]} for encoding and decoding a block of the syntactic type {@code bytes@core.digitalid.net}.

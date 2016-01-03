@@ -16,8 +16,8 @@ import net.digitalid.service.core.exceptions.external.notfound.AttributeNotFound
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.setup.IdentitySetup;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;

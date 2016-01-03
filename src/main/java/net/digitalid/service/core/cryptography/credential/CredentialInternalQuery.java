@@ -40,8 +40,8 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * Requests a new identity- or role-based credential with the given permissions and relation.

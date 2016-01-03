@@ -15,7 +15,7 @@ import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * Internal queries can only be sent by {@link Client clients} and are always signed identity-based.

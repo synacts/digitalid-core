@@ -18,8 +18,8 @@ import net.digitalid.utility.system.converter.exceptions.FieldConverterException
 import net.digitalid.utility.system.converter.exceptions.RestoringException;
 import net.digitalid.utility.system.converter.exceptions.StoringException;
 import net.digitalid.utility.system.converter.exceptions.StructureException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * Converts an object holding multiple fields into an XDF tuple block.

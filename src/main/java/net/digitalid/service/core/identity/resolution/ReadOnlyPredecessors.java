@@ -14,7 +14,7 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * This interface provides read-only access to {@link FreezablePredecessors predecessors} and should <em>never</em> be cast away.

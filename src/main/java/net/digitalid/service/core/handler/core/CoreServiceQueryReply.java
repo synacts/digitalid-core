@@ -11,7 +11,7 @@ import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.resolution.IdentityReply;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * This class models the {@link QueryReply query replies} of the {@link CoreService core service}.

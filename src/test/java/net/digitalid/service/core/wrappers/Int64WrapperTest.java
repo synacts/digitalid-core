@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import org.junit.Assert;
 import org.junit.Test;
 

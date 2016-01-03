@@ -17,7 +17,7 @@ import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * This class models a type.

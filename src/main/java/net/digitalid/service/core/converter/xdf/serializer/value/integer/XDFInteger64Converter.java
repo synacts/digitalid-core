@@ -10,8 +10,8 @@ import net.digitalid.service.core.converter.xdf.XDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.system.converter.exceptions.RestoringException;
 import net.digitalid.utility.system.converter.exceptions.StoringException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 public class XDFInteger64Converter extends XDFConverter<Long> {
     

@@ -37,9 +37,9 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.external.MaskingInvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * Symmetric keys are used to encrypt and decrypt byte arrays with the Advanced Encryption Standard (AES).

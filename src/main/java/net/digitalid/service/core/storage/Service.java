@@ -31,10 +31,10 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.external.MaskingInvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class models a service of the Digital ID protocol.

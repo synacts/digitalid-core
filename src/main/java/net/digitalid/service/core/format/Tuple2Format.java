@@ -2,7 +2,7 @@ package net.digitalid.service.core.format;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 public interface Tuple2Format<R, O1, E1, O2, E2> extends Format<R> {
     

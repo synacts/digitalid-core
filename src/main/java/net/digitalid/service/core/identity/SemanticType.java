@@ -43,7 +43,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 import net.digitalid.utility.system.thread.annotations.MainThread;
 
 /**

@@ -34,8 +34,8 @@ import net.digitalid.service.core.packet.Response;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 import net.digitalid.utility.system.logger.Log;
 
 /**

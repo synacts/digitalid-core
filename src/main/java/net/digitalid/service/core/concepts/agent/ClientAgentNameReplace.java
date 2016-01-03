@@ -20,7 +20,7 @@ import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * Replaces the name of a {@link ClientAgent client agent}.

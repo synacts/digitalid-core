@@ -34,7 +34,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
 import net.digitalid.utility.system.errors.InitializationError;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 import net.digitalid.utility.system.thread.Threading;
 
 /**

@@ -23,7 +23,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.system.castable.Castable;
 import net.digitalid.utility.system.castable.CastableObject;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * This class facilitates the encoding and decoding of attribute values.

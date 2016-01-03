@@ -21,8 +21,8 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * Values and elements are wrapped by separate objects as the native types do not support encoding and decoding.

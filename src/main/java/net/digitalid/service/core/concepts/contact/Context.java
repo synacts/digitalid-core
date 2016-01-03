@@ -38,7 +38,7 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * This class models the contexts for {@link Contact contacts}.

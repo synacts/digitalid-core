@@ -23,8 +23,8 @@ import net.digitalid.utility.annotations.state.Matching;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class stores the groups and exponents of a host's private key.

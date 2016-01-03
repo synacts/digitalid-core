@@ -9,7 +9,7 @@ import net.digitalid.service.core.format.Format;
 import net.digitalid.service.core.format.Tuple2Format;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 @Immutable
 public abstract class Tuple2Factory<O, E, O1, E1, O2, E2> extends Factory<O, E> {

@@ -31,7 +31,7 @@ import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * This class models credentials on the client-side.

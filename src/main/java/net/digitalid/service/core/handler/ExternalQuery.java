@@ -12,7 +12,7 @@ import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * External queries can be sent by both {@link Host hosts} and {@link Client clients}.

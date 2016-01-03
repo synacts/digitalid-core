@@ -7,8 +7,8 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterV
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class implements a non-requesting XDF converter that is based on another non-requesting XDF converter.

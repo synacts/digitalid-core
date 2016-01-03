@@ -20,8 +20,8 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.system.converter.annotations.GenericTypesMap;
 import net.digitalid.utility.system.converter.exceptions.RestoringException;
 import net.digitalid.utility.system.converter.exceptions.StoringException;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 public class XDFMapConverter<T extends Map<?, ?>> extends XDFConverter<T> {
     

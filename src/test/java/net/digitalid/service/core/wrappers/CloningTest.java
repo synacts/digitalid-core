@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.concepts.attribute.AttributeTypes;
 import net.digitalid.service.core.setup.DatabaseSetup;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import org.junit.Assert;
 import org.junit.Test;
 

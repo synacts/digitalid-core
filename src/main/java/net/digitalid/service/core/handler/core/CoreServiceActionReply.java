@@ -9,7 +9,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.handler.ActionReply;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * This class models the {@link ActionReply action replies} of the {@link CoreService core service}.

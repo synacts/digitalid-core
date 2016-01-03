@@ -10,7 +10,7 @@ import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 import org.junit.Assert;
 import org.junit.Test;
 

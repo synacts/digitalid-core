@@ -24,7 +24,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezableQuartet;
 import net.digitalid.utility.collections.tuples.ReadOnlyQuartet;
-import net.digitalid.utility.system.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * This class compresses, signs and encrypts requests with credentials.

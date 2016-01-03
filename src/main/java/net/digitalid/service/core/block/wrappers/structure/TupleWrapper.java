@@ -29,8 +29,8 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class wraps a {@link ReadOnlyArray tuple} for encoding and decoding a block of the syntactic type {@code tuple@core.digitalid.net}.
