@@ -48,6 +48,8 @@
                     <links>
                         <link>https://docs.digitalid.net/utility/annotations/1.0.0/</link>
                         <link>https://docs.digitalid.net/utility/collections/1.0.0/</link>
+                        <link>https://docs.digitalid.net/utility/conversion/1.0.0/</link>
+                        <link>https://docs.digitalid.net/utility/exceptions/1.0.0/</link>
                         <link>https://docs.digitalid.net/utility/system/1.0.0/</link>
                         <link>https://docs.digitalid.net/database/core/1.0.0/</link>
                         <link>http://docs.oracle.com/javase/7/docs/api/</link>
@@ -93,6 +95,16 @@
         <dependency>
             <groupId>net.digitalid</groupId>
             <artifactId>digitalid-utility-collections</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid</groupId>
+            <artifactId>digitalid-utility-conversion</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid</groupId>
+            <artifactId>digitalid-utility-exceptions</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

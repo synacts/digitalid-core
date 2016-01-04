@@ -7,19 +7,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.converter.xdf.XDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 import net.digitalid.utility.system.converter.Convertible;
 import net.digitalid.utility.system.converter.exceptions.FieldConverterException;
 import net.digitalid.utility.system.converter.exceptions.RestoringException;
 import net.digitalid.utility.system.converter.exceptions.StoringException;
 import net.digitalid.utility.system.converter.exceptions.StructureException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * Converts an object holding multiple fields into an XDF tuple block.
@@ -76,11 +77,11 @@ public class XDFTupleConverter<T extends Convertible> extends XDFConverter<T> {
 
             XDFConverter<?> converter;
             try {
-                converter = getFieldConverter(field);
+                converter = XDF.FORMAT.getConverter(field);
             } catch (FieldConverterException e) {
                 throw StoringException.get(type, e.getMessage());
             }
-            Block serializedField = converter.convertToNullable(fieldValue, field.getType(), field.getName(), typeName + "." + parentName, getFieldMetaData(field));
+            Block serializedField = converter.convertToNullable(fieldValue, field.getType(), field.getName(), typeName + (parentName == null ? "" : "." + parentName), getFieldMetaData(field));
             elements.set(i, serializedField);
             i++;
         }

@@ -16,6 +16,7 @@ public class XDFObjectConverter extends XDFConverter<Convertible> {
     @Override
     protected @Nonnull Convertible convertFromNonNullable(@Nonnull Block block, @Nonnull Class<?> type, @Nonnull Map<Class<? extends Annotation>, Object> metaData) throws RestoringException {
         @Nullable Convertible convertible = XDFConverter.convertFrom(block, (Class<? extends Convertible>) type);
+        // TODO: Introduce a non-nullable XDFConverter.convertFrom method and remove the following lines.
         if (convertible == null) {
             throw RestoringException.get(type, "Non-null block converted unexpectedly to null object.");
         }
@@ -28,7 +29,8 @@ public class XDFObjectConverter extends XDFConverter<Convertible> {
         assert object instanceof Convertible : "The object is an instance of Convertible.";
         
         final @Nonnull Convertible convertible = (Convertible) object;
-        final @Nullable Block block = XDFConverter.convertTo(convertible, (Class<? extends Convertible>) type, fieldName + "." + parentName);
+        final @Nullable Block block = XDFConverter.convertTo(convertible, (Class<? extends Convertible>) type, fieldName + (parentName == null ? "" : "." + parentName));
+        // TODO: Introduce a non-nullable XDFConverter.convertTo method and remove the following lines.
         if (block == null) {
             throw StoringException.get(type, "Non-null object converted unexpectedly to null block.");
         }
