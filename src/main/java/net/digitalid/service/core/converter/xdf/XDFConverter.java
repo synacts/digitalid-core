@@ -11,7 +11,7 @@ import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.utility.collections.freezable.FreezableHashMap;
 import net.digitalid.utility.conversion.Converter;
 import net.digitalid.utility.conversion.Convertible;
-import net.digitalid.utility.conversion.exceptions.RestoringException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 
 /**
@@ -31,9 +31,9 @@ public abstract class XDFConverter<T> extends Converter {
      *              
      * @return a nullable field from an XDF block into an object.
      * 
-     * @throws RestoringException if no converter for this field could be found.
+     * @throws RecoveryException if no converter for this field could be found.
      */
-    protected @Nullable Object convertField(@Nonnull Field field, @Nullable Block block) throws RestoringException {
+    protected @Nullable Object convertField(@Nonnull Field field, @Nullable Block block) throws RecoveryException {
         XDFConverter<?> fieldConverter;
         fieldConverter = XDF.FORMAT.getConverter(field);
         Map<Class<? extends Annotation>, Annotation> annotations = getAnnotations(field);
@@ -51,9 +51,9 @@ public abstract class XDFConverter<T> extends Converter {
      *              
      * @return a nullable object converted from a nullable XDF block.
      * 
-     * @throws RestoringException if no converter for this type could be found.
+     * @throws RecoveryException if no converter for this type could be found.
      */
-    public @Nullable T convertFromNullable(@Nullable Block block, @Nonnull Class<?> type, @Nullable Map<Class<? extends Annotation>, Annotation> annotations) throws RestoringException {
+    public @Nullable T convertFromNullable(@Nullable Block block, @Nonnull Class<?> type, @Nullable Map<Class<? extends Annotation>, Annotation> annotations) throws RecoveryException {
         if (annotations == null) {
             annotations = FreezableHashMap.get(); 
         }
@@ -69,9 +69,9 @@ public abstract class XDFConverter<T> extends Converter {
      * 
      * @return a non-nullable object converted from a non-nullable XDF block.
      *
-     * @throws RestoringException if no converter for this type could be found.
+     * @throws RecoveryException if no converter for this type could be found.
      */   
-    protected abstract @Nonnull T convertFromNonNullable(@Nonnull Block block, @Nonnull Class<?> type, @Nonnull Map<Class<? extends Annotation>, Annotation> annotations) throws RestoringException;
+    protected abstract @Nonnull T convertFromNonNullable(@Nonnull Block block, @Nonnull Class<?> type, @Nonnull Map<Class<? extends Annotation>, Annotation> annotations) throws RecoveryException;
     
     /* -------------------------------------------------- Convert To -------------------------------------------------- */
     

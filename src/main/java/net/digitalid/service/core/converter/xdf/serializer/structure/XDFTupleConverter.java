@@ -35,7 +35,7 @@ public class XDFTupleConverter<T extends Convertible> extends XDFConverter<T> {
             @Nonnull @NullableElements ReadOnlyArray<Block> elements = tupleWrapper.getNonNullableElements();
             ReadOnlyList<Field> fields;
             try {
-                fields = getStorableFields(type);
+                fields = getConvertibleFields(type);
             } catch (StructureException e) {
                 throw RestoringException.get(type, e);
             }
@@ -45,7 +45,7 @@ public class XDFTupleConverter<T extends Convertible> extends XDFConverter<T> {
                 Object fieldValue = convertField(field, elements.getNullable(i));
                 values[i] = fieldValue;
             }
-            @Nonnull Object restoredObject = constructObjectNonNullable(type, values);
+            @Nonnull Object restoredObject = recoverNonNullableObject(type, values);
             return (T) restoredObject;
         } catch (InvalidEncodingException | InternalException e) {
             throw RestoringException.get(type, e);
@@ -59,7 +59,7 @@ public class XDFTupleConverter<T extends Convertible> extends XDFConverter<T> {
                 
         ReadOnlyList<Field> fields;
         try {
-            fields = getStorableFields(type);
+            fields = getConvertibleFields(type);
         } catch (StructureException e) {
             throw StoringException.get(type, e.getMessage(), e);
         }

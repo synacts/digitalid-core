@@ -8,62 +8,61 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.conversion.Converter;
+import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.Convertible;
-import net.digitalid.utility.conversion.exceptions.RestoringException;
+import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.conversion.exceptions.StructureException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
- * Objects of classes that implement this interface can be encoded as a {@link Block block}.
- * 
- * @param <O> the type of the objects that the converter can encode and decode, which is typically the declaring class itself.
- * @param <E> the type of the external object that is needed to decode an object, which is quite often an {@link Entity}.
- *            In case no external information is needed for the decoding of an object, declare it as an {@link Object}.
+ * The XDF class provides a public API for converting convertible objects into the XDF format.
  */
 @Stateless
 public final class XDF {
     
     /**
-     * 
+     * The format object of XDF, which contains the XDF converters.
      */
     public static final @Nonnull XDFFormat FORMAT = new XDFFormat();
     
     /* -------------------------------------------------- Convert From -------------------------------------------------- */
     
     /**
-     * Converts a nullable object from a nullable XDF block.
+     * Recovers a nullable object from a nullable XDF block.
      * 
      * @param block the block which is converted to an object.
-     * @param type the type of the object which should be converted.
+     * @param type the type of the object which should be recovered.
      *              
-     * @return a nullable object converted from a nullable block.
+     * @return a nullable object recovered from a nullable block.
      * 
-     * @throws RestoringException if no converter for this type could be found.
+     * @throws RecoveryException if no converter for this type could be found.
      */    
-    public static @Nullable Convertible convertFrom(@Nullable Block block, @Nonnull Class<? extends Convertible> type) throws RestoringException {
+    public static @Nullable Convertible recoverNullable(@Nullable Block block, @Nonnull Class<? extends Convertible> type) throws InvalidEncodingException, InternalException, ConverterNotFoundException, RecoveryException {
         Converter.Structure structure;
         try {
-            structure = inferStructure(type);
+            structure = Converter.inferStructure(type);
         } catch (StructureException e) {
-            throw RestoringException.get(type, e.getMessage(), e);
+            throw InternalException.get(e.getMessage(), e);
         }
         
-        // TODO: Extract into a separate method with https://docs.oracle.com/javase/7/docs/api/java/lang/reflect/AnnotatedElement.html
-        Map<Class<? extends Annotation>, Annotation> metaData = Converter.getAnnotations(type);
+        ConverterAnnotations converterAnnotations = Converter.getAnnotations(type);
         
         Convertible convertible;
         switch (structure) {
             case TUPLE:
-                convertible = TUPLE_CONVERTER.convertFromNullable(block, type, metaData);
+                convertible = TUPLE_CONVERTER.convertFromNullable(block, type, converterAnnotations);
                 break;
             case SINGLE_TYPE:
-                convertible = SINGLE_FIELD_CONVERTER.convertFromNullable(block, type, metaData);
+                convertible = SINGLE_FIELD_CONVERTER.convertFromNullable(block, type, converterAnnotations);
                 break;
             default:
                 throw new RuntimeException("Structure '" + structure + "' is unknown. Known types are: '" + Arrays.toString(Converter.Structure.values()) + "'.");
         }
         if (!type.isInstance(convertible)) {
-            throw RestoringException.get(type, "The converter failed to convert the XDF block into the type '" + type + "'");
+            throw RecoveryException.get(type, "The converter failed to convert the XDF block into the type '" + type + "'");
         }
         return type.cast(convertible);
     }

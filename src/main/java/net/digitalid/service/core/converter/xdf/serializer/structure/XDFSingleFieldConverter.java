@@ -25,19 +25,19 @@ public class XDFSingleFieldConverter<T extends Convertible> extends XDFConverter
     protected @Nonnull T convertFromNonNullable(@Nonnull Block block, @Nonnull Class<?> type, @Nonnull Map<Class<? extends Annotation>, Object> metaData) throws RestoringException {
         Field field;
         try {
-            field = getStorableField(type);
+            field = getConvertibleField(type);
         } catch (StructureException e) {
             throw RestoringException.get(type, e);
         }
         Object fieldValue = convertField(field, block);
-        Object restoredObject = constructObjectNonNullable(type, fieldValue);
+        Object restoredObject = recoverNonNullableObject(type, fieldValue);
         return (T) restoredObject;
     }
 
     @Override
     public @Nonnull Block convertToNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String typeName, @Nullable String parentName, @Nonnull Map<Class<? extends Annotation>, Object> metaData) throws StoringException {
         try {
-            Field field = getStorableFields(type).getNonNullable(0);
+            Field field = getConvertibleFields(type).getNonNullable(0);
             
             Object fieldValue;
             try {
