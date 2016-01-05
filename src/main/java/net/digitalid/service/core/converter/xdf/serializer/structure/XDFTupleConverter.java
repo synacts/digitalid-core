@@ -1,8 +1,6 @@
 package net.digitalid.service.core.converter.xdf.serializer.structure;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
@@ -10,17 +8,19 @@ import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.converter.xdf.XDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.conversion.ConverterAnnotations;
+import net.digitalid.utility.conversion.Convertible;
+import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.exceptions.StoringException;
+import net.digitalid.utility.conversion.exceptions.StructureException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.internal.InternalException;
-import net.digitalid.utility.system.converter.Convertible;
-import net.digitalid.utility.system.converter.exceptions.FieldConverterException;
-import net.digitalid.utility.system.converter.exceptions.RestoringException;
-import net.digitalid.utility.system.converter.exceptions.StoringException;
-import net.digitalid.utility.system.converter.exceptions.StructureException;
 
 /**
  * Converts an object holding multiple fields into an XDF tuple block.
@@ -29,45 +29,42 @@ public class XDFTupleConverter<T extends Convertible> extends XDFConverter<T> {
     
     @SuppressWarnings("unchecked")
     @Override
-    protected @Nonnull T convertFromNonNullable(@Nonnull Block block, @Nonnull Class<?> type, @Nonnull Map<Class<? extends Annotation>, Object> metaData) throws RestoringException {
+    protected @Nonnull T recoverNonNullable(@Nonnull Block block, @Nonnull Class<?> type, @Nonnull ConverterAnnotations metaData) throws InvalidEncodingException, RecoveryException, InternalException {
+        @Nonnull TupleWrapper tupleWrapper = TupleWrapper.decode(block);
+        @Nonnull @NullableElements ReadOnlyArray<Block> elements = tupleWrapper.getNonNullableElements();
+        final @Nonnull @NonNullableElements ReadOnlyList<Field> fields;
         try {
-            @Nonnull TupleWrapper tupleWrapper = TupleWrapper.decode(block);
-            @Nonnull @NullableElements ReadOnlyArray<Block> elements = tupleWrapper.getNonNullableElements();
-            ReadOnlyList<Field> fields;
-            try {
-                fields = getConvertibleFields(type);
-            } catch (StructureException e) {
-                throw RestoringException.get(type, e);
-            }
-            int i = 0;
-            Object[] values = new Object[fields.size()];
-            for (Field field : fields) {
-                Object fieldValue = convertField(field, elements.getNullable(i));
-                values[i] = fieldValue;
-            }
-            @Nonnull Object restoredObject = recoverNonNullableObject(type, values);
-            return (T) restoredObject;
-        } catch (InvalidEncodingException | InternalException e) {
-            throw RestoringException.get(type, e);
+            fields = getConvertibleFields(type);
+        } catch (StructureException e) {
+            throw RecoveryException.get(type, e);
         }
+        int i = 0;
+        final @NullableElements Object[] values = new Object[fields.size()];
+        for (@Nonnull Field field : fields) {
+            @Nullable Object fieldValue = recoverNullable(elements.getNullable(i), field);
+            values[i] = fieldValue;
+        }
+        @Nonnull Object restoredObject = recoverNonNullableObject(type, values);
+        return (T) restoredObject;
     }
 
     @Override
-    public @Nonnull Block convertToNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String typeName, @Nullable String parentName, @Nonnull Map<Class<? extends Annotation>, Object> metaData) throws StoringException {
+    public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String typeName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws ConverterNotFoundException, StoringException {
         assert object instanceof Convertible : "The object extends Convertible.";
-        Convertible convertible = (Convertible) object;
+        
+        final @Nonnull Convertible convertible = (Convertible) object;
                 
-        ReadOnlyList<Field> fields;
+        final @Nonnull @NonNullableElements ReadOnlyList<Field> fields;
         try {
             fields = getConvertibleFields(type);
         } catch (StructureException e) {
             throw StoringException.get(type, e.getMessage(), e);
         }
         
-        @Nonnull FreezableArray<Block> elements = FreezableArray.get(fields.size());
+        final @Nonnull @NullableElements FreezableArray<Block> elements = FreezableArray.get(fields.size());
         int i = 0;
-        for (Field field : fields) {
-            @Nullable Object fieldValue;
+        for (final @Nonnull Field field : fields) {
+            final @Nullable Object fieldValue;
             try {
                 field.setAccessible(true);
                 fieldValue = field.get(convertible);
@@ -75,17 +72,13 @@ public class XDFTupleConverter<T extends Convertible> extends XDFConverter<T> {
                 throw StoringException.get(type, "The field '" + field.getName() + "' cannot be accessed.");
             }
 
-            XDFConverter<?> converter;
-            try {
-                converter = XDF.FORMAT.getConverter(field);
-            } catch (FieldConverterException e) {
-                throw StoringException.get(type, e.getMessage());
-            }
-            Block serializedField = converter.convertToNullable(fieldValue, field.getType(), field.getName(), typeName + (parentName == null ? "" : "." + parentName), getFieldMetaData(field));
+            final @Nonnull XDFConverter<?> converter = XDF.FORMAT.getConverter(field);
+            final @Nullable Block serializedField = converter.convertNullable(fieldValue, field.getType(), field.getName(), typeName + (parentName == null ? "" : "." + parentName), getAnnotations(field));
             elements.set(i, serializedField);
             i++;
         }
-        SemanticType semanticType = generateSemanticType(typeName, parentName, TupleWrapper.XDF_TYPE);
+        @Nonnull SemanticType semanticType = generateSemanticType(typeName, parentName, TupleWrapper.XDF_TYPE);
         return TupleWrapper.encode(semanticType, elements);
     }
+    
 }

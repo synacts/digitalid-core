@@ -1,8 +1,6 @@
 package net.digitalid.service.core.converter.xdf;
 
-import java.lang.annotation.Annotation;
 import java.util.Arrays;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
@@ -10,7 +8,6 @@ import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.conversion.Converter;
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.Convertible;
-import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.conversion.exceptions.StructureException;
@@ -23,24 +20,26 @@ import net.digitalid.utility.exceptions.internal.InternalException;
 @Stateless
 public final class XDF {
     
+    /* -------------------------------------------------- Format -------------------------------------------------- */
+    
     /**
      * The format object of XDF, which contains the XDF converters.
      */
     public static final @Nonnull XDFFormat FORMAT = new XDFFormat();
     
-    /* -------------------------------------------------- Convert From -------------------------------------------------- */
-    
+    /* -------------------------------------------------- Recovery -------------------------------------------------- */
+
     /**
-     * Recovers a nullable object from a nullable XDF block.
-     * 
-     * @param block the block which is converted to an object.
-     * @param type the type of the object which should be recovered.
-     *              
-     * @return a nullable object recovered from a nullable block.
-     * 
-     * @throws RecoveryException if no converter for this type could be found.
-     */    
-    public static @Nullable Convertible recoverNullable(@Nullable Block block, @Nonnull Class<? extends Convertible> type) throws InvalidEncodingException, InternalException, ConverterNotFoundException, RecoveryException {
+     * Recovers a nullable, convertible object from a nullable XDF block.
+     */
+    public static @Nullable Convertible recoverNullable(@Nullable Block block, @Nonnull Class<? extends Convertible> type) throws InvalidEncodingException, RecoveryException, InternalException  {
+        return block == null ? null : recoverNonNullable(block, type);
+    }
+
+    /**
+     * Recovers a non-nullable, convertible object from a non-nullable XDF block.
+     */
+    public static @Nonnull Convertible recoverNonNullable(@Nonnull Block block, @Nonnull Class<? extends Convertible> type) throws InvalidEncodingException, RecoveryException, InternalException  {
         Converter.Structure structure;
         try {
             structure = Converter.inferStructure(type);
@@ -53,24 +52,38 @@ public final class XDF {
         Convertible convertible;
         switch (structure) {
             case TUPLE:
-                convertible = TUPLE_CONVERTER.convertFromNullable(block, type, converterAnnotations);
+                convertible = XDFFormat.TUPLE_CONVERTER.recoverNullable(block, type, converterAnnotations);
                 break;
             case SINGLE_TYPE:
-                convertible = SINGLE_FIELD_CONVERTER.convertFromNullable(block, type, converterAnnotations);
+                convertible = XDFFormat.SINGLE_FIELD_CONVERTER.recoverNullable(block, type, converterAnnotations);
                 break;
             default:
                 throw new RuntimeException("Structure '" + structure + "' is unknown. Known types are: '" + Arrays.toString(Converter.Structure.values()) + "'.");
         }
         if (!type.isInstance(convertible)) {
-            throw RecoveryException.get(type, "The converter failed to convert the XDF block into the type '" + type + "'");
+            throw RecoveryException.get(type, "The converter failed to recover the type '" + type + "' from XDF block.");
         }
         return type.cast(convertible);
     }
     
     /* -------------------------------------------------- Convert To -------------------------------------------------- */
-    
+
     /**
-     * Converts a nullable object into an XDF block.
+     * Converts a nullable object into a nullable XDF block.
+     */
+    public static @Nullable Block convertNullable(@Nullable Convertible convertible, @Nonnull Class<? extends Convertible> type) throws StoringException, InternalException {
+       return convertible == null ? null : convertNonNullable(convertible, type); 
+    }
+
+    /**
+     * Converts a nullable object into a nullable XDF block using an optional parent name.
+     */
+    public static @Nullable Block convertNullable(@Nullable Convertible convertible, @Nonnull Class<? extends Convertible> type, @Nullable String parentName) throws StoringException, InternalException {
+        return convertible == null ? null : convertNonNullable(convertible, type, parentName);
+    }
+
+    /**
+     * Converts a non-nullable object into a non-nullable XDF block.
      *
      * @param convertible the convertible object which is converted into an XDF block.
      * @param type the type of the object which should be converted.
@@ -79,12 +92,12 @@ public final class XDF {
      *
      * @throws StoringException if no converter for this type could be found.
      */
-    public static @Nullable Block convertTo(@Nullable Convertible convertible, @Nonnull Class<? extends Convertible> type) throws StoringException {
-        return convertTo(convertible, type, null);
+    public static @Nonnull Block convertNonNullable(@Nonnull Convertible convertible, @Nonnull Class<? extends Convertible> type) throws StoringException, InternalException {
+        return convertNonNullable(convertible, type, null);
     }
 
     /**
-     * Converts a nullable object into an XDF block.
+     * Converts a non-nullable object into a non-nullable XDF block with an optionally given parent name.
      *
      * @param convertible the convertible object which is converted into an XDF block.
      * @param type the type of the object which should be converted.
@@ -95,24 +108,25 @@ public final class XDF {
      * @throws StoringException if no converter for this type could be found.
      */
     @SuppressWarnings("unchecked")
-    public static @Nullable Block convertTo(@Nullable Convertible convertible, @Nonnull Class<? extends Convertible> type, @Nullable String parentName) throws StoringException {
+    public static @Nonnull Block convertNonNullable(@Nonnull Convertible convertible, @Nonnull Class<? extends Convertible> type, @Nullable String parentName) throws StoringException, InternalException {
 
-        Block serializedObject;
-        Converter.Structure structure;
+        @Nonnull Block serializedObject;
+        final @Nonnull Converter.Structure structure;
         try {
-            structure = inferStructure(type);
+            structure = Converter.inferStructure(type);
         } catch (StructureException e) {
             throw StoringException.get(type, e.getMessage(), e);
         }
+        final @Nonnull ConverterAnnotations annotations = ConverterAnnotations.get();
         switch (structure) {
             case TUPLE:
-                serializedObject = TUPLE_CONVERTER.convertToNullable(convertible, type, type.getSimpleName(), parentName, null);
+                serializedObject = XDFFormat.TUPLE_CONVERTER.convertNonNullable(convertible, type, type.getSimpleName(), parentName, annotations);
                 break;
             case SINGLE_TYPE:
-                serializedObject = SINGLE_FIELD_CONVERTER.convertToNullable(convertible, type, type.getSimpleName(), parentName, null);
+                serializedObject = XDFFormat.SINGLE_FIELD_CONVERTER.convertNonNullable(convertible, type, type.getSimpleName(), parentName, annotations);
                 break;
             default:
-                throw new RuntimeException("Structure '" + structure + "' is unknown. Known types are: '" + Arrays.toString(Converter.Structure.values()) + "'.");
+                throw InternalException.get("Structure '" + structure + "' is unknown. Known types are: '" + Arrays.toString(Converter.Structure.values()) + "'.");
         }
         return serializedObject;
     }

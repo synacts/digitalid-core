@@ -3,6 +3,7 @@ package net.digitalid.service.core.converter.xdf;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import net.digitalid.service.core.converter.xdf.serializer.iterable.XDFArrayConverter;
 import net.digitalid.service.core.converter.xdf.serializer.iterable.XDFCollectionConverter;
 import net.digitalid.service.core.converter.xdf.serializer.iterable.XDFMapConverter;
@@ -24,105 +25,158 @@ import net.digitalid.utility.conversion.Format;
 import net.digitalid.utility.conversion.TypeMapper;
 
 /**
- * Description.
+ * The XDF format class which holds converters to encode and decode objects into the XDF format.
  */
 @Stateless
 public class XDFFormat extends Format<XDFConverter<?>> {
     
-    /* -------------------------------------------------- Type Converters -------------------------------------------------- */
-
-    private final static XDFConverter<Boolean> BOOLEAN_CONVERTER = new XDFBooleanConverter();
+    /* -------------------------------------------------- Internal Type Converters -------------------------------------------------- */
     
-    private final static XDFConverter<String> STRING_CONVERTER = new XDFStringConverter();
+    /**
+     * Creates a new converter which converts boolean to XDF.
+     */
+    private final static @Nonnull XDFConverter<Boolean> BOOLEAN_CONVERTER = new XDFBooleanConverter();
     
-    private final static XDFConverter<Character> CHARACTER_CONVERTER = new XDFCharacterConverter();
+     /**
+     * Creates a new converter which converts a byte to XDF.
+     */
+    private final static @Nonnull XDFConverter<Byte> INTEGER08_CONVERTER = new XDFInteger08Converter();
     
-    private final static XDFConverter<Byte[]> BINARY_CONVERTER = new XDFBinaryConverter();
-
-    private final static XDFConverter<Byte> INTEGER08_CONVERTER = new XDFInteger08Converter();
-    private final static XDFConverter<Short> INTEGER16_CONVERTER = new XDFInteger16Converter();
-    private final static XDFConverter<Integer> INTEGER32_CONVERTER = new XDFInteger32Converter();
-    private final static XDFConverter<Long> INTEGER64_CONVERTER = new XDFInteger64Converter();
+    /**
+     * Creates a new converter which converts a short to XDF.
+     */
+    private final static @Nonnull XDFConverter<Short> INTEGER16_CONVERTER = new XDFInteger16Converter();
     
-    private final static XDFConverter<BigInteger> INTEGER_CONVERTER = new XDFIntegerConverter();
+    /**
+     * Creates a new converter which converts an integer to XDF.
+     */
+    private final static @Nonnull XDFConverter<Integer> INTEGER32_CONVERTER = new XDFInteger32Converter();
     
-    private final static XDFConverter<Convertible> CONVERTIBLE_CONVERTER = new XDFObjectConverter();
-    private final static XDFConverter<? extends Collection<?>> COLLECTION_CONVERTER = new XDFCollectionConverter<>();
-    private final static XDFConverter<? extends Object[]> ARRAY_CONVERTER = new XDFArrayConverter();
-    private final static XDFConverter<? extends Map<?, ?>> MAP_CONVERTER = new XDFMapConverter<>();
+    /**
+     * Creates a new converter which converts a long to XDF.
+     */
+    private final static @Nonnull XDFConverter<Long> INTEGER64_CONVERTER = new XDFInteger64Converter();
     
-    // TODO: Introduce getters for the following two converters.
-    private final static XDFConverter<? extends Convertible> TUPLE_CONVERTER = new XDFTupleConverter<>();
-    private final static XDFConverter<? extends Convertible> SINGLE_FIELD_CONVERTER = new XDFSingleFieldConverter<>();
-
+    /**
+     * Creates a new converter which converts a BigInteger to XDF.
+     */
+    private final static @Nonnull XDFConverter<BigInteger> INTEGER_CONVERTER = new XDFIntegerConverter();
+    
+    /**
+     * Creates a new converter which converts string to XDF.
+     */
+    private final static @Nonnull XDFConverter<String> STRING_CONVERTER = new XDFStringConverter();
+    
+    /**
+     * Creates a new converter which converts a character to XDF.
+     */
+    private final static @Nonnull XDFConverter<Character> CHARACTER_CONVERTER = new XDFCharacterConverter();
+    
+    /**
+     * Creates a new converter which converts a byte array to XDF.
+     */
+    private final static @Nonnull XDFConverter<Byte[]> BINARY_CONVERTER = new XDFBinaryConverter();
+    
+    /**
+     * Creates a new converter which converts a convertible object to XDF.
+     */
+    private final static @Nonnull XDFConverter<? extends Convertible> CONVERTIBLE_CONVERTER = new XDFObjectConverter<>();
+    
+    /**
+     * Creates a new converter which converts a collection to XDF.
+     */
+    private final static @Nonnull XDFConverter<? extends Collection<?>> COLLECTION_CONVERTER = new XDFCollectionConverter<>();
+    
+    /**
+     * Creates a new converter which converts an array to XDF.
+     */
+    private final static @Nonnull XDFConverter<? extends Object[]> ARRAY_CONVERTER = new XDFArrayConverter();
+    
+    /**
+     * Creates a new converter which converts a map to XDF.
+     */
+    private final static @Nonnull XDFConverter<? extends Map<?, ?>> MAP_CONVERTER = new XDFMapConverter<>();
+    
+    /* -------------------------------------------------- Public Type Converters -------------------------------------------------- */
+    
+    /**
+     * Creates a new converter which converts a tuple to XDF.
+     */
+    public final static @Nonnull XDFConverter<? extends Convertible> TUPLE_CONVERTER = new XDFTupleConverter<>();
+    
+    /**
+     * Creates a new converter which converts a convertible with a single field to XDF.
+     */
+    public final static @Nonnull XDFConverter<? extends Convertible> SINGLE_FIELD_CONVERTER = new XDFSingleFieldConverter<>();
+    
     @Override
-    protected XDFConverter<Boolean> getBooleanConverter() {
+    protected @Nonnull XDFConverter<Boolean> getBooleanConverter() {
         return BOOLEAN_CONVERTER;
     }
-
-    @Override
-    protected XDFConverter<Character> getCharacterConverter() {
-        return CHARACTER_CONVERTER;
-    }
-
-    @Override
-    protected XDFConverter<String> getStringConverter() {
-        return STRING_CONVERTER;
-    }
-
-    @Override
-    protected XDFConverter<Byte[]> getBinaryConverter() {
-        return BINARY_CONVERTER;
-    }
-
-    @Override
-    protected XDFConverter<BigInteger> getIntegerConverter() {
+    
+     @Override
+    protected @Nonnull XDFConverter<BigInteger> getIntegerConverter() {
         return INTEGER_CONVERTER;
     }
-
+    
     @Override
-    protected XDFConverter<Byte> getInteger08Converter() {
+    protected @Nonnull XDFConverter<Byte> getInteger08Converter() {
         return INTEGER08_CONVERTER;
     }
-
+    
     @Override
-    protected XDFConverter<Short> getInteger16Converter() {
+    protected @Nonnull XDFConverter<Short> getInteger16Converter() {
         return INTEGER16_CONVERTER;
     }
-
+    
     @Override
-    protected XDFConverter<Integer> getInteger32Converter() {
+    protected @Nonnull XDFConverter<Integer> getInteger32Converter() {
         return INTEGER32_CONVERTER;
     }
-
+    
     @Override
-    protected XDFConverter<Long> getInteger64Converter() {
+    protected @Nonnull XDFConverter<Long> getInteger64Converter() {
         return INTEGER64_CONVERTER;
     }
     
     @Override
-    protected XDFConverter<Convertible> getConvertibleConverter() {
+    protected @Nonnull XDFConverter<Character> getCharacterConverter() {
+        return CHARACTER_CONVERTER;
+    }
+    
+    @Override
+    protected @Nonnull XDFConverter<String> getStringConverter() {
+        return STRING_CONVERTER;
+    }
+    
+    @Override
+    protected @Nonnull XDFConverter<Byte[]> getBinaryConverter() {
+        return BINARY_CONVERTER;
+    }
+    
+    @Override
+    protected @Nonnull XDFConverter<? extends Convertible> getConvertibleConverter() {
         return CONVERTIBLE_CONVERTER;
     }
-
+    
     @Override
-    protected XDFConverter<? extends Collection<?>> getCollectionConverter() {
+    protected @Nonnull XDFConverter<? extends Collection<?>> getCollectionConverter() {
         return COLLECTION_CONVERTER;
     }
-
+    
     @Override
-    protected XDFConverter<? extends Object[]> getArrayConverter() {
+    protected @Nonnull XDFConverter<? extends Object[]> getArrayConverter() {
         return ARRAY_CONVERTER;
     }
     
     @Override
-    protected XDFConverter<? extends Map<?, ?>> getMapConverter() {
+    protected @Nonnull XDFConverter<? extends Map<?, ?>> getMapConverter() {
         return MAP_CONVERTER;
     }
-
+    
     @Override
-    protected XDFConverter<?> getTypeConverter(TypeMapper<?, ?> typeToTypeMapper) {
+    protected @Nonnull XDFConverter<?> getTypeConverter(@Nonnull TypeMapper<?, ?> typeToTypeMapper) {
         return XDFKeyConverter.get(typeToTypeMapper);
     }
-
+    
 }

@@ -1,40 +1,33 @@
 package net.digitalid.service.core.converter.xdf.serializer.value;
 
-import java.lang.annotation.Annotation;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.converter.xdf.XDFConverter;
-import net.digitalid.utility.system.converter.Convertible;
-import net.digitalid.utility.system.converter.exceptions.RestoringException;
-import net.digitalid.utility.system.converter.exceptions.StoringException;
+import net.digitalid.utility.conversion.ConverterAnnotations;
+import net.digitalid.utility.conversion.Convertible;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.exceptions.StoringException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
-public class XDFObjectConverter extends XDFConverter<Convertible> {
+public class XDFObjectConverter<T extends Convertible> extends XDFConverter<T> {
     
     @SuppressWarnings("unchecked")
     @Override
-    protected @Nonnull Convertible convertFromNonNullable(@Nonnull Block block, @Nonnull Class<?> type, @Nonnull Map<Class<? extends Annotation>, Object> metaData) throws RestoringException {
-        @Nullable Convertible convertible = XDFConverter.convertFrom(block, (Class<? extends Convertible>) type);
-        // TODO: Introduce a non-nullable XDFConverter.convertFrom method and remove the following lines.
-        if (convertible == null) {
-            throw RestoringException.get(type, "Non-null block converted unexpectedly to null object.");
-        }
-        return convertible;
+    protected @Nonnull T recoverNonNullable(@Nonnull Block block, @Nonnull Class<?> type, @Nonnull ConverterAnnotations metaData) throws InvalidEncodingException, InternalException, RecoveryException {
+        @Nonnull Convertible convertible = XDF.recoverNonNullable(block, (Class<T>) type);
+        return (T) convertible;
     }
     
     @SuppressWarnings("unchecked")
     @Override
-    public @Nonnull Block convertToNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull Map<Class<? extends Annotation>, Object> metaData) throws StoringException {
+    public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException, InternalException {
         assert object instanceof Convertible : "The object is an instance of Convertible.";
         
         final @Nonnull Convertible convertible = (Convertible) object;
-        final @Nullable Block block = XDFConverter.convertTo(convertible, (Class<? extends Convertible>) type, fieldName + (parentName == null ? "" : "." + parentName));
-        // TODO: Introduce a non-nullable XDFConverter.convertTo method and remove the following lines.
-        if (block == null) {
-            throw StoringException.get(type, "Non-null object converted unexpectedly to null block.");
-        }
-        return block;
+        return XDF.convertNonNullable(convertible, (Class<? extends Convertible>) type, fieldName + (parentName == null ? "" : "." + parentName));
     }
     
 }
