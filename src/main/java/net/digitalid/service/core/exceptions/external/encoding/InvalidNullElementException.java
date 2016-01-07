@@ -21,6 +21,13 @@ public class InvalidNullElementException extends InvalidEncodingException {
     }
     
     /**
+     * Creates a new invalid null element exception with an error detail message.
+     */
+    protected InvalidNullElementException(@Nonnull String message) {
+        super("An element which may not be null is null: " + message);
+    }
+    
+    /**
      * Returns a new invalid null element exception.
      * 
      * @return a new invalid null element exception.
@@ -28,6 +35,14 @@ public class InvalidNullElementException extends InvalidEncodingException {
     @Pure
     public static @Nonnull InvalidNullElementException get() {
         return new InvalidNullElementException();
+    }
+    
+    /**
+     * Returns a new invalid null element exception with an error detail message.
+     */
+    @Pure
+    public static @Nonnull InvalidNullElementException get(@Nonnull String message) {
+        return new InvalidNullElementException(message);
     }
     
 }

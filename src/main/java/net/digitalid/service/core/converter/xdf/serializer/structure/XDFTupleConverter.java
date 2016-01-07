@@ -15,7 +15,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.Convertible;
-import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.conversion.exceptions.StructureException;
@@ -49,7 +48,7 @@ public class XDFTupleConverter<T extends Convertible> extends XDFConverter<T> {
     }
 
     @Override
-    public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String typeName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws ConverterNotFoundException, StoringException {
+    public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String typeName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws InternalException, StoringException {
         assert object instanceof Convertible : "The object extends Convertible.";
         
         final @Nonnull Convertible convertible = (Convertible) object;

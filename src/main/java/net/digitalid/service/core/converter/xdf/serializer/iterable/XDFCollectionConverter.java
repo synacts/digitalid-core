@@ -18,7 +18,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.annotations.GenericTypes;
-import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.conversion.exceptions.TypeUnknownException;
@@ -58,7 +57,7 @@ public class XDFCollectionConverter<T extends Collection<T>> extends XDFIterable
         }
         @Nonnull Class<?> genericType = genericTypes.value()[0];
 
-        @Nonnull XDFConverter elementConverter = XDF.FORMAT.getConverter(genericType);
+        @Nonnull XDFConverter<?> elementConverter = XDF.FORMAT.getConverter(genericType);
 
         @Nonnull @NullableElements Object[] elementValues = new Object[listOfBlocks.size()];
         int i = 0;
@@ -88,7 +87,7 @@ public class XDFCollectionConverter<T extends Collection<T>> extends XDFIterable
     }
 
     @Override
-    public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException, ConverterNotFoundException {
+    public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException, InternalException {
         assert object instanceof Collection: "The field of the convertible '" + object + "' is an iterable";
         
         @Nonnull Collection<?> collection = (Collection<?>) object;

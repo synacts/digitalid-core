@@ -11,8 +11,8 @@ import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.annotations.GenericTypes;
-import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * The converter implements helper methods which can be used to convert iterable objects into an XDF block.
@@ -24,7 +24,7 @@ public abstract class XDFIterableConverter<T> extends XDFConverter<T> {
     /**
      * Converts an array or collections field into an XDF list.
      */
-    protected @Nonnull Block varargsToXDFList(@Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData, @Nullable @NullableElements Object... values) throws ConverterNotFoundException, StoringException {
+    protected @Nonnull Block varargsToXDFList(@Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData, @Nullable @NullableElements Object... values) throws InternalException, StoringException {
         
         final @Nonnull @NullableElements FreezableArrayList<Block> elements = FreezableArrayList.get();
 

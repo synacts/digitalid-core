@@ -9,7 +9,6 @@ import net.digitalid.service.core.converter.xdf.XDFConverter;
 import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.conversion.ConverterAnnotations;
-import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
@@ -35,7 +34,7 @@ public class XDFArrayConverter extends XDFIterableConverter<Object[]> {
     }
     
     @Override
-    public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws ConverterNotFoundException, StoringException {
+    public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws InternalException, StoringException {
         assert object.getClass().isArray() : "The object is an array.";
         
         Object[] values = (Object[]) object;
