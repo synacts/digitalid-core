@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <actionName>CUSTOM-javadoc</actionName>
+        <displayName>javadoc</displayName>
+        <goals>
+            <goal>javadoc:javadoc</goal>
+        </goals>
+    </action>
+    <action>
+        <actionName>CUSTOM-package</actionName>
+        <displayName>package</displayName>
+        <goals>
+            <goal>package</goal>
+        </goals>
+    </action>
+    <action>
+        <actionName>CUSTOM-deploy</actionName>
+        <displayName>deploy</displayName>
+        <goals>
+            <goal>deploy</goal>
+        </goals>
+    </action>
+    <action>
+        <actionName>CUSTOM-install</actionName>
+        <displayName>install</displayName>
+        <goals>
+            <goal>install:install</goal>
+        </goals>
+    </action>
+</actions>
