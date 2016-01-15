@@ -1,10 +1,12 @@
 package net.digitalid.service.core.exceptions.external.encoding;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.identifier.HostIdentifier;
+
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+
+import net.digitalid.service.core.identifier.HostIdentifier;
 
 /**
  * This exception is thrown when a method recipient does not run on this server.

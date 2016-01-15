@@ -4,7 +4,22 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
+import net.digitalid.utility.collections.freezable.FreezableMap;
+import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
+import net.digitalid.utility.console.Console;
+import net.digitalid.utility.directory.Directory;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.loader.Loader;
+import net.digitalid.utility.system.logger.DefaultLogger;
+import net.digitalid.utility.system.logger.Level;
+import net.digitalid.utility.system.logger.Logger;
+import net.digitalid.utility.validation.state.Stateless;
+
 import net.digitalid.database.core.Configuration;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
@@ -13,24 +28,13 @@ import net.digitalid.database.core.annotations.NonLocked;
 import net.digitalid.database.core.configuration.MySQLConfiguration;
 import net.digitalid.database.core.configuration.PostgreSQLConfiguration;
 import net.digitalid.database.core.configuration.SQLiteConfiguration;
+
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
-import net.digitalid.utility.validation.state.Stateless;
-import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
-import net.digitalid.utility.collections.freezable.FreezableMap;
-import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
-import net.digitalid.utility.console.Console;
-import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.system.errors.InitializationError;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.system.loader.Loader;
-import net.digitalid.utility.system.logger.DefaultLogger;
-import net.digitalid.utility.system.logger.Level;
-import net.digitalid.utility.system.logger.Logger;
 
 /**
  * The server runs the configured hosts.

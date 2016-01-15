@@ -2,8 +2,14 @@ package net.digitalid.service.core.handler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.concepts.agent.Restrictions;
@@ -17,9 +23,6 @@ import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.site.annotations.Clients;
 import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.service.core.site.client.Client;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * Internal actions can only be sent by {@link Client clients} and can usually be {@link #reverseOnClient() reversed}.

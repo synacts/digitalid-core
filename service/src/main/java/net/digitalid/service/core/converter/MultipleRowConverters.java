@@ -1,11 +1,14 @@
 package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.sql.MultipleRowSQLConverter;
-import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
-import net.digitalid.service.core.identity.SemanticType;
+
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
+
+import net.digitalid.database.core.converter.sql.MultipleRowSQLConverter;
+
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
+import net.digitalid.service.core.identity.SemanticType;
 
 /**
  * This class allows to store several multiple-row converters in a single object.

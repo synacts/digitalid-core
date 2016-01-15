@@ -1,12 +1,15 @@
 package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.converter.sql.SQLConverter;
+
 import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This class allows to store several converters in a single object.

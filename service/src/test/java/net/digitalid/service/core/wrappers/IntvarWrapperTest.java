@@ -1,10 +1,13 @@
 package net.digitalid.service.core.wrappers;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+
 import net.digitalid.service.core.block.VariableInteger;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+
 import org.junit.Assert;
 import org.junit.Test;
 

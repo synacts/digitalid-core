@@ -1,9 +1,17 @@
 package net.digitalid.service.core.identity.resolution;
 
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
+
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.value.EmptyWrapper;
@@ -17,10 +25,6 @@ import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * Queries the identity of the given subject.

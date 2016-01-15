@@ -1,14 +1,17 @@
 package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.declaration.Declaration;
-import net.digitalid.database.core.table.Site;
-import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.site.host.Host;
+
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Validated;
+
+import net.digitalid.database.core.declaration.Declaration;
+import net.digitalid.database.core.table.Site;
+
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.site.host.Host;
 
 /**
  * This class models a database table that can be exported and imported on {@link Host hosts}.

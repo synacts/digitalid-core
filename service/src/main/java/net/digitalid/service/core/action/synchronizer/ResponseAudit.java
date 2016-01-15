@@ -4,11 +4,30 @@ import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableHashSet;
+import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.freezable.FreezableSet;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.readonly.ReadOnlySet;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.system.thread.NamedThreadFactory;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.CompressionWrapper;
@@ -27,21 +46,6 @@ import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.service.core.packet.Response;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.collections.freezable.FreezableHashSet;
-import net.digitalid.utility.collections.freezable.FreezableLinkedList;
-import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.freezable.FreezableSet;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.collections.readonly.ReadOnlySet;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.system.logger.Log;
-import net.digitalid.utility.system.thread.NamedThreadFactory;
 
 /**
  * This class models a response audit with the trail and the times of the last and this audit.

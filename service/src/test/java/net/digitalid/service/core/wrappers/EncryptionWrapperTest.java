@@ -2,12 +2,14 @@ package net.digitalid.service.core.wrappers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
 import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.ServerSetup;
+
 import org.junit.Assert;
 import org.junit.Test;
 

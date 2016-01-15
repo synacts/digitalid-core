@@ -6,14 +6,26 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
+import net.digitalid.utility.collections.concurrent.ConcurrentMap;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.freezable.NonFrozen;
+import net.digitalid.utility.validation.reference.Capturable;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
+
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.annotations.OnlyForActions;
 import net.digitalid.service.core.block.Block;
@@ -31,14 +43,6 @@ import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.site.annotations.Clients;
-import net.digitalid.utility.validation.reference.Capturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
-import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * This class models the contexts for {@link Contact contacts}.

@@ -1,6 +1,15 @@
 package net.digitalid.service.core.action.synchronizer;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.system.castable.Castable;
+import net.digitalid.utility.system.castable.CastableObject;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
@@ -9,13 +18,6 @@ import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.system.castable.Castable;
-import net.digitalid.utility.system.castable.CastableObject;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * This class models an audit with a time and trail.

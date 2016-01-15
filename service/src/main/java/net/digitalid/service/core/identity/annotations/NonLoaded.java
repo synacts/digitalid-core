@@ -5,8 +5,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.digitalid.service.core.identity.Type;
+
 import net.digitalid.utility.validation.meta.TargetType;
+
+import net.digitalid.service.core.identity.Type;
 
 /**
  * This annotation indicates that a {@link Type type} is {@link Type#isNotLoaded() not loaded}.

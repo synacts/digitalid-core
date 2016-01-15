@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.annotation.Nonnull;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.configuration.MySQLConfiguration;
 import net.digitalid.database.core.configuration.PostgreSQLConfiguration;
 import net.digitalid.database.core.configuration.SQLiteConfiguration;
+
 import net.digitalid.service.core.identity.SemanticType;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

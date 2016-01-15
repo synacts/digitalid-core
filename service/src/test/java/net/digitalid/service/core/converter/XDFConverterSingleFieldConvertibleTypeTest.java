@@ -2,9 +2,12 @@ package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.conversion.Convertible;
+
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.utility.conversion.Convertible;
+
 import org.junit.Test;
 
 public class XDFConverterSingleFieldConvertibleTypeTest {

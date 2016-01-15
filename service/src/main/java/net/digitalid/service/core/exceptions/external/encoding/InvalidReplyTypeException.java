@@ -1,10 +1,12 @@
 package net.digitalid.service.core.exceptions.external.encoding;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.identity.SemanticType;
+
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+
+import net.digitalid.service.core.identity.SemanticType;
 
 /**
  * This exception is thrown when no handler could not be found a reply type.

@@ -1,17 +1,21 @@
 package net.digitalid.service.core.entity;
 
 import java.sql.Types;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.system.castable.CastableObject;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
+
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.system.castable.CastableObject;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * This class implements methods of the {@link Entity} interface.

@@ -2,7 +2,13 @@ package net.digitalid.service.core.action.synchronizer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
+
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.signature.HostSignatureWrapper;
@@ -15,9 +21,6 @@ import net.digitalid.service.core.handler.QueryReply;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * Replies the state of the given entity.

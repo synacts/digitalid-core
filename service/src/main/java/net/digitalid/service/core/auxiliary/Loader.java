@@ -11,20 +11,24 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.directory.annotations.IsDirectory;
+import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.validation.state.Stateless;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.exceptions.operation.FailedCommitException;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
+
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.server.Server;
-import net.digitalid.utility.validation.state.Stateless;
-import net.digitalid.utility.directory.annotations.IsDirectory;
-import net.digitalid.utility.system.errors.InitializationError;
-import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class loads other classes in other domains.

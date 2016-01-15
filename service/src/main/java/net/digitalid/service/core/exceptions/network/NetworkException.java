@@ -1,11 +1,14 @@
 package net.digitalid.service.core.exceptions.network;
 
 import java.io.IOException;
+
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.identifier.HostIdentifier;
+
+import net.digitalid.utility.exceptions.DigitalIDException;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.DigitalIDException;
+
+import net.digitalid.service.core.identifier.HostIdentifier;
 
 /**
  * This exception indicates an error on the network layer.

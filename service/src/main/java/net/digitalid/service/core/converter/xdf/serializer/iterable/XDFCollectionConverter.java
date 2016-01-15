@@ -5,12 +5,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.XDFConverter;
+
 import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableHashSet;
@@ -23,6 +21,11 @@ import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.conversion.exceptions.TypeUnknownException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.internal.InternalException;
+
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.XDFConverter;
 
 /**
  * Converts a convertible object with a single iterable field into an XDF list block.

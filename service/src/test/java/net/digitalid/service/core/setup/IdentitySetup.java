@@ -1,8 +1,13 @@
 package net.digitalid.service.core.setup;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
+
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.concepts.agent.Agent;
@@ -14,8 +19,7 @@ import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.NaturalPerson;
 import net.digitalid.service.core.site.client.Client;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.ExternalException;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;

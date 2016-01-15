@@ -2,18 +2,7 @@ package net.digitalid.service.core.concepts.contact;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
-import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.exceptions.request.RequestException;
-import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.validation.reference.Capturable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.freezable.NonFrozenRecipient;
+
 import net.digitalid.utility.collections.converter.Brackets;
 import net.digitalid.utility.collections.converter.ElementConverter;
 import net.digitalid.utility.collections.converter.IterableConverter;
@@ -22,6 +11,20 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.freezable.NonFrozen;
+import net.digitalid.utility.freezable.NonFrozenRecipient;
+import net.digitalid.utility.validation.reference.Capturable;
+import net.digitalid.utility.validation.state.Pure;
+
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.exceptions.DatabaseException;
+
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.request.RequestException;
+import net.digitalid.service.core.identity.SemanticType;
 
 /**
  * This class models a set of {@link Contact contacts}.

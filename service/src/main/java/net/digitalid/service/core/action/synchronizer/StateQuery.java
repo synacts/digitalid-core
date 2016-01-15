@@ -1,9 +1,17 @@
 package net.digitalid.service.core.action.synchronizer;
 
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
+
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
@@ -24,10 +32,6 @@ import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * Queries the state of the given module for the given role.

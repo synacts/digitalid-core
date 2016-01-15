@@ -1,10 +1,17 @@
 package net.digitalid.service.core.exceptions.request;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
+
 import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
+
 import net.digitalid.service.core.block.wrappers.value.integer.Integer08Wrapper;
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.NonRequestingKeyConverter;
@@ -12,10 +19,6 @@ import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverte
 import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Validated;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * This class enumerates the various request error codes.

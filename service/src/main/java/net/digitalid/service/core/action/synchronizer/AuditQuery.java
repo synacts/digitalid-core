@@ -2,7 +2,14 @@ package net.digitalid.service.core.action.synchronizer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
+
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.annotations.HasSubject;
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
@@ -20,10 +27,6 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.site.annotations.Hosts;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * Queries the audit of the given service for the given role.

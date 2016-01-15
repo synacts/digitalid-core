@@ -1,12 +1,22 @@
 package net.digitalid.service.core.concepts.attribute;
 
 import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
+import net.digitalid.utility.collections.concurrent.ConcurrentMap;
+import net.digitalid.utility.collections.freezable.FreezableSet;
+import net.digitalid.utility.validation.reference.Capturable;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.sql.SQL;
+
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.block.wrappers.value.BooleanWrapper;
 import net.digitalid.service.core.concept.GeneralConcept;
@@ -16,12 +26,6 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.validation.reference.Capturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
-import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.collections.freezable.FreezableSet;
 
 /**
  * This class models an attribute with its value and visibility.

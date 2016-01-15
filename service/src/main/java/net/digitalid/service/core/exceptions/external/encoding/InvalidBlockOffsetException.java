@@ -1,10 +1,12 @@
 package net.digitalid.service.core.exceptions.external.encoding;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.block.Block;
+
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+
+import net.digitalid.service.core.block.Block;
 
 /**
  * This exception is thrown when the offset within a block is invalid.

@@ -1,8 +1,10 @@
 package net.digitalid.service.core.setup;
 
 import javax.annotation.Nonnull;
+
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.server.Server;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;

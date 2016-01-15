@@ -1,6 +1,7 @@
 package net.digitalid.service.core.format;
 
 import javax.annotation.Nonnull;
+
 import net.digitalid.service.core.factory.Tuple2Factory;
 
 /**

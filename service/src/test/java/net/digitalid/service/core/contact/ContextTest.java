@@ -1,13 +1,17 @@
 package net.digitalid.service.core.contact;
 
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
+
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.concepts.contact.FreezableContacts;
 import net.digitalid.service.core.setup.IdentitySetup;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;

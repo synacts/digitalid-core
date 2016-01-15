@@ -2,11 +2,13 @@ package net.digitalid.service.core.converter.xdf;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Stateless;
+
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Stateless;
 
 /**
  * This is a utility class to encode objects that implement {@link XDF}.

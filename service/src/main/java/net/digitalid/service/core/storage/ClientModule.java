@@ -1,10 +1,12 @@
 package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.site.client.Client;
+
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Validated;
+
+import net.digitalid.service.core.site.client.Client;
 
 /**
  * Client modules contain {@link ClientTable client tables} and are only used on {@link Client clients}.

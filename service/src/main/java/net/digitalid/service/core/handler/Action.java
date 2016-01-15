@@ -2,8 +2,16 @@ package net.digitalid.service.core.handler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
 import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.concepts.agent.Agent;
@@ -17,11 +25,6 @@ import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.site.client.AccountOpen;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.collections.freezable.FreezableLinkedList;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
 
 /**
  * Actions affect the state of a digital identity and are thus always {@link Audit audited}.

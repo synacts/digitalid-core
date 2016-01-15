@@ -1,9 +1,12 @@
 package net.digitalid.service.core.action.pusher;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.service.core.handler.ExternalAction;
+
 import net.digitalid.utility.system.logger.Log;
+
+import net.digitalid.database.core.annotations.NonCommitting;
+
+import net.digitalid.service.core.handler.ExternalAction;
 
 /**
  * Pushes the external actions to their recipients (and retries on failure).

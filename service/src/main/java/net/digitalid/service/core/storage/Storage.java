@@ -2,13 +2,15 @@ package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
+import net.digitalid.utility.collections.freezable.FreezableMap;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Stateless;
+
 import net.digitalid.service.core.exceptions.request.RequestErrorCode;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Stateless;
-import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
-import net.digitalid.utility.collections.freezable.FreezableMap;
 
 /**
  * This class maps to all the site storages given their state type.

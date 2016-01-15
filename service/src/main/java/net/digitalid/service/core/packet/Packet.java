@@ -3,10 +3,24 @@ package net.digitalid.service.core.packet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.annotations.index.ValidIndex;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.validation.math.Positive;
+import net.digitalid.utility.validation.reference.RawRecipient;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
 import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.action.synchronizer.RequestAudit;
 import net.digitalid.service.core.action.synchronizer.ResponseAudit;
@@ -44,16 +58,6 @@ import net.digitalid.service.core.identity.resolution.Successor;
 import net.digitalid.service.core.server.Server;
 import net.digitalid.service.core.site.client.AccountInitialize;
 import net.digitalid.service.core.site.client.AccountOpen;
-import net.digitalid.utility.validation.math.Positive;
-import net.digitalid.utility.validation.reference.RawRecipient;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.annotations.index.ValidIndex;
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**
  * A packet compresses, signs and encrypts requests and responses.

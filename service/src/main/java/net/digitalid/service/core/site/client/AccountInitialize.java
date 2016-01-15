@@ -2,10 +2,24 @@ package net.digitalid.service.core.site.client;
 
 import java.io.IOException;
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.tuples.FreezablePair;
+import net.digitalid.utility.collections.tuples.ReadOnlyPair;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
@@ -37,16 +51,6 @@ import net.digitalid.service.core.identity.resolution.FreezablePredecessors;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.identity.resolution.Predecessor;
 import net.digitalid.service.core.identity.resolution.Successor;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.collections.tuples.FreezablePair;
-import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * Initializes a new account with the given states.

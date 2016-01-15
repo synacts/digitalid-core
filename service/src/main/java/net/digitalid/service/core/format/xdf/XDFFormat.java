@@ -1,6 +1,7 @@
 package net.digitalid.service.core.format.xdf;
 
 import javax.annotation.Nonnull;
+
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.factory.Tuple2Factory;
 import net.digitalid.service.core.format.Format;

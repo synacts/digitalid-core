@@ -2,19 +2,22 @@ package net.digitalid.service.core.expression;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
+import net.digitalid.utility.collections.freezable.FreezableSet;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.validation.reference.Capturable;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
+
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.signature.CredentialsSignatureWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.request.RequestException;
-import net.digitalid.utility.validation.reference.Capturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
-import net.digitalid.utility.collections.freezable.FreezableSet;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * This class models binary expressions.

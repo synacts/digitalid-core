@@ -1,6 +1,7 @@
 package net.digitalid.service.core.auxiliary;
 
 import javax.annotation.Nonnull;
+
 import net.digitalid.utility.validation.state.Stateless;
 
 /**

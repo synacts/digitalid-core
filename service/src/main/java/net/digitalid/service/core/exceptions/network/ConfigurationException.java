@@ -1,10 +1,13 @@
 package net.digitalid.service.core.exceptions.network;
 
 import java.net.SocketException;
+
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.identifier.HostIdentifier;
+
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
+
+import net.digitalid.service.core.identifier.HostIdentifier;
 
 /**
  * This exception indicates that a configuration did not work.

@@ -1,8 +1,10 @@
 package net.digitalid.service.core.cryptography;
 
 import javax.annotation.Nonnull;
+
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.setup.DatabaseSetup;
+
 import org.junit.Assert;
 import org.junit.Test;
 

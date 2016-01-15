@@ -2,12 +2,20 @@ package net.digitalid.service.core.concept.property;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.system.thread.annotations.MainThread;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
@@ -26,10 +34,6 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.property.ReadOnlyProperty;
 import net.digitalid.service.core.storage.SiteTable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.system.thread.annotations.MainThread;
 
 /**
  * This class models a database table that stores a {@link ReadOnlyProperty property} of a {@link Concept concept}.

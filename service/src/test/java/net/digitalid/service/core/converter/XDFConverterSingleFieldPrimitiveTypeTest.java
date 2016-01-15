@@ -2,6 +2,7 @@ package net.digitalid.service.core.converter;
 
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.converter.xdf.serializer.value.XDFBooleanConverter;
+
 import org.junit.Assert;
 import org.junit.Test;
 

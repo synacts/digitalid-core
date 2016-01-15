@@ -1,11 +1,13 @@
 package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.site.host.Host;
+
+import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Validated;
-import net.digitalid.utility.system.thread.annotations.MainThread;
+
+import net.digitalid.service.core.site.host.Host;
 
 /**
  * Host modules contain {@link HostTable host tables} and are only used on {@link Host hosts}.

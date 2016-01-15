@@ -2,6 +2,10 @@ package net.digitalid.service.core.handler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.state.Immutable;
+
 import net.digitalid.service.core.block.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
@@ -9,8 +13,6 @@ import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.resolution.IdentityReply;
 import net.digitalid.service.core.site.annotations.Hosts;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class models a {@link Reply reply} to a {@link Query query}.

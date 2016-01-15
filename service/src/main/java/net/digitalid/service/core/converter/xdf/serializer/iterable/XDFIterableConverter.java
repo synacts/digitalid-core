@@ -2,17 +2,19 @@ package net.digitalid.service.core.converter.xdf.serializer.iterable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.XDFConverter;
-import net.digitalid.service.core.identity.SemanticType;
+
 import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.annotations.GenericTypes;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.internal.InternalException;
+
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.XDFConverter;
+import net.digitalid.service.core.identity.SemanticType;
 
 /**
  * The converter implements helper methods which can be used to convert iterable objects into an XDF block.

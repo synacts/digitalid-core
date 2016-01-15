@@ -1,13 +1,9 @@
 package net.digitalid.service.core.server;
 
 import java.util.Collection;
+
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.service.core.exceptions.request.RequestException;
-import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.site.host.Host;
-import net.digitalid.service.core.storage.Service;
+
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
@@ -15,6 +11,14 @@ import net.digitalid.utility.console.Console;
 import net.digitalid.utility.console.Option;
 import net.digitalid.utility.console.exceptions.EscapeOptionException;
 import net.digitalid.utility.exceptions.external.ExternalException;
+
+import net.digitalid.database.core.Database;
+import net.digitalid.database.core.annotations.Committing;
+
+import net.digitalid.service.core.exceptions.request.RequestException;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.site.host.Host;
+import net.digitalid.service.core.storage.Service;
 
 /**
  * This class contains the command-line options of the {@link Server}.

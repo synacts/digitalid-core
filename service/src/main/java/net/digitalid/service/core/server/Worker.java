@@ -3,11 +3,20 @@ package net.digitalid.service.core.server;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.system.logger.Log;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.action.synchronizer.ActionModule;
 import net.digitalid.service.core.action.synchronizer.RequestAudit;
@@ -32,11 +41,6 @@ import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.packet.Request;
 import net.digitalid.service.core.packet.Response;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.exceptions.internal.InternalException;
-import net.digitalid.utility.system.logger.Log;
 
 /**
  * A worker processes incoming requests asynchronously.

@@ -2,11 +2,14 @@ package net.digitalid.service.core.identity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.converter.sql.SQLConverter;
-import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
+
+import net.digitalid.utility.system.castable.CastableObject;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.system.castable.CastableObject;
+
+import net.digitalid.database.core.converter.sql.SQLConverter;
+
+import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 
 /**
  * This class models a digital identity, which can change identifiers and hosts.

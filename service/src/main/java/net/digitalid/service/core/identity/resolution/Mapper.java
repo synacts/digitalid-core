@@ -7,8 +7,23 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.tuples.FreezableTriplet;
+import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.system.thread.annotations.MainThread;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Stateless;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -17,6 +32,7 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.sql.statement.table.create.SQLReferenceOption;
 import net.digitalid.database.core.table.GeneralReference;
 import net.digitalid.database.core.table.GeneralTable;
+
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.exceptions.external.declaration.InvalidDeclarationException;
 import net.digitalid.service.core.exceptions.external.notfound.IdentityNotFoundException;
@@ -49,18 +65,6 @@ import net.digitalid.service.core.server.Server;
 import net.digitalid.service.core.site.client.AccountInitialize;
 import net.digitalid.service.core.site.client.AccountOpen;
 import net.digitalid.service.core.site.host.Host;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Stateless;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.collections.tuples.FreezableTriplet;
-import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
-import net.digitalid.utility.system.errors.InitializationError;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.exceptions.internal.InternalException;
-import net.digitalid.utility.system.logger.Log;
-import net.digitalid.utility.system.thread.annotations.MainThread;
 
 /**
  * The mapper maps between {@link Identifier identifiers} and {@link Identity identities}.

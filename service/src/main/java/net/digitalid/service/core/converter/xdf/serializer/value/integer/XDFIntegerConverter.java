@@ -1,18 +1,19 @@
 package net.digitalid.service.core.converter.xdf.serializer.value.integer;
 
-import java.lang.annotation.Annotation;
 import java.math.BigInteger;
-import java.util.Map;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
-import net.digitalid.service.core.converter.xdf.XDFConverter;
-import net.digitalid.service.core.identity.SemanticType;
+
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.internal.InternalException;
+
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.value.integer.IntegerWrapper;
+import net.digitalid.service.core.converter.xdf.XDFConverter;
+import net.digitalid.service.core.identity.SemanticType;
 
 public class XDFIntegerConverter extends XDFConverter<BigInteger> {
     

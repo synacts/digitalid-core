@@ -2,11 +2,13 @@ package net.digitalid.service.core.exceptions.external.declaration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.handler.Reply;
-import net.digitalid.service.core.identifier.Identifier;
+
+import net.digitalid.utility.exceptions.external.ExternalException;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.ExternalException;
+
+import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.identifier.Identifier;
 
 /**
  * This exception is thrown when an identity has an invalid declaration.

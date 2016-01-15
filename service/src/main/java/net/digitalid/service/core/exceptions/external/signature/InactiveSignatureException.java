@@ -1,9 +1,11 @@
 package net.digitalid.service.core.exceptions.external.signature;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
+
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
+
+import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 
 /**
  * This exception is thrown when a signature is inactive.

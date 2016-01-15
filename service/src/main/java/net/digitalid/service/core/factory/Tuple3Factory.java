@@ -1,6 +1,7 @@
 package net.digitalid.service.core.factory;
 
 import javax.annotation.Nonnull;
+
 import net.digitalid.utility.validation.state.Immutable;
 
 @Immutable

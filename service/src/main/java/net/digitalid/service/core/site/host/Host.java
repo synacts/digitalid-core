@@ -4,12 +4,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.directory.Directory;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
+
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
@@ -33,9 +40,6 @@ import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.server.Server;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * A host stores a {@link KeyPair} and is run by a {@link Server}.

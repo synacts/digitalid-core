@@ -2,12 +2,14 @@ package net.digitalid.service.core;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This class models the core service.

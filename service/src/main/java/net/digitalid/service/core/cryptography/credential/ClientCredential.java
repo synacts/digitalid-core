@@ -2,9 +2,21 @@ package net.digitalid.service.core.cryptography.credential;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.annotations.size.NonEmpty;
+import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
+import net.digitalid.utility.collections.concurrent.ConcurrentMap;
+import net.digitalid.utility.collections.tuples.ReadOnlyPair;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.validation.state.Immutable;
+
 import net.digitalid.database.core.annotations.NonCommitting;
+
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.concepts.agent.RandomizedAgentPermissions;
@@ -24,14 +36,6 @@ import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.collections.annotations.size.NonEmpty;
-import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
-import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**
  * This class models credentials on the client-side.

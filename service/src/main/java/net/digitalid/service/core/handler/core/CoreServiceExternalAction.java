@@ -1,9 +1,14 @@
 package net.digitalid.service.core.handler.core;
 
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
+
 import net.digitalid.service.core.CoreService;
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.entity.Entity;
@@ -14,7 +19,6 @@ import net.digitalid.service.core.handler.ExternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This class models the {@link ExternalAction external actions} of the {@link CoreService core service}.

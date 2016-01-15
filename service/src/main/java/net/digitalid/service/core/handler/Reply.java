@@ -8,12 +8,22 @@ import java.sql.Types;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.thread.Threading;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.CompressionWrapper;
@@ -30,12 +40,6 @@ import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.service.core.site.annotations.Hosts;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
-import net.digitalid.utility.system.errors.InitializationError;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.system.thread.Threading;
 
 /**
  * This class models replies to {@link Method methods} and stores them in the {@link Database database}.

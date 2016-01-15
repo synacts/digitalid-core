@@ -5,21 +5,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.Locked;
-import net.digitalid.database.core.annotations.NonLocked;
-import net.digitalid.database.core.exceptions.DatabaseException;
-import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.request.RequestException;
-import net.digitalid.service.core.handler.InternalAction;
-import net.digitalid.service.core.handler.Method;
-import net.digitalid.service.core.packet.Response;
-import net.digitalid.service.core.storage.Service;
+
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashSet;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
@@ -31,6 +20,21 @@ import net.digitalid.utility.collections.readonly.ReadOnlySet;
 import net.digitalid.utility.exceptions.external.ExternalException;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.NamedThreadFactory;
+
+import net.digitalid.database.core.Database;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonLocked;
+import net.digitalid.database.core.exceptions.DatabaseException;
+
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.network.NetworkException;
+import net.digitalid.service.core.exceptions.request.RequestException;
+import net.digitalid.service.core.handler.InternalAction;
+import net.digitalid.service.core.handler.Method;
+import net.digitalid.service.core.packet.Response;
+import net.digitalid.service.core.storage.Service;
 
 /**
  * This class synchronizes {@link InternalAction internal actions}.

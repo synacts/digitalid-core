@@ -2,8 +2,18 @@ package net.digitalid.service.core.packet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.reference.RawRecipient;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
 import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.action.synchronizer.RequestAudit;
 import net.digitalid.service.core.action.synchronizer.Sender;
@@ -20,13 +30,6 @@ import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.client.Commitment;
 import net.digitalid.service.core.site.client.SecretCommitment;
-import net.digitalid.utility.validation.reference.RawRecipient;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class compresses, signs and encrypts requests by clients.

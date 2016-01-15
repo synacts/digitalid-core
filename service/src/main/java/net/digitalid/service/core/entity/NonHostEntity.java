@@ -1,9 +1,11 @@
 package net.digitalid.service.core.entity;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.identity.InternalNonHostIdentity;
+
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
+
+import net.digitalid.service.core.identity.InternalNonHostIdentity;
 
 /**
  * This interface models a non-host entity.

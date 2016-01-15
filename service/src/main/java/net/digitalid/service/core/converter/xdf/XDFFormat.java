@@ -3,7 +3,14 @@ package net.digitalid.service.core.converter.xdf;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.conversion.Convertible;
+import net.digitalid.utility.conversion.Format;
+import net.digitalid.utility.conversion.TypeMapper;
+import net.digitalid.utility.validation.state.Stateless;
+
 import net.digitalid.service.core.converter.xdf.serializer.iterable.XDFArrayConverter;
 import net.digitalid.service.core.converter.xdf.serializer.iterable.XDFCollectionConverter;
 import net.digitalid.service.core.converter.xdf.serializer.iterable.XDFMapConverter;
@@ -19,10 +26,6 @@ import net.digitalid.service.core.converter.xdf.serializer.value.integer.XDFInte
 import net.digitalid.service.core.converter.xdf.serializer.value.integer.XDFIntegerConverter;
 import net.digitalid.service.core.converter.xdf.serializer.value.string.XDFCharacterConverter;
 import net.digitalid.service.core.converter.xdf.serializer.value.string.XDFStringConverter;
-import net.digitalid.utility.validation.state.Stateless;
-import net.digitalid.utility.conversion.Convertible;
-import net.digitalid.utility.conversion.Format;
-import net.digitalid.utility.conversion.TypeMapper;
 
 /**
  * The XDF format class which holds converters to encode and decode objects into the XDF format.

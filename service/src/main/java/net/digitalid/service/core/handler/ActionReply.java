@@ -1,9 +1,16 @@
 package net.digitalid.service.core.handler;
 
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
+
 import net.digitalid.service.core.action.pusher.Pusher;
 import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.block.wrappers.signature.HostSignatureWrapper;
@@ -16,9 +23,6 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.core.CoreServiceActionReply;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class models a {@link Reply reply} to an {@link ExternalAction external action}.

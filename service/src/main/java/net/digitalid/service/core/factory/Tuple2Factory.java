@@ -2,14 +2,17 @@ package net.digitalid.service.core.factory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
+
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
+
 import net.digitalid.service.core.format.Format;
 import net.digitalid.service.core.format.Tuple2Format;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 @Immutable
 public abstract class Tuple2Factory<O, E, O1, E1, O2, E2> extends Factory<O, E> {

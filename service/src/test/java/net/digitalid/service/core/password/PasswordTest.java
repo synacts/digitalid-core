@@ -1,11 +1,15 @@
 package net.digitalid.service.core.password;
 
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
+
 import net.digitalid.service.core.concepts.settings.Settings;
 import net.digitalid.service.core.setup.IdentitySetup;
+
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;

@@ -2,6 +2,7 @@ package net.digitalid.service.core;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+
 import org.junit.Test;
 
 class A {}

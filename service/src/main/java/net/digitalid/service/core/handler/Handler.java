@@ -1,8 +1,15 @@
 package net.digitalid.service.core.handler;
 
 import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.system.castable.Castable;
+import net.digitalid.utility.system.castable.CastableObject;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.entity.Account;
@@ -13,10 +20,6 @@ import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.system.castable.Castable;
-import net.digitalid.utility.system.castable.CastableObject;
 
 /**
  * This class provides the features that all handlers share.

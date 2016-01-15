@@ -1,13 +1,16 @@
 package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.key.KeyConverter;
-import net.digitalid.service.core.concept.ConceptKeyConverter;
+
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Stateless;
 import net.digitalid.utility.validation.state.Validated;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.exceptions.internal.InternalException;
+
+import net.digitalid.database.core.converter.key.KeyConverter;
+
+import net.digitalid.service.core.concept.ConceptKeyConverter;
 
 /**
  * This class allows to convert an object to its key and recover it again given its key (and an external object) without requests.

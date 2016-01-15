@@ -2,18 +2,12 @@ package net.digitalid.service.core.converter.xdf.serializer.iterable;
 
 import java.lang.reflect.Modifier;
 import java.util.Map;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
-import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.XDFConverter;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidNullElementException;
-import net.digitalid.service.core.identity.SemanticType;
+
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.elements.NullableElements;
-import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableHashMap;
 import net.digitalid.utility.collections.freezable.FreezableList;
@@ -25,6 +19,15 @@ import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.freezable.Frozen;
+
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.structure.ListWrapper;
+import net.digitalid.service.core.block.wrappers.structure.TupleWrapper;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.XDFConverter;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidNullElementException;
+import net.digitalid.service.core.identity.SemanticType;
 
 public class XDFMapConverter<T extends Map<?, ?>> extends XDFConverter<T> {
     

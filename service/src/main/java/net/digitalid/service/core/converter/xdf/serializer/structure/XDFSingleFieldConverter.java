@@ -1,13 +1,10 @@
 package net.digitalid.service.core.converter.xdf.serializer.structure;
 
 import java.lang.reflect.Field;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.value.EmptyWrapper;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.XDFConverter;
-import net.digitalid.service.core.identity.SemanticType;
+
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.Convertible;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
@@ -16,6 +13,12 @@ import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.conversion.exceptions.StructureException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.internal.InternalException;
+
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.value.EmptyWrapper;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.XDFConverter;
+import net.digitalid.service.core.identity.SemanticType;
 
 /**
  * Converts a convertible object with a single field into an XDF block.

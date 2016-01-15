@@ -1,7 +1,9 @@
 package net.digitalid.service.core.block.wrappers.exceptions;
 
 import java.io.IOException;
+
 import javax.annotation.Nonnull;
+
 import net.digitalid.utility.validation.state.Pure;
 
 /**
