@@ -8,7 +8,7 @@ import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.handler.ActionReply;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 /**

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.Type;
-import net.digitalid.utility.annotations.meta.TargetType;
+import net.digitalid.utility.validation.meta.TargetType;
 
 /**
  * This annotation indicates that the {@link Identity identity} of an {@link Entity entity} denotes a {@link Type type}.

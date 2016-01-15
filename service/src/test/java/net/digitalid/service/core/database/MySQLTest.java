@@ -4,7 +4,7 @@ import java.io.IOException;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.configuration.MySQLConfiguration;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Pure;
 import org.junit.BeforeClass;
 
 /**

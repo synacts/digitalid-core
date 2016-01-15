@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
-import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.validation.state.Stateless;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.conversion.Converter;
 import net.digitalid.utility.conversion.ConverterAnnotations;

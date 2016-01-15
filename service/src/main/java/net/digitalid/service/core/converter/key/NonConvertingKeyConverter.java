@@ -2,8 +2,8 @@ package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.converter.xdf.SubtypingRequestingXDFConverter;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Stateless;
 
 /**
  * This class implements a key converter that uses the object itself as its key.

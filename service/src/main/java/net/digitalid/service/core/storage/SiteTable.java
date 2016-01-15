@@ -6,9 +6,9 @@ import net.digitalid.database.core.table.Site;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
 
 /**
  * This class models a database table that contains part of an {@link Entity entity's} state.

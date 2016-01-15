@@ -5,10 +5,10 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.annotations.reference.Capturable;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.freezable.Frozen;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.validation.reference.Capturable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**

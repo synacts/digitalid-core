@@ -7,8 +7,8 @@ import net.digitalid.database.core.exceptions.operation.FailedValueStoringExcept
 import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
 import net.digitalid.service.core.format.Format;
 import net.digitalid.service.core.format.Tuple2Format;
-import net.digitalid.utility.annotations.reference.NonCapturable;
-import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.exceptions.internal.InternalException;
 
 @Immutable

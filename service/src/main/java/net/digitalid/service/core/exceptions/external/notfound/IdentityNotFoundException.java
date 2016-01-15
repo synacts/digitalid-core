@@ -3,8 +3,8 @@ package net.digitalid.service.core.exceptions.external.notfound;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**

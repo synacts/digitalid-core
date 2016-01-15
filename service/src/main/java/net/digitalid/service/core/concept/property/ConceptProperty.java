@@ -11,7 +11,7 @@ import net.digitalid.service.core.concept.property.indexed.IndexedConceptPropert
 import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.service.core.concept.property.nullable.NullableConceptProperty;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This interface is implemented by all {@link ReadOnlyProperty properties} that belong to a {@link Concept concept}.

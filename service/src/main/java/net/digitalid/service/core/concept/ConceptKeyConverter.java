@@ -3,9 +3,9 @@ package net.digitalid.service.core.concept;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.converter.key.NonRequestingKeyConverter;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
 
 /**
  * This class allows to convert an object to its key and recover it again given its key (and an external object) without requests.

@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
-import net.digitalid.utility.annotations.meta.TargetType;
+import net.digitalid.utility.validation.meta.TargetType;
 
 /**
  * This annotation indicates that a {@link SignatureWrapper signature} has a {@link SignatureWrapper#hasSubject() subject}.

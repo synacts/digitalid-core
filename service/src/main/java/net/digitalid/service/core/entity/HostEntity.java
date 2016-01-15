@@ -3,8 +3,8 @@ package net.digitalid.service.core.entity;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.site.host.Host;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This interface models a host entity.

@@ -21,9 +21,9 @@ import net.digitalid.service.core.identity.EmailPerson;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
 import net.digitalid.utility.exceptions.external.ExternalException;
 import net.digitalid.utility.exceptions.internal.InternalException;
 

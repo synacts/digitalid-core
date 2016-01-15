@@ -13,7 +13,7 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidNullElemen
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.elements.NullableElements;
-import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableHashMap;
 import net.digitalid.utility.collections.freezable.FreezableList;

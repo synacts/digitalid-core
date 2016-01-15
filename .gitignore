@@ -1,6 +1,6 @@
-/target/
-.classpath
-.settings/
-.project
-.idea/
-digitalid-service-core.iml
+*/target/
+*/.idea/
+.idea
+digitalid-core.iml
+*/digitalid-core-*.iml
+*/digitalid-service-core.iml

@@ -1,9 +1,9 @@
 package net.digitalid.service.core.concepts.contact;
 
 import javax.annotation.Nonnull;
-import net.digitalid.utility.annotations.reference.Capturable;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.validation.reference.Capturable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.freezable.NonFrozen;
 
 /**
  * This interface provides read-only access to {@link FreezableContactPermissions contact permissions} and should <em>never</em> be cast away.

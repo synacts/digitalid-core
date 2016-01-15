@@ -2,8 +2,8 @@ package net.digitalid.service.core.exceptions.external.signature;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.signature.CredentialsSignatureWrapper;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This exception is thrown when a credentials signature has expired.

@@ -15,7 +15,7 @@ import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.identity.resolution.Successor;
-import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.validation.state.Immutable;
 
 /**
  * This class models a person.

@@ -1,6 +1,6 @@
 package net.digitalid.service.core.identity;
 
-import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.validation.state.Immutable;
 
 /**
  * This class models a non-host identity.

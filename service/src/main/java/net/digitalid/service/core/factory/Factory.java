@@ -3,8 +3,8 @@ package net.digitalid.service.core.factory;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.service.core.format.Format;
-import net.digitalid.utility.annotations.reference.NonCapturable;
-import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.exceptions.internal.InternalException;
 
 @Immutable

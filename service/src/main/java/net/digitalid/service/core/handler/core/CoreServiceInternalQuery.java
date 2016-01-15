@@ -20,7 +20,7 @@ import net.digitalid.service.core.exceptions.request.RequestException;
 import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**

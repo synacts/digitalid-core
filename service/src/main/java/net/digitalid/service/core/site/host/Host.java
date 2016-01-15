@@ -33,8 +33,8 @@ import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.server.Server;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.directory.Directory;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.directory.Directory;
 import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**

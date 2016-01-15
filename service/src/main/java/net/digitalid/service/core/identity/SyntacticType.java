@@ -24,8 +24,8 @@ import net.digitalid.service.core.identity.annotations.NonLoaded;
 import net.digitalid.service.core.identity.annotations.NonLoadedRecipient;
 import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.exceptions.external.ExternalException;
 import net.digitalid.utility.system.thread.annotations.MainThread;
 

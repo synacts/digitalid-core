@@ -8,7 +8,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.request.RequestException;
-import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**

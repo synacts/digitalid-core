@@ -7,7 +7,7 @@ import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This class models the core service.

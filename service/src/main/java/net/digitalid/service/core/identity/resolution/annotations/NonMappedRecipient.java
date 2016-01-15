@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import net.digitalid.service.core.identifier.Identifier;
-import net.digitalid.utility.annotations.meta.TargetType;
+import net.digitalid.utility.validation.meta.TargetType;
 
 /**
  * This annotation indicates that a method should only be invoked on a non-{@link Identifier#isMapped() mapped} {@link Identifier identifier}.

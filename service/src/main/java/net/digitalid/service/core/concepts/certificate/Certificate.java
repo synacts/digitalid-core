@@ -15,7 +15,7 @@ import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.NonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.Category;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**

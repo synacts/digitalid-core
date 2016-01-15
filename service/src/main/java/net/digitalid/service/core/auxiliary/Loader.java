@@ -21,8 +21,8 @@ import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.server.Server;
-import net.digitalid.utility.annotations.state.Stateless;
-import net.digitalid.utility.system.directory.annotations.IsDirectory;
+import net.digitalid.utility.validation.state.Stateless;
+import net.digitalid.utility.directory.annotations.IsDirectory;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.logger.Log;
 

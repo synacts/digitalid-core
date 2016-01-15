@@ -11,9 +11,9 @@ import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.system.console.Console;
-import net.digitalid.utility.system.console.Option;
-import net.digitalid.utility.system.console.exceptions.EscapeOptionException;
+import net.digitalid.utility.console.Console;
+import net.digitalid.utility.console.Option;
+import net.digitalid.utility.console.exceptions.EscapeOptionException;
 import net.digitalid.utility.exceptions.external.ExternalException;
 
 /**

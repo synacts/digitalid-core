@@ -21,7 +21,7 @@ import net.digitalid.service.core.packet.ClientRequest;
 import net.digitalid.service.core.packet.Response;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;

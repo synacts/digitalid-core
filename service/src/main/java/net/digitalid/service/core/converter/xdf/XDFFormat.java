@@ -19,7 +19,7 @@ import net.digitalid.service.core.converter.xdf.serializer.value.integer.XDFInte
 import net.digitalid.service.core.converter.xdf.serializer.value.integer.XDFIntegerConverter;
 import net.digitalid.service.core.converter.xdf.serializer.value.string.XDFCharacterConverter;
 import net.digitalid.service.core.converter.xdf.serializer.value.string.XDFStringConverter;
-import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.validation.state.Stateless;
 import net.digitalid.utility.conversion.Convertible;
 import net.digitalid.utility.conversion.Format;
 import net.digitalid.utility.conversion.TypeMapper;

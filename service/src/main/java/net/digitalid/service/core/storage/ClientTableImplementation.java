@@ -10,9 +10,9 @@ import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.SpecificTable;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
 
 /**
  * This class implements a database table that can be created and deleted on {@link Client clients} and {@link Host hosts}.

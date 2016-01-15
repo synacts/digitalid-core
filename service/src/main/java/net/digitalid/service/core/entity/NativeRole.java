@@ -10,8 +10,8 @@ import net.digitalid.service.core.concept.Observer;
 import net.digitalid.service.core.concepts.agent.ClientAgent;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.site.client.Client;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 

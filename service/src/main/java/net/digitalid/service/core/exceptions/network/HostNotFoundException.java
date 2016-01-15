@@ -3,8 +3,8 @@ package net.digitalid.service.core.exceptions.network;
 import java.net.UnknownHostException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This exception indicates that a host was not found.
