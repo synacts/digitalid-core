@@ -3,64 +3,89 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>net.digitalid</groupId>
-    <artifactId>digitalid-core</artifactId>
+    
+    <groupId>net.digitalid.core</groupId>
+    <artifactId>core</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
+    
+    <name>Digital ID Core</name>
+    <description>This project contains the Digital ID core protocol: www.digitalid.net.</description>
+    <url>https://code.digitalid.net/digitalid/core</url>
+    
+    <organization>
+        <name>Synacts GmbH</name>
+        <url>https://www.synacts.com</url>
+    </organization>
+    
+    <licenses>
+        <license>
+            <name>To be determined</name>
+            <url>https://www.synacts.com/company/#become-partner</url>
+            <comments>Until the license is determined, all rights are reserved by Synacts GmbH.</comments>
+        </license>
+    </licenses>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
-
+    
     <modules>
         <module>exceptions</module>
         <module>identifier</module>
         <module>identity</module>
-        <module>authorization</module>
         <module>entity</module>
-        <module>resolution</module>
-        <module>host</module>
         <module>client</module>
+        <module>host</module>
+        <module>authorization</module>
         <module>handler</module>
+        <module>resolution</module>
         <module>audit</module>
         <module>synchronizer</module>
         <module>property</module>
         <module>concept</module>
-        <module>node</module>
-        <module>error</module>
         <module>settings</module>
+        <module>agent</module>
+        <module>error</module>
+        <module>pusher</module>
+        <module>node</module>
         <module>contact</module>
         <module>context</module>
-        <module>agent</module>
-        <module>pusher</module>
         <module>expression</module>
         <module>conversion</module>
         <module>cryptography</module>
         <module>certificate</module>
         <module>attribute</module>
         <module>cache</module>
-        <module>packet</module>
         <module>credentials</module>
+        <module>packet</module>
         <module>state</module>
         <module>initializer</module>
         <module>account</module>
         <module>server</module>
     </modules>
-
-    <distributionManagement>
-        <repository>
-            <id>digitalid-deployment</id>
-            <name>Final Releases</name>
-            <url>https://repo.digitalid.net/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>digitalid-deployment</id>
-            <name>Snapshot Releases</name>
-            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+    
+    <dependencies>
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.j2objc</groupId>
+            <artifactId>j2objc-annotations</artifactId>
+            <version>0.9.8</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
     <repositories>
         <repository>
             <id>digitalid-releases</id>
@@ -73,39 +98,33 @@
             <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
+    
+    <distributionManagement>
+        <repository>
+            <id>digitalid-deployment</id>
+            <name>Final Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>digitalid-deployment</id>
+            <name>Snapshot Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
     <build>
         <plugins>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
                 <configuration>
-                    <quiet>true</quiet>
-                    <linksource>false</linksource>
-                    <doctitle>Digital ID System</doctitle>
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                    <links>
-                        <link>https://docs.digitalid.net/core/${project.version}/</link>
-                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
-                    </links>
-                    <tagletArtifacts>
-                        <tagletArtifact>
-                            <groupId>net.digitalid</groupId>
-                            <artifactId>digitalid-utility-taglets</artifactId>
-                            <version>${project.version}</version>
-                        </tagletArtifact>
-                    </tagletArtifacts>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -119,18 +138,40 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <configuration>
+                    <quiet>true</quiet>
+                    <linksource>false</linksource>
+                    <doctitle>Digital ID Core</doctitle>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <links>
+                        <!-- TODO: Include all utility, database and core Javadocs here! -->
+                        <link>https://docs.digitalid.net/utility/logging/${project.version}/</link>
+                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                    </links>
+                    <tagletArtifacts>
+                        <tagletArtifact>
+                            <groupId>net.digitalid.utility</groupId>
+                            <artifactId>utility-taglets</artifactId>
+                            <version>${project.version}</version>
+                        </tagletArtifact>
+                    </tagletArtifacts>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
+    
 </project>
