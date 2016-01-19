@@ -59,7 +59,7 @@
         <module>certificate</module>
         <module>attribute</module>
         <module>cache</module>
-        <module>credentials</module>
+        <module>credential</module>
         <module>packet</module>
         <module>state</module>
         <module>initializer</module>

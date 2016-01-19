@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-credentials</artifactId>
+            <artifactId>core-credential</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
