@@ -3,10 +3,10 @@ package net.digitalid.core.property.nonnullable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Validated;
+import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.state.Validated;
 
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.Locked;

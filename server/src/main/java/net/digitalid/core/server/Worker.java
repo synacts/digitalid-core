@@ -9,8 +9,8 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.logger.Log;
 
 import net.digitalid.database.core.Database;

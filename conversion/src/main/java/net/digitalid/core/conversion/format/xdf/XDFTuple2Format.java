@@ -3,7 +3,7 @@ package net.digitalid.core.conversion.format.xdf;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 

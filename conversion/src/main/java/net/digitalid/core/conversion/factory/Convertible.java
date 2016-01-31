@@ -2,7 +2,7 @@ package net.digitalid.core.conversion.factory;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 /**
  * Objects of classes that implement this interface can be converted.

@@ -6,10 +6,10 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.conversion.Convertible;
+import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.conversion.Format;
 import net.digitalid.utility.conversion.TypeMapper;
-import net.digitalid.utility.validation.state.Stateless;
+import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.conversion.xdf.serializer.iterable.XDFArrayConverter;
 import net.digitalid.core.conversion.xdf.serializer.iterable.XDFCollectionConverter;

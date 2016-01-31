@@ -17,7 +17,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableHashSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
-import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.NamedThreadFactory;
 

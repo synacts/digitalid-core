@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.system.auxiliary.StringUtility;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 /**
  * This exception is thrown when a collection contains less elements than expected.

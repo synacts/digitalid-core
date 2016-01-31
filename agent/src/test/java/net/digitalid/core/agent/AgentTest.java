@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;

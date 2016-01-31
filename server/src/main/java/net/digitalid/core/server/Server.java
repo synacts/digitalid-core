@@ -12,13 +12,13 @@ import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.console.Console;
 import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.loader.Loader;
 import net.digitalid.utility.system.logger.DefaultLogger;
 import net.digitalid.utility.system.logger.Level;
 import net.digitalid.utility.system.logger.Logger;
-import net.digitalid.utility.validation.state.Stateless;
+import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.core.Configuration;
 import net.digitalid.database.core.Database;

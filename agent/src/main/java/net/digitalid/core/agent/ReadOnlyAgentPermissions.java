@@ -6,8 +6,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.readonly.ReadOnlyMap;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.reference.Capturable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.reference.Capturable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 

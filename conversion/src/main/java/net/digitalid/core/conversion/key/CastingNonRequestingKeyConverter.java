@@ -3,11 +3,11 @@ package net.digitalid.core.conversion.key;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.castable.Castable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.state.Validated;
 
 /**
  * This class allows to convert an object to its key and recover it again by downcasting the object returned by the abstract method to the given target class.

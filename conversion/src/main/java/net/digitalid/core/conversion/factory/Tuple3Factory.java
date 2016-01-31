@@ -2,7 +2,7 @@ package net.digitalid.core.conversion.factory;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 @Immutable
 public abstract class Tuple3Factory<O, E, O1, E1, O2, E2, O3, E3> extends Tuple2Factory<O, E, O1, E1, O2, E2> {

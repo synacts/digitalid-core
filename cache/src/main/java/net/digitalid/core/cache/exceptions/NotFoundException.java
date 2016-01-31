@@ -2,9 +2,9 @@ package net.digitalid.core.cache.exceptions;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.SemanticType;

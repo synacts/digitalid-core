@@ -2,8 +2,8 @@ package net.digitalid.core.conversion.key;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Stateless;
+import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.conversion.xdf.SubtypingRequestingXDFConverter;
 

@@ -10,18 +10,18 @@ import java.security.NoSuchAlgorithmException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.annotations.index.ValidIndex;
-import net.digitalid.utility.collections.annotations.size.NonEmpty;
+import net.digitalid.utility.validation.annotations.index.Index;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.validation.math.NonNegative;
-import net.digitalid.utility.validation.math.Positive;
-import net.digitalid.utility.validation.reference.Capturable;
-import net.digitalid.utility.validation.reference.Captured;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.math.NonNegative;
+import net.digitalid.utility.validation.annotations.math.Positive;
+import net.digitalid.utility.validation.annotations.reference.Capturable;
+import net.digitalid.utility.validation.annotations.reference.Captured;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.converter.sql.SQL;
@@ -292,7 +292,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * @ensure isEncoded() : "This block is encoded.";
      */
     @NonEncodingRecipient
-    public @Nonnull byte getByte(@ValidIndex int index) {
+    public @Nonnull byte getByte(@Index int index) {
         assert !isEncoding() : "This method is not called during encoding.";
         assert index >= 0 && index < getLength() : "The index is valid.";
         
@@ -369,7 +369,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * @param value the new value of the byte at the given index.
      */
     @EncodingRecipient
-    public void setByte(@ValidIndex int index, byte value) {
+    public void setByte(@Index int index, byte value) {
         assert isEncoding() : "This method may only be called during encoding.";
         assert index >= 0 && index < getLength() : "The index is valid.";
         
@@ -837,7 +837,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * @param close whether the output stream shall be closed.
      */
     @NonEncodingRecipient
-    public void writeTo(@ValidIndex int offset, @Nonnull OutputStream outputStream, boolean close) throws IOException {
+    public void writeTo(@Index int offset, @Nonnull OutputStream outputStream, boolean close) throws IOException {
         writeTo(offset, getLength() - offset, outputStream, close);
     }
     

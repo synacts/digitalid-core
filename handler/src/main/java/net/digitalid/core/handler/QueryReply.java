@@ -3,8 +3,8 @@ package net.digitalid.core.handler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.internal.InternalException;
-import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 

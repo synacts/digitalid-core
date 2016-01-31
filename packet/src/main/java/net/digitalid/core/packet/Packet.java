@@ -7,16 +7,16 @@ import java.io.OutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.annotations.index.ValidIndex;
+import net.digitalid.utility.validation.annotations.index.Index;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.validation.math.Positive;
-import net.digitalid.utility.validation.reference.RawRecipient;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.math.Positive;
+import net.digitalid.utility.validation.annotations.reference.RawRecipient;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
@@ -400,7 +400,7 @@ public abstract class Packet {
      */
     @Pure
     @RawRecipient
-    abstract @Nullable Block getBlock(@ValidIndex int index);
+    abstract @Nullable Block getBlock(@Index int index);
     
     /**
      * Returns the signature of the given compression and audit.

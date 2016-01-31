@@ -3,7 +3,7 @@ package net.digitalid.core.conversion;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.conversion.Convertible;
+import net.digitalid.utility.generator.conversion.Convertible;
 
 import net.digitalid.core.conversion.Block;
 

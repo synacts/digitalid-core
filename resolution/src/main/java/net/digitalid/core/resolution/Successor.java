@@ -7,8 +7,8 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.errors.InitializationError;
 
 import net.digitalid.database.core.Database;

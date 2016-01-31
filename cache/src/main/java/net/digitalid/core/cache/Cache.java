@@ -19,14 +19,14 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.exceptions.external.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.logger.Log;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Stateless;
+import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
@@ -34,26 +34,22 @@ import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.service.core.auxiliary.Time;
-
+import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
+import net.digitalid.core.cache.exceptions.CertificateNotFoundException;
+import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
 import net.digitalid.core.conversion.Block;
-
+import net.digitalid.core.conversion.exceptions.InvalidReplyParameterValueException;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestException;
 
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
 import net.digitalid.service.core.concepts.contact.FreezableAttributeTypeSet;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
 import net.digitalid.service.core.entity.Role;
-
-import net.digitalid.core.conversion.exceptions.InvalidReplyParameterValueException;
-import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
-import net.digitalid.core.cache.exceptions.CertificateNotFoundException;
-import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.HostIdentity;
@@ -110,7 +106,7 @@ public final class Cache {
                     // Since the public key chain of 'core.digitalid.net' is not available, the host 'core.digitalid.net' is created on this server.
                     final @Nonnull Host host = new Host(HostIdentifier.DIGITALID);
                     value = new CertifiedAttributeValue(host.getPublicKeyChain(), HostIdentity.DIGITALID, PublicKeyChain.TYPE);
-                    final @Nonnull File certificateFile = new File(Directory.getHostsDirectory().getPath() + File.separator + "core.digitalid.net.certificate.xdf");
+                    final @Nonnull File certificateFile = new File(Directory.getHostsDirectory().getPath() + "/core.digitalid.net.certificate.xdf");
                     SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, value).writeTo(new FileOutputStream(certificateFile), true);
                     Log.warning("The public key chain of the root host was not found and thus 'core.digitalid.net' was created on this machine.");
                 }

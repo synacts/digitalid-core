@@ -1,7 +1,7 @@
 package net.digitalid.core.cryptography.signature.exceptions;
 
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
  * This exception is thrown when an authentication is inactive.

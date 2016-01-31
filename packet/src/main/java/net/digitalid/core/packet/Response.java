@@ -5,19 +5,19 @@ import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.annotations.index.ValidIndex;
-import net.digitalid.utility.collections.annotations.size.NonEmpty;
+import net.digitalid.utility.validation.annotations.index.Index;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.exceptions.external.ExternalException;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.validation.reference.RawRecipient;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.reference.RawRecipient;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
@@ -231,7 +231,7 @@ public final class Response extends Packet {
      * @throws RequestException if the responding host encountered a packet error.
      */
     @Pure
-    public void checkReply(@ValidIndex int index) throws RequestException {
+    public void checkReply(@Index int index) throws RequestException {
         if (!exceptions.isNull(index)) { throw exceptions.getNonNullable(index); }
     }
     
@@ -245,7 +245,7 @@ public final class Response extends Packet {
      * @throws RequestException if the responding host encountered a packet error.
      */
     @Pure
-    public @Nullable Reply getReply(@ValidIndex int index) throws RequestException {
+    public @Nullable Reply getReply(@Index int index) throws RequestException {
         checkReply(index);
         return replies.get(index);
     }
@@ -263,7 +263,7 @@ public final class Response extends Packet {
      */
     @Pure
     @SuppressWarnings("unchecked")
-    public @Nonnull <T extends Reply> T getReplyNotNull(@ValidIndex int index) throws RequestException {
+    public @Nonnull <T extends Reply> T getReplyNotNull(@Index int index) throws RequestException {
         final @Nullable Reply reply = getReply(index);
         assert reply != null : "The reply is not null.";
         return (T) reply;
@@ -276,7 +276,7 @@ public final class Response extends Packet {
      * @param reply the reply which is to set at the index.
      */
     @RawRecipient
-    void setReply(@ValidIndex int index, @Nonnull Reply reply) {
+    void setReply(@Index int index, @Nonnull Reply reply) {
         replies.set(index, reply);
     }
     
@@ -287,7 +287,7 @@ public final class Response extends Packet {
      * @param exception the exception which is to set at the index.
      */
     @RawRecipient
-    void setException(@ValidIndex int index, @Nonnull RequestException exception) {
+    void setException(@Index int index, @Nonnull RequestException exception) {
         exceptions.set(index, exception);
     }
     
