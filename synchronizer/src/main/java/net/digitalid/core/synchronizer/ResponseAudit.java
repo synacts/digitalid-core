@@ -17,7 +17,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.NamedThreadFactory;
@@ -84,9 +84,9 @@ public final class ResponseAudit extends Audit {
     public ResponseAudit(@Nonnull Time lastTime, @Nonnull Time thisTime, @Nonnull @Frozen @NonNullableElements ReadOnlyList<Block> trail) {
         super(lastTime);
         
-        assert trail.isFrozen() : "The trail is frozen.";
-        assert !trail.containsNull() : "The trail does not contain null.";
-        for (final @Nonnull Block block : trail) { assert block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type."; }
+        Require.that(trail.isFrozen()).orThrow("The trail is frozen.");
+        Require.that(!trail.containsNull()).orThrow("The trail does not contain null.");
+        for (final @Nonnull Block block : trail) { Require.that(block.getType().isBasedOn(Packet.SIGNATURE)).orThrow("Each block of the trail is based on the packet signature type."); }
         
         this.thisTime = thisTime;
         this.trail = trail;

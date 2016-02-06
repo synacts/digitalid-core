@@ -10,7 +10,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.console.Console;
 import net.digitalid.utility.console.Option;
 import net.digitalid.utility.console.exceptions.EscapeOptionException;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;

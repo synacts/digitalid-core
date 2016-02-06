@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -233,7 +233,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @Pure
         @Override
         public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> decodeNonNullable(@Nonnull ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>> pair, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+            Require.that(block.getType().isBasedOn(getType())).orThrow("The block is based on the indicated type.");
             
             final E entity = pair.getNonNullableElement0();
             final NonNullableConceptPropertySetup<V, C, E> setup = pair.getNonNullableElement1();

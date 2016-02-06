@@ -5,8 +5,8 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.system.castable.CastableObject;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -50,7 +50,7 @@ public abstract class EntityImplementation<S extends Site> extends CastableObjec
         } else if (site instanceof Client) {
             return Role.getNotNull((Client) site, resultSet, columnIndex);
         } else {
-            throw ShouldNeverHappenError.get("A site is either a host or a client.");
+            throw UnexpectedValueException.with("A site is either a host or a client.");
         }
     }
     

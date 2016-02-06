@@ -1,6 +1,6 @@
 package net.digitalid.core.cryptography.signature.exceptions;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**

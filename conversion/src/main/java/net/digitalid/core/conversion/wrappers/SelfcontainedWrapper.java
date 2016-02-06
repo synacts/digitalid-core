@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
@@ -123,8 +123,8 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Override
     public void encode(@Nonnull @Encoding Block block) {
-        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        Require.that(block.getLength() == determineLength()).orThrow("The block's length has to match the determined length.");
+        Require.that(block.getType().isBasedOn(getSyntacticType())).orThrow("The block is based on the indicated syntactic type.");
         
         tuple.writeTo(block);
     }
@@ -328,8 +328,8 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      */
     @SuppressWarnings("AssignmentToMethodParameter")
     private static void read(final @Nonnull InputStream inputStream, final @Nonnull byte[] bytes, @NonNegative int offset, @NonNegative int length) throws IOException {
-        assert offset >= 0 && length >= 0 : "The offset and length are non-negative.";
-        assert offset + length <= bytes.length : "The indicated section may not exceed the byte array.";
+        Require.that(offset >= 0 && length >= 0).orThrow("The offset and length are non-negative.");
+        Require.that(offset + length <= bytes.length).orThrow("The indicated section may not exceed the byte array.");
         
         while (length > 0) {
             final int read = inputStream.read(bytes, offset, length);

@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.Database;

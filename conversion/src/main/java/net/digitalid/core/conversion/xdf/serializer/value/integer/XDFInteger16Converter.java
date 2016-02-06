@@ -25,7 +25,7 @@ public class XDFInteger16Converter extends XDFConverter<Short> {
     
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException {
-        assert (object instanceof Short) : "The object is an instance of the byte type.";
+        Require.that((object instanceof Short)).orThrow("The object is an instance of the byte type.");
 
         final short value = (Short) object;
 

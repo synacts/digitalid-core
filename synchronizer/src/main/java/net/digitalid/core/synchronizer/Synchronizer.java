@@ -17,7 +17,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableHashSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.NamedThreadFactory;
 
@@ -56,7 +56,7 @@ public final class Synchronizer extends Thread {
     @Locked
     @Committing
     public static void execute(@Nonnull InternalAction action) throws DatabaseException {
-        assert action.isOnClient() : "The internal action is on a client.";
+        Require.that(action.isOnClient()).orThrow("The internal action is on a client.");
         
         if (action.isSimilarTo(action)) {
             Log.debugging("Execute and queue on the client the action " + action + ".");
@@ -116,7 +116,7 @@ public final class Synchronizer extends Thread {
      * @ensure !isSuspended(role, service) : "The given service is not suspended.";
      */
     static void resume(@Nonnull Role role, @Nonnull Service service) {
-        assert isSuspended(role, service) : "The given service is suspended.";
+        Require.that(isSuspended(role, service)).orThrow("The given service is suspended.");
         
         Log.debugging("The " + service.getName() + " of " + role.getIdentity().getAddress() + " is resumed.");
         final @Nonnull ConcurrentSet<Service> set = suspendedServices.get(role);
@@ -136,7 +136,7 @@ public final class Synchronizer extends Thread {
     @Committing
     static void reloadSuspended(@Nonnull Role role, @Nonnull StateModule module) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         final @Nonnull Service service = module.getService();
-        assert isSuspended(role, service) : "The service is suspended.";
+        Require.that(isSuspended(role, service)).orThrow("The service is suspended.");
         
         @Nonnull Time lastTime = SynchronizerModule.getLastTime(role, service); // Read from the database in order to synchronize with other processes.
         if (module.equals(service)) { lastTime = Time.MAX; }
@@ -165,7 +165,7 @@ public final class Synchronizer extends Thread {
     @NonLocked
     @Committing
     public static void reload(@Nonnull Role role, @Nonnull StateModule module) throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !Database.isLocked() : "The database is not locked.";
+        Require.that(!Database.isLocked()).orThrow("The database is not locked.");
         
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
         if (set == null) { set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>()); }
@@ -195,7 +195,7 @@ public final class Synchronizer extends Thread {
     @NonLocked
     @Committing
     public static void refresh(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !Database.isLocked() : "The database is not locked.";
+        Require.that(!Database.isLocked()).orThrow("The database is not locked.");
         
         if (suspend(role, service)) {
             try {
@@ -282,7 +282,7 @@ public final class Synchronizer extends Thread {
             try {
                 Log.verbose("Wait for the next pending action.");
                 final @Nullable InternalAction action = SynchronizerModule.pendingActions.take();
-                assert action != null : "Just to make sure that the action is indeed not null.";
+                Require.that(action != null).orThrow("Just to make sure that the action is indeed not null.");
                 SynchronizerModule.pendingActions.addFirst(action);
                 // TODO: Rewrite such that SynchronizerModule.getMethods() does the waiting.
                 final @Nonnull ReadOnlyList<Method> methods = SynchronizerModule.getMethods();

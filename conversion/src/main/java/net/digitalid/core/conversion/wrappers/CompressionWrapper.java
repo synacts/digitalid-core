@@ -8,24 +8,21 @@ import java.util.zip.InflaterOutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.conversion.None;
+import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
-import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
-
-import net.digitalid.utility.conversion.None;
-
-import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.annotations.Encoded;
 import net.digitalid.core.conversion.annotations.Encoding;
 import net.digitalid.core.conversion.annotations.NonEncoding;
 
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
@@ -73,7 +70,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     private CompressionWrapper(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block element) {
         super(type);
         
-        assert element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
+        Require.that(element.getType().isBasedOn(type.getParameters().getNonNullable(0))).orThrow("The element is based on the parameter of the given type.");
         
         this.element = element;
     }
@@ -99,7 +96,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
                 element.writeTo(new DeflaterOutputStream(cache), true);
                 Log.verbose("Element with " + element.getLength() + " bytes compressed in " + start.ago().getValue() + " ms.");
             } catch (@Nonnull IOException exception) {
-                throw ShouldNeverHappenError.get("The given element could not be compressed.", exception);
+                throw UnexpectedFailureException.with("The given element could not be compressed.", exception);
             }
         }
         return cache;
@@ -114,13 +111,13 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     @Pure
     @Override
     public void encode(@Nonnull @Encoding Block block) {
-        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        Require.that(block.getLength() == determineLength()).orThrow("The block's length has to match the determined length.");
+        Require.that(block.getType().isBasedOn(getSyntacticType())).orThrow("The block is based on the indicated syntactic type.");
         
         try {
             getCache().writeTo(block.getOutputStream());
         } catch (@Nonnull IOException exception) {
-            throw ShouldNeverHappenError.get("The compressed element could not be written.", exception);
+            throw UnexpectedFailureException.with("The compressed element could not be written.", exception);
         }
     }
     

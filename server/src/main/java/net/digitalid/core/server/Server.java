@@ -12,7 +12,7 @@ import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.console.Console;
 import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.loader.Loader;
 import net.digitalid.utility.system.logger.DefaultLogger;
@@ -93,7 +93,7 @@ public final class Server {
      * @require hasHost(identifier) : "The host is running on this server.";
      */
     public static @Nonnull Host getHost(@Nonnull HostIdentifier hostIdentifier) {
-        assert hasHost(hostIdentifier) : "The host is running on this server.";
+        Require.that(hasHost(hostIdentifier)).orThrow("The host is running on this server.");
         
         return hosts.get(hostIdentifier);
     }

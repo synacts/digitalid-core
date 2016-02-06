@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
@@ -268,7 +268,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
      * @require context == null || contact == null : "The context or the contact is null.";
      */
     private Restrictions(boolean client, boolean role, boolean writing, @Nullable Context context, @Nullable Contact contact) {
-        assert context == null || contact == null : "The context or the contact is null.";
+        Require.that(context == null || contact == null).orThrow("The context or the contact is null.");
         
         this.client = client;
         this.role = role;
@@ -477,7 +477,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         @Pure
         @Override
         public final @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
+            Require.that(block.getType().isBasedOn(getType())).orThrow("The block is based on the type of this converter.");
             
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
             final boolean client = BooleanWrapper.decode(tuple.getNonNullableElement(0));

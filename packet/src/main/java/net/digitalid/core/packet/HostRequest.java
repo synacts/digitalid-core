@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.reference.RawRecipient;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -77,7 +77,7 @@ public final class HostRequest extends Request {
     @Override
     @RawRecipient
     void setField(@Nullable Object field) {
-        assert field != null : "See the constructor above.";
+        Require.that(field != null).orThrow("See the constructor above.");
         this.signer = (InternalIdentifier) field;
     }
     

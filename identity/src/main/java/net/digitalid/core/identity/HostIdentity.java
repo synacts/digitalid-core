@@ -42,7 +42,7 @@ public final class HostIdentity extends IdentityImplementation implements Intern
      */
     @MainThread
     private static @Nonnull HostIdentity map(@Nonnull HostIdentifier identifier) {
-        assert Threading.isMainThread() : "This method may only be called in the main thread.";
+        Require.that(Threading.isMainThread()).orThrow("This method may only be called in the main thread.");
         
         try {
             return Mapper.mapHostIdentity(identifier);

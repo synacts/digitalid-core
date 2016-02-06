@@ -110,7 +110,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     private Attribute(@Nonnull Entity entity, @Nonnull SemanticType type) {
         super(entity);
         
-        assert type.isAttributeFor(entity) : "The type is an attribute for the entity.";
+        Require.that(type.isAttributeFor(entity)).orThrow("The type is an attribute for the entity.");
         
         this.type = type;
     }
@@ -174,7 +174,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     @NonCommitting
     @OnlyForActions
     public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws DatabaseException {
-        assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
+        Require.that(!Objects.equals(oldValue, newValue)).orThrow("The old and new value are not equal.");
         
         if (oldValue == null && newValue != null) { AttributeModule.insertValue(this, true, newValue); }
         else if (oldValue != null && newValue == null) { AttributeModule.deleteValue(this, true, oldValue); }
@@ -232,7 +232,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     @NonCommitting
     @OnlyForActions
     void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws DatabaseException {
-        assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
+        Require.that(!Objects.equals(oldValue, newValue)).orThrow("The old and new value are not equal.");
         
         if (oldValue == null && newValue != null) { AttributeModule.insertValue(this, false, newValue); }
         else if (oldValue != null && newValue == null) { AttributeModule.deleteValue(this, false, oldValue); }
@@ -294,7 +294,7 @@ public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     @NonCommitting
     @OnlyForActions
     void replaceVisibility(@Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) throws DatabaseException {
-        assert !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
+        Require.that(!Objects.equals(oldVisibility, newVisibility)).orThrow("The old and new visibility are not equal.");
         
         if (oldVisibility == null && newVisibility != null) { AttributeModule.insertVisibility(this, newVisibility); }
         else if (oldVisibility != null && newVisibility == null) { AttributeModule.deleteVisibility(this, oldVisibility); }

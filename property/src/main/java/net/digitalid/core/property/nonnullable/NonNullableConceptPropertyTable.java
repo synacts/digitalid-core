@@ -15,7 +15,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -133,7 +133,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Override
     @NonCommitting
     public void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getDumpType()) : "The block is based on the dump type of this data collection.";
+        Require.that(block.getType().isBasedOn(getDumpType())).orThrow("The block is based on the dump type of this data collection.");
         
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
         ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();
@@ -200,7 +200,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Override
     @NonCommitting
     public void addState(@Nonnull E entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getStateType()) : "The block is based on the state type of this data collection.";
+        Require.that(block.getType().isBasedOn(getStateType())).orThrow("The block is based on the state type of this data collection.");
         
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
         ConceptConverters<C, E> conceptConverters = getPropertyFactory().getConceptSetup().getConceptConverters();

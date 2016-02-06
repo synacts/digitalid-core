@@ -87,7 +87,7 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
     @Pure
     @NonCommitting
     public static @Nonnull Settings get(@Nonnull NonHostEntity entity) {
-        assert !(entity instanceof Role) || ((Role) entity).isNative() : "If the entity is a role, it is native.";
+        Require.that(!(entity instanceof Role) || ((Role) entity).isNative()).orThrow("If the entity is a role, it is native.");
         
         return INDEX.get(entity, None.OBJECT);
     }

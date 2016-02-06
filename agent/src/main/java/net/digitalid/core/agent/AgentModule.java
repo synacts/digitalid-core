@@ -14,7 +14,7 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
@@ -366,7 +366,7 @@ public final class AgentModule implements StateModule {
     @Override
     @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
+        Require.that(block.getType().isBasedOn(getModuleFormat())).orThrow("The block is based on the format of this module.");
         
         final @Nonnull ReadOnlyArray<Block> tables = TupleWrapper.decode(block).getNonNullableElements(8);
         final @Nonnull String prefix = "INSERT INTO " + host;
@@ -629,7 +629,7 @@ public final class AgentModule implements StateModule {
     @Override
     @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(getStateFormat())).orThrow("The block is based on the indicated type.");
         
         final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -946,8 +946,8 @@ public final class AgentModule implements StateModule {
      */
     @NonCommitting
     static void replaceRestrictions(@Nonnull Agent agent, @Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws DatabaseException {
-        assert oldRestrictions.match(agent) : "The old restrictions match the given agent.";
-        assert newRestrictions.match(agent) : "The new restrictions match the given agent.";
+        Require.that(oldRestrictions.match(agent)).orThrow("The old restrictions match the given agent.");
+        Require.that(newRestrictions.match(agent)).orThrow("The new restrictions match the given agent.");
         
         final int count;
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -1068,7 +1068,7 @@ public final class AgentModule implements StateModule {
     @Pure
     @NonCommitting
     static boolean isStronger(@Nonnull Agent agent1, @Nonnull Agent agent2) throws DatabaseException {
-        assert agent1.getEntity().equals(agent2.getEntity()) : "Both agents belong to the same entity.";
+        Require.that(agent1.getEntity().equals(agent2.getEntity())).orThrow("Both agents belong to the same entity.");
         
         final @Nonnull NonHostEntity entity = agent1.getEntity();
         final @Nonnull Site site = entity.getSite();
@@ -1094,8 +1094,8 @@ public final class AgentModule implements StateModule {
      */
     @NonCommitting
     static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name) throws DatabaseException {
-        assert permissions.isFrozen() : "The permissions are frozen.";
-        assert Client.isValidName(name) : "The name is valid.";
+        Require.that(permissions.isFrozen()).orThrow("The permissions are frozen.");
+        Require.that(Client.isValidName(name)).orThrow("The name is valid.");
         
         addAgent(clientAgent);
         setRestrictions(clientAgent, restrictions);
@@ -1207,8 +1207,8 @@ public final class AgentModule implements StateModule {
      */
     @NonCommitting
     static void replaceName(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) throws DatabaseException {
-        assert Client.isValidName(oldName) : "The old name is valid.";
-        assert Client.isValidName(newName) : "The new name is valid.";
+        Require.that(Client.isValidName(oldName)).orThrow("The old name is valid.");
+        Require.that(Client.isValidName(newName)).orThrow("The new name is valid.");
         
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "UPDATE " + entity.getSite() + "client_agent SET name = ? WHERE entity = " + entity + " AND agent = " + clientAgent + " AND name = ?";
@@ -1233,8 +1233,8 @@ public final class AgentModule implements StateModule {
      */
     @NonCommitting
     static void addOutgoingRole(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) throws DatabaseException {
-        assert relation.isRoleType() : "The relation is a role type.";
-        assert context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
+        Require.that(relation.isRoleType()).orThrow("The relation is a role type.");
+        Require.that(context.getEntity().equals(outgoingRole.getEntity())).orThrow("The context belongs to the entity of the outgoing role.");
         
         addAgent(outgoingRole);
         
@@ -1260,7 +1260,7 @@ public final class AgentModule implements StateModule {
     @Pure
     @NonCommitting
     public static @Nullable OutgoingRole getOutgoingRole(@Nonnull NonHostEntity entity, @Nonnull SemanticType relation, boolean restrictable) throws DatabaseException {
-        assert relation.isRoleType() : "The relation is a role type.";
+        Require.that(relation.isRoleType()).orThrow("The relation is a role type.");
         
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT a.agent, a.removed FROM " + site + "outgoing_role o, " + site + "agent a WHERE o.entity = " + entity + " AND a.entity = " + entity + " AND o.agent = a.agent AND o.relation = " + relation;
@@ -1304,8 +1304,8 @@ public final class AgentModule implements StateModule {
      */
     @NonCommitting
     static void replaceRelation(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws DatabaseException {
-        assert oldRelation.isRoleType() : "The old relation is a role type.";
-        assert newRelation.isRoleType() : "The new relation is a role type.";
+        Require.that(oldRelation.isRoleType()).orThrow("The old relation is a role type.");
+        Require.that(newRelation.isRoleType()).orThrow("The new relation is a role type.");
         
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -1346,8 +1346,8 @@ public final class AgentModule implements StateModule {
      */
     @NonCommitting
     static void replaceContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context oldContext, @Nonnull Context newContext) throws DatabaseException {
-        assert oldContext.getEntity().equals(outgoingRole.getEntity()) : "The old context belongs to the same entity as the outgoing role.";
-        assert newContext.getEntity().equals(outgoingRole.getEntity()) : "The new context belongs to the same entity as the outgoing role.";
+        Require.that(oldContext.getEntity().equals(outgoingRole.getEntity())).orThrow("The old context belongs to the same entity as the outgoing role.");
+        Require.that(newContext.getEntity().equals(outgoingRole.getEntity())).orThrow("The new context belongs to the same entity as the outgoing role.");
         
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -1371,7 +1371,7 @@ public final class AgentModule implements StateModule {
      */
     @NonCommitting
     static void addIncomingRole(@Nonnull NonHostEntity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws DatabaseException {
-        assert relation.isRoleType() : "The relation is a role type.";
+        Require.that(relation.isRoleType()).orThrow("The relation is a role type.");
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO " + entity.getSite() + "incoming_role (entity, issuer, relation, agent) VALUES (" + entity + ", " + issuer + ", " + relation + ", " + agentNumber + ")");
@@ -1391,7 +1391,7 @@ public final class AgentModule implements StateModule {
      */
     @NonCommitting
     static void removeIncomingRole(@Nonnull NonHostEntity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation) throws DatabaseException {
-        assert relation.isRoleType() : "The relation is a role type.";
+        Require.that(relation.isRoleType()).orThrow("The relation is a role type.");
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             final @Nonnull String SQL = "DELETE FROM " + entity.getSite() + "incoming_role WHERE entity = " + entity + " AND issuer = " + issuer + " AND relation = " + relation;

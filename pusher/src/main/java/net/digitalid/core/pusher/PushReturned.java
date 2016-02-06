@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -98,8 +98,8 @@ public final class PushReturned extends ExternalAction {
     PushReturned(@Nonnull NonHostAccount account, boolean valid, @Nonnull ActionReply reply) {
         super(account, account.getIdentity().getAddress(), account.getHost().getIdentifier());
         
-        assert reply.getSignature() instanceof HostSignatureWrapper : "The reply is signed by a host (and the signature thus not null).";
-        assert account.getIdentity().equals(reply.getEntityNotNull().getIdentity()) : "The account and the reply's entity have the same identity.";
+        Require.that(reply.getSignature() instanceof HostSignatureWrapper).orThrow("The reply is signed by a host (and the signature thus not null).");
+        Require.that(account.getIdentity().equals(reply.getEntityNotNull().getIdentity())).orThrow("The account and the reply's entity have the same identity.");
         
         this.valid = valid;
         this.reply = reply;

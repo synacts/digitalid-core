@@ -92,7 +92,7 @@ public final class MemberModule implements HostModule {
     @Override
     @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
-        assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
+        Require.that(block.getType().isBasedOn(getModuleFormat())).orThrow("The block is based on the format of this module.");
         
         final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block entry : entries) {

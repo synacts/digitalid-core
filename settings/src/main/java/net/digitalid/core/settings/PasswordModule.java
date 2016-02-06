@@ -12,7 +12,7 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -120,7 +120,7 @@ public final class PasswordModule implements StateModule {
     @Override
     @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
+        Require.that(block.getType().isBasedOn(getModuleFormat())).orThrow("The block is based on the format of this module.");
         
         final @Nonnull String SQL = "INSERT INTO " + host + "password (entity, password) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -157,7 +157,7 @@ public final class PasswordModule implements StateModule {
     @Override
     @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
-        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(getStateFormat())).orThrow("The block is based on the indicated type.");
         
         final @Nullable Block element = TupleWrapper.decode(block).getNullableElement(0);
         if (element != null) { set(entity, StringWrapper.decodeNonNullable(element)); }
@@ -205,7 +205,7 @@ public final class PasswordModule implements StateModule {
      */
     @NonCommitting
     public static void set(@Nonnull Entity entity, @Nonnull String value) throws DatabaseException {
-        assert Settings.isValid(value) : "The value is valid.";
+        Require.that(Settings.isValid(value)).orThrow("The value is valid.");
         
         final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + entity.getSite() + "password (entity, password) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -229,8 +229,8 @@ public final class PasswordModule implements StateModule {
      */
     @NonCommitting
     static void replace(@Nonnull Settings password, @Nonnull String oldValue, @Nonnull String newValue) throws DatabaseException {
-        assert Settings.isValid(oldValue) : "The old value is valid.";
-        assert Settings.isValid(newValue) : "The new value is valid.";
+        Require.that(Settings.isValid(oldValue)).orThrow("The old value is valid.");
+        Require.that(Settings.isValid(newValue)).orThrow("The new value is valid.");
         
         final @Nonnull Entity entity = password.getEntity();
         final @Nonnull String SQL = "UPDATE " + entity.getSite() + "password SET password = ? WHERE entity = ? AND password = ?";

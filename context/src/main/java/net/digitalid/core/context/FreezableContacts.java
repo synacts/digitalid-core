@@ -12,7 +12,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.freezable.NonFrozenRecipient;
@@ -97,7 +97,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
      */
     @NonCommitting
     public @NonFrozen FreezableContacts(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) { add(Contact.get(entity, element)); }

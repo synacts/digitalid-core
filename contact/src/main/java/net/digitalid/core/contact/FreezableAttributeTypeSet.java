@@ -11,7 +11,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.freezable.NonFrozenRecipient;
@@ -58,7 +58,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
      * @param type the attribute type to add to the new set.
      */
     public @Single FreezableAttributeTypeSet(@Nonnull @AttributeType SemanticType type) {
-        assert type.isAttributeType() : "The type is an attribute type.";
+        Require.that(type.isAttributeType()).orThrow("The type is an attribute type.");
         
         add(type);
     }
@@ -81,7 +81,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
      */
     @NonCommitting
     public FreezableAttributeTypeSet(@Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(getType())).orThrow("The block is based on the indicated type.");
         
         final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
@@ -119,7 +119,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
     
     @Override
     public final boolean add(@Nonnull @AttributeType SemanticType type) {
-        assert type.isAttributeType() : "The type is an attribute type.";
+        Require.that(type.isAttributeType()).orThrow("The type is an attribute type.");
         
         return super.add(type);
     }

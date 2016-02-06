@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -91,9 +91,9 @@ public final class AttributesReply extends CoreServiceQueryReply {
     AttributesReply(@Nonnull Account account, @Nonnull ReadOnlyList<AttributeValue> attributeValues) {
         super(account);
         
-        assert attributeValues.isFrozen() : "The attribute values are frozen.";
-        assert !attributeValues.isEmpty() : "The attribute values are not empty.";
-        assert areVerified(attributeValues) : "All the attribute values which are not null are verified.";
+        Require.that(attributeValues.isFrozen()).orThrow("The attribute values are frozen.");
+        Require.that(!attributeValues.isEmpty()).orThrow("The attribute values are not empty.");
+        Require.that(areVerified(attributeValues)).orThrow("All the attribute values which are not null are verified.");
         
         this.attributeValues = attributeValues;
     }

@@ -43,7 +43,7 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity, K>
     // TODO: Make sure this method is called in the right places!
     @SingleAccess
     public static void remove(@Nonnull Entity entity) {
-        assert Database.isSingleAccess() : "The database is in single-access mode.";
+        Require.that(Database.isSingleAccess()).orThrow("The database is in single-access mode.");
         
         for (final @Nonnull ConceptIndex<?, ? extends Entity, ?> index : indexes) {
             index.concepts.remove(entity);

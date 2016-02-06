@@ -21,7 +21,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -248,9 +248,9 @@ public final class SynchronizerModule implements ClientModule {
      */
     @NonCommitting
     static void remove(@Nonnull @NonEmpty @NonNullableElements ReadOnlyList<Method> methods) throws DatabaseException {
-        assert !methods.isEmpty() : "The list of methods is not empty.";
-        assert !methods.containsNull() : "The list of methods does not contain null.";
-        assert Method.areSimilar(methods) : "The methods are similar to each other.";
+        Require.that(!methods.isEmpty()).orThrow("The list of methods is not empty.");
+        Require.that(!methods.containsNull()).orThrow("The list of methods does not contain null.");
+        Require.that(Method.areSimilar(methods)).orThrow("The methods are similar to each other.");
         
         final @Nonnull Role role = methods.getNonNullable(0).getRole();
         final @Nonnull String SQL = "DELETE FROM " + role.getSite() + "synchronization_action WHERE time IN (SELECT time FROM " + role.getSite() + "synchronization_action WHERE entity = " + role + " AND service = " + methods.getNonNullable(0).getService() + " AND action = ? ORDER BY time LIMIT 1)";

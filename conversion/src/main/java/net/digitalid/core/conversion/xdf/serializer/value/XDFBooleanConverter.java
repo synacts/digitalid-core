@@ -25,7 +25,7 @@ public class XDFBooleanConverter extends XDFConverter<Boolean> {
 
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException {
-        assert object instanceof Boolean : "The object is of type boolean.";
+        Require.that(object instanceof Boolean).orThrow("The object is of type boolean.");
         
         final @Nonnull Boolean value = (Boolean) object;
         final @Nonnull SemanticType semanticType = generateSemanticType(fieldName, parentName, BooleanWrapper.XDF_TYPE);

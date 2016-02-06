@@ -95,8 +95,8 @@ public final class Integer16Wrapper extends ValueWrapper<Integer16Wrapper> {
     @Pure
     @Override
     public void encode(@Nonnull @Encoding Block block) {
-        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        Require.that(block.getLength() == determineLength()).orThrow("The block's length has to match the determined length.");
+        Require.that(block.getType().isBasedOn(getSyntacticType())).orThrow("The block is based on the indicated syntactic type.");
         
         block.encodeValue(value);
     }
@@ -258,7 +258,7 @@ public final class Integer16Wrapper extends ValueWrapper<Integer16Wrapper> {
         private SQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
             super(declaration, SEMANTIC);
             
-            assert declaration.getType() == SQL_TYPE : "The declaration matches the SQL type of the wrapper.";
+            Require.that(declaration.getType() == SQL_TYPE).orThrow("The declaration matches the SQL type of the wrapper.");
         }
         
         @Override

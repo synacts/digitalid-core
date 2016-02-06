@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.thread.Threading;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -104,9 +104,9 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      */
     @Pure
     public long getNumber() {
-        assert hasSignature() : "This reply has a signature.";
+        Require.that(hasSignature()).orThrow("This reply has a signature.");
         
-        assert number != null : "This follows from the constructor.";
+        Require.that(number != null).orThrow("This follows from the constructor.");
         return number;
     }
     
@@ -228,7 +228,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      * Initializes the reply logger by creating the corresponding database tables if necessary.
      */
     static {
-        assert Threading.isMainThread() : "This method block is called in the main thread.";
+        Require.that(Threading.isMainThread()).orThrow("This method block is called in the main thread.");
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_reply (reply " + Database.getConfiguration().PRIMARY_KEY() + ", time " + Time.FORMAT + " NOT NULL, signature " + Block.FORMAT + " NOT NULL)");

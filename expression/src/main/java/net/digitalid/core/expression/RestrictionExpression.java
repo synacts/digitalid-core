@@ -60,10 +60,10 @@ final class RestrictionExpression extends Expression {
     RestrictionExpression(@Nonnull NonHostEntity entity, @Nonnull SemanticType type, @Nullable String string, @Nullable String symbol) {
         super(entity);
         
-        assert type.isAttributeType() : "The type denotes an attribute.";
-        assert (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
-        assert string == null || isQuoted(string) || string.matches("\\d+") : "If not null, the string either is a string or a number.";
-        assert symbol == null || symbols.contains(symbol) : "If not null, the symbol is valid.";
+        Require.that(type.isAttributeType()).orThrow("The type denotes an attribute.");
+        Require.that((string == null) == (symbol == null)).orThrow("Either both string and symbol are null or none of them.");
+        Require.that(string == null || isQuoted(string) || string.matches("\\d+")).orThrow("If not null, the string either is a string or a number.");
+        Require.that(symbol == null || symbols.contains(symbol)).orThrow("If not null, the symbol is valid.");
         
         this.type = type;
         this.string = string;
@@ -93,7 +93,7 @@ final class RestrictionExpression extends Expression {
     @Pure
     @Override
     @Nonnull @Capturable FreezableSet<Contact> getContacts() {
-        assert isActive() : "This expression is active.";
+        Require.that(isActive()).orThrow("This expression is active.");
         
         return new FreezableLinkedHashSet<>();
     }
@@ -101,7 +101,7 @@ final class RestrictionExpression extends Expression {
     @Pure
     @Override
     boolean matches(@Nonnull Block attributeContent) {
-        assert isImpersonal() : "This expression is impersonal.";
+        Require.that(isImpersonal()).orThrow("This expression is impersonal.");
         
         if (!attributeContent.getType().equals(type)) { return false; }
         
@@ -156,7 +156,7 @@ final class RestrictionExpression extends Expression {
     @Pure
     @Override
     @Nonnull String toString(@Nullable Character operator, boolean right) {
-        assert operator == null || operators.contains(operator) : "The operator is valid.";
+        Require.that(operator == null || operators.contains(operator)).orThrow("The operator is valid.");
         
         return addQuotesIfNecessary(type) + (symbol == null ? "" : symbol) + (string == null ? "" : string);
     }

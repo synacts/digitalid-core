@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -104,9 +104,9 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
     AttributeValueReplace(@Nonnull Attribute attribute, boolean published, @Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) {
         super(attribute.getRole());
         
-        assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
-        assert oldValue == null || oldValue.isVerified() && oldValue.matches(attribute) : "The old value is null or verified and matches the attribute.";
-        assert newValue == null || newValue.isVerified() && newValue.matches(attribute) : "The new value is null or verified and matches the attribute.";
+        Require.that(!Objects.equals(oldValue, newValue)).orThrow("The old and new value are not equal.");
+        Require.that(oldValue == null || oldValue.isVerified() && oldValue.matches(attribute)).orThrow("The old value is null or verified and matches the attribute.");
+        Require.that(newValue == null || newValue.isVerified() && newValue.matches(attribute)).orThrow("The new value is null or verified and matches the attribute.");
         
         this.attribute = attribute;
         this.published = published;

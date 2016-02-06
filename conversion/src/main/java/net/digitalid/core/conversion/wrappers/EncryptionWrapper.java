@@ -10,7 +10,7 @@ import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
@@ -263,7 +263,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     private EncryptionWrapper(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(type);
         
-        assert element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
+        Require.that(element.getType().isBasedOn(type.getParameters().getNonNullable(0))).orThrow("The element is based on the parameter of the given type.");
         
         this.time = Time.getCurrent();
         this.element = element;
@@ -386,7 +386,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
             elements.set(1, Encode.<Identifier>nullable(recipient, RECIPIENT));
             
             if (recipient != null && symmetricKey != null) {
-                assert publicKey != null : "The public key is not null because this method is only called for encoding a block.";
+                Require.that(publicKey != null).orThrow("The public key is not null because this method is only called for encoding a block.");
                 elements.set(2, encrypt(publicKey, symmetricKey));
             }
             
@@ -414,8 +414,8 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     @Pure
     @Override
     public void encode(@Nonnull @Encoding Block block) {
-        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        Require.that(block.getLength() == determineLength()).orThrow("The block's length has to match the determined length.");
+        Require.that(block.getType().isBasedOn(getSyntacticType())).orThrow("The block is based on the indicated syntactic type.");
         
         getCache().writeTo(block);
     }

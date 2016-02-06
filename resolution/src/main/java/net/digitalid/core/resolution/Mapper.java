@@ -14,9 +14,11 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezableTriplet;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
-import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.UnexpectedFailureException;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
@@ -34,21 +36,20 @@ import net.digitalid.database.core.table.GeneralReference;
 import net.digitalid.database.core.table.GeneralTable;
 
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
 import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
+import net.digitalid.core.client.AccountInitialize;
+import net.digitalid.core.client.AccountOpen;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.Reply;
-
+import net.digitalid.core.host.Host;
 import net.digitalid.core.identifier.ExternalIdentifier;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.IdentifierImplementation;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identifier.NonHostIdentifier;
-
 import net.digitalid.core.identity.ArtificialPerson;
 import net.digitalid.core.identity.EmailPerson;
 import net.digitalid.core.identity.ExternalPerson;
@@ -63,15 +64,9 @@ import net.digitalid.core.identity.Person;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.identity.Type;
-
+import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
 import net.digitalid.core.resolution.annotations.NonMapped;
-
 import net.digitalid.core.server.Server;
-
-import net.digitalid.core.client.AccountInitialize;
-import net.digitalid.core.client.AccountOpen;
-
-import net.digitalid.core.host.Host;
 
 /**
  * The mapper maps between {@link Identifier identifiers} and {@link Identity identities}.
@@ -179,7 +174,7 @@ public final class Mapper {
     
     
     static {
-        assert Threading.isMainThread() : "This static block is called in the main thread.";
+        Require.that(Threading.isMainThread()).orThrow("This static block is called in the main thread.");
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             // Make sure that no type initializations are triggered during the creation of the database tables! (This is why the format of the category column is not taken from the category class.)
@@ -216,7 +211,7 @@ public final class Mapper {
                 case ARTIFICIAL_PERSON: return new ArtificialPerson(number, address.castTo(InternalNonHostIdentifier.class));
                 case EMAIL_PERSON: return new EmailPerson(number, address.castTo(EmailIdentifier.class));
                 case MOBILE_PERSON: return new MobilePerson(number, address.castTo(MobileIdentifier.class));
-                default: throw ShouldNeverHappenError.get("The category '" + category.name() + "' is not supported.");
+                default: throw UnexpectedValueException.with("category", category);
             }
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The address " + address + " does not match the category '" + category.name() + "'.", exception);
@@ -265,7 +260,7 @@ public final class Mapper {
     @Locked
     @NonCommitting
     private static @Nonnull Identity loadIdentity(long number) throws DatabaseException {
-        assert !numbers.containsKey(number) : "The given number is not yet loaded.";
+        Require.that(!numbers.containsKey(number)).orThrow("The given number is not yet loaded.");
         
         final @Nonnull String SQL = "SELECT category, address FROM general_identity WHERE identity = " + number;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -301,7 +296,7 @@ public final class Mapper {
         try {
             if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }
         } catch (@Nonnull RequestException | ExternalException | NetworkException exception) {
-            throw ShouldNeverHappenError.get("The type declaration and the referenced identities should already be cached.", exception);
+            throw UnexpectedFailureException.with("The type declaration and the referenced identities should already be cached.", exception);
         }
         return identity;
     }
@@ -319,7 +314,7 @@ public final class Mapper {
     @Locked
     @NonCommitting
     private static boolean loadIdentity(@Nonnull Identifier identifier) throws DatabaseException {
-        assert !identifiers.containsKey(identifier) : "The given identifier is not yet loaded.";
+        Require.that(!identifiers.containsKey(identifier)).orThrow("The given identifier is not yet loaded.");
         
         Log.verbose("Try to load the identifier " + identifier + " from the database.");
         
@@ -383,7 +378,7 @@ public final class Mapper {
     @Locked
     @NonCommitting
     public static @Nonnull Identity getMappedIdentity(@Nonnull Identifier identifier) throws DatabaseException {
-        assert isMapped(identifier) : "The identifier is mapped.";
+        Require.that(isMapped(identifier)).orThrow("The identifier is mapped.");
         
         return identifiers.get(identifier);
     }
@@ -446,7 +441,7 @@ public final class Mapper {
      */
     @MainThread
     static @Nonnull SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier) {
-        assert Threading.isMainThread() : "This method may only be called in the main thread.";
+        Require.that(Threading.isMainThread()).orThrow("This method may only be called in the main thread.");
         
         try {
             final @Nonnull SyntacticType type = mapIdentity(identifier, Category.SYNTACTIC_TYPE, null).castTo(SyntacticType.class);
@@ -467,7 +462,7 @@ public final class Mapper {
      */
     @MainThread
     static @Nonnull SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier) {
-        assert Threading.isMainThread() : "This method may only be called in the main thread.";
+        Require.that(Threading.isMainThread()).orThrow("This method may only be called in the main thread.");
         
         try {
             final @Nonnull SemanticType type = mapIdentity(identifier, Category.SEMANTIC_TYPE, null).castTo(SemanticType.class);
@@ -532,7 +527,7 @@ public final class Mapper {
     @Locked
     @NonCommitting
     private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull @NonMapped InternalNonHostIdentifier identifier) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !isMapped(identifier) : "The identifier is not mapped.";
+        Require.that(!isMapped(identifier)).orThrow("The identifier is not mapped.");
         
         if (Server.hasHost(identifier.getHostIdentifier())) { throw IdentityNotFoundException.get(identifier); }
         
@@ -604,7 +599,7 @@ public final class Mapper {
     @Locked
     @NonCommitting
     private static @Nonnull Person establishExternalIdentity(@Nonnull @NonMapped ExternalIdentifier identifier) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !isMapped(identifier) : "The identifier is not mapped.";
+        Require.that(!isMapped(identifier)).orThrow("The identifier is not mapped.");
         
         final @Nonnull Person person = mapExternalIdentity(identifier);
         try {

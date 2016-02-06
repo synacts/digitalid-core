@@ -7,7 +7,7 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.errors.InitializationError;
 
@@ -34,7 +34,7 @@ import net.digitalid.core.identifier.NonHostIdentifier;
 public final class Successor {
     
     static {
-        assert Threading.isMainThread() : "This static block is called in the main thread.";
+        Require.that(Threading.isMainThread()).orThrow("This static block is called in the main thread.");
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_successor (identifier " + IdentifierImplementation.FORMAT + " NOT NULL, successor " + IdentifierImplementation.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");

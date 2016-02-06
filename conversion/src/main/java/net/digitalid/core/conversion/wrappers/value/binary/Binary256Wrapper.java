@@ -83,8 +83,8 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
     private Binary256Wrapper(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type, @Nonnull @NonNegative BigInteger value) {
         super(type);
         
-        assert value.signum() >= 0 : "The value is positive.";
-        assert value.bitLength() <= Parameters.HASH : "The length of the value is at most Parameters.HASH.";
+        Require.that(value.signum() >= 0).orThrow("The value is positive.");
+        Require.that(value.bitLength() <= Parameters.HASH).orThrow("The length of the value is at most Parameters.HASH.");
         
         this.value = value;
     }
@@ -105,8 +105,8 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
     @Pure
     @Override
     public void encode(@Nonnull @Encoding Block block) {
-        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        Require.that(block.getLength() == determineLength()).orThrow("The block's length has to match the determined length.");
+        Require.that(block.getType().isBasedOn(getSyntacticType())).orThrow("The block is based on the indicated syntactic type.");
         
         final @Nonnull byte[] bytes = value.toByteArray();
         final int offset = bytes.length > LENGTH ? 1 : 0;
@@ -349,7 +349,7 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
         private SQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
             super(declaration, SEMANTIC);
             
-            assert declaration.getType() == SQL_TYPE : "The declaration matches the SQL type of the wrapper.";
+            Require.that(declaration.getType() == SQL_TYPE).orThrow("The declaration matches the SQL type of the wrapper.");
         }
         
         @Override
@@ -396,7 +396,7 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
         @Pure
         @Override
         protected @Nonnull Binary256Wrapper wrap(@Nonnull SemanticType type, @Nonnull BigInteger value) {
-            assert isValid(value) : "The value is valid.";
+            Require.that(isValid(value)).orThrow("The value is valid.");
             
             return new Binary256Wrapper(type, value);
         }

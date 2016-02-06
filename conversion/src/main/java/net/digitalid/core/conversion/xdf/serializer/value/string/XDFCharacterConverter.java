@@ -25,7 +25,7 @@ public class XDFCharacterConverter extends XDFConverter<Character> {
     
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException {
-        assert (object instanceof Character) : "The object is an instance of a character type.";
+        Require.that((object instanceof Character)).orThrow("The object is an instance of a character type.");
 
         final @Nonnull Character character = (Character) object;
 

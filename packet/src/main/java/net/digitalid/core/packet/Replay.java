@@ -30,7 +30,7 @@ public final class Replay {
      * Initializes the replay checker by creating the corresponding database tables if necessary.
      */
     static {
-        assert Threading.isMainThread() : "This method block is called in the main thread.";
+        Require.that(Threading.isMainThread()).orThrow("This method block is called in the main thread.");
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_replay (vector " + InitializationVector.FORMAT + " NOT NULL PRIMARY KEY, time " + Time.FORMAT + " NOT NULL" + Database.getConfiguration().INDEX("time") + ")");

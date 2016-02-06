@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -133,7 +133,7 @@ public final class AccountOpen extends Action {
     AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(null, subject, subject.getHostIdentifier());
         
-        assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
+        Require.that(category.isInternalNonHostIdentity()).orThrow("The category denotes an internal non-host identity.");
         
         this.category = category;
         this.agentNumber = new Random().nextLong();

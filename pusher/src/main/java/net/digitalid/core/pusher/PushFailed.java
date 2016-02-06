@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
@@ -109,7 +109,7 @@ public final class PushFailed extends ExternalAction {
     PushFailed(@Nonnull NonHostAccount account, @Nonnull ExternalAction action) {
         super(account, action.getSubject(), action.getRecipient());
         
-        assert account.getIdentity().equals(action.getEntityNotNull().getIdentity()) : "The account and the action's entity have the same identity.";
+        Require.that(account.getIdentity().equals(action.getEntityNotNull().getIdentity())).orThrow("The account and the action's entity have the same identity.");
         
         this.number = new Random().nextLong();
         this.action = action;

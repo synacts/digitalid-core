@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -141,7 +141,7 @@ public class Commitment implements Blockable, SQLizable {
     @Locked
     @NonCommitting
     public Commitment(@Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
         final @Nonnull HostIdentifier identifier = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(0)).castTo(HostIdentifier.class);

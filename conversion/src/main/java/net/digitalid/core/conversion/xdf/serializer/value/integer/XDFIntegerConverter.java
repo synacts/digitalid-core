@@ -27,7 +27,7 @@ public class XDFIntegerConverter extends XDFConverter<BigInteger> {
     
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException {
-        assert (object instanceof BigInteger) : "The object is an instance of the BigInteger type.";
+        Require.that((object instanceof BigInteger)).orThrow("The object is an instance of the BigInteger type.");
 
         final @Nonnull BigInteger value = (BigInteger) object;
 

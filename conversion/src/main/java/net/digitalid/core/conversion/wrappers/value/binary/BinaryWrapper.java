@@ -77,7 +77,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
         if (bytes != null) {
             return bytes.clone();
         } else {
-            assert block != null : "See the class invariant.";
+            Require.that(block != null).orThrow("See the class invariant.");
             return block.getBytes(1);
         }
     }
@@ -92,7 +92,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
         if (bytes != null) {
             return new ByteArrayInputStream(bytes);
         } else {
-            assert block != null : "See the class invariant.";
+            Require.that(block != null).orThrow("See the class invariant.");
             return block.getInputStream(1);
         }
     }
@@ -132,7 +132,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
         if (bytes != null) {
             return bytes.length + 1;
         } else {
-            assert block != null : "See the class invariant.";
+            Require.that(block != null).orThrow("See the class invariant.");
             return block.getLength();
         }
     }
@@ -140,13 +140,13 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
     @Pure
     @Override
     public void encode(@Nonnull @Encoding Block block) {
-        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        Require.that(block.getLength() == determineLength()).orThrow("The block's length has to match the determined length.");
+        Require.that(block.getType().isBasedOn(getSyntacticType())).orThrow("The block is based on the indicated syntactic type.");
         
         if (bytes != null) {
             block.setBytes(1, bytes);
         } else {
-            assert block != null : "See the class invariant.";
+            Require.that(block != null).orThrow("See the class invariant.");
             block.writeTo(block);
         }
     }
@@ -289,7 +289,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
         if (bytes != null) {
             return Block.toString(bytes);
         } else {
-            assert block != null : "See the class invariant.";
+            Require.that(block != null).orThrow("See the class invariant.");
             return block.toString().replace("E'\\x00", "E'\\x");
         }
     }
@@ -405,7 +405,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
         private SQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
             super(declaration, SEMANTIC);
             
-            assert declaration.getType() == SQL_TYPE : "The declaration matches the SQL type of the wrapper.";
+            Require.that(declaration.getType() == SQL_TYPE).orThrow("The declaration matches the SQL type of the wrapper.");
         }
         
         @Override

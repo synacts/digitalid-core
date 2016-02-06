@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -100,10 +100,10 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     AttributeVisibilityReplace(@Nonnull Attribute attribute, @Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) {
         super(attribute.getRole());
         
-        assert !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
-        assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the attribute belongs to an internal person.";
-        assert oldVisibility == null || oldVisibility.getEntity().equals(attribute.getEntity()) : "The old visibility is null or belongs to the entity of the attribute.";
-        assert newVisibility == null || newVisibility.getEntity().equals(attribute.getEntity()) : "The new visibility is null or belongs to the entity of the attribute.";
+        Require.that(!Objects.equals(oldVisibility, newVisibility)).orThrow("The old and new visibility are not equal.");
+        Require.that(attribute.getEntity().getIdentity() instanceof InternalPerson).orThrow("The entity of the attribute belongs to an internal person.");
+        Require.that(oldVisibility == null || oldVisibility.getEntity().equals(attribute.getEntity())).orThrow("The old visibility is null or belongs to the entity of the attribute.");
+        Require.that(newVisibility == null || newVisibility.getEntity().equals(attribute.getEntity())).orThrow("The new visibility is null or belongs to the entity of the attribute.");
         
         this.attribute = attribute;
         this.oldVisibility = oldVisibility;

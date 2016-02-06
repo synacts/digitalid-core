@@ -55,7 +55,7 @@ public class XDFTupleConverter<T extends Convertible> extends XDFConverter<T> {
 
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String typeName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws InternalException, StoringException {
-        assert object instanceof Convertible : "The object extends Convertible.";
+        Require.that(object instanceof Convertible).orThrow("The object extends Convertible.");
         
         final @Nonnull Convertible convertible = (Convertible) object;
                 

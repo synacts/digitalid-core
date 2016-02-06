@@ -141,7 +141,7 @@ public final class RequestException extends DigitalIDException implements XDF<Re
         @Pure
         @Override
         public final @Nonnull RequestException decodeNonNullable(@Nonnull Object none, @Nonnull Block block) throws InvalidEncodingException, InternalException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
+            Require.that(block.getType().isBasedOn(getType())).orThrow("The block is based on the type of this converter.");
             
             final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
             final @Nonnull RequestErrorCode code = RequestErrorCode.XDF_CONVERTER.decodeNonNullable(none, elements.getNonNullable(0));

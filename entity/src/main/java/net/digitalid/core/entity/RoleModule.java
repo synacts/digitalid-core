@@ -87,8 +87,8 @@ public final class RoleModule {
      */
     @NonCommitting
     public static long map(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, long agentNumber) throws DatabaseException {
-        assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
-        assert (relation == null) == (recipient == null) : "The relation and the recipient are either both null or non-null.";
+        Require.that(relation == null || relation.isRoleType()).orThrow("The relation is either null or a role type.");
+        Require.that((relation == null) == (recipient == null)).orThrow("The relation and the recipient are either both null or non-null.");
         
         final @Nonnull String SQL = "SELECT role FROM " + client + "role WHERE issuer = " + issuer + " AND relation = " + relation + " AND recipient = " + recipient + " AND agent = " + agentNumber;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {

@@ -3,7 +3,7 @@ package net.digitalid.core.handler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -157,7 +157,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
     @NonCommitting
     @Clients
     public final void reverseOnClient() throws DatabaseException {
-        assert isOnClient() : "This method is called on a client.";
+        Require.that(isOnClient()).orThrow("This method is called on a client.");
         
         final @Nullable InternalAction reverse = getReverse();
         if (reverse != null) { reverse.executeOnClient(); }

@@ -62,7 +62,7 @@ final class ContextExpression extends Expression {
     @Override
     @NonCommitting
     @Nonnull @Capturable FreezableSet<Contact> getContacts() throws DatabaseException {
-        assert isActive() : "This expression is active.";
+        Require.that(isActive()).orThrow("This expression is active.");
         
         return context.getAllContacts();
     }
@@ -70,7 +70,7 @@ final class ContextExpression extends Expression {
     @Pure
     @Override
     boolean matches(@Nonnull Block attributeContent) {
-        assert isImpersonal() : "This expression is impersonal.";
+        Require.that(isImpersonal()).orThrow("This expression is impersonal.");
         
         return false;
     }
@@ -86,7 +86,7 @@ final class ContextExpression extends Expression {
     @Pure
     @Override
     @Nonnull String toString(@Nullable Character operator, boolean right) {
-        assert operator == null || operators.contains(operator) : "The operator is valid.";
+        Require.that(operator == null || operators.contains(operator)).orThrow("The operator is valid.");
         
         return context.toString();
     }

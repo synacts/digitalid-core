@@ -78,7 +78,7 @@ public class ChainingNonRequestingXDFConverter<O, E, K, D> extends NonRequesting
     protected ChainingNonRequestingXDFConverter(@Nonnull SemanticType type, @Nonnull NonRequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull NonRequestingXDFConverter<K, ? super D> XDFConverter) {
         super(type);
         
-        assert type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
+        Require.that(type.isBasedOn(XDFConverter.getType())).orThrow("The given type is based on the type of the XDF converter.");
         
         this.keyConverter = keyConverter;
         this.XDFConverter = XDFConverter;
@@ -124,7 +124,7 @@ public class ChainingNonRequestingXDFConverter<O, E, K, D> extends NonRequesting
     @Pure
     @Override
     public final @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull Block block) throws InvalidEncodingException, InternalException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
+        Require.that(block.getType().isBasedOn(getType())).orThrow("The block is based on the type of this converter.");
         
         final @Nonnull K key = XDFConverter.decodeNonNullable(keyConverter.decompose(external), block);
         if (!keyConverter.isValid(key)) { throw InvalidParameterValueException.get("key", key); }

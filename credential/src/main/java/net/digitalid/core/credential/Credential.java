@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -109,8 +109,8 @@ public abstract class Credential {
      */
     @Pure
     public static @Nonnull Block getExposed(@Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent) {
-        assert issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
-        assert role == null || role.isRoleType() : "The role is either null or a role type.";
+        Require.that(issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR)).orThrow("The issuance time is positive and a multiple of half an hour.");
+        Require.that(role == null || role.isRoleType()).orThrow("The role is either null or a role type.");
         
         final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
         elements.set(0, issuer.toBlock(ISSUER));
@@ -127,10 +127,10 @@ public abstract class Credential {
      */
     @Pure
     private boolean invariant() {
-        assert isIdentityBased() != isAttributeBased() : "This credential is either identity- or attribute-based.";
-        assert !isRoleBased() || isIdentityBased() : "If this credential is role-based, it is also identity-based";
-        assert !isAttributeBased() || getRestrictions() == null : "If this credential is attribute-based, the restrictions are null.";
-        assert !isRoleBased() || getPermissions() != null && getRestrictions() != null : "If this credential is role-based, both the permissions and the restrictions are not null.";
+        Require.that(isIdentityBased() != isAttributeBased()).orThrow("This credential is either identity- or attribute-based.");
+        Require.that(!isRoleBased() || isIdentityBased()).orThrow("If this credential is role-based, it is also identity-based");
+        Require.that(!isAttributeBased() || getRestrictions() == null).orThrow("If this credential is attribute-based, the restrictions are null.");
+        Require.that(!isRoleBased() || getPermissions() != null && getRestrictions() != null).orThrow("If this credential is role-based, both the permissions and the restrictions are not null.");
         return true;
     }
     
@@ -216,12 +216,12 @@ public abstract class Credential {
      * @require (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
      */
     Credential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent, @Nullable Restrictions restrictions, @Nonnull Exponent i) {
-        assert issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
-        assert randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
-        assert role == null || role.isRoleType() : "The role is either null or a role type.";
-        assert role == null || restrictions != null : "If a role is given, the restrictions are not null.";
-        assert attributeContent != null || issuer instanceof InternalPerson : "If the attribute content is null, the issuer is an internal person.";
-        assert (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
+        Require.that(issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR)).orThrow("The issuance time is positive and a multiple of half an hour.");
+        Require.that(randomizedPermissions.areShown()).orThrow("The randomized permissions are shown for client credentials.");
+        Require.that(role == null || role.isRoleType()).orThrow("The role is either null or a role type.");
+        Require.that(role == null || restrictions != null).orThrow("If a role is given, the restrictions are not null.");
+        Require.that(attributeContent != null || issuer instanceof InternalPerson).orThrow("If the attribute content is null, the issuer is an internal person.");
+        Require.that((attributeContent == null) != (restrictions == null)).orThrow("Either the attribute content or the restrictions are null (but not both).");
         
         this.publicKey = publicKey;
         this.issuer = issuer;
@@ -252,9 +252,9 @@ public abstract class Credential {
      */
     @NonCommitting
     Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert exposed.getType().isBasedOn(Credential.EXPOSED) : "The exposed block is based on the indicated type.";
-        assert randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE) : "The randomized permissions are either null or based on the indicated type.";
-        assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
+        Require.that(exposed.getType().isBasedOn(Credential.EXPOSED)).orThrow("The exposed block is based on the indicated type.");
+        Require.that(randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE)).orThrow("The randomized permissions are either null or based on the indicated type.");
+        Require.that(i == null || i.getType().isBasedOn(Exponent.TYPE)).orThrow("The serial number is either null or based on the indicated type.");
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(exposed);
         this.issuer = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0)).getIdentity().castTo(InternalNonHostIdentity.class);
@@ -373,10 +373,10 @@ public abstract class Credential {
      */
     @Pure
     public final @Nonnull ReadOnlyAgentPermissions getPermissionsNotNull() {
-        assert isRoleBased() : "This credential is role-based.";
+        Require.that(isRoleBased()).orThrow("This credential is role-based.");
         
         final @Nullable ReadOnlyAgentPermissions permissions = randomizedPermissions.getPermissions();
-        assert permissions != null : "This follows from the class invariant.";
+        Require.that(permissions != null).orThrow("This follows from the class invariant.");
         return permissions;
     }
     
@@ -401,7 +401,7 @@ public abstract class Credential {
      */
     @Pure
     public final @Nonnull SemanticType getRoleNotNull() {
-        assert role != null : "This credential is role-based.";
+        Require.that(role != null).orThrow("This credential is role-based.");
         
         return role;
     }
@@ -425,7 +425,7 @@ public abstract class Credential {
      */
     @Pure
     public final @Nonnull Block getAttributeContentNotNull() {
-        assert attributeContent != null : "This credential is attribute-based.";
+        Require.that(attributeContent != null).orThrow("This credential is attribute-based.");
         
         return attributeContent;
     }
@@ -479,7 +479,7 @@ public abstract class Credential {
      */
     @Pure
     public final @Nonnull Restrictions getRestrictionsNotNull() {
-        assert restrictions != null : "The restrictions are not null.";
+        Require.that(restrictions != null).orThrow("The restrictions are not null.");
         
         return restrictions;
     }

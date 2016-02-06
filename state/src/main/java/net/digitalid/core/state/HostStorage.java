@@ -2,7 +2,7 @@ package net.digitalid.core.state;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 

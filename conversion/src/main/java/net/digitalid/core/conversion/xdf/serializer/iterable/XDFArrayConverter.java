@@ -39,7 +39,7 @@ public class XDFArrayConverter extends XDFIterableConverter<Object[]> {
     
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws InternalException, StoringException {
-        assert object.getClass().isArray() : "The object is an array.";
+        Require.that(object.getClass().isArray()).orThrow("The object is an array.");
         
         Object[] values = (Object[]) object;
         return varargsToXDFList(type, fieldName, parentName, metaData, values);

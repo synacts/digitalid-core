@@ -78,7 +78,7 @@ public abstract class AbstractWrapper<W extends AbstractWrapper<W>> implements X
      * @require semanticType.isBasedOn(getSyntacticType()) : "The given semantic type is based on the indicated syntactic type.";
      */
     protected AbstractWrapper(@Nonnull @Loaded SemanticType semanticType) {
-        assert semanticType.isBasedOn(getSyntacticType()) : "The given semantic type is based on the indicated syntactic type.";
+        Require.that(semanticType.isBasedOn(getSyntacticType())).orThrow("The given semantic type is based on the indicated syntactic type.");
         
         this.semanticType = semanticType;
     }

@@ -25,7 +25,7 @@ public class XDFInteger08Converter extends XDFConverter<Byte> {
     
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException {
-        assert (object instanceof Byte) : "The object is an instance of the byte type.";
+        Require.that((object instanceof Byte)).orThrow("The object is an instance of the byte type.");
 
         final byte value = (Byte) object;
 

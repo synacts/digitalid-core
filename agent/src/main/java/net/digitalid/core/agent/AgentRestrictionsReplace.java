@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -86,8 +86,8 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     AgentRestrictionsReplace(@Nonnull Agent agent, @Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) {
         super(agent.getRole());
         
-        assert oldRestrictions.match(agent) : "The old restrictions match the agent.";
-        assert newRestrictions.match(agent) : "The new restrictions match the agent.";
+        Require.that(oldRestrictions.match(agent)).orThrow("The old restrictions match the agent.");
+        Require.that(newRestrictions.match(agent)).orThrow("The new restrictions match the agent.");
         
         this.agent = agent;
         this.oldRestrictions = oldRestrictions;

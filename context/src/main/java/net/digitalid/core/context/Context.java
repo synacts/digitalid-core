@@ -213,7 +213,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Committing
     public void setName(@Nonnull String newName) throws DatabaseException {
-        assert isValid(newName) : "The new name is valid.";
+        Require.that(isValid(newName)).orThrow("The new name is valid.");
         
         final @Nonnull String oldName = getName();
         if (!newName.equals(oldName)) {
@@ -233,8 +233,8 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @NonCommitting
     @OnlyForActions
     public void replaceName(@Nonnull String oldName, @Nonnull String newName) throws DatabaseException {
-        assert isValid(oldName) : "The old name is valid.";
-        assert isValid(newName) : "The new name is valid.";
+        Require.that(isValid(oldName)).orThrow("The old name is valid.");
+        Require.that(isValid(newName)).orThrow("The new name is valid.");
         
 //        Contexts.replaceName(this, oldName, newName);
         name = newName;
@@ -287,7 +287,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @NonCommitting
     @OnlyForActions
     public void addPermissionsForActions(@Nonnull ReadOnlyContactPermissions newPermissions) throws DatabaseException {
-        assert !newPermissions.isEmpty() : "The new permissions are not empty.";
+        Require.that(!newPermissions.isEmpty()).orThrow("The new permissions are not empty.");
         
 //        Contexts.addPermissions(this, newPermissions);
         if (permissions != null) { permissions.addAll(newPermissions); }
@@ -316,7 +316,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     @NonCommitting
     @OnlyForActions
     public void removePermissionsForActions(@Nonnull ReadOnlyContactPermissions oldPermissions) throws DatabaseException {
-        assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
+        Require.that(!oldPermissions.isEmpty()).orThrow("The old permissions are not empty.");
         
 //        Contexts.removePermissions(this, oldPermissions);
         if (permissions != null) { permissions.removeAll(permissions); }
@@ -438,7 +438,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     public boolean isSubcontextOf(@Nonnull Context context) throws DatabaseException {
-//        assert context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
+//        Require.that(context.getIdentity().equals(getIdentity())).orThrow("The identity of the given context is the same.");
         
         return context.isSupercontextOf(this);
     }
@@ -676,7 +676,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException, InternalException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         return get(entity, Integer64Wrapper.decode(block));
     }

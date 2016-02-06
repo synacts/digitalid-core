@@ -7,8 +7,8 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
@@ -88,10 +88,10 @@ abstract class DelegatingClientStorageImplementation implements ClientStorage {
             this.service = service;
             this.name = service.getName() + "_" + name;
         } else {
-            throw ShouldNeverHappenError.get("Only the service class should call this constructor with null.");
+            throw UnexpectedValueException.with("Only the service class should call this constructor with null.");
         }
         
-        assert isValidName(this.name) : "The name is valid.";
+        Require.that(isValidName(this.name)).orThrow("The name is valid.");
     }
     
     /* -------------------------------------------------- Substorages -------------------------------------------------- */

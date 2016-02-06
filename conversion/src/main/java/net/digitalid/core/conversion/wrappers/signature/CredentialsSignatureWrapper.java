@@ -15,7 +15,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
@@ -295,7 +295,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      * @return whether the given certificates are valid (given the given credentials).
      */
     public static boolean areValid(@Nullable ReadOnlyList<CertifiedAttributeValue> certificates, @Nonnull @Validated ReadOnlyList<Credential> credentials) {
-        assert areValid(credentials) : "The credentials have to be valid.";
+        Require.that(areValid(credentials)).orThrow("The credentials have to be valid.");
         
         if (certificates != null) {
             if (credentials.size() != 1) { return false; }
@@ -398,10 +398,10 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(type, element, subject, audit);
         
-        assert credentials.isFrozen() : "The credentials are frozen.";
-        assert CredentialsSignatureWrapper.areValid(credentials) : "The credentials are valid.";
-        assert certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
-        assert areValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
+        Require.that(credentials.isFrozen()).orThrow("The credentials are frozen.");
+        Require.that(CredentialsSignatureWrapper.areValid(credentials)).orThrow("The credentials are valid.");
+        Require.that(certificates == null || certificates.isFrozen()).orThrow("The certificates are either null or frozen.");
+        Require.that(areValid(certificates, credentials)).orThrow("The certificates are valid (given the given credentials).");
         
         this.credentials = credentials;
         this.certificates = certificates;
@@ -424,7 +424,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     CredentialsSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("credentials.signature@core.digitalid.net") Block credentialsSignature, boolean verified, @Nullable Entity entity) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(block, verified);
         
-        assert credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
+        Require.that(credentialsSignature.getType().isBasedOn(SIGNATURE)).orThrow("The signature is based on the implementation type.");
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(credentialsSignature);
         
@@ -576,8 +576,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public @Nonnull InternalPerson getIssuer() {
-        assert isIdentityBased() : "The authentication is identity-based.";
-        assert !isRoleBased() : "The authentication is not role-based.";
+        Require.that(isIdentityBased()).orThrow("The authentication is identity-based.");
+        Require.that(!isRoleBased()).orThrow("The authentication is not role-based.");
         
         return (InternalPerson) credentials.getNonNullable(0).getIssuer();
     }
@@ -605,7 +605,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public @Nullable Block getAttributeContent(@Nonnull @AttributeType SemanticType type) {
-        assert type.isAttributeType() : "The type is an attribute type.";
+        Require.that(type.isAttributeType()).orThrow("The type is an attribute type.");
         
         if (isAttributeBased()) {
             for (final @Nonnull Credential credential : credentials) {
@@ -730,7 +730,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Override
     @NonCommitting
     public void verify() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !isVerified() : "This signature is not verified.";
+        Require.that(!isVerified()).orThrow("This signature is not verified.");
         
         final @Nonnull Time start = Time.getCurrent();
         
@@ -778,7 +778,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             }
             
             if (v == null) {
-                assert sv != null : "The value sv cannot be null if v is null (see code above).";
+                Require.that(sv != null).orThrow("The value sv cannot be null if v is null (see code above).");
                 hiddenElement = hiddenElement.multiply(publicKey.getAv().pow(sv));
             } else {
                 shownElement = shownElement.multiply(publicKey.getAv().pow(v));
@@ -813,7 +813,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         @Nonnull BigInteger tf = BigInteger.ZERO;
         if (value != null) {
-            assert publicKey != null : "If credentials are to be shortened, the public key of the receiving host is retrieved in the constructor.";
+            Require.that(publicKey != null).orThrow("If credentials are to be shortened, the public key of the receiving host is retrieved in the constructor.");
             final @Nonnull Exponent sb = Exponent.get(signature.getNonNullableElement(7));
             
             @Nonnull Element element = publicKey.getAu().pow(su).multiply(publicKey.getAb().pow(sb));
@@ -841,7 +841,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     void sign(@Nonnull @NonFrozen FreezableArray<Block> elements) {
         final @Nonnull Time start = Time.getCurrent();
         
-        assert credentials.getNonNullable(0) instanceof ClientCredential : "The first credential is a client credential (like all others).";
+        Require.that(credentials.getNonNullable(0) instanceof ClientCredential).orThrow("The first credential is a client credential (like all others).");
         final @Nonnull ClientCredential mainCredential = (ClientCredential) credentials.getNonNullable(0);
         final @Nonnull Exponent u = mainCredential.getU();
         final @Nonnull Exponent v = mainCredential.getV();
@@ -868,7 +868,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull FreezableList<Block> ts = FreezableArrayList.getWithCapacity(size);
         for (int i = 0; i < size; i++) {
-            assert credentials.getNonNullable(i) instanceof ClientCredential : "All credentials have to be client credentials, which was already checked in the constructor.";
+            Require.that(credentials.getNonNullable(i) instanceof ClientCredential).orThrow("All credentials have to be client credentials, which was already checked in the constructor.");
             randomizedCredentials[i] = ((ClientCredential) credentials.getNonNullable(i)).getRandomizedCredential();
             final @Nonnull PublicKey publicKey = randomizedCredentials[i].getPublicKey();
             @Nonnull Element element = publicKey.getCompositeGroup().getElement(BigInteger.ONE);
@@ -907,7 +907,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         @Nullable Element f = null;
         @Nullable Exponent rb = null;
         if (value != null) {
-            assert publicKey != null : "If credentials are to be shortened, the public key of the receiving host is retrieved in the constructor.";
+            Require.that(publicKey != null).orThrow("If credentials are to be shortened, the public key of the receiving host is retrieved in the constructor.");
             rb = Exponent.get(new BigInteger(Parameters.RANDOM_BLINDING_EXPONENT, random));
             
             f = publicKey.getAu().pow(ru).multiply(publicKey.getAb().pow(rb));
@@ -961,7 +961,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         }
         
         if (value != null) {
-            assert f != null && rb != null : "If the credential is shortened, f and rb are not null (see the code above).";
+            Require.that(f != null && rb != null).orThrow("If the credential is shortened, f and rb are not null (see the code above).");
             signature.set(6, Encode.nonNullable(F_PRIME, f));
             signature.set(7, Encode.nonNullable(SB_PRIME, rb.subtract(t.multiply(Exponent.get(value)))));
         }

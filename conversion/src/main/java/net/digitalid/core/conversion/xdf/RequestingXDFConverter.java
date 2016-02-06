@@ -3,7 +3,7 @@ package net.digitalid.core.conversion.xdf;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.reference.Capturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;

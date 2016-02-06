@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -149,7 +149,7 @@ public final class ActionModule implements StateModule {
     @Override
     @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
+        Require.that(block.getType().isBasedOn(getModuleFormat())).orThrow("The block is based on the format of this module.");
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("INSERT INTO " + host + "action (entity, service, time, " + Restrictions.COLUMNS + ", " + FreezableAgentPermissions.COLUMNS + ", agent, recipient, action) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
             final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
@@ -193,7 +193,7 @@ public final class ActionModule implements StateModule {
     @Override
     @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
-        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(getStateFormat())).orThrow("The block is based on the indicated type.");
     }
     
     @Override
@@ -218,7 +218,7 @@ public final class ActionModule implements StateModule {
     @Pure
     @NonCommitting
     public static @Nonnull ResponseAudit getAudit(@Nonnull NonHostEntity entity, @Nonnull Service service, @Nonnull Time lastTime, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException {
-        assert agent == null || service.equals(CoreService.SERVICE) : "The agent is null or the audit trail is requested for the core service.";
+        Require.that(agent == null || service.equals(CoreService.SERVICE)).orThrow("The agent is null or the audit trail is requested for the core service.");
         
         final @Nonnull Site site = entity.getSite();
         final @Nonnull StringBuilder SQL = new StringBuilder("(SELECT ").append(Database.getConfiguration().GREATEST()).append("(COALESCE(MAX(time), 0), ").append(Database.getConfiguration().CURRENT_TIME()).append("), NULL FROM ").append(site).append("action) UNION ");
@@ -266,8 +266,8 @@ public final class ActionModule implements StateModule {
      */
     @NonCommitting
     public static void audit(@Nonnull Action action) throws DatabaseException {
-        assert action.hasEntity() : "The action has an entity.";
-        assert action.hasSignature() : "The action has a signature.";
+        Require.that(action.hasEntity()).orThrow("The action has an entity.");
+        Require.that(action.hasSignature()).orThrow("The action has a signature.");
         
         final @Nonnull Entity entity = action.getEntityNotNull();
         final @Nonnull Site site = entity.getSite();

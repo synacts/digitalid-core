@@ -69,7 +69,7 @@ public final class OutgoingRole extends Agent {
      */
     @NonCommitting
     public void issue(@Nonnull ReadOnlySet<Contact> contacts) throws DatabaseException {
-        assert isOnHost() : "This outgoing role is on a host.";
+        Require.that(isOnHost()).orThrow("This outgoing role is on a host.");
         
         for (final @Nonnull Contact contact : contacts) {
             if (contact.isInternal()) {
@@ -99,7 +99,7 @@ public final class OutgoingRole extends Agent {
      */
     @NonCommitting
     public void revoke(@Nonnull ReadOnlySet<Contact> contacts) throws DatabaseException {
-        assert isOnHost() : "This outgoing role is on a host.";
+        Require.that(isOnHost()).orThrow("This outgoing role is on a host.");
         
         for (final @Nonnull Contact contact : contacts) {
             if (contact.isInternal()) {
@@ -264,8 +264,8 @@ public final class OutgoingRole extends Agent {
      */
     @NonCommitting
     public void restrictTo(@Nonnull Credential credential) throws DatabaseException {
-        assert isRestrictable() : "This outgoing role can be restricted.";
-        assert credential.isRoleBased() : "The credential is role-based.";
+        Require.that(isRestrictable()).orThrow("This outgoing role can be restricted.");
+        Require.that(credential.isRoleBased()).orThrow("The credential is role-based.");
         
         if (permissions == null) { getPermissions(); }
         assert permissions != null;
@@ -287,9 +287,9 @@ public final class OutgoingRole extends Agent {
     @NonCommitting
     public void checkCovers(@Nonnull Credential credential) throws DatabaseException, RequestException {
         final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
-        assert permissions != null : "The permissions of the credential are not null.";
+        Require.that(permissions != null).orThrow("The permissions of the credential are not null.");
         final @Nullable Restrictions restrictions = credential.getRestrictions();
-        assert restrictions != null : "The restrictions of the credential are not null.";
+        Require.that(restrictions != null).orThrow("The restrictions of the credential are not null.");
         
         getPermissions().checkCover(permissions);
         getRestrictions().checkCover(restrictions);

@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -86,8 +86,8 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
     OutgoingRoleRelationReplace(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) {
         super(outgoingRole.getRole());
         
-        assert oldRelation.isRoleType() : "The old relation is a role type.";
-        assert newRelation.isRoleType() : "The new relation is a role type.";
+        Require.that(oldRelation.isRoleType()).orThrow("The old relation is a role type.");
+        Require.that(newRelation.isRoleType()).orThrow("The new relation is a role type.");
         
         this.outgoingRole = outgoingRole;
         this.oldRelation = oldRelation;

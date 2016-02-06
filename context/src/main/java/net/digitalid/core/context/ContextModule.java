@@ -13,7 +13,7 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
@@ -162,7 +162,7 @@ public final class ContextModule implements StateModule {
     @Override
     @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
-        assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
+        Require.that(block.getType().isBasedOn(getModuleFormat())).orThrow("The block is based on the format of this module.");
         
         final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block entry : entries) {
@@ -242,7 +242,7 @@ public final class ContextModule implements StateModule {
     @Override
     @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(getStateFormat())).orThrow("The block is based on the indicated type.");
         
         final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -397,7 +397,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static @Nonnull Set<Pair<Context, String>> getSubcontexts(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        @Nonnull String query = "SELECT context, name FROM context_name WHERE entity = " + identity + " AND context & " + context.getMask() + " = " + context;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
@@ -419,7 +419,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static @Nonnull String getContextName(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        @Nonnull String query = "SELECT name FROM context_name WHERE identity = " + identity + " AND context = " + context;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
@@ -439,8 +439,8 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static void setContextName(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull String name) throws DatabaseException {
-//        assert contextExists(connection, identity, context.getSupercontext()) : "The supercontext of the given context has to exist.";
-//        assert name.length() <= 50 : "The context name may have at most 50 characters.";
+//        Require.that(contextExists(connection, identity, context.getSupercontext())).orThrow("The supercontext of the given context has to exist.");
+//        Require.that(name.length() <= 50).orThrow("The context name may have at most 50 characters.");
 //        
 //        @Nonnull String statement = "REPLACE INTO context_name (identity, context, name) VALUES (?, ?, ?)";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
@@ -460,7 +460,7 @@ public final class ContextModule implements StateModule {
 //     * @require position >= 0 && position < set.size() : "The position is within the bounds of the set.";
 //     */
 //    public static <T> T getElement(@Nonnull Set<T> set, int position) {
-//        assert position >= 0 && position < set.size() : "The position is within the bounds of the set.";
+//        Require.that(position >= 0 && position < set.size()).orThrow("The position is within the bounds of the set.");
 //        
 //        int i = 0;
 //        for (final @Nonnull T element : set) {
@@ -573,7 +573,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static @Nonnull Set<SemanticType> getContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean inherited) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        return getTypes(connection, identity, "context_permission", "context" + (inherited ? " IN (" + context.getSupercontextsAsString() + ")" : " = " + context));
 //    }
@@ -588,7 +588,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static void addContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> permissions) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        addTypes(connection, identity, "context_permission", "context", context.getNumber(), permissions);
 //    }
@@ -603,7 +603,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static void removeContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> permissions) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        removeTypes(connection, identity, "context_permission", "context", context.getNumber(), permissions);
 //    }
@@ -619,7 +619,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static @Nonnull Set<SemanticType> getContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean inherited) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        return getTypes(connection, identity, "context_authentication", "context" + (inherited ? " IN (" + context.getSupercontextsAsString() + ")" : " = " + context));
 //    }
@@ -634,7 +634,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static void addContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> authentications) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        addTypes(connection, identity, "context_authentication", "context", context.getNumber(), authentications);
 //    }
@@ -649,7 +649,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static void removeContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> authentications) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        removeTypes(connection, identity, "context_authentication", "context", context.getNumber(), authentications);
 //    }
@@ -663,7 +663,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static void removeContext(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        try (@Nonnull Statement statement = connection.createStatement()) {
 //            @Nonnull String condition = "WHERE identity = " + identity + " AND context & " + context.getMask() + " = " + context;
@@ -691,7 +691,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static @Nonnull Set<Person> getContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean recursive) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        @Nonnull String query = "SELECT DISTINCT general_identity.identity, general_identity.category, general_identity.address FROM context_contact JOIN general_identity ON context_contact.contact = general_identity.identity WHERE context_contact.identity = " + identity + " AND context_contact.context" + (recursive ? " & " + context.getMask() : "") + " = " + context;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
@@ -717,7 +717,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static void addContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<Person> contacts) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        @Nonnull String statement = "INSERT " + Database.IGNORE + " INTO context_contact (identity, context, contact) VALUES (?, ?, ?)";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
@@ -748,7 +748,7 @@ public final class ContextModule implements StateModule {
 //     */
 //    @NonCommitting
 //    static void removeContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<Person> contacts) throws DatabaseException {
-//        assert contextExists(connection, identity, context) : "The given context has to exist.";
+//        Require.that(contextExists(connection, identity, context)).orThrow("The given context has to exist.");
 //        
 //        @Nonnull String sql = "DELETE FROM context_contact WHERE identity = ? AND context = ? AND contact = ?";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {

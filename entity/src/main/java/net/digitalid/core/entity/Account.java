@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -100,7 +100,7 @@ public abstract class Account extends EntityImplementation {
         } else if (identity instanceof InternalNonHostIdentity) {
             return NonHostAccount.get(host, (InternalNonHostIdentity) identity);
         } else {
-            throw ShouldNeverHappenError.get("An internal identity is either a host or a non-host.");
+            throw UnexpectedValueException.with("identity", identity);
         }
     }
     

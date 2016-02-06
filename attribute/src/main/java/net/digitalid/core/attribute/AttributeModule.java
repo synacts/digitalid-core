@@ -15,7 +15,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.reference.Capturable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -172,7 +172,7 @@ public final class AttributeModule implements StateModule {
     @Override
     @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
+        Require.that(block.getType().isBasedOn(getModuleFormat())).orThrow("The block is based on the format of this module.");
         
         final @Nonnull ReadOnlyArray<Block> tables = TupleWrapper.decode(block).getNonNullableElements(2);
         final @Nonnull String prefix = "INSERT INTO " + host;
@@ -274,7 +274,7 @@ public final class AttributeModule implements StateModule {
     @Override
     @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(getStateFormat())).orThrow("The block is based on the indicated type.");
         
         final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -387,7 +387,7 @@ public final class AttributeModule implements StateModule {
      */
     @NonCommitting
     static void insertValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws DatabaseException {
-        assert value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
+        Require.that(value.isVerified() && value.matches(attribute)).orThrow("The value is verified and matches the given attribute.");
         
         final @Nonnull String SQL = "INSERT INTO " + attribute.getEntity().getSite() + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -409,7 +409,7 @@ public final class AttributeModule implements StateModule {
      * @require value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
      */
     static void deleteValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws DatabaseException {
-        assert value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
+        Require.that(value.isVerified() && value.matches(attribute)).orThrow("The value is verified and matches the given attribute.");
         
         final @Nonnull String SQL = "DELETE FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = ? AND type = ? AND published = ? AND value = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -434,8 +434,8 @@ public final class AttributeModule implements StateModule {
      */
     @NonCommitting
     static void replaceValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue oldValue, @Nonnull AttributeValue newValue) throws DatabaseException {
-        assert oldValue.isVerified() && oldValue.matches(attribute) : "The old value is verified and matches the given attribute.";
-        assert newValue.isVerified() && newValue.matches(attribute) : "The new value is verified and matches the given attribute.";
+        Require.that(oldValue.isVerified() && oldValue.matches(attribute)).orThrow("The old value is verified and matches the given attribute.");
+        Require.that(newValue.isVerified() && newValue.matches(attribute)).orThrow("The new value is verified and matches the given attribute.");
         
         final @Nonnull String SQL = "UPDATE " + attribute.getEntity().getSite() + "attribute_value SET value = ? WHERE entity = ? AND type = ? AND published = ? AND value = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -464,7 +464,7 @@ public final class AttributeModule implements StateModule {
     @Pure
     @NonCommitting
     static @Nullable PassiveExpression getVisibility(@Nonnull Attribute attribute) throws DatabaseException {
-        assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
+        Require.that(attribute.getEntity().getIdentity() instanceof InternalPerson).orThrow("The entity of the given attribute belongs to an internal person.");
         
         final @Nonnull String SQL = "SELECT visibility FROM " + attribute.getEntity().getSite() + "attribute_visibility WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType();
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -484,8 +484,8 @@ public final class AttributeModule implements StateModule {
      */
     @NonCommitting
     static void insertVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws DatabaseException {
-        assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
-        assert visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
+        Require.that(attribute.getEntity().getIdentity() instanceof InternalPerson).orThrow("The entity of the given attribute belongs to an internal person.");
+        Require.that(visibility.getEntity().equals(attribute.getEntity())).orThrow("The visibility and the attribute belong to the same entity.");
         
         final @Nonnull String SQL = "INSERT INTO " + attribute.getEntity().getSite() + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -507,8 +507,8 @@ public final class AttributeModule implements StateModule {
      */
     @NonCommitting
     static void deleteVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws DatabaseException {
-        assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
-        assert visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
+        Require.that(attribute.getEntity().getIdentity() instanceof InternalPerson).orThrow("The entity of the given attribute belongs to an internal person.");
+        Require.that(visibility.getEntity().equals(attribute.getEntity())).orThrow("The visibility and the attribute belong to the same entity.");
         
         final @Nonnull String SQL = "DELETE FROM " + attribute.getEntity().getSite() + "attribute_visibility WHERE entity = ? AND type = ? AND visibility = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -532,9 +532,9 @@ public final class AttributeModule implements StateModule {
      */
     @NonCommitting
     static void replaceVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression oldVisibility, @Nonnull PassiveExpression newVisibility) throws DatabaseException {
-        assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
-        assert oldVisibility.getEntity().equals(attribute.getEntity()) : "The old visibility and the attribute belong to the same entity.";
-        assert newVisibility.getEntity().equals(attribute.getEntity()) : "The new visibility and the attribute belong to the same entity.";
+        Require.that(attribute.getEntity().getIdentity() instanceof InternalPerson).orThrow("The entity of the given attribute belongs to an internal person.");
+        Require.that(oldVisibility.getEntity().equals(attribute.getEntity())).orThrow("The old visibility and the attribute belong to the same entity.");
+        Require.that(newVisibility.getEntity().equals(attribute.getEntity())).orThrow("The new visibility and the attribute belong to the same entity.");
         
         final @Nonnull String SQL = "UPDATE " + attribute.getEntity().getSite() + "attribute_visibility SET visibility = ? WHERE entity = ? AND type = ? AND visibility = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {

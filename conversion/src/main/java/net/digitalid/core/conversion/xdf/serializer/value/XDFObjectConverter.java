@@ -27,7 +27,7 @@ public class XDFObjectConverter<T extends Convertible> extends XDFConverter<T> {
     @SuppressWarnings("unchecked")
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException, InternalException {
-        assert object instanceof Convertible : "The object is an instance of Convertible.";
+        Require.that(object instanceof Convertible).orThrow("The object is an instance of Convertible.");
         
         final @Nonnull Convertible convertible = (Convertible) object;
         return XDF.convertNonNullable(convertible, (Class<? extends Convertible>) type, fieldName + (parentName == null ? "" : "." + parentName));

@@ -2,7 +2,7 @@ package net.digitalid.core.exceptions;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
@@ -180,13 +180,13 @@ public enum RequestErrorCode implements XDF<RequestErrorCode, Object>, SQL<Reque
      */
     @Pure
     public static @Nonnull RequestErrorCode get(@Validated byte value) {
-        assert isValid(value) : "The value is a valid request error.";
+        Require.that(isValid(value)).orThrow("The value is a valid request error.");
         
         for (final @Nonnull RequestErrorCode code : values()) {
             if (code.value == value) { return code; }
         }
         
-        throw ShouldNeverHappenError.get("The value '" + value + "' does not encode a request error code.");
+        throw UnexpectedValueException.with("value", value);
     }
     
     /* -------------------------------------------------- Name -------------------------------------------------- */

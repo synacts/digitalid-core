@@ -80,7 +80,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> e
     @Pure
     @Hosts
     public final @Nonnull Account getAccount() {
-        assert isOnHost() : "This concept is on a host.";
+        Require.that(isOnHost()).orThrow("This concept is on a host.");
         
         return (Account) entity;
     }
@@ -174,7 +174,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> e
      * @require property.getConcept() == this : "The given property belongs to this concept.";
      */
     public void register(@Nonnull ConceptProperty<?, C, E> property) {
-        assert property.getConcept() == this : "The given property belongs to this concept.";
+        Require.that(property.getConcept() == this).orThrow("The given property belongs to this concept.");
         
         properties.add(property);
     }

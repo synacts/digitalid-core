@@ -6,7 +6,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -185,7 +185,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      */
     @NonCommitting
     @Nonnull ClientCredential getInternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull BigInteger b, @Nonnull Exponent u) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert hasSignature() : "This handler has a signature.";
+        Require.that(hasSignature()).orThrow("This handler has a signature.");
         
         if (restrictions == null) { throw InvalidParameterValueCombinationException.get("The restrictions may not be null for internal credentials."); }
         final @Nonnull Exponent v = Exponent.get(restrictions.toBlock().getHash());
@@ -209,7 +209,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      */
     @NonCommitting
     @Nonnull ClientCredential getExternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull BigInteger b, @Nonnull Exponent u, @Nonnull Exponent v) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert hasSignature() : "This handler has a signature.";
+        Require.that(hasSignature()).orThrow("This handler has a signature.");
         
         if (restrictions != null) { throw InvalidParameterValueCombinationException.get("The restrictions must be null for external credentials."); }
         

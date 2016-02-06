@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -87,8 +87,8 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
     PasswordValueReplace(@Nonnull Settings password, @Nonnull String oldValue, @Nonnull String newValue) {
         super(password.getRole());
         
-        assert Settings.isValid(oldValue) : "The old value is valid.";
-        assert Settings.isValid(newValue) : "The new value is valid.";
+        Require.that(Settings.isValid(oldValue)).orThrow("The old value is valid.");
+        Require.that(Settings.isValid(newValue)).orThrow("The new value is valid.");
         
         this.password = password;
         this.oldValue = oldValue;

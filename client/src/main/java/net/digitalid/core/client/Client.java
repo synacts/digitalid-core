@@ -18,7 +18,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
@@ -182,9 +182,9 @@ public class Client extends Site {
     public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Frozen ReadOnlyAgentPermissions preferredPermissions) throws IOException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(identifier);
         
-        assert isValidIdentifier(identifier) : "The identifier is valid.";
-        assert isValidName(name) : "The name is valid.";
-        assert preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
+        Require.that(isValidIdentifier(identifier)).orThrow("The identifier is valid.");
+        Require.that(isValidName(name)).orThrow("The name is valid.");
+        Require.that(preferredPermissions.isFrozen()).orThrow("The preferred permissions are frozen.");
         
         this.identifier = identifier;
         this.name = name;
@@ -247,7 +247,7 @@ public class Client extends Site {
      * @require isValid(name) : "The name is valid.";
      */
     public final void setName(@Nonnull String name) {
-        assert isValidName(name) : "The name is valid.";
+        Require.that(isValidName(name)).orThrow("The name is valid.");
         
         this.name = name;
     }
@@ -419,9 +419,9 @@ public class Client extends Site {
      */
     @Committing
     public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadOnlyList<NativeRole> roles, @Nonnull ReadOnlyList<ExternalIdentifier> identifiers) throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !subject.exists() : "The subject does not exist.";
-        assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
-        assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
+        Require.that(!subject.exists()).orThrow("The subject does not exist.");
+        Require.that(category.isInternalNonHostIdentity()).orThrow("The category denotes an internal non-host identity.");
+        Require.that(!category.isType() || roles.size() <= 1 && identifiers.isEmpty()).orThrow("If the category denotes a type, at most one role and no identifier may be given.");
         
         Database.commit(); // This commit is necessary in case the client and host share the same database.
         final @Nonnull AccountOpen accountOpen = new AccountOpen(subject, category, this); accountOpen.send();

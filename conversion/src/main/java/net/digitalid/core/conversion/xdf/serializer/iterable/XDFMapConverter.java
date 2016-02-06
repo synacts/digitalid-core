@@ -98,8 +98,8 @@ public class XDFMapConverter<T extends Map<?, ?>> extends XDFConverter<T> {
             final @Nonnull TupleWrapper tupleWrapper = TupleWrapper.decode(listElement);
             final @Nonnull @NullableElements ReadOnlyArray<Block> elements = tupleWrapper.getNonNullableElements();
             
-            assert elements.size() == 2 : "The element of a map is a tuple of degree 2.";
-            assert elements.getNullable(0) != null : "The key of a map entry must not be null.";
+            Require.that(elements.size() == 2).orThrow("The element of a map is a tuple of degree 2.");
+            Require.that(elements.getNullable(0) != null).orThrow("The key of a map entry must not be null.");
             
             // The key and value are nullable because there are map implementations that permit null values and keys
             // (e.g. the default implementation of this converter, FreezableHashMap). Therefore we allow it, but
@@ -124,7 +124,7 @@ public class XDFMapConverter<T extends Map<?, ?>> extends XDFConverter<T> {
     
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws InternalException, StoringException {
-        assert Map.class.isAssignableFrom(object.getClass()) : "The object is a map.";
+        Require.that(Map.class.isAssignableFrom(object.getClass())).orThrow("The object is a map.");
         
         final @Nonnull Map<?, ?> map = (Map<?, ?>) object;
         

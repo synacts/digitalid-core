@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -67,7 +67,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
     private MobileIdentifier(@Nonnull @Validated String string) {
         super(string);
         
-        assert isValid(string) : "The string is a valid mobile identifier.";
+        Require.that(isValid(string)).orThrow("The string is a valid mobile identifier.");
     }
     
     /**

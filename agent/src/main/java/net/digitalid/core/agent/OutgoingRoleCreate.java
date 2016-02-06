@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -80,8 +80,8 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
     OutgoingRoleCreate(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) {
         super(outgoingRole.getRole());
         
-        assert relation.isRoleType() : "The relation is a role type.";
-        assert context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
+        Require.that(relation.isRoleType()).orThrow("The relation is a role type.");
+        Require.that(context.getEntity().equals(outgoingRole.getEntity())).orThrow("The context belongs to the entity of the outgoing role.");
         
         this.outgoingRole = outgoingRole;
         this.relation = relation;

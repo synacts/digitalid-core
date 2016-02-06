@@ -90,8 +90,8 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
     private VariableInteger(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, @NonNegative long value) {
         super(type);
         
-        assert value >= 0 : "The value is non-negative.";
-        assert value <= MAX_VALUE : "The first two bits have to be zero.";
+        Require.that(value >= 0).orThrow("The value is non-negative.");
+        Require.that(value <= MAX_VALUE).orThrow("The first two bits have to be zero.");
         
         this.value = value;
     }
@@ -110,7 +110,7 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      */
     @Pure
     public static int decodeLength(@Nonnull Block block, @NonNegative int offset) throws InvalidEncodingException, InternalException {
-        assert offset >= 0 : "The offset is not negative.";
+        Require.that(offset >= 0).orThrow("The offset is not negative.");
         
         if (offset >= block.getLength()) { throw InvalidBlockOffsetException.get(offset, 0, block); }
         
@@ -128,7 +128,7 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      */
     @Pure
     static int decodeLength(@Nonnull @NonEmpty byte[] bytes) throws InvalidEncodingException, InternalException {
-        assert bytes.length > 0 : "The byte array is not empty.";
+        Require.that(bytes.length > 0).orThrow("The byte array is not empty.");
         
         return 1 << ((bytes[0] & 0xFF) >>> 6);
     }
@@ -151,8 +151,8 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      */
     @Pure
     public static @NonNegative long decodeValue(@Nonnull Block block, @NonNegative int offset, int length) throws InvalidEncodingException, InternalException {
-        assert offset >= 0 : "The offset is not negative.";
-        assert length == decodeLength(block, offset) : "The length is correct.";
+        Require.that(offset >= 0).orThrow("The offset is not negative.");
+        Require.that(length == decodeLength(block, offset)).orThrow("The length is correct.");
         
         if (offset + length > block.getLength()) { throw InvalidBlockOffsetException.get(offset, length, block); }
         
@@ -182,8 +182,8 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      */
     @Pure
     static @NonNegative long decodeValue(@Nonnull byte[] bytes, int length) throws InvalidEncodingException, InternalException {
-        assert bytes.length >= length : "The byte array is big enough.";
-        assert length == decodeLength(bytes) : "The length is correct.";
+        Require.that(bytes.length >= length).orThrow("The byte array is big enough.");
+        Require.that(length == decodeLength(bytes)).orThrow("The length is correct.");
         
         long result = bytes[0] & 0x3F;
         for (int i = 1; i < length; i++) {
@@ -208,8 +208,8 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      */
     @Pure
     public static int determineLength(@NonNegative long value) {
-        assert value >= 0 : "The value is not negative.";
-        assert value <= MAX_VALUE : "The first two bits have to be zero.";
+        Require.that(value >= 0).orThrow("The value is not negative.");
+        Require.that(value <= MAX_VALUE).orThrow("The first two bits have to be zero.");
         
         if (value >= 1_073_741_824) { // 2^30
             return 8;
@@ -235,11 +235,11 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      * @require value <= MAX_VALUE : "The first two bits have to be zero.";
      */
     public static void encode(@Nonnull @Encoding Block block, @NonNegative int offset, int length, @NonNegative long value) {
-        assert offset >= 0 : "The offset is not negative.";
-        assert offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
-        assert length == determineLength(value) : "The length of the indicated section in the block has to match the length of the encoded value.";
-        assert value >= 0 : "The value is not negative.";
-        assert value <= MAX_VALUE : "The first two bits have to be zero.";
+        Require.that(offset >= 0).orThrow("The offset is not negative.");
+        Require.that(offset + length <= block.getLength()).orThrow("The indicated section may not exceed the given block.");
+        Require.that(length == determineLength(value)).orThrow("The length of the indicated section in the block has to match the length of the encoded value.");
+        Require.that(value >= 0).orThrow("The value is not negative.");
+        Require.that(value <= MAX_VALUE).orThrow("The first two bits have to be zero.");
         
         long shifter = value;
         for (int i = length - 1; i >= 1; i--) {  
@@ -261,8 +261,8 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
     @Pure
     @Override
     public void encode(@Nonnull @Encoding Block block) {
-        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        Require.that(block.getLength() == determineLength()).orThrow("The block's length has to match the determined length.");
+        Require.that(block.getType().isBasedOn(getSyntacticType())).orThrow("The block is based on the indicated syntactic type.");
         
         encode(block, 0, block.getLength(), value);
     }
@@ -431,7 +431,7 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
         private SQLConverter(@Nonnull @Matching ColumnDeclaration declaration) {
             super(declaration, SEMANTIC);
             
-            assert declaration.getType() == SQL_TYPE : "The declaration matches the SQL type of the wrapper.";
+            Require.that(declaration.getType() == SQL_TYPE).orThrow("The declaration matches the SQL type of the wrapper.");
         }
         
         @Override
@@ -484,7 +484,7 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
         @Pure
         @Override
         protected @Nonnull VariableInteger wrap(@Nonnull SemanticType type, @Nonnull @Validated Long value) {
-            assert isValid(value) : "The value is valid.";
+            Require.that(isValid(value)).orThrow("The value is valid.");
             
             return new VariableInteger(type, value);
         }

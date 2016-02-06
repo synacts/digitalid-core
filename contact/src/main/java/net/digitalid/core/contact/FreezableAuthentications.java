@@ -2,7 +2,7 @@ package net.digitalid.core.contact;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.validation.annotations.reference.Capturable;

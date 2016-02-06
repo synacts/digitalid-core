@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.reference.Capturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -231,7 +231,7 @@ abstract class Expression extends NonHostConcept {
      */
     @Pure
     static @Nonnull String removeQuotes(@Nonnull String string) {
-        assert isQuoted(string) : "The string is quoted.";
+        Require.that(isQuoted(string)).orThrow("The string is quoted.");
         
         return string.substring(1, string.length() - 1);
     }

@@ -2,7 +2,7 @@ package net.digitalid.core.attribute;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -70,7 +70,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
     public CertifiedAttributeValue(@Nonnull Block content, @Nonnull InternalIdentity subject, @Nonnull InternalNonHostIdentity issuer) {
         super(content);
         
-        assert content.getType().isAttributeFor(subject.getCategory()) : "The content is an attribute for the subject.";
+        Require.that(content.getType().isAttributeFor(subject.getCategory())).orThrow("The content is an attribute for the subject.");
         
         this.signature = HostSignatureWrapper.sign(AttributeValue.TYPE, SelfcontainedWrapper.encodeNonNullable(AttributeValue.CONTENT, content), subject.getAddress(), null, issuer.getAddress());
         this.subject = subject;

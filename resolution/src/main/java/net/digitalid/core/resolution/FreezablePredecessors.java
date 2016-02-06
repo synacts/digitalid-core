@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
@@ -89,7 +89,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public FreezablePredecessors(@Nonnull Block block) throws InvalidEncodingException, InternalException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         final @Nonnull ReadOnlyList<Block> predecessors = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block predecessor : predecessors) {
@@ -166,7 +166,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     
     
     static {
-        assert Threading.isMainThread() : "This static block is called in the main thread.";
+        Require.that(Threading.isMainThread()).orThrow("This static block is called in the main thread.");
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_predecessors (identifier " + IdentifierImplementation.FORMAT + " NOT NULL, predecessors " + Block.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
@@ -204,7 +204,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     @Pure
     @NonCommitting
     public static @Nonnull @Frozen ReadOnlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws DatabaseException {
-        assert exist(identifier) : "The predecessors of the given identifier exist.";
+        Require.that(exist(identifier)).orThrow("The predecessors of the given identifier exist.");
         
         final @Nonnull String SQL = "SELECT predecessors FROM general_predecessors WHERE identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {

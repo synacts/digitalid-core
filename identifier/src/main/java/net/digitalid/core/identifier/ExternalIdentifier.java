@@ -2,7 +2,7 @@ package net.digitalid.core.identifier;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -85,7 +85,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     ExternalIdentifier(@Nonnull @Validated String string) {
         super(string);
         
-        assert isValid(string) : "The string is a valid external identifier.";
+        Require.that(isValid(string)).orThrow("The string is a valid external identifier.");
     }
     
     /**
@@ -111,7 +111,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     @Override
     @NonCommitting
     public final @Nonnull Person getMappedIdentity() throws DatabaseException {
-        assert isMapped() : "This identifier is mapped.";
+        Require.that(isMapped()).orThrow("This identifier is mapped.");
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof Person) { return (Person) identity; }

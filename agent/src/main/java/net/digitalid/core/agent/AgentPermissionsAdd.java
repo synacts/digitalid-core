@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -68,7 +68,7 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
     AgentPermissionsAdd(@Nonnull Agent agent, @Nonnull ReadOnlyAgentPermissions permissions) {
         super(agent.getRole());
         
-        assert permissions.isFrozen() : "The permissions are frozen.";
+        Require.that(permissions.isFrozen()).orThrow("The permissions are frozen.");
         
         this.agent = agent;
         this.permissions = permissions;

@@ -115,7 +115,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      */
     @Pure
     public @Nonnull @NullableElements @Frozen ReadOnlyArray<Block> getNullableElements(@Positive int length) throws InvalidCollectionSizeException {
-        assert length > 0 : "The length is positive.";
+        Require.that(length > 0).orThrow("The length is positive.");
         
         if (elements.size() < length) { throw InvalidCollectionSizeException.get(length, elements.size()); }
         return elements;
@@ -152,7 +152,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      */
     @Pure
     public boolean isElementNull(@NonNegative int index) throws InvalidCollectionSizeException {
-        assert index >= 0 : "The index is non-negative.";
+        Require.that(index >= 0).orThrow("The index is non-negative.");
         
         if (index >= elements.size()) { throw InvalidCollectionSizeException.get(index, elements.size()); }
         return elements.getNullable(index) == null;
@@ -171,7 +171,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      */
     @Pure
     public @Nullable Block getNullableElement(@NonNegative int index) throws InvalidCollectionSizeException {
-        assert index >= 0 : "The index is non-negative.";
+        Require.that(index >= 0).orThrow("The index is non-negative.");
         
         if (index >= elements.size()) { throw InvalidCollectionSizeException.get(index, elements.size()); }
         return elements.getNullable(index);
@@ -210,11 +210,11 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     @Pure
     public @Nullable Block getNullableElement(@Nonnull SemanticType type) {
         final @Nonnull ReadOnlyList<SemanticType> parameters = getSemanticType().getParameters();
-        assert parameters.contains(type) : "The parameters of this tuple contain the given type.";
+        Require.that(parameters.contains(type)).orThrow("The parameters of this tuple contain the given type.");
         
         final @Nullable Block element = elements.getNullable(parameters.indexOf(type));
         
-        assert element == null || element.getType().isBasedOn(type) : "The returned block is either null or based on the given type.";
+        Require.that(element == null || element.getType().isBasedOn(type)).orThrow("The returned block is either null or based on the given type.");
         
         return element;
     }
@@ -252,8 +252,8 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     private TupleWrapper(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull @NullableElements @Frozen ReadOnlyArray<Block> elements) {
         super(type);
         
-        assert elements.isFrozen() : "The elements are frozen.";
-        assert basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
+        Require.that(elements.isFrozen()).orThrow("The elements are frozen.");
+        Require.that(basedOnParameters(type, elements)).orThrow("Each element is either null or based on the corresponding parameter of the given type.");
         
         this.elements = elements;
     }
@@ -279,8 +279,8 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     @Pure
     @Override
     public void encode(@Nonnull @Encoding Block block) {
-        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        Require.that(block.getLength() == determineLength()).orThrow("The block's length has to match the determined length.");
+        Require.that(block.getType().isBasedOn(getSyntacticType())).orThrow("The block is based on the indicated syntactic type.");
         
         int offset = 0;
         
@@ -298,7 +298,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
             }
         }
         
-        assert offset == block.getLength() : "The whole block should now be encoded.";
+        Require.that(offset == block.getLength()).orThrow("The whole block should now be encoded.");
     }
     
     /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */

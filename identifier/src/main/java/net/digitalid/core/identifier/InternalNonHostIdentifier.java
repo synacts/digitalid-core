@@ -2,7 +2,7 @@ package net.digitalid.core.identifier;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -62,7 +62,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     private InternalNonHostIdentifier(@Nonnull @Validated String string) {
         super(string);
         
-        assert isValid(string) : "The string is a valid non-host identifier.";
+        Require.that(isValid(string)).orThrow("The string is a valid non-host identifier.");
     }
     
     /**
@@ -84,7 +84,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     @Override
     @NonCommitting
     public @Nonnull InternalNonHostIdentity getMappedIdentity() throws DatabaseException {
-        assert isMapped() : "This identifier is mapped.";
+        Require.that(isMapped()).orThrow("This identifier is mapped.");
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof InternalNonHostIdentity) { return (InternalNonHostIdentity) identity; }

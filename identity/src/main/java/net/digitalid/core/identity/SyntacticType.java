@@ -2,7 +2,7 @@ package net.digitalid.core.identity;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -90,7 +90,7 @@ public final class SyntacticType extends Type {
     @Pure
     @LoadedRecipient
     public byte getNumberOfParameters() {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         return numberOfParameters;
     }
@@ -129,7 +129,7 @@ public final class SyntacticType extends Type {
     @Override
     @NonCommitting
     void load() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !isLoaded() : "The type declaration is not loaded.";
+        Require.that(!isLoaded()).orThrow("The type declaration is not loaded.");
         
         this.numberOfParameters = Integer08Wrapper.decode(Cache.getStaleAttributeContent(this, null, PARAMETERS));
         if (numberOfParameters < -1) { throw InvalidDeclarationException.get("The number of parameters has to be at least -1 but was " + numberOfParameters + ".", getAddress()); }
@@ -147,11 +147,11 @@ public final class SyntacticType extends Type {
     @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SyntacticType load(int numberOfParameters) {
-        assert !isLoaded() : "The type declaration is not loaded.";
-        assert Threading.isMainThread() : "This method may only be called in the main thread.";
+        Require.that(!isLoaded()).orThrow("The type declaration is not loaded.");
+        Require.that(Threading.isMainThread()).orThrow("This method may only be called in the main thread.");
         
-        assert numberOfParameters >= -1 : "The number of parameters is at least -1.";
-        assert numberOfParameters <= 127 : "The number of parameters is at most 127.";
+        Require.that(numberOfParameters >= -1).orThrow("The number of parameters is at least -1.");
+        Require.that(numberOfParameters <= 127).orThrow("The number of parameters is at most 127.");
         
         this.numberOfParameters = (byte) numberOfParameters;
         setLoaded();

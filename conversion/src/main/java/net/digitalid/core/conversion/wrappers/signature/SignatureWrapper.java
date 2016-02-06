@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.NonFrozen;
@@ -173,7 +173,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      */
     @Pure
     public final @Nonnull InternalIdentifier getNonNullableSubject() {
-        assert subject != null : "This signature has a subject.";
+        Require.that(subject != null).orThrow("This signature has a subject.");
         
         return subject;
     }
@@ -204,9 +204,9 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      */
     @Pure
     public final @Nonnull @Positive Time getNonNullableTime() {
-        assert hasSubject() : "This signature has a subject.";
+        Require.that(hasSubject()).orThrow("This signature has a subject.");
         
-        assert time != null : "This then follows from the constructor implementations.";
+        Require.that(time != null).orThrow("This then follows from the constructor implementations.");
         return time;
     }
     
@@ -264,7 +264,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Locked
     @NonCommitting
     public void verify() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !isVerified() : "This signature is not verified.";
+        Require.that(!isVerified()).orThrow("This signature is not verified.");
         
         setVerified();
     }
@@ -286,7 +286,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     SignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nullable InternalIdentifier subject, @Nullable Audit audit) {
         super(type);
         
-        assert element == null || element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is either null or based on the parameter of the given type.";
+        Require.that(element == null || element.getType().isBasedOn(type.getParameters().getNonNullable(0))).orThrow("The element is either null or based on the parameter of the given type.");
         
         this.element = element;
         this.subject = subject;
@@ -453,8 +453,8 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Override
     public void encode(@Nonnull @Encoding Block block) {
-        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        Require.that(block.getLength() == determineLength()).orThrow("The block's length has to match the determined length.");
+        Require.that(block.getType().isBasedOn(getSyntacticType())).orThrow("The block is based on the indicated syntactic type.");
         
         getCache().writeTo(block);
     }

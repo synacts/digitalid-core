@@ -75,7 +75,7 @@ public abstract class Audit extends CastableObject implements Castable, XDF<Audi
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public static @Nonnull Audit get(@Nonnull Block block) throws InvalidEncodingException, InternalException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
         final @Nonnull Time lastTime = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0));

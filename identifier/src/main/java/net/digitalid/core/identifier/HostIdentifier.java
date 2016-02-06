@@ -2,7 +2,7 @@ package net.digitalid.core.identifier;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -68,7 +68,7 @@ public final class HostIdentifier extends InternalIdentifier {
     private HostIdentifier(@Nonnull @Validated String string) {
         super(string);
         
-        assert isValid(string) : "The string is a valid host identifier.";
+        Require.that(isValid(string)).orThrow("The string is a valid host identifier.");
     }
     
     /**
@@ -89,7 +89,7 @@ public final class HostIdentifier extends InternalIdentifier {
     @Override
     @NonCommitting
     public @Nonnull HostIdentity getMappedIdentity() throws DatabaseException {
-        assert isMapped() : "This identifier is mapped.";
+        Require.that(isMapped()).orThrow("This identifier is mapped.");
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof HostIdentity) { return (HostIdentity) identity; }

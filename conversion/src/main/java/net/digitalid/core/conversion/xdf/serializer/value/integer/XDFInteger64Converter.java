@@ -25,7 +25,7 @@ public class XDFInteger64Converter extends XDFConverter<Long> {
     
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException {
-        assert (object instanceof Long) : "The object is an instance of the long type.";
+        Require.that((object instanceof Long)).orThrow("The object is an instance of the long type.");
 
         final long value = (Long) object;
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -102,7 +102,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        assert successor != null : "The successor may only be null to reverse account initialization.";
+        Require.that(successor != null).orThrow("The successor may only be null to reverse account initialization.");
         return successor.toBlock().setType(TYPE);
     }
     

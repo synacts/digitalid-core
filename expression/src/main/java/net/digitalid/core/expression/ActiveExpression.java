@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.freezable.FreezableSet;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.reference.Capturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;

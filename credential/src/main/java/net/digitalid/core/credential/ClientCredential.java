@@ -10,9 +10,9 @@ import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.UnexpectedFailureException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -165,8 +165,8 @@ public final class ClientCredential extends Credential {
     private ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent, @Nullable Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
         super(publicKey, issuer, issuance, randomizedPermissions, role, attributeContent, restrictions, i);
         
-        assert restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
-        assert !oneTime || attributeContent != null : "If the credential can be used only once, the attribute content may not be null.";
+        Require.that(restrictions == null || restrictions.toBlock().getHash().equals(v.getValue())).orThrow("If the restrictions are not null, their hash has to equal v.");
+        Require.that(!oneTime || attributeContent != null).orThrow("If the credential can be used only once, the attribute content may not be null.");
         
         this.c = c;
         this.e = e;
@@ -232,7 +232,7 @@ public final class ClientCredential extends Credential {
     @Override
     public @Nonnull Exponent getI() {
         final @Nullable Exponent i = super.getI();
-        assert i != null : "The value i is always known in client credentials (see the constructor above).";
+        Require.that(i != null).orThrow("The value i is always known in client credentials (see the constructor above).");
         return i;
     }
     
@@ -255,7 +255,7 @@ public final class ClientCredential extends Credential {
             final @Nonnull Exponent r = Exponent.get(new BigInteger(Parameters.BLINDING_EXPONENT - Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
             return new ClientCredential(getPublicKey(), getIssuer(), getIssuance(), getRandomizedPermissions(), getRole(), getAttributeContent(), getRestrictions(), c.multiply(getPublicKey().getAb().pow(r)), e, b.subtract(e.multiply(r)), u, getI(), v, oneTime);
         } catch (@Nonnull InvalidSignatureException exception) {
-            throw ShouldNeverHappenError.get("The randomization of a client credential should yield another valid client credential.", exception);
+            throw UnexpectedFailureException.with("The randomization of a client credential should yield another valid client credential.", exception);
         }
     }
     

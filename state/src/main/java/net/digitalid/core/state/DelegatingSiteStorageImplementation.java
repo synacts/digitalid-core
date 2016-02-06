@@ -9,7 +9,7 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.type.Immutable;

@@ -30,7 +30,7 @@ public class XDFBinaryConverter extends XDFConverter<Byte[]> {
     
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException {
-        assert (object instanceof Byte[] || object instanceof byte[]) : "The object is an instance of a byte array type.";
+        Require.that((object instanceof Byte[] || object instanceof byte[])).orThrow("The object is an instance of a byte array type.");
 
         @Nonnull byte[] value;
         if (object instanceof Byte[]) {

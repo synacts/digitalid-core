@@ -107,7 +107,7 @@ public final class CertificateModule implements StateModule {
     @Override
     @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
-        assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
+        Require.that(block.getType().isBasedOn(getModuleFormat())).orThrow("The block is based on the format of this module.");
         
         final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block entry : entries) {
@@ -146,7 +146,7 @@ public final class CertificateModule implements StateModule {
     @Override
     @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, InvalidEncodingException {
-        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(getStateFormat())).orThrow("The block is based on the indicated type.");
         
         final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block entry : entries) {

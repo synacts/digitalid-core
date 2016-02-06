@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -90,8 +90,8 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     public AttributesQuery(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull ReadOnlyAttributeTypeSet attributeTypes, boolean published) {
         super(role, subject);
         
-        assert attributeTypes.isFrozen() : "The attribute types are frozen.";
-        assert !attributeTypes.isEmpty() : "The attribute types are not empty.";
+        Require.that(attributeTypes.isFrozen()).orThrow("The attribute types are frozen.");
+        Require.that(!attributeTypes.isEmpty()).orThrow("The attribute types are not empty.");
         
         this.attributeTypes = attributeTypes;
         this.published = published;

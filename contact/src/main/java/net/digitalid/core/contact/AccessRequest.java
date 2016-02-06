@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -84,8 +84,8 @@ public final class AccessRequest extends CoreServiceExternalAction {
     AccessRequest(@Nonnull NonHostEntity entity, @Nonnull InternalPerson subject, @Nonnull ReadOnlyContactPermissions permissions) {
         super(entity, subject);
         
-        assert permissions.isFrozen() : "The permissions are frozen.";
-        assert !permissions.isEmpty() : "The permissions are not empty.";
+        Require.that(permissions.isFrozen()).orThrow("The permissions are frozen.");
+        Require.that(!permissions.isEmpty()).orThrow("The permissions are not empty.");
         
         this.person = subject;
         this.permissions = permissions;

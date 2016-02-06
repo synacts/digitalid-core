@@ -137,7 +137,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends AbstractWr
         @Override
         @NonCommitting
         public final @Nonnull V decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding Block block) throws InvalidEncodingException, InternalException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
+            Require.that(block.getType().isBasedOn(getType())).orThrow("The block is based on the type of this converter.");
             
             return wrapper.unwrap(XDFConverter.decodeNonNullable(none, block));
         }

@@ -1,6 +1,6 @@
 package net.digitalid.core.conversion.exceptions;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 
 /**
  * This exception is thrown when a block has an invalid encoding.

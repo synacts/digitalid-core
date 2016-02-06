@@ -110,7 +110,7 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
      */
     @Pure
     public final @Nonnull Entity getEntityNotNull() {
-        assert entity != null : "This handler has an entity.";
+        Require.that(entity != null).orThrow("This handler has an entity.");
         
         return entity;
     }
@@ -144,7 +144,7 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
      */
     @Pure
     public final @Nonnull Account getAccount() {
-        assert isOnHost() : "This handler is on a host.";
+        Require.that(isOnHost()).orThrow("This handler is on a host.");
         
         assert entity != null;
         return (Account) entity;
@@ -169,7 +169,7 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
      */
     @Pure
     public final @Nonnull NonHostEntity getNonHostEntity() {
-        assert isNonHost() : "This handler belongs to a non-host.";
+        Require.that(isNonHost()).orThrow("This handler belongs to a non-host.");
         
         assert entity != null;
         return (NonHostEntity) entity;
@@ -185,8 +185,8 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
      */
     @Pure
     public final @Nonnull NonHostAccount getNonHostAccount() {
-        assert isOnHost() : "This handler is on a host.";
-        assert isNonHost() : "This handler belongs to a non-host.";
+        Require.that(isOnHost()).orThrow("This handler is on a host.");
+        Require.that(isNonHost()).orThrow("This handler belongs to a non-host.");
         
         assert entity != null;
         return (NonHostAccount) entity;
@@ -201,7 +201,7 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
      */
     @Pure
     public final @Nonnull Role getRole() {
-        assert isOnClient() : "This handler is on a client.";
+        Require.that(isOnClient()).orThrow("This handler is on a client.");
         
         assert entity != null;
         return (Role) entity;
@@ -246,7 +246,7 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
      */
     @Pure
     public final @Nonnull SignatureWrapper getSignatureNotNull() {
-        assert signature != null : "This handler has a signature.";
+        Require.that(signature != null).orThrow("This handler has a signature.");
         
         return signature;
     }

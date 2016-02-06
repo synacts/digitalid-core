@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.NonFrozen;
@@ -119,7 +119,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     private HostSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
         super(type, element, subject, audit);
         
-        assert Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
+        Require.that(Server.hasHost(signer.getHostIdentifier())).orThrow("The host of the signer is running on this server.");
         
         this.signer = signer;
     }
@@ -135,7 +135,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     HostSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("host.signature@core.digitalid.net") Block hostSignature, boolean verified) throws InvalidEncodingException, InternalException {
         super(block, verified);
         
-        assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
+        Require.that(hostSignature.getType().isBasedOn(SIGNATURE)).orThrow("The signature is based on the implementation type.");
         
         this.signer = InternalIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, TupleWrapper.decode(hostSignature).getNonNullableElement(0));
     }
@@ -178,7 +178,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     @Override
     @NonCommitting
     public void verify() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !isVerified() : "This signature is not verified.";
+        Require.that(!isVerified()).orThrow("This signature is not verified.");
         
         final @Nonnull Time start = Time.getCurrent();
         

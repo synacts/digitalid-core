@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -88,8 +88,8 @@ final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
     OutgoingRoleContextReplace(@Nonnull OutgoingRole outgoingRole, @Nonnull Context oldContext, @Nonnull Context newContext) {
         super(outgoingRole.getRole());
         
-        assert oldContext.getEntity().equals(outgoingRole.getEntity()) : "The old context belongs to the entity of the outgoing role.";
-        assert newContext.getEntity().equals(outgoingRole.getEntity()) : "The new context belongs to the entity of the outgoing role.";
+        Require.that(oldContext.getEntity().equals(outgoingRole.getEntity())).orThrow("The old context belongs to the entity of the outgoing role.");
+        Require.that(newContext.getEntity().equals(outgoingRole.getEntity())).orThrow("The new context belongs to the entity of the outgoing role.");
         
         this.outgoingRole = outgoingRole;
         this.oldContext = oldContext;

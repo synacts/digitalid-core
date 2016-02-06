@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -87,7 +87,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @require isInternal() : "This contact is internal.";
      */
     public @Nonnull InternalPerson getInternalPerson() {
-        assert isInternal() : "This contact is internal.";
+        Require.that(isInternal()).orThrow("This contact is internal.");
         
         return (InternalPerson) person;
     }
@@ -109,7 +109,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @require isExternal() : "This contact is external.";
      */
     public @Nonnull ExternalPerson getExternalPerson() {
-        assert isExternal() : "This contact is external.";
+        Require.that(isExternal()).orThrow("This contact is external.");
         
         return (ExternalPerson) person;
     }
@@ -215,7 +215,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     @Pure
     @NonCommitting
     public static @Nonnull Contact get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         return get(entity, IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).getIdentity().castTo(Person.class));
     }

@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -92,8 +92,8 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
     ClientAgentNameReplace(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) {
         super(clientAgent.getRole());
         
-        assert Client.isValidName(oldName) : "The old name is valid.";
-        assert Client.isValidName(newName) : "The new name is valid.";
+        Require.that(Client.isValidName(oldName)).orThrow("The old name is valid.");
+        Require.that(Client.isValidName(newName)).orThrow("The new name is valid.");
         
         this.clientAgent = clientAgent;
         this.oldName = oldName;

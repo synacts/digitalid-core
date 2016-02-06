@@ -14,7 +14,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyIterator;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -105,8 +105,8 @@ public abstract class Method extends Handler {
     protected Method(@Nullable NonHostEntity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
         super(entity, subject);
         
-        assert !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
-        assert !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
+        Require.that(!(entity instanceof Account) || canBeSentByHosts()).orThrow("Methods encoded on hosts can be sent by hosts.");
+        Require.that(!(entity instanceof Role) || !canOnlyBeSentByHosts()).orThrow("Methods encoded on clients cannot only be sent by hosts.");
         
         this.recipient = recipient;
     }
@@ -270,7 +270,7 @@ public abstract class Method extends Handler {
     @NonCommitting
     @SuppressWarnings("unchecked")
     public final @Nonnull <T extends Reply> T sendNotNull() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !matches(null) : "This method does not match null.";
+        Require.that(!matches(null)).orThrow("This method does not match null.");
         
         return (T) send().getReplyNotNull(0);
     }
@@ -285,9 +285,9 @@ public abstract class Method extends Handler {
      */
     @Pure
     public static boolean areSimilar(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<? extends Method> methods) {
-        assert methods.isFrozen() : "The list of methods is frozen.";
-        assert !methods.isEmpty() : "The list of methods is not empty.";
-        assert !methods.containsNull() : "The list of methods does not contain null.";
+        Require.that(methods.isFrozen()).orThrow("The list of methods is frozen.");
+        Require.that(!methods.isEmpty()).orThrow("The list of methods is not empty.");
+        Require.that(!methods.containsNull()).orThrow("The list of methods does not contain null.");
         
         final @Nonnull ReadOnlyIterator<? extends Method> iterator = methods.iterator();
         final @Nonnull Method reference = iterator.next();
@@ -334,7 +334,7 @@ public abstract class Method extends Handler {
      */
     @NonCommitting
     public static @Nonnull Response send(@Nonnull ReadOnlyList<Method> methods, @Nullable RequestAudit audit) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert areSimilar(methods) : "The methods are similar to each other.";
+        Require.that(areSimilar(methods)).orThrow("The methods are similar to each other.");
         
         final @Nonnull Method reference = methods.getNonNullable(0);
         final @Nullable Entity entity = reference.getEntity();
@@ -396,7 +396,7 @@ public abstract class Method extends Handler {
                 return new CredentialsRequest(methods, recipient, subject, audit, credentials.freeze(), certificates, lodged, value).send();
             }
         } else {
-            assert entity != null : "The entity can only be null in case of external queries.";
+            Require.that(entity != null).orThrow("The entity can only be null in case of external queries.");
             
             if (reference instanceof ExternalAction) {
                 if (entity instanceof Role) {

@@ -16,7 +16,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.validation.annotations.reference.RawRecipient;
@@ -144,10 +144,10 @@ public class Request extends Packet {
     Request(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nullable Object field, int iteration) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
         
-        assert methods.isFrozen() : "The list of methods is frozen.";
-        assert !methods.isEmpty() : "The list of methods is not empty.";
-        assert !methods.containsNull() : "The list of methods does not contain null.";
-        assert Method.areSimilar(methods) : "The methods are similar to each other.";
+        Require.that(methods.isFrozen()).orThrow("The list of methods is frozen.");
+        Require.that(!methods.isEmpty()).orThrow("The list of methods is not empty.");
+        Require.that(!methods.containsNull()).orThrow("The list of methods does not contain null.");
+        Require.that(Method.areSimilar(methods)).orThrow("The methods are similar to each other.");
         
         if (iteration == 5) { throw RequestException.get(/* RequestErrorCode.EXTERNAL */, "The resending of a request was triggered five times."); }
         
@@ -167,7 +167,7 @@ public class Request extends Packet {
         super(inputStream, null, true);
         
         final @Nullable HostIdentifier recipient = getEncryption().getRecipient();
-        assert recipient != null : "The recipient of the request is not null.";
+        Require.that(recipient != null).orThrow("The recipient of the request is not null.");
         this.recipient = recipient;
         this.subject = getMethod(0).getSubject();
         this.iteration = 0;

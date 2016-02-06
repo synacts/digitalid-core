@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.system.logger.Log;
@@ -124,7 +124,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(block, verified);
         
-        assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
+        Require.that(clientSignature.getType().isBasedOn(SIGNATURE)).orThrow("The signature is based on the implementation type.");
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(clientSignature).getNonNullableElements(3);
         this.commitment = new Commitment(elements.getNonNullable(0));
@@ -165,7 +165,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     @Pure
     @Override
     public void verify() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !isVerified() : "This signature is not verified.";
+        Require.that(!isVerified()).orThrow("This signature is not verified.");
         
         final @Nonnull Time start = Time.getCurrent();
         

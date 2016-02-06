@@ -14,7 +14,7 @@ import net.digitalid.utility.validation.annotations.index.Index;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.exceptions.MissingSupportException;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.reference.Capturable;
@@ -77,11 +77,11 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     @Pure
     private boolean invariant() {
-        assert bytes != null || wrapper != null : "Either the byte array or the wrapper of this block is set.";
-        assert offset >= 0 : "The offset of this block in the byte array is non-negative.";
-        assert bytes == null || length > 0 : "If this block is allocated, its length is positive.";
-        assert bytes == null || offset + length <= bytes.length : "If this block is allocated, it may not exceed the byte array.";
-        assert !isEncoded() || isAllocated() : "If the block is encoded, it is also allocated.";
+        Require.that(bytes != null || wrapper != null).orThrow("Either the byte array or the wrapper of this block is set.");
+        Require.that(offset >= 0).orThrow("The offset of this block in the byte array is non-negative.");
+        Require.that(bytes == null || length > 0).orThrow("If this block is allocated, its length is positive.");
+        Require.that(bytes == null || offset + length <= bytes.length).orThrow("If this block is allocated, it may not exceed the byte array.");
+        Require.that(!isEncoded() || isAllocated()).orThrow("If the block is encoded, it is also allocated.");
         return true;
     }
     
@@ -134,11 +134,11 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * @require offset + length <= bytes.length : "The section fits into the given byte array.";
      */
     private @Encoded Block(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonEmpty byte[] bytes, @NonNegative int offset, @Positive int length) {
-        assert type.isLoaded() : "The type declaration is loaded.";
-        assert bytes.length > 0 : "The byte array is not empty.";
-        assert offset >= 0 : "The offset is not negative.";
-        assert length > 0 : "The length is positive.";
-        assert offset + length <= bytes.length : "The section fits into the given byte array.";
+        Require.that(type.isLoaded()).orThrow("The type declaration is loaded.");
+        Require.that(bytes.length > 0).orThrow("The byte array is not empty.");
+        Require.that(offset >= 0).orThrow("The offset is not negative.");
+        Require.that(length > 0).orThrow("The length is positive.");
+        Require.that(offset + length <= bytes.length).orThrow("The section fits into the given byte array.");
         
         this.type = type;
         this.bytes = bytes;
@@ -177,7 +177,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     @Pure
     public static @Nonnull @Encoded Block get(@Nonnull @Loaded SemanticType type, @Nonnull @Encoded Block block, @NonNegative int offset, @Positive int length) {
-        assert block.isEncoded() : "The given block is encoded.";
+        Require.that(block.isEncoded()).orThrow("The given block is encoded.");
         
         return new Block(type, block.bytes, block.offset + offset, length);
     }
@@ -208,7 +208,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * @ensure !isAllocated() : "This block is not yet allocated.";
      */
     private @NonEncoded @NonEncoding Block(@Nonnull @Loaded SemanticType type, @Nonnull AbstractWrapper<?> wrapper) {
-        assert type.isLoaded() : "The type declaration is loaded.";
+        Require.that(type.isLoaded()).orThrow("The type declaration is loaded.");
         
         this.type = type;
         this.wrapper = wrapper;
@@ -259,8 +259,8 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      * @require type.isBasedOn(getType()) : "The type can only be downcast.";
      */
     public @Nonnull Block setType(@Nonnull @Loaded SemanticType type) {
-        assert type.isLoaded() : "The type declaration is loaded.";
-        assert type.isBasedOn(getType()) : "The type can only be downcast.";
+        Require.that(type.isLoaded()).orThrow("The type declaration is loaded.");
+        Require.that(type.isBasedOn(getType())).orThrow("The type can only be downcast.");
         
         this.type = type;
         return this;
@@ -293,8 +293,8 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     @NonEncodingRecipient
     public @Nonnull byte getByte(@Index int index) {
-        assert !isEncoding() : "This method is not called during encoding.";
-        assert index >= 0 && index < getLength() : "The index is valid.";
+        Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
+        Require.that(index >= 0 && index < getLength()).orThrow("The index is valid.");
         
         encodeIfNotYetEncoded();
         return bytes[offset + index];
@@ -349,10 +349,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     @NonEncodingRecipient
     public @Capturable @Nonnull byte[] getBytes(@NonNegative int offset, @NonNegative int length) {
-        assert !isEncoding() : "This method is not called during encoding.";
-        assert offset >= 0 : "The offset is non-negative.";
-        assert length >= 0 : "The length is non-negative.";
-        assert offset + length <= getLength() : "The offset and length are within this block.";
+        Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
+        Require.that(offset >= 0).orThrow("The offset is non-negative.");
+        Require.that(length >= 0).orThrow("The length is non-negative.");
+        Require.that(offset + length <= getLength()).orThrow("The offset and length are within this block.");
         
         encodeIfNotYetEncoded();
         final @Nonnull byte[] result = new byte[length];
@@ -370,8 +370,8 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     @EncodingRecipient
     public void setByte(@Index int index, byte value) {
-        assert isEncoding() : "This method may only be called during encoding.";
-        assert index >= 0 && index < getLength() : "The index is valid.";
+        Require.that(isEncoding()).orThrow("This method may only be called during encoding.");
+        Require.that(index >= 0 && index < getLength()).orThrow("The index is valid.");
         
         bytes[offset + index] = value;
     }
@@ -402,12 +402,12 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     @EncodingRecipient
     public void setBytes(@NonNegative int index, @Nonnull byte[] values, @NonNegative int offset, @NonNegative int length) {
-        assert isEncoding() : "This method may only be called during encoding.";
-        assert index >= 0 : "The index is non-negative.";
-        assert index + length <= getLength() : "The given values may not exceed this block.";
-        assert offset >= 0 : "The offset is non-negative.";
-        assert length >= 0 : "The length is non-negative.";
-        assert offset + length <= values.length : "The indicated section may not exceed the given byte array.";
+        Require.that(isEncoding()).orThrow("This method may only be called during encoding.");
+        Require.that(index >= 0).orThrow("The index is non-negative.");
+        Require.that(index + length <= getLength()).orThrow("The given values may not exceed this block.");
+        Require.that(offset >= 0).orThrow("The offset is non-negative.");
+        Require.that(length >= 0).orThrow("The length is non-negative.");
+        Require.that(offset + length <= values.length).orThrow("The indicated section may not exceed the given byte array.");
         
         System.arraycopy(values, offset, bytes, this.offset + index, length);
     }
@@ -422,7 +422,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @Pure
     @NonEncodingRecipient
     public long decodeValue() {
-        assert !isEncoding() : "This method is not called during encoding.";
+        Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
         
         encodeIfNotYetEncoded();
         
@@ -440,7 +440,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     @EncodingRecipient
     public void encodeValue(long value) {
-        assert isEncoding() : "This method may only be called during encoding.";
+        Require.that(isEncoding()).orThrow("This method may only be called during encoding.");
         
         long shifter = value;
         for (int i = length - 1; i >= 0; i--) {
@@ -459,10 +459,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @Pure
     public @Positive int getLength() {
         if (length < 0) {
-            assert wrapper != null : "The length may only be negative in case of lazy encoding.";
+            Require.that(wrapper != null).orThrow("The length may only be negative in case of lazy encoding.");
             length = wrapper.determineLength();
             
-            assert length > 0 : "The length is positive (i.e. the block is not empty).";
+            Require.that(length > 0).orThrow("The length is positive (i.e. the block is not empty).");
             assert invariant();
         }
         return length;
@@ -516,7 +516,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @Pure
     @NonEncodingRecipient
     public @Nonnull @Encoded Block encodeIfNotYetEncoded() {
-        assert !isEncoding() : "This method is not called during encoding.";
+        Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
         
         if (!isEncoded()) { encode(); }
         return this;
@@ -530,10 +530,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @Pure
     @NonEncodingRecipient
     private void encode() {
-        assert !isAllocated() : "This block may not yet be allocated.";
+        Require.that(!isAllocated()).orThrow("This block may not yet be allocated.");
         
         bytes = new byte[getLength()];
-        assert wrapper != null : "The byte array may only be null in case of lazy encoding.";
+        Require.that(wrapper != null).orThrow("The byte array may only be null in case of lazy encoding.");
         wrapper.encode(this);
         encoded = true;
         
@@ -565,12 +565,12 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     @NonEncodingRecipient
     public void writeTo(@Nonnull @Encoding Block block, @NonNegative int offset, @Positive int length) {
-        assert block.isEncoding() : "The given block is in the process of being encoded.";
-        assert offset >= 0 : "The offset is not negative.";
-        assert length > 0 : "The length is positive.";
-        assert offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
-        assert getLength() == length : "This block has to have the same length as the designated section.";
-        assert !isEncoding() : "This block is not in the process of being encoded.";
+        Require.that(block.isEncoding()).orThrow("The given block is in the process of being encoded.");
+        Require.that(offset >= 0).orThrow("The offset is not negative.");
+        Require.that(length > 0).orThrow("The length is positive.");
+        Require.that(offset + length <= block.getLength()).orThrow("The indicated section may not exceed the given block.");
+        Require.that(getLength() == length).orThrow("This block has to have the same length as the designated section.");
+        Require.that(!isEncoding()).orThrow("This block is not in the process of being encoded.");
         
         if (isEncoded()) {
             System.arraycopy(this.bytes, this.offset, block.bytes, block.offset + offset, length);
@@ -578,7 +578,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
             this.bytes = block.bytes;
             this.offset = block.offset + offset;
             this.length = length;
-            assert wrapper != null : "The byte array may only be null in case of lazy encoding.";
+            Require.that(wrapper != null).orThrow("The byte array may only be null in case of lazy encoding.");
             wrapper.encode(this);
             this.encoded = true;
         }
@@ -599,7 +599,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @Pure
     @NonEncodingRecipient
     public @Nonnull @NonNegative BigInteger getHash() {
-        assert !isEncoding() : "This method is not called during encoding.";
+        Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
         
         encodeIfNotYetEncoded();
         try {
@@ -607,7 +607,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
             instance.update(bytes, offset, length);
             return new BigInteger(1, instance.digest());
         } catch (@Nonnull NoSuchAlgorithmException exception) {
-            throw ShouldNeverHappenError.get("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
+            throw MissingSupportException.with("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
         }
     }
     
@@ -670,9 +670,9 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     @Pure
     public static @Nonnull String toString(@Nonnull byte[] bytes, @NonNegative int offset, @NonNegative int length) {
-        assert offset >= 0 : "The offset is non-negative.";
-        assert length >= 0 : "The length is non-negative.";
-        assert offset + length <= bytes.length : "The section fits into the given byte array.";
+        Require.that(offset >= 0).orThrow("The offset is non-negative.");
+        Require.that(length >= 0).orThrow("The length is non-negative.");
+        Require.that(offset + length <= bytes.length).orThrow("The section fits into the given byte array.");
         
         // See: 8.4.1. in http://www.postgresql.org/docs/9.0/static/datatype-binary.html
         final @Nonnull StringBuilder string = new StringBuilder("E'\\x");
@@ -700,7 +700,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @NonEncodingRecipient
     public @Nonnull String toString() {
         encodeIfNotYetEncoded();
-        assert bytes != null : "Encoded now.";
+        Require.that(bytes != null).orThrow("Encoded now.");
         return toString(bytes, offset, length);
     }
     
@@ -790,10 +790,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @Pure
     @NonEncodingRecipient
     public @Nonnull Block encrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) {
-        assert !isEncoding() : "This method is not called during encoding.";
+        Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
         
         encodeIfNotYetEncoded();
-        assert bytes != null : "The byte array is allocated.";
+        Require.that(bytes != null).orThrow("The byte array is allocated.");
         return Block.get(type, symmetricKey.encrypt(initializationVector, bytes, offset, length));
     }
     
@@ -809,10 +809,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @Pure
     @NonEncodingRecipient
     public @Nonnull Block decrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) throws InvalidEncodingException, InternalException {
-        assert !isEncoding() : "This method is not called during encoding.";
+        Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
         
         encodeIfNotYetEncoded();
-        assert bytes != null : "The byte array is allocated.";
+        Require.that(bytes != null).orThrow("The byte array is allocated.");
         return Block.get(type, symmetricKey.decrypt(initializationVector, bytes, offset, length));
     }
     
@@ -855,10 +855,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
      */
     @NonEncodingRecipient
     public void writeTo(int offset, int length, @Nonnull OutputStream outputStream, boolean close) throws IOException {
-        assert !isEncoding() : "This method is not called during encoding.";
-        assert offset >= 0 : "The offset is non-negative.";
-        assert length > 0 : "The length is positive.";
-        assert offset + length <= getLength() : "The offset and length are within this block.";
+        Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
+        Require.that(offset >= 0).orThrow("The offset is non-negative.");
+        Require.that(length > 0).orThrow("The length is positive.");
+        Require.that(offset + length <= getLength()).orThrow("The offset and length are within this block.");
         
         try {
             encodeIfNotYetEncoded();
@@ -915,10 +915,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @Pure
     @NonEncodingRecipient
     public @Nonnull InputStream getInputStream(int offset, int length) {
-        assert !isEncoding() : "This method is not called during encoding.";
-        assert offset >= 0 : "The offset is non-negative.";
-        assert length > 0 : "The length is positive.";
-        assert offset + length <= getLength() : "The offset and length are within this block.";
+        Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
+        Require.that(offset >= 0).orThrow("The offset is non-negative.");
+        Require.that(length > 0).orThrow("The length is positive.");
+        Require.that(offset + length <= getLength()).orThrow("The offset and length are within this block.");
         
         encodeIfNotYetEncoded();
         return new BlockInputStream(this.offset + offset, length);
@@ -951,10 +951,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
          * @require start + length <= bytes.length : "The start and length are within the byte array.";
          */
         private BlockInputStream(int start, int length) {
-            assert bytes != null : "The byte array is not null.";
-            assert start >= 0 : "The start is non-negative.";
-            assert length > 0 : "The length is positive.";
-            assert start + length <= bytes.length : "The start and length are within the byte array.";
+            Require.that(bytes != null).orThrow("The byte array is not null.");
+            Require.that(start >= 0).orThrow("The start is non-negative.");
+            Require.that(length > 0).orThrow("The length is positive.");
+            Require.that(start + length <= bytes.length).orThrow("The start and length are within the byte array.");
             
             this.start = start;
             this.end = start + length;
@@ -1072,10 +1072,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     @Pure
     @EncodingRecipient
     public @Nonnull OutputStream getOutputStream(int offset, int length) {
-        assert isEncoding() : "This method may only be called during encoding.";
-        assert offset >= 0 : "The offset is non-negative.";
-        assert length > 0 : "The length is positive.";
-        assert offset + length <= getLength() : "The offset and length are within this block.";
+        Require.that(isEncoding()).orThrow("This method may only be called during encoding.");
+        Require.that(offset >= 0).orThrow("The offset is non-negative.");
+        Require.that(length > 0).orThrow("The length is positive.");
+        Require.that(offset + length <= getLength()).orThrow("The offset and length are within this block.");
         
         return new BlockOutputStream(this.offset + offset, length);
     }
@@ -1107,10 +1107,10 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
          * @require start + length <= bytes.length : "The start and length are within the byte array.";
          */
         private BlockOutputStream(int start, int length) {
-            assert bytes != null : "The byte array is not null.";
-            assert start >= 0 : "The start is non-negative.";
-            assert length > 0 : "The length is positive.";
-            assert start + length <= bytes.length : "The start and length are within the byte array.";
+            Require.that(bytes != null).orThrow("The byte array is not null.");
+            Require.that(start >= 0).orThrow("The start is non-negative.");
+            Require.that(length > 0).orThrow("The length is positive.");
+            Require.that(start + length <= bytes.length).orThrow("The start and length are within the byte array.");
             
             this.start = start;
             this.end = start + length;

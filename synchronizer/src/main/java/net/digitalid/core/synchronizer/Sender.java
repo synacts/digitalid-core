@@ -13,7 +13,7 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.system.logger.Log;
@@ -59,8 +59,8 @@ public final class Sender extends Thread {
      * @require for (Method method : methods) method instanceof InternalAction : "The methods are internal actions.";
      */
     Sender(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<Method> methods) {
-        assert Method.areSimilar(methods) : "The methods are similar to each other.";
-        for (final @Nonnull Method method : methods) { assert method instanceof InternalAction : "The methods are internal actions."; }
+        Require.that(Method.areSimilar(methods)).orThrow("The methods are similar to each other.");
+        for (final @Nonnull Method method : methods) { Require.that(method instanceof InternalAction).orThrow("The methods are internal actions."); }
         
         this.methods = methods;
     }

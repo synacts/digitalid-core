@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
@@ -133,13 +133,13 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
      */
     @Pure
     public static @Nonnull Category get(@Validated byte value) {
-        assert isValid(value) : "The value is a valid category.";
+        Require.that(isValid(value)).orThrow("The value is a valid category.");
         
         for (final @Nonnull Category category : values()) {
             if (category.value == value) { return category; }
         }
         
-        throw ShouldNeverHappenError.get("The value '" + value + "' does not encode a category.");
+        throw UnexpectedValueException.with("value", value);
     }
     
     /* -------------------------------------------------- Queries -------------------------------------------------- */

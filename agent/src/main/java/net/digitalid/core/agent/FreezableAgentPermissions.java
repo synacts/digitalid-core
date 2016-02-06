@@ -21,7 +21,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
@@ -116,7 +116,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @param writing the access to the given attribute type.
      */
     public @Single FreezableAgentPermissions(@Nonnull @AttributeType SemanticType type, @Nonnull Boolean writing) {
-        assert type.isAttributeType() : "The type is an attribute type.";
+        Require.that(type.isAttributeType()).orThrow("The type is an attribute type.");
         
         put(type, writing);
     }
@@ -139,7 +139,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      */
     @NonCommitting
     public FreezableAgentPermissions(@Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
@@ -237,7 +237,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public boolean canRead(@Nonnull SemanticType type) {
-        assert type.isAttributeType() : "The type is an attribute type.";
+        Require.that(type.isAttributeType()).orThrow("The type is an attribute type.");
         
         return containsKey(type) || containsKey(GENERAL);
     }
@@ -251,7 +251,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public boolean canWrite(@Nonnull SemanticType type) {
-        assert type.isAttributeType() : "The type is an attribute type.";
+        Require.that(type.isAttributeType()).orThrow("The type is an attribute type.");
         
         return containsKey(type) && get(type) || containsKey(GENERAL) && get(GENERAL);
     }
@@ -293,7 +293,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      */
     @NonFrozenRecipient
     public void restrictTo(@Nonnull ReadOnlyAgentPermissions permissions) {
-        assert !isFrozen() : "This object is not frozen.";
+        Require.that(!isFrozen()).orThrow("This object is not frozen.");
         
         if (containsKey(GENERAL)) {
             if (get(GENERAL)) {
@@ -342,7 +342,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Override
     @NonFrozenRecipient
     public @Nullable Boolean put(@Nonnull @AttributeType SemanticType type, @Nonnull Boolean writing) {
-        assert type.isAttributeType() : "The type is an attribute type.";
+        Require.that(type.isAttributeType()).orThrow("The type is an attribute type.");
         
         boolean put;
         if (type.equals(GENERAL)) {
@@ -536,7 +536,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @NonCommitting
     @EmptyOrSingleRecipient
     public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws DatabaseException {
-        assert areEmptyOrSingle() : "These permissions are empty or single.";
+        Require.that(areEmptyOrSingle()).orThrow("These permissions are empty or single.");
         
         final @Nonnull FreezableSet<SemanticType> keySet = keySet();
         if (keySet.isEmpty()) {

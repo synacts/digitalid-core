@@ -59,7 +59,7 @@ final class ContactExpression extends Expression {
     @Pure
     @Override
     @Nonnull @Capturable FreezableSet<Contact> getContacts() {
-        assert isActive() : "This expression is active.";
+        Require.that(isActive()).orThrow("This expression is active.");
         
         return new FreezableLinkedHashSet<>(contact);
     }
@@ -67,7 +67,7 @@ final class ContactExpression extends Expression {
     @Pure
     @Override
     boolean matches(@Nonnull Block attributeContent) {
-        assert isImpersonal() : "This expression is impersonal.";
+        Require.that(isImpersonal()).orThrow("This expression is impersonal.");
         
         return false;
     }
@@ -82,7 +82,7 @@ final class ContactExpression extends Expression {
     @Pure
     @Override
     @Nonnull String toString(@Nullable Character operator, boolean right) {
-        assert operator == null || operators.contains(operator) : "The operator is valid.";
+        Require.that(operator == null || operators.contains(operator)).orThrow("The operator is valid.");
         
         return addQuotesIfNecessary(contact.getPerson());
     }

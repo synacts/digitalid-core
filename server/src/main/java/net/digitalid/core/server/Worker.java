@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.logger.Log;
 
@@ -149,7 +149,7 @@ public final class Worker implements Runnable {
                         final @Nullable ReadOnlyAgentPermissions permissions;
                         @Nullable Restrictions restrictions;
                         if (service.equals(CoreService.SERVICE)) {
-                            assert agent != null : "See above.";
+                            Require.that(agent != null).orThrow("See above.");
                             permissions = agent.getPermissions();
                             try {
                                 restrictions = agent.getRestrictions();

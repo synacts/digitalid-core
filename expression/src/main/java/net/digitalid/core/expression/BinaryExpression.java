@@ -5,8 +5,8 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
 import net.digitalid.utility.collections.freezable.FreezableSet;
-import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.reference.Capturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -57,7 +57,7 @@ final class BinaryExpression extends Expression {
     BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, char operator) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(entity);
         
-        assert operators.contains(operator) : "The operator is valid.";
+        Require.that(operators.contains(operator)).orThrow("The operator is valid.");
         
         this.left = Expression.parse(entity, left);
         this.right = Expression.parse(entity, right);
@@ -93,7 +93,7 @@ final class BinaryExpression extends Expression {
     @Override
     @NonCommitting
     @Nonnull @Capturable FreezableSet<Contact> getContacts() throws DatabaseException {
-        assert isActive() : "This expression is active.";
+        Require.that(isActive()).orThrow("This expression is active.");
         
         final @Nonnull FreezableSet<Contact> leftContacts = left.getContacts();
         final @Nonnull FreezableSet<Contact> rightContacts = right.getContacts();
@@ -108,7 +108,7 @@ final class BinaryExpression extends Expression {
     @Pure
     @Override
     boolean matches(@Nonnull Block attributeContent) {
-        assert isImpersonal() : "This expression is impersonal.";
+        Require.that(isImpersonal()).orThrow("This expression is impersonal.");
         
         switch (operator) {
             case '+': return left.matches(attributeContent) || right.matches(attributeContent);
@@ -134,7 +134,7 @@ final class BinaryExpression extends Expression {
     @Pure
     @Override
     @Nonnull String toString(@Nullable Character operator, boolean right) {
-        assert operator == null || operators.contains(operator) : "The operator is valid.";
+        Require.that(operator == null || operators.contains(operator)).orThrow("The operator is valid.");
         
         final @Nonnull String string = this.left.toString(this.operator, false) + this.operator + this.right.toString(this.operator, true);
         
@@ -146,7 +146,7 @@ final class BinaryExpression extends Expression {
         } else if (operator == '*') {
             parentheses = this.operator != '*';
         } else {
-            throw ShouldNeverHappenError.get("The operator '" + operator + "' is invalid.");
+            throw UnexpectedValueException.with("operator", operator);
         }
         
         return parentheses ? "(" + string + ")" : string;

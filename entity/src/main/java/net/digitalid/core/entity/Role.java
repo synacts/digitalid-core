@@ -9,7 +9,7 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.validation.annotations.elements.UniqueElements;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -158,7 +158,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @Pure
     public final @Nonnull NativeRole toNativeRole() {
-        assert isNative() : "This role is native.";
+        Require.that(isNative()).orThrow("This role is native.");
         
         return (NativeRole) this;
     }
@@ -172,7 +172,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      */
     @Pure
     public final @Nonnull NonNativeRole toNonNativeRole() {
-        assert isNonNative() : "This role is non-native.";
+        Require.that(isNonNative()).orThrow("This role is non-native.");
         
         return (NonNativeRole) this;
     }
@@ -303,7 +303,7 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     @NonCommitting
     @OnlyForActions
     public void addRole(@Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws DatabaseException {
-        assert relation.isRoleType() : "The relation is a role type.";
+        Require.that(relation.isRoleType()).orThrow("The relation is a role type.");
         
         final @Nonnull NonNativeRole role = NonNativeRole.add(client, issuer, relation, this, agentNumber);
         role.observe(this, DELETED);

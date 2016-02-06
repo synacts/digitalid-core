@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.validation.annotations.reference.Capturable;

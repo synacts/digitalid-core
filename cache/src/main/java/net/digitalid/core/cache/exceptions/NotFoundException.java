@@ -2,7 +2,7 @@ package net.digitalid.core.cache.exceptions;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -65,7 +65,7 @@ public abstract class NotFoundException extends ExternalException {
     protected NotFoundException(@Nonnull String something, @Nonnull InternalIdentity identity, @Nonnull @AttributeType SemanticType type) {
         super("The " + something + " " + type.getAddress() + " of " + identity.getAddress() + " could not be found.");
         
-        assert type.isAttributeType() : "The type is an attribute type.";
+        Require.that(type.isAttributeType()).orThrow("The type is an attribute type.");
         
         this.identity = identity;
         this.type = type;

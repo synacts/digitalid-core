@@ -12,7 +12,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.validation.annotations.reference.RawRecipient;
@@ -99,10 +99,10 @@ public final class Response extends Packet {
     public Response(@Nonnull Request request, @Nonnull @Frozen @NonEmpty ReadOnlyList<Reply> replies, @Nonnull @Frozen @NonEmpty ReadOnlyList<RequestException> exceptions, @Nullable ResponseAudit audit) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(new FreezablePair<>(replies, exceptions).freeze(), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
         
-        assert replies.isFrozen() : "The list of replies is frozen.";
-        assert !replies.isEmpty() : "The list of replies is not empty.";
-        assert exceptions.isFrozen() : "The list of exceptions is frozen.";
-        assert replies.size() == exceptions.size() : "The number of replies and exceptions are the same.";
+        Require.that(replies.isFrozen()).orThrow("The list of replies is frozen.");
+        Require.that(!replies.isEmpty()).orThrow("The list of replies is not empty.");
+        Require.that(exceptions.isFrozen()).orThrow("The list of exceptions is frozen.");
+        Require.that(replies.size() == exceptions.size()).orThrow("The number of replies and exceptions are the same.");
         
         this.request = request;
     }
@@ -143,7 +143,7 @@ public final class Response extends Packet {
     @Pure
     public @Nonnull ResponseAudit getAuditNotNull() {
         final @Nullable ResponseAudit audit = getAudit();
-        assert audit != null : "The audit is not null.";
+        Require.that(audit != null).orThrow("The audit is not null.");
         return audit;
     }
     
@@ -165,7 +165,7 @@ public final class Response extends Packet {
      */
     @Pure
     public @Nonnull Request getRequest() {
-        assert request != null : "This response has a request.";
+        Require.that(request != null).orThrow("This response has a request.");
         
         return request;
     }
@@ -199,7 +199,7 @@ public final class Response extends Packet {
     @Override
     @RawRecipient
     @Nonnull HostSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
-        assert signer != null : "This method is only called if the element is not an exception.";
+        Require.that(signer != null).orThrow("This method is only called if the element is not an exception.");
         return HostSignatureWrapper.sign(Packet.SIGNATURE, compression, subject, audit, signer);
     }
     
@@ -265,7 +265,7 @@ public final class Response extends Packet {
     @SuppressWarnings("unchecked")
     public @Nonnull <T extends Reply> T getReplyNotNull(@Index int index) throws RequestException {
         final @Nullable Reply reply = getReply(index);
-        assert reply != null : "The reply is not null.";
+        Require.that(reply != null).orThrow("The reply is not null.");
         return (T) reply;
     }
     

@@ -19,7 +19,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
@@ -72,7 +72,7 @@ public final class Cache {
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
     static {
-        assert Threading.isMainThread() : "This static block is called in the main thread.";
+        Require.that(Threading.isMainThread()).orThrow("This static block is called in the main thread.");
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_cache (identity " + Mapper.FORMAT + " NOT NULL, role " + Mapper.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, found BOOLEAN NOT NULL, time " + Time.FORMAT + " NOT NULL, value " + AttributeValue.FORMAT + ", reply " + Reply.FORMAT + ", PRIMARY KEY (identity, role, type, found), FOREIGN KEY (identity) " + Mapper.REFERENCE + ", FOREIGN KEY (role) " + Mapper.REFERENCE + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ", FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
@@ -91,7 +91,7 @@ public final class Cache {
      */
     @Committing
     public static void initialize() {
-        assert Threading.isMainThread() : "This method is called in the main thread.";
+        Require.that(Threading.isMainThread()).orThrow("This method is called in the main thread.");
         
         try {
             Database.lock();
@@ -154,8 +154,8 @@ public final class Cache {
     @Locked
     @NonCommitting
     private static @Nonnull @Frozen ReadOnlyPair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert time.isNonNegative() : "The given time is non-negative.";
-        assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
+        Require.that(time.isNonNegative()).orThrow("The given time is non-negative.");
+        Require.that(type.isAttributeFor(identity.getCategory())).orThrow("The type can be used as an attribute for the category of the given identity.");
         
         if (time.equals(Time.MAX)) { return new FreezablePair<Boolean, AttributeValue>(false, null).freeze(); }
         final @Nonnull String query = "SELECT found, value FROM general_cache WHERE identity = " + identity + " AND (role = " + HostIdentity.DIGITALID + (role != null ? " OR role = " + role.getIdentity() : "") + ") AND type = " + type + " AND time >= " + time;
@@ -192,9 +192,9 @@ public final class Cache {
     @Locked
     @NonCommitting
     private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws DatabaseException, InvalidReplyParameterValueException {
-        assert time.isNonNegative() : "The given time is non-negative.";
-        assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
-        assert value == null || value.isVerified() : "The attribute value is null or its signature is verified.";
+        Require.that(time.isNonNegative()).orThrow("The given time is non-negative.");
+        Require.that(type.isAttributeFor(identity.getCategory())).orThrow("The type can be used as an attribute for the category of the given identity.");
+        Require.that(value == null || value.isVerified()).orThrow("The attribute value is null or its signature is verified.");
         
         if (value != null) { value.checkContentType(type); }
         
@@ -255,10 +255,10 @@ public final class Cache {
     @Locked
     @NonCommitting
     public static @Nonnull AttributeValue[] getAttributeValues(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType... types) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert time.isNonNegative() : "The given time is non-negative.";
-        assert types.length > 0 : "At least one type is given.";
-        assert !Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1 : "If the public key chain of a host is queried, it is the only type.";
-        for (final @Nullable SemanticType type : types) { assert type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity."; }
+        Require.that(time.isNonNegative()).orThrow("The given time is non-negative.");
+        Require.that(types.length > 0).orThrow("At least one type is given.");
+        Require.that(!Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1).orThrow("If the public key chain of a host is queried, it is the only type.");
+        for (final @Nullable SemanticType type : types) { Require.that(type != null && type.isAttributeFor(identity.getCategory())).orThrow("Each type is not null and can be used as an attribute for the category of the given identity."); }
         
         final @Nonnull AttributeValue[] attributeValues = new AttributeValue[types.length];
         final @Nonnull FreezableAttributeTypeSet typesToRetrieve = new FreezableAttributeTypeSet();
@@ -468,7 +468,7 @@ public final class Cache {
     @Locked
     @NonCommitting
     public static @Nonnull HostIdentity establishHostIdentity(@Nonnull @NonMapped HostIdentifier identifier) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !identifier.isMapped() : "The identifier is not mapped.";
+        Require.that(!identifier.isMapped()).orThrow("The identifier is not mapped.");
         
         final @Nonnull HostIdentity identity = Mapper.mapHostIdentity(identifier);
         final @Nonnull Response response;

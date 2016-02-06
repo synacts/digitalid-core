@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -85,7 +85,7 @@ public final class RandomizedAgentPermissions implements Blockable {
      * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     public RandomizedAgentPermissions(@Nonnull ReadOnlyAgentPermissions permissions) {
-        assert permissions.isFrozen() : "The permissions are frozen.";
+        Require.that(permissions.isFrozen()).orThrow("The permissions are frozen.");
         
         this.permissions = permissions;
         this.salt = new BigInteger(Parameters.HASH, new SecureRandom());
@@ -115,7 +115,7 @@ public final class RandomizedAgentPermissions implements Blockable {
      */
     @NonCommitting
     public RandomizedAgentPermissions(@Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         this.hash = block.getHash();
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
@@ -172,7 +172,7 @@ public final class RandomizedAgentPermissions implements Blockable {
      */
     @Pure
     public @Nonnull ReadOnlyAgentPermissions getPermissionsNotNull() {
-        assert permissions != null : "The permissions are exposed.";
+        Require.that(permissions != null).orThrow("The permissions are exposed.");
         
         return permissions;
     }

@@ -75,7 +75,7 @@ public abstract class IdentifierImplementation extends CastableObject implements
      * @param string the string of the identifier.
      */
     IdentifierImplementation(@Nonnull @Validated String string) {
-        assert isValid(string) : "The string is a valid identifier.";
+        Require.that(isValid(string)).orThrow("The string is a valid identifier.");
         
         this.string = string;
     }

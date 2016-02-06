@@ -2,7 +2,7 @@ package net.digitalid.core.conversion.xdf;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -83,7 +83,7 @@ public class ChainingRequestingXDFConverter<O, E, K, D> extends RequestingXDFCon
     protected ChainingRequestingXDFConverter(@Nonnull SemanticType type, @Nonnull RequestingKeyConverter<O, ? super E, K, D> keyConverter, @Nonnull RequestingXDFConverter<K, ? super D> XDFConverter) {
         super(type);
         
-        assert type.isBasedOn(XDFConverter.getType()) : "The given type is based on the type of the XDF converter.";
+        Require.that(type.isBasedOn(XDFConverter.getType())).orThrow("The given type is based on the type of the XDF converter.");
         
         this.keyConverter = keyConverter;
         this.XDFConverter = XDFConverter;
@@ -129,7 +129,7 @@ public class ChainingRequestingXDFConverter<O, E, K, D> extends RequestingXDFCon
     @Pure
     @Override
     public final @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
+        Require.that(block.getType().isBasedOn(getType())).orThrow("The block is based on the type of this converter.");
         
         final @Nonnull K key = XDFConverter.decodeNonNullable(keyConverter.decompose(external), block);
         if (!keyConverter.isValid(key)) { throw InvalidParameterValueException.get("key", key); }

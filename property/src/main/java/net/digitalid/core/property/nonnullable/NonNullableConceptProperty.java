@@ -135,7 +135,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Override
     @Committing
     public void set(@Nonnull @Validated V newValue) throws DatabaseException {
-        assert getValueValidator().isValid(newValue) : "The new value is valid.";
+        Require.that(getValueValidator().isValid(newValue)).orThrow("The new value is valid.");
         
         final @Nonnull V oldValue = get();
         if (!newValue.equals(oldValue)) {
@@ -158,8 +158,8 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @NonCommitting
     void replace(@Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws DatabaseException {
-        assert getValueValidator().isValid(oldValue) : "The old value is valid.";
-        assert getValueValidator().isValid(newValue) : "The new value is valid.";
+        Require.that(getValueValidator().isValid(oldValue)).orThrow("The old value is valid.");
+        Require.that(getValueValidator().isValid(newValue)).orThrow("The new value is valid.");
         
         propertySetup.getPropertyTable().replace(this, oldTime, newTime, oldValue, newValue);
         this.time = newTime;

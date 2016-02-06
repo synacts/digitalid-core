@@ -160,7 +160,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     @Committing
     @Clients
     public final void remove() throws DatabaseException {
-        assert !isRemoved() : "This agent is not removed.";
+        Require.that(!isRemoved()).orThrow("This agent is not removed.");
         
         Synchronizer.execute(new AgentRemove(this));
     }
@@ -185,7 +185,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Committing
     public final void unremove() throws DatabaseException {
-        assert isRemoved() : "This agent is removed.";
+        Require.that(isRemoved()).orThrow("This agent is removed.");
         
         Synchronizer.execute(new AgentUnremove(this));
     }
@@ -463,7 +463,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
      */
     @Pure
     public static @Nonnull Agent get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException, InternalException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
         final long number = Integer64Wrapper.decode(elements.getNonNullable(0));
@@ -506,7 +506,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     @Pure
     @NonCommitting
     public static @Nullable Agent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws DatabaseException {
-        assert columnIndexes.length == 3 : "The number of given indexes is 3.";
+        Require.that(columnIndexes.length == 3).orThrow("The number of given indexes is 3.");
         
         final long number = resultSet.getLong(columnIndexes[0]);
         if (resultSet.wasNull()) { return null; }
@@ -527,7 +527,7 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
     @Pure
     @NonCommitting
     public static @Nonnull Agent getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws DatabaseException {
-        assert columnIndexes.length == 3 : "The number of given indexes is 3.";
+        Require.that(columnIndexes.length == 3).orThrow("The number of given indexes is 3.");
         
         return get(entity, resultSet.getLong(columnIndexes[0]), resultSet.getBoolean(columnIndexes[1]), resultSet.getBoolean(columnIndexes[2]));
     }

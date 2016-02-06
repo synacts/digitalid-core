@@ -113,8 +113,8 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     private ListWrapper(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull @NullableElements @Frozen ReadOnlyList<Block> elements) {
         super(type);
         
-        assert elements.isFrozen() : "The elements are frozen.";
-        assert basedOnParameter(type, elements) : "Each element is either null or based on the parameter of the semantic type.";
+        Require.that(elements.isFrozen()).orThrow("The elements are frozen.");
+        Require.that(basedOnParameter(type, elements)).orThrow("Each element is either null or based on the parameter of the semantic type.");
         
         this.elements = elements;
     }
@@ -140,8 +140,8 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     @Pure
     @Override
     public void encode(@Nonnull @Encoding Block block) {
-        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        Require.that(block.getLength() == determineLength()).orThrow("The block's length has to match the determined length.");
+        Require.that(block.getType().isBasedOn(getSyntacticType())).orThrow("The block is based on the indicated syntactic type.");
         
         final int size = elements.size();
         int offset = VariableInteger.determineLength(size);
@@ -161,7 +161,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
             }
         }
         
-        assert offset == block.getLength() : "The whole block should now be encoded.";
+        Require.that(offset == block.getLength()).orThrow("The whole block should now be encoded.");
     }
     
     /* -------------------------------------------------- Syntactic Type -------------------------------------------------- */

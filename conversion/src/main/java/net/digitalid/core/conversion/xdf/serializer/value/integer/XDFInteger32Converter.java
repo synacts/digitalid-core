@@ -26,7 +26,7 @@ public class XDFInteger32Converter extends XDFConverter<Integer> {
     
     @Override
     public @Nonnull Block convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull String fieldName, @Nullable String parentName, @Nonnull ConverterAnnotations metaData) throws StoringException {
-        assert (object instanceof Integer) : "The object is an instance of the integer type.";
+        Require.that((object instanceof Integer)).orThrow("The object is an instance of the integer type.");
 
         final int value = (Integer) object;
 

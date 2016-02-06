@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -141,7 +141,7 @@ public final class HostCredentialModule implements HostModule {
     @Override
     @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
+        Require.that(block.getType().isBasedOn(getModuleFormat())).orThrow("The block is based on the format of this module.");
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("INSERT INTO " + host + "credential (time, entity, e, i, v, signature) VALUES (?, ?, ?, ?, ?, ?)")) {
             final @Nonnull ReadOnlyList<Block> entries = ListWrapper.decodeNonNullableElements(block);

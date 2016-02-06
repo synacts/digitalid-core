@@ -7,7 +7,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -71,7 +71,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
     private EmailIdentifier(@Nonnull @Validated String string) {
         super(string);
         
-        assert isValid(string) : "The string is a valid email identifier.";
+        Require.that(isValid(string)).orThrow("The string is a valid email identifier.");
     }
     
     /**

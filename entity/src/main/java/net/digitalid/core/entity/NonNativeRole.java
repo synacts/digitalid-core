@@ -60,7 +60,7 @@ public final class NonNativeRole extends Role {
     private NonNativeRole(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, @Nonnull Role recipient, long agentNumber) {
         super(client, number, issuer);
         
-        assert relation.isRoleType() : "The relation is a role type.";
+        Require.that(relation.isRoleType()).orThrow("The relation is a role type.");
         
         this.relation = relation;
         this.recipient = recipient;
@@ -125,7 +125,7 @@ public final class NonNativeRole extends Role {
      * @require relation.isRoleType() : "The relation is a role type.";
      */
     public static @Nonnull NonNativeRole get(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, @Nonnull Role recipient, long agentNumber) {
-        assert relation.isRoleType() : "The relation is a role type.";
+        Require.that(relation.isRoleType()).orThrow("The relation is a role type.");
         
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, NonNativeRole> map = index.get(client);
@@ -153,7 +153,7 @@ public final class NonNativeRole extends Role {
      */
     @NonCommitting
     static @Nonnull NonNativeRole add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, @Nonnull Role recipient, long agentNumber) throws DatabaseException {
-        assert relation.isRoleType() : "The relation is a role type.";
+        Require.that(relation.isRoleType()).orThrow("The relation is a role type.");
         
         final @Nonnull NonNativeRole role = get(client, RoleModule.map(client, issuer, relation, recipient, agentNumber), issuer, relation, recipient, agentNumber);
         role.notify(CREATED);

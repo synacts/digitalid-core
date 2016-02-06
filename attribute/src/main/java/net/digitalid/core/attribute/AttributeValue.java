@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.castable.Castable;
 import net.digitalid.utility.system.castable.CastableObject;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -80,7 +80,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
      * @require content.getType().isAttributeType() : "The type of the content denotes an attribute.";
      */
     AttributeValue(@Nonnull Block content) {
-        assert content.getType().isAttributeType() : "The type of the content denotes an attribute.";
+        Require.that(content.getType().isAttributeType()).orThrow("The type of the content denotes an attribute.");
         
         this.content = content;
     }
@@ -98,7 +98,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
     @Pure
     @NonCommitting
     public static @Nonnull AttributeValue get(@Nonnull Block block, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, verified, null);
         final @Nonnull Block content = SelfcontainedWrapper.decodeNonNullable(signature.getNonNullableElement());
@@ -184,7 +184,7 @@ public abstract class AttributeValue extends CastableObject implements Castable,
      */
     @Pure
     public final @Nonnull AttributeValue checkContentType(@Nonnull @AttributeType SemanticType type) throws InvalidReplyParameterValueException {
-        assert type.isAttributeType() : "The type is an attribute type.";
+        Require.that(type.isAttributeType()).orThrow("The type is an attribute type.");
         
         if (!content.getType().equals(type)) { throw InvalidReplyParameterValueException.get(null, "content type", type.getAddress(), content.getType().getAddress()); }
         return this;

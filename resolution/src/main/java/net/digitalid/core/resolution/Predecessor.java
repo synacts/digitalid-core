@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -70,7 +70,7 @@ public final class Predecessor implements Blockable {
      * @require predecessors.isFrozen() : "The predecessors are frozen.";
      */
     public Predecessor(@Nonnull NonHostIdentifier identifier, @Nonnull ReadOnlyPredecessors predecessors) {
-        assert predecessors.isFrozen() : "The predecessors are frozen.";
+        Require.that(predecessors.isFrozen()).orThrow("The predecessors are frozen.");
         
         this.identifier = identifier;
         this.predecessors = predecessors;
@@ -95,7 +95,7 @@ public final class Predecessor implements Blockable {
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public Predecessor(@Nonnull Block block) throws InvalidEncodingException, InternalException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        Require.that(block.getType().isBasedOn(TYPE)).orThrow("The block is based on the indicated type.");
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
         this.identifier = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, elements.getNonNullable(0)).castTo(NonHostIdentifier.class);

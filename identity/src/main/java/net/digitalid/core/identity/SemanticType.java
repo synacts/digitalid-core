@@ -9,7 +9,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
@@ -169,7 +169,7 @@ public final class SemanticType extends Type {
     @NonCommitting
     @NonLoadedRecipient
     void load() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !isLoaded() : "The type declaration is not loaded.";
+        Require.that(!isLoaded()).orThrow("The type declaration is not loaded.");
         
         if (categories != null) { throw InvalidDeclarationException.get("The semantic base may not be circular.", getAddress()); }
         
@@ -225,21 +225,21 @@ public final class SemanticType extends Type {
     @MainThread
     @NonLoadedRecipient
     public @Nonnull SemanticType load(@Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<SemanticType> parameters) {
-        assert !isLoaded() : "The type declaration is not loaded.";
-        assert Threading.isMainThread() : "This method may only be called in the main thread.";
+        Require.that(!isLoaded()).orThrow("The type declaration is not loaded.");
+        Require.that(Threading.isMainThread()).orThrow("This method may only be called in the main thread.");
         
-        assert categories.isFrozen() : "The categories have to be frozen.";
+        Require.that(categories.isFrozen()).orThrow("The categories have to be frozen.");
         assert !categories.containsNull(): "The categories may not contain null.";
         assert !categories.containsDuplicates(): "The categories may not contain duplicates.";
         
-        assert cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
+        Require.that(cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR)).orThrow("The caching period is null or non-negative and less than a year.");
         
-        assert parameters.isFrozen() : "The parameters have to be frozen.";
+        Require.that(parameters.isFrozen()).orThrow("The parameters have to be frozen.");
         assert !parameters.containsNull(): "The parameters may not contain null.";
         assert !parameters.containsDuplicates(): "The parameters may not contain duplicates.";
         
-        assert categories.isEmpty() == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
-        assert syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size() : "The number of required parameters has either to be variable or to match the given parameters.";
+        Require.that(categories.isEmpty() == (cachingPeriod == null)).orThrow("The caching period is null if and only if the categories are empty.");
+        Require.that(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size()).orThrow("The number of required parameters has either to be variable or to match the given parameters.");
         
         this.categories = categories;
         this.cachingPeriod = cachingPeriod;
@@ -302,18 +302,18 @@ public final class SemanticType extends Type {
     @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull @Loaded SemanticType semanticBase) {
-        assert !isLoaded() : "The type declaration is not loaded.";
-        assert Threading.isMainThread() : "This method may only be called in the main thread.";
+        Require.that(!isLoaded()).orThrow("The type declaration is not loaded.");
+        Require.that(Threading.isMainThread()).orThrow("This method may only be called in the main thread.");
         
-        assert categories.isFrozen() : "The categories have to be frozen.";
-        assert !categories.containsNull() : "The categories may not contain null.";
-        assert !categories.containsDuplicates() : "The categories may not contain duplicates.";
+        Require.that(categories.isFrozen()).orThrow("The categories have to be frozen.");
+        Require.that(!categories.containsNull()).orThrow("The categories may not contain null.");
+        Require.that(!categories.containsDuplicates()).orThrow("The categories may not contain duplicates.");
         
-        assert cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
+        Require.that(cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR)).orThrow("The caching period is null or non-negative and less than a year.");
         
-        assert semanticBase.isLoaded() : "The semantic base is already loaded.";
+        Require.that(semanticBase.isLoaded()).orThrow("The semantic base is already loaded.");
         
-        assert categories.isEmpty() == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
+        Require.that(categories.isEmpty() == (cachingPeriod == null)).orThrow("The caching period is null if and only if the categories are empty.");
         
         this.categories = categories;
         this.cachingPeriod = cachingPeriod;
@@ -372,7 +372,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public @Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<Category> getCategories() {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         assert categories != null;
         return categories;
@@ -388,7 +388,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public @Nullable @NonNegative Time getCachingPeriod() {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         return cachingPeriod;
     }
@@ -405,9 +405,9 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public @Nonnull @NonNegative Time getCachingPeriodNotNull() {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         @Nullable Time cachingPeriod = getCachingPeriod();
-        assert cachingPeriod != null : "The caching period is not null.";
+        Require.that(cachingPeriod != null).orThrow("The caching period is not null.");
         
         return cachingPeriod;
     }
@@ -420,7 +420,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public @Nonnull SyntacticType getSyntacticBase() {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         assert syntacticBase != null;
         return syntacticBase;
@@ -434,7 +434,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public @Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<SemanticType> getParameters() {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         assert parameters != null;
         return parameters;
@@ -450,7 +450,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public @Nullable SemanticType getSemanticBase() {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         return semanticBase;
     }
@@ -466,7 +466,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public boolean isAttributeType() {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         assert categories != null;
         return !categories.isEmpty();
@@ -496,7 +496,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public boolean isAttributeFor(@Nonnull Category category) {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         assert categories != null;
         return categories.contains(category);
@@ -512,7 +512,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public boolean isAttributeFor(@Nonnull Entity entity) {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         return isAttributeFor(entity.getIdentity().getCategory());
     }
@@ -543,7 +543,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public boolean isBasedOn(@Nonnull SyntacticType syntacticType) {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         assert syntacticBase != null;
         return syntacticBase.equals(syntacticType);
@@ -560,7 +560,7 @@ public final class SemanticType extends Type {
     @Pure
     @LoadedRecipient
     public boolean isBasedOn(@Nonnull SemanticType semanticType) {
-        assert isLoaded() : "The type declaration is already loaded.";
+        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
         
         return semanticType.equals(UNKNOWN) || equals(semanticType) || semanticBase != null && semanticBase.isBasedOn(semanticType);
     }

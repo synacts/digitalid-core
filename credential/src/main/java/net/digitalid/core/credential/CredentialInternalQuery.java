@@ -8,7 +8,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -100,7 +100,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     CredentialInternalQuery(@Nonnull Role role, @Nonnull RandomizedAgentPermissions permissions) {
         super(role);
         
-        assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
+        Require.that(role.getIdentity() instanceof InternalPerson).orThrow("The role belongs to an internal person.");
         
         this.permissions = permissions;
         this.relation = null;
@@ -119,7 +119,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     CredentialInternalQuery(@Nonnull NonNativeRole role, @Nonnull RandomizedAgentPermissions permissions, @Nonnull BigInteger value) {
         super(role.getRecipient());
         
-        assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
+        Require.that(role.getIdentity() instanceof InternalPerson).orThrow("The role belongs to an internal person.");
         
         this.permissions = permissions;
         this.relation = role.getRelation();
@@ -208,7 +208,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
             final @Nonnull PrivateKey privateKey = host.getPrivateKeyChain().getKey(issuance);
             final @Nonnull Group group = privateKey.getCompositeGroup();
             
-            assert value != null : "See the constructor.";
+            Require.that(value != null).orThrow("See the constructor.");
             final @Nonnull Element f = group.getElement(value);
             final @Nonnull Exponent i = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
             final @Nonnull Exponent v = Exponent.get(restrictions.toBlock().getHash());

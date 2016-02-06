@@ -11,7 +11,7 @@ import net.digitalid.utility.validation.annotations.index.Index;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.reference.RawRecipient;
@@ -160,8 +160,8 @@ public abstract class Packet {
     @NonCommitting
     @SuppressWarnings("AssignmentToMethodParameter")
     Packet(@Nonnull Object list, int size, @Nullable Object field, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert !(this instanceof Request) || audit == null || audit instanceof RequestAudit : "If this is a request, the audit is either null or a request audit.";
-        assert !(this instanceof Response) || audit == null || audit instanceof ResponseAudit : "If this is a response, the audit is either null or a response audit.";
+        Require.that(!(this instanceof Request) || audit == null || audit instanceof RequestAudit).orThrow("If this is a request, the audit is either null or a request audit.");
+        Require.that(!(this instanceof Response) || audit == null || audit instanceof ResponseAudit).orThrow("If this is a response, the audit is either null or a response audit.");
         
         setList(list);
         setField(field);
@@ -199,8 +199,8 @@ public abstract class Packet {
      */
     @NonCommitting
     Packet(@Nonnull InputStream inputStream, @Nullable Request request, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
-        assert (request == null) == (this instanceof Request) : "If the request is null, this packet is itself a request.";
-        assert (request != null) == (this instanceof Response) : "If the request is not null, this packet is a response.";
+        Require.that((request == null) == (this instanceof Request)).orThrow("If the request is null, this packet is itself a request.");
+        Require.that((request != null) == (this instanceof Response)).orThrow("If the request is not null, this packet is a response.");
         
         final boolean isResponse = (this instanceof Response);
         final @Nullable Response response = isResponse ? (Response) this : null;
@@ -279,7 +279,7 @@ public abstract class Packet {
                         else if (!signature.isSignedLike(reference)) { throw RequestException.get(RequestErrorCode.SIGNATURE, "All the signatures of a request have to be signed alike.", null, isResponse); }
                         
                         final @Nonnull Entity entity;
-                        assert recipient != null && account != null : "In case of requests, both the recipient and the account are set (see the code above).";
+                        Require.that(recipient != null && account != null).orThrow("In case of requests, both the recipient and the account are set (see the code above).");
                         if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) {
                             entity = account;
                         } else {

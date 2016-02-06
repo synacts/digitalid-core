@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
@@ -112,7 +112,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     public ClientAgentAccredit(@Nonnull NativeRole role, @Nonnull String password) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
         super(role);
         
-        assert Settings.isValid(password) : "The password is valid.";
+        Require.that(Settings.isValid(password)).orThrow("The password is valid.");
         
         final @Nonnull Client client = role.getClient();
         this.clientAgent = new ClientAgent(role, role.getAgent().getNumber(), true);

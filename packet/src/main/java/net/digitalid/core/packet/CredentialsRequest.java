@@ -9,7 +9,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezableQuartet;
 import net.digitalid.utility.collections.tuples.ReadOnlyQuartet;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.reference.RawRecipient;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -119,7 +119,7 @@ public final class CredentialsRequest extends Request {
     @RawRecipient
     @SuppressWarnings("unchecked")
     void setField(@Nullable Object field) {
-        assert field != null : "See the constructor above.";
+        Require.that(field != null).orThrow("See the constructor above.");
         final @Nonnull ReadOnlyQuartet<ReadOnlyList<Credential>, ReadOnlyList<CertifiedAttributeValue>, Boolean, BigInteger> quartet = (ReadOnlyQuartet<ReadOnlyList<Credential>, ReadOnlyList<CertifiedAttributeValue>, Boolean, BigInteger>) field;
         this.credentials = quartet.getElement0();
         this.certificates = quartet.getElement1();
