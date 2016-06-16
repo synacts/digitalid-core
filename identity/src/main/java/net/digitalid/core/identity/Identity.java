@@ -11,7 +11,7 @@ import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.castable.Castable;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 

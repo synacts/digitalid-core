@@ -2,7 +2,7 @@ package net.digitalid.core.property.nullable;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.property.ConceptProperty;

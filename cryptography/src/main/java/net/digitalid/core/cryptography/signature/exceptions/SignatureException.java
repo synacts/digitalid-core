@@ -3,7 +3,7 @@ package net.digitalid.core.cryptography.signature.exceptions;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;

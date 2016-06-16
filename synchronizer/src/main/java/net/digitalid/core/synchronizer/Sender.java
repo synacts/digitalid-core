@@ -9,10 +9,10 @@ import java.util.concurrent.FutureTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;

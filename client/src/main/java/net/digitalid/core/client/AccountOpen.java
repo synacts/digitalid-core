@@ -7,12 +7,12 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;

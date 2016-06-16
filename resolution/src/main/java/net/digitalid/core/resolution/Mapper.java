@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezableTriplet;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
 import net.digitalid.utility.exceptions.InternalException;
@@ -23,7 +23,7 @@ import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.annotations.MainThread;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.core.Database;

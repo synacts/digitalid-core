@@ -4,11 +4,11 @@ import java.sql.Statement;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.core.Database;

@@ -4,9 +4,9 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.console.Console;
 import net.digitalid.utility.console.Option;
 import net.digitalid.utility.console.exceptions.EscapeOptionException;

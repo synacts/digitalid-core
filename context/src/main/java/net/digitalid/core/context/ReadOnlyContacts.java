@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 
 import net.digitalid.core.contact.Contact;
 

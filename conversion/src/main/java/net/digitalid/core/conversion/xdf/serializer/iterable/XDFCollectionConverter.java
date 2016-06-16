@@ -9,9 +9,9 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableHashSet;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.annotations.GenericTypes;

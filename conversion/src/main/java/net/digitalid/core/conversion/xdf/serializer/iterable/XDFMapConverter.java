@@ -6,18 +6,18 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableHashMap;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.annotations.GenericTypes;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 

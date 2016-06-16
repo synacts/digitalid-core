@@ -3,16 +3,16 @@ package net.digitalid.core.state;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.freezable.FreezableMap;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 

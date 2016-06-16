@@ -3,7 +3,7 @@ package net.digitalid.core.conversion.xdf.serializer.iterable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.annotations.GenericTypes;
 import net.digitalid.utility.conversion.exceptions.StoringException;

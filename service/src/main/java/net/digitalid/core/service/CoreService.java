@@ -3,7 +3,7 @@ package net.digitalid.core.service;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.identifier.HostIdentifier;

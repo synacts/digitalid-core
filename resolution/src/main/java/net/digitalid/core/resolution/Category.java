@@ -2,32 +2,20 @@ package net.digitalid.core.resolution;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.validation.annotations.method.Pure;
-import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-
-import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
-import net.digitalid.database.core.converter.sql.SQL;
-import net.digitalid.database.core.converter.sql.SQLConverter;
-import net.digitalid.database.core.declaration.ColumnDeclaration;
-
-import net.digitalid.core.conversion.NonRequestingConverters;
-import net.digitalid.core.conversion.key.NonRequestingKeyConverter;
-import net.digitalid.core.conversion.wrappers.value.integer.Integer08Wrapper;
-import net.digitalid.core.conversion.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.core.conversion.xdf.NonRequestingXDFConverter;
-import net.digitalid.core.conversion.xdf.XDF;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.utility.validation.annotations.value.Validated;
 
 /**
  * This class enumerates the various categories of digital identities.
  */
 @Immutable
-public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
+// SemanticType.map("category@core.digitalid.net").load(Integer08Wrapper.XDF_TYPE)
+public enum Category {
     
     /* -------------------------------------------------- Categories -------------------------------------------------- */
     
@@ -72,7 +60,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
      * Stores an empty list of categories that can be shared among semantic types.
      * (This declaration may not be in the semantic type class as the initialization would be too late.)
      */
-    public static final @Nonnull @Frozen ReadOnlyList<Category> NONE = FreezableArrayList.<Category>getWithCapacity(0).freeze();
+    public static final @Nonnull @Frozen ReadOnlyList<Category> NONE = FreezableArrayList.<Category>withCapacity(0).freeze();
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
@@ -199,75 +187,5 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     public boolean isInternalIdentity() {
         return this == HOST || isInternalNonHostIdentity();
     }
-    
-    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
-    
-    /**
-     * Stores the key converter of this class.
-     */
-    private static final @Nonnull NonRequestingKeyConverter<Category, Object, Byte, Object> KEY_CONVERTER = new NonRequestingKeyConverter<Category, Object, Byte, Object>() {
-        
-        @Pure
-        @Override
-        public boolean isValid(@Nonnull Byte value) {
-            return Category.isValid(value);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull @Validated Byte convert(@Nonnull Category category) {
-            return category.value;
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Category recover(@Nonnull Object none, @Nonnull @Validated Byte value) {
-            return Category.get(value);
-        }
-        
-    };
-    
-    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code category@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("category@core.digitalid.net").load(Integer08Wrapper.XDF_TYPE);
-    
-    /**
-     * Stores the XDF converter of this class.
-     */
-    public static final @Nonnull NonRequestingXDFConverter<Category, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, Integer08Wrapper.getValueXDFConverter(TYPE));
-    
-    @Pure
-    @Override
-    public @Nonnull NonRequestingXDFConverter<Category, Object> getXDFConverter() {
-        return XDF_CONVERTER;
-    }
-    
-    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
-    
-    /**
-     * Stores the declaration of this class.
-     */
-    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("category", Integer08Wrapper.SQL_TYPE);
-    
-    /**
-     * Stores the SQL converter of this class.
-     */
-    public static final @Nonnull SQLConverter<Category, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, Integer08Wrapper.getValueSQLConverter(DECLARATION));
-    
-    @Pure
-    @Override
-    public @Nonnull SQLConverter<Category, Object> getSQLConverter() {
-        return SQL_CONVERTER;
-    }
-    
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
-    
-    /**
-     * Stores the converters of this class.
-     */
-    public static final @Nonnull NonRequestingConverters<Category, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

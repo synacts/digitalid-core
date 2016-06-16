@@ -10,7 +10,7 @@ import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
-import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;

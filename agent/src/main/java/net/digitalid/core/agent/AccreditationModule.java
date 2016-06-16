@@ -4,7 +4,7 @@ import java.sql.Statement;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.core.Database;

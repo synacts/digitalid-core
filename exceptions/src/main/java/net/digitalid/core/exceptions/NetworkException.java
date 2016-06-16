@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.DigitalIDException;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -19,7 +19,7 @@ import net.digitalid.service.core.identifier.HostIdentifier;
  * @see SendingException
  */
 @Immutable
-public abstract class NetworkException extends DigitalIDException {
+public abstract class NetworkException extends ExternalException {
     
     /* -------------------------------------------------- Host -------------------------------------------------- */
     

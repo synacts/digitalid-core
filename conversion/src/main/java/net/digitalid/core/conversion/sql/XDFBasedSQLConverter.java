@@ -2,7 +2,7 @@ package net.digitalid.core.conversion.sql;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Matching;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 

@@ -3,12 +3,12 @@ package net.digitalid.core.synchronizer;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.system.castable.Castable;
 import net.digitalid.utility.system.castable.CastableObject;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.Block;

@@ -3,7 +3,7 @@ package net.digitalid.core.conversion;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
