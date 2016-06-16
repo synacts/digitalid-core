@@ -8,16 +8,10 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
-import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.integer.Integer32Wrapper;
-
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.server.DatabaseSetup;
 
 import org.junit.Assert;

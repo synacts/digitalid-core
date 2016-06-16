@@ -6,16 +6,17 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.state.Matching;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.state.Matching;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
@@ -24,22 +25,15 @@ import net.digitalid.database.core.exceptions.operation.FailedValueStoringExcept
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 
-import net.digitalid.utility.conversion.None;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.annotations.Encoding;
 import net.digitalid.core.conversion.annotations.NonEncoding;
-
+import net.digitalid.core.conversion.exceptions.InvalidBlockLengthException;
 import net.digitalid.core.conversion.wrappers.AbstractWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.ValueWrapper;
 
 import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.cryptography.Parameters;
-
-import net.digitalid.core.conversion.exceptions.InvalidBlockLengthException;
-
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -244,7 +238,7 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
      * @param values a mutable array in which the value is to be stored.
      * @param index the array index at which the value is to be stored.
      */
-    public static void storeNonNullable(@Nonnull BigInteger value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+    public static void storeNonNullable(@Nonnull BigInteger value, @NonCaptured @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
         values.set(index.getAndIncrementValue(), Block.toString(value.toByteArray()));
     }
     
@@ -255,7 +249,7 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
      * @param values a mutable array in which the value is to be stored.
      * @param index the array index at which the value is to be stored.
      */
-    public static void storeNullable(@Nullable BigInteger value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+    public static void storeNullable(@Nullable BigInteger value, @NonCaptured @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
         if (value != null) { storeNonNullable(value, values, index); }
         else { values.set(index.getAndIncrementValue(), "NULL"); }
     }
@@ -268,7 +262,7 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNonNullable(@Nonnull BigInteger value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public static void storeNonNullable(@Nonnull BigInteger value, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), value.toByteArray());
         } catch (@Nonnull SQLException exception) {
@@ -284,7 +278,7 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void storeNullable(@Nullable BigInteger value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public static void storeNullable(@Nullable BigInteger value, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             if (value != null) { storeNonNullable(value, preparedStatement, parameterIndex); }
             else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
@@ -303,7 +297,7 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nullable BigInteger restoreNullable(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException {
+    public static @Nullable BigInteger restoreNullable(@NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException {
         try {
             final @Nullable byte [] bytes = resultSet.getBytes(columnIndex.getAndIncrementValue());
             return bytes == null || bytes.length > LENGTH ? null : new BigInteger(1, bytes);
@@ -322,7 +316,7 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull BigInteger restoreNonNullable(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptNullValueException {
+    public static @Nonnull BigInteger restoreNonNullable(@NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptNullValueException {
         final @Nullable BigInteger value = restoreNullable(resultSet, columnIndex);
         if (value == null) { throw CorruptNullValueException.get(); }
         return value;
@@ -354,14 +348,14 @@ public final class Binary256Wrapper extends ValueWrapper<Binary256Wrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull Binary256Wrapper wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull Binary256Wrapper wrapper, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
             Binary256Wrapper.storeNonNullable(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Binary256Wrapper restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
+        public @Nullable Binary256Wrapper restoreNullable(@Nonnull Object none, @NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             final @Nullable BigInteger value = Binary256Wrapper.restoreNullable(resultSet, columnIndex);
             return value == null ? null : new Binary256Wrapper(getType(), value);
         }

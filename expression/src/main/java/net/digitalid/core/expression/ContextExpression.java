@@ -3,10 +3,10 @@ package net.digitalid.core.expression;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.freezable.FreezableSet;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 

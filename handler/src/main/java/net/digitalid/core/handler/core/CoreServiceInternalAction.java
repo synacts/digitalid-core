@@ -6,40 +6,32 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
-
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrapper;
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
-import net.digitalid.core.cache.Cache;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-
-import net.digitalid.service.core.cryptography.PublicKey;
-
+import net.digitalid.core.cache.Cache;
+import net.digitalid.core.client.annotations.Clients;
+import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrapper;
+import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.InternalAction;
-
-import net.digitalid.core.identifier.HostIdentifier;
-
-import net.digitalid.core.client.annotations.Clients;
 import net.digitalid.core.host.annotations.Hosts;
-
+import net.digitalid.core.identifier.HostIdentifier;
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
+
+import net.digitalid.service.core.cryptography.PublicKey;
 
 /**
  * This class models the {@link InternalAction internal actions} of the {@link CoreService core service}.
@@ -147,7 +139,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
                 agent.checkCovers(other);
             } catch (SQLException exception) {
                 throw DatabaseException.get(exception);
-            }  
+            }
         }
         
         executeOnBoth();

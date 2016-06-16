@@ -2,9 +2,9 @@ package net.digitalid.core.state;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.client.Client;
 

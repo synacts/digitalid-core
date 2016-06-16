@@ -7,31 +7,26 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.service.core.auxiliary.Time;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
-
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
+import net.digitalid.core.cryptography.signature.exceptions.InvalidSignatureException;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestException;
 
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
 import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-
-import net.digitalid.core.cryptography.signature.exceptions.InvalidSignatureException;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
 import net.digitalid.service.core.identity.InternalIdentity;

@@ -6,14 +6,14 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
-import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.castable.Castable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -26,22 +26,16 @@ import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionExc
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
 
-import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-
 import net.digitalid.core.conversion.Converters;
-
 import net.digitalid.core.conversion.key.CastingNonRequestingKeyConverter;
 import net.digitalid.core.conversion.key.CastingRequestingKeyConverter;
-
+import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.core.conversion.xdf.ChainingRequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.XDF;
-
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identifier.Identifier;
-
 import net.digitalid.core.resolution.Category;
 import net.digitalid.core.resolution.Mapper;
 

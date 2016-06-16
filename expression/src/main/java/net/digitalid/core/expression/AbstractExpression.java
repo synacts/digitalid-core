@@ -4,12 +4,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestException;
 
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.Blockable;
@@ -18,9 +21,6 @@ import net.digitalid.service.core.concept.NonHostConcept;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
 
 /**
  * This class models abstract expressions.

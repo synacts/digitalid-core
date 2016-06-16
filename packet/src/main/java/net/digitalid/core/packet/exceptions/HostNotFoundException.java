@@ -1,13 +1,13 @@
 package net.digitalid.core.packet.exceptions;
 
-import net.digitalid.core.exceptions.NetworkException;
-
 import java.net.UnknownHostException;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+
+import net.digitalid.core.exceptions.NetworkException;
 
 import net.digitalid.service.core.identifier.HostIdentifier;
 

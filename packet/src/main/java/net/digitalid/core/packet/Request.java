@@ -6,9 +6,7 @@ import java.net.Socket;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.index.Index;
-import net.digitalid.utility.validation.annotations.size.NonEmpty;
+import net.digitalid.utility.annotations.reference.RawRecipient;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
@@ -16,57 +14,46 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.validation.annotations.reference.RawRecipient;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.index.Index;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.core.synchronizer.Audit;
-import net.digitalid.core.synchronizer.RequestAudit;
-
-import net.digitalid.utility.conversion.None;
-
-import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.CompressionWrapper;
-
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
 import net.digitalid.core.cache.AttributesQuery;
 import net.digitalid.core.cache.Cache;
-
 import net.digitalid.core.contact.FreezableAttributeTypeSet;
-
-import net.digitalid.service.core.cryptography.PublicKeyChain;
-import net.digitalid.service.core.cryptography.SymmetricKey;
-
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.CompressionWrapper;
+import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Role;
-import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.Method;
-
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.IdentifierImplementation;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-
+import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
 import net.digitalid.core.resolution.IdentityQuery;
 import net.digitalid.core.resolution.Mapper;
 import net.digitalid.core.resolution.Successor;
-
 import net.digitalid.core.server.Server;
+import net.digitalid.core.service.CoreService;
+import net.digitalid.core.synchronizer.Audit;
+import net.digitalid.core.synchronizer.RequestAudit;
+
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cryptography.PublicKeyChain;
+import net.digitalid.service.core.cryptography.SymmetricKey;
 
 /**
  * This class compresses, signs and encrypts requests.

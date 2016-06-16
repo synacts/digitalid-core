@@ -4,33 +4,25 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.synchronizer.Synchronizer;
-
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
 import net.digitalid.core.agent.Restrictions;
-
+import net.digitalid.core.client.Client;
+import net.digitalid.core.client.annotations.Clients;
+import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
-
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.core.CoreServiceInternalAction;
-
-import net.digitalid.core.identifier.HostIdentifier;
-
-import net.digitalid.core.client.annotations.Clients;
 import net.digitalid.core.host.annotations.Hosts;
-
-import net.digitalid.core.client.Client;
+import net.digitalid.core.identifier.HostIdentifier;
+import net.digitalid.core.synchronizer.Synchronizer;
 
 /**
  * Internal actions can only be sent by {@link Client clients} and can usually be {@link #reverseOnClient() reversed}.

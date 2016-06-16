@@ -2,15 +2,13 @@ package net.digitalid.core.conversion;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.converter.sql.SQLConverter;
 
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
-
 import net.digitalid.core.entity.Entity;
-
 import net.digitalid.core.identity.SemanticType;
 
 /**

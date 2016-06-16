@@ -9,35 +9,26 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.castable.Castable;
 import net.digitalid.utility.system.castable.CastableObject;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
-import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
-
-import net.digitalid.core.conversion.xdf.XDF;
-
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-
 import net.digitalid.core.conversion.exceptions.InvalidReplyParameterValueException;
-
+import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
+import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
+import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
+import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.cryptography.signature.exceptions.InvalidSignatureException;
-
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.identity.annotations.AttributeType;
+
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 
 /**
  * This class facilitates the encoding and decoding of attribute values.

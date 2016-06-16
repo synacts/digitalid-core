@@ -5,18 +5,17 @@ import java.lang.reflect.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.conversion.Converter;
 import net.digitalid.utility.conversion.ConverterAnnotations;
-import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.generator.conversion.Convertible;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 
@@ -84,7 +83,7 @@ public abstract class XDFConverter<T> extends Converter {
         }
         if (parentName.length() > 0) {
             parentName = "." + parentName;
-        }       
+        }
         return name + parentName + "@core.digitalid.net";
     }
     

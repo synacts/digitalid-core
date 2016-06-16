@@ -3,14 +3,13 @@ package net.digitalid.core.handler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
-
-import net.digitalid.core.synchronizer.Audit;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.synchronizer.Audit;
 
 /**
  * Handlers that can be added to the {@link Audit} have to implement this interface.

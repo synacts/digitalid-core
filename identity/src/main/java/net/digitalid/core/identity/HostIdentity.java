@@ -6,24 +6,20 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.thread.annotations.MainThread;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-
 import net.digitalid.core.conversion.Converters;
-
+import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.core.conversion.xdf.ChainingRequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
-
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.Identifier;
-
 import net.digitalid.core.resolution.Category;
 import net.digitalid.core.resolution.Mapper;
 

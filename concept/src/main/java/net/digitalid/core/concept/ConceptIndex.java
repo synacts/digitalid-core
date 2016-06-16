@@ -6,11 +6,11 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
@@ -18,9 +18,8 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.annotations.SingleAccess;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.property.ConceptPropertyTable;
-
 import net.digitalid.core.entity.Entity;
+import net.digitalid.core.property.ConceptPropertyTable;
 
 /**
  * This class indexes the instances of a {@link Concept concept} by their {@link Entity entity} and key.

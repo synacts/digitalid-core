@@ -8,9 +8,7 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.size.EmptyOrSingle;
-import net.digitalid.utility.validation.annotations.size.EmptyOrSingleRecipient;
-import net.digitalid.utility.validation.annotations.size.Single;
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.converter.Brackets;
 import net.digitalid.utility.collections.converter.ElementConverter;
 import net.digitalid.utility.collections.converter.IterableConverter;
@@ -21,39 +19,34 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.freezable.NonFrozenRecipient;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.size.EmptyOrSingle;
+import net.digitalid.utility.validation.annotations.size.EmptyOrSingleRecipient;
+import net.digitalid.utility.validation.annotations.size.Single;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 
-import net.digitalid.service.core.auxiliary.Time;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
-
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityImplementation;
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.identity.annotations.AttributeType;
-
 import net.digitalid.core.resolution.Category;
 import net.digitalid.core.resolution.Mapper;
+
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 
 /**
  * This class models the permissions of agents as a mapping from attribute types to writings.

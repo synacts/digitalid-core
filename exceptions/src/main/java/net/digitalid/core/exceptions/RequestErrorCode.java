@@ -3,9 +3,9 @@ package net.digitalid.core.exceptions;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.database.core.converter.sql.SQL;

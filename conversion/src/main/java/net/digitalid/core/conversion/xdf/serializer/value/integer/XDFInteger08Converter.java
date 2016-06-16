@@ -5,15 +5,12 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.exceptions.StoringException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.value.integer.Integer08Wrapper;
-
 import net.digitalid.core.conversion.xdf.XDFConverter;
-
 import net.digitalid.core.identity.SemanticType;
 
 public class XDFInteger08Converter extends XDFConverter<Byte> {

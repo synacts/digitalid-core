@@ -6,15 +6,11 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
-import net.digitalid.core.service.CoreService;
-
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
-
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
-
 import net.digitalid.core.handler.ActionReply;
-
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
 
 /**

@@ -10,7 +10,6 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identity.SemanticType;
 
 /**

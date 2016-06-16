@@ -5,48 +5,40 @@ import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.NonFrozen;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
+import net.digitalid.core.cache.Cache;
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.annotations.NonEncoding;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.cryptography.signature.exceptions.ExpiredHostSignatureException;
+import net.digitalid.core.cryptography.signature.exceptions.InvalidHostSignatureException;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestException;
 import net.digitalid.core.synchronizer.Audit;
 
-import net.digitalid.utility.conversion.None;
-
 import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.annotations.NonEncoding;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.core.cache.Cache;
-
 import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.PrivateKey;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
-
-import net.digitalid.core.cryptography.signature.exceptions.ExpiredHostSignatureException;
-import net.digitalid.core.cryptography.signature.exceptions.InvalidHostSignatureException;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;

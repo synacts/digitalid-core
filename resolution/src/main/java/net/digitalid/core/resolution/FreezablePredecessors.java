@@ -8,32 +8,27 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.InitializationError;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
-
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.Reply;
-
 import net.digitalid.core.identifier.IdentifierImplementation;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-
 import net.digitalid.core.identity.NonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
 

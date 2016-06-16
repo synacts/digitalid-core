@@ -6,19 +6,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
+import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityImplementation;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.InternalNonHostIdentity;
-
-import net.digitalid.core.host.Host;
 
 /**
  * This class models an account on the host-side.

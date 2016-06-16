@@ -7,12 +7,12 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.conversion.Converter;
 import net.digitalid.utility.conversion.ConverterAnnotations;
-import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.conversion.exceptions.StructureException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.conversion.Block;
@@ -35,14 +35,14 @@ public final class XDF {
     /**
      * Recovers a nullable, convertible object from a nullable XDF block.
      */
-    public static @Nullable Convertible recoverNullable(@Nullable Block block, @Nonnull Class<? extends Convertible> type) throws InvalidEncodingException, RecoveryException, InternalException  {
+    public static @Nullable Convertible recoverNullable(@Nullable Block block, @Nonnull Class<? extends Convertible> type) throws InvalidEncodingException, RecoveryException, InternalException {
         return block == null ? null : recoverNonNullable(block, type);
     }
 
     /**
      * Recovers a non-nullable, convertible object from a non-nullable XDF block.
      */
-    public static @Nonnull Convertible recoverNonNullable(@Nonnull Block block, @Nonnull Class<? extends Convertible> type) throws InvalidEncodingException, RecoveryException, InternalException  {
+    public static @Nonnull Convertible recoverNonNullable(@Nonnull Block block, @Nonnull Class<? extends Convertible> type) throws InvalidEncodingException, RecoveryException, InternalException {
         Converter.Structure structure;
         try {
             structure = Converter.inferStructure(type);

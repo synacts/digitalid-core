@@ -8,18 +8,13 @@ import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.service.core.auxiliary.Time;
-
 import net.digitalid.core.concept.Concept;
-
 import net.digitalid.core.property.extensible.ExtensibleConceptProperty;
-
 import net.digitalid.core.property.indexed.IndexedConceptProperty;
-
 import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
-
 import net.digitalid.core.property.nullable.NullableConceptProperty;
 
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.entity.Entity;
 
 /**

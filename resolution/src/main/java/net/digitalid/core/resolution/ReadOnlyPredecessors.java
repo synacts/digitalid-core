@@ -3,25 +3,22 @@ package net.digitalid.core.resolution;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 
-import net.digitalid.service.core.block.wrappers.Blockable;
-
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.Reply;
-
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-
 import net.digitalid.core.identity.NonHostIdentity;
+
+import net.digitalid.service.core.block.wrappers.Blockable;
 
 /**
  * This interface provides read-only access to {@link FreezablePredecessors predecessors} and should <em>never</em> be cast away.

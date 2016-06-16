@@ -3,36 +3,31 @@ package net.digitalid.core.conversion.wrappers.structure;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.elements.NullableElements;
+import net.digitalid.utility.annotations.ownership.Captured;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.validation.annotations.reference.Captured;
-import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.method.Pure;
-
 import net.digitalid.utility.conversion.None;
+import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.elements.NullableElements;
+import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.VariableInteger;
-
 import net.digitalid.core.conversion.annotations.Encoding;
 import net.digitalid.core.conversion.annotations.NonEncoding;
-
+import net.digitalid.core.conversion.exceptions.InvalidBlockLengthException;
+import net.digitalid.core.conversion.exceptions.InvalidBlockOffsetException;
+import net.digitalid.core.conversion.exceptions.InvalidNullElementException;
 import net.digitalid.core.conversion.wrappers.AbstractWrapper;
 import net.digitalid.core.conversion.wrappers.BlockBasedWrapper;
 
 import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;
-
-import net.digitalid.core.conversion.exceptions.InvalidBlockLengthException;
-import net.digitalid.core.conversion.exceptions.InvalidBlockOffsetException;
-import net.digitalid.core.conversion.exceptions.InvalidNullElementException;
-
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;

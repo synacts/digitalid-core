@@ -3,34 +3,27 @@ package net.digitalid.core.attribute;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.service.core.auxiliary.Time;
-
+import net.digitalid.core.certificate.Certificate;
 import net.digitalid.core.conversion.Block;
-
-import net.digitalid.service.core.block.Blockable;
-
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
-import net.digitalid.core.certificate.Certificate;
-
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-
 import net.digitalid.core.cryptography.signature.exceptions.InvalidSignatureException;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.InternalNonHostIdentity;
+
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Blockable;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 
 /**
  * This class facilitates the encoding and decoding of certified attribute values.

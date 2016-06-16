@@ -6,11 +6,11 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
@@ -18,20 +18,15 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-
+import net.digitalid.core.conversion.Block;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.identity.annotations.Loaded;
 
 /**

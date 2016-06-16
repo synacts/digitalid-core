@@ -6,31 +6,26 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
-
-import net.digitalid.core.synchronizer.Audit;
-
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-
-import net.digitalid.service.core.dataservice.SiteModule;
-
+import net.digitalid.core.client.AccountOpen;
+import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.InternalIdentifier;
+import net.digitalid.core.synchronizer.Audit;
 
-import net.digitalid.core.client.AccountOpen;
+import net.digitalid.service.core.dataservice.SiteModule;
 
 /**
  * Actions affect the state of a digital identity and are thus always {@link Audit audited}.

@@ -2,15 +2,13 @@ package net.digitalid.core.property.nonnullable;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.concept.ConceptSetup;
-
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.property.ConceptPropertyInternalAction;
 import net.digitalid.core.property.ConceptPropertySetup;
 

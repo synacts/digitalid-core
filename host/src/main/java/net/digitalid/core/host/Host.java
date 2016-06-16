@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.directory.Directory;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -17,43 +18,29 @@ import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.utility.conversion.None;
-
-import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-
 import net.digitalid.core.agent.FreezableAgentPermissions;
-
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.attribute.UncertifiedAttributeValue;
-
-import net.digitalid.service.core.cryptography.KeyPair;
-import net.digitalid.service.core.cryptography.PrivateKeyChain;
-import net.digitalid.service.core.cryptography.PublicKeyChain;
-
+import net.digitalid.core.client.Client;
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.entity.HostAccount;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identifier.HostIdentifier;
-
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.InternalIdentity;
-
 import net.digitalid.core.resolution.Mapper;
-
 import net.digitalid.core.server.Server;
-
-import net.digitalid.core.client.Client;
-
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
+
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cryptography.KeyPair;
+import net.digitalid.service.core.cryptography.PrivateKeyChain;
+import net.digitalid.service.core.cryptography.PublicKeyChain;
 
 /**
  * A host stores a {@link KeyPair} and is run by a {@link Server}.

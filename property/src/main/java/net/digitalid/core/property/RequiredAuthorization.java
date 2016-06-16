@@ -6,11 +6,10 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.core.concept.Concept;
-
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.concept.Concept;
 
 /**
  * A state selector returns the SQL condition with which the returned state is restricted.

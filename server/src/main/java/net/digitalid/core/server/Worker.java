@@ -9,48 +9,39 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.logger.Log;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
+import net.digitalid.core.agent.Agent;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
+import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrapper;
+import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
+import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
+import net.digitalid.core.credential.Credential;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestErrorCode;
+import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.handler.Action;
+import net.digitalid.core.handler.InternalMethod;
+import net.digitalid.core.handler.Method;
+import net.digitalid.core.handler.Reply;
+import net.digitalid.core.identifier.InternalIdentifier;
+import net.digitalid.core.packet.Request;
+import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.CoreService;
-
+import net.digitalid.core.state.Service;
 import net.digitalid.core.synchronizer.ActionModule;
 import net.digitalid.core.synchronizer.RequestAudit;
 import net.digitalid.core.synchronizer.ResponseAudit;
 
 import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
-import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrapper;
-import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-
-import net.digitalid.core.credential.Credential;
-
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestErrorCode;
-import net.digitalid.core.exceptions.RequestException;
-
-import net.digitalid.core.handler.Action;
-import net.digitalid.core.handler.InternalMethod;
-import net.digitalid.core.handler.Method;
-import net.digitalid.core.handler.Reply;
-
-import net.digitalid.core.identifier.InternalIdentifier;
-
-import net.digitalid.core.packet.Request;
-import net.digitalid.core.packet.Response;
-
-import net.digitalid.core.state.Service;
 
 /**
  * A worker processes incoming requests asynchronously.

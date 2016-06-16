@@ -16,39 +16,31 @@ import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.thread.Threading;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.service.core.auxiliary.Time;
-
+import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
 import net.digitalid.core.conversion.Block;
-
+import net.digitalid.core.conversion.exceptions.InvalidReplyTypeException;
 import net.digitalid.core.conversion.wrappers.CompressionWrapper;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
-
-import net.digitalid.core.conversion.exceptions.InvalidReplyTypeException;
-import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
+import net.digitalid.core.host.annotations.Hosts;
 import net.digitalid.core.identifier.InternalIdentifier;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.packet.Packet;
 
-import net.digitalid.core.host.annotations.Hosts;
+import net.digitalid.service.core.auxiliary.Time;
 
 /**
  * This class models replies to {@link Method methods} and stores them in the {@link Database database}.

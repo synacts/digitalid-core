@@ -8,25 +8,19 @@ import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 
-import net.digitalid.service.core.auxiliary.Time;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.service.core.concept.NonHostConcept;
-
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.expression.PassiveExpression;
-
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.NonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.resolution.Category;
+
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.concept.NonHostConcept;
 
 /**
  * Description.

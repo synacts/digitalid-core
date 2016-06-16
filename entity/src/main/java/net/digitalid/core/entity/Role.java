@@ -5,14 +5,14 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.elements.UniqueElements;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.elements.UniqueElements;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
@@ -20,30 +20,22 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.annotations.NonLocked;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
+import net.digitalid.core.agent.Agent;
+import net.digitalid.core.agent.AgentModule;
+import net.digitalid.core.client.Client;
+import net.digitalid.core.credential.ClientCredential;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestErrorCode;
+import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.identity.InternalNonHostIdentity;
+import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.service.CoreService;
-
+import net.digitalid.core.state.Service;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.synchronizer.SynchronizerModule;
 
 import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.AgentModule;
-
-import net.digitalid.core.credential.ClientCredential;
-
 import net.digitalid.service.core.dataservice.StateModule;
-
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestErrorCode;
-import net.digitalid.core.exceptions.RequestException;
-
-import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.identity.SemanticType;
-
-import net.digitalid.core.client.Client;
-
-import net.digitalid.core.state.Service;
 
 /**
  * This class models a role on the client-side.

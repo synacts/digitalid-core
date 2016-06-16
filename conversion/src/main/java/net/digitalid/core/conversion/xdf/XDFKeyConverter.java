@@ -7,8 +7,8 @@ import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.TypeMapper;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 import net.digitalid.core.conversion.Block;
 

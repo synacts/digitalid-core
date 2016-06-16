@@ -10,18 +10,18 @@ import java.security.NoSuchAlgorithmException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.index.Index;
-import net.digitalid.utility.validation.annotations.size.NonEmpty;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.annotations.ownership.Captured;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.MissingSupportException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.validation.annotations.index.Index;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.math.Positive;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
-import net.digitalid.utility.validation.annotations.reference.Captured;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.converter.sql.SQL;
@@ -40,16 +40,13 @@ import net.digitalid.core.conversion.annotations.EncodingRecipient;
 import net.digitalid.core.conversion.annotations.NonEncoded;
 import net.digitalid.core.conversion.annotations.NonEncoding;
 import net.digitalid.core.conversion.annotations.NonEncodingRecipient;
-
+import net.digitalid.core.conversion.exceptions.InvalidBlockTypeException;
 import net.digitalid.core.conversion.wrappers.AbstractWrapper;
 
 import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
 import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
-
-import net.digitalid.core.conversion.exceptions.InvalidBlockTypeException;
-
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 
@@ -754,7 +751,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     public static final @Nonnull SQLConverter<Block, SemanticType> SQL_CONVERTER = new SQLConverter<Block, SemanticType>(DECLARATION) {
         
         @Override
-        public void storeNonNullable(@Nonnull Block block, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull Block block, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
             if (Database.getInstance().supportsBinaryStreams()) {
                 collector.setBinaryStream(block.getInputStream(), block.getLength());
             } else {
@@ -763,7 +760,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         }
         
         @Override
-        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
+        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             final @Nullable byte[] bytes = result.getBinary();
             return bytes == null ? null : Block.get(type, bytes);
         }

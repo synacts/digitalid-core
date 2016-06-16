@@ -5,18 +5,19 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.size.NonEmpty;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.state.Matching;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
+import net.digitalid.utility.validation.annotations.state.Matching;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
@@ -25,20 +26,14 @@ import net.digitalid.database.core.exceptions.operation.FailedValueStoringExcept
 import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueException;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 
-import net.digitalid.utility.conversion.None;
-
 import net.digitalid.core.conversion.annotations.Encoding;
 import net.digitalid.core.conversion.annotations.NonEncoding;
-
+import net.digitalid.core.conversion.exceptions.InvalidBlockLengthException;
+import net.digitalid.core.conversion.exceptions.InvalidBlockOffsetException;
 import net.digitalid.core.conversion.wrappers.AbstractWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.ValueWrapper;
 
 import net.digitalid.service.core.converter.NonRequestingConverters;
-
-import net.digitalid.core.conversion.exceptions.InvalidBlockLengthException;
-import net.digitalid.core.conversion.exceptions.InvalidBlockOffsetException;
-
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -242,7 +237,7 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
         Require.that(value <= MAX_VALUE).orThrow("The first two bits have to be zero.");
         
         long shifter = value;
-        for (int i = length - 1; i >= 1; i--) {  
+        for (int i = length - 1; i >= 1; i--) {
             block.setByte(offset + i, (byte) shifter);
             shifter >>>= 8;
         }
@@ -372,7 +367,7 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      * @param values a mutable array in which the value is to be stored.
      * @param index the array index at which the value is to be stored.
      */
-    public static void store(long value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+    public static void store(long value, @NonCaptured @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
         values.set(index.getAndIncrementValue(), String.valueOf(value));
     }
     
@@ -384,7 +379,7 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(long value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public static void store(long value, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             preparedStatement.setLong(parameterIndex.getAndIncrementValue(), value);
         } catch (@Nonnull SQLException exception) {
@@ -402,7 +397,7 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
      */
     @Pure
     @NonCommitting
-    public static long restore(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException {
+    public static long restore(@NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException {
         try {
             return resultSet.getLong(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
@@ -436,14 +431,14 @@ public final class VariableInteger extends ValueWrapper<VariableInteger> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull VariableInteger wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull VariableInteger wrapper, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable VariableInteger restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
+        public @Nullable VariableInteger restoreNullable(@Nonnull Object none, @NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             try {
                 final long value = restore(resultSet, columnIndex);
                 if (resultSet.wasNull()) { return null; }

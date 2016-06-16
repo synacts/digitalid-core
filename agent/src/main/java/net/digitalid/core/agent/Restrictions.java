@@ -5,13 +5,14 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.sql.SQL;
@@ -27,37 +28,25 @@ import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
 
-import net.digitalid.utility.conversion.None;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
-
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.context.Context;
-
+import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.Converters;
-
+import net.digitalid.core.conversion.factory.Factory;
+import net.digitalid.core.conversion.factory.Tuple2Factory;
+import net.digitalid.core.conversion.format.Tuple2Format;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
 import net.digitalid.core.conversion.xdf.Encode;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.XDF;
-
 import net.digitalid.core.entity.NonHostEntity;
-
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
-import net.digitalid.core.conversion.factory.Factory;
-import net.digitalid.core.conversion.factory.Tuple2Factory;
-
-import net.digitalid.core.conversion.format.Tuple2Format;
-
 import net.digitalid.core.identity.SemanticType;
+
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 
 /**
  * This class models the restrictions of an agent.
@@ -403,7 +392,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
     public boolean equals(@Nullable Object object) {
         if (object == this) { return true; }
         if (object == null || !(object instanceof Restrictions)) { return false; }
-        @Nonnull Restrictions other = (Restrictions) object;
+        final @Nonnull Restrictions other = (Restrictions) object;
         return this.client == other.client && this.role == other.role && this.writing == other.writing && Objects.equals(this.context, other.context) && Objects.equals(this.contact, other.contact);
     }
     
@@ -508,7 +497,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Override
         @NonCommitting
-        public final void consumeNonNullable(@Nonnull Restrictions restrictions, @NonCapturable @Nonnull Tuple2Format<?, Boolean, Object, Context, NonHostEntity> format) throws FailedValueStoringException, InternalException {
+        public final void consumeNonNullable(@Nonnull Restrictions restrictions, @NonCaptured @Nonnull Tuple2Format<?, Boolean, Object, Context, NonHostEntity> format) throws FailedValueStoringException, InternalException {
             format.consume1(restrictions.client);
             format.consume2(restrictions.context);
             // or:
@@ -517,7 +506,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Override
         @NonCommitting
-        public final @Nullable Restrictions produceNullable(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull Tuple2Format<?, Boolean, Object, Context, NonHostEntity> format) throws FailedValueRestoringException, CorruptValueException, InternalException {
+        public final @Nullable Restrictions produceNullable(@Nonnull NonHostEntity entity, @NonCaptured @Nonnull Tuple2Format<?, Boolean, Object, Context, NonHostEntity> format) throws FailedValueRestoringException, CorruptValueException, InternalException {
             return new Restrictions(format.produce1(None.OBJECT), format.produce2(entity));
         }
         
@@ -537,7 +526,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Override
         @NonCommitting
-        public final void storeNonNullable(@Nonnull Restrictions restrictions, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        public final void storeNonNullable(@Nonnull Restrictions restrictions, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
             BooleanWrapper.store(restrictions.client, collector);
             BooleanWrapper.store(restrictions.role, collector);
             BooleanWrapper.store(restrictions.writing, collector);
@@ -547,7 +536,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Override
         @NonCommitting
-        public final @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
+        public final @Nullable Restrictions restoreNullable(@Nonnull NonHostEntity entity, @NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             final boolean client = BooleanWrapper.restore(result);
             final boolean clientWasNull = result.wasNull();
             final boolean role = BooleanWrapper.restore(result);

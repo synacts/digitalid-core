@@ -1,6 +1,5 @@
-*/target/
-*/.idea/
-.idea
-digitalid-core.iml
-*/digitalid-core-*.iml
-*/digitalid-service-core.iml
+*/config
+*/target
+/target/
+.idea/
+*.iml

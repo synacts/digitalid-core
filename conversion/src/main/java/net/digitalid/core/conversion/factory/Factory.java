@@ -2,8 +2,8 @@ package net.digitalid.core.conversion.factory;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
@@ -26,7 +26,7 @@ public abstract class Factory<O, E> {
     
     /* -------------------------------------------------- Consumption -------------------------------------------------- */
     
-    public abstract <R> R consume(@Nonnull O object, @NonCapturable @Nonnull Format<R> format) throws FailedValueStoringException, InternalException;
+    public abstract <R> R consume(@Nonnull O object, @NonCaptured @Nonnull Format<R> format) throws FailedValueStoringException, InternalException;
     
     /* -------------------------------------------------- Production -------------------------------------------------- */
     

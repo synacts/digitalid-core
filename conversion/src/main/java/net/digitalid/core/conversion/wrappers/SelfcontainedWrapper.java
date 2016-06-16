@@ -6,38 +6,32 @@ import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.utility.conversion.None;
-
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.VariableInteger;
-
 import net.digitalid.core.conversion.annotations.Encoding;
 import net.digitalid.core.conversion.annotations.NonEncoding;
-
 import net.digitalid.core.conversion.wrappers.exceptions.UnexpectedEndOfFileException;
 import net.digitalid.core.conversion.wrappers.exceptions.UnsupportedBlockLengthException;
-
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.service.core.converter.xdf.Encode;
-import net.digitalid.service.core.converter.xdf.XDF;
-
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
 
+import net.digitalid.service.core.converter.xdf.Encode;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;

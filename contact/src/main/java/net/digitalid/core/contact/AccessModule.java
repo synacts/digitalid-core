@@ -16,26 +16,19 @@ import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.host.Host;
+import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.service.CoreService;
+import net.digitalid.core.state.Service;
 
 import net.digitalid.service.core.dataservice.StateModule;
-
-import net.digitalid.core.entity.NonHostEntity;
-
-import net.digitalid.core.identity.SemanticType;
-
-import net.digitalid.core.host.Host;
-
-import net.digitalid.core.state.Service;
 
 /**
  * This class provides database access to the {@link AccessRequest access requests} of the core service.

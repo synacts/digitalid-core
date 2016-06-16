@@ -9,16 +9,16 @@ import java.util.HashSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -27,44 +27,33 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
-
-import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-
+import net.digitalid.core.client.Client;
+import net.digitalid.core.client.Commitment;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.context.Context;
 import net.digitalid.core.context.ContextModule;
-
-import net.digitalid.service.core.dataservice.StateModule;
-
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
+import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
+import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.entity.EntityImplementation;
 import net.digitalid.core.entity.NonHostAccount;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.NonNativeRole;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.RequestException;
-
+import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityImplementation;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.resolution.Mapper;
-
-import net.digitalid.core.client.Client;
-import net.digitalid.core.client.Commitment;
-import net.digitalid.core.host.Host;
-
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
+
+import net.digitalid.service.core.dataservice.StateModule;
 
 /**
  * This class provides database access to the {@link Agent agents} of the core service.

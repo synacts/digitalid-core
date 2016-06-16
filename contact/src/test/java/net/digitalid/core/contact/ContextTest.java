@@ -7,10 +7,8 @@ import javax.annotation.Nonnull;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 
-import net.digitalid.core.contact.Contact;
 import net.digitalid.core.context.Context;
 import net.digitalid.core.context.FreezableContacts;
-
 import net.digitalid.core.server.IdentitySetup;
 
 import org.junit.Assert;

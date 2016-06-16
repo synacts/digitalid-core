@@ -3,18 +3,16 @@ package net.digitalid.core.client;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
-
-import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
+import net.digitalid.core.identity.HostIdentity;
 
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.PublicKey;
-
-import net.digitalid.core.identity.HostIdentity;
 
 /**
  * This class extends the {@link Commitment commitment} of a {@link Client client} with its {@link Client#getSecret() secret}.

@@ -5,26 +5,25 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.CompressionWrapper;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestErrorCode;
+import net.digitalid.core.exceptions.RequestException;
 
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
@@ -33,11 +32,6 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestErrorCode;
-import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.service.core.handler.ActionReply;
 import net.digitalid.service.core.handler.ExternalAction;
 import net.digitalid.service.core.handler.Method;

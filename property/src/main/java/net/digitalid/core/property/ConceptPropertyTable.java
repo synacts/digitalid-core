@@ -8,34 +8,28 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.thread.annotations.MainThread;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.service.core.auxiliary.Time;
-
+import net.digitalid.core.concept.Concept;
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.annotations.NonEncoding;
-
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestException;
 
-import net.digitalid.core.concept.Concept;
-
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
-
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;

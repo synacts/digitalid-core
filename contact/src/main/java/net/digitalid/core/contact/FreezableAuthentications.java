@@ -2,25 +2,21 @@ package net.digitalid.core.contact;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 
-import net.digitalid.service.core.auxiliary.Time;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
-
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.resolution.Category;
+
+import net.digitalid.service.core.auxiliary.Time;
 
 /**
  * This class models the authentications of contacts as a set of attribute types.

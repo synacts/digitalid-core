@@ -5,26 +5,23 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
 
+import net.digitalid.core.client.Commitment;
+import net.digitalid.core.entity.Entity;
+import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.identity.Identity;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 import net.digitalid.service.core.annotations.OnlyForActions;
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.Observer;
-
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-
-import net.digitalid.core.identity.Identity;
-
-import net.digitalid.core.client.Commitment;
 
 /**
  * This class models a client agent that acts on behalf of an {@link Identity identity}.

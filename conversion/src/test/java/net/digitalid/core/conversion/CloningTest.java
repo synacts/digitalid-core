@@ -8,12 +8,8 @@ import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 import net.digitalid.database.core.Database;
 
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-
 import net.digitalid.core.attribute.AttributeTypes;
-
+import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.server.DatabaseSetup;
 
 import org.junit.Assert;

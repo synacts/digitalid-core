@@ -8,12 +8,9 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 
 import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
 import net.digitalid.core.conversion.factory.Tuple2Factory;
-
 import net.digitalid.core.conversion.format.Tuple2Format;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 
 public class XDFTuple2Format<O1, E1, O2, E2> implements Tuple2Format<Block, O1, E1, O2, E2> {
     

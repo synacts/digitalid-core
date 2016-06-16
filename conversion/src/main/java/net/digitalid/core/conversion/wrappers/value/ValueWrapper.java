@@ -3,15 +3,15 @@ package net.digitalid.core.conversion.wrappers.value;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -19,9 +19,7 @@ import net.digitalid.database.core.exceptions.operation.FailedValueRestoringExce
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.annotations.NonEncoding;
-
 import net.digitalid.core.conversion.wrappers.AbstractWrapper;
 
 import net.digitalid.service.core.identity.SemanticType;
@@ -177,20 +175,20 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends AbstractWr
         
         @Pure
         @Override
-        public final void storeNonNullable(@Nonnull V value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+        public final void storeNonNullable(@Nonnull V value, @NonCaptured @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
             values.set(index.getAndIncrementValue(), wrapper.wrap(SQLConverter.getType(), value).toString());
         }
         
         @Override
         @NonCommitting
-        public final void storeNonNullable(@Nonnull V value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        public final void storeNonNullable(@Nonnull V value, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
             SQLConverter.storeNonNullable(wrapper.wrap(SQLConverter.getType(), value), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable V restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
+        public final @Nullable V restoreNullable(@Nonnull Object none, @NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             final @Nullable W wrapper = SQLConverter.restoreNullable(none, resultSet, columnIndex);
             return wrapper == null ? null : this.wrapper.unwrap(wrapper);
         }

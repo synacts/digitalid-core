@@ -3,17 +3,12 @@ package net.digitalid.core.conversion;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.EncryptionWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
+import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.server.ServerSetup;
 
 import net.digitalid.service.core.cryptography.SymmetricKey;
-
-import net.digitalid.core.identity.SemanticType;
-
-import net.digitalid.core.server.ServerSetup;
 
 import org.junit.Assert;
 import org.junit.Test;

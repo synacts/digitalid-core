@@ -7,22 +7,21 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.service.core.concept.Aspect;
-import net.digitalid.service.core.concept.Instance;
-import net.digitalid.service.core.concept.Observer;
-
+import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityImplementation;
 
-import net.digitalid.core.host.Host;
+import net.digitalid.service.core.concept.Aspect;
+import net.digitalid.service.core.concept.Instance;
+import net.digitalid.service.core.concept.Observer;
 
 /**
  * This class models a host account.

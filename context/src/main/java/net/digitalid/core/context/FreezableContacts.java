@@ -3,8 +3,7 @@ package net.digitalid.core.context;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.core.contact.Contact;
-
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.converter.Brackets;
 import net.digitalid.utility.collections.converter.ElementConverter;
 import net.digitalid.utility.collections.converter.IterableConverter;
@@ -12,24 +11,20 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.freezable.NonFrozenRecipient;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
+import net.digitalid.core.contact.Contact;
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
-
 import net.digitalid.core.entity.NonHostEntity;
-
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identity.SemanticType;
 
 /**

@@ -2,8 +2,8 @@ package net.digitalid.core.contact;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
 /**

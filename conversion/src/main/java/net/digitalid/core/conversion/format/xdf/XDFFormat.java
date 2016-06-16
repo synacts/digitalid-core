@@ -3,9 +3,7 @@ package net.digitalid.core.conversion.format.xdf;
 import javax.annotation.Nonnull;
 
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.factory.Tuple2Factory;
-
 import net.digitalid.core.conversion.format.Format;
 
 public class XDFFormat implements Format<Block> {

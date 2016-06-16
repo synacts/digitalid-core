@@ -12,8 +12,9 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -22,21 +23,15 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.utility.conversion.None;
-
-import net.digitalid.service.core.auxiliary.Time;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.EmptyWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
+import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.service.CoreService;
 
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
@@ -48,9 +43,6 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
-
-import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.identifier.Identifier;

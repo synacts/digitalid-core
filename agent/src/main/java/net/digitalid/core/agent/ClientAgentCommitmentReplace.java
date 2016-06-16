@@ -5,33 +5,25 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 
+import net.digitalid.core.client.Commitment;
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.entity.Entity;
+import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.handler.Action;
+import net.digitalid.core.handler.Method;
+import net.digitalid.core.handler.core.CoreServiceInternalAction;
+import net.digitalid.core.identifier.HostIdentifier;
+import net.digitalid.core.identity.SemanticType;
 
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.dataservice.StateModule;
-
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.exceptions.RequestException;
-
-import net.digitalid.core.handler.Action;
-import net.digitalid.core.handler.Method;
-
-import net.digitalid.core.handler.core.CoreServiceInternalAction;
-
-import net.digitalid.core.identifier.HostIdentifier;
-
-import net.digitalid.core.identity.SemanticType;
-
-import net.digitalid.core.client.Commitment;
 
 /**
  * Replaces the {@link Commitment commitment} of a {@link ClientAgent client agent}.

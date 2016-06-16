@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 import net.digitalid.utility.validation.annotations.meta.TargetTypes;
 
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.identity.SemanticType;
 
 /**

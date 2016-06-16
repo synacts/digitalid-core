@@ -3,15 +3,15 @@ package net.digitalid.core.concept;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.system.castable.Castable;
 import net.digitalid.utility.system.castable.CastableObject;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
@@ -19,18 +19,15 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.property.ConceptProperty;
-import net.digitalid.core.property.ConceptPropertyTable;
-
+import net.digitalid.core.client.annotations.Clients;
 import net.digitalid.core.conversion.xdf.XDF;
-
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
-
-import net.digitalid.core.client.annotations.Clients;
 import net.digitalid.core.host.annotations.Hosts;
+import net.digitalid.core.property.ConceptProperty;
+import net.digitalid.core.property.ConceptPropertyTable;
 
 /**
  * This class models a concept in the {@link Database database}.

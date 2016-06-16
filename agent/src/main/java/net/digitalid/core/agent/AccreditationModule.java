@@ -12,7 +12,6 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.table.Site;
 
 import net.digitalid.core.service.CoreService;
-
 import net.digitalid.core.state.ClientModule;
 import net.digitalid.core.state.Service;
 

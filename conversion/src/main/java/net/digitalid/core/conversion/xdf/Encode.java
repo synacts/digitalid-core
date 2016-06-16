@@ -7,9 +7,7 @@ import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.identity.annotations.Loaded;
 
 /**

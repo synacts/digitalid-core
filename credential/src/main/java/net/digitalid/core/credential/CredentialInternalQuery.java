@@ -8,55 +8,45 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
-
-import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
-import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrapper;
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.RandomizedAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-
-import net.digitalid.service.core.cryptography.Element;
-import net.digitalid.service.core.cryptography.Exponent;
-import net.digitalid.service.core.cryptography.Group;
-import net.digitalid.service.core.cryptography.Parameters;
-import net.digitalid.service.core.cryptography.PrivateKey;
-import net.digitalid.service.core.cryptography.PublicKey;
-
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
+import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrapper;
+import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostAccount;
 import net.digitalid.core.entity.NonNativeRole;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
-
 import net.digitalid.core.handler.core.CoreServiceInternalQuery;
-
+import net.digitalid.core.host.Host;
 import net.digitalid.core.identifier.HostIdentifier;
-
 import net.digitalid.core.identity.IdentityImplementation;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;
 
-import net.digitalid.core.host.Host;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cryptography.Element;
+import net.digitalid.service.core.cryptography.Exponent;
+import net.digitalid.service.core.cryptography.Group;
+import net.digitalid.service.core.cryptography.Parameters;
+import net.digitalid.service.core.cryptography.PrivateKey;
+import net.digitalid.service.core.cryptography.PublicKey;
 
 /**
  * Requests a new identity- or role-based credential with the given permissions and relation.

@@ -7,42 +7,33 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.core.synchronizer.Synchronizer;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
-
-import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-
+import net.digitalid.core.client.annotations.Clients;
 import net.digitalid.core.concept.Concept;
-
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
+import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.core.entity.NonHostEntity;
-
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.SemanticType;
-
-import net.digitalid.core.client.annotations.Clients;
+import net.digitalid.core.synchronizer.Synchronizer;
 
 /**
  * This class models an agent that acts on behalf of an {@link Identity identity}.

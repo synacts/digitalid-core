@@ -2,11 +2,10 @@ package net.digitalid.core.conversion.xdf;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.key.NonConvertingKeyConverter;
-
 import net.digitalid.core.identity.SemanticType;
 
 /**

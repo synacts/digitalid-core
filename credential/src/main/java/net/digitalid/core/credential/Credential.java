@@ -7,50 +7,38 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.utility.conversion.None;
-
-import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.core.conversion.wrappers.value.binary.Binary256Wrapper;
-
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-
-import net.digitalid.core.cache.Cache;
-
 import net.digitalid.core.agent.RandomizedAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-
 import net.digitalid.core.attribute.AttributeValue;
-
-import net.digitalid.service.core.cryptography.Exponent;
-import net.digitalid.service.core.cryptography.PublicKey;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-
+import net.digitalid.core.cache.Cache;
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.conversion.wrappers.value.binary.Binary256Wrapper;
+import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identifier.IdentifierImplementation;
-
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.NonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
+
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cryptography.Exponent;
+import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 
 /**
  * This class abstracts from client and host credentials.

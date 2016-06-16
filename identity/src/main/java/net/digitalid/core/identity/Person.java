@@ -12,16 +12,12 @@ import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-
 import net.digitalid.core.conversion.Converters;
-
+import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.core.conversion.xdf.ChainingRequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
-
 import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-
 import net.digitalid.core.resolution.Mapper;
 import net.digitalid.core.resolution.Successor;
 

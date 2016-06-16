@@ -17,12 +17,10 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.core.service.CoreService;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.service.CoreService;
 
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;

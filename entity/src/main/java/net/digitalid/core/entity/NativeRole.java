@@ -5,21 +5,19 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 
+import net.digitalid.core.agent.ClientAgent;
+import net.digitalid.core.client.Client;
+import net.digitalid.core.identity.InternalNonHostIdentity;
+
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.Observer;
-
-import net.digitalid.core.agent.ClientAgent;
-
-import net.digitalid.core.identity.InternalNonHostIdentity;
-
-import net.digitalid.core.client.Client;
 
 /**
  * This class models a native role on the client-side.

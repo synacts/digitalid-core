@@ -13,18 +13,18 @@ import java.util.concurrent.LinkedBlockingDeque;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.core.Database;
@@ -34,23 +34,17 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
 
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
+import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestException;
 import net.digitalid.core.service.CoreService;
 
 import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
 import net.digitalid.service.core.concepts.error.ErrorModule;
 import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.Role;
-
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;

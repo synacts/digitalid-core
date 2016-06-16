@@ -18,10 +18,10 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
 
@@ -32,51 +32,38 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.core.synchronizer.ResponseAudit;
-import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.core.synchronizer.SynchronizerModule;
-
-import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-
-import net.digitalid.core.cache.Cache;
-
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.agent.ClientAgentAccredit;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-
+import net.digitalid.core.cache.Cache;
 import net.digitalid.core.context.Context;
-
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
+import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.conversion.xdf.Encode;
-
-import net.digitalid.service.core.cryptography.Element;
-import net.digitalid.service.core.cryptography.Exponent;
-import net.digitalid.service.core.cryptography.Parameters;
-import net.digitalid.service.core.cryptography.PublicKey;
-
 import net.digitalid.core.entity.NativeRole;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.entity.RoleModule;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identifier.ExternalIdentifier;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.resolution.Category;
 import net.digitalid.core.resolution.Mapper;
 import net.digitalid.core.resolution.Predecessor;
+import net.digitalid.core.service.CoreService;
+import net.digitalid.core.synchronizer.ResponseAudit;
+import net.digitalid.core.synchronizer.Synchronizer;
+import net.digitalid.core.synchronizer.SynchronizerModule;
+
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cryptography.Element;
+import net.digitalid.service.core.cryptography.Exponent;
+import net.digitalid.service.core.cryptography.Parameters;
+import net.digitalid.service.core.cryptography.PublicKey;
 
 /**
  * A client is configured with an identifier and a secret.

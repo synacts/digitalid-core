@@ -2,12 +2,11 @@ package net.digitalid.core.entity;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
-
-import net.digitalid.core.identity.HostIdentity;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.host.Host;
+import net.digitalid.core.identity.HostIdentity;
 
 /**
  * This interface models a host entity.

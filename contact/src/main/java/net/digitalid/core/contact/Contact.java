@@ -9,13 +9,24 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 
 import net.digitalid.core.conversion.Block;
+import net.digitalid.core.entity.Entity;
+import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.identifier.IdentifierImplementation;
+import net.digitalid.core.identity.ExternalPerson;
+import net.digitalid.core.identity.Identity;
+import net.digitalid.core.identity.IdentityImplementation;
+import net.digitalid.core.identity.InternalPerson;
+import net.digitalid.core.identity.Person;
+import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.resolution.Mapper;
 
 import net.digitalid.service.core.block.Blockable;
 import net.digitalid.service.core.concept.Aspect;
@@ -23,21 +34,6 @@ import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.NonHostConcept;
 import net.digitalid.service.core.concept.Observer;
 import net.digitalid.service.core.database.SQLizable;
-
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.RequestException;
-
-import net.digitalid.core.identifier.IdentifierImplementation;
-
-import net.digitalid.core.identity.ExternalPerson;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.IdentityImplementation;
-import net.digitalid.core.identity.InternalPerson;
-import net.digitalid.core.identity.Person;
-import net.digitalid.core.identity.SemanticType;
-
-import net.digitalid.core.resolution.Mapper;
 
 /**
  * Contacts have certain {@link FreezableContactPermissions permissions} and {@link FreezableAuthentications authentications}.

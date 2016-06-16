@@ -5,28 +5,18 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-
 import net.digitalid.core.cache.Cache;
-
-import net.digitalid.core.attribute.Attribute;
-import net.digitalid.core.attribute.AttributeTypes;
-import net.digitalid.core.attribute.AttributeValue;
-import net.digitalid.core.attribute.UncertifiedAttributeValue;
-
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.expression.PassiveExpression;
-
 import net.digitalid.core.server.IdentitySetup;
 
 import org.junit.Assert;

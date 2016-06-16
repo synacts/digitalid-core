@@ -5,8 +5,6 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.generator.conversion.Convertible;
 
-import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.xdf.XDF;
 
 import org.junit.Test;

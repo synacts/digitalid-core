@@ -6,30 +6,23 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
-
-import net.digitalid.core.pusher.Pusher;
-
-import net.digitalid.core.synchronizer.Audit;
-
-import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-
+import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
-
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.core.CoreServiceActionReply;
-
+import net.digitalid.core.pusher.Pusher;
 import net.digitalid.core.state.Service;
+import net.digitalid.core.synchronizer.Audit;
 
 /**
  * This class models a {@link Reply reply} to an {@link ExternalAction external action}.

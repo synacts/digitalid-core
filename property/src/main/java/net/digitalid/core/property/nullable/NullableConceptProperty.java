@@ -4,14 +4,11 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.validation.annotations.method.Pure;
 
-import net.digitalid.service.core.auxiliary.Time;
-
 import net.digitalid.core.concept.Concept;
-
 import net.digitalid.core.property.ConceptProperty;
-
 import net.digitalid.core.property.nonnullable.NonNullableConceptPropertyTable;
 
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.property.ValueValidator;
 
 /**

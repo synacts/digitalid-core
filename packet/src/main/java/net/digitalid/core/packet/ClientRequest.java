@@ -3,42 +3,34 @@ package net.digitalid.core.packet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.reference.RawRecipient;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.RawRecipient;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
+import net.digitalid.core.agent.ClientAgentCommitmentReplace;
+import net.digitalid.core.client.Client;
+import net.digitalid.core.client.Commitment;
+import net.digitalid.core.client.SecretCommitment;
+import net.digitalid.core.conversion.wrappers.CompressionWrapper;
+import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
+import net.digitalid.core.entity.NativeRole;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.handler.Method;
+import net.digitalid.core.identifier.HostIdentifier;
+import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.synchronizer.RequestAudit;
 import net.digitalid.core.synchronizer.Sender;
 
 import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.wrappers.CompressionWrapper;
-
-import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
-
-import net.digitalid.core.agent.ClientAgentCommitmentReplace;
-
-import net.digitalid.core.entity.NativeRole;
-
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
-
-import net.digitalid.core.handler.Method;
-
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
-
-import net.digitalid.core.client.Client;
-import net.digitalid.core.client.Commitment;
-import net.digitalid.core.client.SecretCommitment;
 
 /**
  * This class compresses, signs and encrypts requests by clients.

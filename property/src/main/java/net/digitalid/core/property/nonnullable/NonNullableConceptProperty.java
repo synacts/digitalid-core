@@ -3,8 +3,8 @@ package net.digitalid.core.property.nonnullable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
 
@@ -13,14 +13,11 @@ import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
+import net.digitalid.core.concept.Concept;
+import net.digitalid.core.property.ConceptProperty;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.concept.Concept;
-
-import net.digitalid.core.property.ConceptProperty;
-
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.property.nonnullable.WritableNonNullableProperty;
 

@@ -11,46 +11,35 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.utility.conversion.None;
+import net.digitalid.core.cache.Cache;
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.conversion.wrappers.value.integer.IntegerWrapper;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.identifier.HostIdentifier;
+import net.digitalid.core.identifier.IdentifierImplementation;
+import net.digitalid.core.identity.HostIdentity;
+import net.digitalid.core.identity.IdentityImplementation;
+import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.resolution.Mapper;
+import net.digitalid.core.server.Server;
 
 import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.Block;
-
 import net.digitalid.service.core.block.Blockable;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.core.conversion.wrappers.value.integer.IntegerWrapper;
-
-import net.digitalid.core.cache.Cache;
-
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.database.SQLizable;
-
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
-
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.IdentifierImplementation;
-
-import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.identity.IdentityImplementation;
-import net.digitalid.core.identity.SemanticType;
-
-import net.digitalid.core.resolution.Mapper;
-
-import net.digitalid.core.server.Server;
 
 /**
  * This class models the commitment of a client.

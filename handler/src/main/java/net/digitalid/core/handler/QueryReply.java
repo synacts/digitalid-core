@@ -7,17 +7,12 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
-
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
-
 import net.digitalid.core.handler.core.CoreServiceQueryReply;
-
-import net.digitalid.core.identifier.InternalIdentifier;
-
-import net.digitalid.core.resolution.IdentityReply;
-
 import net.digitalid.core.host.annotations.Hosts;
+import net.digitalid.core.identifier.InternalIdentifier;
+import net.digitalid.core.resolution.IdentityReply;
 
 /**
  * This class models a {@link Reply reply} to a {@link Query query}.

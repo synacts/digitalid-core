@@ -5,16 +5,10 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
-
 import net.digitalid.core.credential.Credential;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.server.ServerSetup;
 
 import org.junit.Test;

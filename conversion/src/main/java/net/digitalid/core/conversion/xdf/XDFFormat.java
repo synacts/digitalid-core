@@ -6,29 +6,24 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.conversion.Format;
 import net.digitalid.utility.conversion.TypeMapper;
+import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.conversion.xdf.serializer.iterable.XDFArrayConverter;
 import net.digitalid.core.conversion.xdf.serializer.iterable.XDFCollectionConverter;
 import net.digitalid.core.conversion.xdf.serializer.iterable.XDFMapConverter;
-
 import net.digitalid.core.conversion.xdf.serializer.structure.XDFSingleFieldConverter;
 import net.digitalid.core.conversion.xdf.serializer.structure.XDFTupleConverter;
-
 import net.digitalid.core.conversion.xdf.serializer.value.XDFBooleanConverter;
 import net.digitalid.core.conversion.xdf.serializer.value.XDFObjectConverter;
-
 import net.digitalid.core.conversion.xdf.serializer.value.binary.XDFBinaryConverter;
-
 import net.digitalid.core.conversion.xdf.serializer.value.integer.XDFInteger08Converter;
 import net.digitalid.core.conversion.xdf.serializer.value.integer.XDFInteger16Converter;
 import net.digitalid.core.conversion.xdf.serializer.value.integer.XDFInteger32Converter;
 import net.digitalid.core.conversion.xdf.serializer.value.integer.XDFInteger64Converter;
 import net.digitalid.core.conversion.xdf.serializer.value.integer.XDFIntegerConverter;
-
 import net.digitalid.core.conversion.xdf.serializer.value.string.XDFCharacterConverter;
 import net.digitalid.core.conversion.xdf.serializer.value.string.XDFStringConverter;
 

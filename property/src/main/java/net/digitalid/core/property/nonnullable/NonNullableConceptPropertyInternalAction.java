@@ -5,43 +5,35 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.utility.conversion.None;
-
-import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
 import net.digitalid.core.concept.Concept;
-
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.exceptions.InvalidConceptPropertyActionException;
+import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.exceptions.NetworkException;
+import net.digitalid.core.exceptions.RequestException;
 import net.digitalid.core.property.ConceptPropertyInternalAction;
 
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.RequestingXDFConverter;
 import net.digitalid.service.core.entity.Entity;
-
-import net.digitalid.core.conversion.exceptions.InvalidConceptPropertyActionException;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;

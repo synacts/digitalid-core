@@ -7,11 +7,11 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
@@ -19,20 +19,15 @@ import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-
+import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
 import net.digitalid.core.conversion.NonRequestingConverters;
-
+import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.conversion.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.NonRequestingXDFConverter;
-
-import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identity.EmailPerson;
 import net.digitalid.core.identity.Person;
-
 import net.digitalid.core.resolution.Category;
 import net.digitalid.core.resolution.Mapper;
 

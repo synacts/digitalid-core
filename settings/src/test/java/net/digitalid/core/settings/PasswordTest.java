@@ -7,8 +7,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 
-import net.digitalid.core.settings.Settings;
-
 import net.digitalid.core.server.IdentitySetup;
 
 import org.junit.Assert;

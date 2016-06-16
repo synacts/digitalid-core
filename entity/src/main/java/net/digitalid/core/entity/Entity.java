@@ -5,13 +5,14 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.conversion.None;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
-import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.system.castable.Castable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -22,29 +23,19 @@ import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.utility.conversion.None;
-
-import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-
+import net.digitalid.core.client.Client;
 import net.digitalid.core.concept.Concept;
-
 import net.digitalid.core.conversion.Converters;
-
 import net.digitalid.core.conversion.key.CastingNonRequestingKeyConverter;
-
+import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.core.conversion.xdf.ChainingRequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.XDF;
-
 import net.digitalid.core.handler.Handler;
-
+import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.InternalIdentity;
-
 import net.digitalid.core.resolution.Mapper;
-
-import net.digitalid.core.client.Client;
-import net.digitalid.core.host.Host;
 
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept} or {@link Handler handler}.

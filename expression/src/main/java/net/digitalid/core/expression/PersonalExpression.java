@@ -6,17 +6,16 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
+
+import net.digitalid.core.exceptions.RequestException;
 
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
 import net.digitalid.service.core.entity.NonHostEntity;
-
-import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.service.core.identity.SemanticType;
 
 /**

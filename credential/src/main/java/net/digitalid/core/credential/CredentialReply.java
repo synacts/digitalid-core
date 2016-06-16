@@ -6,47 +6,36 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.service.core.auxiliary.Time;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.core.cache.Cache;
-
 import net.digitalid.core.agent.RandomizedAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-
-import net.digitalid.service.core.cryptography.Element;
-import net.digitalid.service.core.cryptography.Exponent;
-import net.digitalid.service.core.cryptography.PublicKey;
-
+import net.digitalid.core.cache.Cache;
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.entity.NonHostAccount;
 import net.digitalid.core.entity.NonHostEntity;
-
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.Reply;
-
 import net.digitalid.core.handler.core.CoreServiceQueryReply;
-
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;
+
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cryptography.Element;
+import net.digitalid.service.core.cryptography.Exponent;
+import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 
 /**
  * Replies the parameters of a new credential.

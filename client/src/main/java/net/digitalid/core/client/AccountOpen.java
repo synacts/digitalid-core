@@ -9,72 +9,54 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
-
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.conversion.wrappers.annotations.HasSubject;
-
-import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-
 import net.digitalid.core.context.Context;
-
-import net.digitalid.service.core.cryptography.Exponent;
-import net.digitalid.service.core.dataservice.StateModule;
-
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.annotations.HasSubject;
+import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
+import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
+import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
+import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
+import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostAccount;
 import net.digitalid.core.entity.NonHostEntity;
-
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.ActionReply;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
-
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.identity.annotations.BasedOn;
-
-import net.digitalid.core.resolution.Category;
-import net.digitalid.core.resolution.Mapper;
-
 import net.digitalid.core.packet.ClientRequest;
 import net.digitalid.core.packet.Response;
-
+import net.digitalid.core.resolution.Category;
+import net.digitalid.core.resolution.Mapper;
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
+
+import net.digitalid.service.core.cryptography.Exponent;
+import net.digitalid.service.core.dataservice.StateModule;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 
 /**
  * Opens a new account with the given category and client.

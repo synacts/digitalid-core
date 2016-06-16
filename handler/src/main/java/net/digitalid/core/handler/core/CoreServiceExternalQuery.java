@@ -9,23 +9,17 @@ import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 
-import net.digitalid.core.service.CoreService;
-
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
-
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.ExternalQuery;
-
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.InternalIdentifier;
-
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
+
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 
 /**
  * This class models the {@link ExternalQuery external queries} of the {@link CoreService core service}.

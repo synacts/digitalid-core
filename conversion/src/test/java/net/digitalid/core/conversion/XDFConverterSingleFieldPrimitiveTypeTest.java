@@ -1,7 +1,5 @@
 package net.digitalid.core.conversion;
 
-import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.xdf.serializer.value.XDFBooleanConverter;
 
 import org.junit.Assert;

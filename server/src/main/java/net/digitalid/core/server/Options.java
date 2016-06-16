@@ -16,11 +16,8 @@ import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 
 import net.digitalid.core.exceptions.RequestException;
-
-import net.digitalid.core.identifier.HostIdentifier;
-
 import net.digitalid.core.host.Host;
-
+import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.state.Service;
 
 /**

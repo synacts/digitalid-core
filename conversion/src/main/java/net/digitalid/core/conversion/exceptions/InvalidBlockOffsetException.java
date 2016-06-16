@@ -3,8 +3,8 @@ package net.digitalid.core.conversion.exceptions;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.service.core.block.Block;
 

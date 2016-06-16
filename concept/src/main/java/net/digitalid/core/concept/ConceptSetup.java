@@ -2,22 +2,19 @@ package net.digitalid.core.concept;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.table.Site;
 
 import net.digitalid.core.conversion.Converters;
-
 import net.digitalid.core.entity.Entity;
-
-import net.digitalid.service.core.factory.ConceptConverters;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.state.Service;
 import net.digitalid.core.state.SiteModule;
+
+import net.digitalid.service.core.factory.ConceptConverters;
 
 /**
  * This class stores the setup of a {@link Concept concept}.

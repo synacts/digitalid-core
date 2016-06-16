@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 import net.digitalid.utility.validation.annotations.meta.TargetTypes;
 
 import net.digitalid.core.entity.Entity;
-
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.Type;
 

@@ -5,18 +5,18 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 
-import net.digitalid.core.service.CoreService;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
+import net.digitalid.core.exceptions.RequestErrorCode;
+import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.service.CoreService;
 
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
@@ -26,10 +26,6 @@ import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.Role;
-
-import net.digitalid.core.exceptions.RequestErrorCode;
-import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;

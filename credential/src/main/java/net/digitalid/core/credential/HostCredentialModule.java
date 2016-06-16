@@ -18,36 +18,26 @@ import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.service.core.auxiliary.Time;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-
-import net.digitalid.service.core.cryptography.Exponent;
-
 import net.digitalid.core.entity.EntityImplementation;
 import net.digitalid.core.entity.NonHostAccount;
 import net.digitalid.core.exceptions.RequestException;
-
+import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityImplementation;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
-
-import net.digitalid.core.resolution.Mapper;
-
 import net.digitalid.core.packet.Packet;
-
-import net.digitalid.core.host.Host;
-
+import net.digitalid.core.resolution.Mapper;
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.HostModule;
 import net.digitalid.core.state.Service;
+
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cryptography.Exponent;
 
 /**
  * This class provides database access to the {@link Credential credentials} issued by a {@link Host host}.

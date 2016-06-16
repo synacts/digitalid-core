@@ -5,15 +5,16 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.state.Matching;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.state.Matching;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
@@ -23,21 +24,14 @@ import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 
-import net.digitalid.utility.conversion.None;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.annotations.Encoding;
 import net.digitalid.core.conversion.annotations.NonEncoding;
-
+import net.digitalid.core.conversion.exceptions.InvalidBlockLengthException;
 import net.digitalid.core.conversion.wrappers.AbstractWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.ValueWrapper;
 
 import net.digitalid.service.core.converter.NonRequestingConverters;
-
-import net.digitalid.core.conversion.exceptions.InvalidBlockLengthException;
-
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -199,7 +193,7 @@ public final class Integer16Wrapper extends ValueWrapper<Integer16Wrapper> {
      * @param values a mutable array in which the value is to be stored.
      * @param index the array index at which the value is to be stored.
      */
-    public static void store(short value, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+    public static void store(short value, @NonCaptured @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
         values.set(index.getAndIncrementValue(), String.valueOf(value));
     }
     
@@ -211,7 +205,7 @@ public final class Integer16Wrapper extends ValueWrapper<Integer16Wrapper> {
      * @param parameterIndex the statement index at which the value is to be stored.
      */
     @NonCommitting
-    public static void store(short value, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public static void store(short value, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             preparedStatement.setShort(parameterIndex.getAndIncrementValue(), value);
         } catch (@Nonnull SQLException exception) {
@@ -229,7 +223,7 @@ public final class Integer16Wrapper extends ValueWrapper<Integer16Wrapper> {
      */
     @Pure
     @NonCommitting
-    public static short restore(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException {
+    public static short restore(@NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException {
         try {
             return resultSet.getShort(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
@@ -263,14 +257,14 @@ public final class Integer16Wrapper extends ValueWrapper<Integer16Wrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull Integer16Wrapper wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull Integer16Wrapper wrapper, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
             store(wrapper.value, preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Integer16Wrapper restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
+        public @Nullable Integer16Wrapper restoreNullable(@Nonnull Object none, @NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             try {
                 final short value = restore(resultSet, columnIndex);
                 return resultSet.wasNull() ? null : new Integer16Wrapper(getType(), value);

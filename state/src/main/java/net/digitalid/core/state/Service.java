@@ -6,13 +6,14 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.conversion.None;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
-import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
@@ -21,33 +22,22 @@ import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.utility.conversion.None;
-
-import net.digitalid.core.cache.Cache;
-
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
-
+import net.digitalid.core.cache.Cache;
 import net.digitalid.core.conversion.Converters;
-
 import net.digitalid.core.conversion.key.NonRequestingKeyConverter;
-
 import net.digitalid.core.conversion.xdf.ChainingRequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.XDF;
-
 import net.digitalid.core.entity.Role;
-
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identifier.HostIdentifier;
-
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.service.CoreService;
 
 /**
  * This class models a service of the Digital ID protocol.
@@ -55,7 +45,7 @@ import net.digitalid.core.identity.SemanticType;
  * @see CoreService
  */
 @Immutable
-public class Service extends DelegatingSiteStorageImplementation implements XDF<Service, Object>,  SQL<Service, Object> {
+public class Service extends DelegatingSiteStorageImplementation implements XDF<Service, Object>, SQL<Service, Object> {
     
     /* -------------------------------------------------- Services -------------------------------------------------- */
     

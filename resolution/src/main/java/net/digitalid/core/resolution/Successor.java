@@ -7,8 +7,8 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.InitializationError;
 
 import net.digitalid.database.core.Database;
@@ -17,9 +17,7 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.handler.Reply;
-
 import net.digitalid.core.identifier.ExternalIdentifier;
 import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.IdentifierImplementation;

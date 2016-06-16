@@ -4,42 +4,34 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.thread.annotations.MainThread;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.service.core.auxiliary.Time;
-
+import net.digitalid.core.cache.Cache;
+import net.digitalid.core.conversion.Converters;
 import net.digitalid.core.conversion.wrappers.value.integer.Integer08Wrapper;
 import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-
-import net.digitalid.core.cache.Cache;
-
-import net.digitalid.core.conversion.Converters;
-
 import net.digitalid.core.conversion.xdf.ChainingRequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
-
-import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-
 import net.digitalid.core.identity.annotations.Loaded;
 import net.digitalid.core.identity.annotations.LoadedRecipient;
 import net.digitalid.core.identity.annotations.NonLoaded;
 import net.digitalid.core.identity.annotations.NonLoadedRecipient;
-
+import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
 import net.digitalid.core.resolution.Category;
 import net.digitalid.core.resolution.Mapper;
+
+import net.digitalid.service.core.auxiliary.Time;
 
 /**
  * This class models a syntactic type.

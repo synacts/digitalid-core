@@ -6,25 +6,21 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
 
-import net.digitalid.core.conversion.wrappers.value.integer.Integer08Wrapper;
-
 import net.digitalid.core.conversion.NonRequestingConverters;
-
 import net.digitalid.core.conversion.key.NonRequestingKeyConverter;
-
+import net.digitalid.core.conversion.wrappers.value.integer.Integer08Wrapper;
 import net.digitalid.core.conversion.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.NonRequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.XDF;
-
 import net.digitalid.core.identity.SemanticType;
 
 /**

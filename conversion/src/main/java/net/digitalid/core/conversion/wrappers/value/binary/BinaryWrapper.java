@@ -7,17 +7,18 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.annotations.ownership.Captured;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
-import net.digitalid.utility.validation.annotations.reference.Captured;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.state.Matching;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.state.Matching;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -30,15 +31,10 @@ import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 
-import net.digitalid.utility.conversion.None;
-
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.annotations.Encoding;
 import net.digitalid.core.conversion.annotations.NonEncoding;
-
 import net.digitalid.core.conversion.wrappers.AbstractWrapper;
-
 import net.digitalid.core.conversion.wrappers.value.ValueWrapper;
 
 import net.digitalid.service.core.converter.NonRequestingConverters;
@@ -301,7 +297,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
      * @param values a mutable array in which the bytes are to be stored.
      * @param index the array index at which the bytes are to be stored.
      */
-    public static void storeNonNullable(@Nonnull byte[] bytes, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+    public static void storeNonNullable(@Nonnull byte[] bytes, @NonCaptured @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
         values.set(index.getAndIncrementValue(), Block.toString(bytes));
     }
     
@@ -312,7 +308,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
      * @param values a mutable array in which the bytes are to be stored.
      * @param index the array index at which the bytes are to be stored.
      */
-    public static void storeNullable(@Nullable byte[] bytes, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+    public static void storeNullable(@Nullable byte[] bytes, @NonCaptured @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
         if (bytes != null) { storeNonNullable(bytes, values, index); }
         else { values.set(index.getAndIncrementValue(), "NULL"); }
     }
@@ -325,7 +321,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
      * @param parameterIndex the statement index at which the bytes are to be stored.
      */
     @NonCommitting
-    public static void storeNonNullable(@Nonnull byte[] bytes, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public static void storeNonNullable(@Nonnull byte[] bytes, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             preparedStatement.setBytes(parameterIndex.getAndIncrementValue(), bytes);
         } catch (@Nonnull SQLException exception) {
@@ -341,7 +337,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
      * @param parameterIndex the statement index at which the bytes are to be stored.
      */
     @NonCommitting
-    public static void storeNullable(@Nullable byte[] bytes, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public static void storeNullable(@Nullable byte[] bytes, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             if (bytes != null) { storeNonNullable(bytes, preparedStatement, parameterIndex); }
             else { preparedStatement.setNull(parameterIndex.getAndIncrementValue(), SQL_TYPE.getCode()); }
@@ -360,7 +356,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nullable byte[] restoreNullable(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException {
+    public static @Nullable byte[] restoreNullable(@NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException {
         try {
             return resultSet.getBytes(columnIndex.getAndIncrementValue());
         } catch (@Nonnull SQLException exception) {
@@ -378,7 +374,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull byte[] restoreNonNullable(@NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptNullValueException {
+    public static @Nonnull byte[] restoreNonNullable(@NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptNullValueException {
         final @Nullable byte[] bytes = restoreNullable(resultSet, columnIndex);
         if (bytes == null) { throw CorruptNullValueException.get(); }
         return bytes;
@@ -410,7 +406,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
         
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull BinaryWrapper wrapper, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        public void storeNonNullable(@Nonnull BinaryWrapper wrapper, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
             if (Database.getInstance().supportsBinaryStreams()) {
                 collector.setBinaryStream(wrapper.getBytesAsInputStream(), wrapper.determineLength());
             } else {
@@ -421,7 +417,7 @@ public final class BinaryWrapper extends ValueWrapper<BinaryWrapper> {
         @Pure
         @Override
         @NonCommitting
-        public @Nullable BinaryWrapper restoreNullable(@Nonnull Object none, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
+        public @Nullable BinaryWrapper restoreNullable(@Nonnull Object none, @NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
             final @Nullable byte[] bytes = BinaryWrapper.restoreNullable(result);
             return bytes == null ? null : new BinaryWrapper(getType(), bytes);
         }

@@ -7,23 +7,18 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.system.castable.Castable;
 import net.digitalid.utility.system.castable.CastableObject;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-
 import net.digitalid.core.conversion.xdf.XDF;
-
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostAccount;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
-
 import net.digitalid.core.identifier.InternalIdentifier;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.state.Service;
 
 /**

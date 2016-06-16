@@ -7,35 +7,30 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.service.CoreService;
-
 import net.digitalid.core.agent.Agent;
-
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-
+import net.digitalid.core.client.Client;
 import net.digitalid.core.exceptions.RequestErrorCode;
 import net.digitalid.core.exceptions.RequestException;
-
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityImplementation;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.resolution.Mapper;
-
-import net.digitalid.core.client.Client;
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.ClientModule;
+
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 
 /**
  * This class provides database access to the {@link Role roles} of the core service.

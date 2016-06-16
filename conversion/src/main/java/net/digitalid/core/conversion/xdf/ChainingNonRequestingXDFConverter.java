@@ -2,18 +2,16 @@ package net.digitalid.core.conversion.xdf;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.conversion.key.NonRequestingKeyConverter;
+import net.digitalid.core.identity.SemanticType;
 
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-
-import net.digitalid.core.identity.SemanticType;
 
 /**
  * This class implements a non-requesting XDF converter that is based on another non-requesting XDF converter.

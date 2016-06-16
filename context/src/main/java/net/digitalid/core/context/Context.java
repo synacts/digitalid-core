@@ -10,14 +10,14 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.freezable.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
@@ -26,37 +26,28 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.core.synchronizer.Synchronizer;
-
-import net.digitalid.service.core.annotations.OnlyForActions;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.service.core.block.Blockable;
-
-import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-
-import net.digitalid.service.core.concept.Aspect;
-import net.digitalid.service.core.concept.Instance;
-import net.digitalid.service.core.concept.NonHostConcept;
-import net.digitalid.service.core.concept.Observer;
-import net.digitalid.service.core.database.SQLizable;
-
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.Role;
-
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-
-import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.client.annotations.Clients;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.contact.FreezableContactPermissions;
 import net.digitalid.core.contact.ReadOnlyAuthentications;
 import net.digitalid.core.contact.ReadOnlyContactPermissions;
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
+import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
+import net.digitalid.core.entity.Entity;
+import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.entity.Role;
+import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.synchronizer.Synchronizer;
+
+import net.digitalid.service.core.annotations.OnlyForActions;
+import net.digitalid.service.core.block.Blockable;
+import net.digitalid.service.core.concept.Aspect;
+import net.digitalid.service.core.concept.Instance;
+import net.digitalid.service.core.concept.NonHostConcept;
+import net.digitalid.service.core.concept.Observer;
+import net.digitalid.service.core.database.SQLizable;
+import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 
 /**
  * This class models the contexts for {@link Contact contacts}.
@@ -123,7 +114,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     /**
      * Stores the semantic type {@code flat.context@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType FLAT = SemanticType.map("flat.context@core.digitalid.net");    
+    public static final @Nonnull SemanticType FLAT = SemanticType.map("flat.context@core.digitalid.net");
     
     /**
      * Stores the semantic type {@code name.context@core.digitalid.net}.

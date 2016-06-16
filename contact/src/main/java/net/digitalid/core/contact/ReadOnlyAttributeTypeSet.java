@@ -2,16 +2,15 @@ package net.digitalid.core.contact;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.validation.annotations.reference.Capturable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
-import net.digitalid.service.core.block.wrappers.Blockable;
-
 import net.digitalid.core.agent.FreezableAgentPermissions;
-
 import net.digitalid.core.identity.SemanticType;
+
+import net.digitalid.service.core.block.wrappers.Blockable;
 
 /**
  * This interface provides read-only access to {@link FreezableAttributeTypeSet attribute type sets} and should <em>never</em> be cast away.

@@ -9,10 +9,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.conversion.Block;
-
 import net.digitalid.core.agent.Restrictions;
-
+import net.digitalid.core.conversion.Block;
 import net.digitalid.core.exceptions.NetworkException;
 import net.digitalid.core.exceptions.RequestException;
 

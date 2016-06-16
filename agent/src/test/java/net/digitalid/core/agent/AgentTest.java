@@ -9,28 +9,15 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.core.conversion.Block;
-
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ClientAgent;
-import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-
 import net.digitalid.core.attribute.AttributeTypes;
-
-import net.digitalid.core.context.Context;
-
-import net.digitalid.core.entity.NativeRole;
-
-import net.digitalid.core.exceptions.RequestException;
-
-import net.digitalid.core.server.IdentitySetup;
-
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
+import net.digitalid.core.context.Context;
+import net.digitalid.core.conversion.Block;
+import net.digitalid.core.entity.NativeRole;
+import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.server.IdentitySetup;
+import net.digitalid.core.service.CoreService;
 
 import org.junit.After;
 import org.junit.Assert;

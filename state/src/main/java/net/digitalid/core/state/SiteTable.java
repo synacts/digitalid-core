@@ -2,17 +2,15 @@ package net.digitalid.core.state;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.database.core.table.Site;
 
 import net.digitalid.core.entity.Entity;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.identity.annotations.Loaded;
 
 /**

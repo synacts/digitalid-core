@@ -7,9 +7,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 import net.digitalid.core.conversion.wrappers.value.integer.Integer16Wrapper;
-
 import net.digitalid.core.identity.SemanticType;
-
 import net.digitalid.core.server.DatabaseSetup;
 
 import org.junit.Assert;
