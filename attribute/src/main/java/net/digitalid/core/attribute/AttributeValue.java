@@ -23,8 +23,8 @@ import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.cryptography.signature.exceptions.InvalidSignatureException;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.annotations.AttributeType;
 

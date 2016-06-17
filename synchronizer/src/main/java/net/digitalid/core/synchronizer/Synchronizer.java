@@ -27,8 +27,8 @@ import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonLocked;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.entity.Role;

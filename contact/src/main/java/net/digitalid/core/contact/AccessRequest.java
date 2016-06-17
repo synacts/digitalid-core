@@ -20,9 +20,9 @@ import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrap
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestErrorCode;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.handler.core.CoreServiceActionReply;

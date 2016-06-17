@@ -14,9 +14,9 @@ import net.digitalid.core.client.Client;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestErrorCode;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.core.CoreServiceInternalQuery;
 import net.digitalid.core.identifier.HostIdentifier;
 

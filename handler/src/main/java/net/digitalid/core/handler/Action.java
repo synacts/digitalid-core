@@ -20,7 +20,7 @@ import net.digitalid.core.client.AccountOpen;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.synchronizer.Audit;

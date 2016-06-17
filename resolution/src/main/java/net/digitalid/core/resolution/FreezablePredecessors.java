@@ -25,7 +25,7 @@ import net.digitalid.database.core.annotations.NonCommitting;
 
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identifier.IdentifierImplementation;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;

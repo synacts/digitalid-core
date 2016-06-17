@@ -41,9 +41,9 @@ import net.digitalid.core.conversion.xdf.Encode;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestErrorCode;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identity.SemanticType;
 
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;

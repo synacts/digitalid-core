@@ -15,7 +15,7 @@ import net.digitalid.core.cache.Cache;
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.expression.PassiveExpression;
 import net.digitalid.core.server.IdentitySetup;
 

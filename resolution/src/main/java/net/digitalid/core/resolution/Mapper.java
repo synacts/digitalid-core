@@ -39,9 +39,9 @@ import net.digitalid.core.cache.Cache;
 import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
 import net.digitalid.core.client.AccountInitialize;
 import net.digitalid.core.client.AccountOpen;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestErrorCode;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identifier.ExternalIdentifier;
@@ -65,7 +65,7 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.identity.Type;
 import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
-import net.digitalid.core.resolution.annotations.NonMapped;
+import net.digitalid.core.identification.annotations.NonMapped;
 import net.digitalid.core.server.Server;
 
 /**

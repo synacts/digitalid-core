@@ -10,8 +10,8 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 /**
  * This class allows to convert an object to its key and recover it again given its key (and an external object).

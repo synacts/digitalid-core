@@ -28,8 +28,8 @@ import net.digitalid.core.conversion.annotations.NonEncoding;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.cryptography.signature.exceptions.ExpiredHostSignatureException;
 import net.digitalid.core.cryptography.signature.exceptions.InvalidHostSignatureException;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.synchronizer.Audit;
 
 import net.digitalid.service.core.auxiliary.Time;

@@ -16,8 +16,8 @@ import net.digitalid.database.core.exceptions.operation.FailedValueStoringExcept
 import net.digitalid.database.core.exceptions.state.value.MaskingCorruptValueException;
 
 import net.digitalid.core.conversion.Block;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.identity.SemanticType;

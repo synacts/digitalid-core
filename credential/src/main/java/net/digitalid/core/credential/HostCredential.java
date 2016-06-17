@@ -11,8 +11,8 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.conversion.Block;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 /**
  * This class models credentials on the host-side.

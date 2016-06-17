@@ -35,13 +35,11 @@
     </properties>
     
     <modules>
-        <module>exceptions</module>
-        <module>identifier</module>
-        <module>identity</module>
+        <module>identification</module>
+        <module>authorization</module>
         <module>entity</module>
         <module>client</module>
         <module>host</module>
-        <module>authorization</module>
         <module>handler</module>
         <module>resolution</module>
         <module>audit</module>

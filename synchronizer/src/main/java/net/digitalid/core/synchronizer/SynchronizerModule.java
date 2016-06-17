@@ -37,8 +37,8 @@ import net.digitalid.database.core.table.Site;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.service.CoreService;
 
 import net.digitalid.service.core.auxiliary.Time;

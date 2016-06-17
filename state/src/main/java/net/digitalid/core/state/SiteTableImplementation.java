@@ -24,8 +24,8 @@ import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.annotations.Loaded;
 

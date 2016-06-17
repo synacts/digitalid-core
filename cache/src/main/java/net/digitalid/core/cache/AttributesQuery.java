@@ -20,8 +20,8 @@ import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrap
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.expression.PassiveExpression;
 
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;

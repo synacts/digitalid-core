@@ -27,8 +27,8 @@ import net.digitalid.core.conversion.annotations.NonEncoding;
 import net.digitalid.core.conversion.wrappers.exceptions.UnexpectedEndOfFileException;
 import net.digitalid.core.conversion.wrappers.exceptions.UnsupportedBlockLengthException;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 import net.digitalid.service.core.converter.xdf.Encode;
 import net.digitalid.service.core.converter.xdf.XDF;

@@ -18,7 +18,7 @@ import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.core.CoreServiceActionReply;
 import net.digitalid.core.pusher.Pusher;
 import net.digitalid.core.state.Service;

@@ -11,7 +11,7 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 /**
  * This class facilitates the encoding and decoding of uncertified attribute values.

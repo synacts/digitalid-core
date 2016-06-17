@@ -40,8 +40,8 @@ import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.exceptions.InvalidReplyParameterValueException;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;

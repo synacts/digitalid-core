@@ -9,8 +9,8 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.conversion.wrappers.value.integer.Integer32Wrapper;
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.server.DatabaseSetup;
 

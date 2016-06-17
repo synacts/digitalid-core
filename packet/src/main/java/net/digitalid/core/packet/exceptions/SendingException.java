@@ -7,8 +7,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.exceptions.NetworkException;
-
 import net.digitalid.service.core.identifier.HostIdentifier;
 
 /**

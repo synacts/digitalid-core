@@ -31,7 +31,7 @@ import net.digitalid.database.core.configuration.SQLiteConfiguration;
 
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identity.HostIdentity;

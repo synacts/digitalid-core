@@ -23,7 +23,7 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identity.IdentityImplementation;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.annotations.AttributeType;

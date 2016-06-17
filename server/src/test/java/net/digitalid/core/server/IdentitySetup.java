@@ -13,7 +13,7 @@ import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.entity.NativeRole;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.NaturalPerson;

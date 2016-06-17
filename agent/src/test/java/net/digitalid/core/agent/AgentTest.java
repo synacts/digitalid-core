@@ -15,7 +15,7 @@ import net.digitalid.core.client.Commitment;
 import net.digitalid.core.context.Context;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.entity.NativeRole;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.server.IdentitySetup;
 import net.digitalid.core.service.CoreService;
 

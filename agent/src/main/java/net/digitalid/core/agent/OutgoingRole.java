@@ -21,7 +21,7 @@ import net.digitalid.core.context.Context;
 import net.digitalid.core.credential.Credential;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.pusher.Pusher;

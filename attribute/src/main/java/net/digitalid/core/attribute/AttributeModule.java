@@ -37,7 +37,7 @@ import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.EntityImplementation;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.expression.PassiveExpression;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.Identity;

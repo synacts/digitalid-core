@@ -28,7 +28,7 @@ import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.wrappers.value.EmptyWrapper;
 import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.service.CoreService;
 
 import net.digitalid.service.core.auxiliary.Time;

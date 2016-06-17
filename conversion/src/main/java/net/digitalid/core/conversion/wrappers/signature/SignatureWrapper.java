@@ -30,9 +30,9 @@ import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.cryptography.signature.exceptions.InactiveAuthenticationException;
 import net.digitalid.core.cryptography.signature.exceptions.InactiveSignatureException;
 import net.digitalid.core.cryptography.signature.exceptions.InvalidSignatureException;
-import net.digitalid.core.exceptions.NetworkException;
-import net.digitalid.core.exceptions.RequestErrorCode;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.synchronizer.Audit;
 
 import net.digitalid.service.core.auxiliary.Time;

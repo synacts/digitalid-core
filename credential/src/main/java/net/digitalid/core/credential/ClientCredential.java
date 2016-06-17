@@ -27,7 +27,7 @@ import net.digitalid.core.cryptography.signature.exceptions.InvalidSignatureExce
 import net.digitalid.core.entity.NonNativeRole;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.entity.annotations.OfInternalPerson;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;

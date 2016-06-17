@@ -13,8 +13,8 @@ import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 
 import net.digitalid.core.conversion.wrappers.EncryptionWrapper;
-import net.digitalid.core.exceptions.RequestErrorCode;
-import net.digitalid.core.exceptions.RequestException;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.InitializationVector;
