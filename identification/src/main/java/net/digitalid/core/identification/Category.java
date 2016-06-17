@@ -5,16 +5,18 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.string.Strings;
+import net.digitalid.utility.validation.annotations.size.Empty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.value.Validated;
+import net.digitalid.utility.validation.annotations.value.Valid;
 
 /**
  * This class enumerates the various categories of digital identities.
  */
 @Immutable
-// SemanticType.map("category@core.digitalid.net")
 public enum Category {
     
     /* -------------------------------------------------- Categories -------------------------------------------------- */
@@ -58,68 +60,45 @@ public enum Category {
     
     /**
      * Stores an empty list of categories that can be shared among semantic types.
-     * (This declaration may not be in the semantic type class as the initialization would be too late.)
+     * (This declaration cannot be in the semantic type class as the initialization would be too late.)
      */
-    public static final @Nonnull @Frozen ReadOnlyList<Category> NONE = FreezableArrayList.<Category>withCapacity(0).freeze();
+    @Deprecated // TODO: Do we still need this?
+    public static final @Nonnull @Frozen @Empty ReadOnlyList<Category> NONE = FreezableArrayList.<Category>withCapacity(0).freeze();
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
-     * Returns whether the given value is a valid category.
-     *
-     * @param value the value to check.
-     * 
-     * @return whether the given value is a valid category.
+     * Returns whether the given value denotes a valid category.
      */
     @Pure
     public static boolean isValid(byte value) {
         return value >= 0 && value <= 6;
     }
     
-    /**
-     * Stores the byte representation of this category.
-     */
-    private final @Validated byte value;
+    private final @Valid byte value;
     
     /**
      * Returns the byte representation of this category.
-     * 
-     * @return the byte representation of this category.
      */
     @Pure
-    public @Validated byte getValue() {
+    public @Valid byte getValue() {
         return value;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull String toString() {
-        return String.valueOf(value);
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    /**
-     * Creates a new category with the given value.
-     * 
-     * @param value the value encoding the category.
-     */
-    private Category(@Validated int value) {
+    private Category(int value) {
         this.value = (byte) value;
     }
     
     /**
-     * Returns the category encoded by the given value.
-     * 
-     * @param value the value encoding the category.
-     * 
-     * @return the category encoded by the given value.
+     * Returns the category denoted by the given value.
      */
     @Pure
-    public static @Nonnull Category get(@Validated byte value) {
-        Require.that(isValid(value)).orThrow("The value is a valid category.");
+    public static @Nonnull Category of(@Valid byte value) {
+        Require.that(isValid(value)).orThrow("The value has to be valid but was $.", value);
         
-        for (final @Nonnull Category category : values()) {
+        for (@Nonnull Category category : values()) {
             if (category.value == value) { return category; }
         }
         
@@ -130,8 +109,6 @@ public enum Category {
     
     /**
      * Returns whether this category denotes a type.
-     * 
-     * @return whether this category denotes a type.
      */
     @Pure
     public boolean isType() {
@@ -140,8 +117,6 @@ public enum Category {
     
     /**
      * Returns whether this category denotes an internal person.
-     * 
-     * @return whether this category denotes an internal person.
      */
     @Pure
     public boolean isInternalPerson() {
@@ -150,8 +125,6 @@ public enum Category {
     
     /**
      * Returns whether this category denotes an external person.
-     * 
-     * @return whether this category denotes an external person.
      */
     @Pure
     public boolean isExternalPerson() {
@@ -160,8 +133,6 @@ public enum Category {
     
     /**
      * Returns whether this category denotes a person.
-     * 
-     * @return whether this category denotes a person.
      */
     @Pure
     public boolean isPerson() {
@@ -170,8 +141,6 @@ public enum Category {
     
     /**
      * Returns whether this category denotes an internal non-host identity.
-     * 
-     * @return whether this category denotes an internal non-host identity.
      */
     @Pure
     public boolean isInternalNonHostIdentity() {
@@ -180,12 +149,18 @@ public enum Category {
     
     /**
      * Returns whether this category denotes an internal identity.
-     * 
-     * @return whether this category denotes an internal identity.
      */
     @Pure
     public boolean isInternalIdentity() {
         return this == HOST || isInternalNonHostIdentity();
+    }
+    
+    /* -------------------------------------------------- Object -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return Strings.capitalizeFirstLetters(Strings.desnake(name()));
     }
     
 }
