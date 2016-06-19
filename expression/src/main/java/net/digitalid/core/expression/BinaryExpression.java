@@ -54,7 +54,7 @@ final class BinaryExpression extends Expression {
      * @require operators.contains(operator) : "The operator is valid.";
      */
     @NonCommitting
-    BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, char operator) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, char operator) throws ExternalException {
         super(entity);
         
         Require.that(operators.contains(operator)).orThrow("The operator is valid.");

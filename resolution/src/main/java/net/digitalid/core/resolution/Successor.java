@@ -65,7 +65,7 @@ public final class Successor {
      * @return the successor of the given identifier as stored in the database or retrieved by a new request.
      */
     @NonCommitting
-    public static @Nonnull InternalNonHostIdentifier getReloaded(@Nonnull NonHostIdentifier identifier) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull InternalNonHostIdentifier getReloaded(@Nonnull NonHostIdentifier identifier) throws ExternalException {
         @Nullable InternalNonHostIdentifier successor = get(identifier);
         if (successor == null) {
             final @Nonnull Reply reply;

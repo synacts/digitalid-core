@@ -96,7 +96,7 @@ public abstract class ConceptPropertyInternalAction<V, C extends Concept<C, E, ?
         this.publicKey = null;
     }
     
-    protected ConceptPropertyInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Service service) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    protected ConceptPropertyInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Service service) throws ExternalException {
         super(entity, signature, recipient);
         
         this.service = service;

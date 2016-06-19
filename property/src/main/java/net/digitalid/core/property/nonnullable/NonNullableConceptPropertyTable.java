@@ -125,7 +125,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void importAll(@Nonnull Host host, @Nonnull Block block) throws ExternalException {
         Require.that(block.getType().isBasedOn(getDumpType())).orThrow("The block is based on the dump type of this data collection.");
         
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();
@@ -192,7 +192,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public void addState(@Nonnull E entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void addState(@Nonnull E entity, @Nonnull Block block) throws ExternalException {
         Require.that(block.getType().isBasedOn(getStateType())).orThrow("The block is based on the state type of this data collection.");
         
         Converters<E, Site> entityConverters = getPropertyFactory().getConceptSetup().getEntityConverters();

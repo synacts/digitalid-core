@@ -239,7 +239,7 @@ public abstract class Credential {
      * @require i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
      */
     @NonCommitting
-    Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws ExternalException {
         Require.that(exposed.getType().isBasedOn(Credential.EXPOSED)).orThrow("The exposed block is based on the indicated type.");
         Require.that(randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE)).orThrow("The randomized permissions are either null or based on the indicated type.");
         Require.that(i == null || i.getType().isBasedOn(Exponent.TYPE)).orThrow("The serial number is either null or based on the indicated type.");

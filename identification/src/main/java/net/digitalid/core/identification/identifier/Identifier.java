@@ -3,138 +3,75 @@ package net.digitalid.core.identification.identifier;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.system.castable.Castable;
-import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.rootclass.RootInterface;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
-import net.digitalid.database.core.converter.sql.SQLConverter;
-import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.conversion.NonRequestingConverters;
-import net.digitalid.core.conversion.key.CastingNonRequestingKeyConverter;
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-import net.digitalid.core.conversion.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.core.conversion.xdf.NonRequestingXDFConverter;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.resolution.annotations.MappedRecipient;
+import net.digitalid.core.identification.identity.Identity;
 
 /**
  * This interface models identifiers.
  * 
- * @see IdentifierImplementation
+ * @see InternalIdentifier
  * @see NonHostIdentifier
  */
 @Immutable
-public interface Identifier extends Castable {
+@GenerateConverter
+public interface Identifier extends RootInterface {
+    
+    /* -------------------------------------------------- Validity -------------------------------------------------- */
+    
+    /**
+     * Returns whether the given string conforms to the criteria of this class.
+     * This method is called by the validity checkers of the subtypes to prevent infinite recursion.
+     */
+    @Pure
+    public static boolean isConforming(@Nonnull String string) {
+        return string.length() < 64;
+    }
+    
+    /**
+     * Returns whether the given string is a valid identifier.
+     * This method delegates the validation to the subtypes.
+     */
+    @Pure
+    public static boolean isValid(@Nonnull String string) {
+        return string.contains(":") ? ExternalIdentifier.isValid(string) : InternalIdentifier.isValid(string);
+    }
     
     /* -------------------------------------------------- String -------------------------------------------------- */
     
     /**
      * Returns the string of this identifier.
-     * 
-     * @return the string of this identifier.
      */
     @Pure
-    public @Nonnull @Validated String getString();
+    public abstract @Nonnull @Valid String getString();
     
-    /* -------------------------------------------------- Mapping -------------------------------------------------- */
+    /* -------------------------------------------------- Recover -------------------------------------------------- */
     
     /**
-     * Returns whether this identifier is mapped.
-     * 
-     * @return whether this identifier is mapped.
+     * Returns a new identifier with the given string.
      */
     @Pure
-    @NonCommitting
-    public boolean isMapped() throws DatabaseException;
+    @Recover
+    public static @Nonnull Identifier with(@Nonnull @Valid String string) {
+        return string.contains(":") ? ExternalIdentifier.with(string) : InternalIdentifier.with(string);
+    }
     
-    /**
-     * Returns the mapped identity of this identifier.
-     * 
-     * @return the mapped identity of this identifier.
-     */
-    @Pure
-    @NonCommitting
-    @MappedRecipient
-    public @Nonnull Identity getMappedIdentity() throws DatabaseException;
+    /* -------------------------------------------------- Resolve -------------------------------------------------- */
     
     /**
      * Returns the identity of this identifier.
-     * 
-     * @return the identity of this identifier.
      * 
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
     @Pure
     @NonCommitting
-    public @Nonnull Identity getIdentity() throws ExternalException;
-    
-    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
-    
-    /**
-     * This class allows to convert an identifier to its string and recover it again by downcasting the identifier returned by the overridden method to the given target class.
-     */
-    @Immutable
-    public static final class StringConverter<I extends Identifier> extends CastingNonRequestingKeyConverter<I, Object, String, Object, Identifier> {
-        
-        /**
-         * Creates a new identifier-string converter with the given target class.
-         * 
-         * @param targetClass the target class to which the recovered object is cast.
-         */
-        protected StringConverter(@Nonnull Class<I> targetClass) {
-            super(targetClass);
-        }
-        
-        @Pure
-        @Override
-        public boolean isValid(@Nonnull String string) {
-            return IdentifierImplementation.isValid(string);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull @Validated String convert(@Nonnull I identifier) {
-            return identifier.getString();
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Identifier recoverSupertype(@Nonnull Object none, @Nonnull @Validated String string) {
-            return IdentifierImplementation.get(string);
-        }
-        
-    }
-    
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
-    
-    /**
-     * Stores the declaration of this class.
-     */
-    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("identifier", StringWrapper.SQL_TYPE);
-    
-    /**
-     * Stores the key converter of this class.
-     */
-    public static final @Nonnull Identifier.StringConverter<Identifier> KEY_CONVERTER = new Identifier.StringConverter<>(Identifier.class);
-    
-    /**
-     * Stores the XDF converter of this class.
-     */
-    public static final @Nonnull NonRequestingXDFConverter<Identifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(Identity.IDENTIFIER));
-    
-    /**
-     * Stores the SQL converter of this class.
-     */
-    public static final @Nonnull SQLConverter<Identifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter(DECLARATION));
-    
-    /**
-     * Stores the converters of this class.
-     */
-    public static final @Nonnull NonRequestingConverters<Identifier, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public abstract @Nonnull Identity getIdentity() throws ExternalException;
     
 }

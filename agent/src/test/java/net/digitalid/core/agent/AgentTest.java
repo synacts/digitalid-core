@@ -38,7 +38,7 @@ public final class AgentTest extends IdentitySetup {
     
     @BeforeClass
     @Committing
-    public static void accreditClientAgent() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static void accreditClientAgent() throws ExternalException {
         print("accreditClientAgent");
         try {
             final @Nonnull FreezableAgentPermissions agentPermissions = new FreezableAgentPermissions();
@@ -58,7 +58,7 @@ public final class AgentTest extends IdentitySetup {
     
     @After
     @Committing
-    public void testAgentStateEquality() throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void testAgentStateEquality() throws InterruptedException, ExternalException {
         try {
             role.waitForCompletion(CoreService.SERVICE);
             Thread.sleep(1l);
@@ -84,7 +84,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _01_testUnremoveAgent() throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void _01_testUnremoveAgent() throws InterruptedException, ExternalException {
         print("_01_testUnremoveAgent");
         try {
             getRole().refreshState(CoreService.SERVICE);
@@ -100,7 +100,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _02_testPermissionsAdd() throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void _02_testPermissionsAdd() throws InterruptedException, ExternalException {
         print("_02_testPermissionsAdd");
         try {
             final @Nonnull FreezableAgentPermissions agentPermissions = new FreezableAgentPermissions();
@@ -153,7 +153,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _04_testRestrictionsReplace() throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void _04_testRestrictionsReplace() throws InterruptedException, ExternalException {
         print("_04_testRestrictionsReplace");
         try {
             getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).setRestrictions(new Restrictions(true, true, true, Context.getRoot(getRole())));
@@ -174,7 +174,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _05_testCommitmentReplace() throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void _05_testCommitmentReplace() throws InterruptedException, ExternalException {
         print("_05_testCommitmentReplace");
         try {
             final @Nonnull ClientAgent clientAgent = role.getAgent();

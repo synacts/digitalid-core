@@ -59,6 +59,6 @@ public interface HostStorage extends ClientStorage {
      */
     @Locked
     @NonCommitting
-    public void importAll(@Nonnull Host host, @Nonnull @NonEncoding Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
+    public void importAll(@Nonnull Host host, @Nonnull @NonEncoding Block block) throws ExternalException;
     
 }

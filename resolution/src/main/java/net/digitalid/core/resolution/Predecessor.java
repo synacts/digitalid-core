@@ -149,7 +149,7 @@ public final class Predecessor implements Blockable {
      */
     @Pure
     @NonCommitting
-    @Nullable NonHostIdentity getIdentity() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    @Nullable NonHostIdentity getIdentity() throws ExternalException {
         if (identifier.isMapped()) { return identifier.getMappedIdentity(); }
         if (!predecessors.getIdentities().isEmpty()) { return identifier.getIdentity().castTo(NonHostIdentity.class); }
         return null;

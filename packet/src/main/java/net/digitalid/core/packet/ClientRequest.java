@@ -58,7 +58,7 @@ public final class ClientRequest extends Request {
      * @require methods.getNotNull(0).isOnClient() : "The methods are on a client.";
      */
     @NonCommitting
-    public ClientRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public ClientRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment) throws ExternalException {
         this(methods, subject, audit, commitment, 0);
     }
     
@@ -72,7 +72,7 @@ public final class ClientRequest extends Request {
      * @param iteration how many times this request was resent.
      */
     @NonCommitting
-    private ClientRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment, int iteration) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    private ClientRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment, int iteration) throws ExternalException {
         super(methods, subject.getHostIdentifier(), getSymmetricKey(subject.getHostIdentifier(), Time.HOUR), subject, audit, commitment, iteration);
     }
     
@@ -100,7 +100,7 @@ public final class ClientRequest extends Request {
     
     @Override
     @NonCommitting
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws ExternalException {
         if (!subject.getHostIdentifier().equals(recipient)) { throw InternalException.get("The host of the subject " + subject + " does not match the recipient " + recipient + "."); }
         return new ClientRequest(methods, subject, getAudit(), commitment).send(verified);
     }
@@ -115,7 +115,7 @@ public final class ClientRequest extends Request {
      * @return the response to the resent request with the new commitment.
      */
     @NonCommitting
-    @Nonnull Response recommit(@Nonnull FreezableList<Method> methods, int iteration, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    @Nonnull Response recommit(@Nonnull FreezableList<Method> methods, int iteration, boolean verified) throws ExternalException {
         final @Nonnull NativeRole role = methods.getNonNullable(0).getRole().toNativeRole();
         final @Nonnull Client client = role.getClient();
         final @Nonnull Commitment oldCommitment = role.getAgent().getCommitment();

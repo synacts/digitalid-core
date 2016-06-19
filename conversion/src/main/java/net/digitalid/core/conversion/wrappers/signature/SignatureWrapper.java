@@ -255,7 +255,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public void verify() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void verify() throws ExternalException {
         Require.that(!isVerified()).orThrow("This signature is not verified.");
         
         setVerified();
@@ -343,7 +343,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull SignatureWrapper decodeWithVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nullable Entity entity) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull SignatureWrapper decodeWithVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nullable Entity entity) throws ExternalException {
         final @Nonnull SignatureWrapper signatureWrapper = decodeWithoutVerifying(block, false, entity);
         signatureWrapper.verify();
         return signatureWrapper;
@@ -361,7 +361,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified, @Nullable Entity entity) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified, @Nullable Entity entity) throws ExternalException {
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(Block.get(IMPLEMENTATION, block)).getNullableElements(4);
         final @Nullable Block hostSignature = elements.getNullable(1);
         final @Nullable Block clientSignature = elements.getNullable(2);

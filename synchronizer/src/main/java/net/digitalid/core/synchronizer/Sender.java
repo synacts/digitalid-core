@@ -213,7 +213,7 @@ public final class Sender extends Thread {
      * @see ClientRequest
      */
     @NonCommitting
-    public static @Nullable RequestAudit runAsynchronously(final @Nonnull InternalAction action, final @Nullable RequestAudit audit) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nullable RequestAudit runAsynchronously(final @Nonnull InternalAction action, final @Nullable RequestAudit audit) throws ExternalException {
         // TODO: This will almost certainly not work with the locking mechanism of SQLite. The problem could propably be solved with savepoints and partial rollbacks, however.
         
         Log.error("The sender should not yet be run asynchronously.");

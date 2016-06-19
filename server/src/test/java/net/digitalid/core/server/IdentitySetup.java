@@ -60,7 +60,7 @@ public class IdentitySetup extends ServerSetup {
     
     @BeforeClass
     @Committing
-    public static void setUpIdentity() throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static void setUpIdentity() throws InterruptedException, ExternalException {
         print("setUpIdentity");
         try {
             client = new Client("tester", "Test Client", FreezableAgentPermissions.GENERAL_WRITE);
@@ -77,7 +77,7 @@ public class IdentitySetup extends ServerSetup {
     
     @After
     @Committing
-    public final void testStateEquality() throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public final void testStateEquality() throws InterruptedException, ExternalException {
         try {
             role.waitForCompletion(CoreService.SERVICE);
             Thread.sleep(1l);

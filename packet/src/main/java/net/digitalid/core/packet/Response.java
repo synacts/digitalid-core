@@ -70,7 +70,7 @@ public final class Response extends Packet {
      * @ensure getSize() == 1 : "The size of this response is one.";
      */
     @NonCommitting
-    public Response(@Nullable Request request, @Nonnull RequestException exception) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public Response(@Nullable Request request, @Nonnull RequestException exception) throws ExternalException {
         super(new FreezablePair<>(FreezableArrayList.<Reply>getWithCapacity(1).freeze(), FreezableArrayList.get(exception).freeze()).freeze(), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
         
         this.request = request;
@@ -90,7 +90,7 @@ public final class Response extends Packet {
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the request.";
      */
     @NonCommitting
-    public Response(@Nonnull Request request, @Nonnull @Frozen @NonEmpty ReadOnlyList<Reply> replies, @Nonnull @Frozen @NonEmpty ReadOnlyList<RequestException> exceptions, @Nullable ResponseAudit audit) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public Response(@Nonnull Request request, @Nonnull @Frozen @NonEmpty ReadOnlyList<Reply> replies, @Nonnull @Frozen @NonEmpty ReadOnlyList<RequestException> exceptions, @Nullable ResponseAudit audit) throws ExternalException {
         super(new FreezablePair<>(replies, exceptions).freeze(), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
         
         Require.that(replies.isFrozen()).orThrow("The list of replies is frozen.");
@@ -113,7 +113,7 @@ public final class Response extends Packet {
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the given request.";
      */
     @NonCommitting
-    public Response(@Nonnull Request request, @Nonnull InputStream inputStream, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public Response(@Nonnull Request request, @Nonnull InputStream inputStream, boolean verified) throws ExternalException {
         super(inputStream, request, verified);
         
         this.request = request;

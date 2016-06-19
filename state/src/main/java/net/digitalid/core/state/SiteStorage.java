@@ -66,7 +66,7 @@ public interface SiteStorage extends HostStorage {
      */
     @Locked
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws ExternalException;
     
     /**
      * Removes all the entries of the given entity in this storage.

@@ -53,7 +53,7 @@ public final class AttributeTest extends IdentitySetup {
     
     @Committing
     @Test(expected = AttributeNotFoundException.class)
-    public void _02_testNonPublicAccess() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void _02_testNonPublicAccess() throws ExternalException {
         print("_02_testNonPublicAccess");
         try {
             Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeTypes.NAME, false);
@@ -67,7 +67,7 @@ public final class AttributeTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _03_testVisibilityReplace() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void _03_testVisibilityReplace() throws ExternalException {
         print("_03_testVisibilityReplace");
         try {
             final @Nonnull PassiveExpression passiveExpression = new PassiveExpression(getRole(), "everybody");
@@ -85,7 +85,7 @@ public final class AttributeTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _04_testPublicAccess() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void _04_testPublicAccess() throws ExternalException {
         print("_04_testPublicAccess");
         try {
             final @Nonnull Block content = Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeTypes.NAME, false);

@@ -96,7 +96,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      */
     @Locked
     @NonCommitting
-    private SelfcontainedWrapper(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    private SelfcontainedWrapper(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws ExternalException {
         super(block.getType());
         
         this.tuple = Block.get(IMPLEMENTATION, block);
@@ -157,7 +157,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         @Locked
         @Override
         @NonCommitting
-        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws ExternalException {
             return new SelfcontainedWrapper(block);
         }
         
@@ -217,7 +217,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws ExternalException {
         return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).element;
     }
     
@@ -231,7 +231,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Locked
     @NonCommitting
-    public static @Nullable @NonEncoding Block decodeNullable(@Nullable @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nullable @NonEncoding Block decodeNullable(@Nullable @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws ExternalException {
         return block == null ? null : decodeNonNullable(block);
     }
     
@@ -246,7 +246,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws IOException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws IOException, ExternalException {
         return decodeNonNullable(readBlockFrom(inputStream, close));
     }
     

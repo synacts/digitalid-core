@@ -230,7 +230,7 @@ public abstract class Method extends Handler {
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     @NonCommitting
-    public @Nonnull Response send() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public @Nonnull Response send() throws ExternalException {
         final @Nullable RequestAudit requestAudit = RequestAudit.get(this);
         final @Nonnull Response response;
         try {
@@ -255,7 +255,7 @@ public abstract class Method extends Handler {
      */
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public final @Nonnull <T extends Reply> T sendNotNull() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public final @Nonnull <T extends Reply> T sendNotNull() throws ExternalException {
         Require.that(!matches(null)).orThrow("This method does not match null.");
         
         return (T) send().getReplyNotNull(0);
@@ -319,7 +319,7 @@ public abstract class Method extends Handler {
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     @NonCommitting
-    public static @Nonnull Response send(@Nonnull ReadOnlyList<Method> methods, @Nullable RequestAudit audit) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull Response send(@Nonnull ReadOnlyList<Method> methods, @Nullable RequestAudit audit) throws ExternalException {
         Require.that(areSimilar(methods)).orThrow("The methods are similar to each other.");
         
         final @Nonnull Method reference = methods.getNonNullable(0);
@@ -442,7 +442,7 @@ public abstract class Method extends Handler {
          */
         @Pure
         @NonCommitting
-        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
+        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws ExternalException;
         
     }
     
@@ -481,7 +481,7 @@ public abstract class Method extends Handler {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws ExternalException {
         final @Nullable Method.Factory factory = converters.get(block.getType());
         if (factory == null) { throw RequestException.get(RequestErrorCode.METHOD, "No method could be found for the type " + block.getType().getAddress() + "."); }
         else { return factory.create(entity, signature, recipient, block); }

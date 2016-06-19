@@ -126,7 +126,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<NonHostIdentity> getIdentities() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<NonHostIdentity> getIdentities() throws ExternalException {
         final @Nonnull FreezableList<NonHostIdentity> identities = FreezableArrayList.getWithCapacity(size());
         for (final @Nonnull Predecessor predecessor : this) {
             final @Nullable NonHostIdentity identity = predecessor.getIdentity();

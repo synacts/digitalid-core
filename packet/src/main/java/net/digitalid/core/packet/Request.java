@@ -98,7 +98,7 @@ public class Request extends Packet {
      * @ensure getSize() == 1 : "The size of this request is 1.";
      */
     @NonCommitting
-    public Request(@Nonnull HostIdentifier identifier) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public Request(@Nonnull HostIdentifier identifier) throws ExternalException {
         this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new FreezableAttributeTypeSet(PublicKeyChain.TYPE).freeze(), true)).freeze(), identifier, null, identifier, null, null, 0);
     }
     
@@ -112,7 +112,7 @@ public class Request extends Packet {
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      */
     @NonCommitting
-    public Request(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public Request(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws ExternalException {
         this(methods, recipient, SymmetricKey.getRandom(), subject, null, null, 0);
     }
     
@@ -128,7 +128,7 @@ public class Request extends Packet {
      * @param iteration how many times this request was resent.
      */
     @NonCommitting
-    Request(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nullable Object field, int iteration) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    Request(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nullable Object field, int iteration) throws ExternalException {
         super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
         
         Require.that(methods.isFrozen()).orThrow("The list of methods is frozen.");
@@ -150,7 +150,7 @@ public class Request extends Packet {
      * @param inputStream the input stream to read the request from.
      */
     @NonCommitting
-    public Request(@Nonnull InputStream inputStream) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public Request(@Nonnull InputStream inputStream) throws ExternalException {
         super(inputStream, null, true);
         
         final @Nullable HostIdentifier recipient = getEncryption().getRecipient();
@@ -183,7 +183,7 @@ public class Request extends Packet {
     @Override
     @RawRecipient
     @NonCommitting
-    @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws ExternalException {
         return SignatureWrapper.encodeWithoutSigning(Packet.SIGNATURE, compression, subject);
     }
     
@@ -276,7 +276,7 @@ public class Request extends Packet {
      * @return the response to the resent request.
      */
     @NonCommitting
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws ExternalException {
         return new Request(methods, recipient, SymmetricKey.getRandom(), subject, null, null, iteration).send(verified);
     }
     
@@ -290,7 +290,7 @@ public class Request extends Packet {
      * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
     @NonCommitting
-    public final @Nonnull Response send() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public final @Nonnull Response send() throws ExternalException {
         return send(true);
     }
     
@@ -306,7 +306,7 @@ public class Request extends Packet {
      * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
     @NonCommitting
-    public final @Nonnull Response send(boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public final @Nonnull Response send(boolean verified) throws ExternalException {
         // TODO: Use the specific NetworkExceptions.
         try (@Nonnull Socket socket = new Socket("id." + getRecipient().getString(), Server.PORT)) {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!

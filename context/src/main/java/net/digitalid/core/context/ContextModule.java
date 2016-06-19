@@ -232,7 +232,7 @@ public final class ContextModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws ExternalException {
         Require.that(block.getType().isBasedOn(getStateFormat())).orThrow("The block is based on the indicated type.");
         
         final @Nonnull Site site = entity.getSite();

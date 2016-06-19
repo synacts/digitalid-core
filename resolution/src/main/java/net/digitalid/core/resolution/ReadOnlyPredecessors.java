@@ -38,7 +38,7 @@ public interface ReadOnlyPredecessors extends ReadOnlyList<Predecessor>, Blockab
      */
     @Pure
     @NonCommitting
-    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<NonHostIdentity> getIdentities() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
+    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<NonHostIdentity> getIdentities() throws ExternalException;
     
     /**
      * Sets these values as the predecessors of the given identifier.

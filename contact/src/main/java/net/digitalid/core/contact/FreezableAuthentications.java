@@ -80,7 +80,7 @@ public final class FreezableAuthentications extends FreezableAttributeTypeSet im
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public FreezableAuthentications(@Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public FreezableAuthentications(@Nonnull Block block) throws ExternalException {
         super(block);
     }
     

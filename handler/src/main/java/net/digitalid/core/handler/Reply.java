@@ -130,7 +130,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
          */
         @Pure
         @NonCommitting
-        protected abstract Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
+        protected abstract Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws ExternalException;
         
     }
     
@@ -166,7 +166,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      */
     @Pure
     @NonCommitting
-    private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws ExternalException {
         final @Nullable Reply.Factory factory = converters.get(block.getType());
         if (factory == null) { throw InvalidReplyTypeException.get(block.getType()); }
         else { return factory.create(entity, signature, number, block); }
@@ -187,7 +187,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws ExternalException {
         return get(entity, signature, store(signature), block);
     }
     
@@ -241,7 +241,7 @@ public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTripl
      */
     @Pure
     @NonCommitting
-    public static @Nullable Reply get(@Nullable NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nullable Reply get(@Nullable NonHostEntity entity, @NonCapturable @Nonnull SelectionResult result) throws ExternalException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) { return null; }
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {

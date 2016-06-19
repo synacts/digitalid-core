@@ -95,7 +95,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      * @require Password.isValid(password) : "The password is valid.";
      */
     @NonCommitting
-    public ClientAgentAccredit(@Nonnull NativeRole role, @Nonnull String password) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public ClientAgentAccredit(@Nonnull NativeRole role, @Nonnull String password) throws ExternalException {
         super(role);
         
         Require.that(Settings.isValid(password)).orThrow("The password is valid.");
@@ -122,7 +122,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private ClientAgentAccredit(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    private ClientAgentAccredit(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws ExternalException {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(4);
@@ -163,7 +163,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    public @Nonnull Response send() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public @Nonnull Response send() throws ExternalException {
         final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(this).freeze(), null);
         response.checkReply(0);
         return response;
@@ -248,7 +248,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws ExternalException {
             return new ClientAgentAccredit(entity, signature, recipient, block);
         }
         

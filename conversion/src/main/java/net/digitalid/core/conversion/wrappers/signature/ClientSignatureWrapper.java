@@ -114,7 +114,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws ExternalException {
         super(block, verified);
         
         Require.that(clientSignature.getType().isBasedOn(SIGNATURE)).orThrow("The signature is based on the implementation type.");
@@ -157,7 +157,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     
     @Pure
     @Override
-    public void verify() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public void verify() throws ExternalException {
         Require.that(!isVerified()).orThrow("This signature is not verified.");
         
         final @Nonnull Time start = Time.getCurrent();

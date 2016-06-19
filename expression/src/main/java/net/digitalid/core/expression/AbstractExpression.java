@@ -45,7 +45,7 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
      * @param string the string which is to be parsed for the expression.
      */
     @NonCommitting
-    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws ExternalException {
         super(entity);
         
         this.expression = Expression.parse(entity, string);
@@ -61,7 +61,7 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
     @NonCommitting
-    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws ExternalException {
         this(entity, StringWrapper.decodeNonNullable(block));
     }
     

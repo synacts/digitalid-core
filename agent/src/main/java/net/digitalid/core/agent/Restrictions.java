@@ -465,7 +465,7 @@ public final class Restrictions implements XDF<Restrictions, NonHostEntity>, SQL
         
         @Pure
         @Override
-        public final @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+        public final @Nonnull Restrictions decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull Block block) throws ExternalException {
             Require.that(block.getType().isBasedOn(getType())).orThrow("The block is based on the type of this converter.");
             
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);

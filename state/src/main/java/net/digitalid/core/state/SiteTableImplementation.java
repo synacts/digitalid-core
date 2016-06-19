@@ -80,7 +80,7 @@ abstract class SiteTableImplementation<M extends DelegatingSiteStorageImplementa
     @Locked
     @Override
     @NonCommitting
-    public abstract void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
+    public abstract void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws ExternalException;
     
     @Locked
     @Override

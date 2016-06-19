@@ -107,7 +107,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         return new NonNullableConceptPropertyInternalAction<>(property.getConceptPropertySetup(), property, property.getTime(), Time.getCurrent(), oldValue, newValue); // TODO: Let all the arguments be determined by the caller.
     }
     
-    private NonNullableConceptPropertyInternalAction(@Nonnull E entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block content, @Nonnull NonNullableConceptPropertySetup<V, C, E> setup) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    private NonNullableConceptPropertyInternalAction(@Nonnull E entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block content, @Nonnull NonNullableConceptPropertySetup<V, C, E> setup) throws ExternalException {
         super(entity, signature, recipient, setup.getConceptSetup().getService());
         
         this.setup = setup;
@@ -224,7 +224,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         
         @Pure
         @Override
-        public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> decodeNonNullable(@Nonnull ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>> pair, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+        public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> decodeNonNullable(@Nonnull ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>> pair, @Nonnull Block block) throws ExternalException {
             Require.that(block.getType().isBasedOn(getType())).orThrow("The block is based on the indicated type.");
             
             final E entity = pair.getNonNullableElement0();
@@ -271,7 +271,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @Override
         @NonCommitting
         @SuppressWarnings("unchecked")
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws ExternalException {
                return new NonNullableConceptPropertyInternalAction<>((E) entity.castTo(NonHostEntity.class), signature, recipient, block, setup);
         }
         

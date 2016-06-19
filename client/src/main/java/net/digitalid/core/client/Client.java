@@ -166,7 +166,7 @@ public class Client extends Site {
      */
     @Locked
     @Committing
-    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Frozen ReadOnlyAgentPermissions preferredPermissions) throws IOException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Frozen ReadOnlyAgentPermissions preferredPermissions) throws IOException, ExternalException {
         super(identifier);
         
         Require.that(isValidIdentifier(identifier)).orThrow("The identifier is valid.");
@@ -262,7 +262,7 @@ public class Client extends Site {
      */
     @Pure
     @NonCommitting
-    private static @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject, @Nonnull Exponent secret) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    private static @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject, @Nonnull Exponent secret) throws ExternalException {
         final @Nonnull HostIdentity host = subject.getHostIdentifier().getIdentity();
         final @Nonnull Time time = Time.getCurrent();
         final @Nonnull PublicKey publicKey = Cache.getPublicKeyChain(host).getKey(time);
@@ -279,7 +279,7 @@ public class Client extends Site {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public final @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject) throws ExternalException {
         return getCommitment(subject, secret);
     }
     
@@ -289,7 +289,7 @@ public class Client extends Site {
      * TODO: Make sure that other instances of the same client learn about the key rotation.
      */
     @Committing
-    public final void rotateSecret() throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public final void rotateSecret() throws InterruptedException, ExternalException {
         final @Nonnull Exponent newSecret = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
         final @Nonnull ReadOnlyList<NativeRole> roles = getRoles();
         Database.commit();
@@ -369,7 +369,7 @@ public class Client extends Site {
      * @require Password.isValid(password) : "The password is valid.";
      */
     @Committing
-    public final @Nonnull NativeRole accredit(@Nonnull InternalNonHostIdentity identity, @Nonnull String password) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public final @Nonnull NativeRole accredit(@Nonnull InternalNonHostIdentity identity, @Nonnull String password) throws ExternalException {
         final @Nonnull NativeRole role = addRole(identity, new Random().nextLong());
         Database.commit();
         try {
@@ -405,7 +405,7 @@ public class Client extends Site {
      * @require !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
      */
     @Committing
-    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadOnlyList<NativeRole> roles, @Nonnull ReadOnlyList<ExternalIdentifier> identifiers) throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadOnlyList<NativeRole> roles, @Nonnull ReadOnlyList<ExternalIdentifier> identifiers) throws InterruptedException, ExternalException {
         Require.that(!subject.exists()).orThrow("The subject does not exist.");
         Require.that(category.isInternalNonHostIdentity()).orThrow("The category denotes an internal non-host identity.");
         Require.that(!category.isType() || roles.size() <= 1 && identifiers.isEmpty()).orThrow("If the category denotes a type, at most one role and no identifier may be given.");
@@ -459,7 +459,7 @@ public class Client extends Site {
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
     @Committing
-    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws InterruptedException, DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws InterruptedException, ExternalException {
         return openAccount(identifier, category, new FreezableLinkedList<NativeRole>().freeze(), new FreezableLinkedList<ExternalIdentifier>().freeze());
     }
     

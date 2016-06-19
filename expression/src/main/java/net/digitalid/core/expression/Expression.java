@@ -258,7 +258,7 @@ abstract class Expression extends NonHostConcept {
      */
     @Pure
     @NonCommitting
-    static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws ExternalException {
         if (string.trim().isEmpty()) { return new EmptyExpression(entity); }
         
         int index = lastIndexOf(string, addition);

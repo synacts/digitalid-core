@@ -57,13 +57,13 @@ public abstract class CastingRequestingKeyConverter<O extends S, E, K, D, S exte
      * @return the object of the supertype with the given key.
      */
     @Pure
-    protected abstract @Nonnull S recoverSupertype(@Nonnull E external, @Nonnull @Validated K key) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
+    protected abstract @Nonnull S recoverSupertype(@Nonnull E external, @Nonnull @Validated K key) throws ExternalException;
     
     /* -------------------------------------------------- Method -------------------------------------------------- */
     
     @Pure
     @Override
-    public final @Nonnull O recover(@Nonnull E external, @Nonnull K key) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public final @Nonnull O recover(@Nonnull E external, @Nonnull K key) throws ExternalException {
         return recoverSupertype(external, key).castTo(targetClass);
     }
     

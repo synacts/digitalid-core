@@ -118,7 +118,7 @@ public interface Identity extends Castable, XDF<Identity, Object>, SQL<Identity,
         
         @Pure
         @Override
-        public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Identifier identifier) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+        public @Nonnull Identity recoverSupertype(@Nonnull Object none, @Nonnull Identifier identifier) throws ExternalException {
             return identifier.getIdentity();
         }
         

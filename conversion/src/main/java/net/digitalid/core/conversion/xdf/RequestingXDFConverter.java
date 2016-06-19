@@ -140,7 +140,7 @@ public abstract class RequestingXDFConverter<O, E> {
     @Pure
     @Locked
     @NonCommitting
-    public abstract @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull @NonEncoding Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull E external, @Nonnull @NonEncoding Block block) throws ExternalException;
     
     /**
      * Decodes the given nullable block.
@@ -155,7 +155,7 @@ public abstract class RequestingXDFConverter<O, E> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public @Nullable O decodeNullable(@Nonnull E external, @Nullable @NonEncoding Block block) throws ExternalException {
         if (block != null) { return decodeNonNullable(external, block); }
         else { return null; }
     }

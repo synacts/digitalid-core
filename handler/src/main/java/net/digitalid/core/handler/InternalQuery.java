@@ -55,7 +55,7 @@ public abstract class InternalQuery extends Query implements InternalMethod {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws ExternalException {
         super(entity, signature, recipient);
         
         if (!isNonHost()) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "Internal queries have to belong to a non-host."); }

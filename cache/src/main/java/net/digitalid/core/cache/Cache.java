@@ -36,7 +36,7 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
 import net.digitalid.core.cache.exceptions.CertificateNotFoundException;
-import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
+import net.digitalid.core.identification.exceptions.IdentityNotFoundException;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.exceptions.InvalidReplyParameterValueException;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
@@ -153,7 +153,7 @@ public final class Cache {
      */
     @Locked
     @NonCommitting
-    private static @Nonnull @Frozen ReadOnlyPair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    private static @Nonnull @Frozen ReadOnlyPair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws ExternalException {
         Require.that(time.isNonNegative()).orThrow("The given time is non-negative.");
         Require.that(type.isAttributeFor(identity.getCategory())).orThrow("The type can be used as an attribute for the category of the given identity.");
         
@@ -254,7 +254,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull AttributeValue[] getAttributeValues(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType... types) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull AttributeValue[] getAttributeValues(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType... types) throws ExternalException {
         Require.that(time.isNonNegative()).orThrow("The given time is non-negative.");
         Require.that(types.length > 0).orThrow("At least one type is given.");
         Require.that(!Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1).orThrow("If the public key chain of a host is queried, it is the only type.");
@@ -320,7 +320,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull AttributeValue getAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull AttributeValue getAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws ExternalException {
         final @Nonnull AttributeValue[] attributeValues = getAttributeValues(identity, role, time, type);
         if (attributeValues[0] == null) { throw AttributeNotFoundException.get(identity, type); }
         else { return attributeValues[0]; }
@@ -348,7 +348,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Block getAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, boolean certified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull Block getAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, boolean certified) throws ExternalException {
         final @Nonnull AttributeValue value = getAttributeValue(identity, role, time, type);
         if (certified && !value.isCertified()) { throw CertificateNotFoundException.get(identity, type); }
         return value.getContent();
@@ -374,7 +374,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Block getFreshAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull Block getFreshAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws ExternalException {
         return getAttributeContent(identity, role, Time.getCurrent(), type, certified);
     }
     
@@ -398,7 +398,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Block getReloadedAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull Block getReloadedAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws ExternalException {
         return getAttributeContent(identity, role, Time.MAX, type, certified);
     }
     
@@ -420,7 +420,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Block getStaleAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull Block getStaleAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type) throws ExternalException {
         return getAttributeContent(identity, role, Time.MIN, type, false);
     }
     
@@ -434,7 +434,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull PublicKeyChain getPublicKeyChain(@Nonnull HostIdentity identity) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull PublicKeyChain getPublicKeyChain(@Nonnull HostIdentity identity) throws ExternalException {
         return new PublicKeyChain(getFreshAttributeContent(identity, null, PublicKeyChain.TYPE, true));
     }
     
@@ -449,7 +449,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull PublicKey getPublicKey(@Nonnull HostIdentifier identifier, @Nonnull Time time) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull PublicKey getPublicKey(@Nonnull HostIdentifier identifier, @Nonnull Time time) throws ExternalException {
         return getPublicKeyChain(identifier.getIdentity()).getKey(time);
     }
     
@@ -467,7 +467,7 @@ public final class Cache {
      */
     @Locked
     @NonCommitting
-    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull @NonMapped HostIdentifier identifier) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull @NonMapped HostIdentifier identifier) throws ExternalException {
         Require.that(!identifier.isMapped()).orThrow("The identifier is not mapped.");
         
         final @Nonnull HostIdentity identity = Mapper.mapHostIdentity(identifier);

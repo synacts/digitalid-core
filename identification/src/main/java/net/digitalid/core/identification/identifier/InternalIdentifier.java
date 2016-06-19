@@ -5,117 +5,80 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
-import net.digitalid.database.core.converter.sql.SQLConverter;
-import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
-import net.digitalid.core.conversion.NonRequestingConverters;
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-import net.digitalid.core.conversion.xdf.ChainingNonRequestingXDFConverter;
-import net.digitalid.core.conversion.xdf.NonRequestingXDFConverter;
-import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.resolution.Mapper;
+import net.digitalid.core.identification.IdentifierResolver;
+import net.digitalid.core.identification.exceptions.IdentityNotFoundException;
+import net.digitalid.core.identification.identity.InternalIdentity;
 
 /**
- * This class models internal identifiers.
+ * This interface models internal identifiers.
  * 
  * @see HostIdentifier
  * @see InternalNonHostIdentifier
  */
 @Immutable
-public abstract class InternalIdentifier extends IdentifierImplementation {
+@GenerateConverter
+public interface InternalIdentifier extends Identifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
      * The pattern that valid internal identifiers have to match.
      */
-    private static final Pattern PATTERN = Pattern.compile("(?:(?:[a-z0-9]+(?:[._-][a-z0-9]+)*)?@)?[a-z0-9]+(?:[.-][a-z0-9]+)*\\.[a-z][a-z]+");
+    public static final @Nonnull Pattern PATTERN = Pattern.compile("(?:(?:[a-z0-9]+(?:[._-][a-z0-9]+)*)?@)?[a-z0-9]+(?:[.-][a-z0-9]+)*\\.[a-z][a-z]+");
     
     /**
      * Returns whether the given string conforms to the criteria of this class.
      * At most 38 characters may follow after the @-symbol.
-     *
-     * @param string the string to check.
-     * 
-     * @return whether the given string conforms to the criteria of this class.
      */
     @Pure
-    static boolean isConforming(@Nonnull String string) {
-        return IdentifierImplementation.isConforming(string) && PATTERN.matcher(string).matches() && string.length() - string.indexOf("@") < 40;
+    public static boolean isConforming(@Nonnull String string) {
+        return Identifier.isConforming(string) && PATTERN.matcher(string).matches() && string.length() - string.indexOf("@") < 40;
     }
     
     /**
      * Returns whether the given string is a valid internal identifier.
-     *
-     * @param string the string to check.
-     * 
-     * @return whether the given string is a valid internal identifier.
      */
     @Pure
     public static boolean isValid(@Nonnull String string) {
         return string.contains("@") ? InternalNonHostIdentifier.isValid(string) : HostIdentifier.isValid(string);
     }
     
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * Creates an internal identifier with the given string.
-     * 
-     * @param string the string of the internal identifier.
-     */
-    InternalIdentifier(@Nonnull @Validated String string) {
-        super(string);
-        
-        Require.that(isValid(string)).orThrow("The string is a valid internal identifier.");
-    }
+    /* -------------------------------------------------- Recover -------------------------------------------------- */
     
     /**
      * Returns a new internal identifier with the given string.
-     * 
-     * @param string the string of the new internal identifier.
-     * 
-     * @return a new internal identifier with the given string.
      */
     @Pure
-    public static @Nonnull InternalIdentifier get(@Nonnull @Validated String string) {
-        return string.contains("@") ? InternalNonHostIdentifier.get(string) : HostIdentifier.get(string);
+    @Recover
+    public static @Nonnull InternalIdentifier with(@Nonnull @Valid String string) {
+        return string.contains("@") ? InternalNonHostIdentifier.with(string) : HostIdentifier.with(string);
     }
     
-    /* -------------------------------------------------- Mapping -------------------------------------------------- */
+    /* -------------------------------------------------- Resolve -------------------------------------------------- */
     
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull InternalIdentity getMappedIdentity() throws DatabaseException;
-    
-    @Pure
-    @Override
-    @NonCommitting
-    public abstract @Nonnull InternalIdentity getIdentity() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
+    public abstract @Nonnull InternalIdentity getIdentity() throws ExternalException;
     
     /* -------------------------------------------------- Existence -------------------------------------------------- */
     
     /**
      * Returns whether an identity with this internal identifier exists.
-     * 
-     * @return whether an identity with this internal identifier exists.
      */
     @Pure
     @NonCommitting
-    public final boolean exists() throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException {
+    public default boolean exists() throws ExternalException {
         try {
-            Mapper.getIdentity(this);
+            IdentifierResolver.configuration.get().resolve(this);
             return true;
         } catch (@Nonnull IdentityNotFoundException exception) {
             return false;
@@ -126,37 +89,8 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     
     /**
      * Returns the host part of this internal identifier.
-     * 
-     * @return the host part of this internal identifier.
      */
     @Pure
     public abstract @Nonnull HostIdentifier getHostIdentifier();
-    
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
-    
-    /**
-     * Stores the declaration of this class.
-     */
-    public static final @Nonnull ColumnDeclaration DECLARATION = Identifier.DECLARATION.renamedAs("internal_identifier");
-    
-    /**
-     * Stores the key converter of this class.
-     */
-    public static final @Nonnull Identifier.StringConverter<InternalIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(InternalIdentifier.class);
-    
-    /**
-     * Stores the XDF converter of this class.
-     */
-    public static final @Nonnull NonRequestingXDFConverter<InternalIdentifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(InternalIdentity.IDENTIFIER));
-    
-    /**
-     * Stores the SQL converter of this class.
-     */
-    public static final @Nonnull SQLConverter<InternalIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter(DECLARATION));
-    
-    /**
-     * Stores the converters of this class.
-     */
-    public static final @Nonnull NonRequestingConverters<InternalIdentifier, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

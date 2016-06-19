@@ -69,6 +69,6 @@ abstract class HostTableImplementation<M extends DelegatingHostStorageImplementa
     @Locked
     @Override
     @NonCommitting
-    public abstract void importAll(@Nonnull Host host, @Nonnull Block block) throws DatabaseException, NetworkException, InternalException, ExternalException, RequestException;
+    public abstract void importAll(@Nonnull Host host, @Nonnull Block block) throws ExternalException;
     
 }
