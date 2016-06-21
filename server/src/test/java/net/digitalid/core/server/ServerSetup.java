@@ -2,7 +2,7 @@ package net.digitalid.core.server;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.core.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.HostIdentifier;
 
 import org.junit.AfterClass;
 import org.junit.Assert;

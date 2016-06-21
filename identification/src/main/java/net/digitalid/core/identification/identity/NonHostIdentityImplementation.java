@@ -9,6 +9,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
  * @see Person
  */
 @Immutable
+@Deprecated // TODO: No longer necessary in Java 1.8!
 abstract class NonHostIdentityImplementation extends IdentityImplementation implements NonHostIdentity {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */

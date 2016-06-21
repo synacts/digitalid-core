@@ -21,7 +21,7 @@ import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.expression.PassiveExpression;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.property.nullable.NullableConceptProperty;
 import net.digitalid.core.property.nullable.NullableConceptPropertyTable;
 import net.digitalid.core.synchronizer.Synchronizer;

@@ -31,8 +31,8 @@ import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 /**

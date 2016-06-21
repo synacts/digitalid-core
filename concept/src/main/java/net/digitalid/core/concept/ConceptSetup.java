@@ -10,7 +10,7 @@ import net.digitalid.database.core.table.Site;
 
 import net.digitalid.core.conversion.Converters;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.state.Service;
 import net.digitalid.core.state.SiteModule;
 

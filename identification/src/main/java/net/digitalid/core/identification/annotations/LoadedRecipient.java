@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.digitalid.core.identity.Type;
+import net.digitalid.core.identification.identity.Type;
 
 /**
  * This annotation indicates that a method should only be invoked on a {@link Type#isLoaded() loaded} {@link Type type}.

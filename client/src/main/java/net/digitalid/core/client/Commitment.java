@@ -26,11 +26,11 @@ import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.IdentifierImplementation;
-import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.identity.IdentityImplementation;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.IdentifierImplementation;
+import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.identification.identity.IdentityImplementation;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.resolution.Mapper;
 import net.digitalid.core.server.Server;
 

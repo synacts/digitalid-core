@@ -11,7 +11,7 @@ import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.value.integer.Integer08Wrapper;
 import net.digitalid.core.conversion.xdf.XDFConverter;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 public class XDFInteger08Converter extends XDFConverter<Byte> {
     

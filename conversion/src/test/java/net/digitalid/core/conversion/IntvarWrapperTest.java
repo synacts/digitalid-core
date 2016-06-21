@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.server.DatabaseSetup;
 
 import org.junit.Assert;

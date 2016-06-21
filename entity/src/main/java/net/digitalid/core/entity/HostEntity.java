@@ -6,7 +6,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identity.HostIdentity;
+import net.digitalid.core.identification.identity.HostIdentity;
 
 /**
  * This interface models a host entity.

@@ -22,7 +22,7 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.conversion.xdf.XDFConverter;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * Converts an object holding multiple fields into an XDF tuple block.

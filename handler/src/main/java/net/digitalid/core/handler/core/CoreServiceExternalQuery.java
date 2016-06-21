@@ -14,8 +14,8 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.ExternalQuery;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
 

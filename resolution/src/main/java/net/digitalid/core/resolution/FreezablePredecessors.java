@@ -27,10 +27,10 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.IdentifierImplementation;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identity.NonHostIdentity;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identifier.IdentifierImplementation;
+import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identity.NonHostIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * This class models a list of {@link Predecessor predecessors}.

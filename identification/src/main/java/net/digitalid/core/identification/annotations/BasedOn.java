@@ -6,10 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.digitalid.utility.validation.annotations.meta.TargetTypes;
-
-import net.digitalid.core.conversion.Block;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * This annotation indicates that the {@link Block#getType() type} of a {@link Block block} is
@@ -17,8 +14,8 @@ import net.digitalid.core.identity.SemanticType;
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)
-@TargetTypes({Block.class, SemanticType.class})
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+// TODO: Implement a value validator instead: @TargetTypes({Block.class, SemanticType.class})
+@Target(ElementType.TYPE_USE)
 public @interface BasedOn {
     String value();
 }

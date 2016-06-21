@@ -32,7 +32,7 @@ import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.InternalMethod;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.InternalIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.CoreService;

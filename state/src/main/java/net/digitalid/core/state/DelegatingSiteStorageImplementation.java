@@ -32,8 +32,8 @@ import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.annotations.Loaded;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.annotations.Loaded;
 
 /**
  * This class implements a storage that delegates the retrieval of an {@link Entity entity's} state to substorages on {@link Host hosts} and {@link Client clients}.

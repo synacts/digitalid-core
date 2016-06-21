@@ -13,8 +13,8 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.handler.core.CoreServiceExternalQuery;
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 
 /**
  * External queries can be sent by both {@link Host hosts} and {@link Client clients}.

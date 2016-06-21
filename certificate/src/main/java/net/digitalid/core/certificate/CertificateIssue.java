@@ -28,9 +28,9 @@ import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.handler.core.CoreServiceActionReply;
 import net.digitalid.core.handler.core.CoreServiceExternalAction;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.dataservice.StateModule;
 

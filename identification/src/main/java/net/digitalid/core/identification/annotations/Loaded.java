@@ -6,9 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.digitalid.utility.validation.annotations.meta.TargetTypes;
-
-import net.digitalid.core.identity.Type;
+import net.digitalid.core.identification.identity.Type;
 
 /**
  * This annotation indicates that a {@link Type type} is {@link Type#isLoaded() loaded}.
@@ -16,7 +14,7 @@ import net.digitalid.core.identity.Type;
  * @see NonLoaded
  */
 @Documented
-@TargetTypes(Type.class)
+// TODO: Implement a value validator instead: @TargetTypes(Type.class)
 @Retention(RetentionPolicy.CLASS)
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+@Target(ElementType.TYPE_USE)
 public @interface Loaded {}

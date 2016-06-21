@@ -26,8 +26,8 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.annotations.Loaded;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.annotations.Loaded;
 
 /**
  * This class implements a database table from which one can get, add and remove an {@link Entity entity's} state.

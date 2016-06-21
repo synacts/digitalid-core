@@ -27,7 +27,7 @@ import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.conversion.xdf.XDFConverter;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 public class XDFMapConverter<T extends Map<?, ?>> extends XDFConverter<T> {
     

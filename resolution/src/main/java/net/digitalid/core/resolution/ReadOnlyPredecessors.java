@@ -15,8 +15,8 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identity.NonHostIdentity;
+import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identity.NonHostIdentity;
 
 import net.digitalid.service.core.block.wrappers.Blockable;
 

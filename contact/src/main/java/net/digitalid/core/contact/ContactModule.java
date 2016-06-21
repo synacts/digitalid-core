@@ -24,7 +24,7 @@ import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
 

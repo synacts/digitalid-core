@@ -35,10 +35,10 @@ import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.handler.core.CoreServiceInternalQuery;
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identity.IdentityImplementation;
-import net.digitalid.core.identity.InternalPerson;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.IdentityImplementation;
+import net.digitalid.core.identification.identity.InternalPerson;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.Element;

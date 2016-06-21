@@ -13,7 +13,7 @@ import net.digitalid.database.core.configuration.MySQLConfiguration;
 import net.digitalid.database.core.configuration.PostgreSQLConfiguration;
 import net.digitalid.database.core.configuration.SQLiteConfiguration;
 
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;

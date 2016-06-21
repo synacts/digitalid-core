@@ -11,7 +11,7 @@ import net.digitalid.core.conversion.wrappers.value.integer.Integer32Wrapper;
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.server.DatabaseSetup;
 
 import org.junit.Assert;

@@ -15,9 +15,9 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.IdentityImplementation;
+import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.identification.identity.IdentityImplementation;
 
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;

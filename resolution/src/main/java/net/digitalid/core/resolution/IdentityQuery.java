@@ -21,10 +21,10 @@ import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.handler.core.CoreServiceExternalQuery;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
+import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * Queries the identity of the given subject.

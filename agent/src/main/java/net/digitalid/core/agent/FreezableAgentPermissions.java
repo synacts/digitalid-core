@@ -38,11 +38,11 @@ import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.IdentityImplementation;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.annotations.AttributeType;
-import net.digitalid.core.resolution.Category;
+import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.identification.identity.IdentityImplementation;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.annotations.AttributeType;
+import net.digitalid.core.identification.Category;
 import net.digitalid.core.resolution.Mapper;
 
 import net.digitalid.service.core.auxiliary.Time;

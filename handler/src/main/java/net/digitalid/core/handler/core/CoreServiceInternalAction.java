@@ -27,7 +27,7 @@ import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.host.annotations.Hosts;
-import net.digitalid.core.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
 

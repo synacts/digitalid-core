@@ -14,9 +14,9 @@ import net.digitalid.core.client.Client;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.entity.NativeRole;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.NaturalPerson;
+import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.identification.identity.NaturalPerson;
 import net.digitalid.core.service.CoreService;
 
 import net.digitalid.service.core.identity.Category;

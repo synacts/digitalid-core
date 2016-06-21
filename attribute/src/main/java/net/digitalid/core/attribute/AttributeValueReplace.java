@@ -24,9 +24,9 @@ import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.core.CoreServiceInternalAction;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.IdentifierImplementation;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.IdentifierImplementation;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.dataservice.StateModule;
 

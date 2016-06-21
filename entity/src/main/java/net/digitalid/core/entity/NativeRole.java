@@ -13,7 +13,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.identity.InternalNonHostIdentity;
+import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;

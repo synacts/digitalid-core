@@ -28,9 +28,9 @@ import net.digitalid.core.entity.NonNativeRole;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.entity.annotations.OfInternalPerson;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.identity.InternalPerson;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.InternalNonHostIdentity;
+import net.digitalid.core.identification.identity.InternalPerson;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.Element;

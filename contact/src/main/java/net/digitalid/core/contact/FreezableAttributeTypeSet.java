@@ -24,9 +24,9 @@ import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.IdentityImplementation;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.annotations.AttributeType;
+import net.digitalid.core.identification.identity.IdentityImplementation;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.annotations.AttributeType;
 
 /**
  * This class models a freezable set of attribute types.

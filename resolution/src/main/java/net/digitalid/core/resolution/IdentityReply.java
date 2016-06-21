@@ -24,10 +24,10 @@ import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.handler.core.CoreServiceQueryReply;
-import net.digitalid.core.identifier.IdentifierImplementation;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identity.NonHostIdentity;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identifier.IdentifierImplementation;
+import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identity.NonHostIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
 
 /**

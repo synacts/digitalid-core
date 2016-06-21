@@ -10,8 +10,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.annotations.NonEncoding;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.annotations.Loaded;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.annotations.Loaded;
 
 /**
  * This class is like {@link RequestingXDFConverter} except that the decoding of {@link Block blocks} throws less exceptions.

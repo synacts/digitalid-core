@@ -13,7 +13,7 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.key.RequestingKeyConverter;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 

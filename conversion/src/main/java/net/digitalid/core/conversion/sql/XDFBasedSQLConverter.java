@@ -14,7 +14,7 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.key.XDFBasedKeyConverter;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.XDF;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * This class implements the methods that all SQL converters which store their data as a {@link Block block} in the {@link Database database} share.

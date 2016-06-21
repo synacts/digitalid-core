@@ -33,8 +33,8 @@ import net.digitalid.core.cache.Cache;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identity.HostIdentity;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.HostIdentity;
 
 /**
  * The server runs the configured hosts.

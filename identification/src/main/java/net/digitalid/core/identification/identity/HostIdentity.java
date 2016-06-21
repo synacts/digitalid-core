@@ -10,17 +10,10 @@ import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
-import net.digitalid.database.core.converter.sql.SQLConverter;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
-import net.digitalid.core.conversion.Converters;
-import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-import net.digitalid.core.conversion.xdf.ChainingRequestingXDFConverter;
-import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.Identifier;
-import net.digitalid.core.resolution.Category;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.Category;
 import net.digitalid.core.resolution.Mapper;
 
 /**
@@ -96,36 +89,5 @@ public final class HostIdentity extends IdentityImplementation implements Intern
         Mapper.unmap(this);
         throw exception;
     }
-    
-    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code host@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("host@core.digitalid.net").load(Identity.IDENTIFIER);
-    
-    /**
-     * Stores the XDF converter of this class.
-     */
-    public static final @Nonnull RequestingXDFConverter<HostIdentity, Object> XDF_CONVERTER = ChainingRequestingXDFConverter.get(new Identity.IdentifierConverter<>(HostIdentity.class), Identifier.XDF_CONVERTER.setType(IDENTIFIER));
-    
-    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
-    
-    /**
-     * Stores the declaration of this class.
-     */
-    public static final @Nonnull Identity.Declaration DECLARATION = new Identity.Declaration("host_identity", false);
-    
-    /**
-     * Stores the SQL converter of this class.
-     */
-    public static final @Nonnull SQLConverter<HostIdentity, Object> SQL_CONVERTER = ChainingSQLConverter.get(new Identity.LongConverter<>(HostIdentity.class), Integer64Wrapper.getValueSQLConverter(DECLARATION));
-    
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
-    
-    /**
-     * Stores the converters of this class.
-     */
-    public static final @Nonnull Converters<HostIdentity, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

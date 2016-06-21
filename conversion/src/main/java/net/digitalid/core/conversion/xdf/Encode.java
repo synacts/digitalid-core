@@ -7,8 +7,8 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.conversion.Block;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.annotations.Loaded;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.annotations.Loaded;
 
 /**
  * This is a utility class to encode objects that implement {@link XDF}.

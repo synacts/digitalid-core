@@ -12,7 +12,7 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.value.integer.Integer32Wrapper;
 import net.digitalid.core.conversion.wrappers.value.integer.IntegerWrapper;
 import net.digitalid.core.conversion.xdf.XDFConverter;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 public class XDFInteger32Converter extends XDFConverter<Integer> {
     

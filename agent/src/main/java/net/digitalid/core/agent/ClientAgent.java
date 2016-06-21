@@ -15,7 +15,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.identity.Identity;
+import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 import net.digitalid.service.core.annotations.OnlyForActions;

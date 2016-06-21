@@ -18,8 +18,8 @@ import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.cryptography.signature.exceptions.InvalidSignatureException;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.identity.InternalNonHostIdentity;
+import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Blockable;

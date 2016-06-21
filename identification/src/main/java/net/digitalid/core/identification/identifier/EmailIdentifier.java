@@ -51,7 +51,7 @@ public interface EmailIdentifier extends ExternalIdentifier {
      */
     @Pure
     public default @Nonnull String getHost() {
-        return getString().substring(getString().indexOf("@") + 1);
+        return getString().substring(getString().indexOf('@') + 1);
     }
     
     /**

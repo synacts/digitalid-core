@@ -34,9 +34,9 @@ import net.digitalid.core.entity.Role;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identity.InternalPerson;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.InternalPerson;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.service.CoreService;
 
 /**

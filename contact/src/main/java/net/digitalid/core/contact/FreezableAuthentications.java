@@ -13,8 +13,8 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.resolution.Category;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.Category;
 
 import net.digitalid.service.core.auxiliary.Time;
 

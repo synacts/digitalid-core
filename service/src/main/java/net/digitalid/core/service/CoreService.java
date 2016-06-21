@@ -6,9 +6,9 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 
 import net.digitalid.core.entity.Role;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.InternalPerson;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.state.Service;
 
 /**

@@ -18,7 +18,7 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.value.EmptyWrapper;
 import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.conversion.xdf.XDFConverter;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * Converts a convertible object with a single field into an XDF block.

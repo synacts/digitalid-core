@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 import net.digitalid.utility.validation.annotations.meta.TargetTypes;
 
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.InternalPerson;
+import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.identification.identity.InternalPerson;
 
 /**
  * This annotation indicates that the {@link Identity identity} of an {@link Entity entity} denotes an {@link InternalPerson internal person}.

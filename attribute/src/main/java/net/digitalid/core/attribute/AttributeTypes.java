@@ -3,8 +3,8 @@ package net.digitalid.core.attribute;
 import javax.annotation.Nonnull;
 
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.resolution.Category;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.Category;
 
 import net.digitalid.service.core.auxiliary.Time;
 

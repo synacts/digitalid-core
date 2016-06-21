@@ -8,7 +8,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.core.converter.sql.SQLConverter;
 
 import net.digitalid.core.conversion.xdf.NonRequestingXDFConverter;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * This class allows to store several non-requesting converters in a single object.

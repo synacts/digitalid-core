@@ -28,11 +28,11 @@ import net.digitalid.core.conversion.wrappers.value.binary.Binary256Wrapper;
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identifier.IdentifierImplementation;
-import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.identity.InternalPerson;
-import net.digitalid.core.identity.NonHostIdentity;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identifier.IdentifierImplementation;
+import net.digitalid.core.identification.identity.InternalNonHostIdentity;
+import net.digitalid.core.identification.identity.InternalPerson;
+import net.digitalid.core.identification.identity.NonHostIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.Exponent;

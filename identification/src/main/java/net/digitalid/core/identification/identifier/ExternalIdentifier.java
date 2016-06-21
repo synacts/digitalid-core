@@ -28,10 +28,6 @@ public interface ExternalIdentifier extends NonHostIdentifier {
     
     /**
      * Returns whether the given string conforms to the criteria of this class.
-     *
-     * @param string the string to check.
-     * 
-     * @return whether the given string conforms to the criteria of this class.
      */
     @Pure
     static boolean isConforming(@Nonnull String string) {
@@ -40,10 +36,6 @@ public interface ExternalIdentifier extends NonHostIdentifier {
     
     /**
      * Returns whether the given string is a valid identifier.
-     *
-     * @param string the string to check.
-     * 
-     * @return whether the given string is a valid identifier.
      */
     @Pure
     public static boolean isValid(@Nonnull String string) {

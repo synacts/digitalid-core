@@ -12,7 +12,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * This class models the permissions of contacts as a set of attribute types.

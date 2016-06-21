@@ -37,7 +37,7 @@ import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 import net.digitalid.service.core.annotations.OnlyForActions;

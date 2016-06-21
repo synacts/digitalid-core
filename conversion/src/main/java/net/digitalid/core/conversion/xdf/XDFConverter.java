@@ -16,8 +16,8 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.conversion.Block;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.SyntacticType;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SyntacticType;
 
 /**
  * Converts {@link Convertible} objects to and from XDF blocks.

@@ -18,8 +18,8 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.core.CoreServiceExternalAction;
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.pusher.Pusher;
 
 /**

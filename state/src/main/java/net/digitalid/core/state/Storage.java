@@ -10,7 +10,7 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * This class maps to all the site storages given their state type.

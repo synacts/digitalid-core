@@ -11,7 +11,7 @@ import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.value.string.String01Wrapper;
 import net.digitalid.core.conversion.xdf.XDFConverter;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 public class XDFCharacterConverter extends XDFConverter<Character> {
     

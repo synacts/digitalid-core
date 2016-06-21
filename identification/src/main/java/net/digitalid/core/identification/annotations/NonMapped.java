@@ -6,9 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.digitalid.utility.validation.annotations.meta.TargetTypes;
-
-import net.digitalid.core.identifier.Identifier;
+import net.digitalid.core.identification.identifier.Identifier;
 
 /**
  * This annotation indicates that an {@link Identifier identifier} is not {@link Identifier#isMapped() mapped}.
@@ -16,7 +14,7 @@ import net.digitalid.core.identifier.Identifier;
  * @see Mapped
  */
 @Documented
-@TargetTypes(Identifier.class)
+// TODO: Implement a value validator instead: @TargetTypes(Identifier.class)
+@Target(ElementType.TYPE_USE)
 @Retention(RetentionPolicy.CLASS)
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface NonMapped {}

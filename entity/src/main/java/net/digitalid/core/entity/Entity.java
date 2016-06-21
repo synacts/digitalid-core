@@ -33,8 +33,8 @@ import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.handler.Handler;
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.InternalIdentity;
+import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.resolution.Mapper;
 
 /**

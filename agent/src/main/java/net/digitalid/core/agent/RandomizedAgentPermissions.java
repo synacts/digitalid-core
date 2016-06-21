@@ -21,7 +21,7 @@ import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.wrappers.value.binary.Binary256Wrapper;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.block.Blockable;
 import net.digitalid.service.core.cryptography.Parameters;

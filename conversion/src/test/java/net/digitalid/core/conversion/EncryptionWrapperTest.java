@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.core.conversion.wrappers.EncryptionWrapper;
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.server.ServerSetup;
 
 import net.digitalid.service.core.cryptography.SymmetricKey;

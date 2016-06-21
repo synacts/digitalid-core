@@ -11,7 +11,7 @@ import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.core.CoreServiceQueryReply;
 import net.digitalid.core.host.annotations.Hosts;
-import net.digitalid.core.identifier.InternalIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.resolution.IdentityReply;
 
 /**

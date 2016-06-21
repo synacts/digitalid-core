@@ -26,9 +26,9 @@ import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.handler.core.CoreServiceQueryReply;
-import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.identity.InternalPerson;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.InternalNonHostIdentity;
+import net.digitalid.core.identification.identity.InternalPerson;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.Element;

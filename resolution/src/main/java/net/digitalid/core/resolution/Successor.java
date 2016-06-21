@@ -18,11 +18,11 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.ExternalIdentifier;
-import net.digitalid.core.identifier.Identifier;
-import net.digitalid.core.identifier.IdentifierImplementation;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identifier.NonHostIdentifier;
+import net.digitalid.core.identification.identifier.ExternalIdentifier;
+import net.digitalid.core.identification.identifier.Identifier;
+import net.digitalid.core.identification.identifier.IdentifierImplementation;
+import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identifier.NonHostIdentifier;
 
 /**
  * This class models the successor of an {@link Identifier identifier}.

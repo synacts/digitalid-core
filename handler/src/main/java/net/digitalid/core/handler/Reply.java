@@ -36,8 +36,8 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.host.annotations.Hosts;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.packet.Packet;
 
 import net.digitalid.service.core.auxiliary.Time;

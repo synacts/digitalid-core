@@ -44,7 +44,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 

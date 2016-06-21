@@ -7,7 +7,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
-import net.digitalid.core.identity.HostIdentity;
+import net.digitalid.core.identification.identity.HostIdentity;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.Element;

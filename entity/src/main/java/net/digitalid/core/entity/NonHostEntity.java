@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.identity.InternalNonHostIdentity;
+import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 
 /**
  * This interface models a non-host entity.

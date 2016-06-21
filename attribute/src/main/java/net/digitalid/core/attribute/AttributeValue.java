@@ -25,8 +25,8 @@ import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.cryptography.signature.exceptions.InvalidSignatureException;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.annotations.AttributeType;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.annotations.AttributeType;
 
 import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
 

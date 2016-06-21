@@ -18,7 +18,7 @@ import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.core.CoreServiceInternalQuery;
-import net.digitalid.core.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.HostIdentifier;
 
 /**
  * Internal queries can only be sent by {@link Client clients} and are always signed identity-based.

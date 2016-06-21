@@ -16,8 +16,8 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.host.annotations.Hosts;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 
 /**
  * Queries have to be sent by the caller and are thus executed synchronously.

@@ -21,7 +21,7 @@ import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.core.host.annotations.Hosts;
-import net.digitalid.core.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 /**

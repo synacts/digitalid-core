@@ -7,9 +7,6 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.system.castable.CastableObject;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.converter.sql.SQLConverter;
-
-import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
 
 /**
  * This class models a digital identity, which can change identifiers and hosts.
@@ -76,22 +73,6 @@ abstract class IdentityImplementation extends CastableObject implements Identity
     @Override
     public final @Nonnull String toString() {
         return String.valueOf(key);
-    }
-    
-    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final @Nonnull RequestingXDFConverter<Identity, Object> getXDFConverter() {
-        return XDF_CONVERTER;
-    }
-    
-    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final @Nonnull SQLConverter<Identity, Object> getSQLConverter() {
-        return SQL_CONVERTER;
     }
     
 }

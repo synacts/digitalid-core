@@ -8,7 +8,7 @@ import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.annotations.method.Pure;
 
 import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.block.wrappers.Blockable;
 

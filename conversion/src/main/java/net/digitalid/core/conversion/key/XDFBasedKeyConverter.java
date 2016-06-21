@@ -15,7 +15,7 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * This class allows to convert an object to its {@link Block block} and recover it again.

@@ -24,8 +24,8 @@ import net.digitalid.core.credential.Credential;
 import net.digitalid.core.packet.exceptions.NetworkException;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Method;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.synchronizer.RequestAudit;
 

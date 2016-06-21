@@ -10,8 +10,8 @@ import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.database.core.table.Site;
 
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.annotations.Loaded;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.annotations.Loaded;
 
 /**
  * This class models a database table that can be exported and imported on {@link Host hosts}.

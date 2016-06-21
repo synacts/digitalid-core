@@ -13,11 +13,11 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.IdentityImplementation;
-import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.identity.InternalNonHostIdentity;
+import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.identification.identity.IdentityImplementation;
+import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 
 /**
  * This class models an account on the host-side.

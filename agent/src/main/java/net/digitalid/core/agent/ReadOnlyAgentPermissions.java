@@ -12,7 +12,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticType;
 
 import net.digitalid.service.core.block.wrappers.Blockable;
 import net.digitalid.service.core.database.SQLizable;

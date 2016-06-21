@@ -6,9 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.digitalid.utility.validation.annotations.meta.TargetTypes;
-
-import net.digitalid.core.identifier.Identifier;
+import net.digitalid.core.identification.identifier.Identifier;
 
 /**
  * This annotation indicates that a method should only be invoked on a {@link Identifier#isMapped() mapped} {@link Identifier identifier}.
@@ -17,6 +15,6 @@ import net.digitalid.core.identifier.Identifier;
  */
 @Documented
 @Target(ElementType.METHOD)
-@TargetTypes(Identifier.class)
+// TODO: Implement a value validator instead: @TargetTypes(Identifier.class)
 @Retention(RetentionPolicy.CLASS)
 public @interface MappedRecipient {}

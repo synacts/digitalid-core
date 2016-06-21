@@ -41,11 +41,11 @@ public interface InternalNonHostIdentifier extends InternalIdentifier, NonHostId
      */
     @Pure
     @Recover
-    public static @Nonnull InternalNonHostIdentifier get(@Nonnull @Valid String string) {
+    public static @Nonnull InternalNonHostIdentifier with(@Nonnull @Valid String string) {
         return new InternalNonHostIdentifierSubclass(string);
     }
     
-    /* -------------------------------------------------- Mapping -------------------------------------------------- */
+    /* -------------------------------------------------- Resolve -------------------------------------------------- */
     
     @Pure
     @Override
@@ -72,7 +72,8 @@ public interface InternalNonHostIdentifier extends InternalIdentifier, NonHostId
      * This is useful for dynamically creating subtypes of existing types.
      */
     @Pure
-    public default @Nonnull String getStringWithDot() {
+    @Deprecated // TODO: Maybe no longer necessary if almost all types are generated implicitly.
+    public default @Nonnull String getStringWithLeadingDot() {
         final @Nonnull String string = getString();
         return (string.startsWith("@") ? "" : ".") + string;
     }
