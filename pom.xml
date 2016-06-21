@@ -68,11 +68,11 @@
     </modules>
     
     <dependencies>
-<!--        <dependency>
+        <dependency>
             <groupId>net.digitalid.database</groupId>
-            <artifactId>database</artifactId>
+            <artifactId>database-annotations</artifactId>
             <version>1.0.0</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>net.digitalid.utility</groupId>
             <artifactId>utility-parent</artifactId>

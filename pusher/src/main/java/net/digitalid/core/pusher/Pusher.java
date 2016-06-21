@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.system.logger.Log;
 
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.service.core.handler.ExternalAction;
 

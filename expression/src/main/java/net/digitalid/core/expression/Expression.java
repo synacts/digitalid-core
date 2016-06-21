@@ -12,7 +12,7 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.packet.exceptions.NetworkException;

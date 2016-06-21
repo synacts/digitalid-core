@@ -9,7 +9,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyMap;
 import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.annotations.method.Pure;
 
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identity.SemanticType;

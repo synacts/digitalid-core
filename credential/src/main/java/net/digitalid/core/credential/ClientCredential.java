@@ -15,7 +15,7 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.agent.RandomizedAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;

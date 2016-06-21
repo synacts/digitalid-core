@@ -9,7 +9,7 @@ import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.annotations.transaction.Committing;
 
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;

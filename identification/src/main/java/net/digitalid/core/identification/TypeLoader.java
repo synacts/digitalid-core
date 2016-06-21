@@ -8,6 +8,8 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.tuples.Quintet;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
+import net.digitalid.database.annotations.transaction.NonCommitting;
+
 import net.digitalid.core.identification.identity.Type;
 
 /**
@@ -25,7 +27,7 @@ public interface TypeLoader {
      */
     @Pure
     @NonCommitting
-    public abstract @Nonnull Quintet load(@Nonnull Type type) throws ExternalException;
+    public abstract @Nonnull Quintet<?, ?, ?, ?, ?> load(@Nonnull Type type) throws ExternalException;
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     

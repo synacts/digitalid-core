@@ -10,7 +10,7 @@ import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.identification.identity.Identity;
 

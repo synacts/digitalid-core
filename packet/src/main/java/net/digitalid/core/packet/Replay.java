@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.system.errors.InitializationError;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.conversion.wrappers.EncryptionWrapper;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;

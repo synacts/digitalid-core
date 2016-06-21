@@ -8,9 +8,9 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
 
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.Locked;
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.annotations.transaction.Locked;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.concept.Concept;

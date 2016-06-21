@@ -8,7 +8,7 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.core.configuration.MySQLConfiguration;
 import net.digitalid.database.core.configuration.PostgreSQLConfiguration;
 import net.digitalid.database.core.configuration.SQLiteConfiguration;

@@ -13,8 +13,8 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.converter.sql.SQL;
 
 import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;

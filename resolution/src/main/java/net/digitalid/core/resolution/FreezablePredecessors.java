@@ -21,7 +21,7 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.annotations.method.Pure;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;

@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
-import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.annotations.transaction.Committing;
 
 import org.junit.Test;
 

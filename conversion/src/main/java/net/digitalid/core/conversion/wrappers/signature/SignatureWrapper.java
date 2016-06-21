@@ -17,8 +17,8 @@ import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.annotations.Locked;
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.Locked;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.conversion.Block;

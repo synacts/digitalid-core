@@ -13,7 +13,7 @@ import net.digitalid.utility.console.exceptions.EscapeOptionException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.annotations.transaction.Committing;
 
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.host.Host;

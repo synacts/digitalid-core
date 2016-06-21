@@ -22,9 +22,9 @@ import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.NamedThreadFactory;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.Locked;
-import net.digitalid.database.core.annotations.NonLocked;
+import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.annotations.transaction.Locked;
+import net.digitalid.database.annotations.transaction.NonLocked;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.packet.exceptions.NetworkException;

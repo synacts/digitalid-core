@@ -20,8 +20,8 @@ import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.validation.state.Stateless;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.core.exceptions.operation.FailedCommitException;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 

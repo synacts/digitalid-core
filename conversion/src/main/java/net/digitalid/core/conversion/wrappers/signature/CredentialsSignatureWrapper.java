@@ -24,8 +24,8 @@ import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.state.Validated;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.annotations.Locked;
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.Locked;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.cache.Cache;

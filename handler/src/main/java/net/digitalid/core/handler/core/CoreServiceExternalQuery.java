@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;

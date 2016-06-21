@@ -7,6 +7,8 @@ import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
+import net.digitalid.database.annotations.transaction.NonCommitting;
+
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identity.Identity;
 
