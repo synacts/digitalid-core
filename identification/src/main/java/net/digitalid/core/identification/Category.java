@@ -10,6 +10,7 @@ import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.string.Strings;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.Empty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -97,6 +98,7 @@ public enum Category {
      * Returns the category denoted by the given value.
      */
     @Pure
+    @Recover
     public static @Nonnull Category of(@Valid byte value) {
         Require.that(isValid(value)).orThrow("The value has to be valid but was $.", value);
         

@@ -62,7 +62,7 @@ public interface InternalNonHostIdentifier extends InternalIdentifier, NonHostId
     @Pure
     @Override
     public default @Nonnull HostIdentifier getHostIdentifier() {
-        return HostIdentifier.get(getString().substring(getString().indexOf("@") + 1));
+        return HostIdentifier.with(getString().substring(getString().indexOf("@") + 1));
     }
     
     /* -------------------------------------------------- String with Dot -------------------------------------------------- */

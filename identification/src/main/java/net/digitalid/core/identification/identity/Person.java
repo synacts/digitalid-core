@@ -1,5 +1,6 @@
 package net.digitalid.core.identification.identity;
 
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -14,6 +15,14 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 @Mutable
 @GenerateConverter
 public abstract class Person extends RelocatableIdentity {
+    
+    /* -------------------------------------------------- Key -------------------------------------------------- */
+    
+    /**
+     * Sets the internal number that represents this person.
+     */
+    @Impure
+    abstract void setKey(long key);
     
     /* -------------------------------------------------- Merging -------------------------------------------------- */
     
