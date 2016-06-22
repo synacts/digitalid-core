@@ -1,38 +1,37 @@
 package net.digitalid.core.identification.identity;
 
-import java.sql.SQLException;
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.rootclass.RootInterface;
-import net.digitalid.utility.validation.annotations.type.Immutable;
-
-import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.core.identification.Category;
 import net.digitalid.core.identification.identifier.Identifier;
 
 /**
- * This interface models a digital identity.
+ * This interface models a digital identity, which can change identifiers and hosts.
+ * Note that identity objects are not necessarily unique (e.g. after identities have been merged).
+ * TODO: Explain the above properties better.
  * 
- * @see IdentityImplementation
+ * TODO: The equality and hash code of identities should only depend on their key (so that types are sound hash keys even after relocation).
+ * 
+ * @see NonHostIdentity
  * @see InternalIdentity
- * @see ExternalIdentity
- * 
- * @see Mapper
  */
-@Immutable
+@Mutable
 @GenerateConverter
 public interface Identity extends RootInterface {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
     /**
-     * Returns the number that represents this identity.
+     * Returns the internal number that represents this identity.
+     * The key remains the same after relocation but changes after merging.
      */
     @Pure
+//    @Volatile // TODO: Make the generated field volatile.
     public long getKey();
     
     /* -------------------------------------------------- Address -------------------------------------------------- */
@@ -53,13 +52,16 @@ public interface Identity extends RootInterface {
     
     /* -------------------------------------------------- Merging -------------------------------------------------- */
     
-    /**
-     * Returns whether this identity has been merged and updates the internal number and the identifier.
-     * 
-     * @param exception the exception to be rethrown if this identity has not been merged.
-     */
-    @NonCommitting
-    public boolean hasBeenMerged(@Nonnull SQLException exception) throws DatabaseException;
+    // TODO: I'm still uncertain how we want to handle this in the future but tend to caching only in single-access mode and each time database lookups in multi-access mode.
+    
+//    /**
+//     * Returns whether this identity has been merged and updates the internal number and the identifier.
+//     * 
+//     * @param exception the exception to be rethrown if this identity has not been merged.
+//     */
+//    @Pure
+//    @NonCommitting
+//    public boolean hasBeenMerged(@Nonnull SQLException exception) throws DatabaseException;
     
     /* -------------------------------------------------- Key Converters -------------------------------------------------- */
     

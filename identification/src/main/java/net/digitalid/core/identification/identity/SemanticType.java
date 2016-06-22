@@ -3,43 +3,29 @@ package net.digitalid.core.identification.identity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.collections.array.FreezableArray;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.threading.Threading;
 import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.UniqueElements;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.cache.Cache;
-import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
-import net.digitalid.core.contact.Context;
-import net.digitalid.core.conversion.Block;
-import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
-import net.digitalid.core.conversion.wrappers.value.binary.BinaryWrapper;
-import net.digitalid.core.entity.Entity;
 import net.digitalid.core.identification.Category;
-import net.digitalid.core.identification.identifier.IdentifierImplementation;
-import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identification.identity.annotations.Loaded;
-import net.digitalid.core.identification.identity.annotations.LoadedRecipient;
-import net.digitalid.core.identification.identity.annotations.NonLoaded;
-import net.digitalid.core.identification.identity.annotations.NonLoadedRecipient;
-import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
-import net.digitalid.core.resolution.Mapper;
-
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.core.identification.annotations.Loaded;
+import net.digitalid.core.identification.annotations.LoadedRecipient;
+import net.digitalid.core.identification.annotations.NonLoadedRecipient;
 
 /**
  * This class models a semantic type.
@@ -47,39 +33,57 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterV
  * @invariant !isLoaded() || isAttributeType() == (getCachingPeriod() != null) : "If (and only if) this semantic type can be used as an attribute, the caching period is not null.";
  * @invariant !isLoaded() || getSyntacticBase().getNumberOfParameters() == -1 && getParameters().size() > 0 || getSyntacticBase().getNumberOfParameters() == getParameters().size() : "The number of required parameters is either variable or matches the given parameters.";
  */
-@Immutable
-public final class SemanticType extends Type {
+@Mutable
+@GenerateSubclass
+@GenerateConverter
+public abstract class SemanticType extends Type {
     
-    /**
-     * Stores the semantic type {@code categories.attribute.type@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType CATEGORIES = SemanticType.map("categories.attribute.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.XDF_TYPE, Category.TYPE);
+    // TODO: Find a way to map and load semantic types.
     
-    /**
-     * Stores the semantic type {@code caching.attribute.type@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType CACHING = SemanticType.map("caching.attribute.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, Time.TYPE);
+//    /**
+//     * Stores the semantic type {@code categories.attribute.type@core.digitalid.net}.
+//     */
+//    public static final @Nonnull SemanticType CATEGORIES = SemanticType.map("categories.attribute.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.XDF_TYPE, Category.TYPE);
+//    
+//    /**
+//     * Stores the semantic type {@code caching.attribute.type@core.digitalid.net}.
+//     */
+//    public static final @Nonnull SemanticType CACHING = SemanticType.map("caching.attribute.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, Time.TYPE);
+//    
+//    /**
+//     * Stores the semantic type {@code syntactic.base.semantic.type@core.digitalid.net}.
+//     */
+//    public static final @Nonnull SemanticType SYNTACTIC_BASE = SemanticType.map("syntactic.base.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, SyntacticType.IDENTIFIER);
+//    
+//    /**
+//     * Stores the semantic type {@code parameters.semantic.type@core.digitalid.net}.
+//     */
+//    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.XDF_TYPE, SemanticType.IDENTIFIER);
+//    
+//    /**
+//     * Stores the semantic type {@code semantic.base.semantic.type@core.digitalid.net}.
+//     */
+//    public static final @Nonnull SemanticType SEMANTIC_BASE = SemanticType.map("semantic.base.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, SemanticType.IDENTIFIER);
+//    
+//    
+//    /**
+//     * Stores the semantic type {@code unknown@core.digitalid.net}.
+//     */
+//    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(BinaryWrapper.XDF_TYPE);
     
-    /**
-     * Stores the semantic type {@code syntactic.base.semantic.type@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType SYNTACTIC_BASE = SemanticType.map("syntactic.base.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, SyntacticType.IDENTIFIER);
     
-    /**
-     * Stores the semantic type {@code parameters.semantic.type@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.XDF_TYPE, SemanticType.IDENTIFIER);
-    
-    /**
-     * Stores the semantic type {@code semantic.base.semantic.type@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType SEMANTIC_BASE = SemanticType.map("semantic.base.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, SemanticType.IDENTIFIER);
-    
-    
-    /**
-     * Stores the semantic type {@code unknown@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(BinaryWrapper.XDF_TYPE);
+//    /**
+//     * Maps the semantic type with the given identifier.
+//     * 
+//     * @param identifier the identifier of the semantic type.
+//     * 
+//     * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
+//     */
+//    @MainThread
+//    @NonCommitting
+//    public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
+//        return Mapper.mapSemanticType(InternalNonHostIdentifier.get(identifier));
+//    }
     
     
     /**
@@ -117,70 +121,49 @@ public final class SemanticType extends Type {
      */
     private @Nullable SemanticType semanticBase;
     
-    /**
-     * Creates a new semantic type with the given number and address.
-     * 
-     * @param number the number that represents this identity.
-     * @param address the current address of this identity.
-     */
-    @NonLoaded SemanticType(long number, @Nonnull InternalNonHostIdentifier address) {
-        super(number, address);
-    }
-    
-    /**
-     * Maps the semantic type with the given identifier.
-     * 
-     * @param identifier the identifier of the semantic type.
-     * 
-     * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
-     */
-    @MainThread
-    @NonCommitting
-    public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
-        return Mapper.mapSemanticType(InternalNonHostIdentifier.get(identifier));
-    }
-    
-    
+    @Impure
     @Override
     @NonCommitting
     @NonLoadedRecipient
     void load() throws ExternalException {
         Require.that(!isLoaded()).orThrow("The type declaration is not loaded.");
         
-        if (categories != null) { throw InvalidDeclarationException.get("The semantic base may not be circular.", getAddress()); }
+        // TODO: Use the type loader instead!
         
-        Cache.getAttributeValues(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);
-        
-        final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(Cache.getStaleAttributeContent(this, null, CATEGORIES));
-        final @Nonnull FreezableList<Category> categories = FreezableArrayList.getWithCapacity(elements.size());
-        for (final @Nonnull Block element : elements) { categories.add(Category.get(element)); }
-        if (!categories.containsDuplicates()) { throw InvalidParameterValueException.get("categories", categories); }
-        this.categories = categories.freeze();
-        
-        try {
-            this.cachingPeriod = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(this, null, CACHING));
-            if (cachingPeriod.isNegative() || cachingPeriod.isGreaterThan(Time.TROPICAL_YEAR)) { throw InvalidParameterValueException.get("caching period", cachingPeriod); }
-        } catch (@Nonnull AttributeNotFoundException exception) {
-            this.cachingPeriod = null;
-        }
-        if (!categories.isEmpty() == (cachingPeriod == null)) { throw InvalidParameterValueCombinationException.get("If (and only if) this semantic type can be used as an attribute, the caching period may not be null."); }
-        
-        try {
-            this.semanticBase = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().castTo(SemanticType.class);
-            this.syntacticBase = semanticBase.syntacticBase;
-            this.parameters = semanticBase.parameters;
-            setLoaded();
-        } catch (@Nonnull AttributeNotFoundException exception) {
-            this.syntacticBase = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().castTo(SyntacticType.class);
-            final @Nonnull ReadOnlyList<Block> list = ListWrapper.decodeNonNullableElements(Cache.getStaleAttributeContent(this, null, PARAMETERS));
-            final @Nonnull FreezableList<SemanticType> parameters = FreezableArrayList.getWithCapacity(list.size());
-            for (final @Nonnull Block element : elements) { parameters.add(Mapper.getIdentity(IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, element)).castTo(SemanticType.class)); }
-            if (!parameters.containsDuplicates()) { throw InvalidParameterValueException.get("parameters", parameters); }
-            if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) { throw InvalidParameterValueCombinationException.get("The number of required parameters must either be variable or match the given parameters."); }
-            this.parameters = parameters.freeze();
-            setLoaded();
-            for (final @Nonnull SemanticType parameter : parameters) { parameter.ensureLoaded(); }
-        }
+//        if (categories != null) { throw InvalidDeclarationException.get("The semantic base may not be circular.", getAddress()); }
+//        
+//        Cache.getAttributeValues(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);
+//        
+//        final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(Cache.getStaleAttributeContent(this, null, CATEGORIES));
+//        final @Nonnull FreezableList<Category> categories = FreezableArrayList.getWithCapacity(elements.size());
+//        for (final @Nonnull Block element : elements) { categories.add(Category.get(element)); }
+//        if (!categories.containsDuplicates()) { throw InvalidParameterValueException.get("categories", categories); }
+//        this.categories = categories.freeze();
+//        
+//        try {
+//            this.cachingPeriod = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(this, null, CACHING));
+//            if (cachingPeriod.isNegative() || cachingPeriod.isGreaterThan(Time.TROPICAL_YEAR)) { throw InvalidParameterValueException.get("caching period", cachingPeriod); }
+//        } catch (@Nonnull AttributeNotFoundException exception) {
+//            this.cachingPeriod = null;
+//        }
+//        if (!categories.isEmpty() == (cachingPeriod == null)) { throw InvalidParameterValueCombinationException.get("If (and only if) this semantic type can be used as an attribute, the caching period may not be null."); }
+//        
+//        try {
+//            this.semanticBase = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().castTo(SemanticType.class);
+//            this.syntacticBase = semanticBase.syntacticBase;
+//            this.parameters = semanticBase.parameters;
+//            setLoaded();
+//        } catch (@Nonnull AttributeNotFoundException exception) {
+//            this.syntacticBase = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().castTo(SyntacticType.class);
+//            final @Nonnull ReadOnlyList<Block> list = ListWrapper.decodeNonNullableElements(Cache.getStaleAttributeContent(this, null, PARAMETERS));
+//            final @Nonnull FreezableList<SemanticType> parameters = FreezableArrayList.getWithCapacity(list.size());
+//            for (final @Nonnull Block element : elements) { parameters.add(Mapper.getIdentity(IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, element)).castTo(SemanticType.class)); }
+//            if (!parameters.containsDuplicates()) { throw InvalidParameterValueException.get("parameters", parameters); }
+//            if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) { throw InvalidParameterValueCombinationException.get("The number of required parameters must either be variable or match the given parameters."); }
+//            this.parameters = parameters.freeze();
+//            setLoaded();
+//            for (final @Nonnull SemanticType parameter : parameters) { parameter.ensureLoaded(); }
+//        }
     }
     
     /**
@@ -198,6 +181,7 @@ public final class SemanticType extends Type {
      * @require categories.isEmpty() == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      * @require syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size() : "The number of required parameters has either to be variable or to match the given parameters.";
      */
+    @Impure
     @MainThread
     @NonLoadedRecipient
     public @Nonnull SemanticType load(@Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<SemanticType> parameters) {
@@ -241,10 +225,11 @@ public final class SemanticType extends Type {
      * @require (categories.length == 0) == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      * @require syntacticBase.getNumberOfParameters() == -1 && parameters.length > 0 || syntacticBase.getNumberOfParameters() == parameters.length : "The number of required parameters has either to be variable or to match the given parameters.";
      */
+    @Impure
     @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @NonNullableElements @UniqueElements Category[] categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull @NonNullableElements @UniqueElements SemanticType... parameters) {
-        return load(FreezableArray.getNonNullable(categories).toFreezableList().freeze(), cachingPeriod, syntacticBase, FreezableArray.getNonNullable(parameters).toFreezableList().freeze());
+        return load(FreezableArray.withElements(categories).toFreezableList().freeze(), cachingPeriod, syntacticBase, FreezableArray.withElements(parameters).toFreezableList().freeze());
     }
     
     /**
@@ -257,10 +242,11 @@ public final class SemanticType extends Type {
      * 
      * @require syntacticBase.getNumberOfParameters() == -1 && parameters.length > 0 || syntacticBase.getNumberOfParameters() == parameters.length : "The number of required parameters has either to be variable or to match the given parameters.";
      */
+    @Impure
     @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull SyntacticType syntacticBase, @Nonnull @NonNullableElements @UniqueElements SemanticType... parameters) {
-        return load(Category.NONE, null, syntacticBase, FreezableArray.getNonNullable(parameters).toFreezableList().freeze());
+        return load(Category.NONE, null, syntacticBase, FreezableArray.withElements(parameters).toFreezableList().freeze());
     }
     
     /**
@@ -275,6 +261,7 @@ public final class SemanticType extends Type {
      * @require cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      * @require categories.isEmpty() == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      */
+    @Impure
     @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @Frozen @NonNullableElements @UniqueElements ReadOnlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull @Loaded SemanticType semanticBase) {
@@ -313,10 +300,11 @@ public final class SemanticType extends Type {
      * @require cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      * @require (categories.length == 0) == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      */
+    @Impure
     @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @NonNullableElements @UniqueElements Category[] categories, @Nullable Time cachingPeriod, @Nonnull @Loaded SemanticType semanticBase) {
-        return load(FreezableArray.getNonNullable(categories).toFreezableList().freeze(), cachingPeriod, semanticBase);
+        return load(FreezableArray.withElements(categories).toFreezableList().freeze(), cachingPeriod, semanticBase);
     }
     
     /**
@@ -326,12 +314,14 @@ public final class SemanticType extends Type {
      * 
      * @return this semantic type.
      */
+    @Impure
     @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SemanticType load(@Nonnull @Loaded SemanticType semanticBase) {
         return load(Category.NONE, null, semanticBase);
     }
     
+    /* -------------------------------------------------- Category -------------------------------------------------- */
     
     @Pure
     @Override
@@ -339,11 +329,10 @@ public final class SemanticType extends Type {
         return Category.SEMANTIC_TYPE;
     }
     
+    /* -------------------------------------------------- Attributes -------------------------------------------------- */
     
     /**
      * Returns the categories for which this semantic type can be used as an attribute.
-     * 
-     * @return the categories for which this semantic type can be used as an attribute.
      */
     @Pure
     @LoadedRecipient
@@ -357,8 +346,6 @@ public final class SemanticType extends Type {
     /**
      * Returns the caching period of this semantic type when used as an attribute.
      * 
-     * @return the caching period of this semantic type when used as an attribute.
-     * 
      * @ensure return == null || return.isNonNegative() && return.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      */
     @Pure
@@ -371,8 +358,6 @@ public final class SemanticType extends Type {
     
     /**
      * Returns the caching period of this semantic type when used as an attribute.
-     * 
-     * @return the caching period of this semantic type when used as an attribute.
      * 
      * @require getCachingPeriod() != null : "The caching period is not null.";
      * 
@@ -390,8 +375,6 @@ public final class SemanticType extends Type {
     
     /**
      * Returns the syntactic base of this semantic type.
-     * 
-     * @return the syntactic base of this semantic type.
      */
     @Pure
     @LoadedRecipient
@@ -404,8 +387,6 @@ public final class SemanticType extends Type {
     
     /**
      * Returns the generic parameters of this semantic type.
-     * 
-     * @return the generic parameters of this semantic type.
      */
     @Pure
     @LoadedRecipient
@@ -418,8 +399,6 @@ public final class SemanticType extends Type {
     
     /**
      * Returns the semantic base of this semantic type.
-     * 
-     * @return the semantic base of this semantic type.
      * 
      * @ensure semanticBase == null || !semanticBase.isBasedOn(this) : "The semantic base is not based on this type.";
      */
@@ -435,8 +414,6 @@ public final class SemanticType extends Type {
     /**
      * Returns whether this semantic type can be used to denote an attribute.
      * 
-     * @return whether this semantic type can be used to denote an attribute.
-     * 
      * @ensure isAttributeType() == (getCachingPeriod() != null) : "If (and only if) this semantic type can be used to denote an attribute, the caching period is not null.";
      */
     @Pure
@@ -448,19 +425,19 @@ public final class SemanticType extends Type {
         return !categories.isEmpty();
     }
     
-    /**
-     * Checks that this semantic type can be used to denote an attribute.
-     * 
-     * @return this semantic type.
-     * 
-     * @throws InvalidParameterValueException if this is not the case.
-     */
-    @Pure
-    @LoadedRecipient
-    public @Nonnull SemanticType checkIsAttributeType() throws InvalidParameterValueException {
-        if (!isAttributeType()) { throw InvalidParameterValueException.get("attribute type", this); }
-        return this;
-    }
+//    /**
+//     * Checks that this semantic type can be used to denote an attribute.
+//     * 
+//     * @return this semantic type.
+//     * 
+//     * @throws InvalidParameterValueException if this is not the case.
+//     */
+//    @Pure
+//    @LoadedRecipient
+//    public @Nonnull SemanticType checkIsAttributeType() throws InvalidParameterValueException {
+//        if (!isAttributeType()) { throw InvalidParameterValueException.get("attribute type", this); }
+//        return this;
+//    }
     
     /**
      * Returns whether this semantic type can be used to denote an attribute for the given category.
@@ -478,43 +455,32 @@ public final class SemanticType extends Type {
         return categories.contains(category);
     }
     
-    /**
-     * Returns whether this semantic type can be used to denote an attribute for the given entity.
-     * 
-     * @param entity the entity of interest.
-     * 
-     * @return whether this semantic type can be used to denote an attribute for the given entity.
-     */
-    @Pure
-    @LoadedRecipient
-    public boolean isAttributeFor(@Nonnull Entity entity) {
-        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
-        
-        return isAttributeFor(entity.getIdentity().getCategory());
-    }
-    
-    /**
-     * Checks that this semantic type can be used to denote an attribute for the given entity.
-     * 
-     * @param entity the entity of interest.
-     * 
-     * @return this semantic type.
-     * 
-     * @throws InvalidParameterValueCombinationException if this is not the case.
-     */
-    @Pure
-    @LoadedRecipient
-    public @Nonnull SemanticType checkIsAttributeFor(@Nonnull Entity entity) throws InvalidParameterValueCombinationException {
-        if (!isAttributeFor(entity)) { throw InvalidParameterValueCombinationException.get(getAddress() + " is not an attribute for the entity " + entity.getIdentity().getAddress() + "."); }
-        return this;
-    }
+//    /**
+//     * Returns whether this semantic type can be used to denote an attribute for the given entity.
+//     */
+//    @Pure
+//    @LoadedRecipient
+//    public boolean isAttributeFor(@Nonnull Entity entity) {
+//        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
+//        
+//        return isAttributeFor(entity.getIdentity().getCategory());
+//    }
+//    
+//    /**
+//     * Checks that this semantic type can be used to denote an attribute for the given entity.
+//     * 
+//     * @throws InvalidParameterValueCombinationException if this is not the case.
+//     */
+//    @Pure
+//    @Chainable
+//    @LoadedRecipient
+//    public @Nonnull SemanticType checkIsAttributeFor(@Nonnull Entity entity) throws InvalidParameterValueCombinationException {
+//        if (!isAttributeFor(entity)) { throw InvalidParameterValueCombinationException.get(getAddress() + " is not an attribute for the entity " + entity.getIdentity().getAddress() + "."); }
+//        return this;
+//    }
     
     /**
      * Returns whether this semantic type is (indirectly) based on the given syntactic type.
-     * 
-     * @param syntacticType the syntactic type of interest.
-     * 
-     * @return whether this semantic type is (indirectly) based on the given syntactic type.
      */
     @Pure
     @LoadedRecipient
@@ -525,45 +491,38 @@ public final class SemanticType extends Type {
         return syntacticBase.equals(syntacticType);
     }
     
-    /**
-     * Returns whether this semantic type is (indirectly) based on the given semantic type.
-     * This relation is reflexive, transitive and antisymmetric.
-     * 
-     * @param semanticType the semantic type of interest.
-     * 
-     * @return whether this semantic type is (indirectly) based on the given semantic type.
-     */
-    @Pure
-    @LoadedRecipient
-    public boolean isBasedOn(@Nonnull SemanticType semanticType) {
-        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
-        
-        return semanticType.equals(UNKNOWN) || equals(semanticType) || semanticBase != null && semanticBase.isBasedOn(semanticType);
-    }
-    
-    /**
-     * Returns whether this semantic type can be used to denote a role.
-     * 
-     * @return whether this semantic type can be used to denote a role.
-     */
-    @Pure
-    @LoadedRecipient
-    public boolean isRoleType() {
-        return isBasedOn(Context.FLAT);
-    }
-    
-    /**
-     * Checks that this semantic type can be used to denote a role.
-     * 
-     * @return this semantic type.
-     * 
-     * @throws InvalidParameterValueException if this is not the case.
-     */
-    @Pure
-    @LoadedRecipient
-    public @Nonnull SemanticType checkIsRoleType() throws InvalidParameterValueException {
-        if (!isRoleType()) { throw InvalidParameterValueException.get("role type", this); }
-        return this;
-    }
+//    /**
+//     * Returns whether this semantic type is (indirectly) based on the given semantic type.
+//     * This relation is reflexive, transitive and antisymmetric.
+//     */
+//    @Pure
+//    @LoadedRecipient
+//    public boolean isBasedOn(@Nonnull SemanticType semanticType) {
+//        Require.that(isLoaded()).orThrow("The type declaration is already loaded.");
+//        
+//        return semanticType.equals(UNKNOWN) || equals(semanticType) || semanticBase != null && semanticBase.isBasedOn(semanticType);
+//    }
+//    
+//    /**
+//     * Returns whether this semantic type can be used to denote a role.
+//     */
+//    @Pure
+//    @LoadedRecipient
+//    public boolean isRoleType() {
+//        return isBasedOn(Context.FLAT);
+//    }
+//    
+//    /**
+//     * Checks that this semantic type can be used to denote a role.
+//     * 
+//     * @throws InvalidParameterValueException if this is not the case.
+//     */
+//    @Pure
+//    @Chainable
+//    @LoadedRecipient
+//    public @Nonnull SemanticType checkIsRoleType() throws InvalidParameterValueException {
+//        if (!isRoleType()) { throw InvalidParameterValueException.get("role type", this); }
+//        return this;
+//    }
     
 }

@@ -3,9 +3,6 @@ package net.digitalid.core.identification.identifier;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.InitialDirContext;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
@@ -59,13 +56,20 @@ public interface EmailIdentifier extends ExternalIdentifier {
      */
     @Pure
     public default boolean providerExists() {
-        try {
-            final @Nonnull InitialDirContext context = new InitialDirContext();
-            final @Nonnull Attributes attributes = context.getAttributes("dns:/" + getHost(), new String[] {"MX"});
-            return attributes.get("MX") != null;
-        } catch (@Nonnull NamingException exception) {
-            return false;
-        }
+        // TODO: These classes do not seem to exist on Android.
+        
+//import javax.naming.NamingException;
+//import javax.naming.directory.Attributes;
+//import javax.naming.directory.InitialDirContext;
+//        try {
+//            final @Nonnull InitialDirContext context = new InitialDirContext();
+//            final @Nonnull Attributes attributes = context.getAttributes("dns:/" + getHost(), new String[] {"MX"});
+//            return attributes.get("MX") != null;
+//        } catch (@Nonnull NamingException exception) {
+//            return false;
+//        }
+        
+        return false;
     }
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */

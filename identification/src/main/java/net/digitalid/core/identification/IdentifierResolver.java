@@ -14,6 +14,8 @@ import net.digitalid.core.identification.identity.Identity;
 
 /**
  * The identifier resolver resolves an identifier into the corresponding identity.
+ * 
+ * TODO: Move to the identity subpackage to expose package-visible executables through protected methods in this class.
  */
 @Mutable
 public interface IdentifierResolver {
