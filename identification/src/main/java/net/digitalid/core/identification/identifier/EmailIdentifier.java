@@ -14,7 +14,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.identification.IdentifierResolver;
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.exceptions.IdentityNotFoundException;
 import net.digitalid.core.identification.identity.Person;
 

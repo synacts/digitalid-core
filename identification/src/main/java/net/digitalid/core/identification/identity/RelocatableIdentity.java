@@ -14,7 +14,7 @@ import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
  * @see Person
  */
 @Mutable
-abstract class RelocatableIdentity implements NonHostIdentity {
+public abstract class RelocatableIdentity implements NonHostIdentity {
     
     /* -------------------------------------------------- Address -------------------------------------------------- */
     
