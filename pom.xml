@@ -70,7 +70,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.database</groupId>
-            <artifactId>database-annotations</artifactId>
+            <artifactId>database-core</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

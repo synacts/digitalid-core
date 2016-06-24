@@ -5,30 +5,28 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
-import net.digitalid.utility.freezable.NonFrozen;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.UniqueElements;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.annotations.transaction.NonLocked;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.AgentModule;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.credential.ClientCredential;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
 import net.digitalid.core.synchronizer.Synchronizer;
@@ -45,7 +43,7 @@ import net.digitalid.service.core.dataservice.StateModule;
  * @see NonNativeRole
  */
 @Immutable
-public abstract class Role extends EntityImplementation implements NonHostEntity {
+public abstract class Role implements NonHostEntity {
     
     /**
      * Stores the semantic type {@code issuer.role@core.digitalid.net}.
@@ -93,8 +91,6 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     
     /**
      * Returns the client that can assume this role.
-     * 
-     * @return the client that can assume this role.
      */
     @Pure
     public final @Nonnull Client getClient() {
@@ -103,8 +99,6 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     
     /**
      * Returns the issuer of this role.
-     * 
-     * @return the issuer of this role.
      */
     @Pure
     public final @Nonnull InternalNonHostIdentity getIssuer() {
@@ -114,8 +108,6 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     
     /**
      * Returns the agent of this role.
-     * 
-     * @return the agent of this role.
      */
     @Pure
     public abstract @Nonnull Agent getAgent();
@@ -123,8 +115,6 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     
     /**
      * Returns whether this role is native.
-     * 
-     * @return whether this role is native.
      */
     @Pure
     public final boolean isNative() {
@@ -133,8 +123,6 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     
     /**
      * Returns whether this role is non-native.
-     * 
-     * @return whether this role is non-native.
      */
     @Pure
     public final boolean isNonNative() {
@@ -143,8 +131,6 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     
     /**
      * Returns this role as a native role.
-     * 
-     * @return this role as a native role.
      * 
      * @require isNative() : "This role is native.";
      */
@@ -157,8 +143,6 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
     
     /**
      * Returns this role as a non-native role.
-     * 
-     * @return this role as a non-native role.
      * 
      * @require isNonNative() : "This role is non-native.";
      */
@@ -194,7 +178,6 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      * 
      * @param module the module whose state is to be reloaded for this role.
      */
-    @NonLocked
     @Committing
     public final void reloadState(@Nonnull StateModule module) throws InterruptedException, ExternalException {
         Synchronizer.reload(this, module);
@@ -209,7 +192,6 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      * 
      * @param service the service whose state is to be refreshed for this role.
      */
-    @NonLocked
     @Committing
     public final void refreshState(@Nonnull Service service) throws InterruptedException, ExternalException {
         Synchronizer.refresh(this, service);
@@ -226,7 +208,6 @@ public abstract class Role extends EntityImplementation implements NonHostEntity
      * 
      * @return whether this role is accredited for the given services.
      */
-    @NonLocked
     @Committing
     public boolean reloadOrRefreshState(@Nonnull Service... services) throws InterruptedException, ExternalException {
         final @Nonnull Time[] times = new Time[services.length];

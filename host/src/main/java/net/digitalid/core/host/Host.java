@@ -7,15 +7,16 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.conversion.None;
-import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.cryptography.key.KeyPair;
+import net.digitalid.utility.cryptography.key.chain.PrivateKeyChain;
+import net.digitalid.utility.cryptography.key.chain.PublicKeyChain;
+import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.time.Time;
+import net.digitalid.utility.time.TimeBuilder;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Committing;
-import net.digitalid.database.annotations.transaction.Locked;
-import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.table.Site;
 
 import net.digitalid.core.agent.FreezableAgentPermissions;
@@ -27,8 +28,6 @@ import net.digitalid.core.client.Client;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.entity.HostAccount;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.InternalIdentity;
@@ -36,11 +35,6 @@ import net.digitalid.core.resolution.Mapper;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
-
-import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.cryptography.KeyPair;
-import net.digitalid.service.core.cryptography.PrivateKeyChain;
-import net.digitalid.service.core.cryptography.PublicKeyChain;
 
 /**
  * A host stores a {@link KeyPair} and is run by a {@link Server}.
@@ -111,8 +105,8 @@ public final class Host extends Site {
             this.privateKeyChain = PrivateKeyChain.XDF_CONVERTER.decodeNonNullable(None.OBJECT, SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(privateKeyFile), true).checkType(PrivateKeyChain.TYPE));
             this.publicKeyChain = PublicKeyChain.XDF_CONVERTER.decodeNonNullable(None.OBJECT, SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(publicKeyFile), true).checkType(PublicKeyChain.TYPE));
         } else {
-            final @Nonnull KeyPair keyPair = KeyPair.getRandom();
-            final @Nonnull Time time = Time.getCurrent();
+            final @Nonnull KeyPair keyPair = KeyPair.withRandomValues();
+            final @Nonnull Time time = TimeBuilder.get().build();
             this.privateKeyChain = PrivateKeyChain.get(time, keyPair.getPrivateKey());
             this.publicKeyChain = PublicKeyChain.get(time, keyPair.getPublicKey());
         }
@@ -151,8 +145,6 @@ public final class Host extends Site {
     
     /**
      * Returns the identifier of this host.
-     * 
-     * @return the identifier of this host.
      */
     @Pure
     public @Nonnull HostIdentifier getIdentifier() {
@@ -161,8 +153,6 @@ public final class Host extends Site {
     
     /**
      * Returns the identity of this host.
-     * 
-     * @return the identity of this host.
      */
     @Pure
     public @Nonnull HostIdentity getIdentity() {
@@ -171,8 +161,6 @@ public final class Host extends Site {
     
     /**
      * Returns the account of this host.
-     * 
-     * @return the account of this host.
      */
     @Pure
     public @Nonnull HostAccount getAccount() {
@@ -181,8 +169,6 @@ public final class Host extends Site {
     
     /**
      * Returns the private key chain of this host.
-     * 
-     * @return the private key chain of this host.
      */
     @Pure
     public @Nonnull PrivateKeyChain getPrivateKeyChain() {
@@ -191,8 +177,6 @@ public final class Host extends Site {
     
     /**
      * Returns the public key chain of this host.
-     * 
-     * @return the public key chain of this host.
      */
     @Pure
     public @Nonnull PublicKeyChain getPublicKeyChain() {
@@ -201,8 +185,6 @@ public final class Host extends Site {
     
     /**
      * Returns the client associated with this host.
-     * 
-     * @return the client associated with this host.
      */
     @Pure
     public @Nonnull Client getClient() {
