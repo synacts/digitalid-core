@@ -3,7 +3,6 @@ package net.digitalid.core.identification.identifier;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.generation.Recover;
@@ -21,7 +20,7 @@ import net.digitalid.core.identification.identity.Identity;
  * @see NonHostIdentifier
  */
 @Immutable
-@GenerateConverter
+// TODO: @GenerateConverter
 public interface Identifier extends RootInterface {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */

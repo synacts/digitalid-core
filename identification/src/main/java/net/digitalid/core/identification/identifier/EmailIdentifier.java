@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.generation.Recover;
@@ -14,8 +13,8 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.exceptions.IdentityNotFoundException;
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Person;
 
 /**
@@ -23,7 +22,7 @@ import net.digitalid.core.identification.identity.Person;
  */
 @Immutable
 @GenerateSubclass
-@GenerateConverter
+// TODO: @GenerateConverter
 public interface EmailIdentifier extends ExternalIdentifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */

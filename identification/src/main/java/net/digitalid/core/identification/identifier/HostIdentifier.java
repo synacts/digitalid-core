@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -14,15 +13,15 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.identification.identity.IdentifierResolver;
 
 /**
  * This interface models host identifiers.
  */
 @Immutable
 @GenerateSubclass
-@GenerateConverter
+// TODO: @GenerateConverter
 public interface HostIdentifier extends InternalIdentifier {
     
     /* -------------------------------------------------- Digital ID Host Identifier -------------------------------------------------- */

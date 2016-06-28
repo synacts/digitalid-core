@@ -8,7 +8,6 @@ import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.freezable.annotations.Frozen;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.Empty;
@@ -19,7 +18,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
  * This class enumerates the various categories of digital identities.
  */
 @Immutable
-@GenerateConverter
+// TODO: @GenerateConverter
 public enum Category {
     
     /* -------------------------------------------------- Categories -------------------------------------------------- */

@@ -3,7 +3,6 @@ package net.digitalid.core.identification.identity;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.value.Invariant;
 
@@ -16,7 +15,7 @@ import net.digitalid.core.identification.Category;
  * @see MobilePerson
  */
 @Mutable
-@GenerateConverter
+// TODO: @GenerateConverter
 public abstract class ExternalPerson extends Person {
     
     /* -------------------------------------------------- Category -------------------------------------------------- */

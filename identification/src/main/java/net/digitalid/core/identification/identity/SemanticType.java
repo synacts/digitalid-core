@@ -9,7 +9,6 @@ import net.digitalid.utility.collections.array.FreezableArray;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.freezable.annotations.Frozen;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.threading.Threading;
@@ -35,7 +34,7 @@ import net.digitalid.core.identification.annotations.NonLoadedRecipient;
  */
 @Mutable
 @GenerateSubclass
-@GenerateConverter
+// TODO: @GenerateConverter
 public abstract class SemanticType extends Type {
     
     // TODO: Find a way to map and load semantic types.
