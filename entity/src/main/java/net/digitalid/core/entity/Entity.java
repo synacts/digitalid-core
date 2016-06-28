@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -22,7 +21,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
  * @see NonHostEntity
  */
 @Immutable
-@GenerateConverter
+// TODO: @GenerateConverter
 public interface Entity extends RootInterface {
     
     /* -------------------------------------------------- Methods -------------------------------------------------- */
@@ -48,15 +47,6 @@ public interface Entity extends RootInterface {
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
     
-    /**
-     * Returns the given column of the result set as an instance of this class.
-     * 
-     * @param site the site that accommodates the returned entity.
-     * @param resultSet the result set to retrieve the data from.
-     * @param columnIndex the index of the column containing the data.
-     * 
-     * @return the given column of the result set as an instance of this class.
-     */
     @Pure
     @Recover
     @NonCommitting

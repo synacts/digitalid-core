@@ -6,8 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.digitalid.utility.validation.annotations.meta.TargetTypes;
-
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.Type;
@@ -18,7 +16,11 @@ import net.digitalid.core.identification.identity.Type;
  * @see OfInternalPerson
  */
 @Documented
-@TargetTypes(Entity.class)
-@Retention(RetentionPolicy.CLASS)
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface OfType {}
+//@TargetTypes(Entity.class)
+@Target(ElementType.TYPE_USE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface OfType {    
+    
+    // TODO: Write a value validator if this annotation is still used at all.
+    
+}
