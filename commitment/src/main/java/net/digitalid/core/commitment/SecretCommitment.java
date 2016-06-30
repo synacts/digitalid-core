@@ -11,9 +11,9 @@ import net.digitalid.utility.math.Exponent;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
- * This class extends the {@link Commitment commitment} of a {@link Client client} with its {@link Client#getSecret() secret}.
+ * This class extends the {@link Commitment commitment} of a client with its secret.
  * 
- * @invariant getPublicKey().getAu().pow(getSecret()).equals(getValue()) : "The secret has to match the commitment.";
+ * @invariant getPublicKey().getAu().pow(getSecret()).equals(getElement()) : "The secret has to match the commitment.";
  */
 @Immutable
 @GenerateBuilder

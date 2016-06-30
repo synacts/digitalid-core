@@ -4,9 +4,10 @@ import java.math.BigInteger;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.core.client.commitment.SecretCommitmentBuilder;
-
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.cryptography.key.PublicKey;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -107,7 +108,8 @@ public interface Commitment extends RootInterface {
      * Returns the public key of this commitment.
      */
     @Pure
-    @Derive("Cache.getPublicKeyChain(host).getKey(time)")
+    // TODO: Support importing qualified names: @Derive("{net.digitalid.core.identification.PublicKeyRetriever}.retrieve(host, time)")
+    // TODO: Allow to throw exceptions in derive-expressions: @Derive("net.digitalid.core.identification.PublicKeyRetriever.retrieve(host, time)")
     public @Nonnull PublicKey getPublicKey();
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
@@ -125,6 +127,7 @@ public interface Commitment extends RootInterface {
      * Adds the given secret to this commitment.
      */
     @Pure
+    @TODO(task = "Why are all the fields optional? The public key should be required as long as no exceptions can be thrown in derive-expressions.", date = "2016-06-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
     public default @Nonnull SecretCommitment addSecret(@Nonnull Exponent secret) throws ExternalException {
         return SecretCommitmentBuilder.withHost(getHost()).withTime(getTime()).withValue(getValue()).withSecret(secret).build();
     }
