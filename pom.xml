@@ -35,13 +35,23 @@
     </properties>
     
     <modules>
+        <module>exceptions</module>
         <module>identification</module>
-        <module>authorization</module>
+        <module>block</module>
+        <module>wrappers</module>
+        <module>cryptography</module>
+        <module>permissions</module>
+        <module>restrictions</module>
+        <module>commitment</module>
         <module>entity</module>
         <module>client</module>
         <module>host</module>
+        <module>storage</module>
         <module>handler</module>
+        <module>service</module>
+        <module>credential</module>
         <module>resolution</module>
+        <module>account</module>
         <module>audit</module>
         <module>synchronizer</module>
         <module>property</module>
@@ -53,17 +63,14 @@
         <module>node</module>
         <module>contact</module>
         <module>context</module>
+        <module>value</module>
         <module>expression</module>
-        <module>conversion</module>
-        <module>cryptography</module>
         <module>certificate</module>
         <module>attribute</module>
         <module>cache</module>
-        <module>credential</module>
+        <module>conversion</module>
         <module>packet</module>
-        <module>state</module>
         <module>initializer</module>
-        <module>account</module>
         <module>server</module>
     </modules>
     

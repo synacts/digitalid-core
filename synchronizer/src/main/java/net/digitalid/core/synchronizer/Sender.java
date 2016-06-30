@@ -1,5 +1,8 @@
 package net.digitalid.core.synchronizer;
 
+import net.digitalid.core.audit.RequestAudit;
+import net.digitalid.core.audit.ResponseAudit;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;

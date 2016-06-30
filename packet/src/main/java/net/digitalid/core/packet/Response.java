@@ -26,12 +26,12 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.CompressionWrapper;
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.synchronizer.Audit;
-import net.digitalid.core.synchronizer.ResponseAudit;
+import net.digitalid.core.audit.Audit;
+import net.digitalid.core.audit.ResponseAudit;
 
 /**
  * This class decrypts, verifies and decompresses responses on the client-side.

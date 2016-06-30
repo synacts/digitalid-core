@@ -18,12 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-conversion</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
-            <artifactId>core-identification</artifactId>
+            <artifactId>core-wrappers</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

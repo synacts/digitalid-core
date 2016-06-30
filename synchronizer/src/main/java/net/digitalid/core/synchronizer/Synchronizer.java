@@ -1,5 +1,10 @@
 package net.digitalid.core.synchronizer;
 
+import net.digitalid.core.synchronizer.handlers.StateReply;
+import net.digitalid.core.audit.handlers.AuditQuery;
+import net.digitalid.core.audit.RequestAudit;
+import net.digitalid.core.audit.ResponseAudit;
+
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;

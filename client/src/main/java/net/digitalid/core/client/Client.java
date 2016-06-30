@@ -34,7 +34,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.client.commitment.Commitment;
+import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.client.commitment.CommitmentBuilder;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.conversion.xdf.Encode;

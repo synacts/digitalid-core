@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-cryptography</artifactId>
+            <artifactId>core-value</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

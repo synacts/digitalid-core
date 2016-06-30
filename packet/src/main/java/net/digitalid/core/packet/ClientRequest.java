@@ -22,12 +22,12 @@ import net.digitalid.core.conversion.wrappers.CompressionWrapper;
 import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
 import net.digitalid.core.entity.NativeRole;
 import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.synchronizer.Audit;
-import net.digitalid.core.synchronizer.RequestAudit;
+import net.digitalid.core.audit.Audit;
+import net.digitalid.core.audit.RequestAudit;
 import net.digitalid.core.synchronizer.Sender;
 
 import net.digitalid.service.core.auxiliary.Time;

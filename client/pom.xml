@@ -21,6 +21,11 @@
             <artifactId>core-entity</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-commitment</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     
 </project>

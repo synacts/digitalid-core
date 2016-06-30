@@ -15,4 +15,12 @@
         <version>1.0.0</version>
     </parent>
     
+    <dependencies>
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-wrappers</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    
 </project>

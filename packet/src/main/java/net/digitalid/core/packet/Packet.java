@@ -41,8 +41,8 @@ import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.HostAccount;
 import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.exceptions.request.RequestErrorCode;
+import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
@@ -54,9 +54,9 @@ import net.digitalid.core.resolution.FreezablePredecessors;
 import net.digitalid.core.resolution.IdentityQuery;
 import net.digitalid.core.resolution.Successor;
 import net.digitalid.core.server.Server;
-import net.digitalid.core.synchronizer.Audit;
-import net.digitalid.core.synchronizer.RequestAudit;
-import net.digitalid.core.synchronizer.ResponseAudit;
+import net.digitalid.core.audit.Audit;
+import net.digitalid.core.audit.RequestAudit;
+import net.digitalid.core.audit.ResponseAudit;
 
 import net.digitalid.service.core.cryptography.SymmetricKey;
 

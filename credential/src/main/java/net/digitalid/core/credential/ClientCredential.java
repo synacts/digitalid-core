@@ -1,5 +1,8 @@
 package net.digitalid.core.credential;
 
+import net.digitalid.core.credential.handlers.CredentialInternalQuery;
+import net.digitalid.core.credential.handlers.CredentialReply;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
