@@ -56,7 +56,7 @@ public interface MobileIdentifier extends ExternalIdentifier {
     @Override
     @NonCommitting
     public default @Nonnull Person getIdentity() throws ExternalException {
-        return IdentifierResolver.configuration.get().resolve(this).castTo(Person.class);
+        return IdentifierResolver.resolve(this).castTo(Person.class);
     }
     
 }

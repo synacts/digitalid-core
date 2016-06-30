@@ -7,7 +7,7 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.type.Mutable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
@@ -22,17 +22,18 @@ import net.digitalid.core.identification.identifier.MobileIdentifier;
  * The identifier resolver resolves an identifier into the corresponding identity.
  * This type is a class instead of an interface to expose only package-visible executables through protected methods.
  */
-@Mutable
+@Immutable
 public abstract class IdentifierResolver {
     
     /* -------------------------------------------------- Interface -------------------------------------------------- */
     
     /**
-     * Resolves the given identifier into an identity.
+     * Returns the identity of the given identifier.
+     * The identity is also established if required.
      */
     @Pure
     @NonCommitting
-    public abstract @Nonnull Identity resolve(@Nonnull Identifier identifier) throws ExternalException;
+    public abstract @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws ExternalException;
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
@@ -40,6 +41,17 @@ public abstract class IdentifierResolver {
      * Stores the identifier resolver, which has to be provided by another package.
      */
     public static final @Nonnull Configuration<IdentifierResolver> configuration = Configuration.withUnknownProvider();
+    
+    /* -------------------------------------------------- Static Access -------------------------------------------------- */
+    
+    /**
+     * Resolves the given identifier into an identity.
+     */
+    @Pure
+    @NonCommitting
+    public static @Nonnull Identity resolve(@Nonnull Identifier identifier) throws ExternalException {
+        return configuration.get().getIdentity(identifier);
+    }
     
     /* -------------------------------------------------- Identity Creation -------------------------------------------------- */
     

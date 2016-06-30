@@ -77,7 +77,7 @@ public interface InternalIdentifier extends Identifier {
     @NonCommitting
     public default boolean exists() throws ExternalException {
         try {
-            IdentifierResolver.configuration.get().resolve(this);
+            IdentifierResolver.resolve(this);
             return true;
         } catch (@Nonnull IdentityNotFoundException exception) {
             return false;
