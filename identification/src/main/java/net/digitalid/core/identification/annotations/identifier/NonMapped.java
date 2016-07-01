@@ -1,4 +1,4 @@
-package net.digitalid.core.identification.annotations;
+package net.digitalid.core.identification.annotations.identifier;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
 import net.digitalid.core.identification.identifier.Identifier;
 
 /**
- * This annotation indicates that a method should only be invoked on a {@link Identifier#isMapped() mapped} {@link Identifier identifier}.
+ * This annotation indicates that an {@link Identifier identifier} is not {@link Identifier#isMapped() mapped}.
  * 
  * @see Mapped
  */
 @Documented
-@Target(ElementType.METHOD)
 // TODO: Implement a value validator instead: @TargetTypes(Identifier.class)
+@Target(ElementType.TYPE_USE)
 @Retention(RetentionPolicy.CLASS)
-public @interface MappedRecipient {}
+public @interface NonMapped {}

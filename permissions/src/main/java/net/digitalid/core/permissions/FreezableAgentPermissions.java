@@ -12,13 +12,13 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.array.FreezableArray;
 import net.digitalid.utility.collections.array.ReadOnlyArray;
-import net.digitalid.utility.collections.converter.Brackets;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.set.FreezableSet;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.freezable.annotations.Freezable;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.freezable.annotations.NonFrozenRecipient;
@@ -29,28 +29,16 @@ import net.digitalid.utility.validation.annotations.size.Single;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.Database;
+import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.conversion.Block;
-import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
-import net.digitalid.core.identification.Category;
-import net.digitalid.core.identification.identity.Identity;
-import net.digitalid.core.identification.identity.IdentityImplementation;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.identification.identity.annotations.AttributeType;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.resolution.Mapper;
-
-import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
 
 /**
  * This class models the permissions of agents as a mapping from attribute types to writings.
  * 
  * @invariant areValid() : "These agent permissions are always valid.";
  */
+@Freezable(ReadOnlyAgentPermissions.class)
 public final class FreezableAgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadOnlyAgentPermissions {
     
     /**

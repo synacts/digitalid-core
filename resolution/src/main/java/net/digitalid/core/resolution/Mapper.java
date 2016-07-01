@@ -65,7 +65,7 @@ import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.identification.identity.Type;
 import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
-import net.digitalid.core.identification.annotations.NonMapped;
+import net.digitalid.core.identification.annotations.identifier.NonMapped;
 import net.digitalid.core.server.Server;
 
 /**

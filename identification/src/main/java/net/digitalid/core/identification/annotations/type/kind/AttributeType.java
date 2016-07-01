@@ -1,4 +1,4 @@
-package net.digitalid.core.identification.annotations;
+package net.digitalid.core.identification.annotations.type.kind;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,10 +9,10 @@ import java.lang.annotation.Target;
 import net.digitalid.core.identification.identity.SemanticType;
 
 /**
- * This annotation indicates that a {@link SemanticType semantic type} denotes a {@link SemanticType#isRoleType() role type}.
+ * This annotation indicates that a {@link SemanticType semantic type} denotes an {@link SemanticType#isAttributeType() attribute type}.
  */
 @Documented
 // TODO: Implement a value validator instead: @TargetTypes(SemanticType.class)
 @Target(ElementType.TYPE_USE)
 @Retention(RetentionPolicy.CLASS)
-public @interface RoleType {}
+public @interface AttributeType {}

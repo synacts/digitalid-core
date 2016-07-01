@@ -1,4 +1,4 @@
-package net.digitalid.core.identification.annotations;
+package net.digitalid.core.identification.annotations.type;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
