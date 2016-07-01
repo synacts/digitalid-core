@@ -24,6 +24,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.core.identification.Category;
 import net.digitalid.core.identification.annotations.type.loaded.Loaded;
 import net.digitalid.core.identification.annotations.type.loaded.LoadedRecipient;
+import net.digitalid.core.identification.annotations.type.loaded.NonLoaded;
 import net.digitalid.core.identification.annotations.type.loaded.NonLoadedRecipient;
 
 /**
@@ -71,18 +72,20 @@ public abstract class SemanticType extends Type {
 //    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(BinaryWrapper.XDF_TYPE);
     
     
-//    /**
-//     * Maps the semantic type with the given identifier.
-//     * 
-//     * @param identifier the identifier of the semantic type.
-//     * 
-//     * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
-//     */
-//    @MainThread
-//    @NonCommitting
-//    public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
-//        return Mapper.mapSemanticType(InternalNonHostIdentifier.get(identifier));
-//    }
+    /**
+     * Maps the semantic type with the given identifier.
+     * 
+     * @param identifier the identifier of the semantic type.
+     * 
+     * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
+     */
+    @MainThread
+    @NonCommitting
+    public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
+        // TODO: What to do here?
+        // return Mapper.mapSemanticType(InternalNonHostIdentifier.get(identifier));
+        return null;
+    }
     
     
     /**
