@@ -7,29 +7,24 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collections.array.FreezableArray;
+import net.digitalid.utility.collections.array.ReadOnlyArray;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.conversion.Block;
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-import net.digitalid.core.conversion.wrappers.value.binary.Binary256Wrapper;
 import net.digitalid.core.identification.identity.SemanticType;
 
-import net.digitalid.service.core.block.Blockable;
-import net.digitalid.service.core.cryptography.Parameters;
-
 /**
- * This class models the randomized {@link FreezableAgentPermissions permissions} of {@link OutgoingRole outgoing roles}.
+ * This class models the randomized {@link FreezableAgentPermissions permissions} of outgoing roles.
  * 
  * @invariant (salt == null) == (permissions == null) : "The salt and the permissions are either both null or both non-null.";
  */
 @Immutable
-public final class RandomizedAgentPermissions implements Blockable {
+public abstract class RandomizedAgentPermissions {
     
     /**
      * Stores the semantic type {@code salt.randomized.permission.agent@core.digitalid.net}.

@@ -6,14 +6,15 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMap;
-import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.Freezable;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.freezable.annotations.NonFrozenRecipient;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.validation.annotations.method.Chainable;
+import net.digitalid.utility.validation.annotations.size.Empty;
 import net.digitalid.utility.validation.annotations.size.Single;
 
 import net.digitalid.core.identification.annotations.type.kind.AttributeType;
@@ -24,7 +25,7 @@ import net.digitalid.core.identification.identity.SemanticType;
  */
 @GenerateSubclass
 @Freezable(ReadOnlyAgentPermissions.class)
-public abstract class FreezableAgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadOnlyAgentPermissions {
+public abstract class FreezableAgentPermissions extends FreezableLinkedHashMap<@Nonnull SemanticType, @Nonnull Boolean> implements ReadOnlyAgentPermissions {
     
     /* -------------------------------------------------- Types -------------------------------------------------- */
     
@@ -88,14 +89,12 @@ public abstract class FreezableAgentPermissions extends FreezableLinkedHashMap<S
     @Override
     @NonFrozenRecipient
     public @Nullable Boolean put(@Nonnull @AttributeType SemanticType type, @Nonnull Boolean writing) {
-        boolean put;
+        final boolean put;
         if (type.equals(GENERAL)) {
             if (writing) {
                 super.clear();
             } else {
-                for (@Nonnull SemanticType key : keySet()) {
-                    if (!get(key)) { remove(key); }
-                }
+                removeAll(readableTypes());
             }
             put = true;
         } else {
@@ -106,56 +105,51 @@ public abstract class FreezableAgentPermissions extends FreezableLinkedHashMap<S
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
-    /**
-     * Creates an empty map of agent permissions.
-     */
-    public FreezableAgentPermissions() {}
-    
-    /**
-     * Creates new agent permissions with the given type and access.
-     * 
-     * @param type the attribute type of the agent permission.
-     * @param writing the access to the given attribute type.
-     */
-    public @Single FreezableAgentPermissions(@Nonnull @AttributeType SemanticType type, @Nonnull Boolean writing) {
-        Require.that(type.isAttributeType()).orThrow("The type is an attribute type.");
-        
-        put(type, writing);
+    protected FreezableAgentPermissions() {
+        super(4, 0.75f, false);
     }
     
     /**
-     * Creates new agent permissions from the given agent permissions.
-     * 
-     * @param permissions the agent permissions to add to the new agent permissions.
+     * Returns new agent permissions with the given access to the given type.
      */
-    public FreezableAgentPermissions(@Nonnull ReadOnlyAgentPermissions permissions) {
-        putAll(permissions);
+    @Pure
+    public static @Nonnull @NonFrozen @Single FreezableAgentPermissions with(@Nonnull @AttributeType SemanticType type, @Nonnull Boolean writing) {
+        final @Nonnull FreezableAgentPermissions result = new FreezableAgentPermissionsSubclass();
+        result.put(type, writing);
+        return result;
     }
     
-    /* -------------------------------------------------- Freezable -------------------------------------------------- */
-    
-    @Override
-    public @Nonnull @Frozen ReadOnlyAgentPermissions freeze() {
-        super.freeze();
-        return this;
+    /**
+     * Returns new agent permissions with the given agent permissions.
+     */
+    @Pure
+    public static @Nonnull @NonFrozen FreezableAgentPermissions with(@Nonnull ReadOnlyAgentPermissions permissions) {
+        final @Nonnull FreezableAgentPermissions result = new FreezableAgentPermissionsSubclass();
+        result.putAll(permissions);
+        return result;
     }
     
-    /* -------------------------------------------------- Constants -------------------------------------------------- */
+    /**
+     * Returns new agent permissions with no permissions.
+     */
+    @Pure
+    public static @Nonnull @NonFrozen @Empty FreezableAgentPermissions withNoPermissions() {
+        return new FreezableAgentPermissionsSubclass();
+    }
+    
+    /* -------------------------------------------------- Restriction -------------------------------------------------- */
     
     /**
-     * Stores an empty set of agent permissions.
+     * Restricts these agent permissions to the given agent permissions.
      */
-    public static final @Nonnull ReadOnlyAgentPermissions NONE = new FreezableAgentPermissions().freeze();
-    
-    /**
-     * Stores a general read permission.
-     */
-    public static final @Nonnull ReadOnlyAgentPermissions GENERAL_READ = new FreezableAgentPermissions(GENERAL, false).freeze();
-    
-    /**
-     * Stores a general write permission.
-     */
-    public static final @Nonnull ReadOnlyAgentPermissions GENERAL_WRITE = new FreezableAgentPermissions(GENERAL, true).freeze();
+    @Impure
+    @NonFrozenRecipient
+    public void restrictTo(@Nonnull ReadOnlyAgentPermissions permissions) {
+        for (@Nonnull SemanticType type : keySet()) {
+            if (!permissions.allowToRead(type)) { remove(type); }
+            else if (get(type) && !permissions.allowToWrite(type)) { put(type, false); }
+        }
+    }
     
     /* -------------------------------------------------- Validatable -------------------------------------------------- */
     
@@ -164,100 +158,62 @@ public abstract class FreezableAgentPermissions extends FreezableLinkedHashMap<S
     public void validate() {
         if (containsKey(GENERAL)) {
             if (get(GENERAL)) {
-                return areEmptyOrSingle();
+                Validate.that(isSingle()).orThrow("These permissions may contain no other permissions besides the general write permission but were $.", this);
             } else {
-                for (final @Nonnull SemanticType semanticType : keySet()) {
-                    if (!semanticType.equals(GENERAL) && !get(semanticType)) { return false; }
+                for (@Nonnull SemanticType semanticType : keySet()) {
+                    Validate.that(semanticType.equals(GENERAL) || get(semanticType)).orThrow("These permissions may contain no other read permissions besides the general read permission but were $.", this);
                 }
-                return true;
             }
-        } else {
-            return true;
         }
+    }
+    
+    /* -------------------------------------------------- Freezable -------------------------------------------------- */
+    
+    @Impure
+    @Override
+    public @Nonnull @Frozen ReadOnlyAgentPermissions freeze() {
+        super.freeze();
+        return this;
     }
     
     /* -------------------------------------------------- Size -------------------------------------------------- */
     
-    /**
-     * Checks that these permissions are single.
-     * 
-     * @return these permissions.
-     * 
-     * @throws InvalidEncodingException if this is not the case.
-     */
-    @Pure
-    @Chainable
-    public @Nonnull FreezableAgentPermissions checkIsSingle() throws InvalidParameterValueException {
-        if (!isSingle()) { throw InvalidParameterValueException.get("agent permissions", this); }
-        return this;
-    }
+    // TODO: Remove the following code if it is no longer needed because such aspects should now be checked with contracts.
     
-    /**
-     * Checks that these permissions are empty or single.
-     * 
-     * @return these permissions.
-     * 
-     * @throws InvalidEncodingException if this is not the case.
-     */
-    @Pure
-    @Chainable
-    public @Nonnull FreezableAgentPermissions checkIsEmptyOrSingle() throws InvalidParameterValueException {
-        if (!isEmptyOrSingle()) { throw InvalidParameterValueException.get("agent permissions", this); }
-        return this;
-    }
-    
-    /* -------------------------------------------------- Restriction -------------------------------------------------- */
-    
-    /**
-     * Restricts these agent permissions to the given agent permissions.
-     * 
-     * @param permissions the agent permissions with which to restrict these agent permissions.
-     */
-    @Impure
-    @NonFrozenRecipient
-    public void restrictTo(@Nonnull ReadOnlyAgentPermissions permissions) {
-        Require.that(!isFrozen()).orThrow("This object is not frozen.");
-        
-        if (containsKey(GENERAL)) {
-            if (get(GENERAL)) {
-                clear();
-                putAll(permissions);
-            } else {
-                if (!permissions.get(GENERAL)) {
-                    remove(GENERAL);
-                    for (final @Nonnull SemanticType type : keySet()) {
-                        if (permissions.containsKey(type)) {
-                            if (get(type) && !permissions.get(type)) { put(type, false); }
-                        } else {
-                            remove(type);
-                        }
-                    }
-                    for (final @Nonnull SemanticType semanticType : permissions.keySet()) {
-                        if (!containsKey(semanticType)) { put(semanticType, false); }
-                    }
-                }
-            }
-        } else {
-            final boolean generalPermission = permissions.containsKey(GENERAL);
-            final boolean writingPermission = generalPermission ? permissions.get(GENERAL) : false;
-            for (final @Nonnull SemanticType type : keySet()) {
-                if (permissions.containsKey(type)) {
-                    if (get(type) && !permissions.get(type)) { put(type, false); }
-                } else if (generalPermission) {
-                    if (get(type) && !writingPermission) { put(type, false); }
-                } else {
-                    remove(type);
-                }
-            }
-        }
-    }
+//    /**
+//     * Checks that these permissions are single.
+//     * 
+//     * @return these permissions.
+//     * 
+//     * @throws InvalidEncodingException if this is not the case.
+//     */
+//    @Pure
+//    @Chainable
+//    public @Nonnull FreezableAgentPermissions checkIsSingle() throws InvalidParameterValueException {
+//        if (!isSingle()) { throw InvalidParameterValueException.get("agent permissions", this); }
+//        return this;
+//    }
+//    
+//    /**
+//     * Checks that these permissions are empty or single.
+//     * 
+//     * @return these permissions.
+//     * 
+//     * @throws InvalidEncodingException if this is not the case.
+//     */
+//    @Pure
+//    @Chainable
+//    public @Nonnull FreezableAgentPermissions checkIsEmptyOrSingle() throws InvalidParameterValueException {
+//        if (!isEmptyOrSingle()) { throw InvalidParameterValueException.get("agent permissions", this); }
+//        return this;
+//    }
     
     /* -------------------------------------------------- Cloneable -------------------------------------------------- */
     
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezableAgentPermissions clone() {
-        return new FreezableAgentPermissions(this);
+        return FreezableAgentPermissions.with(this);
     }
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
@@ -265,7 +221,7 @@ public abstract class FreezableAgentPermissions extends FreezableLinkedHashMap<S
     @Pure
     @Override
     public @Nonnull String toString() {
-        return IterableConverter.toString(keySet(), new ElementConverter<SemanticType>() { @Pure @Override public String toString(@Nullable SemanticType type) { return type == null ? "null" : type.getAddress().getString() + ": " + (get(type) ? "write" : "read"); } }, Brackets.SQUARE);
+        return entrySet().map(entry -> entry.getKey().getAddress() + ": " + (entry.getValue() ? "write" : "read")).join(Brackets.SQUARE);
     }
     
     /* -------------------------------------------------- SQL Condition -------------------------------------------------- */
