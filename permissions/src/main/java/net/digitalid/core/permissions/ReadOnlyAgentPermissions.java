@@ -9,7 +9,6 @@ import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 
 import net.digitalid.core.exceptions.request.RequestErrorCode;
@@ -20,7 +19,7 @@ import net.digitalid.core.identification.identity.SemanticType;
 /**
  * This interface provides read-only access to {@link FreezableAgentPermissions agent permissions} and should <em>never</em> be cast away.
  */
-@GenerateConverter // TODO: Do we need an @Recover method that generates the appropriate FreezableAgentPermissions here?
+// TODO: @GenerateConverter // TODO: Do we need an @Recover method that generates the appropriate FreezableAgentPermissions here?
 @ReadOnly(FreezableAgentPermissions.class)
 public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticType, @Nonnull Boolean> {
     

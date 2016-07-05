@@ -14,6 +14,7 @@ import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.freezable.annotations.NonFrozenRecipient;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.method.Chainable;
 import net.digitalid.utility.validation.annotations.size.Empty;
 import net.digitalid.utility.validation.annotations.size.Single;
 
@@ -171,7 +172,8 @@ public abstract class FreezableAgentPermissions extends FreezableLinkedHashMap<@
     
     @Impure
     @Override
-    public @Nonnull @Frozen ReadOnlyAgentPermissions freeze() {
+    @NonFrozenRecipient
+    public @Chainable @Nonnull @Frozen ReadOnlyAgentPermissions freeze() {
         super.freeze();
         return this;
     }

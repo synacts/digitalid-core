@@ -79,6 +79,7 @@ public abstract class SemanticType extends Type {
      * 
      * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
      */
+    @Pure
     @MainThread
     @NonCommitting
     public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
