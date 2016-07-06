@@ -3,24 +3,20 @@ package net.digitalid.core.concept;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.list.FreezableLinkedList;
-import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.list.ReadOnlyList;
-import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.system.castable.Castable;
-import net.digitalid.utility.system.castable.CastableObject;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collections.list.FreezableLinkedList;
+import net.digitalid.utility.collections.list.FreezableList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
-import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.converter.sql.SQL;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.client.annotations.Clients;
-import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
@@ -38,7 +34,7 @@ import net.digitalid.core.property.ConceptPropertyTable;
  *            (The type has to be a supertype of {@link NonHostEntity}, which cannot be declared in Java, unfortunately!)
  * @param <K> the type of the key which identifies an instance among all instances of a concept at the same entity.
  */
-public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> extends CastableObject implements Castable, XDF<C, E>, SQL<C, E> {
+public abstract class Concept<E extends Entity, K> extends RootClass {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     

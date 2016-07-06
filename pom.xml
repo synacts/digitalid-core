@@ -35,17 +35,20 @@
     </properties>
     
     <modules>
-        <module>exceptions</module>
         <module>identification</module>
-        <module>block</module>
-        <module>wrappers</module>
-        <module>cryptography</module>
-        <module>permissions</module>
-        <module>restrictions</module>
         <module>commitment</module>
+        <module>typeset</module>
+        <module>exceptions</module>
+        <module>permissions</module>
         <module>entity</module>
         <module>client</module>
         <module>host</module>
+        <module>concept</module>
+        <module>node</module>
+        <module>restrictions</module>
+        <module>block</module>
+        <module>wrappers</module>
+        <module>cryptography</module>
         <module>storage</module>
         <module>handler</module>
         <module>service</module>
@@ -55,12 +58,10 @@
         <module>audit</module>
         <module>synchronizer</module>
         <module>property</module>
-        <module>concept</module>
         <module>settings</module>
         <module>agent</module>
         <module>error</module>
         <module>pusher</module>
-        <module>node</module>
         <module>contact</module>
         <module>context</module>
         <module>value</module>

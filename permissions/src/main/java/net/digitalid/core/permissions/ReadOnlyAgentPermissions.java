@@ -58,7 +58,7 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticT
     }
     
     /**
-     * Checks that these agent permissions allow to read the given type and throws a {@link RequestException} if not.
+     * Checks that these agent permissions allow to read the given type and throws a {@link RequestException} otherwise.
      */
     @Pure
     public default void checkAllowToRead(@Nonnull @AttributeType SemanticType type) throws RequestException {
@@ -76,7 +76,7 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticT
     }
     
     /**
-     * Checks that these agent permissions allow to write the given type and throws a {@link RequestException} if not.
+     * Checks that these agent permissions allow to write the given type and throws a {@link RequestException} otherwise.
      */
     @Pure
     public default void checkAllowToWrite(@Nonnull @AttributeType SemanticType type) throws RequestException {
@@ -105,7 +105,7 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticT
     }
     
     /**
-     * Checks that these agent permissions cover the given agent permissions and throws a {@link RequestException} if not.
+     * Checks that these agent permissions cover the given agent permissions and throws a {@link RequestException} otherwise.
      */
     @Pure
     public default void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws RequestException {

@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-entity</artifactId>
+            <artifactId>core-permissions</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

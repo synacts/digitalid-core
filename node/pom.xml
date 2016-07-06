@@ -21,6 +21,11 @@
             <artifactId>core-concept</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-typeset</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     
 </project>

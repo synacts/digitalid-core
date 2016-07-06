@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>net.digitalid.core</groupId>
-    <artifactId>core-contact</artifactId>
+    <artifactId>core-typeset</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     
@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-property</artifactId>
+            <artifactId>core-identification</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

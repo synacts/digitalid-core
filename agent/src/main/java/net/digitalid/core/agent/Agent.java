@@ -7,14 +7,15 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
@@ -29,10 +30,11 @@ import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
 import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 /**
@@ -318,6 +320,33 @@ public abstract class Agent extends Concept<Agent, NonHostEntity, Long> {
         restrictions = newRestrictions;
         notify(RESTRICTIONS);
     }
+    
+    // TODO: The following code is copied from the restrictions class.
+    
+//    /* -------------------------------------------------- Matching -------------------------------------------------- */
+//    
+//    /**
+//     * Returns whether these restrictions match the given agent.
+//     */
+//    @Pure
+//    public boolean match(@Nonnull Agent agent) {
+//        return isClient() == agent.isClient() && (context == null || context.getEntity().equals(agent.getEntity())) && (contact == null || contact.getEntity().equals(agent.getEntity()));
+//    }
+//    
+//    /**
+//     * Checks that these restrictions match the given agent.
+//     * 
+//     * @param agent the agent which needs to be matched.
+//     * 
+//     * @return these restrictions.
+//     * 
+//     * @throws InvalidEncodingException otherwise.
+//     */
+//    @Pure
+//    public @Nonnull Restrictions checkMatch(@Nonnull Agent agent) throws InvalidEncodingException, InternalException {
+//        if (!match(agent)) { throw InvalidParameterValueCombinationException.with("The restrictions do not match the given agent."); }
+//        return this;
+//    }
     
     /* -------------------------------------------------- Abstract -------------------------------------------------- */
     
