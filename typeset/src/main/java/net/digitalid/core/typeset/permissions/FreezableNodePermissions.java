@@ -17,7 +17,7 @@ import net.digitalid.core.identification.identity.SemanticType;
 /**
  * This class models the permissions of contacts as a set of attribute types.
  */
-public final class FreezableContactPermissions extends FreezableAttributeTypeSet implements ReadOnlyContactPermissions {
+public final class FreezableNodePermissions extends FreezableAttributeTypeSet implements ReadOnlyNodePermissions {
     
     /**
      * Stores the semantic type {@code permission.contact@core.digitalid.net}.
@@ -28,13 +28,13 @@ public final class FreezableContactPermissions extends FreezableAttributeTypeSet
     /**
      * Stores an empty set of contact permissions.
      */
-    public static final @Nonnull ReadOnlyContactPermissions NONE = new FreezableContactPermissions().freeze();
+    public static final @Nonnull ReadOnlyNodePermissions NONE = new FreezableNodePermissions().freeze();
     
     
     /**
      * Creates an empty set of contact permissions.
      */
-    public FreezableContactPermissions() {}
+    public FreezableNodePermissions() {}
     
     /**
      * Creates new contact permissions with the given attribute type.
@@ -45,7 +45,7 @@ public final class FreezableContactPermissions extends FreezableAttributeTypeSet
      * 
      * @ensure isSingle() : "The new contact permissions are single.";
      */
-    public FreezableContactPermissions(@Nonnull SemanticType type) {
+    public FreezableNodePermissions(@Nonnull SemanticType type) {
         super(type);
     }
     
@@ -54,7 +54,7 @@ public final class FreezableContactPermissions extends FreezableAttributeTypeSet
      * 
      * @param permissions the contact permissions to add to the new contact permissions.
      */
-    public FreezableContactPermissions(@Nonnull ReadOnlyContactPermissions permissions) {
+    public FreezableNodePermissions(@Nonnull ReadOnlyNodePermissions permissions) {
         super(permissions);
     }
     
@@ -66,7 +66,7 @@ public final class FreezableContactPermissions extends FreezableAttributeTypeSet
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public FreezableContactPermissions(@Nonnull Block block) throws ExternalException {
+    public FreezableNodePermissions(@Nonnull Block block) throws ExternalException {
         super(block);
     }
     
@@ -78,7 +78,7 @@ public final class FreezableContactPermissions extends FreezableAttributeTypeSet
     
     
     @Override
-    public @Nonnull @Frozen ReadOnlyContactPermissions freeze() {
+    public @Nonnull @Frozen ReadOnlyNodePermissions freeze() {
         super.freeze();
         return this;
     }
@@ -86,8 +86,8 @@ public final class FreezableContactPermissions extends FreezableAttributeTypeSet
     
     @Pure
     @Override
-    public @Capturable @Nonnull @NonFrozen FreezableContactPermissions clone() {
-        return new FreezableContactPermissions(this);
+    public @Capturable @Nonnull @NonFrozen FreezableNodePermissions clone() {
+        return new FreezableNodePermissions(this);
     }
     
 }

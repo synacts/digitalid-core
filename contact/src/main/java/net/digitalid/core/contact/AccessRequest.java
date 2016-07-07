@@ -43,7 +43,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     /**
      * Stores the semantic type {@code request.access@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("request.access@core.digitalid.net").load(FreezableContactPermissions.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("request.access@core.digitalid.net").load(FreezableNodePermissions.TYPE);
     
     
     /**
@@ -57,7 +57,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @invariant permissions.isFrozen() : "The permissions are frozen.";
      * @invariant !permissions.isEmpty() : "The permissions are not empty.";
      */
-    private final @Nonnull ReadOnlyContactPermissions permissions;
+    private final @Nonnull ReadOnlyNodePermissions permissions;
     
     /**
      * Creates an external action to request the given permissions of the given subject.
@@ -72,7 +72,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @require permissions.isFrozen() : "The permissions are frozen.";
      * @require !permissions.isEmpty() : "The permissions are not empty.";
      */
-    AccessRequest(@Nonnull NonHostEntity entity, @Nonnull InternalPerson subject, @Nonnull ReadOnlyContactPermissions permissions) {
+    AccessRequest(@Nonnull NonHostEntity entity, @Nonnull InternalPerson subject, @Nonnull ReadOnlyNodePermissions permissions) {
         super(entity, subject);
         
         Require.that(permissions.isFrozen()).orThrow("The permissions are frozen.");
@@ -100,7 +100,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         super(entity, signature, recipient);
         
         this.person = entity.getIdentity().castTo(InternalPerson.class);
-        this.permissions = new FreezableContactPermissions(block).freeze();
+        this.permissions = new FreezableNodePermissions(block).freeze();
         if (permissions.isEmpty()) { throw InvalidParameterValueException.get("contact permissions", permissions); }
     }
     
@@ -125,7 +125,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @ensure return.isFrozen() : "The permissions are frozen.";
      * @ensure !return.isEmpty() : "The permissions are not empty.";
      */
-    public @Nonnull ReadOnlyContactPermissions getPermissions() {
+    public @Nonnull ReadOnlyNodePermissions getPermissions() {
         return permissions;
     }
     

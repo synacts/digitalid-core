@@ -28,9 +28,9 @@ import net.digitalid.database.core.table.Site;
 
 import net.digitalid.core.client.annotations.Clients;
 import net.digitalid.core.contact.Contact;
-import net.digitalid.core.contact.FreezableContactPermissions;
+import net.digitalid.core.contact.FreezableNodePermissions;
 import net.digitalid.core.contact.ReadOnlyAuthentications;
-import net.digitalid.core.contact.ReadOnlyContactPermissions;
+import net.digitalid.core.contact.ReadOnlyNodePermissions;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
@@ -239,7 +239,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     /**
      * Stores the permissions of this context.
      */
-    private @Nullable FreezableContactPermissions permissions;
+    private @Nullable FreezableNodePermissions permissions;
     
     /**
      * Returns the permissions of this context.
@@ -248,7 +248,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public @Nonnull ReadOnlyContactPermissions getPermissions() throws DatabaseException {
+    public @Nonnull ReadOnlyNodePermissions getPermissions() throws DatabaseException {
         if (permissions == null) {
             throw new SQLException();
 //            permissions = Contexts.getPermissions(this);
@@ -262,7 +262,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param permissions the permissions to be added to this context.
      */
     @Committing
-    public void addPermissions(@Nonnull ReadOnlyContactPermissions permissions) throws DatabaseException {
+    public void addPermissions(@Nonnull ReadOnlyNodePermissions permissions) throws DatabaseException {
         if (!permissions.isEmpty()) {
 //            Synchronizer.execute(new ContextPermissionsAdd(this, permissions));
         }
@@ -277,7 +277,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     @OnlyForActions
-    public void addPermissionsForActions(@Nonnull ReadOnlyContactPermissions newPermissions) throws DatabaseException {
+    public void addPermissionsForActions(@Nonnull ReadOnlyNodePermissions newPermissions) throws DatabaseException {
         Require.that(!newPermissions.isEmpty()).orThrow("The new permissions are not empty.");
         
 //        Contexts.addPermissions(this, newPermissions);
@@ -291,7 +291,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param permissions the permissions to be removed from this context.
      */
     @Committing
-    public void removePermissions(@Nonnull ReadOnlyContactPermissions permissions) throws DatabaseException {
+    public void removePermissions(@Nonnull ReadOnlyNodePermissions permissions) throws DatabaseException {
         if (!permissions.isEmpty()) {
 //            Synchronizer.execute(new ContextPermissionsRemove(this, permissions));
         }
@@ -306,7 +306,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     @OnlyForActions
-    public void removePermissionsForActions(@Nonnull ReadOnlyContactPermissions oldPermissions) throws DatabaseException {
+    public void removePermissionsForActions(@Nonnull ReadOnlyNodePermissions oldPermissions) throws DatabaseException {
         Require.that(!oldPermissions.isEmpty()).orThrow("The old permissions are not empty.");
         
 //        Contexts.removePermissions(this, oldPermissions);

@@ -36,7 +36,7 @@ import net.digitalid.service.core.concept.Observer;
 import net.digitalid.service.core.database.SQLizable;
 
 /**
- * Contacts have certain {@link FreezableContactPermissions permissions} and {@link FreezableAuthentications authentications}.
+ * Contacts have certain {@link FreezableNodePermissions permissions} and {@link FreezableAuthentications authentications}.
  */
 @Immutable
 public final class Contact extends NonHostConcept implements Blockable, SQLizable {
@@ -118,8 +118,8 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @return the permissions of this contact.
      */
     @NonCommitting
-    public @Nonnull ReadOnlyContactPermissions getPermissions() throws DatabaseException {
-        return FreezableContactPermissions.NONE; // TODO
+    public @Nonnull ReadOnlyNodePermissions getPermissions() throws DatabaseException {
+        return FreezableNodePermissions.NONE; // TODO
     }
     
     /* -------------------------------------------------- Authentications -------------------------------------------------- */
