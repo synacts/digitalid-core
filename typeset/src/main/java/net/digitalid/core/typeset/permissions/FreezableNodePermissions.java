@@ -1,93 +1,84 @@
-package net.digitalid.core.contact;
+package net.digitalid.core.typeset.permissions;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.annotations.ownership.Capturable;
-import net.digitalid.utility.freezable.annotations.Frozen;
-import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.freezable.annotations.Freezable;
+import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.freezable.annotations.NonFrozenRecipient;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.method.Chainable;
+import net.digitalid.utility.validation.annotations.size.Single;
 
-import net.digitalid.database.annotations.transaction.NonCommitting;
-
-import net.digitalid.core.conversion.Block;
-import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.identification.annotations.type.kind.AttributeType;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.typeset.FreezableAttributeTypeSet;
 
 /**
- * This class models the permissions of contacts as a set of attribute types.
+ * This class models the permissions of nodes as a set of attribute types.
  */
-public final class FreezableNodePermissions extends FreezableAttributeTypeSet implements ReadOnlyNodePermissions {
+@GenerateSubclass
+@Freezable(ReadOnlyNodePermissions.class)
+public abstract class FreezableNodePermissions extends FreezableAttributeTypeSet implements ReadOnlyNodePermissions {
     
-    /**
-     * Stores the semantic type {@code permission.contact@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("permission.contact@core.digitalid.net").load(FreezableAttributeTypeSet.TYPE);
-    
+    /* -------------------------------------------------- Constants -------------------------------------------------- */
     
     /**
      * Stores an empty set of contact permissions.
      */
-    public static final @Nonnull ReadOnlyNodePermissions NONE = new FreezableNodePermissions().freeze();
+    public static final @Nonnull ReadOnlyNodePermissions NONE = FreezableNodePermissions.withNoTypes().freeze();
     
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
-    /**
-     * Creates an empty set of contact permissions.
-     */
-    public FreezableNodePermissions() {}
+    protected FreezableNodePermissions() {}
     
     /**
-     * Creates new contact permissions with the given attribute type.
-     * 
-     * @param type the attribute type used for contact permission.
-     * 
-     * @require type.isAttributeType() : "The type is an attribute type.";
-     * 
-     * @ensure isSingle() : "The new contact permissions are single.";
+     * Returns new node permissions with no attribute types.
      */
-    public FreezableNodePermissions(@Nonnull SemanticType type) {
-        super(type);
-    }
-    
-    /**
-     * Creates new contact permissions from the given contact permissions.
-     * 
-     * @param permissions the contact permissions to add to the new contact permissions.
-     */
-    public FreezableNodePermissions(@Nonnull ReadOnlyNodePermissions permissions) {
-        super(permissions);
-    }
-    
-    /**
-     * Creates new contact permissions from the given block.
-     * 
-     * @param block the block containing the contact permissions.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     */
-    @NonCommitting
-    public FreezableNodePermissions(@Nonnull Block block) throws ExternalException {
-        super(block);
-    }
-    
     @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
+    public static @Nonnull @NonFrozen @Single FreezableNodePermissions withNoTypes() {
+        return new FreezableNodePermissionsSubclass();
     }
     
+    /**
+     * Returns new node permissions with the given attribute type.
+     */
+    @Pure
+    public static @Nonnull @NonFrozen @Single FreezableNodePermissions withType(@Nonnull @AttributeType SemanticType type) {
+        final @Nonnull FreezableNodePermissions result = new FreezableNodePermissionsSubclass();
+        result.add(type);
+        return result;
+    }
     
+    /**
+     * Returns new node permissions with the attribute types of the given node permissions.
+     */
+    @Pure
+    public static @Nonnull @NonFrozen FreezableNodePermissions withTypesOf(@Nonnull ReadOnlyNodePermissions permissions) {
+        final @Nonnull FreezableNodePermissions result = new FreezableNodePermissionsSubclass();
+        result.addAll(permissions);
+        return result;
+    }
+    
+    /* -------------------------------------------------- Freezable -------------------------------------------------- */
+    
+    @Impure
     @Override
-    public @Nonnull @Frozen ReadOnlyNodePermissions freeze() {
+    @NonFrozenRecipient
+    public @Chainable @Nonnull @Frozen ReadOnlyNodePermissions freeze() {
         super.freeze();
         return this;
     }
     
+    /* -------------------------------------------------- Cloneable -------------------------------------------------- */
     
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezableNodePermissions clone() {
-        return new FreezableNodePermissions(this);
+        return FreezableNodePermissions.withTypesOf(this);
     }
     
 }

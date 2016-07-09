@@ -37,9 +37,9 @@
     <modules>
         <module>identification</module>
         <module>commitment</module>
-        <module>typeset</module>
         <module>exceptions</module>
         <module>permissions</module>
+        <module>typeset</module>
         <module>entity</module>
         <module>client</module>
         <module>host</module>

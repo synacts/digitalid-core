@@ -40,12 +40,12 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticT
     /**
      * Stores a general read permission.
      */
-    public static final @Nonnull @Frozen ReadOnlyAgentPermissions GENERAL_READ = FreezableAgentPermissions.with(GENERAL, false).freeze();
+    public static final @Nonnull @Frozen ReadOnlyAgentPermissions GENERAL_READ = FreezableAgentPermissions.withPermission(GENERAL, false).freeze();
     
     /**
      * Stores a general write permission.
      */
-    public static final @Nonnull @Frozen ReadOnlyAgentPermissions GENERAL_WRITE = FreezableAgentPermissions.with(GENERAL, true).freeze();
+    public static final @Nonnull @Frozen ReadOnlyAgentPermissions GENERAL_WRITE = FreezableAgentPermissions.withPermission(GENERAL, true).freeze();
     
     /* -------------------------------------------------- Reading -------------------------------------------------- */
     

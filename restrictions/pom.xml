@@ -21,11 +21,6 @@
             <artifactId>core-node</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
-            <artifactId>core-exceptions</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
     
 </project>

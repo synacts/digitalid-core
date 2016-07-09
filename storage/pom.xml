@@ -23,11 +23,6 @@
         </dependency>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-permissions</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
             <artifactId>core-block</artifactId>
             <version>${project.version}</version>
         </dependency>

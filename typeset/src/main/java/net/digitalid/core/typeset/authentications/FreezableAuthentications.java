@@ -1,107 +1,94 @@
-package net.digitalid.core.contact;
+package net.digitalid.core.typeset.authentications;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.annotations.ownership.Capturable;
-import net.digitalid.utility.freezable.annotations.Frozen;
-import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.freezable.annotations.Freezable;
+import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.freezable.annotations.NonFrozenRecipient;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.method.Chainable;
+import net.digitalid.utility.validation.annotations.size.Single;
 
-import net.digitalid.database.annotations.transaction.NonCommitting;
-
-import net.digitalid.core.conversion.Block;
-import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
-import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.identification.annotations.type.kind.AttributeType;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.identification.Category;
-
-import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.core.typeset.FreezableAttributeTypeSet;
 
 /**
- * This class models the authentications of contacts as a set of attribute types.
+ * This class models the authentications of nodes as a set of attribute types.
  */
-public final class FreezableAuthentications extends FreezableAttributeTypeSet implements ReadOnlyAuthentications {
+@GenerateSubclass
+@Freezable(ReadOnlyAuthentications.class)
+public abstract class FreezableAuthentications extends FreezableAttributeTypeSet implements ReadOnlyAuthentications {
     
-    /**
-     * Stores the semantic type {@code authentication.contact@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("authentication.contact@core.digitalid.net").load(FreezableAttributeTypeSet.TYPE);
-    
+    /* -------------------------------------------------- Constants -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code identity.based.authentication.contact@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTITY_BASED_TYPE = SemanticType.map("identity.based.authentication.contact@core.digitalid.net").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.XDF_TYPE);
+    public static final @Nonnull SemanticType IDENTITY_BASED_TYPE = SemanticType.map("identity.based.authentication.contact@core.digitalid.net"); // TODO: .load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.XDF_TYPE);
     
     /**
      * Stores an empty set of authentications.
      */
-    public static final @Nonnull ReadOnlyAuthentications NONE = new FreezableAuthentications().freeze();
+    public static final @Nonnull ReadOnlyAuthentications NONE = FreezableAuthentications.withNoTypes().freeze();
     
     /**
      * Stores an identity-based authentication.
      */
-    public static final @Nonnull ReadOnlyAuthentications IDENTITY_BASED = new FreezableAuthentications(IDENTITY_BASED_TYPE).freeze();
+    public static final @Nonnull ReadOnlyAuthentications IDENTITY_BASED = FreezableAuthentications.withType(IDENTITY_BASED_TYPE).freeze();
     
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
-    /**
-     * Creates an empty set of authentications.
-     */
-    public FreezableAuthentications() {}
+    protected FreezableAuthentications() {}
     
     /**
-     * Creates new authentications with the given attribute type.
-     * 
-     * @param type the attribute type used for authentication.
-     * 
-     * @require type.isAttributeType() : "The type is an attribute type.";
-     * 
-     * @ensure isSingle() : "The new authentications are single.";
+     * Returns new authentications with no attribute types.
      */
-    public FreezableAuthentications(@Nonnull SemanticType type) {
-        super(type);
-    }
-    
-    /**
-     * Creates new authentications from the given authentications.
-     * 
-     * @param authentications the authentications to add to the new authentications.
-     */
-    public FreezableAuthentications(@Nonnull ReadOnlyAuthentications authentications) {
-        super(authentications);
-    }
-    
-    /**
-     * Creates new authentications from the given block.
-     * 
-     * @param block the block containing the authentications.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     */
-    @NonCommitting
-    public FreezableAuthentications(@Nonnull Block block) throws ExternalException {
-        super(block);
-    }
-    
     @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
+    public static @Nonnull @NonFrozen @Single FreezableAuthentications withNoTypes() {
+        return new FreezableAuthenticationsSubclass();
     }
     
+    /**
+     * Returns new authentications with the given attribute type.
+     */
+    @Pure
+    public static @Nonnull @NonFrozen @Single FreezableAuthentications withType(@Nonnull @AttributeType SemanticType type) {
+        final @Nonnull FreezableAuthentications result = new FreezableAuthenticationsSubclass();
+        result.add(type);
+        return result;
+    }
     
+    /**
+     * Returns new authentications with the attribute types of the given authentications.
+     */
+    @Pure
+    public static @Nonnull @NonFrozen FreezableAuthentications withTypesOf(@Nonnull ReadOnlyAuthentications authentications) {
+        final @Nonnull FreezableAuthentications result = new FreezableAuthenticationsSubclass();
+        result.addAll(authentications);
+        return result;
+    }
+    
+    /* -------------------------------------------------- Freezable -------------------------------------------------- */
+    
+    @Impure
     @Override
-    public @Nonnull @Frozen ReadOnlyAuthentications freeze() {
+    @NonFrozenRecipient
+    public @Chainable @Nonnull @Frozen ReadOnlyAuthentications freeze() {
         super.freeze();
         return this;
     }
     
+    /* -------------------------------------------------- Cloneable -------------------------------------------------- */
     
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezableAuthentications clone() {
-        return new FreezableAuthentications(this);
+        return FreezableAuthentications.withTypesOf(this);
     }
     
 }
