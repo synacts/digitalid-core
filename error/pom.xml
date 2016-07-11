@@ -21,6 +21,11 @@
             <artifactId>core-property</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-coreservice</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     
 </project>

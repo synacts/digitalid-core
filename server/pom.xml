@@ -23,6 +23,11 @@
         </dependency>
         <dependency>
             <groupId>net.digitalid.core</groupId>
+            <artifactId>core-clientagent</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
             <artifactId>core-certificate</artifactId>
             <version>${project.version}</version>
         </dependency>

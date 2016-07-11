@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-settings</artifactId>
+            <artifactId>core-concept</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

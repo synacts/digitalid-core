@@ -18,6 +18,11 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
+            <artifactId>core-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
             <artifactId>core-entity</artifactId>
             <version>${project.version}</version>
         </dependency>

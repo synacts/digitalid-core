@@ -3,24 +3,24 @@ package net.digitalid.core.settings;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.core.Database;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.concept.ConceptIndex;
 import net.digitalid.core.concept.ConceptSetup;
 import net.digitalid.core.conversion.wrappers.value.EmptyWrapper;
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
+import net.digitalid.core.permissions.FreezableAgentPermissions;
+import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.core.property.nonnullable.NonNullableConceptPropertySetup;
+import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.service.CoreService;
 
 import net.digitalid.service.core.auxiliary.ShortString;
@@ -137,7 +137,7 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
     /**
      * Stores the password of these settings.
      */
-    @Property
-    public @Nonnull NonNullableConceptProperty<ShortString, Settings, NonHostEntity> password() { return null; };// = NonNullableConceptProperty.get(VALUE_PROPERTY_SETUP, this);
+    @GenerateProperty
+    public @Nonnull NonNullableConceptProperty<@MaxSize(50) String, Settings, NonHostEntity> password() { return null; };// = NonNullableConceptProperty.get(VALUE_PROPERTY_SETUP, this);
     
 }

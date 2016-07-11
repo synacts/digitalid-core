@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-agent</artifactId>
+            <artifactId>core-outgoingrole</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

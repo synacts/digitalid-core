@@ -7,4 +7,4 @@
  * <li>The interface {@link SiteStorage} introduces the methods {@link SiteStorage#getState(net.digitalid.service.core.entity.NonHostEntity, net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions, net.digitalid.service.core.concepts.agent.Restrictions, net.digitalid.service.core.concepts.agent.Agent)}, {@link SiteStorage#addState(net.digitalid.service.core.entity.NonHostEntity, net.digitalid.service.core.block.Block)} and {@link SiteStorage#removeState(net.digitalid.service.core.entity.NonHostEntity)}.
  * </ul>
  */
-package net.digitalid.core.state;
+package net.digitalid.core.storage;

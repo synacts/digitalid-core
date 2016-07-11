@@ -1,17 +1,16 @@
-package net.digitalid.core.state;
+package net.digitalid.core.storage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.conversion.None;
-import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -31,12 +30,11 @@ import net.digitalid.core.conversion.xdf.ChainingRequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
 import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.entity.Role;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.service.CoreService;
 
 /**

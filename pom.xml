@@ -43,15 +43,17 @@
         <module>entity</module>
         <module>client</module>
         <module>host</module>
+        <module>service</module>
         <module>concept</module>
         <module>node</module>
+        <module>agent</module>
         <module>restrictions</module>
         <module>block</module>
         <module>wrappers</module>
         <module>cryptography</module>
         <module>storage</module>
         <module>handler</module>
-        <module>service</module>
+        <module>coreservice</module>
         <module>credential</module>
         <module>resolution</module>
         <module>account</module>
@@ -59,7 +61,8 @@
         <module>synchronizer</module>
         <module>property</module>
         <module>settings</module>
-        <module>agent</module>
+        <module>clientagent</module>
+        <module>outgoingrole</module>
         <module>error</module>
         <module>pusher</module>
         <module>contact</module>

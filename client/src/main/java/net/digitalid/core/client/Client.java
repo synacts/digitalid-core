@@ -11,10 +11,11 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.cryptography.Parameters;
 import net.digitalid.utility.cryptography.key.PublicKey;
-import net.digitalid.utility.directory.Directory;
+import net.digitalid.utility.file.Files;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -32,18 +33,16 @@ import net.digitalid.database.core.Database;
 import net.digitalid.database.core.Site;
 import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.cache.Cache;
-import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.client.commitment.CommitmentBuilder;
-import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-import net.digitalid.core.conversion.xdf.Encode;
+import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.entity.NativeRole;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.entity.RoleModule;
+import net.digitalid.core.identification.PublicKeyRetriever;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
+import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 
 /**
  * A client is configured with an identifier and a secret.
@@ -136,7 +135,7 @@ public abstract class Client implements Site {
     
     @Pure
     static @Nonnull Exponent loadSecret(@Nonnull @DomainName String identifier) {
-        final @Nonnull File file = new File(Directory.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
+        final @Nonnull File file = new File(Files.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
         if (file.exists()) {
             this.secret = Exponent.get(SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(file), true).checkType(SECRET));
         } else {
@@ -161,7 +160,7 @@ public abstract class Client implements Site {
     private static @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject, @Nonnull Exponent secret) throws ExternalException {
         final @Nonnull HostIdentity host = subject.getHostIdentifier().getIdentity();
         final @Nonnull Time time = TimeBuilder.get().build();
-        final @Nonnull PublicKey publicKey = Cache.getPublicKeyChain(host).getKey(time);
+        final @Nonnull PublicKey publicKey = PublicKeyRetriever.retrieve(host, time);
         final @Nonnull Element value = publicKey.getAu().pow(secret);
         return CommitmentBuilder.withHost(host).withTime(time).withValue(value.getValue()).build();
     }
@@ -196,7 +195,7 @@ public abstract class Client implements Site {
         }
         
         this.secret = newSecret;
-        final @Nonnull File file = new File(Directory.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
+        final @Nonnull File file = new File(Files.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
         SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, secret.toBlock().setType(SECRET)).writeTo(new FileOutputStream(file), true);
     }
     

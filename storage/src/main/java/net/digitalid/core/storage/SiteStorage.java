@@ -3,11 +3,9 @@ package net.digitalid.core.state;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 
-import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
@@ -18,8 +16,6 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.annotations.NonEncoding;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.identification.identity.annotations.Loaded;
 
@@ -52,7 +48,6 @@ public interface SiteStorage extends HostStorage {
      * @ensure return.getType().equals(getStateType()) : "The returned block has the state type of this storage.";
      */
     @Pure
-    @Locked
     @NonCommitting
     public @Nonnull @NonEncoding Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException;
     
@@ -64,7 +59,6 @@ public interface SiteStorage extends HostStorage {
      * 
      * @require block.getType().isBasedOn(getStateType()) : "The block is based on the state type of this storage.";
      */
-    @Locked
     @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws ExternalException;
     
@@ -73,7 +67,6 @@ public interface SiteStorage extends HostStorage {
      * 
      * @param entity the entity whose entries are to be removed.
      */
-    @Locked
     @NonCommitting
     public void removeState(@Nonnull NonHostEntity entity) throws DatabaseException;
     

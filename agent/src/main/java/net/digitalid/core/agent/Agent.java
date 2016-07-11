@@ -34,6 +34,7 @@ import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.synchronizer.Synchronizer;
 
