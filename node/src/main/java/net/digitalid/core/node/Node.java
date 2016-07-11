@@ -1,5 +1,4 @@
-package net.digitalid.core.restrictions;
-
+package net.digitalid.core.node;
 
 import javax.annotation.Nonnull;
 
@@ -9,6 +8,9 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
+
+import net.digitalid.core.typeset.authentications.ReadOnlyAuthentications;
+import net.digitalid.core.typeset.permissions.ReadOnlyNodePermissions;
 
 /**
  * Description.
