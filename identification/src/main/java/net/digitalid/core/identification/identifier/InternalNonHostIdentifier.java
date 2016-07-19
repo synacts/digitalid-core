@@ -61,7 +61,7 @@ public interface InternalNonHostIdentifier extends InternalIdentifier, NonHostId
     @Pure
     @Override
     public default @Nonnull HostIdentifier getHostIdentifier() {
-        return HostIdentifier.with(getString().substring(getString().indexOf("@") + 1));
+        return HostIdentifier.with(getString().substring(getString().indexOf('@') + 1));
     }
     
     /* -------------------------------------------------- String with Dot -------------------------------------------------- */
@@ -71,7 +71,6 @@ public interface InternalNonHostIdentifier extends InternalIdentifier, NonHostId
      * This is useful for dynamically creating subtypes of existing types.
      */
     @Pure
-    @Deprecated // TODO: Maybe no longer necessary if almost all types are generated implicitly.
     public default @Nonnull String getStringWithLeadingDot() {
         final @Nonnull String string = getString();
         return (string.startsWith("@") ? "" : ".") + string;

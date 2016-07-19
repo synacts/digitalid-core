@@ -1,4 +1,4 @@
 /**
- * Contains the core service class.
+ * Contains the service class.
  */
 package net.digitalid.core.service;

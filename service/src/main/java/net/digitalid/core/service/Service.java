@@ -1,264 +1,127 @@
-package net.digitalid.core.storage;
+package net.digitalid.core.service;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
-import net.digitalid.utility.collections.freezable.FreezableMap;
-import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
-import net.digitalid.utility.conversion.None;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.exceptions.external.MaskingInvalidEncodingException;
-import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.annotations.reference.Raw;
+import net.digitalid.utility.collections.collection.ReadOnlyCollection;
+import net.digitalid.utility.collections.map.FreezableLinkedHashMap;
+import net.digitalid.utility.collections.map.FreezableMap;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.validation.annotations.generation.Normalize;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.converter.sql.ChainingSQLConverter;
-import net.digitalid.database.core.converter.sql.SQL;
-import net.digitalid.database.core.converter.sql.SQLConverter;
-import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.exceptions.DatabaseException;
-
-import net.digitalid.core.attribute.Attribute;
-import net.digitalid.core.attribute.AttributeValue;
-import net.digitalid.core.cache.Cache;
-import net.digitalid.core.conversion.Converters;
-import net.digitalid.core.conversion.key.NonRequestingKeyConverter;
-import net.digitalid.core.conversion.xdf.ChainingRequestingXDFConverter;
-import net.digitalid.core.conversion.xdf.RequestingXDFConverter;
-import net.digitalid.core.conversion.xdf.XDF;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.identification.identity.InternalPerson;
+import net.digitalid.core.exceptions.request.RequestErrorCode;
+import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.service.CoreService;
 
 /**
  * This class models a service of the Digital ID protocol.
- * 
- * @see CoreService
  */
 @Immutable
-public class Service extends DelegatingSiteStorageImplementation implements XDF<Service, Object>, SQL<Service, Object> {
+@GenerateBuilder // TODO: Use the fields of the generated constructor and not the recover method here.
+@GenerateSubclass
+// TODO: Semantic types cannot be converted yet: @GenerateConverter // TODO: Make sure that only the type is stored (and used for comparison).
+public abstract class Service extends RootClass {
     
     /* -------------------------------------------------- Services -------------------------------------------------- */
     
     /**
-     * Maps the services that are installed on this server from their type.
+     * Maps the services that are installed on this site from their type.
      */
-    private static final @Nonnull FreezableMap<SemanticType, Service> services = FreezableLinkedHashMap.get();
+    private static final @Nonnull FreezableMap<@Nonnull SemanticType, @Nonnull Service> services = FreezableLinkedHashMap.withDefaultCapacity();
     
     /**
-     * Returns a collection of the services installed on this server.
-     * 
-     * @return a collection of the services installed on this server.
+     * Adds the given service for the given type and returns that type afterwards.
+     */
+    @Pure // TODO: Should be impure but this is not allowed for immutable types at the moment.
+    static @Nonnull SemanticType addService(@Nonnull SemanticType type, @Raw @Nonnull Service service) {
+        services.put(type, service);
+        return type;
+    }
+    
+    /**
+     * Returns the services installed on this site.
      */
     @Pure
-    public static @Nonnull ReadOnlyCollection<Service> getServices() {
+    public static @Nonnull ReadOnlyCollection<@Nonnull Service> getServices() {
         return services.values();
     }
     
     /**
-     * Returns the service with the given type.
-     * 
-     * @param type the type of the desired service.
-     * 
-     * @return the service with the given type.
+     * Returns the service with the given type or throws a {@link RequestException} if no such service is found.
      */
     @Pure
+    @Recover
     public static @Nonnull Service getService(@Nonnull SemanticType type) throws RequestException {
         final @Nullable Service service = services.get(type);
-        if (service == null) { throw RequestException.get(RequestErrorCode.SERVICE, "No service with the type " + type.getAddress() + " is installed."); }
+        if (service == null) { throw RequestException.with(RequestErrorCode.SERVICE, "No service with the type $ was found.", type.getAddress().getString()); }
         return service;
     }
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
-     * Stores the type of this service.
-     */
-    private final @Nonnull SemanticType type;
-    
-    /**
      * Returns the type of this service.
-     * 
-     * @return the type of this service.
      */
     @Pure
-    public final @Nonnull SemanticType getType() {
-        return type;
-    }
+    @Normalize("Service.addService(type, this)")
+    public abstract @Nonnull SemanticType getType();
     
     /* -------------------------------------------------- Title -------------------------------------------------- */
     
     /**
-     * Stores the title of this service.
-     */
-    private final @Nonnull String title;
-    
-    /**
      * Returns the title of this service.
-     * 
-     * @return the title of this service.
      */
     @Pure
-    public final @Nonnull String getTitle() {
-        return title;
-    }
+    public abstract @Nonnull String getTitle();
     
     /* -------------------------------------------------- Version -------------------------------------------------- */
     
     /**
-     * Stores the version of this service.
-     */
-    private final @Nonnull String version;
-    
-    /**
      * Returns the version of this service.
-     * 
-     * @return the version of this service.
      */
     @Pure
-    public final @Nonnull String getVersion() {
-        return version;
-    }
+    public abstract @Nonnull String getVersion();
     
     /**
      * Returns the title with the version of this service.
-     * 
-     * @return the title with the version of this service.
      */
     @Pure
-    public final @Nonnull String getTitleWithVersion() {
-        return title + " (" + version + ")";
-    }
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * Creates a new service with the given name, title and version.
-     * 
-     * @param name the name of the new service.
-     * @param title the title of the new service.
-     * @param version the version of the new service.
-     */
-    protected Service(@Nonnull @Validated String name, @Nonnull SemanticType type, @Nonnull String title, @Nonnull String version) {
-        super(null, name);
-        
-        this.type = type;
-        this.title = title;
-        this.version = version;
-        services.put(getType(), this);
+    public @Nonnull String getTitleWithVersion() {
+        return getTitle() + " (" + getVersion() + ")";
     }
     
     /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
-    /**
-     * Returns the recipient of internal methods for the given role.
-     * 
-     * @param role the role for which the recipient is to be returned.
-     * 
-     * @return the recipient of internal methods for the given role.
-     */
-    @Pure
-    @NonCommitting
-    public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws DatabaseException {
-        final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
-        if (attributeValue == null) { throw DatabaseException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + "."); }
-        try {
-            return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, attributeValue.getContent());
-        } catch (@Nonnull InvalidEncodingException exception) {
-            throw DatabaseException.get("The attribute of type " + getType().getAddress() + " of the role " + role.getIdentity().getAddress() + " does not encode a host identifier.", exception);
-        }
-    }
+    // TODO: Move the following code to an appropriate location.
     
-    /**
-     * Returns the recipient of external methods for the given subject.
-     * 
-     * @param role the role that sends the method or null for hosts.
-     * @param subject the subject for which the recipient is to be returned.
-     * 
-     * @return the recipient of external methods for the given subject.
-     */
-    @Pure
-    @NonCommitting
-    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws ExternalException {
-        return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false));
-    }
-    
-    /* -------------------------------------------------- Object -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final @Nonnull String toString() {
-        return getType().toString();
-    }
-    
-    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
-    
-    /**
-     * Stores the key converter of this class.
-     */
-    private static final @Nonnull NonRequestingKeyConverter<Service, Object, SemanticType, Object> KEY_CONVERTER = new NonRequestingKeyConverter<Service, Object, SemanticType, Object>() {
-        
-        @Pure
-        @Override
-        public @Nonnull SemanticType convert(@Nonnull Service service) {
-            return service.getType();
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Service recover(@Nonnull Object none, @Nonnull SemanticType type) throws InvalidEncodingException {
-            try {
-                return getService(type);
-            } catch (@Nonnull RequestException exception) {
-                throw MaskingInvalidEncodingException.get(exception);
-            }
-        }
-        
-    };
-    
-    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
-    
-    /**
-     * Stores the XDF converter of this class.
-     */
-    public static final @Nonnull RequestingXDFConverter<Service, Object> XDF_CONVERTER = ChainingRequestingXDFConverter.get(KEY_CONVERTER, SemanticType.XDF_CONVERTER);
-    
-    @Pure
-    @Override
-    public @Nonnull RequestingXDFConverter<Service, Object> getXDFConverter() {
-        return XDF_CONVERTER;
-    }
-    
-    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
-    
-    /**
-     * Stores the declaration of this class.
-     */
-    public static final @Nonnull ColumnDeclaration DECLARATION = SemanticType.DECLARATION.renamedAs("service");
-    
-    /**
-     * Stores the SQL converter of this class.
-     */
-    public static final @Nonnull SQLConverter<Service, Object> SQL_CONVERTER = ChainingSQLConverter.get(DECLARATION, KEY_CONVERTER, SemanticType.SQL_CONVERTER);
-    
-    @Pure
-    @Override
-    public @Nonnull SQLConverter<Service, Object> getSQLConverter() {
-        return SQL_CONVERTER;
-    }
-    
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
-    
-    /**
-     * Stores the converters of this class.
-     */
-    public static final @Nonnull Converters<Service, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+//    /**
+//     * Returns the recipient of internal methods for the given role.
+//     */
+//    @Pure
+//    @NonCommitting
+//    public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws DatabaseException {
+//        final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
+//        if (attributeValue == null) { throw DatabaseException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + "."); }
+//        try {
+//            return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, attributeValue.getContent());
+//        } catch (@Nonnull InvalidEncodingException exception) {
+//            throw DatabaseException.get("The attribute of type " + getType().getAddress() + " of the role " + role.getIdentity().getAddress() + " does not encode a host identifier.", exception);
+//        }
+//    }
+//    
+//    /**
+//     * Returns the recipient of external methods for the given subject.
+//     */
+//    @Pure
+//    @NonCommitting
+//    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws ExternalException {
+//        return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false));
+//    }
     
 }
