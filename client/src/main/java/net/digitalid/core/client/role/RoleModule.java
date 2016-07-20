@@ -1,4 +1,4 @@
-package net.digitalid.core.entity;
+package net.digitalid.core.client.role;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,25 +7,25 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.ownership.Capturable;
-import net.digitalid.utility.collections.list.FreezableLinkedList;
-import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.list.FreezableLinkedList;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.IdentityImplementation;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.resolution.Mapper;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.ClientModule;

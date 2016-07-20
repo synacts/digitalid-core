@@ -12,7 +12,7 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.client.annotations.Clients;
+import net.digitalid.core.client.annotations.OnlyForClients;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
@@ -45,7 +45,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @param role the role to which this handler belongs.
      * @param recipient the recipient of this method.
      */
-    @Clients
+    @OnlyForClients
     protected InternalAction(@Nonnull Role role, @Nonnull HostIdentifier recipient) {
         super(role, role.getIdentity().getAddress(), recipient);
     }
@@ -140,14 +140,14 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @return the reverse of this action or null if this action cannot be reversed.
      */
     @Pure
-    @Clients
+    @OnlyForClients
     public abstract @Nullable InternalAction getReverse() throws DatabaseException;
     
     /**
      * Reverses this internal action on the client if this action can be reversed.
      */
     @NonCommitting
-    @Clients
+    @OnlyForClients
     public final void reverseOnClient() throws DatabaseException {
         Require.that(isOnClient()).orThrow("This method is called on a client.");
         

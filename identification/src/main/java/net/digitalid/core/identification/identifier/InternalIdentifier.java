@@ -1,4 +1,4 @@
-package net.digitalid.core.identification.identifier;
+package net.digitalid.core.identification. identifier;
 
 import java.util.regex.Pattern;
 
@@ -35,11 +35,10 @@ public interface InternalIdentifier extends Identifier {
     
     /**
      * Returns whether the given string conforms to the criteria of this class.
-     * At most 38 characters may follow after the @-symbol.
      */
     @Pure
     public static boolean isConforming(@Nonnull String string) {
-        return Identifier.isConforming(string) && PATTERN.matcher(string).matches() && string.length() - string.indexOf("@") < 40;
+        return Identifier.isConforming(string) && PATTERN.matcher(string).matches();
     }
     
     /**

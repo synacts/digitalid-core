@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.client.annotations.Clients;
+import net.digitalid.core.client.annotations.OnlyForClients;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
@@ -54,7 +54,7 @@ final class ContactsRemove extends CoreServiceInternalAction {
      * @param context the context whose contacts are to be reduced.
      * @param contacts the contacts to be removed from the given context.
      */
-    @Clients
+    @OnlyForClients
     ContactsRemove(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) {
         super(context.getRole());
         

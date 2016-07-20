@@ -1,4 +1,4 @@
 /**
- * Provides annotations to indicate exclusive use by clients or hosts.
+ * Provides annotations to indicate exclusive use by clients.
  */
-package net.digitalid.core.host.annotations;
+package net.digitalid.core.client.annotations;

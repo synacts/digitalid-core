@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.client.annotations.Clients;
+import net.digitalid.core.client.annotations.OnlyForClients;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
@@ -54,7 +54,7 @@ final class ContactsAdd extends CoreServiceInternalAction {
      * @param context the context whose contacts are to be extended.
      * @param contacts the contacts to be added to the given context.
      */
-    @Clients
+    @OnlyForClients
     ContactsAdd(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) {
         super(context.getRole());
         

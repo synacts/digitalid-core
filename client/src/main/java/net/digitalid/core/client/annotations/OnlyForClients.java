@@ -11,7 +11,8 @@ import java.lang.annotation.Target;
  * 
  * @see OnlyForHosts
  */
+@Deprecated // TODO: Do we still need this annotation?
 @Documented
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface Clients {}
+public @interface OnlyForClients {}

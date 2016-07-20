@@ -17,7 +17,7 @@ import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.client.annotations.Clients;
+import net.digitalid.core.client.annotations.OnlyForClients;
 import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrapper;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
@@ -145,7 +145,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
         executeOnBoth();
     }
     
-    @Clients
+    @OnlyForClients
     @Override
     @NonCommitting
     public final void executeOnClient() throws DatabaseException {

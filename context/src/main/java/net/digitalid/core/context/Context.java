@@ -26,7 +26,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
 
-import net.digitalid.core.client.annotations.Clients;
+import net.digitalid.core.client.annotations.OnlyForClients;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.contact.FreezableNodePermissions;
 import net.digitalid.core.contact.ReadOnlyAuthentications;
@@ -459,7 +459,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param contacts the contacts to be added to this context.
      */
     @Committing
-    @Clients
+    @OnlyForClients
     public void addContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws DatabaseException {
         if (!contacts.isEmpty()) { Synchronizer.execute(new ContactsAdd(this, contacts)); }
     }
@@ -483,7 +483,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param contacts the contacts to be removed from this context.
      */
     @Committing
-    @Clients
+    @OnlyForClients
     public void removeContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws DatabaseException {
         if (!contacts.isEmpty()) { Synchronizer.execute(new ContactsRemove(this, contacts)); }
     }

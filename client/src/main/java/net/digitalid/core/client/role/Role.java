@@ -1,4 +1,4 @@
-package net.digitalid.core.entity;
+package net.digitalid.core.client.role;
 
 import java.sql.SQLException;
 
@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
@@ -17,12 +17,12 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.AgentModule;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.credential.ClientCredential;
+import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;

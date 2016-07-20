@@ -1,23 +1,20 @@
-package net.digitalid.core.entity;
+package net.digitalid.core.client.role;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.core.Database;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
-
-import net.digitalid.service.core.concept.Aspect;
-import net.digitalid.service.core.concept.Instance;
-import net.digitalid.service.core.concept.Observer;
 
 /**
  * This class models a native role on the client-side.
