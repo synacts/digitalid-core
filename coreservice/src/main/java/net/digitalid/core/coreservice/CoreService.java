@@ -1,15 +1,15 @@
-package net.digitalid.core.service;
+package net.digitalid.core.coreservice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 
-import net.digitalid.core.entity.Role;
+import net.digitalid.core.client.role.Role;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalPerson;
-import net.digitalid.core.state.Service;
+import net.digitalid.core.service.Service;
 
 /**
  * This class models the core service.

@@ -23,12 +23,12 @@
         </dependency>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-storage</artifactId>
+            <artifactId>core-restrictions</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-client</artifactId>
+            <artifactId>core-agent</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -65,12 +65,12 @@ public interface Identifier extends RootInterface {
     /* -------------------------------------------------- Resolve -------------------------------------------------- */
     
     /**
-     * Returns the identity of this identifier.
+     * Resolves this identifier to an identity.
      * 
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
     @Pure
     @NonCommitting
-    public abstract @Nonnull Identity getIdentity() throws ExternalException;
+    public abstract @Nonnull Identity resolve() throws ExternalException;
     
 }

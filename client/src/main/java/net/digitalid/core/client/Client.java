@@ -46,7 +46,7 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
  */
 @Mutable
 @GenerateSubclass
-public abstract class Client implements Site {
+public abstract class Client extends Site {
     
     /* -------------------------------------------------- Stop -------------------------------------------------- */
     

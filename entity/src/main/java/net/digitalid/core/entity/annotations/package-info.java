@@ -1,4 +1,4 @@
 /**
- * Provides annotations to indicate the category of an entity.
+ * Provides annotations for entities.
  */
 package net.digitalid.core.entity.annotations;

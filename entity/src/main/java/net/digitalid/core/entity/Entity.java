@@ -24,7 +24,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
 // TODO: @GenerateConverter
 public interface Entity extends RootInterface {
     
-    /* -------------------------------------------------- Methods -------------------------------------------------- */
+    /* -------------------------------------------------- Key -------------------------------------------------- */
     
     /**
      * Returns the number that represents this entity in the database.
@@ -33,17 +33,39 @@ public interface Entity extends RootInterface {
     @TODO(task = "Make sure that only the key is used in the database.", date = "2016-06-24", author = Author.KASPAR_ETTER)
     public long getKey();
     
+    /* -------------------------------------------------- Site -------------------------------------------------- */
+    
     /**
      * Returns the site of this entity.
      */
     @Pure
     public @Nonnull Site getSite();
     
+    /* -------------------------------------------------- Identity -------------------------------------------------- */
+    
     /**
      * Returns the identity of this entity.
      */
     @Pure
     public @Nonnull InternalIdentity getIdentity();
+    
+    /* -------------------------------------------------- Queries -------------------------------------------------- */
+    
+    /**
+     * Returns whether this entity is on a host.
+     */
+    @Pure
+    public default boolean isOnHost() {
+        return getSite().isHost();
+    }
+    
+    /**
+     * Returns whether this entity is on a client.
+     */
+    @Pure
+    public default boolean isOnClient() {
+        return getSite().isClient();
+    }
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
     

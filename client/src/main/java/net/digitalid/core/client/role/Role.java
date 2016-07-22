@@ -6,10 +6,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCapturable;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.UniqueElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -17,23 +20,13 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.Database;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.AgentModule;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.credential.ClientCredential;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.service.CoreService;
-import net.digitalid.core.state.Service;
-import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.core.synchronizer.SynchronizerModule;
-
-import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.dataservice.StateModule;
 
 /**
  * This class models a role on the client-side.

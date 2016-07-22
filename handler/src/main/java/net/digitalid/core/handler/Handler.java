@@ -5,13 +5,12 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.system.castable.Castable;
-import net.digitalid.utility.system.castable.CastableObject;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-import net.digitalid.core.conversion.xdf.XDF;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostAccount;
@@ -19,7 +18,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.state.Service;
+import net.digitalid.core.service.Service;
 
 /**
  * This class provides the features that all handlers share.
@@ -28,12 +27,122 @@ import net.digitalid.core.state.Service;
  * @see Reply
  */
 @Immutable
-public abstract class Handler<O, E> extends CastableObject implements Castable, XDF<O, E> {
+public abstract class Handler<O, E> extends RootClass {
+    
+    /* -------------------------------------------------- Entity -------------------------------------------------- */
     
     /**
      * Stores the entity to which this handler belongs or null if it is impersonal.
      */
     private final @Nullable Entity entity;
+    
+    /**
+     * Returns the entity to which this handler belongs or null if it is impersonal.
+     */
+    @Pure
+    public @Nullable Entity getEntity() {
+        return entity;
+    }
+    
+    /**
+     * Returns whether this handler has an entity.
+     */
+    @Pure
+    public final boolean hasEntity() {
+        return entity != null;
+    }
+    
+    /**
+     * Returns the entity to which this handler belongs.
+     * 
+     * @require hasEntity() : "This handler has an entity.";
+     */
+    @Pure
+    public final @Nonnull Entity getEntityNotNull() {
+        Require.that(entity != null).orThrow("This handler has an entity.");
+        
+        return entity;
+    }
+    
+    /**
+     * Returns whether this handler is on a host.
+     */
+    @Pure
+    public final boolean isOnHost() {
+        return entity instanceof Account;
+    }
+    
+    /**
+     * Returns whether this handler is on a client.
+     */
+    @Pure
+    public final boolean isOnClient() {
+        return entity instanceof Role;
+    }
+    
+    /**
+     * Returns the account to which this handler belongs.
+     * 
+     * @require isOnHost() : "This handler is on a host.";
+     */
+    @Pure
+    public final @Nonnull Account getAccount() {
+        Require.that(isOnHost()).orThrow("This handler is on a host.");
+        
+        assert entity != null;
+        return (Account) entity;
+    }
+    
+    /**
+     * Returns whether this handler belongs to a non-host.
+     */
+    @Pure
+    public final boolean isNonHost() {
+        return entity instanceof NonHostEntity;
+    }
+    
+    /**
+     * Returns the non-host entity to which this handler belongs.
+     * 
+     * @require isNonHost() : "This handler belongs to a non-host.";
+     */
+    @Pure
+    public final @Nonnull NonHostEntity getNonHostEntity() {
+        Require.that(isNonHost()).orThrow("This handler belongs to a non-host.");
+        
+        assert entity != null;
+        return (NonHostEntity) entity;
+    }
+    
+    /**
+     * Returns the non-host account to which this handler belongs.
+     * 
+     * @require isOnHost() : "This handler is on a host.";
+     * @require isNonHost() : "This handler belongs to a non-host.";
+     */
+    @Pure
+    public final @Nonnull NonHostAccount getNonHostAccount() {
+        Require.that(isOnHost()).orThrow("This handler is on a host.");
+        Require.that(isNonHost()).orThrow("This handler belongs to a non-host.");
+        
+        assert entity != null;
+        return (NonHostAccount) entity;
+    }
+    
+    /**
+     * Returns the role to which this handler belongs.
+     * 
+     * @require isOnClient() : "This handler is on a client.";
+     */
+    @Pure
+    public final @Nonnull Role getRole() {
+        Require.that(isOnClient()).orThrow("This handler is on a client.");
+        
+        assert entity != null;
+        return (Role) entity;
+    }
+    
+    /* -------------------------------------------------- Subject -------------------------------------------------- */
     
     /**
      * Stores the subject of this handler.
@@ -44,9 +153,49 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
     private final @Nonnull InternalIdentifier subject;
     
     /**
+     * Returns the subject of this handler.
+     */
+    @Pure
+    public final @Nonnull InternalIdentifier getSubject() {
+        return subject;
+    }
+    
+    /* -------------------------------------------------- Signature -------------------------------------------------- */
+    
+    /**
      * Stores the signature of this handler.
      */
     private final @Nullable SignatureWrapper signature;
+    
+    /**
+     * Returns the signature of this handler.
+     */
+    @Pure
+    public final @Nullable SignatureWrapper getSignature() {
+        return signature;
+    }
+    
+    /**
+     * Returns whether this handler has a signature.
+     */
+    @Pure
+    public final boolean hasSignature() {
+        return signature != null;
+    }
+    
+    /**
+     * Returns the signature of this handler.
+     * 
+     * @require hasSignature() : "This handler has a signature.";
+     */
+    @Pure
+    public final @Nonnull SignatureWrapper getSignatureNotNull() {
+        Require.that(signature != null).orThrow("This handler has a signature.");
+        
+        return signature;
+    }
+    
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a handler that encodes the content of a packet about the given subject.
@@ -76,201 +225,27 @@ public abstract class Handler<O, E> extends CastableObject implements Castable, 
         this.subject = signature.getNonNullableSubject();
     }
     
-    /**
-     * Returns the entity to which this handler belongs or null if it is impersonal.
-     * 
-     * @return the entity to which this handler belongs or null if it is impersonal.
-     */
-    @Pure
-    public final @Nullable Entity getEntity() {
-        return entity;
-    }
-    
-    /**
-     * Returns whether this handler has an entity.
-     * 
-     * @return whether this handler has an entity.
-     */
-    @Pure
-    public final boolean hasEntity() {
-        return entity != null;
-    }
-    
-    /**
-     * Returns the entity to which this handler belongs.
-     * 
-     * @return the entity to which this handler belongs.
-     * 
-     * @require hasEntity() : "This handler has an entity.";
-     */
-    @Pure
-    public final @Nonnull Entity getEntityNotNull() {
-        Require.that(entity != null).orThrow("This handler has an entity.");
-        
-        return entity;
-    }
-    
-    /**
-     * Returns whether this handler is on a host.
-     * 
-     * @return whether this handler is on a host.
-     */
-    @Pure
-    public final boolean isOnHost() {
-        return entity instanceof Account;
-    }
-    
-    /**
-     * Returns whether this handler is on a client.
-     * 
-     * @return whether this handler is on a client.
-     */
-    @Pure
-    public final boolean isOnClient() {
-        return entity instanceof Role;
-    }
-    
-    /**
-     * Returns the account to which this handler belongs.
-     * 
-     * @return the account to which this handler belongs.
-     * 
-     * @require isOnHost() : "This handler is on a host.";
-     */
-    @Pure
-    public final @Nonnull Account getAccount() {
-        Require.that(isOnHost()).orThrow("This handler is on a host.");
-        
-        assert entity != null;
-        return (Account) entity;
-    }
-    
-    /**
-     * Returns whether this handler belongs to a non-host.
-     * 
-     * @return whether this handler belongs to a non-host.
-     */
-    @Pure
-    public final boolean isNonHost() {
-        return entity instanceof NonHostEntity;
-    }
-    
-    /**
-     * Returns the non-host entity to which this handler belongs.
-     * 
-     * @return the non-host entity to which this handler belongs.
-     * 
-     * @require isNonHost() : "This handler belongs to a non-host.";
-     */
-    @Pure
-    public final @Nonnull NonHostEntity getNonHostEntity() {
-        Require.that(isNonHost()).orThrow("This handler belongs to a non-host.");
-        
-        assert entity != null;
-        return (NonHostEntity) entity;
-    }
-    
-    /**
-     * Returns the non-host account to which this handler belongs.
-     * 
-     * @return the non-host account to which this handler belongs.
-     * 
-     * @require isOnHost() : "This handler is on a host.";
-     * @require isNonHost() : "This handler belongs to a non-host.";
-     */
-    @Pure
-    public final @Nonnull NonHostAccount getNonHostAccount() {
-        Require.that(isOnHost()).orThrow("This handler is on a host.");
-        Require.that(isNonHost()).orThrow("This handler belongs to a non-host.");
-        
-        assert entity != null;
-        return (NonHostAccount) entity;
-    }
-    
-    /**
-     * Returns the role to which this handler belongs.
-     * 
-     * @return the role to which this handler belongs.
-     * 
-     * @require isOnClient() : "This handler is on a client.";
-     */
-    @Pure
-    public final @Nonnull Role getRole() {
-        Require.that(isOnClient()).orThrow("This handler is on a client.");
-        
-        assert entity != null;
-        return (Role) entity;
-    }
-    
-    /**
-     * Returns the subject of this handler.
-     * 
-     * @return the subject of this handler.
-     */
-    @Pure
-    public final @Nonnull InternalIdentifier getSubject() {
-        return subject;
-    }
-    
-    /**
-     * Returns the signature of this handler.
-     * 
-     * @return the signature of this handler.
-     */
-    @Pure
-    public final @Nullable SignatureWrapper getSignature() {
-        return signature;
-    }
-    
-    /**
-     * Returns whether this handler has a signature.
-     * 
-     * @return whether this handler has a signature.
-     */
-    @Pure
-    public final boolean hasSignature() {
-        return signature != null;
-    }
-    
-    /**
-     * Returns the signature of this handler.
-     * 
-     * @return the signature of this handler.
-     * 
-     * @require hasSignature() : "This handler has a signature.";
-     */
-    @Pure
-    public final @Nonnull SignatureWrapper getSignatureNotNull() {
-        Require.that(signature != null).orThrow("This handler has a signature.");
-        
-        return signature;
-    }
-    
+    /* -------------------------------------------------- Other -------------------------------------------------- */
     
     /**
      * Returns the type of packets that this handler handles.
-     * 
-     * @return the type of packets that this handler handles.
      */
     @Pure
     public abstract @Nonnull SemanticType getType();
     
     /**
      * Returns the service that this handler implements.
-     * 
-     * @return the service that this handler implements.
      */
     @Pure
     public abstract @Nonnull Service getService();
     
     /**
      * Returns a description of this handler.
-     * 
-     * @return a description of this handler.
      */
     @Pure
     public abstract @Nonnull String getDescription();
     
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
     /**
      * Returns whether the given object is equal to this handler.

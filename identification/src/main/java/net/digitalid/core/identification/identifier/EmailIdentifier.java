@@ -87,7 +87,7 @@ public interface EmailIdentifier extends ExternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public default @Nonnull Person getIdentity() throws ExternalException {
+    public default @Nonnull Person resolve() throws ExternalException {
         if (!providerExists()) { throw IdentityNotFoundException.with(this); }
         return IdentifierResolver.resolve(this).castTo(Person.class);
     }

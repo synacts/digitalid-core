@@ -49,7 +49,7 @@ public interface InternalNonHostIdentifier extends InternalIdentifier, NonHostId
     @Pure
     @Override
     @NonCommitting
-    public default @Nonnull InternalNonHostIdentity getIdentity() throws ExternalException {
+    public default @Nonnull InternalNonHostIdentity resolve() throws ExternalException {
         final @Nonnull InternalNonHostIdentity identity = IdentifierResolver.resolve(this).castTo(InternalNonHostIdentity.class);
         // If the returned identity is a type, its fields need to be loaded from the type's attributes.
         if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }

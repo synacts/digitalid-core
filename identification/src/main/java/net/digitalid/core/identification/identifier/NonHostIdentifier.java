@@ -25,6 +25,6 @@ public interface NonHostIdentifier extends Identifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull NonHostIdentity getIdentity() throws ExternalException;
+    public @Nonnull NonHostIdentity resolve() throws ExternalException;
     
 }

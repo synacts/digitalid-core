@@ -53,7 +53,7 @@ public interface PublicKeyRetriever {
     @Pure
     @NonCommitting
     public static @Nonnull PublicKey retrieve(@Nonnull HostIdentifier host, @Nonnull Time time) throws ExternalException {
-        return retrieve(host.getIdentity(), time);
+        return retrieve(host.resolve(), time);
     }
     
 }

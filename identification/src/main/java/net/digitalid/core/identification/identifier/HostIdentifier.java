@@ -56,7 +56,7 @@ public interface HostIdentifier extends InternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public default @Nonnull HostIdentity getIdentity() throws ExternalException {
+    public default @Nonnull HostIdentity resolve() throws ExternalException {
         return IdentifierResolver.resolve(this).castTo(HostIdentity.class);
     }
     

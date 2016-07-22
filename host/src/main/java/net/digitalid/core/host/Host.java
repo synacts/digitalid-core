@@ -11,13 +11,15 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.cryptography.key.KeyPair;
 import net.digitalid.utility.cryptography.key.chain.PrivateKeyChain;
 import net.digitalid.utility.cryptography.key.chain.PublicKeyChain;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.attribute.Attribute;
@@ -41,7 +43,9 @@ import net.digitalid.core.state.Service;
  * 
  * TODO: Make sure that the host keys get rotated!
  */
-public final class Host extends Site {
+@Mutable
+@GenerateSubclass
+public class Host extends Site {
     
     @Pure
     @Override

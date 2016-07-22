@@ -41,8 +41,6 @@
         <module>permissions</module>
         <module>typeset</module>
         <module>entity</module>
-        <module>client</module>
-        <module>host</module>
         <module>service</module>
         <module>concept</module>
         <module>node</module>
@@ -75,6 +73,8 @@
         <module>conversion</module>
         <module>packet</module>
         <module>initializer</module>
+        <module>client</module>
+        <module>host</module>
         <module>server</module>
     </modules>
     

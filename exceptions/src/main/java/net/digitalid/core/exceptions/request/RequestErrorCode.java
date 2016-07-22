@@ -6,6 +6,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.string.Strings;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
@@ -146,7 +147,8 @@ public enum RequestErrorCode {
      * Returns the request error code denoted by the given value.
      */
     @Pure
-    public static @Nonnull RequestErrorCode get(@Valid byte value) {
+    @Recover
+    public static @Nonnull RequestErrorCode of(@Valid byte value) {
         Require.that(isValid(value)).orThrow("The value has to be a valid request error code but was $.", value);
         
         for (@Nonnull RequestErrorCode code : values()) {

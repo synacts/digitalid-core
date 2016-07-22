@@ -69,6 +69,6 @@ public interface ExternalIdentifier extends NonHostIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull Person getIdentity() throws ExternalException;
+    public abstract @Nonnull Person resolve() throws ExternalException;
     
 }

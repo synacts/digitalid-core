@@ -19,19 +19,17 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 import net.digitalid.utility.validation.contract.Contract;
 
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.identification.identity.Identity;
-import net.digitalid.core.identification.identity.Type;
 
 /**
- * This annotation indicates that the {@link Identity identity} of the annotated {@link Entity entity} is a {@link Type type}.
+ * This annotation indicates that the annotated {@link Entity entity} is {@link Entity#isOnClient() on a client}.
  * 
- * @see OfInternalPerson
+ * @see OnHost
  */
 @Documented
 @Target(ElementType.TYPE_USE)
 @Retention(RetentionPolicy.RUNTIME)
-@ValueValidator(OfType.Validator.class)
-public @interface OfType {    
+@ValueValidator(OnClient.Validator.class)
+public @interface OnClient {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
@@ -44,7 +42,7 @@ public @interface OfType {
         @Pure
         @Override
         public @Nonnull Contract generateContract(@Nonnull Element element, @Nonnull AnnotationMirror annotationMirror, @NonCaptured @Modified @Nonnull TypeImporter typeImporter) {
-            return Contract.with("# == null || #.getIdentity().getCategory().isType()", "The # has to be null or its identity has to be a type.", element);
+            return Contract.with("# == null || #.isOnClient()", "The # has to be null or be on a client.", element);
         }
         
     }

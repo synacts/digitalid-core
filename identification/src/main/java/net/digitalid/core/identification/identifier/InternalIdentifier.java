@@ -65,7 +65,7 @@ public interface InternalIdentifier extends Identifier {
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull InternalIdentity getIdentity() throws ExternalException;
+    public abstract @Nonnull InternalIdentity resolve() throws ExternalException;
     
     /* -------------------------------------------------- Existence -------------------------------------------------- */
     
