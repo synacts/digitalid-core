@@ -3,12 +3,15 @@ package net.digitalid.core.node;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.property.extensible.WritableExtensibleProperty;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
+import net.digitalid.core.concept.annotations.GenerateProperty;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.typeset.authentications.ReadOnlyAuthentications;
 import net.digitalid.core.typeset.permissions.ReadOnlyNodePermissions;
 
@@ -33,8 +36,8 @@ public interface Node extends RootInterface {
      * Returns the permissions of this node.
      */
     @Pure
-    @NonCommitting
-    public @Nonnull ReadOnlyNodePermissions getPermissions() throws DatabaseException; // TODO: Rather already a property?
+    @GenerateProperty
+    public @Nonnull WritableExtensibleProperty<SemanticType, ReadOnlyNodePermissions> permissions();
     
     /* -------------------------------------------------- Authentications -------------------------------------------------- */
     

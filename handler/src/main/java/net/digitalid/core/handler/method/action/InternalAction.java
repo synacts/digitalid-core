@@ -3,8 +3,8 @@ package net.digitalid.core.handler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -15,13 +15,13 @@ import net.digitalid.core.client.Client;
 import net.digitalid.core.client.annotations.OnlyForClients;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.entity.annotations.OnClient;
+import net.digitalid.core.host.annotations.Hosts;
+import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.service.handler.CoreServiceInternalAction;
-import net.digitalid.core.host.annotations.Hosts;
-import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 /**
@@ -46,8 +46,8 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @param recipient the recipient of this method.
      */
     @OnlyForClients
-    protected InternalAction(@Nonnull Role role, @Nonnull HostIdentifier recipient) {
-        super(role, role.getIdentity().getAddress(), recipient);
+    protected InternalAction(@Nonnull @OnClient NonHostEntity entity, @Nonnull HostIdentifier recipient) {
+        super(entity, entity.getIdentity().getAddress(), recipient);
     }
     
     /**

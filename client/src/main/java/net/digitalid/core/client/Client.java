@@ -169,7 +169,7 @@ public abstract class Client extends Site {
     @Pure
     @NonCommitting
     protected @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject, @Nonnull Exponent secret) throws ExternalException {
-        final @Nonnull HostIdentity host = subject.getHostIdentifier().getIdentity();
+        final @Nonnull HostIdentity host = subject.getHostIdentifier().resolve();
         final @Nonnull Time time = TimeBuilder.get().build();
         final @Nonnull PublicKey publicKey = PublicKeyRetriever.retrieve(host, time);
         final @Nonnull Element value = publicKey.getAu().pow(secret);

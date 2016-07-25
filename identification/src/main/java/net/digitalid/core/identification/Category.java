@@ -65,7 +65,7 @@ public enum Category {
      * (This declaration cannot be in the semantic type class as the initialization would be too late.)
      */
     @Deprecated // TODO: Do we still need this?
-    public static final @Nonnull @Frozen @Empty ReadOnlyList<Category> NONE = FreezableArrayList.<Category>withCapacity(0).freeze();
+    public static final @Nonnull @Frozen @Empty ReadOnlyList<Category> NONE = FreezableArrayList.<Category>withInitialCapacity(0).freeze();
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     

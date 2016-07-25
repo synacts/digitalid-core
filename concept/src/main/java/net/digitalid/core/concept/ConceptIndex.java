@@ -6,44 +6,46 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.concurrency.ConcurrentHashMap;
 import net.digitalid.utility.concurrency.ConcurrentMap;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.functional.interfaces.BinaryFunction;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.mode.SingleAccess;
-import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.Database;
-import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.property.ConceptPropertyTable;
 
 /**
  * This class indexes the instances of a {@link Concept concept} by their {@link Entity entity} and key.
  */
 @Immutable
-public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity, K> {
+@GenerateBuilder
+@GenerateSubclass
+public abstract class ConceptIndex<E extends Entity, K, C extends Concept<E, K>> {
     
     /* -------------------------------------------------- Removal -------------------------------------------------- */
     
     /**
      * Stores a list of all the indexes that were created.
      */
-    private static final @Nonnull @NonNullableElements List<ConceptIndex<?, ? extends Entity, ?>> indexes = new LinkedList<>();
+    private static final @Nonnull List<@Nonnull ConceptIndex<?, ?, ?>> indexes = new LinkedList<>();
     
     /**
      * Removes the entries of the given entity from all indexes.
-     * 
-     * @param entity the entity whose entries are to be removed.
      */
     // TODO: Make sure this method is called in the right places!
+    @Impure
     @SingleAccess
     public static void remove(@Nonnull Entity entity) {
         Require.that(Database.isSingleAccess()).orThrow("The database is in single-access mode.");
         
-        for (final @Nonnull ConceptIndex<?, ? extends Entity, ?> index : indexes) {
+        for (@Nonnull ConceptIndex<?, ?, ?> index : indexes) {
             index.concepts.remove(entity);
         }
     }
@@ -51,32 +53,14 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity, K>
     /* -------------------------------------------------- Factory -------------------------------------------------- */
     
     /**
-     * Stores the factory that can produce a new concept instance with a given entity and key.
+     * Returns the factory that can produce a new concept instance with a given entity and key.
      */
-    private final @Nonnull Concept.Factory<C, E, K> factory;
+    protected abstract @Nonnull BinaryFunction<@Nonnull E, @Nonnull K, @Nonnull C> getFactory();
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    /**
-     * Creates a new index with the given concept factory.
-     * 
-     * @param factory the factory that can produce a new concept instance.
-     */
-    private ConceptIndex(@Nonnull Concept.Factory<C, E, K> factory) {
-        this.factory = factory;
+    protected ConceptIndex() {
         indexes.add(this);
-    }
-    
-    /**
-     * Creates a new index with the given concept factory.
-     * 
-     * @param factory the factory that can produce a new concept instance.
-     * 
-     * @return a new index with the given concept factory.
-     */
-    @Pure
-    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity, K> ConceptIndex<C, E, K> get(@Nonnull Concept.Factory<C, E, K> factory) {
-        return new ConceptIndex<>(factory);
     }
     
     /* -------------------------------------------------- Concepts -------------------------------------------------- */
@@ -84,46 +68,42 @@ public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity, K>
     /**
      * Stores the concepts of this index.
      */
-    private final @Nonnull ConcurrentMap<E, ConcurrentMap<K, C>> concepts = ConcurrentHashMap.get();
+    private final @Nonnull ConcurrentMap<@Nonnull E, @Nonnull ConcurrentMap<@Nonnull K, @Nonnull C>> concepts = ConcurrentHashMap.withDefaultCapacity();
     
     /**
-     * Returns a potentially cached concept that might not yet exist in the database.
-     * 
-     * @param entity the entity to which the concept belongs.
-     * @param key the key that denotes the returned instance.
-     * 
-     * @return a new or existing concept with the given entity and key.
+     * Returns the potentially cached concept with the given entity and key that might not yet exist in the database.
      */
     @Pure
     public @Nonnull C get(@Nonnull E entity, @Nonnull K key) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
-            if (map == null) { map = concepts.putIfAbsentElseReturnPresent(entity, ConcurrentHashMap.<K, C>get()); }
+            if (map == null) { map = concepts.putIfAbsentElseReturnPresent(entity, ConcurrentHashMap.<K, C>withDefaultCapacity()); }
             @Nullable C concept = map.get(key);
-            if (concept == null) { concept = map.putIfAbsentElseReturnPresent(key, factory.create(entity, key)); }
+            if (concept == null) { concept = map.putIfAbsentElseReturnPresent(key, getFactory().evaluate(entity, key)); }
             return concept;
         } else {
-            return factory.create(entity, key);
+            return getFactory().evaluate(entity, key);
         }
     }
     
     /* -------------------------------------------------- Resetting -------------------------------------------------- */
     
-    /**
-     * Resets the concepts of the given entity.
-     * 
-     * @param entity the entity whose concepts are to be reset.
-     * @param table the table which initiated the reset of its properties.
-     */
-    @Locked
-    @NonCommitting
-    public void reset(@Nonnull E entity, @Nonnull ConceptPropertyTable<?, C, E> table) throws DatabaseException {
-        if (Database.isSingleAccess()) {
-            final @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
-            if (map != null) {
-                for (final @Nonnull C concept : map.values()) { concept.reset(table); }
-            }
-        }
-    }
+    // TODO:
+    
+//    /**
+//     * Resets the concepts of the given entity.
+//     * 
+//     * @param entity the entity whose concepts are to be reset.
+//     * @param table the table which initiated the reset of its properties.
+//     */
+//    @NonCommitting
+//    public void reset(@Nonnull E entity, @Nonnull ConceptPropertyTable<?, C, E> table) throws DatabaseException {
+//        if (Database.isSingleAccess()) {
+//            final @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
+//            if (map != null) {
+//                for (final @Nonnull C concept : map.values()) { concept.reset(table); }
+//            }
+//        }
+//    }
     
 }

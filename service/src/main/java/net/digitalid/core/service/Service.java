@@ -28,6 +28,13 @@ import net.digitalid.core.identification.identity.SemanticType;
 // TODO: Semantic types cannot be converted yet: @GenerateConverter // TODO: Make sure that only the type is stored (and used for comparison).
 public abstract class Service extends RootClass {
     
+    /* -------------------------------------------------- Constants -------------------------------------------------- */
+    
+    /**
+     * Stores the core service.
+     */
+    public static final @Nonnull Service CORE = ServiceBuilder.withType(null /* TODO */).withTitle("Core Service").withVersion("1.0").build();
+    
     /* -------------------------------------------------- Services -------------------------------------------------- */
     
     /**

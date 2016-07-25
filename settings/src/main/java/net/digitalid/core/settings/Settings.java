@@ -4,8 +4,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.conversion.None;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.auxiliary.None;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.Database;
@@ -14,25 +17,22 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.concept.ConceptIndex;
 import net.digitalid.core.concept.ConceptSetup;
+import net.digitalid.core.concept.annotations.GenerateProperty;
 import net.digitalid.core.conversion.wrappers.value.EmptyWrapper;
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
+import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.core.property.nonnullable.NonNullableConceptPropertySetup;
 import net.digitalid.core.restrictions.Restrictions;
-import net.digitalid.core.service.CoreService;
-
-import net.digitalid.service.core.auxiliary.ShortString;
-import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.property.RequiredAuthorization;
-import net.digitalid.service.core.property.ValueValidator;
 
 /**
  * This class models a password of a digital identity.
  */
-public final class Settings extends Concept<Settings, NonHostEntity, Object> {
+@GenerateSubclass
+@GenerateConverter
+public abstract class Settings extends Concept<NonHostEntity, Object> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -61,11 +61,8 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
         
     }
     
-    /* -------------------------------------------------- ConceptIndex -------------------------------------------------- */
+    /* -------------------------------------------------- Index -------------------------------------------------- */
     
-    /**
-     * Stores the index of this concept.
-     */
     private static final @Nonnull ConceptIndex<Settings, NonHostEntity, Object> INDEX = ConceptIndex.get(new Factory());
     
     /**
@@ -79,7 +76,7 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Settings get(@Nonnull NonHostEntity entity) {
+    public static @Nonnull Settings of(@Nonnull NonHostEntity entity) {
         Require.that(!(entity instanceof Role) || ((Role) entity).isNative()).orThrow("If the entity is a role, it is native.");
         
         return INDEX.get(entity, None.OBJECT);
