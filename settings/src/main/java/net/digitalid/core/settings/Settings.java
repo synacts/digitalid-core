@@ -7,6 +7,8 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.generation.Recover;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.auxiliary.None;
 
@@ -16,9 +18,10 @@ import net.digitalid.database.core.Database;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.concept.ConceptIndex;
+import net.digitalid.core.concept.ConceptIndexBuilder;
 import net.digitalid.core.concept.ConceptSetup;
+import net.digitalid.core.concept.ConceptSetupBuilder;
 import net.digitalid.core.concept.annotations.GenerateProperty;
-import net.digitalid.core.conversion.wrappers.value.EmptyWrapper;
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
@@ -26,44 +29,19 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.core.property.nonnullable.NonNullableConceptPropertySetup;
 import net.digitalid.core.restrictions.Restrictions;
+import net.digitalid.core.service.Service;
 
 /**
- * This class models a password of a digital identity.
+ * This class models the settings of a digital identity.
  */
+@Immutable
 @GenerateSubclass
-@GenerateConverter
+@GenerateConverter // TODO: How can we get the entity to be externally provided?
 public abstract class Settings extends Concept<NonHostEntity, Object> {
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * Creates a new password that belongs to the given entity.
-     * 
-     * @param entity the entity to which the password belongs.
-     */
-    private Settings(@Nonnull NonHostEntity entity) {
-        super(entity, None.OBJECT, SETUP);
-    }
-    
-    /* -------------------------------------------------- Factory -------------------------------------------------- */
-    
-    /**
-     * The factory for this class.
-     */
-    @Immutable
-    private static final class Factory extends Concept.Factory<Settings, NonHostEntity, Object> {
-        
-        @Pure
-        @Override
-        public @Nonnull Settings create(@Nonnull NonHostEntity entity, @Nonnull Object key) {
-            return new Settings(entity);
-        }
-        
-    }
     
     /* -------------------------------------------------- Index -------------------------------------------------- */
     
-    private static final @Nonnull ConceptIndex<Settings, NonHostEntity, Object> INDEX = ConceptIndex.get(new Factory());
+    private static final @Nonnull ConceptIndex<Settings, NonHostEntity, Object> INDEX = ConceptIndexBuilder.withFactory((entity, key) -> new SettingsSubclass(entity)).build();
     
     /**
      * Returns a potentially cached password that might not yet exist in the database.
@@ -75,6 +53,7 @@ public abstract class Settings extends Concept<NonHostEntity, Object> {
      * @require !(entity instanceof Role) || ((Role) entity).isNative() : "If the entity is a role, it is native.";
      */
     @Pure
+    @Recover
     @NonCommitting
     public static @Nonnull Settings of(@Nonnull NonHostEntity entity) {
         Require.that(!(entity instanceof Role) || ((Role) entity).isNative()).orThrow("If the entity is a role, it is native.");
@@ -87,7 +66,7 @@ public abstract class Settings extends Concept<NonHostEntity, Object> {
     /**
      * Stores the setup of this concept.
      */
-    public static final @Nonnull ConceptSetup<Settings, NonHostEntity, Object> SETUP = ConceptSetup.get(CoreService.SERVICE, "settings", INDEX, EmptyWrapper.getValueConverters(EmptyWrapper.SEMANTIC), NonHostEntity.CONVERTERS);
+    public static final @Nonnull ConceptSetup<Settings, NonHostEntity, Object> SETUP = ConceptSetupBuilder.withService(Service.CORE).withConceptName("settings").withConceptIndex(INDEX).build(); //.get(CoreService.SERVICE, "settings", INDEX, EmptyWrapper.getValueConverters(EmptyWrapper.SEMANTIC), NonHostEntity.CONVERTERS);
     
     /* -------------------------------------------------- Required Authorization -------------------------------------------------- */
     
@@ -134,6 +113,7 @@ public abstract class Settings extends Concept<NonHostEntity, Object> {
     /**
      * Stores the password of these settings.
      */
+    @Pure
     @GenerateProperty
     public @Nonnull NonNullableConceptProperty<@MaxSize(50) String, Settings, NonHostEntity> password() { return null; };// = NonNullableConceptProperty.get(VALUE_PROPERTY_SETUP, this);
     
