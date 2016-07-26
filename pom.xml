@@ -44,8 +44,8 @@
         <module>service</module>
         <module>concept</module>
         <module>node</module>
-        <module>agent</module>
         <module>restrictions</module>
+        <module>agent</module>
         <module>block</module>
         <module>wrappers</module>
         <module>cryptography</module>

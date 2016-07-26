@@ -4,31 +4,24 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.property.extensible.WritableExtensibleProperty;
-import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
+import net.digitalid.core.concept.CoreConcept;
 import net.digitalid.core.concept.annotations.GenerateProperty;
+import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.typeset.authentications.ReadOnlyAuthentications;
 import net.digitalid.core.typeset.permissions.ReadOnlyNodePermissions;
 
 /**
- * Description.
+ * This class models a node, which is the superclass of contact and context.
  */
 @Immutable
-// TODO: @GenerateConverter // TODO: How to provide a recover-method? Make it injectable?
-public interface Node extends RootInterface {
-    
-    /* -------------------------------------------------- Number -------------------------------------------------- */
-    
-    /**
-     * Returns the number that denotes this node.
-     */
-    @Pure
-    public long getNumber();
+// TODO: @GenerateConverter // TODO: How to provide a recover-method? Make it injectable? (Use the key to determine whether it is a context or a contact (either with ranges or even vs. uneven)?)
+public abstract class Node extends CoreConcept<NonHostEntity, Long> {
     
     /* -------------------------------------------------- Permissions -------------------------------------------------- */
     
@@ -36,8 +29,9 @@ public interface Node extends RootInterface {
      * Returns the permissions of this node.
      */
     @Pure
-    @GenerateProperty
-    public @Nonnull WritableExtensibleProperty<SemanticType, ReadOnlyNodePermissions> permissions();
+    @GenerateProperty(requiredPermissionsToExecuteMethod = "value, false", requiredRestrictionsToExecuteMethod = "false, false, true, concept", requiredPermissionsToSeeMethod = "value, false", requiredRestrictionsToSeeMethod = "false, false, false, concept")
+//    @GenerateProperty(requiredPermissionsToExecuteMethod = "value, false", requiredRestrictionsToExecuteMethod = "RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()", requiredPermissionsToSeeMethod = "value, false", requiredRestrictionsToSeeMethod = "RestrictionsBuilder.withNode(concept).build()")
+    public abstract @Nonnull WritableExtensibleProperty<SemanticType, ReadOnlyNodePermissions> permissions();
     
     /* -------------------------------------------------- Authentications -------------------------------------------------- */
     
@@ -45,32 +39,16 @@ public interface Node extends RootInterface {
      * Returns the authentications of this node.
      */
     @Pure
-    @NonCommitting
-    public @Nonnull ReadOnlyAuthentications getAuthentications() throws DatabaseException; // TODO: Rather already a property?
+    @GenerateProperty(requiredPermissionsToExecuteMethod = "value, false", requiredRestrictionsToExecuteMethod = "false, false, true, concept", requiredPermissionsToSeeMethod = "value, false", requiredRestrictionsToSeeMethod = "false, false, false, concept")
+    public abstract @Nonnull WritableExtensibleProperty<SemanticType, ReadOnlyAuthentications> getAuthentications();
     
-    /* -------------------------------------------------- Subnodes -------------------------------------------------- */
-    
-    // TODO: Use the following code only in contexts.
-    
-//    /**
-//     * Returns the direct subnodes of this node.
-//     */
-//    @Pure
-//    @NonCommitting
-//    public @Nonnull List<Node> getSubnodes() throws DatabaseException; // TODO: Rather already a property?
-//    
-//    /**
-//     * Returns all subnodes of this node.
-//     */
-//    @Pure
-//    @NonCommitting
-//    public @Nonnull List<Node> getAllSubnodes() throws DatabaseException;
+    /* -------------------------------------------------- Supernode -------------------------------------------------- */
     
     /**
      * Returns whether this node is a supernode of the given node.
      */
     @Pure
     @NonCommitting
-    public boolean isSupernodeOf(@Nonnull Node node) throws DatabaseException;
+    public abstract boolean isSupernodeOf(@Nonnull Node node) throws DatabaseException;
     
 }

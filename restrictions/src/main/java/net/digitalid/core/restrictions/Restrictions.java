@@ -33,7 +33,7 @@ public abstract class Restrictions extends RootClass {
     /**
      * Stores the weakest restrictions (without a context and contact).
      */
-    public static final @Nonnull Restrictions MIN = RestrictionsBuilder.get().build();
+    public static final @Nonnull Restrictions MIN = RestrictionsBuilder.build();
     
     /**
      * Stores the strongest restrictions (without a context and contact).

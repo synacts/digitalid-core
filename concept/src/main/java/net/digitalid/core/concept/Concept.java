@@ -8,8 +8,10 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
 
+import net.digitalid.core.concept.annotations.GenerateIndex;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.service.Service;
 
 /**
  * This class models a concept in the {@link Database database}.
@@ -38,13 +40,22 @@ public abstract class Concept<E extends Entity, K> extends RootClass {
     @Pure
     public abstract @Nonnull K getKey();
     
-    /* -------------------------------------------------- Setup -------------------------------------------------- */
+    /* -------------------------------------------------- Service -------------------------------------------------- */
     
     /**
-     * Returns the setup of this concept.
+     * Returns the service to which this concept belongs.
      */
     @Pure
-    public abstract @Nonnull ConceptSetup<E, K, Concept<E, K>> getSetup();
+    public abstract @Nonnull Service getService();
+    
+    /* -------------------------------------------------- Index -------------------------------------------------- */
+    
+    /**
+     * Returns the index of this concept.
+     */
+    @Pure
+    @GenerateIndex
+    protected abstract @Nonnull ConceptIndex<E, K, ? extends Concept<E, K>> getIndex();
     
     /* -------------------------------------------------- Properties -------------------------------------------------- */
     
