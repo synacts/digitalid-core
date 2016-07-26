@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.reference.Raw;
 import net.digitalid.utility.collections.collection.ReadOnlyCollection;
-import net.digitalid.utility.collections.map.FreezableLinkedHashMap;
+import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -33,14 +33,21 @@ public abstract class Service extends RootClass {
     /**
      * Stores the core service.
      */
-    public static final @Nonnull Service CORE = ServiceBuilder.withType(null /* TODO */).withTitle("Core Service").withVersion("1.0").build();
+    // TODO: Generate a builder that uses the non-representative fields title and version.
+    public static final @Nonnull Service CORE = Service.with(null /* TODO */, "Core Service", "1.0");
+//    public static final @Nonnull Service CORE = ServiceBuilder.withType(null /* TODO */).withTitle("Core Service").withVersion("1.0").build();
+    
+    @Pure
+    public static @Nonnull Service with(@Nonnull SemanticType type, @Nonnull String title, @Nonnull String version) {
+        return new ServiceSubclass(type, title, version);
+    }
     
     /* -------------------------------------------------- Services -------------------------------------------------- */
     
     /**
      * Maps the services that are installed on this site from their type.
      */
-    private static final @Nonnull FreezableMap<@Nonnull SemanticType, @Nonnull Service> services = FreezableLinkedHashMap.withDefaultCapacity();
+    private static final @Nonnull FreezableMap<@Nonnull SemanticType, @Nonnull Service> services = FreezableLinkedHashMapBuilder.build();
     
     /**
      * Adds the given service for the given type and returns that type afterwards.
