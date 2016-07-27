@@ -13,7 +13,6 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.functional.interfaces.BinaryFunction;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.mode.SingleAccess;
@@ -49,14 +48,6 @@ public abstract class ConceptIndex<E extends Entity, K, C extends Concept<E, K>>
             index.concepts.remove(entity);
         }
     }
-    
-    /* -------------------------------------------------- Name -------------------------------------------------- */
-    
-    /**
-     * Returns the name of the concept.
-     */
-    @Pure
-    protected abstract @Nonnull @CodeIdentifier String getName();
     
     /* -------------------------------------------------- Factory -------------------------------------------------- */
     

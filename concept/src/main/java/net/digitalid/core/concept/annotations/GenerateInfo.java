@@ -12,9 +12,8 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-//@TypeValidator(GenerateProperty.Validator.class)
-public @interface GenerateIndex {
+public @interface GenerateInfo {
     
-    // TODO: Implement a validator.
+    // TODO: Implement the interceptor that generates the info with the index.
     
 }

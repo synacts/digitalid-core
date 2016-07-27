@@ -3,6 +3,8 @@ package net.digitalid.core.property.nonnullable;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.state.Validated;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -10,7 +12,6 @@ import net.digitalid.core.concept.Concept;
 import net.digitalid.core.concept.ConceptSetup;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.property.ConceptPropertyInternalAction;
-import net.digitalid.core.property.ConceptPropertySetup;
 
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.entity.Entity;
@@ -23,7 +24,9 @@ import net.digitalid.service.core.property.ValueValidator;
  * This is the factory for non-nullable concept properties.
  */
 @Immutable
-public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>, E extends Entity> extends ConceptPropertySetup<V, C, E> {
+@GenerateBuilder
+@GenerateSubclass
+public abstract class NonNullableConceptPropertyInfo<V, C extends Concept<C, E, ?>, E extends Entity> extends ConceptPropertyInfo<V, C, E> {
     
     /* -------------------------------------------------- Old Value Type -------------------------------------------------- */
     
@@ -34,8 +37,6 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     
     /**
      * Returns the type of the old value in the internal action.
-     * 
-     * @return the type of the old value in the internal action.
      */
     @Pure
     public @Nonnull @Loaded SemanticType getOldValueType() {
@@ -51,8 +52,6 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     
     /**
      * Returns the type of the new value in the internal action.
-     * 
-     * @return the type of the new value in the internal action.
      */
     @Pure
     public @Nonnull @Loaded SemanticType getNewValueType() {
@@ -81,8 +80,6 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     
     /**
      * Returns the default value for the properties created by this factory.
-     * 
-     * @return the default value for the properties created by this factory.
      */
     @Pure
     public @Nonnull V getDefaultValue() {

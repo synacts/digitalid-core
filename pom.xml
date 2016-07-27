@@ -81,7 +81,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.database</groupId>
-            <artifactId>database-core</artifactId>
+            <artifactId>database-conversion</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

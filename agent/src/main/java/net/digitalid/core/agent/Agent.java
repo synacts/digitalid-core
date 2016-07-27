@@ -15,7 +15,6 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.concept.CoreConcept;
-import net.digitalid.core.concept.annotations.GenerateProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -43,11 +42,13 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
     
     /* -------------------------------------------------- Removed -------------------------------------------------- */
     
+    // TODO: Declare the required authorization object.
+    
     /**
      * Returns whether this agent is removed.
      */
     @Pure
-    @GenerateProperty(requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
+//    @GenerateProperty(requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
     public abstract @Nonnull WritableNonNullableProperty<Boolean> removed();
     
     /**
@@ -93,7 +94,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      * make sure to {@link #removePermissions(net.digitalid.service.core.agent.ReadonlyAgentPermissions) remove} them first.
      */
     @Pure
-    @GenerateProperty(requiredPermissionsToExecuteMethod = "key, value", requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
+//    @GenerateProperty(requiredPermissionsToExecuteMethod = "key, value", requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
     public abstract @Nonnull WritableIndexedProperty<SemanticType, Boolean, ReadOnlyAgentPermissions> permissions();
     
     /* -------------------------------------------------- Restrictions -------------------------------------------------- */
@@ -105,7 +106,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      * @ensure return.match(this) : "The restrictions match this agent.";
      */
     @Pure
-    @GenerateProperty(requiredRestrictionsToExecuteMethod = "value", requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
+//    @GenerateProperty(requiredRestrictionsToExecuteMethod = "value", requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
     public abstract @Nonnull WritableNonNullableProperty<Restrictions> restrictions();
     
     /* -------------------------------------------------- Abstract -------------------------------------------------- */
