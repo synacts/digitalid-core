@@ -9,5 +9,4 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
  * @see ArtificialPerson
  */
 @Mutable
-// TODO: @GenerateConverter
 public abstract class InternalPerson extends Person implements InternalNonHostIdentity {}

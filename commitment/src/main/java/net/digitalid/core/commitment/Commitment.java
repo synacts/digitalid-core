@@ -10,6 +10,7 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.cryptography.key.PublicKey;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.math.Element;
@@ -29,7 +30,7 @@ import net.digitalid.core.identification.identity.HostIdentity;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-// TODO: @GenerateConverter
+@GenerateConverter
 public interface Commitment extends RootInterface {
     
     // TODO: Remove the following code once these (or such) semantic types are generated implicitly.

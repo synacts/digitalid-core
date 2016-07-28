@@ -3,6 +3,7 @@ package net.digitalid.core.identification.identity;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.core.identification.identifier.InternalIdentifier;
@@ -14,7 +15,6 @@ import net.digitalid.core.identification.identifier.InternalIdentifier;
  * @see InternalNonHostIdentity
  */
 @Mutable
-// TODO: @GenerateConverter
 public interface InternalIdentity extends Identity {
     
     /* -------------------------------------------------- Address -------------------------------------------------- */

@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -20,7 +21,7 @@ import net.digitalid.core.identification.identity.Person;
  * @see MobileIdentifier
  */
 @Immutable
-// TODO: @GenerateConverter
+@GenerateConverter
 public interface ExternalIdentifier extends NonHostIdentifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */

@@ -5,7 +5,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -23,7 +25,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
  * @see InternalNonHostIdentifier
  */
 @Immutable
-// TODO: @GenerateConverter
+@GenerateConverter
 public interface InternalIdentifier extends Identifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
@@ -89,6 +91,7 @@ public interface InternalIdentifier extends Identifier {
      * Returns the host part of this internal identifier.
      */
     @Pure
+    @NonRepresentative
     public abstract @Nonnull HostIdentifier getHostIdentifier();
     
 }

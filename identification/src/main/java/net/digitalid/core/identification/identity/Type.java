@@ -2,6 +2,7 @@ package net.digitalid.core.identification.identity;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -14,7 +15,6 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
  * @see SemanticType
  */
 @Mutable
-// TODO: @GenerateConverter
 public abstract class Type extends RelocatableIdentity implements InternalNonHostIdentity {
     
     /* -------------------------------------------------- Loaded -------------------------------------------------- */
