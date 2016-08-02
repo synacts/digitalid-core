@@ -6,14 +6,13 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.thread.annotations.MainThread;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
-import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.concept.Concept;
@@ -21,8 +20,6 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.annotations.NonEncoding;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concepts.agent.Agent;
@@ -122,7 +119,6 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      * @ensure return.getType().equals(getStateType()) : "The returned block has the state type of this data collection.";
      */
     @Pure
-    @Locked
     @NonCommitting
     public abstract @Nonnull @NonEncoding Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws DatabaseException;
     
@@ -134,7 +130,6 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      * 
      * @require block.getType().isBasedOn(getStateType()) : "The block is based on the state type of this data collection.";
      */
-    @Locked
     @NonCommitting
     public abstract void addState(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws ExternalException;
     
@@ -143,7 +138,6 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      * 
      * @param entity the entity whose entries are to be removed.
      */
-    @Locked
     @NonCommitting
     public void removeState(@Nonnull E entity) throws DatabaseException {
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -156,7 +150,6 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     /* -------------------------------------------------- Non-Generic State -------------------------------------------------- */
     
     @Pure
-    @Locked
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
@@ -164,7 +157,6 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
         return getState((E) entity, permissions, restrictions, agent);
     }
     
-    @Locked
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
@@ -172,7 +164,6 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
         addState((E) entity, block);
     }
     
-    @Locked
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")

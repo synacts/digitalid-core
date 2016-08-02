@@ -54,13 +54,13 @@ public abstract class ConceptPropertyInfo<V, C extends Concept<C, E, ?>, E exten
     @Pure
     public abstract @Nonnull ValueValidator<V> getValueValidator();
     
-    /* -------------------------------------------------- Concept Setup -------------------------------------------------- */
+    /* -------------------------------------------------- Concept Info -------------------------------------------------- */
     
     /**
      * Returns the concept info.
      */
     @Pure
-    public abstract @Nonnull ConceptInfo<C, E, ?> getConceptSetup();
+    public abstract @Nonnull ConceptInfo<C, E, ?> getConceptInfo();
     
     /* -------------------------------------------------- Concept Type -------------------------------------------------- */
     

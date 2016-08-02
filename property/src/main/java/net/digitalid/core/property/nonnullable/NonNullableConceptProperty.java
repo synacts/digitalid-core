@@ -3,23 +3,19 @@ package net.digitalid.core.property.nonnullable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.validation.annotations.state.Validated;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.time.Time;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.Committing;
-import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.property.ConceptProperty;
 import net.digitalid.core.synchronizer.Synchronizer;
-
-import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.property.nonnullable.WritableNonNullableProperty;
 
 /**
  * This property belongs to a concept and stores a replaceable value that cannot be null.
@@ -102,7 +98,6 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     private @Nullable Time time;
     
     @Pure
-    @Locked
     @Override
     @NonCommitting
     public @Nonnull Time getTime() throws DatabaseException {
@@ -116,22 +111,20 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     /**
      * Stores the value of this property.
      */
-    private @Nullable @Validated V value;
+    private @Nullable @Valid V value;
     
     @Pure
-    @Locked
     @Override
     @NonCommitting
-    public @Nonnull @Validated V get() throws DatabaseException {
+    public @Nonnull @Valid V get() throws DatabaseException {
         if (value == null) { load(); }
         assert value != null;
         return value;
     }
     
-    @Locked
     @Override
     @Committing
-    public void set(@Nonnull @Validated V newValue) throws DatabaseException {
+    public void set(@Nonnull @Valid V newValue) throws DatabaseException {
         Require.that(getValueValidator().isValid(newValue)).orThrow("The new value is valid.");
         
         final @Nonnull V oldValue = get();
@@ -152,9 +145,8 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
      * 
      * @require !oldValue.equals(newValue) : "The old and the new value are not the same.";
      */
-    @Locked
     @NonCommitting
-    void replace(@Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws DatabaseException {
+    void replace(@Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Valid V oldValue, @Nonnull @Valid V newValue) throws DatabaseException {
         Require.that(getValueValidator().isValid(oldValue)).orThrow("The old value is valid.");
         Require.that(getValueValidator().isValid(newValue)).orThrow("The new value is valid.");
         
@@ -164,7 +156,6 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         notify(oldValue, newValue);
     }
     
-    @Locked
     @Override
     @NonCommitting
     public void reset() throws DatabaseException {

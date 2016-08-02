@@ -41,7 +41,7 @@ public abstract class Node extends CoreConcept<NonHostEntity, Long> {
      */
     @Pure
 //    @GenerateProperty(requiredPermissionsToExecuteMethod = "value, false", requiredRestrictionsToExecuteMethod = "false, false, true, concept", requiredPermissionsToSeeMethod = "value, false", requiredRestrictionsToSeeMethod = "false, false, false, concept")
-    public abstract @Nonnull WritableExtensibleProperty<SemanticType, ReadOnlyAuthentications> getAuthentications();
+    public abstract @Nonnull WritableExtensibleProperty<SemanticType, ReadOnlyAuthentications> authentications();
     
     /* -------------------------------------------------- Supernode -------------------------------------------------- */
     

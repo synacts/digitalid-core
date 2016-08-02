@@ -83,7 +83,7 @@ public abstract class Service extends RootClass {
      * Returns the type of this service.
      */
     @Pure
-    @Normalize("Service.addService(type, this)")
+    @Normalize("Service.addService(type, this)") // TODO: Replace this normalization with the initialize method.
     public abstract @Nonnull SemanticType getType();
     
     /* -------------------------------------------------- Title -------------------------------------------------- */
