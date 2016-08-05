@@ -85,6 +85,11 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-property</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>net.digitalid.utility</groupId>
             <artifactId>utility-parent</artifactId>
             <version>1.0.0</version>

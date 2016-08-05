@@ -7,12 +7,12 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.property.indexed.WritableIndexedProperty;
-import net.digitalid.utility.property.nonnullable.WritableNonNullableProperty;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.property.simple.PersistentWritableSimpleProperty;
 
 import net.digitalid.core.concept.CoreConcept;
 import net.digitalid.core.entity.NonHostEntity;
@@ -49,13 +49,13 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      */
     @Pure
 //    @GenerateProperty(requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
-    public abstract @Nonnull WritableNonNullableProperty<Boolean> removed();
+    public abstract @Nonnull PersistentWritableSimpleProperty<Agent, Boolean> removed();
     
     /**
      * Checks that this agent is not removed and throws a {@link RequestException} otherwise.
      */
     @Pure
-    public void checkNotRemoved() throws RequestException {
+    public void checkNotRemoved() throws RequestException, DatabaseException {
         if (removed().get()) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "The agent has been removed."); }
     }
     
@@ -107,7 +107,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      */
     @Pure
 //    @GenerateProperty(requiredRestrictionsToExecuteMethod = "value", requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
-    public abstract @Nonnull WritableNonNullableProperty<Restrictions> restrictions();
+    public abstract @Nonnull PersistentWritableSimpleProperty<Agent, Restrictions> restrictions();
     
     /* -------------------------------------------------- Abstract -------------------------------------------------- */
     

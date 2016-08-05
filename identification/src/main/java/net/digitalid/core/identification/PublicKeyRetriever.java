@@ -7,7 +7,7 @@ import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.cryptography.key.PublicKey;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.time.Time;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
@@ -17,7 +17,7 @@ import net.digitalid.core.identification.identity.HostIdentity;
 /**
  * The public key retriever retrieves the public key of a host at a given time.
  */
-@Immutable
+@Stateless
 public interface PublicKeyRetriever {
     
     /* -------------------------------------------------- Interface -------------------------------------------------- */
