@@ -13,6 +13,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.storage.Site;
 import net.digitalid.database.exceptions.DatabaseException;
 
+import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 
 /**

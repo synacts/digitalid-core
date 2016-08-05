@@ -173,6 +173,11 @@
                     </compilerArguments>
                     <!-- NetBeans seems to need the following line sometimes: -->
                     <generatedSourcesDirectory>target/generated-sources/annotations</generatedSourcesDirectory>
+                    <!-- Uncomment the following 2 lines if you need to remotely debug the annotation processing. -->
+<!--
+                    <compilerArgument>-J-Xdebug</compilerArgument>
+                    <compilerArgument>-J-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005</compilerArgument>
+-->
                 </configuration>
             </plugin>
             
