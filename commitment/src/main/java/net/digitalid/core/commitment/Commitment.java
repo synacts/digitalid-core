@@ -20,6 +20,7 @@ import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.core.identification.PublicKeyRetriever;
 import net.digitalid.core.identification.identity.HostIdentity;
 
 /**
@@ -130,7 +131,7 @@ public interface Commitment extends RootInterface {
     @Pure
     @TODO(task = "Why are all the fields optional? The public key should be required as long as no exceptions can be thrown in derive-expressions.", date = "2016-06-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
     public default @Nonnull SecretCommitment addSecret(@Nonnull Exponent secret) throws ExternalException {
-        return SecretCommitmentBuilder.withHost(getHost()).withTime(getTime()).withValue(getValue()).withSecret(secret).build();
+        return SecretCommitmentBuilder.withHost(getHost()).withTime(getTime()).withValue(getValue()).withPublicKey(PublicKeyRetriever.retrieve(getHost(), getTime())).withSecret(secret).build();
     }
     
 }

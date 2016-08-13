@@ -19,7 +19,7 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.core.Database;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.attribute.Attribute;

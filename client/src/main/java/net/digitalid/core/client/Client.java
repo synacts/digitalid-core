@@ -29,7 +29,7 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.Database;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.commitment.Commitment;
@@ -93,7 +93,7 @@ public abstract class Client extends Site {
     @Pure
     @Override
     @Derive("identifier.replace(\".\", \"_\")")
-    public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getDatabaseName();
+    public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getName();
     
     /* -------------------------------------------------- Entity Reference -------------------------------------------------- */
     
