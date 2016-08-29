@@ -1,4 +1,4 @@
-package net.digitalid.core.conversion.annotations;
+package net.digitalid.core.block.annotations.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -6,9 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.digitalid.utility.validation.annotations.meta.TargetTypes;
-
-import net.digitalid.core.conversion.Block;
 
 /**
  * This annotation indicates that a method should only be invoked on non-{@link Exposed exposed} objects.
@@ -18,7 +15,7 @@ import net.digitalid.core.conversion.Block;
  * @see EncodingRecipient
  */
 @Documented
-@TargetTypes(Block.class)
+//@TargetTypes(Block.class)
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
 public @interface NonEncodingRecipient {}

@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.block.wrappers.signature.HostSignatureWrapper;
+import net.digitalid.core.cryptography.signature.HostSignature;
 
 /**
  * This exception is thrown when a host signature has expired.
@@ -20,7 +20,7 @@ public class ExpiredHostSignatureException extends ExpiredSignatureException {
      * 
      * @param signature the host signature that has expired.
      */
-    protected ExpiredHostSignatureException(@Nonnull HostSignatureWrapper signature) {
+    protected ExpiredHostSignatureException(@Nonnull HostSignature signature) {
         super(signature);
     }
     
@@ -32,7 +32,7 @@ public class ExpiredHostSignatureException extends ExpiredSignatureException {
      * @return a new expired host signature exception.
      */
     @Pure
-    public static @Nonnull ExpiredHostSignatureException get(@Nonnull HostSignatureWrapper signature) {
+    public static @Nonnull ExpiredHostSignatureException get(@Nonnull HostSignature signature) {
         return new ExpiredHostSignatureException(signature);
     }
     
@@ -40,8 +40,8 @@ public class ExpiredHostSignatureException extends ExpiredSignatureException {
     
     @Pure
     @Override
-    public @Nonnull HostSignatureWrapper getSignature() {
-        return (HostSignatureWrapper) super.getSignature();
+    public @Nonnull HostSignature getSignature() {
+        return (HostSignature) super.getSignature();
     }
     
 }

@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.block.wrappers.signature.ClientSignatureWrapper;
+import net.digitalid.core.cryptography.signature.ClientSignature;
 
 /**
  * This exception is thrown when a client signature has expired.
@@ -20,7 +20,7 @@ public class ExpiredClientSignatureException extends ExpiredSignatureException {
      * 
      * @param signature the client signature that has expired.
      */
-    protected ExpiredClientSignatureException(@Nonnull ClientSignatureWrapper signature) {
+    protected ExpiredClientSignatureException(@Nonnull ClientSignature signature) {
         super(signature);
     }
     
@@ -32,7 +32,7 @@ public class ExpiredClientSignatureException extends ExpiredSignatureException {
      * @return a new expired client signature exception.
      */
     @Pure
-    public static @Nonnull ExpiredClientSignatureException get(@Nonnull ClientSignatureWrapper signature) {
+    public static @Nonnull ExpiredClientSignatureException get(@Nonnull ClientSignature signature) {
         return new ExpiredClientSignatureException(signature);
     }
     
@@ -40,8 +40,8 @@ public class ExpiredClientSignatureException extends ExpiredSignatureException {
     
     @Pure
     @Override
-    public @Nonnull ClientSignatureWrapper getSignature() {
-        return (ClientSignatureWrapper) super.getSignature();
+    public @Nonnull ClientSignature getSignature() {
+        return (ClientSignature) super.getSignature();
     }
     
 }

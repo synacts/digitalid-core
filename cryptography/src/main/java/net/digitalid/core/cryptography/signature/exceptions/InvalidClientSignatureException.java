@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.block.wrappers.signature.ClientSignatureWrapper;
+import net.digitalid.core.cryptography.signature.ClientSignature;
 
 /**
  * This exception is thrown when a client signature is invalid.
@@ -20,7 +20,7 @@ public class InvalidClientSignatureException extends InvalidSignatureException {
      * 
      * @param signature the client signature that is invalid.
      */
-    protected InvalidClientSignatureException(@Nonnull ClientSignatureWrapper signature) {
+    protected InvalidClientSignatureException(@Nonnull ClientSignature signature) {
         super(signature);
     }
     
@@ -32,7 +32,7 @@ public class InvalidClientSignatureException extends InvalidSignatureException {
      * @return a new invalid client signature exception.
      */
     @Pure
-    public static @Nonnull InvalidClientSignatureException get(@Nonnull ClientSignatureWrapper signature) {
+    public static @Nonnull InvalidClientSignatureException get(@Nonnull ClientSignature signature) {
         return new InvalidClientSignatureException(signature);
     }
     
@@ -40,8 +40,8 @@ public class InvalidClientSignatureException extends InvalidSignatureException {
     
     @Pure
     @Override
-    public @Nonnull ClientSignatureWrapper getSignature() {
-        return (ClientSignatureWrapper) super.getSignature();
+    public @Nonnull ClientSignature getSignature() {
+        return (ClientSignature) super.getSignature();
     }
     
 }

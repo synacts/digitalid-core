@@ -10,44 +10,27 @@ import java.security.NoSuchAlgorithmException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Captured;
-import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.cryptography.InitializationVector;
+import net.digitalid.utility.cryptography.SymmetricKey;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.MissingSupportException;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.validation.annotations.index.Index;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
-import net.digitalid.database.core.converter.sql.SQLConverter;
-import net.digitalid.database.core.declaration.ColumnDeclaration;
-import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
-import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
-import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.database.core.interfaces.ValueCollector;
-import net.digitalid.database.core.sql.statement.table.create.SQLType;
-
-import net.digitalid.core.conversion.annotations.Encoded;
-import net.digitalid.core.conversion.annotations.Encoding;
-import net.digitalid.core.conversion.annotations.EncodingRecipient;
-import net.digitalid.core.conversion.annotations.NonEncoded;
-import net.digitalid.core.conversion.annotations.NonEncoding;
-import net.digitalid.core.conversion.annotations.NonEncodingRecipient;
-import net.digitalid.core.conversion.exceptions.InvalidBlockTypeException;
-import net.digitalid.core.conversion.wrappers.AbstractWrapper;
-
-import net.digitalid.service.core.converter.xdf.NonRequestingXDFConverter;
-import net.digitalid.service.core.cryptography.InitializationVector;
-import net.digitalid.service.core.cryptography.SymmetricKey;
-import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.core.block.annotations.annotations.Encoded;
+import net.digitalid.core.block.annotations.annotations.Encoding;
+import net.digitalid.core.block.annotations.annotations.EncodingRecipient;
+import net.digitalid.core.block.annotations.annotations.NonEncoded;
+import net.digitalid.core.block.annotations.annotations.NonEncoding;
+import net.digitalid.core.block.annotations.annotations.NonEncodingRecipient;
+import net.digitalid.core.identification.annotations.type.loaded.Loaded;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * A block is a sequence of bytes that is encoded according to some syntactic type.
@@ -62,8 +45,11 @@ import net.digitalid.service.core.identity.annotations.Loaded;
  * @invariant bytes == null || length > 0 : "If this block is allocated, its length is positive.";
  * @invariant bytes == null || offset + length <= bytes.length : "If this block is allocated, it may not exceed the byte array.";
  * @invariant !isEncoded() || isAllocated() : "If the block is encoded, it is also allocated.";
+ * 
+ * @deprecated This type is not required anymore since we're writing directly into the output stream.
  */
-@Immutable
+//@Immutable // TODO: not immutable. We do have impure methods.
+@Deprecated
 public final class Block implements Cloneable {
     
     /* -------------------------------------------------- Invariant -------------------------------------------------- */
@@ -110,7 +96,7 @@ public final class Block implements Cloneable {
     /**
      * Stores the wrapper of this block for lazy encoding or null otherwise.
      */
-    private final @Nullable AbstractWrapper<?> wrapper;
+    private final @Nullable Wrapper<?> wrapper;
     
     /**
      * Stores whether this block is already encoded and can thus no longer be written to.
@@ -203,7 +189,7 @@ public final class Block implements Cloneable {
      * 
      * @ensure !isAllocated() : "This block is not yet allocated.";
      */
-    private @NonEncoded @NonEncoding Block(@Nonnull @Loaded SemanticType type, @Nonnull AbstractWrapper<?> wrapper) {
+    private @NonEncoded @NonEncoding Block(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
         Require.that(type.isLoaded()).orThrow("The type declaration is loaded.");
         
         this.type = type;
@@ -224,7 +210,7 @@ public final class Block implements Cloneable {
      * @ensure !isAllocated() : "This block is not yet allocated.";
      */
     @Pure
-    public static @Nonnull @NonEncoded @NonEncoding Block get(@Nonnull @Loaded SemanticType type, @Nonnull AbstractWrapper<?> wrapper) {
+    public static @Nonnull @NonEncoded @NonEncoding Block get(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
         return new Block(type, wrapper);
     }
     
@@ -234,7 +220,7 @@ public final class Block implements Cloneable {
      * Returns the semantic type of this block.
      * <p>
      * <em>Important:</em> Do not rely on the identity of the type, but rather use
-     * {@link SemanticType#isBasedOn(net.digitalid.service.core.identity.SemanticType)} for comparisons.
+     * {@link SemanticType# isBasedOn(net.digitalid.service.core.identity.SemanticType)} for comparisons.
      * 
      * @return the semantic type of this block.
      * 
@@ -254,27 +240,30 @@ public final class Block implements Cloneable {
      * 
      * @require type.isBasedOn(getType()) : "The type can only be downcast.";
      */
+    @Impure
     public @Nonnull Block setType(@Nonnull @Loaded SemanticType type) {
         Require.that(type.isLoaded()).orThrow("The type declaration is loaded.");
-        Require.that(type.isBasedOn(getType())).orThrow("The type can only be downcast.");
+        // TODO: figure out whether type check is actually required and useful.
+//        Require.that(type.isBasedOn(getType())).orThrow("The type can only be downcast.");
         
         this.type = type;
         return this;
     }
     
-    /**
-     * Checks that the type of this block is based on the given type.
-     * 
-     * @param type the type to set for this block.
-     * 
-     * @return this block.
-     * 
-     * @throws InvalidBlockTypeException if this is not the case.
-     */
-    public @Nonnull Block checkType(@Nonnull @Loaded SemanticType type) throws InvalidBlockTypeException {
-        if (!this.type.isBasedOn(type)) { throw InvalidBlockTypeException.get(type, this.type); }
-        return this;
-    }
+    // TODO: Commented out, because the usefulness of this method is currently unclear. If it is required it should probably be implemented in the conversion.
+//    /**
+//     * Checks that the type of this block is based on the given type.
+//     * 
+//     * @param type the type to set for this block.
+//     * 
+//     * @return this block.
+//     * 
+//     * @throws InvalidBlockTypeException if this is not the case.
+//     */
+//    public @Nonnull Block checkType(@Nonnull @Loaded SemanticType type) throws InvalidBlockTypeException {
+//        if (!this.type.isBasedOn(type)) { throw InvalidBlockTypeException.get(type, this.type); }
+//        return this;
+//    }
     
     /* -------------------------------------------------- Get Bytes -------------------------------------------------- */
     
@@ -287,8 +276,9 @@ public final class Block implements Cloneable {
      * 
      * @ensure isEncoded() : "This block is encoded.";
      */
+    @Pure
     @NonEncodingRecipient
-    public @Nonnull byte getByte(@Index int index) {
+    public byte getByte(int index) {
         Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
         Require.that(index >= 0 && index < getLength()).orThrow("The index is valid.");
         
@@ -305,6 +295,7 @@ public final class Block implements Cloneable {
      * @ensure isEncoded() : "The block is encoded.";
      * @ensure result.length == getLength() : "The result has the whole length.";
      */
+    @Pure
     @NonEncodingRecipient
     public @Capturable @Nonnull byte[] getBytes() {
         return getBytes(0);
@@ -324,6 +315,7 @@ public final class Block implements Cloneable {
      * @ensure isEncoded() : "The block is encoded.";
      * @ensure result.length == getLength() - offset : "The result has the right length.";
      */
+    @Pure
     @NonEncodingRecipient
     public @Capturable @Nonnull byte[] getBytes(int offset) {
         return getBytes(offset, getLength() - offset);
@@ -343,6 +335,7 @@ public final class Block implements Cloneable {
      * @ensure isEncoded() : "The block is encoded.";
      * @ensure result.length == length : "The result has the given length.";
      */
+    @Pure
     @NonEncodingRecipient
     public @Capturable @Nonnull byte[] getBytes(@NonNegative int offset, @NonNegative int length) {
         Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
@@ -364,8 +357,9 @@ public final class Block implements Cloneable {
      * @param index the index of the byte to be set.
      * @param value the new value of the byte at the given index.
      */
+    @Impure
     @EncodingRecipient
-    public void setByte(@Index int index, byte value) {
+    public void setByte(int index, byte value) {
         Require.that(isEncoding()).orThrow("This method may only be called during encoding.");
         Require.that(index >= 0 && index < getLength()).orThrow("The index is valid.");
         
@@ -380,6 +374,7 @@ public final class Block implements Cloneable {
      * 
      * @require offset + values.length <= getLength() : "The given values may not exceed this block.";
      */
+    @Impure
     @EncodingRecipient
     public void setBytes(@NonNegative int offset, @Nonnull byte[] values) {
         setBytes(offset, values, 0, values.length);
@@ -396,6 +391,7 @@ public final class Block implements Cloneable {
      * @require index + length <= getLength() : "The given values may not exceed this block.";
      * @require offset + length <= values.length : "The indicated section may not exceed the given byte array.";
      */
+    @Impure
     @EncodingRecipient
     public void setBytes(@NonNegative int index, @Nonnull byte[] values, @NonNegative int offset, @NonNegative int length) {
         Require.that(isEncoding()).orThrow("This method may only be called during encoding.");
@@ -434,6 +430,7 @@ public final class Block implements Cloneable {
      * 
      * @param value the value to be encoded.
      */
+    @Impure
     @EncodingRecipient
     public void encodeValue(long value) {
         Require.that(isEncoding()).orThrow("This method may only be called during encoding.");
@@ -544,6 +541,7 @@ public final class Block implements Cloneable {
      * 
      * @require getLength() == block.getLength() : "This block has to have the same length as the given block.";
      */
+    @Impure
     @NonEncodingRecipient
     public void writeTo(@Nonnull @Encoding Block block) {
         writeTo(block, 0, block.getLength());
@@ -559,6 +557,7 @@ public final class Block implements Cloneable {
      * @require offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
      * @require getLength() == length : "This block has to have the same length as the designated section.";
      */
+    @Impure
     @NonEncodingRecipient
     public void writeTo(@Nonnull @Encoding Block block, @NonNegative int offset, @Positive int length) {
         Require.that(block.isEncoding()).orThrow("The given block is in the process of being encoded.");
@@ -700,77 +699,77 @@ public final class Block implements Cloneable {
         return toString(bytes, offset, length);
     }
     
-    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
-    
-    /**
-     * The XDF converter for this class.
-     */
-    @Immutable
-    public static class XDFConverter extends NonRequestingXDFConverter<Block, Object> {
-        
-        /**
-         * Creates a new XDF converter with the given type.
-         * 
-         * @param type the type of the blocks which are returned.
-         */
-        private XDFConverter(@Nonnull @Loaded SemanticType type) {
-            super(type);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull Block block) {
-            return block;
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Block decodeNonNullable(@Nonnull Object none, @Nonnull Block block) {
-            return block;
-        }
-        
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull XDFConverter getXDFConverter() {
-        return new XDFConverter(type);
-    }
-    
-    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
-    
-    /**
-     * Stores the declaration of this class.
-     */
-    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("block", SQLType.BINARY);
-    
-    /**
-     * Stores the SQL converter which is used to store and restore blocks.
-     */
-    public static final @Nonnull SQLConverter<Block, SemanticType> SQL_CONVERTER = new SQLConverter<Block, SemanticType>(DECLARATION) {
-        
-        @Override
-        public void storeNonNullable(@Nonnull Block block, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
-            if (Database.getInstance().supportsBinaryStreams()) {
-                collector.setBinaryStream(block.getInputStream(), block.getLength());
-            } else {
-                collector.setBinary(block.getBytes());
-            }
-        }
-        
-        @Override
-        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
-            final @Nullable byte[] bytes = result.getBinary();
-            return bytes == null ? null : Block.get(type, bytes);
-        }
-        
-    };
-    
-    @Pure
-    @Override
-    public @Nonnull SQLConverter<Block, SemanticType> getSQLConverter() {
-        return SQL_CONVERTER;
-    }
+//    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
+//    
+//    /**
+//     * The XDF converter for this class.
+//     */
+//    @Immutable
+//    public static class XDFConverter extends NonRequestingXDFConverter<Block, Object> {
+//        
+//        /**
+//         * Creates a new XDF converter with the given type.
+//         * 
+//         * @param type the type of the blocks which are returned.
+//         */
+//        private XDFConverter(@Nonnull @Loaded SemanticType type) {
+//            super(type);
+//        }
+//        
+//        @Pure
+//        @Override
+//        public @Nonnull Block encodeNonNullable(@Nonnull Block block) {
+//            return block;
+//        }
+//        
+//        @Pure
+//        @Override
+//        public @Nonnull Block decodeNonNullable(@Nonnull Object none, @Nonnull Block block) {
+//            return block;
+//        }
+//        
+//    }
+//    
+//    @Pure
+//    @Override
+//    public @Nonnull XDFConverter getXDFConverter() {
+//        return new XDFConverter(type);
+//    }
+//    
+//    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
+//    
+//    /**
+//     * Stores the declaration of this class.
+//     */
+//    public static final @Nonnull ColumnDeclaration DECLARATION = ColumnDeclaration.get("block", SQLType.BINARY);
+//    
+//    /**
+//     * Stores the SQL converter which is used to store and restore blocks.
+//     */
+//    public static final @Nonnull SQLConverter<Block, SemanticType> SQL_CONVERTER = new SQLConverter<Block, SemanticType>(DECLARATION) {
+//        
+//        @Override
+//        public void storeNonNullable(@Nonnull Block block, @NonCaptured @Nonnull ValueCollector collector) throws FailedValueStoringException {
+//            if (Database.getInstance().supportsBinaryStreams()) {
+//                collector.setBinaryStream(block.getInputStream(), block.getLength());
+//            } else {
+//                collector.setBinary(block.getBytes());
+//            }
+//        }
+//        
+//        @Override
+//        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @NonCaptured @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
+//            final @Nullable byte[] bytes = result.getBinary();
+//            return bytes == null ? null : Block.get(type, bytes);
+//        }
+//        
+//    };
+//    
+//    @Pure
+//    @Override
+//    public @Nonnull SQLConverter<Block, SemanticType> getSQLConverter() {
+//        return SQL_CONVERTER;
+//    }
     
     /* -------------------------------------------------- Cryptography -------------------------------------------------- */
     
@@ -804,7 +803,7 @@ public final class Block implements Cloneable {
      */
     @Pure
     @NonEncodingRecipient
-    public @Nonnull Block decrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) throws InvalidEncodingException, InternalException {
+    public @Nonnull Block decrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) throws InternalException {
         Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
         
         encodeIfNotYetEncoded();
@@ -820,6 +819,7 @@ public final class Block implements Cloneable {
      * @param outputStream the output stream to writeTo to.
      * @param close whether the output stream shall be closed.
      */
+    @Impure
     @NonEncodingRecipient
     public void writeTo(@Nonnull OutputStream outputStream, boolean close) throws IOException {
         writeTo(0, outputStream, close);
@@ -832,8 +832,9 @@ public final class Block implements Cloneable {
      * @param outputStream the output stream to write to.
      * @param close whether the output stream shall be closed.
      */
+    @Impure
     @NonEncodingRecipient
-    public void writeTo(@Index int offset, @Nonnull OutputStream outputStream, boolean close) throws IOException {
+    public void writeTo(int offset, @Nonnull OutputStream outputStream, boolean close) throws IOException {
         writeTo(offset, getLength() - offset, outputStream, close);
     }
     
@@ -849,6 +850,7 @@ public final class Block implements Cloneable {
      * @require length > 0 : "The length is positive.";
      * @require offset + length <= getLength() : "The offset and length are within this block.";
      */
+    @Impure
     @NonEncodingRecipient
     public void writeTo(int offset, int length, @Nonnull OutputStream outputStream, boolean close) throws IOException {
         Require.that(!isEncoding()).orThrow("This method is not called during encoding.");
@@ -991,7 +993,8 @@ public final class Block implements Cloneable {
         public int available() throws IOException {
             return end - start;
         }
-        
+    
+        @Impure
         @Override
         public void close() throws IOException {
             start = end;
@@ -1002,12 +1005,14 @@ public final class Block implements Cloneable {
          * Stores the marked position.
          */
         private int mark = 0;
-        
+    
+        @Impure
         @Override
         public void mark(int readAheadLimit) {
             mark = start;
         }
-        
+    
+        @Impure
         @Override
         public void reset() throws IOException {
             start = mark;
@@ -1111,7 +1116,8 @@ public final class Block implements Cloneable {
             this.start = start;
             this.end = start + length;
         }
-        
+    
+        @Impure
         @Override
         public void write(int b) throws IOException {
             if (start < length) {
@@ -1121,7 +1127,8 @@ public final class Block implements Cloneable {
                 throw new IOException("Could not write the byte as the end of the block has already been reached.");
             }
         }
-        
+    
+        @Impure
         @Override
         public void write(@Nonnull byte[] bytes, int offset, int length) throws IOException {
             if (offset < 0 || length < 0 || offset + length > bytes.length) { throw new IndexOutOfBoundsException(); }
@@ -1132,7 +1139,8 @@ public final class Block implements Cloneable {
                 throw new IOException("Could not write the bytes as the block is not big enough.");
             }
         }
-        
+    
+        @Impure
         @Override
         public void close() throws IOException {
             start = length;

@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
+import net.digitalid.core.cryptography.signature.Signature;
 
 /**
  * This exception is thrown when a signature has expired.
@@ -23,7 +23,7 @@ public abstract class ExpiredSignatureException extends SignatureException {
      * 
      * @param signature the signature that has expired.
      */
-    protected ExpiredSignatureException(@Nonnull SignatureWrapper signature) {
+    protected ExpiredSignatureException(@Nonnull Signature signature) {
         super(signature);
     }
     

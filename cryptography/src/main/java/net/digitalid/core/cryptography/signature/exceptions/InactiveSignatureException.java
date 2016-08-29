@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
+import net.digitalid.core.cryptography.signature.Signature;
 
 /**
  * This exception is thrown when a signature is inactive.
@@ -18,7 +18,7 @@ public class InactiveSignatureException extends InactiveAuthenticationException 
     /**
      * Stores the signature that is inactive.
      */
-    private final @Nonnull SignatureWrapper signature;
+    private final @Nonnull Signature signature;
     
     /**
      * Returns the signature that is inactive.
@@ -26,7 +26,7 @@ public class InactiveSignatureException extends InactiveAuthenticationException 
      * @return the signature that is inactive.
      */
     @Pure
-    public @Nonnull SignatureWrapper getSignature() {
+    public @Nonnull Signature getSignature() {
         return signature;
     }
     
@@ -37,7 +37,7 @@ public class InactiveSignatureException extends InactiveAuthenticationException 
      * 
      * @param signature the signature that is inactive.
      */
-    protected InactiveSignatureException(@Nonnull SignatureWrapper signature) {
+    protected InactiveSignatureException(@Nonnull Signature signature) {
         this.signature = signature;
     }
     
@@ -49,7 +49,7 @@ public class InactiveSignatureException extends InactiveAuthenticationException 
      * @return a new inactive signature exception.
      */
     @Pure
-    public static @Nonnull InactiveSignatureException get(@Nonnull SignatureWrapper signature) {
+    public static @Nonnull InactiveSignatureException get(@Nonnull Signature signature) {
         return new InactiveSignatureException(signature);
     }
     

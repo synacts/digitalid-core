@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
+import net.digitalid.core.cryptography.signature.Signature;
 
 /**
  * This exception is thrown when a signature is invalid.
@@ -23,7 +23,7 @@ public abstract class InvalidSignatureException extends SignatureException {
      * 
      * @param signature the signature that is invalid.
      */
-    protected InvalidSignatureException(@Nonnull SignatureWrapper signature) {
+    protected InvalidSignatureException(@Nonnull Signature<?> signature) {
         super(signature);
     }
     

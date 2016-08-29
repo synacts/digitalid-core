@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.block.wrappers.signature.HostSignatureWrapper;
+import net.digitalid.core.cryptography.signature.HostSignature;
 
 /**
  * This exception is thrown when a host signature is invalid.
@@ -20,7 +20,7 @@ public class InvalidHostSignatureException extends InvalidSignatureException {
      * 
      * @param signature the host signature that is invalid.
      */
-    protected InvalidHostSignatureException(@Nonnull HostSignatureWrapper signature) {
+    protected InvalidHostSignatureException(@Nonnull HostSignature<?> signature) {
         super(signature);
     }
     
@@ -32,7 +32,7 @@ public class InvalidHostSignatureException extends InvalidSignatureException {
      * @return a new invalid host signature exception.
      */
     @Pure
-    public static @Nonnull InvalidHostSignatureException get(@Nonnull HostSignatureWrapper signature) {
+    public static @Nonnull InvalidHostSignatureException get(@Nonnull HostSignature<?> signature) {
         return new InvalidHostSignatureException(signature);
     }
     
@@ -40,8 +40,8 @@ public class InvalidHostSignatureException extends InvalidSignatureException {
     
     @Pure
     @Override
-    public @Nonnull HostSignatureWrapper getSignature() {
-        return (HostSignatureWrapper) super.getSignature();
+    public @Nonnull HostSignature<?> getSignature() {
+        return (HostSignature<?>) super.getSignature();
     }
     
 }
