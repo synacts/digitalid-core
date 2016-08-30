@@ -86,7 +86,7 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@NonCaptured @Unmodified HostSignature<T> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
+    public <X extends ExternalException> int convert(@NonCaptured @Unmodified HostSignature<T> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws ExternalException {
         Require.that(privateKeyChain != null);
         
         int i = 1;
@@ -114,7 +114,7 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
     
     @Pure
     @Override
-    public <X extends ExternalException> @Nonnull HostSignature<T> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void externallyProvided) throws X {
+    public <X extends ExternalException> @Nonnull HostSignature<T> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void externallyProvided) throws ExternalException {
         try {
             selectionResult.setSignatureDigest(MessageDigest.getInstance("SHA-256"));
         } catch (@Nonnull NoSuchAlgorithmException exception) {

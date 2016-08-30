@@ -21,15 +21,22 @@ import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.cryptography.InitializationVector;
 import net.digitalid.utility.cryptography.InitializationVectorConverter;
 import net.digitalid.utility.cryptography.SymmetricKey;
+import net.digitalid.utility.cryptography.SymmetricKeyBuilder;
 import net.digitalid.utility.cryptography.SymmetricKeyConverter;
+import net.digitalid.utility.cryptography.key.PrivateKey;
+import net.digitalid.utility.cryptography.key.PublicKey;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.immutable.ImmutableMap;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.math.Element;
+import net.digitalid.utility.math.ElementConverter;
+import net.digitalid.utility.math.Group;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeConverter;
 
+import net.digitalid.core.identification.PublicKeyRetriever;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.HostIdentifierConverter;
 
@@ -44,15 +51,23 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
     
     private final @Nonnull Converter<T, ?> objectConverter;
     
+    /* -------------------------------------------------- Private Key -------------------------------------------------- */
+    
+    /**
+     * The private key of this host instance.
+     */
+    private final @Nonnull PrivateKey privateKey;
+    
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private EncryptionConverter(@Nonnull Converter<T, ?> objectConverter) {
+    private EncryptionConverter(@Nonnull Converter<T, ?> objectConverter, @Nonnull PrivateKey privateKey) {
         this.objectConverter = objectConverter;
+        this.privateKey = privateKey;
     }
     
     @Pure
-    public static <T> @Nonnull EncryptionConverter<T> getInstance(@Nonnull Converter<T, ?> objectConverter) {
-        return new EncryptionConverter<>(objectConverter);
+    public static <T> @Nonnull EncryptionConverter<T> getInstance(@Nonnull Converter<T, ?> objectConverter, @Nonnull PrivateKey privateKey) {
+        return new EncryptionConverter<>(objectConverter, privateKey);
     }
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
@@ -87,7 +102,7 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified Encryption<T> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified Encryption<T> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws ExternalException {
         if (object == null) {
             throw UnexpectedFailureException.with("Cannot convert encryption object that is null");
         }
@@ -96,10 +111,13 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
         final @Nonnull SymmetricKey symmetricKey = object.getSymmetricKey();
         final @Nonnull InitializationVector initializationVector = object.getInitializationVector();
         
-        i *= TimeConverter.INSTANCE.convert(object.getTime(), valueCollector);
-        i *= HostIdentifierConverter.INSTANCE.convert(object.getRecipient(), valueCollector);
-        // TODO: The symmetric key MUST be encrypted with the public key of the receiver (otherwise encryption is pointless).
-        i *= SymmetricKeyConverter.INSTANCE.convert(symmetricKey, valueCollector);
+        final @Nonnull Time time = object.getTime();
+        final @Nonnull HostIdentifier recipient = object.getRecipient();
+        i *= TimeConverter.INSTANCE.convert(time, valueCollector);
+        i *= HostIdentifierConverter.INSTANCE.convert(recipient, valueCollector);
+        final @Nonnull PublicKey publicKey = PublicKeyRetriever.retrieve(recipient, time);
+        final @Nonnull Element encryptedSymmetricKey = publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE());
+        i *= ElementConverter.INSTANCE.convert(encryptedSymmetricKey, valueCollector);
         i *= InitializationVectorConverter.INSTANCE.convert(initializationVector, valueCollector);
         
         valueCollector.setEncryptionCipher(symmetricKey.getCipher(initializationVector, Cipher.ENCRYPT_MODE));
@@ -112,18 +130,19 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
     
     @Pure
     @Override 
-    public <X extends ExternalException> @Nonnull Encryption<T> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nullable Void externallyProvided) throws X {
+    public <X extends ExternalException> @Nonnull Encryption<T> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nullable Void externallyProvided) throws ExternalException {
         final @Nonnull Time time = TimeConverter.INSTANCE.recover(selectionResult, externallyProvided);
         final @Nonnull HostIdentifier recipient = HostIdentifierConverter.INSTANCE.recover(selectionResult, externallyProvided);
-        final @Nonnull SymmetricKey encryptedSymmetricKey = SymmetricKeyConverter.INSTANCE.recover(selectionResult, externallyProvided);
-        // TODO: See above: Symmetric key is expected to be encrypted and we need to decrypt it here.
+        final @Nonnull Group compositeGroup = privateKey.getCompositeGroup();
+        final @Nonnull Element encryptedSymmetricKeyValue = ElementConverter.INSTANCE.recover(selectionResult, compositeGroup);
+        final @Nonnull SymmetricKey decryptedSymmetricKey = SymmetricKeyBuilder.buildWithValue(encryptedSymmetricKeyValue.pow(privateKey.getD()).getValue());
         final @Nonnull InitializationVector initializationVector = InitializationVectorConverter.INSTANCE.recover(selectionResult, externallyProvided);
     
-        selectionResult.setDecryptionCipher(encryptedSymmetricKey.getCipher(initializationVector, Cipher.DECRYPT_MODE));
+        selectionResult.setDecryptionCipher(decryptedSymmetricKey.getCipher(initializationVector, Cipher.DECRYPT_MODE));
         // TODO: do we need to hand the externally provided element here?
         final T object = objectConverter.recover(selectionResult, null);
         selectionResult.popDecryptionCipher();
-        return EncryptionBuilder.<T>withTime(time).withRecipient(recipient).withSymmetricKey(encryptedSymmetricKey).withInitializationVector(initializationVector).withObject(object).build();
+        return EncryptionBuilder.<T>withTime(time).withRecipient(recipient).withSymmetricKey(decryptedSymmetricKey).withInitializationVector(initializationVector).withObject(object).build();
     }
     
 }

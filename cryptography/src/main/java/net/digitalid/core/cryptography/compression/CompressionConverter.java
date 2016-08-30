@@ -67,7 +67,7 @@ public class CompressionConverter<T> implements Converter<Compression<T>, Void> 
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified Compression<T> compression, @Nonnull @Modified @NonCaptured ValueCollector<X> valueCollector) throws X {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified Compression<T> compression, @Nonnull @Modified @NonCaptured ValueCollector<X> valueCollector) throws ExternalException {
         valueCollector.setCompression(new Deflater(deflaterMode));
         objectConverter.convert(compression == null ? null : compression.getObject(), valueCollector);
         valueCollector.popCompression();
@@ -78,7 +78,7 @@ public class CompressionConverter<T> implements Converter<Compression<T>, Void> 
     
     @Pure
     @Override
-    public <X extends ExternalException> @Nullable Compression<T> recover(@Nonnull @Modified @NonCaptured SelectionResult<X> selectionResult, @Nullable Void externallyProvided) throws X {
+    public <X extends ExternalException> @Nullable Compression<T> recover(@Nonnull @Modified @NonCaptured SelectionResult<X> selectionResult, @Nullable Void externallyProvided) throws ExternalException {
         selectionResult.setDecompression(new Inflater());
         final @Nullable T object = objectConverter.recover(selectionResult, null);
         final Compression<@Nullable T> compression = CompressionBuilder.withObject(object).build();
