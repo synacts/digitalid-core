@@ -25,6 +25,7 @@ import net.digitalid.utility.cryptography.SymmetricKeyBuilder;
 import net.digitalid.utility.cryptography.SymmetricKeyConverter;
 import net.digitalid.utility.cryptography.key.PrivateKey;
 import net.digitalid.utility.cryptography.key.PublicKey;
+import net.digitalid.utility.cryptography.key.chain.PrivateKeyChain;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
@@ -54,20 +55,20 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
     /* -------------------------------------------------- Private Key -------------------------------------------------- */
     
     /**
-     * The private key of this host instance.
+     * The private key chain of this host instance.
      */
-    private final @Nonnull PrivateKey privateKey;
+    private final @Nonnull PrivateKeyChain privateKeyChain;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private EncryptionConverter(@Nonnull Converter<T, ?> objectConverter, @Nonnull PrivateKey privateKey) {
+    private EncryptionConverter(@Nonnull Converter<T, ?> objectConverter, @Nonnull PrivateKeyChain privateKeyChain) {
         this.objectConverter = objectConverter;
-        this.privateKey = privateKey;
+        this.privateKeyChain = privateKeyChain;
     }
     
     @Pure
-    public static <T> @Nonnull EncryptionConverter<T> getInstance(@Nonnull Converter<T, ?> objectConverter, @Nonnull PrivateKey privateKey) {
-        return new EncryptionConverter<>(objectConverter, privateKey);
+    public static <T> @Nonnull EncryptionConverter<T> getInstance(@Nonnull Converter<T, ?> objectConverter, @Nonnull PrivateKeyChain privateKeyChain) {
+        return new EncryptionConverter<>(objectConverter, privateKeyChain);
     }
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
@@ -133,6 +134,7 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
     public <X extends ExternalException> @Nonnull Encryption<T> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nullable Void externallyProvided) throws ExternalException {
         final @Nonnull Time time = TimeConverter.INSTANCE.recover(selectionResult, externallyProvided);
         final @Nonnull HostIdentifier recipient = HostIdentifierConverter.INSTANCE.recover(selectionResult, externallyProvided);
+        final @Nonnull PrivateKey privateKey = privateKeyChain.getKey(time);
         final @Nonnull Group compositeGroup = privateKey.getCompositeGroup();
         final @Nonnull Element encryptedSymmetricKeyValue = ElementConverter.INSTANCE.recover(selectionResult, compositeGroup);
         final @Nonnull SymmetricKey decryptedSymmetricKey = SymmetricKeyBuilder.buildWithValue(encryptedSymmetricKeyValue.pow(privateKey.getD()).getValue());

@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.cryptography.InitializationVector;
 import net.digitalid.utility.cryptography.InitializationVectorBuilder;
 import net.digitalid.utility.cryptography.Parameters;
@@ -15,6 +14,7 @@ import net.digitalid.utility.cryptography.SymmetricKey;
 import net.digitalid.utility.cryptography.SymmetricKeyBuilder;
 import net.digitalid.utility.cryptography.key.KeyPair;
 import net.digitalid.utility.cryptography.key.PublicKey;
+import net.digitalid.utility.cryptography.key.chain.PrivateKeyChain;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
@@ -114,14 +114,15 @@ public class EncryptionConverterTest {
         
         final @Nonnull Time time = TimeBuilder.build();
         final @Nonnull Encryption<Identifier> encryptedIdentifier = EncryptionBuilder.<Identifier>withTime(time).withRecipient(identifierRecipient).withSymmetricKey(symmetricKey).withInitializationVector(initializationVector).withObject(identifier).build();
-        
+    
+        final @Nonnull PrivateKeyChain privateKeyChain = PrivateKeyChain.with(time, publicKeyRetrieverForTest.keyPair.getPrivateKey());
         final @Nonnull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        XDF.convert(encryptedIdentifier, EncryptionConverter.getInstance(IdentifierConverter.INSTANCE, publicKeyRetrieverForTest.keyPair.getPrivateKey()), byteArrayOutputStream);
+        XDF.convert(encryptedIdentifier, EncryptionConverter.getInstance(IdentifierConverter.INSTANCE, privateKeyChain), byteArrayOutputStream);
     
         final @Nonnull byte[] encryptedBytes = byteArrayOutputStream.toByteArray();
         
         final @Nonnull ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(encryptedBytes);
-        final @Nullable Encryption<Identifier> encryption = XDF.recover(EncryptionConverter.getInstance(IdentifierConverter.INSTANCE, publicKeyRetrieverForTest.keyPair.getPrivateKey()), byteArrayInputStream);
+        final @Nullable Encryption<Identifier> encryption = XDF.recover(EncryptionConverter.getInstance(IdentifierConverter.INSTANCE, privateKeyChain), byteArrayInputStream);
     
         Assert.assertNotNull(encryption);
         Assert.assertEquals(identifierRecipient, encryption.getRecipient());
