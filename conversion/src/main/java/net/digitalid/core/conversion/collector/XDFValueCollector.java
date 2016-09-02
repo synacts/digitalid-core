@@ -1,5 +1,6 @@
 package net.digitalid.core.conversion.collector;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,7 +10,6 @@ import java.security.MessageDigest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
@@ -28,6 +28,7 @@ import net.digitalid.utility.logging.exceptions.io.StreamException;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
+import net.digitalid.core.conversion.utility.StackHandler;
 import net.digitalid.core.cryptography.encryption.NonClosingOutputStream;
 
 /**
@@ -35,17 +36,28 @@ import net.digitalid.core.cryptography.encryption.NonClosingOutputStream;
  */
 public class XDFValueCollector extends ValueCollectorImplementation<StreamException> {
     
-    /* -------------------------------------------------- Final Fields -------------------------------------------------- */
-    
     /**
-     * The output stream into which we are writing.
+     * The stack handler keeps track of the state of the output stream. It holds a stack of any output streams, but guarantees
+     * that the top entry is always a data output stream. When an output stream is added to the stack, it immediately adds a data output stream that wraps the previously added data stream.
+     * When an output stream is popped, the data output stream is popped too.
      */
-    private @Nonnull Stack<@Nonnull OutputStream> outputStreamStack;
-    
-    @Pure
-    public @Nonnull OutputStream getOutputStream() {
-        return outputStreamStack.peek();
+    private static class OutputStreamStackHandler extends StackHandler<@Nonnull OutputStream, @Nonnull DataOutputStream> {
+        
+        @Pure
+        @Override
+        protected @Nonnull DataOutputStream wrapEntry(@Nonnull OutputStream stackEntry) {
+            return new DataOutputStream(stackEntry);
+        }
+        
+        @Pure
+        @Override
+        protected @Nonnull Class<@Nonnull DataOutputStream> getWrapperType() {
+            return DataOutputStream.class;
+        }
+        
     }
+    
+    private final @Nonnull OutputStreamStackHandler outputStreamStack;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -53,8 +65,13 @@ public class XDFValueCollector extends ValueCollectorImplementation<StreamExcept
      * Creates a new XDF value collector instance.
      */
     private XDFValueCollector(@Nonnull OutputStream outputStream) {
-        this.outputStreamStack = new Stack<>();
-        outputStreamStack.add(outputStream);
+        this.outputStreamStack = new OutputStreamStackHandler();
+        outputStreamStack.addAndWrapStackEntry(outputStream);
+    }
+    
+    @Pure
+    public void finish() {
+        Require.that(outputStreamStack.hasSize(2)).orThrow("Expected a stack size of 2 (the initial output stream and the wrapped output stream), but got $", outputStreamStack.size());
     }
     
     /**
@@ -78,7 +95,7 @@ public class XDFValueCollector extends ValueCollectorImplementation<StreamExcept
     @Override
     public Integer setBoolean(boolean value) throws StreamException {
         try {
-            getOutputStream().write(value ? 1 : 0);
+            outputStreamStack.peek().writeBoolean(value);
         } catch (IOException e) {
             throw StreamException.with("Failed to write boolean value to output stream", e);
         }
@@ -107,11 +124,7 @@ public class XDFValueCollector extends ValueCollectorImplementation<StreamExcept
     @Override
     public Integer setInteger64(long value) throws StreamException {
         try {
-            long shifter = value;
-            for (int i = 7; i >= 0; i--) {
-                getOutputStream().write((byte) shifter);
-                shifter >>>= 8;
-            }
+            outputStreamStack.peek().writeLong(value);
         } catch (IOException e) {
             throw StreamException.with("Failed to write long value to output stream", e);
         }
@@ -123,8 +136,8 @@ public class XDFValueCollector extends ValueCollectorImplementation<StreamExcept
     public Integer setInteger(@Nonnull BigInteger value) throws StreamException {
         try {
             byte sizeOfByteArray = (byte) Math.floor((value.bitLength() / 8) + 1);
-            getOutputStream().write(sizeOfByteArray);
-            getOutputStream().write(value.toByteArray());
+            outputStreamStack.peek().write(sizeOfByteArray);
+            outputStreamStack.peek().write(value.toByteArray());
         } catch (IOException e) {
             throw StreamException.with("Failed to write BigInteger value to output stream", e);
         }
@@ -159,9 +172,7 @@ public class XDFValueCollector extends ValueCollectorImplementation<StreamExcept
     @Override
     public Integer setString(@Nonnull String value) throws StreamException {
         try {
-            getOutputStream().write(value.getBytes("UTF-16BE"));
-            getOutputStream().write(0);
-            getOutputStream().write(0);
+            outputStreamStack.peek().writeUTF(value);
         } catch (IOException e) {
             throw StreamException.with("Failed to write string value to output stream", e);
         }
@@ -184,8 +195,8 @@ public class XDFValueCollector extends ValueCollectorImplementation<StreamExcept
     @Override
     public Integer setBinary(@Nonnull byte[] value) throws StreamException {
         try {
-            getOutputStream().write(value.length);
-            getOutputStream().write(value);
+            outputStreamStack.peek().write(value.length);
+            outputStreamStack.peek().write(value);
         } catch (IOException e) {
             throw StreamException.with("Failed to write binary array to output stream", e);
         }
@@ -203,7 +214,7 @@ public class XDFValueCollector extends ValueCollectorImplementation<StreamExcept
     public <T> Integer setList(@Nonnull List<T> list, @Nonnull FailableUnaryFunction<T, Integer, StreamException> entityCollector) throws StreamException {
         try {
             // TODO: maybe add the var-length functionality here.
-            getOutputStream().write(list.size());
+            outputStreamStack.peek().writeInt(list.size());
             for (T element : list) {
                 entityCollector.evaluate(element);
             }
@@ -237,51 +248,49 @@ public class XDFValueCollector extends ValueCollectorImplementation<StreamExcept
         return null;
     }
     
+    /* -------------------------------------------------- Transformational Types -------------------------------------------------- */
+    
     @Impure
     @Override
     public void setEncryptionCipher(@Nonnull Cipher cipher) {
-        outputStreamStack.add(new CipherOutputStream(new NonClosingOutputStream(getOutputStream()), cipher));
+        outputStreamStack.addAndWrapStackEntry(new CipherOutputStream(new NonClosingOutputStream(outputStreamStack.peek()), cipher));
     }
     
     @Impure
     @Override
     public @Nonnull CipherOutputStream popEncryptionCipher() throws StreamException {
-        Require.that(getOutputStream() instanceof CipherOutputStream).orThrow("Cipher output stream not found.");
-    
+        final @Nonnull CipherOutputStream cipherOutputStream = outputStreamStack.popWrappedStackEntry(CipherOutputStream.class);
+        
         try {
-            getOutputStream().close();
+            cipherOutputStream.close();
         } catch (IOException e) {
             throw StreamException.with("Failed to close cipher output stream", e);
         }
-        return (CipherOutputStream) outputStreamStack.pop();
+        return cipherOutputStream;
     }
     
     @Impure
     @Override
     public void setSignatureDigest(@Nonnull MessageDigest digest) {
-        outputStreamStack.add(new DigestOutputStream(getOutputStream(), digest));
+        outputStreamStack.addAndWrapStackEntry(new DigestOutputStream(outputStreamStack.peek(), digest));
     }
     
     @Impure
     @Override
-    public @Nullable DigestOutputStream popSignatureDigest() {
-        Require.that(getOutputStream() instanceof DigestOutputStream).orThrow("Signature digest output stream not found.");
-        
-        return (DigestOutputStream) outputStreamStack.pop();
+    public @Nonnull DigestOutputStream popSignatureDigest() {
+        return outputStreamStack.popWrappedStackEntry(DigestOutputStream.class);
     }
     
     @Impure
     @Override
     public void setCompression(@Nonnull Deflater deflater) {
-        outputStreamStack.add(new DeflaterOutputStream(getOutputStream(), deflater));
+        outputStreamStack.addAndWrapStackEntry(new DeflaterOutputStream(outputStreamStack.peek(), deflater));
     }
     
     @Impure
     @Override
     public @Nonnull DeflaterOutputStream popCompression() throws StreamException {
-        Require.that(getOutputStream() instanceof DeflaterOutputStream).orThrow("Deflater output stream not found.");
-    
-        final @Nonnull DeflaterOutputStream deflaterOutputStream = (DeflaterOutputStream) outputStreamStack.pop();
+        final @Nonnull DeflaterOutputStream deflaterOutputStream = outputStreamStack.popWrappedStackEntry(DeflaterOutputStream.class);
         try {
             deflaterOutputStream.finish();
         } catch (IOException e) {

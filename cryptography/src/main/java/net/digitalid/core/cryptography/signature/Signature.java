@@ -3,6 +3,7 @@ package net.digitalid.core.cryptography.signature;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.time.Time;
 
 import net.digitalid.core.identification.identifier.InternalIdentifier;
@@ -10,7 +11,7 @@ import net.digitalid.core.identification.identifier.InternalIdentifier;
 /**
  *
  */
-public abstract class Signature<T> {
+public abstract class Signature<T> extends RootClass {
     
     @Pure
     public abstract @Nullable InternalIdentifier getSubject();

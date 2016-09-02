@@ -25,6 +25,7 @@ public class XDF {
     public static <T> void convert(@Nonnull T object, @Nonnull Converter<T, ?> converter, @Nonnull @Modified OutputStream outputStream) throws ExternalException {
         final @Nonnull XDFValueCollector valueCollector = XDFValueCollector.with(outputStream);
         converter.convert(object, valueCollector);
+        valueCollector.finish();
     }
     
     @Pure

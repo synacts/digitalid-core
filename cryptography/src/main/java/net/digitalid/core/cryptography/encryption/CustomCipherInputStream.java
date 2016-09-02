@@ -88,6 +88,14 @@ public class CustomCipherInputStream extends FilterInputStream {
         return this.finishDecryptedBuffer - this.startDecryptedBuffer;
     }
     
+    @Impure
+    @Override
+    public int read() throws IOException {
+        byte[] singleByte = new byte[1];
+        read(singleByte);
+        return singleByte[0];
+    }
+    
     /**
      * Reads data from the input stream into a buffer, decrypts the buffer and returns its content.
      */

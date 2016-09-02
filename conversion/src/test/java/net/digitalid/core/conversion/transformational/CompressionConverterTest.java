@@ -1,4 +1,4 @@
-package net.digitalid.core.conversion;
+package net.digitalid.core.conversion.transformational;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

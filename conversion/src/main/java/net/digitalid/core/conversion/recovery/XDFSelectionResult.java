@@ -1,11 +1,12 @@
 package net.digitalid.core.conversion.recovery;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +16,6 @@ import java.util.zip.Inflater;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
@@ -24,10 +24,10 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.converter.SelectionResult;
 import net.digitalid.utility.functional.failable.FailableProducer;
 import net.digitalid.utility.logging.exceptions.io.StreamException;
-import net.digitalid.utility.validation.annotations.math.modulo.MultipleOf;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
+import net.digitalid.core.conversion.utility.StackHandler;
 import net.digitalid.core.cryptography.compression.BufferedInflaterInputStream;
 import net.digitalid.core.cryptography.encryption.CustomCipherInputStream;
 
@@ -36,24 +36,43 @@ import net.digitalid.core.cryptography.encryption.CustomCipherInputStream;
  */
 public class XDFSelectionResult implements SelectionResult<StreamException> {
     
-    /**
-     * The input stream from which we are reading.
-     */
-    private @Nonnull Stack<@Nonnull InputStream> inputStreamStack = new Stack<>();
+    /* -------------------------------------------------- Input Stream Stack Operations -------------------------------------------------- */
     
-    @Pure
-    public @Nonnull InputStream getInputStream() {
-        return inputStreamStack.peek();
+    /**
+     * The stack handler keeps track of the state of the input stream. It holds a stack of any input streams, but guarantees
+     * that the top entry is always a data input stream. When an input stream is added to the stack, it immediately adds a data input stream that wraps the previously added input stream.
+     * When an input stream is popped, the data input stream is popped too.
+     */
+    private static class InputStreamStackHandler extends StackHandler<@Nonnull InputStream, @Nonnull DataInputStream> {
+        
+        @Pure
+        @Override
+        protected @Nonnull DataInputStream wrapEntry(@Nonnull InputStream stackEntry) {
+            return new DataInputStream(stackEntry);
+        }
+        
+        @Pure
+        @Override
+        protected @Nonnull Class<@Nonnull DataInputStream> getWrapperType() {
+            return DataInputStream.class;
+        }
+        
     }
     
+    private final @Nonnull InputStreamStackHandler inputStreamStackHandler = new InputStreamStackHandler();
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
     XDFSelectionResult(@Nonnull InputStream inputStream) {
-        inputStreamStack.add(inputStream);
+        inputStreamStackHandler.addAndWrapStackEntry(inputStream);
     }
     
     @Pure
     public static @Nonnull XDFSelectionResult with(@Nonnull InputStream inputStream) {
         return new XDFSelectionResult(inputStream);
     }
+    
+    /* -------------------------------------------------- Getter -------------------------------------------------- */
     
     @Impure
     @Override
@@ -65,7 +84,7 @@ public class XDFSelectionResult implements SelectionResult<StreamException> {
     @Override
     public boolean getBoolean() throws StreamException {
         try {
-            return getInputStream().read() == 1;
+            return inputStreamStackHandler.peek().readBoolean();
         } catch (IOException e) {
             throw StreamException.with("Failed to read boolean value from input stream", e);
         }
@@ -93,11 +112,7 @@ public class XDFSelectionResult implements SelectionResult<StreamException> {
     @Override
     public long getInteger64() throws StreamException {
         try {
-            long value = 0;
-            for (int i = 0; i < 8; i++) {
-                value = (value << 8) | (getInputStream().read() & 0xff);
-            }
-            return value;
+            return inputStreamStackHandler.peek().readLong();
         } catch (IOException e) {
             throw StreamException.with("Failed to read long value from input stream", e);
         }
@@ -107,9 +122,9 @@ public class XDFSelectionResult implements SelectionResult<StreamException> {
     @Override
     public @Nullable BigInteger getInteger() throws StreamException {
         try {
-            final byte sizeOfByteArray = (byte) getInputStream().read();
+            final byte sizeOfByteArray = (byte) inputStreamStackHandler.peek().read();
             byte[] bigIntegerByteArray = new byte[sizeOfByteArray];
-            getInputStream().read(bigIntegerByteArray);
+            inputStreamStackHandler.peek().read(bigIntegerByteArray);
             return new BigInteger(bigIntegerByteArray);
         } catch (IOException e) {
             throw StreamException.with("Failed to read BigInteger value from input stream", e);
@@ -144,23 +159,9 @@ public class XDFSelectionResult implements SelectionResult<StreamException> {
     @Override
     public @Nullable String getString() throws StreamException {
         try {
-            @MultipleOf(2) int length = 32;
-            @Nonnull byte[] string = new byte[length];
-            int i = 0;
-            final byte[] character = new byte[2];
-            while (getInputStream().read(character) > 0 && (character[0] != 0 || character[1] != 0)) {
-                string[i] = character[0];
-                string[i + 1] = character[1];
-                i += 2;
-                if (i == length) {
-                    length = length * 2;
-                    string = Arrays.copyOf(string, length);
-                }
-                character[0] = character[1] = 0;
-            }
-            return new String(string, 0, i, "UTF-16BE");
+            return inputStreamStackHandler.peek().readUTF();
         } catch (IOException e) {
-            throw StreamException.with("Failed to read string value from input stream", e);
+            throw StreamException.with("Failed to read UTF-8 string value from input stream", e);
         }
     }
     
@@ -180,9 +181,9 @@ public class XDFSelectionResult implements SelectionResult<StreamException> {
     @Override
     public @Nullable byte[] getBinary() throws StreamException {
         try {
-            int byteArraySize = getInputStream().read();
+            int byteArraySize = inputStreamStackHandler.peek().read();
             byte[] bytes = new byte[byteArraySize];
-            int read = getInputStream().read(bytes);
+            int read = inputStreamStackHandler.peek().read(bytes);
             Require.that(read == byteArraySize).orThrow("The input stream ended unexpectedly");
             
             return bytes;
@@ -195,7 +196,7 @@ public class XDFSelectionResult implements SelectionResult<StreamException> {
     @Override
     public <T> List<T> getList(@Nonnull FailableProducer<T, StreamException> function) throws StreamException {
         try {
-            int listSize = getInputStream().read();
+            int listSize = inputStreamStackHandler.peek().readInt();
             final @Nonnull List<@Nullable T> list = FreezableArrayList.withInitialCapacity(listSize);
             for (int i = 0; i < listSize; i++) {
                 final @Nullable T element = function.produce();
@@ -228,42 +229,38 @@ public class XDFSelectionResult implements SelectionResult<StreamException> {
     @Impure
     @Override
     public void setDecryptionCipher(@Nonnull Cipher cipher) {
-        inputStreamStack.add(CustomCipherInputStream.with(getInputStream(), cipher));
+        inputStreamStackHandler.addAndWrapStackEntry(CustomCipherInputStream.with(inputStreamStackHandler.peek(), cipher));
     }
     
     @Impure
     @Override
     public void popDecryptionCipher() {
-        Require.that(getInputStream() instanceof CustomCipherInputStream).orThrow("Cipher input stream not found.");
-    
-        inputStreamStack.pop();
+        inputStreamStackHandler.popWrappedStackEntry(CustomCipherInputStream.class);
     }
     
     @Impure
     @Override
     public void setDecompression(@Nonnull Inflater inflater) {
-        inputStreamStack.add(new BufferedInflaterInputStream(getInputStream()));
+        inputStreamStackHandler.addAndWrapStackEntry(new BufferedInflaterInputStream(inputStreamStackHandler.peek()));
     }
     
     @Impure
     @Override
     public void popDecompression() throws StreamException {
-        Require.that(getInputStream() instanceof BufferedInflaterInputStream).orThrow("Inflater input stream not found.");
-    
-        final @Nonnull BufferedInflaterInputStream inflaterInputStream = (BufferedInflaterInputStream) inputStreamStack.pop();
-        inputStreamStack.set(inputStreamStack.size() - 1, inflaterInputStream.finish());
+        final @Nonnull BufferedInflaterInputStream bufferedInflaterInputStream = inputStreamStackHandler.popWrappedStackEntry(BufferedInflaterInputStream.class);
+        bufferedInflaterInputStream.finish();
     }
     
     @Impure
     @Override
     public void setSignatureDigest(@Nonnull MessageDigest digest) {
-        
+        inputStreamStackHandler.addAndWrapStackEntry(new DigestInputStream(inputStreamStackHandler.peek(), digest));
     }
     
     @Impure
     @Override
     public @Nonnull DigestInputStream popSignatureDigest() {
-        return null;
+        return inputStreamStackHandler.popWrappedStackEntry(DigestInputStream.class);
     }
     
 }

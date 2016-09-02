@@ -1,5 +1,7 @@
 package net.digitalid.core.commitment;
 
+import java.math.BigInteger;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.CallSuper;
@@ -9,6 +11,8 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.math.Exponent;
+import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
@@ -29,6 +33,14 @@ public interface SecretCommitment extends Commitment {
      */
     @Pure
     public @Nonnull Exponent getSecret();
+    
+    /**
+     * Returns the value of this commitment.
+     */
+    @Pure
+    @Derive("getPublicKey().getAu().pow(getSecret()).getValue()")
+    @OrderOfAssignment(1)
+    public @Nonnull BigInteger getValue();
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */
     
