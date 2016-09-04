@@ -13,7 +13,7 @@ import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.auxiliary.None;
+import net.digitalid.utility.auxiliary.None;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 

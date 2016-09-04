@@ -9,7 +9,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.property.nonnullable.WritableNonNullableProperty;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
-import net.digitalid.utility.validation.auxiliary.None;
+import net.digitalid.utility.auxiliary.None;
 
 import net.digitalid.core.concept.CoreConcept;
 import net.digitalid.core.concept.annotations.GenerateProperty;

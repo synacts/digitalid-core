@@ -49,7 +49,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      */
     @Pure
 //    @GenerateProperty(requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
-    public abstract @Nonnull PersistentWritableSimpleProperty<Agent, Boolean> removed();
+    public abstract @Nonnull PersistentWritableSimpleProperty<Boolean> removed();
     
     /**
      * Checks that this agent is not removed and throws a {@link RequestException} otherwise.
@@ -107,7 +107,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      */
     @Pure
 //    @GenerateProperty(requiredRestrictionsToExecuteMethod = "value", requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
-    public abstract @Nonnull PersistentWritableSimpleProperty<Agent, Restrictions> restrictions();
+    public abstract @Nonnull PersistentWritableSimpleProperty<Restrictions> restrictions();
     
     /* -------------------------------------------------- Abstract -------------------------------------------------- */
     
