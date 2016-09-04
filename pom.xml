@@ -35,9 +35,8 @@
     </properties>
     
     <modules>
-        <module>identification</module>
-        <module>commitment</module>
         <module>exceptions</module>
+        <module>identification</module>
         <module>permissions</module>
         <module>typeset</module>
         <module>entity</module>
@@ -46,18 +45,15 @@
         <module>node</module>
         <module>restrictions</module>
         <module>agent</module>
-        <module>block</module>
-        <!--<module>wrappers</module>-->
-        <module>conversion</module>
+        <module>commitment</module>
         <module>cryptography</module>
-        <module>storage</module>
+        <module>conversion</module>
         <module>handler</module>
         <module>coreservice</module>
         <module>credential</module>
         <module>resolution</module>
         <module>account</module>
         <module>audit</module>
-        <module>synchronizer</module>
         <module>property</module>
         <module>settings</module>
         <module>clientagent</module>
