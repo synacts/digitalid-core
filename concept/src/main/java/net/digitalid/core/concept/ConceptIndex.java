@@ -7,8 +7,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.concurrency.ConcurrentHashMapBuilder;
-import net.digitalid.utility.concurrency.ConcurrentMap;
+import net.digitalid.utility.concurrency.map.ConcurrentHashMapBuilder;
+import net.digitalid.utility.concurrency.map.ConcurrentMap;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.functional.interfaces.BinaryFunction;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;

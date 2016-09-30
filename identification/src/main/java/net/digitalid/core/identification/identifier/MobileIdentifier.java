@@ -8,6 +8,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -19,11 +20,13 @@ import net.digitalid.core.identification.identity.Person;
 
 /**
  * This interface models mobile identifiers.
+ * 
+ * (This type has to be a class because otherwise the static {@link #isValid(java.lang.String)} method would not be inherited by the generated subclass.)
  */
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public interface MobileIdentifier extends ExternalIdentifier {
+public abstract class MobileIdentifier extends RootClass implements ExternalIdentifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     
@@ -56,7 +59,7 @@ public interface MobileIdentifier extends ExternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public default @Nonnull Person resolve() throws ExternalException {
+    public @Nonnull Person resolve() throws ExternalException {
         return IdentifierResolver.resolve(this).castTo(Person.class);
     }
     

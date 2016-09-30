@@ -8,6 +8,7 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -19,11 +20,13 @@ import net.digitalid.core.identification.identity.IdentifierResolver;
 
 /**
  * This interface models host identifiers.
+ * 
+ * (This type has to be a class because otherwise the static {@link #isValid(java.lang.String)} method would not be inherited by the generated subclass.)
  */
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public interface HostIdentifier extends InternalIdentifier {
+public abstract class HostIdentifier extends RootClass implements InternalIdentifier {
     
     /* -------------------------------------------------- Digital ID Host Identifier -------------------------------------------------- */
     
@@ -57,7 +60,7 @@ public interface HostIdentifier extends InternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public default @Nonnull HostIdentity resolve() throws ExternalException {
+    public @Nonnull HostIdentity resolve() throws ExternalException {
         return IdentifierResolver.resolve(this).castTo(HostIdentity.class);
     }
     
@@ -65,7 +68,7 @@ public interface HostIdentifier extends InternalIdentifier {
     
     @Pure
     @Override
-    public default @Nonnull HostIdentifier getHostIdentifier() {
+    public @Nonnull HostIdentifier getHostIdentifier() {
         return this;
     }
     
@@ -77,7 +80,7 @@ public interface HostIdentifier extends InternalIdentifier {
      */
     @Pure
     @TODO(task = "If we take the host name as the database name and not as table prefixes, then we might be able to increase the length restrictions.", date = "2016-06-19", author = Author.KASPAR_ETTER)
-    public default @Nonnull @MaxSize(39) String asHostName() {
+    public @Nonnull @MaxSize(39) String asHostName() {
         final @Nonnull String string = getString();
         return (Character.isDigit(string.charAt(0)) ? "_" : "") + string.replace(".", "_").replace("-", "$");
     }

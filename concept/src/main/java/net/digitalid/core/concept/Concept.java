@@ -8,8 +8,10 @@ import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
+import net.digitalid.database.property.Subject;
 
 import net.digitalid.core.concept.annotations.GenerateInfo;
+import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 
@@ -22,7 +24,7 @@ import net.digitalid.core.entity.NonHostEntity;
  * @param <K> the type of the key which identifies an instance among all instances of a concept at the same entity.
  */
 @Immutable
-public abstract class Concept<E extends Entity, K> extends RootClass {
+public abstract class Concept<E extends Entity, K> extends RootClass implements Subject {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
@@ -32,6 +34,14 @@ public abstract class Concept<E extends Entity, K> extends RootClass {
     @Pure
     @Provided
     public abstract @Nonnull E getEntity();
+    
+    /* -------------------------------------------------- Site -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull CoreSite getSite() {
+        return getEntity().getSite();
+    }
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     

@@ -8,6 +8,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -19,12 +20,14 @@ import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Person;
 
 /**
- * This interface models email identifiers.
+ * This class models email identifiers.
+ * 
+ * (This type has to be a class because otherwise the static {@link #isValid(java.lang.String)} method would not be inherited by the generated subclass.)
  */
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public interface EmailIdentifier extends ExternalIdentifier {
+public abstract class EmailIdentifier extends RootClass implements ExternalIdentifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     
@@ -47,7 +50,7 @@ public interface EmailIdentifier extends ExternalIdentifier {
      * Returns the host of this email address.
      */
     @Pure
-    public default @Nonnull String getHost() {
+    public @Nonnull String getHost() {
         return getString().substring(getString().indexOf('@') + 1);
     }
     
@@ -55,7 +58,7 @@ public interface EmailIdentifier extends ExternalIdentifier {
      * Returns whether the provider of this email address exists.
      */
     @Pure
-    public default boolean providerExists() {
+    public boolean providerExists() {
         // TODO: These classes do not seem to exist on Android.
         
 //import javax.naming.NamingException;
@@ -88,7 +91,7 @@ public interface EmailIdentifier extends ExternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public default @Nonnull Person resolve() throws ExternalException {
+    public @Nonnull Person resolve() throws ExternalException {
         if (!providerExists()) { throw IdentityNotFoundException.with(this); }
         return IdentifierResolver.resolve(this).castTo(Person.class);
     }

@@ -3,16 +3,18 @@ package net.digitalid.core.node;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.property.extensible.WritableExtensibleProperty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.property.set.WritablePersistentSetProperty;
 
 import net.digitalid.core.concept.CoreConcept;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.typeset.authentications.FreezableAuthentications;
 import net.digitalid.core.typeset.authentications.ReadOnlyAuthentications;
+import net.digitalid.core.typeset.permissions.FreezableNodePermissions;
 import net.digitalid.core.typeset.permissions.ReadOnlyNodePermissions;
 
 /**
@@ -32,7 +34,7 @@ public abstract class Node extends CoreConcept<NonHostEntity, Long> {
     @Pure
 //    @GenerateProperty(requiredPermissionsToExecuteMethod = "value, false", requiredRestrictionsToExecuteMethod = "false, false, true, concept", requiredPermissionsToSeeMethod = "value, false", requiredRestrictionsToSeeMethod = "false, false, false, concept")
 //    @GenerateProperty(requiredPermissionsToExecuteMethod = "value, false", requiredRestrictionsToExecuteMethod = "RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()", requiredPermissionsToSeeMethod = "value, false", requiredRestrictionsToSeeMethod = "RestrictionsBuilder.withNode(concept).build()")
-    public abstract @Nonnull WritableExtensibleProperty<SemanticType, ReadOnlyNodePermissions> permissions();
+    public abstract @Nonnull WritablePersistentSetProperty<Node, SemanticType, ReadOnlyNodePermissions, FreezableNodePermissions> permissions();
     
     /* -------------------------------------------------- Authentications -------------------------------------------------- */
     
@@ -41,7 +43,7 @@ public abstract class Node extends CoreConcept<NonHostEntity, Long> {
      */
     @Pure
 //    @GenerateProperty(requiredPermissionsToExecuteMethod = "value, false", requiredRestrictionsToExecuteMethod = "false, false, true, concept", requiredPermissionsToSeeMethod = "value, false", requiredRestrictionsToSeeMethod = "false, false, false, concept")
-    public abstract @Nonnull WritableExtensibleProperty<SemanticType, ReadOnlyAuthentications> authentications();
+    public abstract @Nonnull WritablePersistentSetProperty<Node, SemanticType, ReadOnlyAuthentications, FreezableAuthentications> authentications();
     
     /* -------------------------------------------------- Supernode -------------------------------------------------- */
     

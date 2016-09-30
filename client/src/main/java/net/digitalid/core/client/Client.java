@@ -16,7 +16,7 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.math.Element;
 import net.digitalid.utility.math.Exponent;
 import net.digitalid.utility.math.ExponentBuilder;
-import net.digitalid.utility.property.extensible.WritableExtensibleProperty;
+import net.digitalid.utility.property.set.WritableSetProperty;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
@@ -218,7 +218,7 @@ public abstract class Client extends Site {
     
     /* -------------------------------------------------- Roles -------------------------------------------------- */
     
-    public final @Nonnull WritableExtensibleProperty<NativeRole, ReadOnlySet<NativeRole>> roles = null; // TODO: Implement such a WritableExtensibleProperty.
+    public final @Nonnull WritableSetProperty<NativeRole, ReadOnlySet<NativeRole>> roles = null; // TODO: Implement such a WritableExtensibleProperty.
     
     // TODO: Remove the following code once the writable extensible property for roles is implemented.
     

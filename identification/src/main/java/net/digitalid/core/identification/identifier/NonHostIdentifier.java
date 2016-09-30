@@ -23,13 +23,6 @@ import net.digitalid.core.identification.identity.NonHostIdentity;
 @GenerateConverter
 public interface NonHostIdentifier extends Identifier {
     
-    /* -------------------------------------------------- Resolve -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    @NonCommitting
-    public @Nonnull NonHostIdentity resolve() throws ExternalException;
-    
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
@@ -44,8 +37,15 @@ public interface NonHostIdentifier extends Identifier {
     
     @Pure
     @Recover
-    public static @Nonnull NonHostIdentifier with(@Nonnull String address) {
+    public static @Nonnull NonHostIdentifier with(@Nonnull @Valid String address) {
         return address.contains(":") ? ExternalIdentifier.with(address) : InternalNonHostIdentifier.with(address);
     } 
+    
+    /* -------------------------------------------------- Resolve -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @NonCommitting
+    public @Nonnull NonHostIdentity resolve() throws ExternalException;
     
 }

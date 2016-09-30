@@ -9,7 +9,6 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.logging.exceptions.io.StreamException;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.conversion.collector.XDFValueCollector;

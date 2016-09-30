@@ -8,7 +8,7 @@ import net.digitalid.utility.contracts.exceptions.PreconditionViolationException
 import net.digitalid.utility.functional.failable.FailableConsumer;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.property.simple.WritableSimpleProperty;
+import net.digitalid.utility.property.value.WritableValueProperty;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -126,7 +126,7 @@ public abstract class Settings extends CoreConcept<NonHostEntity, Object> {
     @GenerateProperty()
     @Generated("TODO in Subclass") // TODO: Only the abstract method is declared here.
 //    @GenerateProperty(requiredRestrictionsToExecuteMethod = "true, false, false, null", requiredRestrictionsToSeeMethod = "true, false, false, null")
-    public @Nonnull WritableSimpleProperty<@MaxSize(50) String> password() {
+    public @Nonnull WritableValueProperty<@MaxSize(50) String> password() {
         return password;
     }
     
