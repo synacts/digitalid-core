@@ -15,12 +15,9 @@ import net.digitalid.core.identification.PublicKeyRetriever;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identification.identifier.NonHostIdentifier;
-import net.digitalid.core.identification.identity.HostIdentityBuilder;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
-import net.digitalid.core.identification.identity.NaturalPersonBuilder;
 
 import org.junit.BeforeClass;
 
@@ -83,10 +80,10 @@ public class CryptographyTestBase {
         @Override
         public @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws ExternalException {
             if (identifier instanceof HostIdentifier) {
-                return HostIdentityBuilder.withKey(1L).withAddress((HostIdentifier) identifier).build();
+                return createHostIdentity(1L, (HostIdentifier) identifier);
             } else if (identifier instanceof InternalNonHostIdentifier) {
                 // TODO: How do we know whether the identifier is one of a natural or artificial person or a type?
-                return NaturalPersonBuilder.withKey(1L).withAddress((InternalNonHostIdentifier) identifier).build();
+                return createNaturalPerson(1L, (InternalNonHostIdentifier) identifier);
             } else {
                 throw new UnsupportedOperationException("The identifier resolver does not support '" + identifier.getClass() + "' yet.");
             }

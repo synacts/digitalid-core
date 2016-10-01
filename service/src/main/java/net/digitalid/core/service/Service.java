@@ -9,13 +9,14 @@ import net.digitalid.utility.collections.collection.ReadOnlyCollection;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Normalize;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.identification.identity.SemanticType;
 
@@ -25,7 +26,7 @@ import net.digitalid.core.identification.identity.SemanticType;
 @Immutable
 @GenerateBuilder // TODO: Use the fields of the generated constructor and not the recover method here.
 @GenerateSubclass
-// TODO: Semantic types cannot be converted yet: @GenerateConverter // TODO: Make sure that only the type is stored (and used for comparison).
+@GenerateConverter // TODO: What shall we do with the RequestException thrown in the recover method?
 public abstract class Service extends RootClass {
     
     /* -------------------------------------------------- Constants -------------------------------------------------- */
@@ -71,9 +72,10 @@ public abstract class Service extends RootClass {
      */
     @Pure
     @Recover
-    public static @Nonnull Service getService(@Nonnull SemanticType type) throws RequestException {
+    public static @Nonnull Service getService(@Nonnull SemanticType type) /* throws RequestException */ {
         final @Nullable Service service = services.get(type);
-        if (service == null) { throw RequestException.with(RequestErrorCode.SERVICE, "No service with the type $ was found.", type.getAddress().getString()); }
+//        if (service == null) { throw RequestException.with(RequestErrorCode.SERVICE, "No service with the type $ was found.", type.getAddress().getString()); }
+        if (service == null) { throw new RuntimeException("No service with the type '" + type.getAddress().getString() + "' was found."); }
         return service;
     }
     
@@ -92,6 +94,7 @@ public abstract class Service extends RootClass {
      * Returns the title of this service.
      */
     @Pure
+    @NonRepresentative
     public abstract @Nonnull String getTitle();
     
     /* -------------------------------------------------- Version -------------------------------------------------- */
@@ -100,6 +103,7 @@ public abstract class Service extends RootClass {
      * Returns the version of this service.
      */
     @Pure
+    @NonRepresentative
     public abstract @Nonnull String getVersion();
     
     /**

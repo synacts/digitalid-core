@@ -10,6 +10,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.threading.Threading;
 import net.digitalid.utility.threading.annotations.MainThread;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -18,6 +19,7 @@ import net.digitalid.core.identification.Category;
 import net.digitalid.core.identification.annotations.type.loaded.Loaded;
 import net.digitalid.core.identification.annotations.type.loaded.LoadedRecipient;
 import net.digitalid.core.identification.annotations.type.loaded.NonLoadedRecipient;
+import net.digitalid.core.identification.identifier.NonHostIdentifier;
 
 /**
  * This class models a syntactic type.
@@ -26,6 +28,23 @@ import net.digitalid.core.identification.annotations.type.loaded.NonLoadedRecipi
 @GenerateSubclass
 @GenerateConverter
 public abstract class SyntacticType extends Type {
+    
+    /* -------------------------------------------------- Recover -------------------------------------------------- */
+    
+    /**
+     * Returns the identity of the given address.
+     */
+    @Pure
+    @Recover // TODO: Split into @Recover(Representation.INTERNAL) and @Recover(Representation.EXTERNAL) or something similar.
+    static @Nonnull SyntacticType with(long key, @Nonnull NonHostIdentifier address) {
+        try {
+            // TODO: The following cast should probably not throw an internal exception.
+            return IdentifierResolver.resolve(address).castTo(SyntacticType.class);
+        } catch (@Nonnull ExternalException exception) {
+            // TODO: How to handle this?
+            throw new RuntimeException(exception);
+        }
+    }
     
     /* -------------------------------------------------- Semantic Type Hacks -------------------------------------------------- */
     

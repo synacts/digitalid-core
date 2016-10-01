@@ -3,15 +3,15 @@ package net.digitalid.core.entity;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.rootclass.RootInterface;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
+import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.Site;
-import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
@@ -22,17 +22,8 @@ import net.digitalid.core.identification.identity.InternalIdentity;
  * @see NonHostEntity
  */
 @Immutable
-// TODO: @GenerateConverter
+@GenerateConverter
 public interface Entity extends RootInterface {
-    
-    /* -------------------------------------------------- Key -------------------------------------------------- */
-    
-    /**
-     * Returns the number that represents this entity in the database.
-     */
-    @Pure
-    @TODO(task = "Make sure that only the key is used in the database.", date = "2016-06-24", author = Author.KASPAR_ETTER)
-    public long getKey();
     
     /* -------------------------------------------------- Site -------------------------------------------------- */
     
@@ -40,7 +31,16 @@ public interface Entity extends RootInterface {
      * Returns the site of this entity.
      */
     @Pure
+    @Provided
     public @Nonnull CoreSite getSite();
+    
+    /* -------------------------------------------------- Key -------------------------------------------------- */
+    
+    /**
+     * Returns the number that represents this entity in the database.
+     */
+    @Pure
+    public long getKey();
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
@@ -48,6 +48,7 @@ public interface Entity extends RootInterface {
      * Returns the identity of this entity.
      */
     @Pure
+    @NonRepresentative
     public @Nonnull InternalIdentity getIdentity();
     
     /* -------------------------------------------------- Queries -------------------------------------------------- */
@@ -73,7 +74,7 @@ public interface Entity extends RootInterface {
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull Entity with(@Nonnull Site site, long key) throws DatabaseException {
+    public static @Nonnull Entity with(@Nonnull CoreSite site, long key) /* throws DatabaseException */ {
         // TODO: Think about how to recover entities. Maybe make it configurable?
 //        if (site instanceof Host) {
 //            return Account.getNotNull((Host) site, resultSet, columnIndex);

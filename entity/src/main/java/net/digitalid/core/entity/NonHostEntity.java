@@ -3,12 +3,12 @@ package net.digitalid.core.entity;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.Site;
-import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 
@@ -16,13 +16,14 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
  * This interface models a non-host entity.
  */
 @Immutable
-// TODO: @GenerateConverter
+@GenerateConverter
 public interface NonHostEntity extends Entity {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
     @Pure
     @Override
+    @NonRepresentative
     public @Nonnull InternalNonHostIdentity getIdentity();
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
@@ -30,7 +31,7 @@ public interface NonHostEntity extends Entity {
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull NonHostEntity with(@Nonnull Site site, long key) throws DatabaseException {
+    public static @Nonnull NonHostEntity with(@Nonnull CoreSite site, long key) /*throws DatabaseException */{
         // TODO: Think about how to recover entities. Maybe make it configurable?
 //        if (site instanceof Host) {
 //            return Account.getNotNull((Host) site, resultSet, columnIndex);

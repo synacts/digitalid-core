@@ -4,7 +4,10 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootInterface;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.core.identification.Category;
@@ -21,6 +24,7 @@ import net.digitalid.core.identification.identifier.Identifier;
  * @see InternalIdentity
  */
 @Mutable
+@GenerateConverter
 public interface Identity extends RootInterface {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
@@ -30,7 +34,8 @@ public interface Identity extends RootInterface {
      * The key remains the same after relocation but changes after merging.
      */
     @Pure
-//    @Volatile // TODO: Make the generated field volatile.
+//    @Volatile // TODO: Make the generated field volatile (?)
+    // TODO: @Representative(Representation.INTERNAL) or something similar.
     public long getKey();
     
     /* -------------------------------------------------- Address -------------------------------------------------- */
@@ -39,6 +44,7 @@ public interface Identity extends RootInterface {
      * Returns the current address of this identity.
      */
     @Pure
+    // TODO: @Representative(Representation.EXTERNAL) or something similar.
     public @Nonnull Identifier getAddress();
     
     /* -------------------------------------------------- Category -------------------------------------------------- */
@@ -47,7 +53,24 @@ public interface Identity extends RootInterface {
      * Returns the category of this identity.
      */
     @Pure
+    @NonRepresentative
     public @Nonnull Category getCategory();
+    
+    /* -------------------------------------------------- Recover -------------------------------------------------- */
+    
+    /**
+     * Returns the identity of the given address.
+     */
+    @Pure
+    @Recover // TODO: Split into @Recover(Representation.INTERNAL) and @Recover(Representation.EXTERNAL) or something similar.
+    static @Nonnull Identity with(long key, @Nonnull Identifier address) {
+        try {
+            return IdentifierResolver.resolve(address);
+        } catch (@Nonnull ExternalException exception) {
+            // TODO: How to handle this?
+            throw new RuntimeException(exception);
+        }
+    }
     
     /* -------------------------------------------------- Merging -------------------------------------------------- */
     
