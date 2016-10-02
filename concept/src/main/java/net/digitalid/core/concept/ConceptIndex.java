@@ -10,8 +10,6 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.concurrency.map.ConcurrentHashMapBuilder;
 import net.digitalid.utility.concurrency.map.ConcurrentMap;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.functional.interfaces.BinaryFunction;
-import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -24,7 +22,6 @@ import net.digitalid.core.entity.Entity;
  * This class indexes the instances of a {@link Concept concept} by their {@link Entity entity} and key.
  */
 @Immutable
-@GenerateBuilder
 @GenerateSubclass
 public abstract class ConceptIndex<E extends Entity, K, C extends Concept<E, K>> {
     
@@ -49,13 +46,13 @@ public abstract class ConceptIndex<E extends Entity, K, C extends Concept<E, K>>
         }
     }
     
-    /* -------------------------------------------------- Factory -------------------------------------------------- */
+    /* -------------------------------------------------- Module -------------------------------------------------- */
     
     /**
-     * Returns the factory that can produce a new concept instance with a given entity and key.
+     * Returns the concept module, which contains the concept factory.
      */
     @Pure
-    protected abstract @Nonnull BinaryFunction<@Nonnull E, @Nonnull K, @Nonnull C> getFactory();
+    protected abstract @Nonnull ConceptModule<E, K, C> getConceptModule();
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -79,10 +76,10 @@ public abstract class ConceptIndex<E extends Entity, K, C extends Concept<E, K>>
             @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
             if (map == null) { map = concepts.putIfAbsentElseReturnPresent(entity, ConcurrentHashMapBuilder.<K, C>build()); }
             @Nullable C concept = map.get(key);
-            if (concept == null) { concept = map.putIfAbsentElseReturnPresent(key, getFactory().evaluate(entity, key)); }
+            if (concept == null) { concept = map.putIfAbsentElseReturnPresent(key, getConceptModule().getConceptFactory().evaluate(entity, key)); }
             return concept;
         } else {
-            return getFactory().evaluate(entity, key);
+            return getConceptModule().getConceptFactory().evaluate(entity, key);
         }
     }
     

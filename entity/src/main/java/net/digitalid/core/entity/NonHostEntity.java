@@ -9,6 +9,7 @@ import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.core.Site;
 
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 
@@ -31,7 +32,7 @@ public interface NonHostEntity extends Entity {
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull NonHostEntity with(@Nonnull CoreSite site, long key) /*throws DatabaseException */{
+    public static @Nonnull NonHostEntity with(@Nonnull Site site, long key) /*throws DatabaseException */{
         // TODO: Think about how to recover entities. Maybe make it configurable?
 //        if (site instanceof Host) {
 //            return Account.getNotNull((Host) site, resultSet, columnIndex);

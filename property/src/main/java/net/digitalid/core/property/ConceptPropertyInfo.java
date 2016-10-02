@@ -7,7 +7,7 @@ import net.digitalid.utility.validation.annotations.state.Validated;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.concept.Concept;
-import net.digitalid.core.concept.ConceptInfo;
+import net.digitalid.core.concept.ConceptModule;
 
 import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.entity.Entity;
@@ -60,7 +60,7 @@ public abstract class ConceptPropertyInfo<V, C extends Concept<C, E, ?>, E exten
      * Returns the concept info.
      */
     @Pure
-    public abstract @Nonnull ConceptInfo<C, E, ?> getConceptInfo();
+    public abstract @Nonnull ConceptModule<C, E, ?> getConceptInfo();
     
     /* -------------------------------------------------- Concept Type -------------------------------------------------- */
     

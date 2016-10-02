@@ -8,10 +8,10 @@ import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Database;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.property.Subject;
 
-import net.digitalid.core.concept.annotations.GenerateInfo;
-import net.digitalid.core.entity.CoreSite;
+import net.digitalid.core.concept.annotations.GenerateConceptModule;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 
@@ -35,14 +35,6 @@ public abstract class Concept<E extends Entity, K> extends RootClass implements 
     @Provided
     public abstract @Nonnull E getEntity();
     
-    /* -------------------------------------------------- Site -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull CoreSite getSite() {
-        return getEntity().getSite();
-    }
-    
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
     /**
@@ -51,14 +43,22 @@ public abstract class Concept<E extends Entity, K> extends RootClass implements 
     @Pure
     public abstract @Nonnull K getKey();
     
-    /* -------------------------------------------------- Info -------------------------------------------------- */
+    /* -------------------------------------------------- Site -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Site getSite() {
+        return getEntity().getSite();
+    }
+    
+    /* -------------------------------------------------- Module -------------------------------------------------- */
     
     /**
-     * Generates the {@link ConceptInfo info} with the {@link ConceptIndex index}.
+     * Returns the module of this concept.
      */
     @Pure
-    @GenerateInfo
-    protected abstract void generateInfo();
+    @GenerateConceptModule
+    public abstract @Nonnull ConceptModule<E, K, ?> getConceptModule();
     
     /* -------------------------------------------------- Properties -------------------------------------------------- */
     

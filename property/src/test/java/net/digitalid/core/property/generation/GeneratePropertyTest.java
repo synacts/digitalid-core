@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.auxiliary.None;
 
 import net.digitalid.core.concept.CoreConcept;
-import net.digitalid.core.concept.annotations.GenerateProperty;
+import net.digitalid.core.concept.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
 
@@ -28,7 +28,7 @@ abstract class GeneratePropertyClass extends CoreConcept<NonHostEntity, None> {
      */
     @Pure
     @Default("\"\"")
-    @GenerateProperty()
+    @GenerateSynchronizedProperty()
     public abstract @Nonnull NonNullableConceptProperty<@MaxSize(50) String, GeneratePropertyClass, NonHostEntity> password();
     
 }

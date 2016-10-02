@@ -11,7 +11,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.circumfixes.Brackets;
@@ -29,19 +28,17 @@ import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.concept.Concept;
-import net.digitalid.core.concept.ConceptIndexBuilder;
-import net.digitalid.core.concept.ConceptInfo;
-import net.digitalid.core.concept.ConceptInfoBuilder;
-import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.concept.ConceptModule;
+import net.digitalid.core.concept.ConceptModuleBuilder;
 
 /**
  * This annotation is used to indicate that an info object must be generated, which contains information about the service, the index, with which factory an instance of the type is built and its converter.
  */
 @Documented
 @Target(ElementType.METHOD)
-@Interceptor(GenerateInfo.Interceptor.class)
+@Interceptor(GenerateConceptModule.Interceptor.class)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GenerateInfo {
+public @interface GenerateConceptModule {
     
     /**
      * This class generates content for the annotated method.
@@ -65,7 +62,7 @@ public @interface GenerateInfo {
     
             Require.that(typeArguments.size() == 2).orThrow("Expected two type arguments for type $, but got $", typeInformation.getName(), typeArguments.size());
             
-            javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(ConceptInfo.class) + Brackets.inPointy(javaFileGenerator.importIfPossible(typeArguments.get(0)) + ", " + javaFileGenerator.importIfPossible(typeArguments.get(1)) + ", " + typeInformation.getName()) + " INFO = " + javaFileGenerator.importIfPossible(ConceptInfoBuilder.class) + "." + Brackets.inPointy(javaFileGenerator.importIfPossible(typeArguments.get(0)) + ", " + javaFileGenerator.importIfPossible(typeArguments.get(1)) + ", " + typeInformation.getName()) + "withService" + Brackets.inRound("SERVICE") + ".withName" + Brackets.inRound(Quotes.inDouble(typeInformation.getName())) + ".withIndex" + Brackets.inRound(javaFileGenerator.importIfPossible(ConceptIndexBuilder.class) + ".buildWithFactory" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedSubclass() + "::new")) + ".withConverter" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedConverter() + ".INSTANCE") + ".build()");
+            javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(ConceptModule.class) + Brackets.inPointy(javaFileGenerator.importIfPossible(typeArguments.get(0)) + ", " + javaFileGenerator.importIfPossible(typeArguments.get(1)) + ", " + typeInformation.getName()) + " CONCEPT_MODULE = " + javaFileGenerator.importIfPossible(ConceptModuleBuilder.class) + "." + Brackets.inPointy(javaFileGenerator.importIfPossible(typeArguments.get(0)) + ", " + javaFileGenerator.importIfPossible(typeArguments.get(1)) + ", " + typeInformation.getName()) + "withName" + Brackets.inRound(Quotes.inDouble(typeInformation.getName())) + ".withService" + Brackets.inRound("SERVICE") + ".withConceptFactory" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedSubclass() + "::new") + ".withEntityConverter" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedConverter() + ".INSTANCE") + ".build()");
         }
     
         @Pure

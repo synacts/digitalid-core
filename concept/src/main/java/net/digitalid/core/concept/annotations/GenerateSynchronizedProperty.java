@@ -42,8 +42,8 @@ import net.digitalid.utility.validation.validator.ValueAnnotationValidator;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Interceptor(GenerateProperty.Interceptor.class)
-public @interface GenerateProperty {
+@Interceptor(GenerateSynchronizedProperty.Interceptor.class)
+public @interface GenerateSynchronizedProperty {
     
     // TODO: Implement the interceptor that generates the property with the info.
     /*

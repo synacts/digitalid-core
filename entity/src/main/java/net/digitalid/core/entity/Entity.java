@@ -32,7 +32,7 @@ public interface Entity extends RootInterface {
      */
     @Pure
     @Provided
-    public @Nonnull CoreSite getSite();
+    public @Nonnull Site getSite();
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
@@ -74,8 +74,8 @@ public interface Entity extends RootInterface {
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull Entity with(@Nonnull CoreSite site, long key) /* throws DatabaseException */ {
-        // TODO: Think about how to recover entities. Maybe make it configurable?
+    public static @Nonnull Entity with(@Nonnull Site site, long key) /* throws DatabaseException */ {
+        // TODO: Think about how to recover entities. Maybe make it configurable/injectable?
 //        if (site instanceof Host) {
 //            return Account.getNotNull((Host) site, resultSet, columnIndex);
 //        } else if (site instanceof Client) {
