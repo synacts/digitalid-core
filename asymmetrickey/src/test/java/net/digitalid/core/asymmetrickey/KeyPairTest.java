@@ -1,27 +1,21 @@
 package net.digitalid.core.asymmetrickey;
 
-import net.digitalid.core.parameters.Parameters;
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
-
-import net.digitalid.core.asymmetrickey.KeyPair;
-import net.digitalid.core.asymmetrickey.PrivateKey;
-import net.digitalid.core.asymmetrickey.PublicKey;
-
 import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.testing.RootTest;
+
+import net.digitalid.database.auxiliary.Time;
+import net.digitalid.database.auxiliary.TimeBuilder;
 
 import net.digitalid.core.group.Element;
-
-import net.digitalid.utility.testing.CustomTest;
-import net.digitalid.utility.time.Time;
-import net.digitalid.utility.time.TimeBuilder;
+import net.digitalid.core.parameters.Parameters;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class KeyPairTest extends CustomTest {
+public class KeyPairTest extends RootTest {
     
     /**
      * Sets the length of the cryptographic parameters.

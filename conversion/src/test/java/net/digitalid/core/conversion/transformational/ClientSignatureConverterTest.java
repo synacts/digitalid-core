@@ -7,8 +7,9 @@ import java.math.BigInteger;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.math.ExponentBuilder;
-import net.digitalid.utility.time.Time;
-import net.digitalid.utility.time.TimeBuilder;
+
+import net.digitalid.database.auxiliary.Time;
+import net.digitalid.database.auxiliary.TimeBuilder;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.commitment.SecretCommitment;

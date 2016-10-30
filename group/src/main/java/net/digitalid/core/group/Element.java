@@ -11,16 +11,14 @@ import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-
-import net.digitalid.core.annotations.group.GroupMember;
-import net.digitalid.core.annotations.group.InSameGroup;
-
 import net.digitalid.utility.interfaces.BigIntegerNumerical;
-import net.digitalid.utility.math.ElementSubclass;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Normalize;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+
+import net.digitalid.core.annotations.group.GroupMember;
+import net.digitalid.core.annotations.group.InSameGroup;
 
 /**
  * An element is a number in a certain group.

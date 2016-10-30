@@ -1,6 +1,5 @@
 package net.digitalid.core.keychain;
 
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
@@ -8,16 +7,16 @@ import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
-
-import net.digitalid.core.asymmetrickey.AsymmetricKey;
-
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.freezable.annotations.Frozen;
-import net.digitalid.utility.time.Time;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.order.StrictlyDescending;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+
+import net.digitalid.database.auxiliary.Time;
+
+import net.digitalid.core.asymmetrickey.AsymmetricKey;
 
 /**
  * A key chain contains several items to support the rotation of host keys.

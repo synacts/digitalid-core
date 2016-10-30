@@ -4,7 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.time.Time;
+
+import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.asymmetrickey.PrivateKey;

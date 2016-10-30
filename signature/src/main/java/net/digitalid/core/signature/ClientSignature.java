@@ -10,7 +10,8 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.time.Time;
+
+import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.commitment.SecretCommitment;
 import net.digitalid.core.group.Element;

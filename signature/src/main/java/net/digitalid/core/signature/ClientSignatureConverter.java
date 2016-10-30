@@ -22,8 +22,9 @@ import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.math.ExponentBuilder;
 import net.digitalid.utility.math.ExponentConverter;
-import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeConverter;
+
+import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.commitment.SecretCommitment;
 import net.digitalid.core.commitment.SecretCommitmentConverter;

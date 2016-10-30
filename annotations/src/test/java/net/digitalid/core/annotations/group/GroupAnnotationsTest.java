@@ -4,8 +4,6 @@ import java.math.BigInteger;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.group.TestGroupSubclass;
-import net.digitalid.utility.group.TestMemberSubclass;
 import net.digitalid.utility.testing.ContractTest;
 
 import org.junit.Test;

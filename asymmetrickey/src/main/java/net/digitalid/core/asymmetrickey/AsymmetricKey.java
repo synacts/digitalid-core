@@ -3,11 +3,10 @@ package net.digitalid.core.asymmetrickey;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-
-import net.digitalid.core.group.Group;
-
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+
+import net.digitalid.core.group.Group;
 
 /**
  * This class models an asymmetric key.

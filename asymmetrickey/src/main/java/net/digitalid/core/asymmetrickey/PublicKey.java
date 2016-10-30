@@ -11,15 +11,14 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.tuples.Pair;
+import net.digitalid.utility.validation.annotations.generation.Provide;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.annotations.group.InGroup;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.GroupWithUnknownOrder;
-
-import net.digitalid.utility.tuples.Pair;
-import net.digitalid.utility.validation.annotations.generation.Provide;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
  * This class stores the groups, elements and exponents of a host's public key.

@@ -14,11 +14,11 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.functional.iterators.ReadOnlyIterator;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;

@@ -5,11 +5,15 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Captured;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Normalize;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
@@ -19,7 +23,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
  */
 @Immutable
 @GenerateSubclass
-// TODO: @GenerateConverter
+@GenerateConverter
 public abstract class RequestException extends ExternalException {
     
     /* -------------------------------------------------- Code -------------------------------------------------- */
@@ -42,23 +46,30 @@ public abstract class RequestException extends ExternalException {
     
     // TODO: Make sure that the message is properly normalized.
     protected RequestException(@Nonnull @Normalize("\"(\" + code + \") \" + message") String message, @Nullable Exception cause, @Captured @Nonnull @NullableElements Object... arguments) {
-        super(message, cause);
+        super(message, cause, arguments);
     }
     
     /**
      * Returns a new request exception with the given code, message and cause.
      */
     @Pure
-    public static @Nonnull RequestException with(@Nonnull RequestErrorCode error, @Nonnull String message, @Nullable Exception cause, @Captured @Nonnull @NullableElements Object... arguments) {
-        return new RequestExceptionSubclass(message, cause, arguments, error, false);
+    public static @Nonnull RequestException with(@Nonnull RequestErrorCode code, @Nonnull String message, @Nullable Exception cause, @Captured @Nonnull @NullableElements Object... arguments) {
+        return new RequestExceptionSubclass(message, cause, arguments, code, false);
     }
     
     /**
      * Returns a new request exception with the given code and message.
      */
     @Pure
-    public static @Nonnull RequestException with(@Nonnull RequestErrorCode error, @Nonnull String message, @Captured @Nonnull @NullableElements Object... arguments) {
-        return with(error, message, null, arguments);
+    public static @Nonnull RequestException with(@Nonnull RequestErrorCode code, @Nonnull String message, @Captured @Nonnull @NullableElements Object... arguments) {
+        return with(code, message, null, arguments);
+    }
+    
+    @Pure
+    @Recover
+    @TODO(task = "Think about how to best convert and recover request exceptions.", date = "2016-10-30", author = Author.KASPAR_ETTER)
+    static @Nonnull RequestException with(@Nonnull RequestErrorCode code) {
+        return new RequestExceptionSubclass("", null, new Object[0], code, true);
     }
     
     /* -------------------------------------------------- XDF Converter -------------------------------------------------- */

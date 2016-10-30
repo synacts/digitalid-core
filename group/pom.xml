@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>utility-annotations</artifactId>
+            <artifactId>core-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

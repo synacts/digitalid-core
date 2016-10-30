@@ -188,7 +188,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      */
     @Pure
     @Recover
-    public static @Nonnull Agent of(@Nonnull NonHostEntity entity, long number) {
+    public static @Nonnull Agent of(@Nonnull NonHostEntity entity, long key) {
         // TODO: Make this injectable?
         return null;
 //        return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed, false);

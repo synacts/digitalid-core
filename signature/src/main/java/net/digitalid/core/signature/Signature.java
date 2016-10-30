@@ -4,7 +4,8 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.rootclass.RootClass;
-import net.digitalid.utility.time.Time;
+
+import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 

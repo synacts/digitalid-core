@@ -1,7 +1,5 @@
 package net.digitalid.core.symmetrickey;
 
-import net.digitalid.core.parameters.Parameters;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
@@ -43,6 +41,8 @@ import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+
+import net.digitalid.core.parameters.Parameters;
 
 /**
  * Symmetric keys are used to encrypt and decrypt byte arrays with the Advanced Encryption Standard (AES).

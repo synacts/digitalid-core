@@ -8,8 +8,9 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.cryptography.InitializationVectorBuilder;
 import net.digitalid.utility.cryptography.SymmetricKeyBuilder;
-import net.digitalid.utility.time.Time;
-import net.digitalid.utility.time.TimeBuilder;
+
+import net.digitalid.database.auxiliary.Time;
+import net.digitalid.database.auxiliary.TimeBuilder;
 
 import net.digitalid.core.conversion.converter.XDF;
 import net.digitalid.core.cryptography.encryption.EncryptionBuilder;

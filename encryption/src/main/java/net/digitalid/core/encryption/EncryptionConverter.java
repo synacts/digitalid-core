@@ -18,31 +18,30 @@ import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.conversion.converter.SelectionResult;
 import net.digitalid.utility.conversion.converter.ValueCollector;
 import net.digitalid.utility.conversion.converter.types.CustomType;
-import net.digitalid.utility.cryptography.InitializationVectorConverter;
-import net.digitalid.utility.cryptography.SymmetricKeyBuilder;
-import net.digitalid.utility.cryptography.SymmetricKeyConverter;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.immutable.ImmutableMap;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.math.ElementConverter;
-import net.digitalid.utility.time.Time;
-import net.digitalid.utility.time.TimeConverter;
+
+import net.digitalid.database.auxiliary.Time;
+import net.digitalid.database.auxiliary.TimeConverter;
 
 import net.digitalid.core.asymmetrickey.PrivateKey;
+import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.asymmetrickey.PublicKey;
-import net.digitalid.core.cryptography.encryption.EncryptionBuilder;
+import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.group.Element;
+import net.digitalid.core.group.ElementConverter;
 import net.digitalid.core.group.Group;
-import net.digitalid.core.identification.PublicKeyRetriever;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.HostIdentifierConverter;
-import net.digitalid.core.keychain.PrivateKeyChain;
 import net.digitalid.core.symmetrickey.InitializationVector;
+import net.digitalid.core.symmetrickey.InitializationVectorConverter;
 import net.digitalid.core.symmetrickey.SymmetricKey;
+import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
+import net.digitalid.core.symmetrickey.SymmetricKeyConverter;
 
-import static net.digitalid.utility.conversion.converter.types.CustomType.*;
 import static net.digitalid.utility.conversion.converter.types.CustomType.TUPLE;
 
 /**
@@ -54,23 +53,15 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
     
     private final @Nonnull Converter<T, ?> objectConverter;
     
-    /* -------------------------------------------------- Private Key -------------------------------------------------- */
-    
-    /**
-     * The private key chain of this host instance.
-     */
-    private final @Nonnull PrivateKeyChain privateKeyChain;
-    
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private EncryptionConverter(@Nonnull Converter<T, ?> objectConverter, @Nonnull PrivateKeyChain privateKeyChain) {
+    private EncryptionConverter(@Nonnull Converter<T, ?> objectConverter) {
         this.objectConverter = objectConverter;
-        this.privateKeyChain = privateKeyChain;
     }
     
     @Pure
-    public static <T> @Nonnull EncryptionConverter<T> getInstance(@Nonnull Converter<T, ?> objectConverter, @Nonnull PrivateKeyChain privateKeyChain) {
-        return new EncryptionConverter<>(objectConverter, privateKeyChain);
+    public static <T> @Nonnull EncryptionConverter<T> getInstance(@Nonnull Converter<T, ?> objectConverter) {
+        return new EncryptionConverter<>(objectConverter);
     }
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
@@ -107,7 +98,7 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
     @Override
     public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified Encryption<T> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws ExternalException {
         if (object == null) {
-            throw UnexpectedFailureException.with("Cannot convert encryption object that is null");
+            throw UnexpectedFailureException.with("Cannot convert encryption object that is null"); // TODO: Why not? Just encode it especially.
         }
         int i = 1;
         
@@ -136,7 +127,7 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
     public <X extends ExternalException> @Nonnull Encryption<T> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nullable Void externallyProvided) throws ExternalException {
         final @Nonnull Time time = TimeConverter.INSTANCE.recover(selectionResult, externallyProvided);
         final @Nonnull HostIdentifier recipient = HostIdentifierConverter.INSTANCE.recover(selectionResult, externallyProvided);
-        final @Nonnull PrivateKey privateKey = privateKeyChain.getKey(time);
+        final @Nonnull PrivateKey privateKey = PrivateKeyRetriever.retrieve(recipient, time);
         final @Nonnull Group compositeGroup = privateKey.getCompositeGroup();
         final @Nonnull Element encryptedSymmetricKeyValue = ElementConverter.INSTANCE.recover(selectionResult, compositeGroup);
         final @Nonnull SymmetricKey decryptedSymmetricKey = SymmetricKeyBuilder.buildWithValue(encryptedSymmetricKeyValue.pow(privateKey.getD()).getValue());

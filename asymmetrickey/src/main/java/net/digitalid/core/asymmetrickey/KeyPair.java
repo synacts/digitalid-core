@@ -12,21 +12,16 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.contracts.Validate;
-
-import net.digitalid.core.parameters.Parameters;
-import net.digitalid.core.group.Element;
-import net.digitalid.core.group.Exponent;
-
-import net.digitalid.utility.math.ExponentBuilder;
-
-import net.digitalid.core.group.GroupWithKnownOrder;
-
-import net.digitalid.utility.cryptography.key.PrivateKeyBuilder;
-import net.digitalid.utility.cryptography.key.PublicKeyBuilder;
-import net.digitalid.utility.math.GroupWithKnownOrderBuilder;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+
+import net.digitalid.core.group.Element;
+import net.digitalid.core.group.Exponent;
+import net.digitalid.core.group.ExponentBuilder;
+import net.digitalid.core.group.GroupWithKnownOrder;
+import net.digitalid.core.group.GroupWithKnownOrderBuilder;
+import net.digitalid.core.parameters.Parameters;
 
 /**
  * This class generates new key pairs.

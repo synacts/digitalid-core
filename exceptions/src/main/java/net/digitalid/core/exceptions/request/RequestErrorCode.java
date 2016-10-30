@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -17,7 +18,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
  * @see RequestException
  */
 @Immutable
-// TODO: @GenerateConverter
+@GenerateConverter
 public enum RequestErrorCode {
     
     /* -------------------------------------------------- Error Codes -------------------------------------------------- */

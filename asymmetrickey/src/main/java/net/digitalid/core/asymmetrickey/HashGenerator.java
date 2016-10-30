@@ -10,11 +10,10 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.exceptions.MissingSupportException;
-
-import net.digitalid.core.group.Element;
-
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Utility;
+
+import net.digitalid.core.group.Element;
 
 /**
  * Generates cryptographic hashes.

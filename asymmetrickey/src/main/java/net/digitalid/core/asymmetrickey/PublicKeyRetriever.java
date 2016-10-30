@@ -1,21 +1,20 @@
-package net.digitalid.core.identification;
+package net.digitalid.core.asymmetrickey;
 
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.auxiliary.Time;
 
-import net.digitalid.core.asymmetrickey.PublicKey;
-import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.HostIdentity;
 
 /**
- * The public key retriever retrieves the public key of an internal identity at a given time.
+ * The public key retriever retrieves the public key of a host at a given time.
  */
 @Stateless
 public interface PublicKeyRetriever {
@@ -27,7 +26,7 @@ public interface PublicKeyRetriever {
      */
     @Pure
     @NonCommitting
-    public @Nonnull PublicKey getPublicKey(@Nonnull InternalIdentity internalIdentity, @Nonnull Time time) throws ExternalException;
+    public @Nonnull PublicKey getPublicKey(@Nonnull HostIdentity host, @Nonnull Time time) throws ExternalException;
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
@@ -39,21 +38,21 @@ public interface PublicKeyRetriever {
     /* -------------------------------------------------- Static Access -------------------------------------------------- */
     
     /**
-     * Retrieves the public key of the given internal identity at the given time.
+     * Retrieves the public key of the given host at the given time.
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PublicKey retrieve(@Nonnull InternalIdentity internalIdentity, @Nonnull Time time) throws ExternalException {
-        return configuration.get().getPublicKey(internalIdentity, time);
+    public static @Nonnull PublicKey retrieve(@Nonnull HostIdentity host, @Nonnull Time time) throws ExternalException {
+        return configuration.get().getPublicKey(host, time);
     }
     
     /**
-     * Retrieves the public key of the given internal identifier at the given time.
+     * Retrieves the public key of the given host at the given time.
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PublicKey retrieve(@Nonnull InternalIdentifier internalIdentifier, @Nonnull Time time) throws ExternalException {
-        return retrieve(internalIdentifier.resolve(), time);
+    public static @Nonnull PublicKey retrieve(@Nonnull HostIdentifier host, @Nonnull Time time) throws ExternalException {
+        return retrieve(host.resolve(), time);
     }
     
 }

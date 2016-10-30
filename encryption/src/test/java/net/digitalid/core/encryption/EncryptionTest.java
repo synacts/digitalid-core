@@ -18,11 +18,12 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.cryptography.InitializationVectorBuilder;
-import net.digitalid.utility.cryptography.SymmetricKeyBuilder;
 
+import net.digitalid.core.parameters.Parameters;
 import net.digitalid.core.symmetrickey.InitializationVector;
+import net.digitalid.core.symmetrickey.InitializationVectorBuilder;
 import net.digitalid.core.symmetrickey.SymmetricKey;
+import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,6 +34,11 @@ import org.junit.Test;
 public class EncryptionTest {
     
     public static final @Nonnull String MODE = "AES/CBC/PKCS5Padding";
+    
+    /**
+     * Stores the length of symmetric keys in bytes.
+     */
+    public static final int LENGTH = Parameters.ENCRYPTION_KEY.get() / 8;
     
     @Pure
     protected @Nonnull Key deriveKey(@Nonnull BigInteger value) {

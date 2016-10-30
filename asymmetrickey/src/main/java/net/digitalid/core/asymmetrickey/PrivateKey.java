@@ -9,14 +9,13 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.annotations.group.InGroup;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.GroupWithKnownOrder;
-
-import net.digitalid.utility.validation.annotations.generation.Derive;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
  * This class stores the groups and exponents of a host's private key.

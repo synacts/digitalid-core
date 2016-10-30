@@ -17,7 +17,8 @@ import net.digitalid.utility.conversion.converter.ValueCollector;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.time.TimeBuilder;
+
+import net.digitalid.database.auxiliary.TimeBuilder;
 
 import net.digitalid.core.conversion.converter.XDF;
 import net.digitalid.core.cryptography.signature.HostSignatureBuilder;

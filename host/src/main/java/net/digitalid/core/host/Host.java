@@ -10,11 +10,11 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.time.Time;
-import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.auxiliary.Time;
+import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.Site;
 
