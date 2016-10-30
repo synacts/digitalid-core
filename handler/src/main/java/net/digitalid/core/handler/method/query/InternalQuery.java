@@ -1,24 +1,22 @@
-package net.digitalid.core.handler;
+package net.digitalid.core.handler.method.query;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
-import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.packet.exceptions.RequestErrorCode;
 import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.service.handler.CoreServiceInternalQuery;
-import net.digitalid.core.identification.identifier.HostIdentifier;
 
 /**
  * Internal queries can only be sent by {@link Client clients} and are always signed identity-based.

@@ -10,8 +10,8 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.Database;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.agent.OutgoingRole;
 import net.digitalid.core.client.Client;

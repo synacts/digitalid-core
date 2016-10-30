@@ -21,7 +21,7 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.core.Database;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;

@@ -1,4 +1,4 @@
 /**
- * Provides classes for modeling handlers (namely actions, queries and replies).
+ * Provides classes for modeling handlers.
  */
 package net.digitalid.core.handler;

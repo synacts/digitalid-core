@@ -1,4 +1,4 @@
-package net.digitalid.core.handler;
+package net.digitalid.core.handler.method.action;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,11 +16,11 @@ import net.digitalid.core.client.Client;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.service.handler.CoreServiceExternalAction;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.pusher.Pusher;
+import net.digitalid.core.service.handler.CoreServiceExternalAction;
 
 /**
  * External actions can be sent by both {@link Host hosts} and {@link Client clients}.

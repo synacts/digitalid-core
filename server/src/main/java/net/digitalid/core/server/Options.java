@@ -5,15 +5,15 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.console.Console;
 import net.digitalid.utility.console.Option;
 import net.digitalid.utility.console.exceptions.EscapeOptionException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.host.Host;

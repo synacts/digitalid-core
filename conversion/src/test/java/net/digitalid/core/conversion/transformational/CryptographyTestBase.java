@@ -3,13 +3,12 @@ package net.digitalid.core.conversion.transformational;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.cryptography.Parameters;
-import net.digitalid.utility.cryptography.key.KeyPair;
-import net.digitalid.utility.cryptography.key.PrivateKey;
-import net.digitalid.utility.cryptography.key.PublicKey;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.time.Time;
 
+import net.digitalid.core.asymmetrickey.KeyPair;
+import net.digitalid.core.asymmetrickey.PrivateKey;
+import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.identification.PrivateKeyRetriever;
 import net.digitalid.core.identification.PublicKeyRetriever;
 import net.digitalid.core.identification.identifier.HostIdentifier;
@@ -18,6 +17,7 @@ import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.parameters.Parameters;
 
 import org.junit.BeforeClass;
 

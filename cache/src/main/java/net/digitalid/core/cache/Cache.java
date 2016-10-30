@@ -30,8 +30,8 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
 import net.digitalid.core.cache.exceptions.CertificateNotFoundException;

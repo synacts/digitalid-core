@@ -3,11 +3,11 @@ package net.digitalid.core.resolution;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -16,8 +16,6 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identification.identifier.IdentifierImplementation;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identifier.NonHostIdentifier;

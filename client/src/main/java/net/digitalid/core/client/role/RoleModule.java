@@ -14,7 +14,7 @@ import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.Database;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;

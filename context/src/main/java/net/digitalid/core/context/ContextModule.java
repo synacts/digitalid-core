@@ -8,22 +8,22 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.NonFrozen;
+import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.table.Site;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
@@ -35,7 +35,6 @@ import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
 import net.digitalid.core.entity.EntityImplementation;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.IdentityImplementation;

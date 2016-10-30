@@ -27,7 +27,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.core.Database;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.annotations.transaction.NonCommitting;

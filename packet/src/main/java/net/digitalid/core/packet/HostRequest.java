@@ -3,24 +3,21 @@ package net.digitalid.core.packet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.reference.RawRecipient;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.exceptions.DatabaseException;
 
+import net.digitalid.core.audit.Audit;
 import net.digitalid.core.conversion.wrappers.CompressionWrapper;
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.audit.Audit;
 
 import net.digitalid.service.core.auxiliary.Time;
 

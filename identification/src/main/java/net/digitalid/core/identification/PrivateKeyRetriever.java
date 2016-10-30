@@ -4,12 +4,13 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
-import net.digitalid.utility.cryptography.key.PrivateKey;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+
+import net.digitalid.core.asymmetrickey.PrivateKey;
 
 /**
  *

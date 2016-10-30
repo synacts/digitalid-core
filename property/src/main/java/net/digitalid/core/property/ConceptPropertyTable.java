@@ -12,8 +12,8 @@ import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.conversion.Block;

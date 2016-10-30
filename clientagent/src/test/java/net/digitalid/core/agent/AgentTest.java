@@ -6,8 +6,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.logging.exceptions.ExternalException;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.attribute.AttributeTypes;
 import net.digitalid.core.client.Client;

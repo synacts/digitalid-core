@@ -11,10 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezableTriplet;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
-import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
@@ -23,10 +23,8 @@ import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.annotations.MainThread;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.declaration.ColumnDeclaration;
@@ -34,16 +32,15 @@ import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.sql.statement.table.create.SQLReferenceOption;
 import net.digitalid.database.core.table.GeneralReference;
 import net.digitalid.database.core.table.GeneralTable;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.cache.exceptions.IdentityNotFoundException;
 import net.digitalid.core.client.AccountInitialize;
 import net.digitalid.core.client.AccountOpen;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.host.Host;
+import net.digitalid.core.identification.annotations.identifier.NonMapped;
 import net.digitalid.core.identification.identifier.ExternalIdentifier;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
@@ -65,7 +62,9 @@ import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.identification.identity.Type;
 import net.digitalid.core.packet.exceptions.InvalidDeclarationException;
-import net.digitalid.core.identification.annotations.identifier.NonMapped;
+import net.digitalid.core.packet.exceptions.NetworkException;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.server.Server;
 
 /**

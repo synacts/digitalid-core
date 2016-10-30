@@ -6,19 +6,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.validation.annotations.generation.Default;
+import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostAccount;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.Role;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.service.Service;
+import net.digitalid.core.signature.Signature;
 
 /**
  * This class provides the features that all handlers share.
@@ -27,203 +24,57 @@ import net.digitalid.core.service.Service;
  * @see Reply
  */
 @Immutable
-public abstract class Handler<O, E> extends RootClass {
+public abstract class Handler<E extends Entity> extends RootClass {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
-    
-    /**
-     * Stores the entity to which this handler belongs or null if it is impersonal.
-     */
-    private final @Nullable Entity entity;
     
     /**
      * Returns the entity to which this handler belongs or null if it is impersonal.
      */
     @Pure
-    public @Nullable Entity getEntity() {
-        return entity;
-    }
-    
-    /**
-     * Returns whether this handler has an entity.
-     */
-    @Pure
-    public final boolean hasEntity() {
-        return entity != null;
-    }
-    
-    /**
-     * Returns the entity to which this handler belongs.
-     * 
-     * @require hasEntity() : "This handler has an entity.";
-     */
-    @Pure
-    public final @Nonnull Entity getEntityNotNull() {
-        Require.that(entity != null).orThrow("This handler has an entity.");
-        
-        return entity;
-    }
+    @Provided
+    public abstract @Nullable E getEntity();
     
     /**
      * Returns whether this handler is on a host.
      */
     @Pure
-    public final boolean isOnHost() {
-        return entity instanceof Account;
+    @Deprecated // TODO: Are such shortcuts desirable?
+    public boolean isOnHost() {
+        final @Nullable E entity = getEntity();
+        return entity != null && entity.isOnHost();
     }
     
     /**
-     * Returns whether this handler is on a client.
+     * Returns whether this entity is on a client.
      */
     @Pure
-    public final boolean isOnClient() {
-        return entity instanceof Role;
-    }
-    
-    /**
-     * Returns the account to which this handler belongs.
-     * 
-     * @require isOnHost() : "This handler is on a host.";
-     */
-    @Pure
-    public final @Nonnull Account getAccount() {
-        Require.that(isOnHost()).orThrow("This handler is on a host.");
-        
-        assert entity != null;
-        return (Account) entity;
-    }
-    
-    /**
-     * Returns whether this handler belongs to a non-host.
-     */
-    @Pure
-    public final boolean isNonHost() {
-        return entity instanceof NonHostEntity;
-    }
-    
-    /**
-     * Returns the non-host entity to which this handler belongs.
-     * 
-     * @require isNonHost() : "This handler belongs to a non-host.";
-     */
-    @Pure
-    public final @Nonnull NonHostEntity getNonHostEntity() {
-        Require.that(isNonHost()).orThrow("This handler belongs to a non-host.");
-        
-        assert entity != null;
-        return (NonHostEntity) entity;
-    }
-    
-    /**
-     * Returns the non-host account to which this handler belongs.
-     * 
-     * @require isOnHost() : "This handler is on a host.";
-     * @require isNonHost() : "This handler belongs to a non-host.";
-     */
-    @Pure
-    public final @Nonnull NonHostAccount getNonHostAccount() {
-        Require.that(isOnHost()).orThrow("This handler is on a host.");
-        Require.that(isNonHost()).orThrow("This handler belongs to a non-host.");
-        
-        assert entity != null;
-        return (NonHostAccount) entity;
-    }
-    
-    /**
-     * Returns the role to which this handler belongs.
-     * 
-     * @require isOnClient() : "This handler is on a client.";
-     */
-    @Pure
-    public final @Nonnull Role getRole() {
-        Require.that(isOnClient()).orThrow("This handler is on a client.");
-        
-        assert entity != null;
-        return (Role) entity;
+    @Deprecated // TODO: Are such shortcuts desirable?
+    public boolean isOnClient() {
+        final @Nullable E entity = getEntity();
+        return entity != null && entity.isOnClient();
     }
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     
     /**
-     * Stores the subject of this handler.
+     * Returns the subject of this handler.
      * 
      * The subject is stored as an identifier because for certain handlers
      * the corresponding identity is not known to (or does not yet) exist.
      */
-    private final @Nonnull InternalIdentifier subject;
-    
-    /**
-     * Returns the subject of this handler.
-     */
     @Pure
-    public final @Nonnull InternalIdentifier getSubject() {
-        return subject;
-    }
+    @Default("signature == null ? null : signature.getSubject()") // TODO: This probably does not work like this.
+    public abstract @Nonnull InternalIdentifier getSubject();
     
     /* -------------------------------------------------- Signature -------------------------------------------------- */
     
     /**
-     * Stores the signature of this handler.
-     */
-    private final @Nullable SignatureWrapper signature;
-    
-    /**
      * Returns the signature of this handler.
      */
     @Pure
-    public final @Nullable SignatureWrapper getSignature() {
-        return signature;
-    }
-    
-    /**
-     * Returns whether this handler has a signature.
-     */
-    @Pure
-    public final boolean hasSignature() {
-        return signature != null;
-    }
-    
-    /**
-     * Returns the signature of this handler.
-     * 
-     * @require hasSignature() : "This handler has a signature.";
-     */
-    @Pure
-    public final @Nonnull SignatureWrapper getSignatureNotNull() {
-        Require.that(signature != null).orThrow("This handler has a signature.");
-        
-        return signature;
-    }
-    
-    /* -------------------------------------------------- Constructors -------------------------------------------------- */
-    
-    /**
-     * Creates a handler that encodes the content of a packet about the given subject.
-     * 
-     * @param entity the entity to which this handler belongs or null if it is impersonal.
-     * @param subject the subject of this handler.
-     */
-    protected Handler(@Nullable Entity entity, @Nonnull InternalIdentifier subject) {
-        this.entity = entity;
-        this.signature = null;
-        this.subject = subject;
-    }
-    
-    /**
-     * Creates a handler that decodes a packet with the given signature for the given entity.
-     * 
-     * @param entity the entity to which this handler belongs or null if it is impersonal.
-     * @param signature the signature of this handler (or a dummy that just contains a subject).
-     * 
-     * @require signature.hasSubject() : "The signature has a subject.";
-     * 
-     * @ensure hasSignature() : "This handler has a signature.";
-     */
-    protected Handler(@Nullable Entity entity, @Nonnull SignatureWrapper signature) {
-        this.entity = entity;
-        this.signature = signature;
-        this.subject = signature.getNonNullableSubject();
-    }
+    @Provided
+    public abstract @Nullable Signature<?> getSignature(); // TODO: Provide the correct type argument if possible.
     
     /* -------------------------------------------------- Other -------------------------------------------------- */
     
@@ -247,6 +98,8 @@ public abstract class Handler<O, E> extends RootClass {
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
     
+    // TODO: The following methods are probably best generated.
+    
     /**
      * Returns whether the given object is equal to this handler.
      * This method does not override {@link Object#equals(java.lang.Object)}
@@ -262,7 +115,7 @@ public abstract class Handler<O, E> extends RootClass {
         if (object == null || !(object instanceof Handler)) { return false; }
         @SuppressWarnings("rawtypes")
         final @Nonnull Handler other = (Handler) object;
-        return Objects.equals(this.entity, other.entity) && Objects.equals(this.subject, other.subject);
+        return Objects.equals(this.getEntity(), other.getEntity()) && Objects.equals(this.getSubject(), other.getSubject());
     }
     
     /**
@@ -275,8 +128,8 @@ public abstract class Handler<O, E> extends RootClass {
     @Pure
     protected int protectedHashCode() {
         int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.entity);
-        hash = 89 * hash + Objects.hashCode(this.subject);
+        hash = 89 * hash + Objects.hashCode(this.getEntity());
+        hash = 89 * hash + Objects.hashCode(this.getSubject());
         return hash;
     }
     

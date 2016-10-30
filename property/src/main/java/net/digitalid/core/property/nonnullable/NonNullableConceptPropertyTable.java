@@ -8,10 +8,11 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.list.FreezableLinkedList;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.conversion.None;
@@ -19,22 +20,19 @@ import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.thread.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.state.Validated;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.property.ConceptPropertyTable;
 
 import net.digitalid.service.core.auxiliary.Time;

@@ -3,14 +3,14 @@ package net.digitalid.core.audit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.core.synchronizer.SynchronizerModule;
-
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
+
+import net.digitalid.core.synchronizer.Synchronizer;
+import net.digitalid.core.synchronizer.SynchronizerModule;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.entity.Role;

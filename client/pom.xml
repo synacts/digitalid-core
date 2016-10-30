@@ -4,9 +4,7 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <groupId>net.digitalid.core</groupId>
     <artifactId>core-client</artifactId>
-    <version>1.0.0</version>
     <packaging>jar</packaging>
     
     <parent>
@@ -18,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-outgoingrole</artifactId>
+            <artifactId>core-authorization</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -28,7 +26,7 @@
         </dependency>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-commitment</artifactId>
+            <artifactId>core-cache</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

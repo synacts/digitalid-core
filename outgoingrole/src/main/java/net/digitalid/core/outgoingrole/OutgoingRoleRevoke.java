@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -16,17 +16,17 @@ import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonNativeRole;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
-import net.digitalid.core.service.handler.CoreServiceActionReply;
-import net.digitalid.core.service.handler.CoreServiceExternalAction;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.IdentityImplementation;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.service.handler.CoreServiceActionReply;
+import net.digitalid.core.service.handler.CoreServiceExternalAction;
 
 import net.digitalid.service.core.dataservice.StateModule;
 

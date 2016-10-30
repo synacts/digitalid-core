@@ -8,13 +8,9 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.set.ReadOnlySet;
-import net.digitalid.utility.cryptography.Parameters;
-import net.digitalid.utility.cryptography.key.PublicKey;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.math.Element;
-import net.digitalid.utility.math.Exponent;
 import net.digitalid.utility.math.ExponentBuilder;
 import net.digitalid.utility.property.set.WritableSetProperty;
 import net.digitalid.utility.time.Time;
@@ -28,15 +24,19 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.Database;
-import net.digitalid.database.core.Site;
+import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.Site;
 
+import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.commitment.CommitmentBuilder;
+import net.digitalid.core.group.Element;
+import net.digitalid.core.group.Exponent;
 import net.digitalid.core.identification.PublicKeyRetriever;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.parameters.Parameters;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 
 /**

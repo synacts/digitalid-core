@@ -10,10 +10,11 @@ import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.math.Exponent;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+
+import net.digitalid.core.group.Exponent;
 
 /**
  * This class extends the {@link Commitment commitment} of a client with its secret.

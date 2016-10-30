@@ -5,19 +5,19 @@ import java.math.BigInteger;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.cryptography.key.PublicKey;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.math.Element;
-import net.digitalid.utility.math.Exponent;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.core.asymmetrickey.PublicKey;
+import net.digitalid.core.group.Element;
+import net.digitalid.core.group.Exponent;
 import net.digitalid.core.identification.PublicKeyRetriever;
 import net.digitalid.core.identification.identity.HostIdentity;
 

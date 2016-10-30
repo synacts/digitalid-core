@@ -19,11 +19,11 @@ import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.validation.state.Stateless;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.core.exceptions.operation.FailedCommitException;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.service.core.block.wrappers.signature.SignatureWrapper;
 import net.digitalid.service.core.cache.Cache;

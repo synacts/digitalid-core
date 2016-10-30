@@ -1,12 +1,12 @@
-package net.digitalid.core.handler;
+package net.digitalid.core.handler.reply;
 
 import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -19,8 +19,8 @@ import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.service.handler.CoreServiceActionReply;
 import net.digitalid.core.pusher.Pusher;
+import net.digitalid.core.service.handler.CoreServiceActionReply;
 import net.digitalid.core.state.Service;
 import net.digitalid.core.synchronizer.Audit;
 

@@ -20,14 +20,14 @@ import net.digitalid.utility.system.logger.Level;
 import net.digitalid.utility.system.logger.Logger;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.core.Configuration;
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.annotations.transaction.NonLocked;
+import net.digitalid.database.core.Configuration;
 import net.digitalid.database.core.configuration.MySQLConfiguration;
 import net.digitalid.database.core.configuration.PostgreSQLConfiguration;
 import net.digitalid.database.core.configuration.SQLiteConfiguration;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.client.Client;

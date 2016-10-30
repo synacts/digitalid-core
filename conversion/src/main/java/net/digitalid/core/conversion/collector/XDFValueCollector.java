@@ -29,7 +29,7 @@ import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
 import net.digitalid.core.conversion.utility.StackHandler;
-import net.digitalid.core.cryptography.encryption.NonClosingOutputStream;
+import net.digitalid.core.encryption.NonClosingOutputStream;
 
 /**
  *

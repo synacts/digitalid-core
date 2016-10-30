@@ -4,11 +4,12 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
-import net.digitalid.database.core.Site;
+import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.property.Subject;
 
 import net.digitalid.core.concept.annotations.GenerateConceptModule;
@@ -57,6 +58,7 @@ public abstract class Concept<E extends Entity, K> extends RootClass implements 
      * Returns the module of this concept.
      */
     @Pure
+    @NonRepresentative
     @GenerateConceptModule
     public abstract @Nonnull ConceptModule<E, K, ?> getConceptModule();
     

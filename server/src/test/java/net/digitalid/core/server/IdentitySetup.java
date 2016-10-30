@@ -2,11 +2,11 @@ package net.digitalid.core.server;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;

@@ -8,12 +8,13 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableHashSet;
-import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.freezable.FreezableSet;
+import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
 import net.digitalid.utility.freezable.annotations.Frozen;
@@ -21,12 +22,11 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.NamedThreadFactory;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.CompressionWrapper;

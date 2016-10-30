@@ -5,8 +5,8 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -19,11 +19,9 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NativeRole;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
-import net.digitalid.core.service.handler.CoreServiceInternalAction;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.IdentifierImplementation;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
@@ -32,6 +30,7 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.resolution.Successor;
 import net.digitalid.core.service.CoreService;
+import net.digitalid.core.service.handler.CoreServiceInternalAction;
 
 import net.digitalid.service.core.dataservice.StateModule;
 

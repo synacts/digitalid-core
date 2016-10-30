@@ -12,10 +12,10 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.ExternalAction;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
 

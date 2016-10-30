@@ -1,10 +1,5 @@
 package net.digitalid.core.synchronizer;
 
-import net.digitalid.core.synchronizer.handlers.StateReply;
-import net.digitalid.core.audit.handlers.AuditQuery;
-import net.digitalid.core.audit.RequestAudit;
-import net.digitalid.core.audit.ResponseAudit;
-
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -18,22 +13,24 @@ import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashSet;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentSet;
-import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableHashSet;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.system.thread.NamedThreadFactory;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.annotations.transaction.NonLocked;
 import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.audit.RequestAudit;
+import net.digitalid.core.audit.ResponseAudit;
+import net.digitalid.core.audit.handlers.AuditQuery;
+import net.digitalid.core.synchronizer.handlers.StateReply;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.entity.Role;

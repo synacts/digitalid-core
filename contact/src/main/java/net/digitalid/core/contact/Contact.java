@@ -6,19 +6,18 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identification.identifier.IdentifierImplementation;
 import net.digitalid.core.identification.identity.ExternalPerson;
 import net.digitalid.core.identification.identity.Identity;

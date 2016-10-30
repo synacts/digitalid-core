@@ -6,10 +6,10 @@ import java.io.ByteArrayOutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.core.compression.Compression;
+import net.digitalid.core.compression.CompressionConverter;
 import net.digitalid.core.conversion.converter.XDF;
-import net.digitalid.core.cryptography.compression.Compression;
 import net.digitalid.core.cryptography.compression.CompressionBuilder;
-import net.digitalid.core.cryptography.compression.CompressionConverter;
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identifier.IdentifierConverter;
 

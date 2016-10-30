@@ -5,10 +5,11 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
-import net.digitalid.utility.math.Exponent;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Mutable;
+
+import net.digitalid.core.group.Exponent;
 
 /**
  * The client secret loader loads and stores the secret of a client.

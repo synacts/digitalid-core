@@ -6,12 +6,12 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;

@@ -2,8 +2,8 @@ package net.digitalid.core.certificate;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 
 import net.digitalid.database.annotations.transaction.Locked;
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -12,12 +12,11 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.expression.PassiveExpression;
+import net.digitalid.core.identification.Category;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.NonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.identification.Category;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.NonHostConcept;

@@ -1,6 +1,5 @@
 package net.digitalid.core.conversion.recovery;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +9,6 @@ import java.security.MessageDigest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.zip.Inflater;
 
 import javax.annotation.Nonnull;
@@ -27,9 +25,9 @@ import net.digitalid.utility.logging.exceptions.io.StreamException;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
+import net.digitalid.core.compression.BufferedInflaterInputStream;
 import net.digitalid.core.conversion.utility.StackHandler;
-import net.digitalid.core.cryptography.compression.BufferedInflaterInputStream;
-import net.digitalid.core.cryptography.encryption.CustomCipherInputStream;
+import net.digitalid.core.encryption.CustomCipherInputStream;
 
 /**
  *

@@ -1,4 +1,4 @@
-package net.digitalid.core.handler;
+package net.digitalid.core.handler.reply;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,15 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.tuples.ReadOnlyTriplet;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.thread.Threading;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.core.converter.sql.SQL;
 import net.digitalid.database.core.exceptions.DatabaseException;
 
@@ -32,13 +32,14 @@ import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Account;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.handler.Handler;
 import net.digitalid.core.host.annotations.Hosts;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.packet.Packet;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 import net.digitalid.service.core.auxiliary.Time;
 
@@ -52,7 +53,7 @@ import net.digitalid.service.core.auxiliary.Time;
  * @see QueryReply
  */
 @Immutable
-public abstract class Reply<R extends Reply<R>> extends Handler<R, ReadOnlyTriplet<NonHostEntity, HostSignatureWrapper, Long>> implements SQL<Reply, Object> {
+public abstract class Reply<E extends Entity> extends Handler<R, ReadOnlyTriplet<NonHostEntity, HostSignatureWrapper, Long>> implements SQL<Reply, Object> {
     
     /**
      * Stores the number that references this reply in the database.

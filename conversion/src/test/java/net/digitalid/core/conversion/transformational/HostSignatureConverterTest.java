@@ -20,10 +20,10 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.time.TimeBuilder;
 
 import net.digitalid.core.conversion.converter.XDF;
-import net.digitalid.core.cryptography.signature.HostSignature;
 import net.digitalid.core.cryptography.signature.HostSignatureBuilder;
-import net.digitalid.core.cryptography.signature.HostSignatureConverter;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
+import net.digitalid.core.signature.HostSignature;
+import net.digitalid.core.signature.HostSignatureConverter;
 
 import org.junit.Assert;
 import org.junit.Test;

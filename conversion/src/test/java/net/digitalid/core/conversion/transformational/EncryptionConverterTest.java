@@ -6,21 +6,21 @@ import java.io.ByteArrayOutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.cryptography.InitializationVector;
 import net.digitalid.utility.cryptography.InitializationVectorBuilder;
-import net.digitalid.utility.cryptography.SymmetricKey;
 import net.digitalid.utility.cryptography.SymmetricKeyBuilder;
-import net.digitalid.utility.cryptography.key.chain.PrivateKeyChain;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
 
 import net.digitalid.core.conversion.converter.XDF;
-import net.digitalid.core.cryptography.encryption.Encryption;
 import net.digitalid.core.cryptography.encryption.EncryptionBuilder;
-import net.digitalid.core.cryptography.encryption.EncryptionConverter;
+import net.digitalid.core.encryption.Encryption;
+import net.digitalid.core.encryption.EncryptionConverter;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identifier.IdentifierConverter;
+import net.digitalid.core.keychain.PrivateKeyChain;
+import net.digitalid.core.symmetrickey.InitializationVector;
+import net.digitalid.core.symmetrickey.SymmetricKey;
 
 import org.junit.Assert;
 import org.junit.Test;

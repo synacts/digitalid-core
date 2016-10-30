@@ -22,8 +22,8 @@ import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.metadata.Embedded;
-import net.digitalid.database.core.Site;
+import net.digitalid.database.annotations.type.Embedded;
+import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.property.PersistentProperty;
 import net.digitalid.database.property.SubjectModule;
 

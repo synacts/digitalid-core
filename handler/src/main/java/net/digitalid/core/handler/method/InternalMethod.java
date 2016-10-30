@@ -1,11 +1,11 @@
-package net.digitalid.core.handler;
+package net.digitalid.core.handler.method;
 
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.restrictions.Restrictions;
 
 /**
  * Internal methods have to implement this interface in order to provide the required restrictions.
@@ -19,8 +19,6 @@ public interface InternalMethod {
     
     /**
      * Returns the restrictions required for this internal method.
-     * 
-     * @return the restrictions required for this internal method.
      */
     @Pure
     public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod();

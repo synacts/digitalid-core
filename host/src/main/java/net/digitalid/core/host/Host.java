@@ -8,9 +8,6 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.cryptography.key.KeyPair;
-import net.digitalid.utility.cryptography.key.chain.PrivateKeyChain;
-import net.digitalid.utility.cryptography.key.chain.PublicKeyChain;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.time.Time;
@@ -18,10 +15,11 @@ import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
-import net.digitalid.database.core.Database;
-import net.digitalid.database.core.Site;
+import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.Site;
 
 import net.digitalid.core.agent.FreezableAgentPermissions;
+import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
@@ -33,6 +31,8 @@ import net.digitalid.core.entity.HostAccount;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.keychain.PrivateKeyChain;
+import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.resolution.Mapper;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.service.CoreService;

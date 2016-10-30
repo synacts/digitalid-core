@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -16,15 +16,15 @@ import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.conversion.wrappers.value.EmptyWrapper;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
-import net.digitalid.core.service.handler.CoreServiceExternalQuery;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.service.handler.CoreServiceExternalQuery;
 
 /**
  * Queries the identity of the given subject.

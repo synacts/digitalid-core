@@ -1,12 +1,12 @@
-package net.digitalid.core.handler;
+package net.digitalid.core.handler.method.action;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.freezable.annotations.Frozen;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -20,9 +20,11 @@ import net.digitalid.core.client.AccountOpen;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.handler.Auditable;
+import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.synchronizer.Audit;
 
 import net.digitalid.service.core.dataservice.SiteModule;

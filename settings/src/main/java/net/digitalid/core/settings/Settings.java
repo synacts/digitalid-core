@@ -4,6 +4,7 @@ import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.auxiliary.None;
 import net.digitalid.utility.contracts.exceptions.PreconditionViolationException;
 import net.digitalid.utility.functional.failable.FailableConsumer;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
@@ -13,13 +14,12 @@ import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.auxiliary.None;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.concept.ConceptIndexBuilder;
-import net.digitalid.core.concept.ConceptModule;
 import net.digitalid.core.concept.ConceptInfoBuilder;
+import net.digitalid.core.concept.ConceptModule;
 import net.digitalid.core.concept.CoreConcept;
 import net.digitalid.core.concept.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.NonHostEntity;

@@ -12,7 +12,7 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 
 import net.digitalid.database.annotations.transaction.Committing;
-import net.digitalid.database.core.Database;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.ClientAgent;

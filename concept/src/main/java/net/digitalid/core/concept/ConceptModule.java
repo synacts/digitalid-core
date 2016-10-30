@@ -10,7 +10,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Site;
+import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.property.SubjectModule;
 
 import net.digitalid.core.entity.Entity;

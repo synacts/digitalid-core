@@ -6,6 +6,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -15,6 +16,7 @@ import net.digitalid.database.property.map.WritablePersistentMapProperty;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.concept.CoreConcept;
+import net.digitalid.core.concept.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -28,7 +30,7 @@ import net.digitalid.core.restrictions.Restrictions;
  * This class models an agent that acts on behalf of an {@link Identity identity}.
  */
 @Immutable
-//@GenerateConverter
+@GenerateConverter
 public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
     
     /* -------------------------------------------------- Aspects -------------------------------------------------- */
@@ -49,6 +51,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      * Returns whether this agent is removed.
      */
     @Pure
+    @GenerateSynchronizedProperty
 //    @GenerateProperty(requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
     public abstract @Nonnull WritablePersistentValueProperty<Agent, Boolean> removed();
     
@@ -95,6 +98,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      * make sure to {@link #removePermissions(net.digitalid.service.core.agent.ReadonlyAgentPermissions) remove} them first.
      */
     @Pure
+    @GenerateSynchronizedProperty
 //    @GenerateProperty(requiredPermissionsToExecuteMethod = "key, value", requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
     public abstract @Nonnull WritablePersistentMapProperty<Agent, SemanticType, Boolean, ReadOnlyAgentPermissions, FreezableAgentPermissions> permissions();
     
@@ -107,6 +111,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      * @ensure return.match(this) : "The restrictions match this agent.";
      */
     @Pure
+    @GenerateSynchronizedProperty
 //    @GenerateProperty(requiredRestrictionsToExecuteMethod = "value", requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
     public abstract @Nonnull WritablePersistentValueProperty<Agent, Restrictions> restrictions();
     

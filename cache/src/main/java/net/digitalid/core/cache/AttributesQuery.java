@@ -5,24 +5,22 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.exceptions.DatabaseException;
 
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrapper;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
-import net.digitalid.core.packet.exceptions.NetworkException;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.expression.PassiveExpression;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.attribute.Attribute;

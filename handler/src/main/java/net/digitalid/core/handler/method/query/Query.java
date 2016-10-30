@@ -1,12 +1,12 @@
-package net.digitalid.core.handler;
+package net.digitalid.core.handler.method.query;
 
 import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -14,10 +14,11 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
-import net.digitalid.core.packet.exceptions.RequestException;
+import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.host.annotations.Hosts;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
+import net.digitalid.core.packet.exceptions.RequestException;
 
 /**
  * Queries have to be sent by the caller and are thus executed synchronously.

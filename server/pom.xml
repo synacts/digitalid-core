@@ -4,9 +4,7 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <groupId>net.digitalid.core</groupId>
     <artifactId>core-server</artifactId>
-    <version>1.0.0</version>
     <packaging>jar</packaging>
     
     <parent>
@@ -19,11 +17,6 @@
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-host</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
-            <artifactId>core-clientagent</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

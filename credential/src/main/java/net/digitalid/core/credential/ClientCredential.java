@@ -1,8 +1,5 @@
 package net.digitalid.core.credential;
 
-import net.digitalid.core.credential.handlers.CredentialInternalQuery;
-import net.digitalid.core.credential.handlers.CredentialReply;
-
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
@@ -24,16 +21,17 @@ import net.digitalid.core.agent.RandomizedAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
+import net.digitalid.core.authorization.CredentialInternalQuery;
+import net.digitalid.core.authorization.CredentialReply;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.credential.annotations.Active;
-import net.digitalid.core.cryptography.signature.exceptions.InvalidSignatureException;
 import net.digitalid.core.entity.NonNativeRole;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.entity.annotations.OfInternalPerson;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.signature.exceptions.InvalidSignatureException;
 
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.Element;

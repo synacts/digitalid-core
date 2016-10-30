@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
@@ -19,10 +19,10 @@ import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrap
 import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.handler.InternalQuery;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.packet.exceptions.RequestErrorCode;
+import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.state.Service;
 

@@ -3,8 +3,8 @@ package net.digitalid.core.synchronizer.handlers;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -12,7 +12,6 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
-import net.digitalid.core.packet.exceptions.RequestException;
 
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.NonHostAccount;

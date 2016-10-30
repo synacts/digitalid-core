@@ -1,7 +1,5 @@
 package net.digitalid.core.audit.module;
 
-import net.digitalid.core.audit.ResponseAudit;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,26 +9,26 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.list.FreezableLinkedList;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.conversion.None;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.table.Site;
+import net.digitalid.database.interfaces.Database;
 
+import net.digitalid.core.audit.ResponseAudit;
 import net.digitalid.core.conversion.Block;
 import net.digitalid.core.conversion.wrappers.structure.ListWrapper;
 import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
 import net.digitalid.core.conversion.wrappers.value.EmptyWrapper;
 import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-import net.digitalid.core.packet.exceptions.RequestException;
 import net.digitalid.core.service.CoreService;
 
 import net.digitalid.service.core.auxiliary.Time;
