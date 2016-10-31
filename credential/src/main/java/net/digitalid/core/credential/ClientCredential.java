@@ -25,7 +25,7 @@ import net.digitalid.core.group.Exponent;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.permissions.RandomizedAgentPermissions;
+import net.digitalid.core.permissions.SaltedAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 
 /**
@@ -88,7 +88,7 @@ public abstract class ClientCredential extends Credential {
      * @require role == null || role.isRoleType() : "The role is either null or a role type.";
      * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
      */
-    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalPerson issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v) throws InvalidSignatureException {
+    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalPerson issuer, @Nonnull Time issuance, @Nonnull SaltedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v) throws InvalidSignatureException {
         this(publicKey, issuer, issuance, randomizedPermissions, role, null, restrictions, c, e, b, u, i, v, false);
     }
     
@@ -113,7 +113,7 @@ public abstract class ClientCredential extends Credential {
      * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
      * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
      */
-    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
+    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull SaltedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
         this(publicKey, issuer, issuance, randomizedPermissions, null, attributeContent, null, c, e, b, u, i, v, oneTime);
     }
     
@@ -146,7 +146,7 @@ public abstract class ClientCredential extends Credential {
      * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
      * @require !oneTime || attributeContent != null : "If the credential can be used only once, the attribute content may not be null.";
      */
-    private ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent, @Nullable Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
+    private ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull SaltedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent, @Nullable Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
         super(publicKey, issuer, issuance, randomizedPermissions, role, attributeContent, restrictions, i);
         
         Require.that(restrictions == null || restrictions.toBlock().getHash().equals(v.getValue())).orThrow("If the restrictions are not null, their hash has to equal v.");
@@ -264,7 +264,7 @@ public abstract class ClientCredential extends Credential {
         @Nullable ClientCredential credential = map.get(permissions);
         
         if (credential == null || !credential.isActive()) {
-            final @Nonnull RandomizedAgentPermissions randomizedPermissions = new RandomizedAgentPermissions(permissions);
+            final @Nonnull SaltedAgentPermissions randomizedPermissions = new SaltedAgentPermissions(permissions);
             final @Nonnull BigInteger value = new BigInteger(Parameters.BLINDING_EXPONENT, new SecureRandom());
             final @Nonnull CredentialReply reply = new CredentialInternalQuery(role, randomizedPermissions, value).sendNotNull();
             credential = map.putIfAbsentElseReturnPresent(permissions, reply.getInternalCredential(randomizedPermissions, role.getRelation(), value, role.getClient().getSecret()));
@@ -294,7 +294,7 @@ public abstract class ClientCredential extends Credential {
         @Nullable ClientCredential credential = map.get(permissions);
         
         if (credential == null || !credential.isActive()) {
-            final @Nonnull RandomizedAgentPermissions randomizedPermissions = new RandomizedAgentPermissions(permissions);
+            final @Nonnull SaltedAgentPermissions randomizedPermissions = new SaltedAgentPermissions(permissions);
             final @Nonnull CredentialReply reply = new CredentialInternalQuery(role, randomizedPermissions).sendNotNull();
             credential = map.putIfAbsentElseReturnPresent(permissions, reply.getInternalCredential(randomizedPermissions, null, BigInteger.ZERO, role.getClient().getSecret()));
         }

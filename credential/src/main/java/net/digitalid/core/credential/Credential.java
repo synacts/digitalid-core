@@ -25,7 +25,7 @@ import net.digitalid.core.group.Exponent;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.permissions.RandomizedAgentPermissions;
+import net.digitalid.core.permissions.SaltedAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 
@@ -60,7 +60,7 @@ public abstract class Credential {
      * @ensure return.getType().equals(EXPOSED) : "The returned block has the indicated type.";
      */
     @Pure
-    public static @Nonnull Block getExposed(@Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent) {
+    public static @Nonnull Block getExposed(@Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull SaltedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent) {
         Require.that(issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR)).orThrow("The issuance time is positive and a multiple of half an hour.");
         Require.that(role == null || role.isRoleType()).orThrow("The role is either null or a role type.");
         
@@ -110,7 +110,7 @@ public abstract class Credential {
     /**
      * Stores the client's randomized permissions or its randomized hash.
      */
-    private final @Nonnull RandomizedAgentPermissions randomizedPermissions;
+    private final @Nonnull SaltedAgentPermissions randomizedPermissions;
     
     /**
      * Stores the role that is assumed by the client or null in case no role is assumed.
@@ -169,7 +169,7 @@ public abstract class Credential {
      * @require attributeContent != null || issuer instanceof InternalPerson : "If the attribute content is null, the issuer is an internal person.";
      * @require (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
      */
-    Credential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent, @Nullable Restrictions restrictions, @Nonnull Exponent i) {
+    Credential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull SaltedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent, @Nullable Restrictions restrictions, @Nonnull Exponent i) {
         Require.that(issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR)).orThrow("The issuance time is positive and a multiple of half an hour.");
         Require.that(randomizedPermissions.areShown()).orThrow("The randomized permissions are shown for client credentials.");
         Require.that(role == null || role.isRoleType()).orThrow("The role is either null or a role type.");
@@ -207,7 +207,7 @@ public abstract class Credential {
     @NonCommitting
     Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws ExternalException {
         Require.that(exposed.getType().isBasedOn(Credential.EXPOSED)).orThrow("The exposed block is based on the indicated type.");
-        Require.that(randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE)).orThrow("The randomized permissions are either null or based on the indicated type.");
+        Require.that(randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(SaltedAgentPermissions.TYPE)).orThrow("The randomized permissions are either null or based on the indicated type.");
         Require.that(i == null || i.getType().isBasedOn(Exponent.TYPE)).orThrow("The serial number is either null or based on the indicated type.");
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(exposed);
@@ -217,10 +217,10 @@ public abstract class Credential {
         this.publicKey = PublicKeyRetriever.retrieve(issuer.getAddress().getHostIdentifier(), issuance);
         final @Nonnull BigInteger hash = Binary256Wrapper.decodeNonNullable(tuple.getNonNullableElement(2));
         if (randomizedPermissions != null) {
-            this.randomizedPermissions = new RandomizedAgentPermissions(randomizedPermissions);
+            this.randomizedPermissions = new SaltedAgentPermissions(randomizedPermissions);
             if (!this.randomizedPermissions.getHash().equals(hash)) { throw InvalidParameterValueCombinationException.get("The hash of the given permissions has to equal the credential's exposed hash."); }
         } else {
-            this.randomizedPermissions = new RandomizedAgentPermissions(hash);
+            this.randomizedPermissions = new SaltedAgentPermissions(hash);
         }
         this.role = tuple.isElementNull(3) ? null : IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(3)).getIdentity().castTo(SemanticType.class);
         if (role != null && !role.isRoleType()) { throw InvalidParameterValueException.get("role", role); }
@@ -283,7 +283,7 @@ public abstract class Credential {
      * Returns the client's randomized permissions or simply its hash.
      */
     @Pure
-    public abstract @Nonnull RandomizedAgentPermissions getRandomizedPermissions();
+    public abstract @Nonnull SaltedAgentPermissions getRandomizedPermissions();
     
     /**
      * Returns the permissions of the client or null if they are not shown.
