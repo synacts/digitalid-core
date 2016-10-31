@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.signature.ClientSignature;
+import net.digitalid.core.signature.client.ClientSignature;
 
 /**
  * This exception is thrown when a client signature has expired.

@@ -7,36 +7,27 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.None;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.math.Positive;
+import net.digitalid.utility.validation.annotations.math.modulo.MultipleOf;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.auxiliary.Time;
 
-import net.digitalid.core.agent.RandomizedAgentPermissions;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.attribute.AttributeValue;
-import net.digitalid.core.cache.Cache;
-import net.digitalid.core.conversion.Block;
-import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-import net.digitalid.core.conversion.wrappers.value.binary.Binary256Wrapper;
-import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-import net.digitalid.core.identification.identifier.IdentifierImplementation;
+import net.digitalid.core.asymmetrickey.PublicKey;
+import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
+import net.digitalid.core.group.Exponent;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.InternalPerson;
-import net.digitalid.core.identification.identity.NonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
-
-import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.cryptography.Exponent;
-import net.digitalid.service.core.cryptography.PublicKey;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueCombinationException;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
+import net.digitalid.core.permissions.RandomizedAgentPermissions;
+import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
+import net.digitalid.core.restrictions.Restrictions;
 
 /**
  * This class abstracts from client and host credentials.
@@ -51,31 +42,6 @@ import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterV
  */
 @Immutable
 public abstract class Credential {
-    
-    /**
-     * Stores the semantic type {@code issuer.exposed.credential@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType ISSUER = SemanticType.map("issuer.exposed.credential@core.digitalid.net").load(NonHostIdentity.IDENTIFIER);
-    
-    /**
-     * Stores the semantic type {@code issuance.exposed.credential@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType ISSUANCE = SemanticType.map("issuance.exposed.credential@core.digitalid.net").load(Time.TYPE);
-    
-    /**
-     * Stores the semantic type {@code hash.exposed.credential@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType HASH = SemanticType.map("hash.exposed.credential@core.digitalid.net").load(RandomizedAgentPermissions.HASH);
-    
-    /**
-     * Stores the semantic type {@code role.exposed.credential@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType ROLE = SemanticType.map("role.exposed.credential@core.digitalid.net").load(SemanticType.ROLE_IDENTIFIER);
-    
-    /**
-     * Stores the semantic type {@code exposed.credential@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType EXPOSED = SemanticType.map("exposed.credential@core.digitalid.net").load(TupleWrapper.XDF_TYPE, ISSUER, ISSUANCE, HASH, ROLE, AttributeValue.CONTENT);
     
     /**
      * Returns the block containing the exposed arguments of a credential.
@@ -112,6 +78,7 @@ public abstract class Credential {
      * Asserts that the class invariant still holds.
      */
     @Pure
+    @TODO(task = "Use validate() instead.", date = "2016-10-30", author = Author.KASPAR_ETTER)
     private boolean invariant() {
         Require.that(isIdentityBased() != isAttributeBased()).orThrow("This credential is either identity- or attribute-based.");
         Require.that(!isRoleBased() || isIdentityBased()).orThrow("If this credential is role-based, it is also identity-based");
@@ -155,6 +122,7 @@ public abstract class Credential {
     /**
      * Stores the attribute content for attribute-based access control or null in case of identity-based authentication.
      */
+    @TODO(task = "Use Selfcontained here?", date = "2016-10-30", author = Author.KASPAR_ETTER)
     private final @Nullable Block attributeContent;
     
     /**
@@ -246,7 +214,7 @@ public abstract class Credential {
         this.issuer = IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0)).getIdentity().castTo(InternalNonHostIdentity.class);
         this.issuance = Time.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
         if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) { throw InvalidParameterValueException.get("issuance time", issuance); }
-        this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier(), issuance);
+        this.publicKey = PublicKeyRetriever.retrieve(issuer.getAddress().getHostIdentifier(), issuance);
         final @Nonnull BigInteger hash = Binary256Wrapper.decodeNonNullable(tuple.getNonNullableElement(2));
         if (randomizedPermissions != null) {
             this.randomizedPermissions = new RandomizedAgentPermissions(randomizedPermissions);
@@ -275,85 +243,58 @@ public abstract class Credential {
     
     
     /**
-     * Returns the public key of the host that issued this credential.
-     * 
-     * @return the public key of the host that issued this credential.
-     */
-    @Pure
-    public final @Nonnull PublicKey getPublicKey() {
-        return publicKey;
-    }
-    
-    /**
      * Returns the internal non-host identity that issued this credential.
-     * 
-     * @return the internal non-host identity that issued this credential.
      * 
      * @ensure !isIdentityBased() || issuer instanceof InternalPerson : "If this credential is identity-based, then the issuer is an internal person.";
      */
     @Pure
-    public final @Nonnull InternalNonHostIdentity getIssuer() {
-        return issuer;
-    }
+    public abstract @Nonnull InternalNonHostIdentity getIssuer();
     
     /**
      * Returns the issuance time rounded down to the last half-hour.
-     * 
-     * @return the issuance time rounded down to the last half-hour.
-     * 
-     * @ensure issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
      */
     @Pure
-    public final @Nonnull Time getIssuance() {
-        return issuance;
-    }
+    public abstract @Nonnull @Positive @MultipleOf(1_800_000l) Time getIssuance();
     
     /**
      * Returns whether this credential is still valid.
-     * 
-     * @return whether this credential is still valid.
      */
     @Pure
-    public final boolean isValid() {
-        return !issuance.isLessThan(Time.TROPICAL_YEAR.ago());
+    public boolean isValid() {
+        return getIssuance().isGreaterThan(Time.TROPICAL_YEAR.ago());
     }
     
     /**
      * Returns whether this credential is still active.
-     * 
-     * @return whether this credential is still active.
      */
     @Pure
-    public final boolean isActive() {
-        return !issuance.isLessThan(Time.HOUR.ago());
+    public boolean isActive() {
+        return getIssuance().isGreaterThan(Time.HOUR.ago());
     }
+    
+    /**
+     * Returns the public key of the host that issued this credential.
+     */
+    @Pure
+    @TODO(task = "Use @Derive?", date = "2016-10-30", author = Author.KASPAR_ETTER)
+    public abstract @Nonnull PublicKey getPublicKey();
     
     /**
      * Returns the client's randomized permissions or simply its hash.
-     * 
-     * @return the client's randomized permissions or simply its hash.
      */
     @Pure
-    public final @Nonnull RandomizedAgentPermissions getRandomizedPermissions() {
-        return randomizedPermissions;
-    }
+    public abstract @Nonnull RandomizedAgentPermissions getRandomizedPermissions();
     
     /**
      * Returns the permissions of the client or null if they are not shown.
-     * 
-     * @return the permissions of the client or null if they are not shown.
-     * 
-     * @ensure permissions.isFrozen() : "The permissions are frozen.";
      */
     @Pure
-    public final @Nullable ReadOnlyAgentPermissions getPermissions() {
+    public final @Nullable @Frozen ReadOnlyAgentPermissions getPermissions() {
         return randomizedPermissions.getPermissions();
     }
     
     /**
      * Returns the permissions of the client.
-     * 
-     * @return the permissions of the client.
      * 
      * @require isRoleBased() : "This credential is role-based.";
      */
@@ -369,8 +310,6 @@ public abstract class Credential {
     /**
      * Returns the role that is assumed by the client or null in case no role is assumed.
      * 
-     * @return the role that is assumed by the client or null in case no role is assumed.
-     * 
      * @ensure role == null || role.isRoleType() : "The role is either null or a role type.";
      */
     @Pure
@@ -380,8 +319,6 @@ public abstract class Credential {
     
     /**
      * Returns the role that is assumed by the client.
-     * 
-     * @return the role that is assumed by the client.
      * 
      * @require isRoleBased() : "This credential is role-based.";
      */
@@ -394,8 +331,6 @@ public abstract class Credential {
     
     /**
      * Returns the attribute content for anonymous access control or null in case of identity-based authentication.
-     * 
-     * @return the attribute content for anonymous access control or null in case of identity-based authentication.
      */
     @Pure
     public final @Nullable Block getAttributeContent() {
@@ -404,8 +339,6 @@ public abstract class Credential {
     
     /**
      * Returns the attribute content for anonymous access control.
-     * 
-     * @return the attribute content for anonymous access control.
      * 
      * @require isAttributeBased() : "This credential is attribute-based.";
      */
@@ -418,8 +351,6 @@ public abstract class Credential {
     
     /**
      * Returns whether this credential is used for attribute-based authentication.
-     * 
-     * @return whether this credential is used for attribute-based authentication.
      */
     @Pure
     public final boolean isAttributeBased() {
@@ -428,8 +359,6 @@ public abstract class Credential {
     
     /**
      * Returns whether this credential is used for identity-based authentication.
-     * 
-     * @return whether this credential is used for identity-based authentication.
      */
     @Pure
     public final boolean isIdentityBased() {
@@ -438,8 +367,6 @@ public abstract class Credential {
     
     /**
      * Returns whether this credential is used for role-based authentication.
-     * 
-     * @return whether this credential is used for role-based authentication.
      */
     @Pure
     public final boolean isRoleBased() {
@@ -448,8 +375,6 @@ public abstract class Credential {
     
     /**
      * Returns the restrictions of the client or null in case they are not shown.
-     * 
-     * @return the restrictions of the client or null in case they are not shown.
      */
     @Pure
     public final @Nullable Restrictions getRestrictions() {
@@ -458,8 +383,6 @@ public abstract class Credential {
     
     /**
      * Returns the restrictions of the client.
-     * 
-     * @return the restrictions of the client.
      * 
      * @require getRestrictions() != null : "The restrictions are not null.";
      */
@@ -473,8 +396,6 @@ public abstract class Credential {
     /**
      * Returns the exposed block of this credential.
      * 
-     * @return the exposed block of this credential.
-     * 
      * @ensure exposed.getType().isBasedOn(EXPOSED) : "The block is based on the indicated type.";
      */
     @Pure
@@ -484,8 +405,6 @@ public abstract class Credential {
     
     /**
      * Returns the hash of the exposed block.
-     * 
-     * @return the hash of the exposed block.
      */
     @Pure
     public final @Nonnull Exponent getO() {
@@ -494,8 +413,6 @@ public abstract class Credential {
     
     /**
      * Returns the serial number of this credential or null if it is not shown.
-     * 
-     * @return the serial number of this credential or null if it is not shown.
      */
     @Pure
     public @Nullable Exponent getI() {

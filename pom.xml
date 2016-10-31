@@ -52,13 +52,13 @@
         <module>symmetrickey</module>
         <module>asymmetrickey</module>
         <module>keychain</module>
+        <module>conversion</module>
         <module>encryption</module>
         <module>commitment</module>
+        <module>selfcontained</module>
         <module>credential</module>
         <module>signature</module>
         <module>compression</module>
-        <module>selfcontained</module>
-        <module>conversion</module>
         <module>packet</module>
 		
         <module>handler</module>
@@ -77,7 +77,6 @@
 		
         <module>expression</module>
         <module>certificate</module>
-        <module>attributevalue</module>
         <module>attribute</module>
         <module>cache</module>
         <module>authorization</module>

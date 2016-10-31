@@ -16,11 +16,6 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-attributevalue</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
             <artifactId>core-expression</artifactId>
             <version>${project.version}</version>
         </dependency>

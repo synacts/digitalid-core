@@ -6,44 +6,35 @@ import java.security.SecureRandom;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
-import net.digitalid.utility.collections.concurrent.ConcurrentMap;
-import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.auxiliary.Time;
 
-import net.digitalid.core.agent.RandomizedAgentPermissions;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.attribute.CertifiedAttributeValue;
-import net.digitalid.core.authorization.CredentialInternalQuery;
-import net.digitalid.core.authorization.CredentialReply;
-import net.digitalid.core.conversion.Block;
+import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.credential.annotations.Active;
-import net.digitalid.core.entity.NonNativeRole;
-import net.digitalid.core.entity.Role;
 import net.digitalid.core.entity.annotations.OfInternalPerson;
+import net.digitalid.core.group.Element;
+import net.digitalid.core.group.Exponent;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.signature.exceptions.InvalidSignatureException;
-
-import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.cryptography.Element;
-import net.digitalid.service.core.cryptography.Exponent;
-import net.digitalid.service.core.cryptography.Parameters;
-import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.core.permissions.RandomizedAgentPermissions;
+import net.digitalid.core.restrictions.Restrictions;
 
 /**
  * This class models credentials on the client-side.
  */
 @Immutable
-public final class ClientCredential extends Credential {
+@GenerateBuilder
+@GenerateSubclass
+public abstract class ClientCredential extends Credential {
     
     /**
      * Stores the certifying base of this credential.

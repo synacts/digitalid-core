@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.core.conversion.converter.XDF;
+import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.conversion.value.testentities.CustomString;
 import net.digitalid.core.conversion.value.testentities.CustomStringBuilder;
 import net.digitalid.core.conversion.value.testentities.CustomStringConverter;

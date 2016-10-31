@@ -19,6 +19,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.digitalid.utility.annotations.method.Pure;
 
+import net.digitalid.core.conversion.streams.CustomCipherInputStream;
+import net.digitalid.core.conversion.streams.NonClosingOutputStream;
 import net.digitalid.core.parameters.Parameters;
 import net.digitalid.core.symmetrickey.InitializationVector;
 import net.digitalid.core.symmetrickey.InitializationVectorBuilder;
@@ -493,7 +495,7 @@ public class EncryptionTest {
     
         final @Nonnull ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(outputStream.toByteArray());
         final @Nonnull DataInputStream wrappingInputStream = new DataInputStream(byteArrayInputStream);
-        final @Nonnull CustomCipherInputStream customCipherInputStream = new CustomCipherInputStream(wrappingInputStream, getDecryptCipher(symmetricKey, initializationVector));
+        final @Nonnull CustomCipherInputStream customCipherInputStream = CustomCipherInputStream.with(wrappingInputStream, getDecryptCipher(symmetricKey, initializationVector));
         final @Nonnull DataInputStream dataInputStream = new DataInputStream(customCipherInputStream);
         
         Assert.assertEquals("pre-encryption", wrappingInputStream.readUTF());

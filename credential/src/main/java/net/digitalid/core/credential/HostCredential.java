@@ -3,19 +3,22 @@ package net.digitalid.core.credential;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.conversion.Block;
+import net.digitalid.core.restrictions.Restrictions;
 
 /**
  * This class models credentials on the host-side.
  */
 @Immutable
-public final class HostCredential extends Credential {
+@GenerateBuilder
+@GenerateSubclass
+public abstract class HostCredential extends Credential {
     
     /**
      * Creates a new credential from the given blocks for hosts.

@@ -17,8 +17,6 @@ import net.digitalid.utility.conversion.converter.ValueCollector;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 
-import net.digitalid.core.cryptography.compression.CompressionBuilder;
-
 /**
  *
  * @see Deflater

@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.signature.HostSignature;
+import net.digitalid.core.signature.host.HostSignature;
 
 /**
  * This exception is thrown when a host signature has expired.

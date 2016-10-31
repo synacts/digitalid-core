@@ -18,6 +18,7 @@ public abstract class Selfcontained<T> {
     public abstract @Nonnull SemanticType getSemanticType();
     
     @Pure
+    @TODO(task = "Use a byte array instead?", date = "2016-10-30", author = Author.KASPAR_ETTER)
     public abstract @Nonnull T getObject();
     
 }
