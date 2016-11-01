@@ -1,17 +1,27 @@
 package net.digitalid.core.credential;
 
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.core.asymmetrickey.PublicKey;
+import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
+import net.digitalid.core.group.ExponentBuilder;
+import net.digitalid.core.parameters.Parameters;
+import net.digitalid.core.restrictions.RestrictionsConverter;
 
 /**
  * This class models credentials on the client-side.
@@ -74,9 +84,8 @@ public abstract class ClientCredential extends Credential {
      */
     @Pure
     public @Nonnull ClientCredential getRandomizedCredential() {
-//        final @Nonnull Exponent r = Exponent.get(new BigInteger(Parameters.BLINDING_EXPONENT - Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
-//        return new ClientCredential(getPublicKey(), getIssuer(), getIssuance(), getRandomizedPermissions(), getRole(), getAttributeContent(), getRestrictions(), c.multiply(getPublicKey().getAb().pow(r)), e, b.subtract(e.multiply(r)), u, getI(), v, oneTime);
-        return null;
+        final @Nonnull Exponent r = ExponentBuilder.withValue(new BigInteger(Parameters.BLINDING_EXPONENT.get() - Parameters.CREDENTIAL_EXPONENT.get(), new SecureRandom())).build();
+        return ClientCredentialBuilder.withExposedExponent(getExposedExponent()).withC(getC().multiply(getExposedExponent().getPublicKey().getAb().pow(r))).withE(getE()).withB(getB().subtract(getE().multiply(r))).withU(getU()).withV(getV()).withI(getI()).withRestrictions(getRestrictions()).withOneTime(isOneTime()).build();
     }
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */
@@ -85,24 +94,15 @@ public abstract class ClientCredential extends Credential {
     @Override
     @CallSuper
     public void validate() {
-//     * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
-//     * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
-//     * @require role == null || role.isRoleType() : "The role is either null or a role type.";
-//     * @require role == null || restrictions != null : "If a role is given, the restrictions are not null.";
-//     * @require attributeContent != null || issuer instanceof Person : "If the attribute content is null, the issuer is a person.";
-//     * @require (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
-//     * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
-//     * @require !oneTime || attributeContent != null : "If the credential can be used only once, the attribute content may not be null.";
-        
-//        Require.that(restrictions == null || restrictions.toBlock().getHash().equals(v.getValue())).orThrow("If the restrictions are not null, their hash has to equal v.");
-//        Require.that(!oneTime || attributeContent != null).orThrow("If the credential can be used only once, the attribute content may not be null.");
-//        
-//        if (!publicKey.getAo().pow(getO()).equals(c.pow(e).multiply(publicKey.getAb().pow(b)).multiply(publicKey.getAu().pow(u)).multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)))) { throw new InvalidSignatureException("The credential issued by " + issuer.getAddress() + " is invalid."); }
-//        
-//        Validate.that(isIdentityBased() != isAttributeBased()).orThrow("This credential is either identity- or attribute-based.");
-//        Validate.that(!isRoleBased() || isIdentityBased()).orThrow("If this credential is role-based, it is also identity-based");
-//        Validate.that(!isAttributeBased() || getRestrictions() == null).orThrow("If this credential is attribute-based, the restrictions are null.");
-//        Validate.that(!isRoleBased() || getPermissions() != null && getRestrictions() != null).orThrow("If this credential is role-based, both the permissions and the restrictions are not null.");
+        Validate.that(getExposedExponent().getHashedOrSaltedPermissions().areExposed()).orThrow("The salted permissions have to be provided for client credentials.");
+        try {
+            Validate.that(getRestrictions() == null || new BigInteger(1, XDF.hash(getRestrictions(), RestrictionsConverter.INSTANCE)).equals(getV().getValue())).orThrow("If the restrictions are not null, their hash has to equal v.");
+        } catch (@Nonnull ExternalException exception) {
+            throw new RuntimeException(exception); // TODO: How to handle or propagate such exceptions?
+        }
+        Validate.that(!isOneTime() || isAttributeBased()).orThrow("If the credential can be used only once, it has to be attribute-based.");
+        final @Nonnull PublicKey publicKey = getExposedExponent().getPublicKey();
+        Validate.that(publicKey.getAo().pow(getO()).equals(getC().pow(getE()).multiply(publicKey.getAb().pow(getB())).multiply(publicKey.getAu().pow(getU())).multiply(publicKey.getAi().pow(getI())).multiply(publicKey.getAv().pow(getV())))).orThrow("The credential issued by $ is invalid.", getExposedExponent().getIssuer().getAddress());
         super.validate();
     }
     

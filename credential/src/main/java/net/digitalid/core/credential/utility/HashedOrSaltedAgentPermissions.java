@@ -39,29 +39,38 @@ public abstract class HashedOrSaltedAgentPermissions extends RootClass {
     public abstract @Nullable SaltedAgentPermissions getSaltedPermissions();
     
     /**
-     * Returns whether the permissions are shown.
+     * Returns the actual permissions or null if the permissions are hidden.
      */
     @Pure
-    public boolean areShown() {
+    public @Nullable @Frozen ReadOnlyAgentPermissions getPermissions() {
+        final @Nullable SaltedAgentPermissions saltedPermissions = getSaltedPermissions();
+        return saltedPermissions != null ? saltedPermissions.getPermissions() : null;
+    }
+    
+    /**
+     * Returns whether the permissions are exposed.
+     */
+    @Pure
+    public boolean areExposed() {
         return getSaltedPermissions() != null;
     }
     
     /**
-     * Returns whether the permissions are hidden.
+     * Returns whether the permissions are covered.
      */
     @Pure
-    public boolean areHidden() {
+    public boolean areCovered() {
         return getSaltedPermissions() == null;
     }
     
     /**
-     * Returns the actual permissions.
+     * Returns the exposed permissions.
      * 
-     * @require areShown() : "The permissions are exposed.";
+     * @require areExposed() : "The permissions are exposed.";
      */
     @Pure
-    public @Nonnull ReadOnlyAgentPermissions getPermissions() {
-        Require.that(areShown()).orThrow("The permissions have to be exposed.");
+    public @Nonnull @Frozen ReadOnlyAgentPermissions getExposedPermissions() {
+        Require.that(areExposed()).orThrow("The permissions have to be exposed.");
         
         return getSaltedPermissions().getPermissions();
     }
