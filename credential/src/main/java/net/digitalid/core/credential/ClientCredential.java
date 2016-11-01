@@ -1,32 +1,17 @@
 package net.digitalid.core.credential;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.UnexpectedFailureException;
-import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.annotations.method.CallSuper;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.size.NonEmpty;
+import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.auxiliary.Time;
-
-import net.digitalid.core.asymmetrickey.PublicKey;
-import net.digitalid.core.credential.annotations.Active;
-import net.digitalid.core.entity.annotations.OfInternalPerson;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
-import net.digitalid.core.identification.identity.InternalNonHostIdentity;
-import net.digitalid.core.identification.identity.InternalPerson;
-import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.permissions.SaltedAgentPermissions;
-import net.digitalid.core.restrictions.Restrictions;
 
 /**
  * This class models credentials on the client-side.
@@ -36,303 +21,89 @@ import net.digitalid.core.restrictions.Restrictions;
 @GenerateSubclass
 public abstract class ClientCredential extends Credential {
     
-    /**
-     * Stores the certifying base of this credential.
-     */
-    private final @Nonnull Element c;
-    
-    /**
-     * Stores the certifying exponent of this credential.
-     */
-    private final @Nonnull Exponent e;
-    
-    /**
-     * Stores the blinding exponent of this credential.
-     */
-    private final @Nonnull Exponent b;
-    
-    /**
-     * Stores the client's secret of this credential.
-     */
-    private final @Nonnull Exponent u;
-    
-    /**
-     * Stores the hash of restrictions or the hash of the subject's identifier.
-     */
-    private final @Nonnull Exponent v;
-    
-    /**
-     * Stores whether the credential can be used only once (i.e. 'i' is to be disclosed).
-     */
-    private final boolean oneTime;
-    
-    /**
-     * Creates a new identity-based credential with the given public key, issuer, issuance, permissions, role, restrictions and arguments for clients.
-     * 
-     * @param publicKey the public key of the host that issued the credential.
-     * @param issuer the internal person that issued the credential.
-     * @param issuance the issuance time rounded down to the last half-hour.
-     * @param randomizedPermissions the client's randomized permissions.
-     * @param role the role that is assumed or null in case no role is assumed.
-     * @param restrictions the restrictions of the client.
-     * 
-     * @param c the certifying base of this credential.
-     * @param e the certifying exponent of this credential.
-     * @param b the blinding exponent of this credential.
-     * @param u the client's secret of this credential.
-     * @param i the serial number of this credential.
-     * @param v the hash of restrictions.
-     * 
-     * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
-     * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
-     * @require role == null || role.isRoleType() : "The role is either null or a role type.";
-     * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
-     */
-    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalPerson issuer, @Nonnull Time issuance, @Nonnull SaltedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v) throws InvalidSignatureException {
-        this(publicKey, issuer, issuance, randomizedPermissions, role, null, restrictions, c, e, b, u, i, v, false);
-    }
-    
-    /**
-     * Creates a new attribute-based credential with the given public key, issuer, issuance, permissions, attribute content and arguments for clients.
-     * 
-     * @param publicKey the public key of the host that issued the credential.
-     * @param issuer the internal non-host identity that issued the credential.
-     * @param issuance the issuance time rounded down to the last half-hour.
-     * @param randomizedPermissions the client's randomized permissions.
-     * @param attributeContent the attribute content for access control.
-     * 
-     * @param c the certifying base of this credential.
-     * @param e the certifying exponent of this credential.
-     * @param b the blinding exponent of this credential.
-     * @param u the client's secret of this credential.
-     * @param i the serial number of this credential.
-     * @param v the hash of the subject's identifier.
-     * 
-     * @param oneTime whether the credential can be used only once.
-     * 
-     * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
-     * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
-     */
-    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull SaltedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
-        this(publicKey, issuer, issuance, randomizedPermissions, null, attributeContent, null, c, e, b, u, i, v, oneTime);
-    }
-    
-    /**
-     * Creates a new credential with the given given public key, issuer, issuance, permissions, role, attribute content, restrictions and arguments for clients.
-     * 
-     * @param publicKey the public key of the host that issued the credential.
-     * @param issuer the internal non-host identity that issued the credential.
-     * @param issuance the issuance time rounded down to the last half-hour.
-     * @param randomizedPermissions the client's randomized permissions.
-     * @param role the role that is assumed or null in case no role is assumed.
-     * @param attributeContent the attribute content for access control.
-     * @param restrictions the restrictions of the client.
-     * 
-     * @param c the certifying base of this credential.
-     * @param e the certifying exponent of this credential.
-     * @param b the blinding exponent of this credential.
-     * @param u the client's secret of this credential.
-     * @param i the serial number of this credential.
-     * @param v the hash of restrictions or the hash of the subject's identifier.
-     * 
-     * @param oneTime whether the credential can be used only once.
-     * 
-     * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
-     * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
-     * @require role == null || role.isRoleType() : "The role is either null or a role type.";
-     * @require role == null || restrictions != null : "If a role is given, the restrictions are not null.";
-     * @require attributeContent != null || issuer instanceof Person : "If the attribute content is null, the issuer is a person.";
-     * @require (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
-     * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
-     * @require !oneTime || attributeContent != null : "If the credential can be used only once, the attribute content may not be null.";
-     */
-    private ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull SaltedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent, @Nullable Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
-        super(publicKey, issuer, issuance, randomizedPermissions, role, attributeContent, restrictions, i);
-        
-        Require.that(restrictions == null || restrictions.toBlock().getHash().equals(v.getValue())).orThrow("If the restrictions are not null, their hash has to equal v.");
-        Require.that(!oneTime || attributeContent != null).orThrow("If the credential can be used only once, the attribute content may not be null.");
-        
-        this.c = c;
-        this.e = e;
-        this.b = b;
-        this.u = u;
-        this.v = v;
-        
-        this.oneTime = oneTime;
-        
-        if (!publicKey.getAo().pow(getO()).equals(c.pow(e).multiply(publicKey.getAb().pow(b)).multiply(publicKey.getAu().pow(u)).multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)))) { throw new InvalidSignatureException("The credential issued by " + issuer.getAddress() + " is invalid."); }
-    }
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
      * Returns the certifying base of this credential.
-     * 
-     * @return the certifying base of this credential.
      */
-    public @Nonnull Element getC() {
-        return c;
-    }
+    @Pure
+    public abstract @Nonnull Element getC();
     
     /**
      * Returns the certifying exponent of this credential.
-     * 
-     * @return the certifying exponent of this credential.
      */
-    public @Nonnull Exponent getE() {
-        return e;
-    }
+    @Pure
+    public abstract @Nonnull Exponent getE();
     
     /**
      * Returns the blinding exponent of this credential.
-     * 
-     * @return the blinding exponent of this credential.
      */
-    public @Nonnull Exponent getB() {
-        return b;
-    }
+    @Pure
+    public abstract @Nonnull Exponent getB();
     
     /**
      * Returns the client's secret of this credential.
-     * 
-     * @return the client's secret of this credential.
      */
-    public @Nonnull Exponent getU() {
-        return u;
-    }
+    @Pure
+    public abstract @Nonnull Exponent getU();
     
     /**
      * Returns the hash of restrictions or the hash of the subject's identifier.
-     * 
-     * @return the hash of restrictions or the hash of the subject's identifier.
      */
-    public @Nonnull Exponent getV() {
-        return v;
-    }
+    @Pure
+    public abstract @Nonnull Exponent getV();
     
     /**
      * Returns the serial number of this credential.
-     * 
-     * @return the serial number of this credential.
      */
+    @Pure
     @Override
-    public @Nonnull Exponent getI() {
-        final @Nullable Exponent i = super.getI();
-        Require.that(i != null).orThrow("The value i is always known in client credentials (see the constructor above).");
-        return i;
-    }
+    public abstract @Nonnull Exponent getI();
     
     /**
      * Returns whether this credential can be used only once (i.e. 'i' is shown).
-     * 
-     * @return whether this credential can be used only once (i.e. 'i' is shown).
      */
-    public boolean isOneTime() {
-        return oneTime;
-    }
+    @Pure
+    @Default("false")
+    public abstract boolean isOneTime();
+    
+    /* -------------------------------------------------- Randomization -------------------------------------------------- */
     
     /**
      * Returns a randomized version of this credential.
-     * 
-     * @return a randomized version of this credential.
      */
+    @Pure
     public @Nonnull ClientCredential getRandomizedCredential() {
-        try {
-            final @Nonnull Exponent r = Exponent.get(new BigInteger(Parameters.BLINDING_EXPONENT - Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
-            return new ClientCredential(getPublicKey(), getIssuer(), getIssuance(), getRandomizedPermissions(), getRole(), getAttributeContent(), getRestrictions(), c.multiply(getPublicKey().getAb().pow(r)), e, b.subtract(e.multiply(r)), u, getI(), v, oneTime);
-        } catch (@Nonnull InvalidSignatureException exception) {
-            throw UnexpectedFailureException.with("The randomization of a client credential should yield another valid client credential.", exception);
-        }
+//        final @Nonnull Exponent r = Exponent.get(new BigInteger(Parameters.BLINDING_EXPONENT - Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
+//        return new ClientCredential(getPublicKey(), getIssuer(), getIssuance(), getRandomizedPermissions(), getRole(), getAttributeContent(), getRestrictions(), c.multiply(getPublicKey().getAb().pow(r)), e, b.subtract(e.multiply(r)), u, getI(), v, oneTime);
+        return null;
     }
     
+    /* -------------------------------------------------- Validation -------------------------------------------------- */
     
-    /**
-     * Caches the role-based client credentials given their role and permissions.
-     */
-    private static final @Nonnull ConcurrentMap<NonNativeRole, ConcurrentMap<ReadOnlyAgentPermissions, ClientCredential>> roleBasedCredentials = new ConcurrentHashMap<>();
-    
-    /**
-     * Returns a role-based credential for the given role and permissions.
-     * 
-     * @param role the role for which the credential is to be returned.
-     * @param permissions the permissions which are to be contained.
-     * 
-     * @return a role-based credential for the given role and permissions.
-     */
-    @NonCommitting
-    public static @Nonnull @Active ClientCredential getRoleBased(@Nonnull @OfInternalPerson NonNativeRole role, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws ExternalException {
-        @Nullable ConcurrentMap<ReadOnlyAgentPermissions, ClientCredential> map = roleBasedCredentials.get(role);
-        if (map == null) { map = roleBasedCredentials.putIfAbsentElseReturnPresent(role, new ConcurrentHashMap<ReadOnlyAgentPermissions, ClientCredential>()); }
-        @Nullable ClientCredential credential = map.get(permissions);
+    @Pure
+    @Override
+    @CallSuper
+    public void validate() {
+//     * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
+//     * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
+//     * @require role == null || role.isRoleType() : "The role is either null or a role type.";
+//     * @require role == null || restrictions != null : "If a role is given, the restrictions are not null.";
+//     * @require attributeContent != null || issuer instanceof Person : "If the attribute content is null, the issuer is a person.";
+//     * @require (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
+//     * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
+//     * @require !oneTime || attributeContent != null : "If the credential can be used only once, the attribute content may not be null.";
         
-        if (credential == null || !credential.isActive()) {
-            final @Nonnull SaltedAgentPermissions randomizedPermissions = new SaltedAgentPermissions(permissions);
-            final @Nonnull BigInteger value = new BigInteger(Parameters.BLINDING_EXPONENT, new SecureRandom());
-            final @Nonnull CredentialReply reply = new CredentialInternalQuery(role, randomizedPermissions, value).sendNotNull();
-            credential = map.putIfAbsentElseReturnPresent(permissions, reply.getInternalCredential(randomizedPermissions, role.getRelation(), value, role.getClient().getSecret()));
-        }
-        
-        return credential;
-    }
-    
-    
-    /**
-     * Caches the identity-based client credentials given their role and permissions.
-     */
-    private static final @Nonnull ConcurrentMap<Role, ConcurrentMap<ReadOnlyAgentPermissions, ClientCredential>> identityBasedCredentials = new ConcurrentHashMap<>();
-    
-    /**
-     * Returns an identity-based credential for the given role and permissions.
-     * 
-     * @param role the role for which the credential is to be returned.
-     * @param permissions the permissions which are to be contained.
-     * 
-     * @return an identity-based credential for the given role and permissions.
-     */
-    @NonCommitting
-    public static @Nonnull @Active ClientCredential getIdentityBased(@Nonnull @OfInternalPerson Role role, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws ExternalException {
-        @Nullable ConcurrentMap<ReadOnlyAgentPermissions, ClientCredential> map = identityBasedCredentials.get(role);
-        if (map == null) { map = identityBasedCredentials.putIfAbsentElseReturnPresent(role, new ConcurrentHashMap<ReadOnlyAgentPermissions, ClientCredential>()); }
-        @Nullable ClientCredential credential = map.get(permissions);
-        
-        if (credential == null || !credential.isActive()) {
-            final @Nonnull SaltedAgentPermissions randomizedPermissions = new SaltedAgentPermissions(permissions);
-            final @Nonnull CredentialReply reply = new CredentialInternalQuery(role, randomizedPermissions).sendNotNull();
-            credential = map.putIfAbsentElseReturnPresent(permissions, reply.getInternalCredential(randomizedPermissions, null, BigInteger.ZERO, role.getClient().getSecret()));
-        }
-        
-        return credential;
-    }
-    
-    
-    /**
-     * Caches the attribute-based client credentials given their role, value and permissions.
-     */
-    private static final @Nonnull ConcurrentMap<Role, ConcurrentMap<ReadOnlyPair<CertifiedAttributeValue, ReadOnlyAgentPermissions>, ClientCredential>> attributeBasedCredentials = new ConcurrentHashMap<>();
-    
-    /**
-     * Returns an attribute-based credential for the given role, value and permissions.
-     * 
-     * @param role the role for which the credential is to be returned.
-     * @param value the certified attribute value which is to be shortened.
-     * @param permissions the permissions which are to be contained.
-     * 
-     * @return an attribute-based credential for the given role, value and permissions.
-     */
-    @NonCommitting
-    public static @Nonnull @Active ClientCredential getAttributeBased(@Nonnull @OfInternalPerson Role role, @Nonnull CertifiedAttributeValue value, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws ExternalException {
-        // TODO: Shortening with CredentialExternalQuery.
-        throw new UnsupportedOperationException("Credentials for attribute-based access control are not yet supported!");
-    }
-    
-    
-    /**
-     * Removes the credentials of the given role.
-     * 
-     * @param role the role whose credentials are to be removed.
-     */
-    public static void remove(@Nonnull Role role) {
-        roleBasedCredentials.remove(role);
-        identityBasedCredentials.remove(role);
-        attributeBasedCredentials.remove(role);
+//        Require.that(restrictions == null || restrictions.toBlock().getHash().equals(v.getValue())).orThrow("If the restrictions are not null, their hash has to equal v.");
+//        Require.that(!oneTime || attributeContent != null).orThrow("If the credential can be used only once, the attribute content may not be null.");
+//        
+//        if (!publicKey.getAo().pow(getO()).equals(c.pow(e).multiply(publicKey.getAb().pow(b)).multiply(publicKey.getAu().pow(u)).multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)))) { throw new InvalidSignatureException("The credential issued by " + issuer.getAddress() + " is invalid."); }
+//        
+//        Validate.that(isIdentityBased() != isAttributeBased()).orThrow("This credential is either identity- or attribute-based.");
+//        Validate.that(!isRoleBased() || isIdentityBased()).orThrow("If this credential is role-based, it is also identity-based");
+//        Validate.that(!isAttributeBased() || getRestrictions() == null).orThrow("If this credential is attribute-based, the restrictions are null.");
+//        Validate.that(!isRoleBased() || getPermissions() != null && getRestrictions() != null).orThrow("If this credential is role-based, both the permissions and the restrictions are not null.");
+        super.validate();
     }
     
 }

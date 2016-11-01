@@ -5,10 +5,14 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCapturable;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 
 import net.digitalid.core.exceptions.request.RequestErrorCode;
@@ -19,9 +23,18 @@ import net.digitalid.core.identification.identity.SemanticType;
 /**
  * This interface provides read-only access to {@link FreezableAgentPermissions agent permissions} and should <em>never</em> be cast away.
  */
-// TODO: @GenerateConverter // TODO: Do we need an @Recover method that generates the appropriate FreezableAgentPermissions here?
+@GenerateConverter
 @ReadOnly(FreezableAgentPermissions.class)
 public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticType, @Nonnull Boolean> {
+    
+    /* -------------------------------------------------- Recovery -------------------------------------------------- */
+    
+    @Pure
+    @Recover
+    @TODO(task = "Support the conversion of freezable collections. (This method is nonsense, of course.)", date = "2016-11-01", author = Author.KASPAR_ETTER)
+    public static @Nonnull ReadOnlyAgentPermissions with(boolean frozen) {
+        return FreezableAgentPermissions.withNoPermissions();
+    }
     
     /* -------------------------------------------------- General Permission -------------------------------------------------- */
     

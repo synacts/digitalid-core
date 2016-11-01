@@ -12,6 +12,7 @@ import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -73,11 +74,20 @@ public abstract class HashedOrSaltedAgentPermissions extends RootClass {
     @Pure
     protected abstract @Nullable BigInteger getStoredHash();
     
+    @Pure
+    protected @Nonnull BigInteger deriveHash() {
+        try {
+            return getStoredHash() != null ? getStoredHash() : new BigInteger(1, XDF.hash(getSaltedPermissions(), SaltedAgentPermissionsConverter.INSTANCE));
+        } catch (@Nonnull ExternalException exception) {
+            throw new RuntimeException(exception); // TODO: How to handle or propagate such exceptions?
+        }
+    }
+    
     /**
      * Returns the hash of the salted agent permissions.
      */
     @Pure
-    @Derive("storedHash != null ? storedHash : new BigInteger(1, net.digitalid.core.conversion.XDF.hash(saltedPermissions, SaltedAgentPermissionsConverter.INSTANCE))")
+    @Derive("deriveHash()")
     public abstract @Nonnull BigInteger getHash();
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */
@@ -96,7 +106,7 @@ public abstract class HashedOrSaltedAgentPermissions extends RootClass {
      * Creates new hashed or salted permissions with the given permissions.
      */
     @Pure
-    public static @Nonnull HashedOrSaltedAgentPermissions with(@Nonnull @Frozen ReadOnlyAgentPermissions permissions, boolean exposed) {
+    public static @Nonnull HashedOrSaltedAgentPermissions with(@Nonnull @Frozen ReadOnlyAgentPermissions permissions, boolean exposed) throws ExternalException {
         if (exposed) {
             return new HashedOrSaltedAgentPermissionsSubclass(SaltedAgentPermissions.with(permissions), null);
         } else {

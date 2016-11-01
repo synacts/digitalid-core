@@ -45,7 +45,7 @@
         <module>node</module>
         <module>restrictions</module>
         <module>agent</module>
-		
+        
         <module>annotations</module>
         <module>group</module>
         <module>parameters</module>
@@ -60,12 +60,12 @@
         <module>signature</module>
         <module>compression</module>
         <module>packet</module>
-		
+        
         <module>handler</module>
         <module>audit</module>
         <module>synchronizer</module>
         <module>property</module>
-		
+        
         <module>coreservice</module>
         <module>settings</module>
         <module>clientagent</module>
@@ -74,7 +74,7 @@
         <module>pusher</module>
         <module>contact</module>
         <module>context</module>
-		
+        
         <module>expression</module>
         <module>certificate</module>
         <module>attribute</module>
@@ -82,7 +82,7 @@
         <module>authorization</module>
         <module>client</module>
         <module>host</module>
-		
+        
         <module>resolution</module>
         <module>account</module>
         <module>initializer</module>

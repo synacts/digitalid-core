@@ -22,11 +22,15 @@ import net.digitalid.core.identification.identity.SemanticType;
 @GenerateConverter
 public abstract class Selfcontained {
     
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
+    
     @Pure
     public abstract @Nonnull SemanticType getSemanticType();
     
     @Pure
     protected abstract @Nonnull byte[] getObject();
+    
+    /* -------------------------------------------------- Conversion -------------------------------------------------- */
     
     @Pure
     @TODO(task = "Throw a more specific exception? Introduce the possibility to provide an external object?", date = "2016-10-31", author = Author.KASPAR_ETTER)
@@ -39,6 +43,19 @@ public abstract class Selfcontained {
     public static <T> @Nonnull Selfcontained convert(@Nullable T object, @Nonnull Converter<T, ?> converter) throws ExternalException {
         final /* @Nonnull */ SemanticType semanticType = null; // TODO: Derive from the given converter.
         return new SelfcontainedSubclass(semanticType, XDF.convert(object, converter));
+    }
+    
+    /* -------------------------------------------------- Object -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @TODO(task = "Print the object only if the semantic type is based on a string.", date = "2016-11-01", author = Author.KASPAR_ETTER)
+    public @Nonnull String toString() {
+//        string.append(attributeContent.getType().getAddress().getString());
+//        if (attributeContent.getType().isBasedOn(StringWrapper.XDF_TYPE)) {
+//            string.append(": ").append(StringWrapper.decodeNonNullable(attributeContent));
+//        }
+        return "Selfcontained";
     }
     
 }
