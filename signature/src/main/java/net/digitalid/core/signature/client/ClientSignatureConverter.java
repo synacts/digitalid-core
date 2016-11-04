@@ -20,9 +20,9 @@ import net.digitalid.utility.conversion.converter.ValueCollector;
 import net.digitalid.utility.exceptions.MissingSupportException;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.time.TimeConverter;
 
 import net.digitalid.database.auxiliary.Time;
+import net.digitalid.database.auxiliary.TimeConverter;
 
 import net.digitalid.core.commitment.SecretCommitment;
 import net.digitalid.core.commitment.SecretCommitmentConverter;

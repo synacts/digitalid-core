@@ -1,6 +1,4 @@
-package net.digitalid.core.signature;
-
-import net.digitalid.core.asymmetrickey.CryptographyTestBase;
+package net.digitalid.core.signature.client;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,11 +6,10 @@ import java.math.BigInteger;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.math.ExponentBuilder;
-
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
 
+import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.commitment.SecretCommitment;
 import net.digitalid.core.commitment.SecretCommitmentBuilder;
@@ -21,12 +18,11 @@ import net.digitalid.core.conversion.value.testentities.CustomString;
 import net.digitalid.core.conversion.value.testentities.CustomStringBuilder;
 import net.digitalid.core.conversion.value.testentities.CustomStringConverter;
 import net.digitalid.core.group.Exponent;
+import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.IdentifierResolver;
-import net.digitalid.core.signature.ClientSignature;
-import net.digitalid.core.signature.ClientSignatureConverter;
 
 import org.junit.Assert;
 import org.junit.Test;

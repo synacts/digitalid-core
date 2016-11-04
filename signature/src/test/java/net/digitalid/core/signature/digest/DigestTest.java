@@ -1,4 +1,4 @@
-package net.digitalid.core.signature;
+package net.digitalid.core.signature.digest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

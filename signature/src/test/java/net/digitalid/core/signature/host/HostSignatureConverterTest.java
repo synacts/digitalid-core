@@ -1,6 +1,4 @@
-package net.digitalid.core.signature;
-
-import net.digitalid.core.asymmetrickey.CryptographyTestBase;
+package net.digitalid.core.signature.host;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,11 +20,9 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 
 import net.digitalid.database.auxiliary.TimeBuilder;
 
+import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.conversion.XDF;
-import net.digitalid.core.cryptography.signature.HostSignatureBuilder;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.signature.HostSignature;
-import net.digitalid.core.signature.HostSignatureConverter;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -69,11 +65,11 @@ public class HostSignatureConverterTest extends CryptographyTestBase {
     
     @Test
     public void shouldSignAndVerify() throws Exception {
-        final @Nonnull String message = "This is a secret message";
+        final @Nonnull String message = "This is an authentic message";
         final @Nonnull InternalIdentifier subject = InternalIdentifier.with("bob@digitalid.net");
         final @Nonnull InternalIdentifier signer = InternalIdentifier.with("alice@digitalid.net");
         
-        final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureBuilder.withElement(message).withSigner(signer).withSubject(subject).withTime(TimeBuilder.build()).build();
+        final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureBuilder.withElement(message).withSigner(signer).withTime(TimeBuilder.build()).withSubject(subject).build();
     
         final @Nonnull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         XDF.convert(signedIdentifier, HostSignatureConverter.getInstance(StringConverter.INSTANCE), byteArrayOutputStream);

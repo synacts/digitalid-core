@@ -79,7 +79,7 @@ public class CryptographyTestBase {
                 return createHostIdentity(1L, (HostIdentifier) identifier);
             } else if (identifier instanceof InternalNonHostIdentifier) {
                 // TODO: How do we know whether the identifier is one of a natural or artificial person or a type?
-                return createNaturalPerson(1L, (InternalNonHostIdentifier) identifier);
+                return createNaturalPerson(2L, (InternalNonHostIdentifier) identifier);
             } else {
                 throw new UnsupportedOperationException("The identifier resolver does not support '" + identifier.getClass() + "' yet.");
             }
@@ -94,7 +94,7 @@ public class CryptographyTestBase {
     @Pure
     @BeforeClass
     public static void setup() throws Exception {
-        Parameters.FACTOR.set(128);
+        Parameters.FACTOR.set(130);
         Parameters.RANDOM_EXPONENT.set(64);
         Parameters.CREDENTIAL_EXPONENT.set(64);
         Parameters.RANDOM_CREDENTIAL_EXPONENT.set(96);

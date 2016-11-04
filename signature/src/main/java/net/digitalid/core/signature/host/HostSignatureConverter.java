@@ -21,9 +21,9 @@ import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
 import net.digitalid.utility.exceptions.MissingSupportException;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.time.TimeConverter;
 
 import net.digitalid.database.auxiliary.Time;
+import net.digitalid.database.auxiliary.TimeConverter;
 
 import net.digitalid.core.asymmetrickey.PrivateKey;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
@@ -73,11 +73,12 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified HostSignature<T> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws ExternalException {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified HostSignature<T> signature, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws ExternalException {
         // TODO: how do we handle multiple hosts? In the privateKeyRetriever itself?
         @Nullable PrivateKey privateKey = null;
-        if (object != null && object.getTime() != null) {
-            privateKey = PrivateKeyRetriever.retrieve(object.getTime());
+        if (signature != null && signature.getTime() != null) {
+            privateKey = PrivateKeyRetriever.retrieve(signature.getSigner().getHostIdentifier(), signature.getTime());
+//            System.out.println("private key: " + privateKey);
         }
         
         try {
@@ -86,14 +87,14 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
             throw MissingSupportException.with("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
         }
         int i = 1;
-        i *= InternalIdentifierConverter.INSTANCE.convert(object == null ? null : object.getSubject(), valueCollector);
-//        System.out.println("object: " + object.getSubject());
-        i *= TimeConverter.INSTANCE.convert(object == null ? null : object.getTime(), valueCollector);
-//        System.out.println("time: " + object.getTime());
-        i *= objectConverter.convert(object == null ? null : object.getElement(), valueCollector);
-//        System.out.println("element: " + object.getElement());
-        i *= InternalIdentifierConverter.INSTANCE.convert(object == null ? null : object.getSigner(), valueCollector);
-//        System.out.println("signer: " + object.getSigner());
+        i *= InternalIdentifierConverter.INSTANCE.convert(signature == null ? null : signature.getSubject(), valueCollector);
+//        System.out.println("object: " + signature.getSubject());
+        i *= TimeConverter.INSTANCE.convert(signature == null ? null : signature.getTime(), valueCollector);
+//        System.out.println("time: " + signature.getTime());
+        i *= objectConverter.convert(signature == null ? null : signature.getElement(), valueCollector);
+//        System.out.println("element: " + signature.getElement());
+        i *= InternalIdentifierConverter.INSTANCE.convert(signature == null ? null : signature.getSigner(), valueCollector);
+//        System.out.println("signer: " + signature.getSigner());
         
         if (privateKey != null) {
             final @Nullable DigestOutputStream digestOutputStream = valueCollector.popSignatureDigest();
@@ -134,12 +135,13 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
         
         @Nullable PublicKey publicKey = null;
         if (signatureValue != null && signer != null && time != null) {
-            publicKey = PublicKeyRetriever.retrieve(signer, time);
+            publicKey = PublicKeyRetriever.retrieve(signer.getHostIdentifier(), time);
+//            System.out.println("public key: " + publicKey);
         }
         final @Nonnull BigInteger hash = new BigInteger(1, digestInputStream.getMessageDigest().digest());
 //        System.out.println("hash: " + hash);
     
-        final @Nonnull HostSignature<T> hostSignature = HostSignatureBuilder.withElement(object).withSigner(signer).withSubject(subject).withTime(time).build();
+        final @Nonnull HostSignature<T> hostSignature = HostSignatureBuilder.withElement(object).withSigner(signer).withTime(time).withSubject(subject).build();
         if (publicKey != null) {
     
             try {
