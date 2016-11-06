@@ -1,14 +1,12 @@
 package net.digitalid.core.packet.exceptions;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.handler.Reply;
-import net.digitalid.service.core.identifier.Identifier;
+import net.digitalid.core.identification.identifier.Identifier;
 
 /**
  * This exception is thrown when an identity has an invalid declaration.
@@ -18,15 +16,10 @@ public class InvalidDeclarationException extends ExternalException {
     
     /* -------------------------------------------------- Identifier -------------------------------------------------- */
     
-    /**
-     * Stores the identifier that has an invalid declaration.
-     */
     private final @Nonnull Identifier identifier;
     
     /**
      * Returns the identifier that has an invalid declaration.
-     * 
-     * @return the identifier that has an invalid declaration.
      */
     @Pure
     public @Nonnull Identifier getIdentifier() {
@@ -35,20 +28,15 @@ public class InvalidDeclarationException extends ExternalException {
     
     /* -------------------------------------------------- Reply -------------------------------------------------- */
     
-    /**
-     * Stores the reply that contains the invalid declaration.
-     */
-    private final @Nullable Reply reply;
-    
-    /**
-     * Returns the reply that contains the invalid declaration.
-     * 
-     * @return the reply that contains the invalid declaration.
-     */
-    @Pure
-    public @Nullable Reply getReply() {
-        return reply;
-    }
+//    private final @Nullable Reply reply;
+//    
+//    /**
+//     * Returns the reply that contains the invalid declaration.
+//     */
+//    @Pure
+//    public @Nullable Reply getReply() {
+//        return reply;
+//    }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -59,11 +47,11 @@ public class InvalidDeclarationException extends ExternalException {
      * @param identifier the identifier that has an invalid declaration.
      * @param reply the reply that contains the invalid declaration.
      */
-    protected InvalidDeclarationException(@Nonnull String message, @Nonnull Identifier identifier, @Nullable Reply reply) {
+    protected InvalidDeclarationException(@Nonnull String message, @Nonnull Identifier identifier /*, @Nullable Reply reply */) {
         super(identifier.toString() + " has an invalid declaration: " + message);
         
         this.identifier = identifier;
-        this.reply = reply;
+//        this.reply = reply;
     }
     
     /**
@@ -76,8 +64,8 @@ public class InvalidDeclarationException extends ExternalException {
      * @return a new invalid declaration exception with the given message, identifier and reply.
      */
     @Pure
-    public static @Nonnull InvalidDeclarationException get(@Nonnull String message, @Nonnull Identifier identifier, @Nullable Reply reply) {
-        return new InvalidDeclarationException(message, identifier, reply);
+    public static @Nonnull InvalidDeclarationException get(@Nonnull String message, @Nonnull Identifier identifier /*, @Nullable Reply reply */) {
+        return new InvalidDeclarationException(message, identifier /*, reply */);
     }
     
     /**
@@ -88,9 +76,9 @@ public class InvalidDeclarationException extends ExternalException {
      * 
      * @return a new invalid declaration exception with the given message and identifier.
      */
-    @Pure
-    public static @Nonnull InvalidDeclarationException get(@Nonnull String message, @Nonnull Identifier identifier) {
-        return new InvalidDeclarationException(message, identifier, null);
-    }
+//    @Pure
+//    public static @Nonnull InvalidDeclarationException get(@Nonnull String message, @Nonnull Identifier identifier) {
+//        return new InvalidDeclarationException(message, identifier /*, null */);
+//    }
     
 }

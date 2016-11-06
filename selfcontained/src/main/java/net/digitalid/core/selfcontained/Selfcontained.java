@@ -1,6 +1,5 @@
 package net.digitalid.core.selfcontained;
 
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

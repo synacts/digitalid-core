@@ -48,7 +48,7 @@ public class ClientSignatureConverterTest extends CryptographyTestBase {
         
         final @Nonnull SecretCommitment commitment = SecretCommitmentBuilder.withHost(hostIdentity).withTime(time).withPublicKey(publicKey).withSecret(secret).build();
         
-        final @Nonnull ClientSignature<CustomString> signedMessage = ClientSignatureBuilder.withElement(message).withSecretCommitment(commitment).withSubject(subject).withTime(time).build(); 
+        final @Nonnull ClientSignature<CustomString> signedMessage = ClientSignatureBuilder.<CustomString>withSecretCommitment(commitment).withElement(message).withSubject(subject).withTime(time).build(); 
     
         final @Nonnull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         XDF.convert(signedMessage, ClientSignatureConverter.getInstance(CustomStringConverter.INSTANCE), byteArrayOutputStream);

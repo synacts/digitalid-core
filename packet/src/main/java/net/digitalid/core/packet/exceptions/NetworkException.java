@@ -8,7 +8,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.HostIdentifier;
 
 /**
  * This exception indicates an error on the network layer.
@@ -23,18 +23,13 @@ public abstract class NetworkException extends ExternalException {
     
     /* -------------------------------------------------- Host -------------------------------------------------- */
     
-    /**
-     * Stores the host with which the communication failed.
-     */
     private final @Nonnull HostIdentifier host;
     
     /**
      * Returns the host with which the communication failed.
-     * 
-     * @return the host with which the communication failed.
      */
     @Pure
-    public final @Nonnull HostIdentifier getHost() {
+    public @Nonnull HostIdentifier getHost() {
         return host;
     }
     
