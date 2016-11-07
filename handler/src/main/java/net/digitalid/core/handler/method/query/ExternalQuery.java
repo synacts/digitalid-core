@@ -4,22 +4,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.client.Client;
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.host.Host;
+import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.service.handler.CoreServiceExternalQuery;
 
 /**
  * External queries can be sent by both {@link Host hosts} and {@link Client clients}.
- * 
- * @see CoreServiceExternalQuery
  */
 @Immutable
 public abstract class ExternalQuery extends Query {

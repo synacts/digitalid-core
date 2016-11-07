@@ -8,21 +8,17 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.exceptions.DatabaseException;
+import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.client.Client;
-import net.digitalid.core.client.annotations.OnlyForClients;
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnClient;
-import net.digitalid.core.host.annotations.Hosts;
+import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.handler.method.InternalMethod;
+import net.digitalid.core.handler.method.Method;
+import net.digitalid.core.handler.reply.ActionReply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.service.handler.CoreServiceInternalAction;
-import net.digitalid.core.synchronizer.Synchronizer;
+import net.digitalid.core.restrictions.Restrictions;
 
 /**
  * Internal actions can only be sent by {@link Client clients} and can usually be {@link #reverseOnClient() reversed}.
@@ -33,8 +29,6 @@ import net.digitalid.core.synchronizer.Synchronizer;
  * @invariant hasEntity() : "This internal action has an entity.";
  * @invariant isNonHost() : "This internal action belongs to a non-host.";
  * @invariant getEntityNotNull().getIdentity().equals(getSubject().getIdentity()) : "The identity of the entity and the subject are the same.";
- * 
- * @see CoreServiceInternalAction
  */
 @Immutable
 public abstract class InternalAction extends Action implements InternalMethod {
@@ -72,7 +66,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
     
     @Pure
     @Override
-    public boolean isSimilarTo(@Nonnull Method other) {
+    public boolean isSimilarTo(@Nonnull Method<?> other) {
         return super.isSimilarTo(other) && other instanceof InternalAction;
     }
     
@@ -84,8 +78,8 @@ public abstract class InternalAction extends Action implements InternalMethod {
     
     @Pure
     @Override
-    public final boolean canOnlyBeSentByHosts() {
-        return false;
+    public final boolean canBeSentByClients() {
+        return true;
     }
     
     @Pure
@@ -136,8 +130,6 @@ public abstract class InternalAction extends Action implements InternalMethod {
     
     /**
      * Returns the reverse of this action or null if this action cannot be reversed.
-     * 
-     * @return the reverse of this action or null if this action cannot be reversed.
      */
     @Pure
     @OnlyForClients

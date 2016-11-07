@@ -15,7 +15,7 @@ import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.identification.identity.SemanticType;
 
 /**
- *
+ * A selfcontained object also contains its type.
  */
 @GenerateSubclass
 @GenerateConverter
@@ -32,9 +32,9 @@ public abstract class Selfcontained {
     /* -------------------------------------------------- Conversion -------------------------------------------------- */
     
     @Pure
-    @TODO(task = "Throw a more specific exception? Introduce the possibility to provide an external object?", date = "2016-10-31", author = Author.KASPAR_ETTER)
-    public <T> @Nullable T recover(@Nonnull Converter<T, Void> converter) throws ExternalException {
-        return XDF.recover(converter, getObject());
+    @TODO(task = "Throw a more specific exception? ", date = "2016-10-31", author = Author.KASPAR_ETTER)
+    public <T, E> @Nullable T recover(@Nonnull Converter<T, E> converter, E externallyProvided) throws ExternalException {
+        return XDF.recover(converter, externallyProvided, getObject());
     }
     
     @Pure

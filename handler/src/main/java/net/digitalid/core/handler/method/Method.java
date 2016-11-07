@@ -1,31 +1,27 @@
 package net.digitalid.core.handler.method;
 
 import java.math.BigInteger;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.method.Impure;
+import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.contracts.Validate;
+import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.annotations.OnHost;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Handler;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 
@@ -39,27 +35,6 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 @Immutable
 public abstract class Method<E extends Entity> extends Handler<E> {
     
-    /**
-     * Creates a method that encodes the content of a packet for the given recipient about the given subject.
-     * 
-     * @param entity the entity to which this handler belongs.
-     * @param subject the subject of this handler.
-     * @param recipient the recipient of this method.
-     * 
-     * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
-     * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
-     * 
-     * @ensure isNonHost() : "This method belongs to a non-host.";
-     */
-    protected Method(@Nullable NonHostEntity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
-        super(entity, subject);
-        
-        Require.that(!(entity instanceof Account) || canBeSentByHosts()).orThrow("Methods encoded on hosts can be sent by hosts.");
-        Require.that(!(entity instanceof Role) || !canOnlyBeSentByHosts()).orThrow("Methods encoded on clients cannot only be sent by hosts.");
-        
-        this.recipient = recipient;
-    }
-    
     /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
     /**
@@ -68,6 +43,7 @@ public abstract class Method<E extends Entity> extends Handler<E> {
     @Pure
     public abstract @Nonnull HostIdentifier getRecipient();
     
+    /* -------------------------------------------------- Lodged -------------------------------------------------- */
     
     /**
      * Returns whether this method needs to be lodged.
@@ -75,13 +51,16 @@ public abstract class Method<E extends Entity> extends Handler<E> {
     @Pure
     public abstract boolean isLodged();
     
+    /* -------------------------------------------------- Value -------------------------------------------------- */
+    
     /**
      * Returns either the value b' for clients or the value f' for hosts or null if no credential is shortened.
      */
     @Pure
-    public @Nullable BigInteger getValue() {
-        return null;
-    }
+    @Default("null")
+    public abstract @Nullable BigInteger getValue();
+    
+    /* -------------------------------------------------- Requirements -------------------------------------------------- */
     
     /**
      * Returns whether this method can be sent by hosts.
@@ -90,19 +69,28 @@ public abstract class Method<E extends Entity> extends Handler<E> {
     public abstract boolean canBeSentByHosts();
     
     /**
-     * Returns whether this method can only be sent by hosts.
+     * Returns whether this method can be sent by clients.
      */
     @Pure
-    public abstract boolean canOnlyBeSentByHosts();
+    public abstract boolean canBeSentByClients();
     
     /**
      * Returns the permissions required for this method.
      */
     @Pure
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
+    public @Nonnull @Frozen ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return FreezableAgentPermissions.NONE;
     }
     
+    /* -------------------------------------------------- Execution -------------------------------------------------- */
+    
+    /**
+     * Returns whether this method matches the given reply.
+     */
+    @Pure
+    // TODO: Rather move this method to the reply class (and match methods that generate replies)?
+    // TODO: Make the return type void and throw a InvalidReplyParameterValueException instead?
+    public abstract boolean matches(@Nullable Reply reply);
     
     /**
      * Executes this method on the host.
@@ -111,30 +99,25 @@ public abstract class Method<E extends Entity> extends Handler<E> {
      * 
      * @throws RequestException if the authorization is not sufficient.
      * 
-     * @require hasSignature() : "This handler has a signature.";
+     * @require hasBeenReceived() : "This method has been received.";
      * 
      * @ensure matches(return) : "This method matches the returned reply.";
      */
-    @OnHost
+    @Pure // TODO: Introduce an annotation that can also be used in immutable types.
+    // @OnHost // TODO: Replace with something that generates a precondition.
     @NonCommitting
     public abstract @Nullable Reply<E> executeOnHost() throws RequestException, DatabaseException;
     
-    /**
-     * Returns whether this method matches the given reply.
-     * 
-     * @return whether this method matches the given reply.
-     */
-    @Pure
-    // TODO: Make the return type void and throw a InvalidReplyParameterValueException instead?
-    public abstract boolean matches(@Nullable Reply reply);
-    
     /* -------------------------------------------------- Send -------------------------------------------------- */
     
-    @Impure
+    @Pure // TODO: Introduce an annotation that can also be used in immutable types.
     @NonCommitting
     public <R extends Reply<E>> @Nullable R send() throws ExternalException {
-        return MethodSender.send(this);
+        // TODO (see net.digitalid.core.initializer.MethodSenderImplementation)
+        return null;
     }
+    
+    /* -------------------------------------------------- Similarity -------------------------------------------------- */
     
     /**
      * Returns whether the other method is similar to this one.
@@ -159,98 +142,16 @@ public abstract class Method<E extends Entity> extends Handler<E> {
                 && this.getService().equals(other.getService());
     }
     
-    
-    /* -------------------------------------------------- Object -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("\"").append(getClass().getSimpleName()).append(" to ").append(getSubject());
-        if (hasEntity()) { string.append(" by ").append(getEntityNotNull().getIdentity().getAddress()); }
-        string.append(": ").append(getDescription()).append("\"");
-        return string.toString();
-    }
+    /* -------------------------------------------------- Validation -------------------------------------------------- */
     
     @Pure
     @Override
-    protected final boolean protectedEquals(@Nullable Object object) {
-        return super.protectedEquals(object) && object instanceof Method && this.recipient.equals(((Method) object).recipient);
-    }
-    
-    @Pure
-    @Override
-    protected final int protectedHashCode() {
-        return 89 * super.protectedHashCode() + recipient.hashCode();
-    }
-    
-    /* -------------------------------------------------- Registry -------------------------------------------------- */
-    
-    /**
-     * Each method needs to {@link #add(net.digitalid.service.core.identity.SemanticType, net.digitalid.service.core.handler.Method.Factory) register} a factory that inherits from this class.
-     */
-    protected static abstract class Factory<E extends Entity> {
-        
-        /**
-         * Creates a method that handles contents of the indicated type.
-         * 
-         * @param entity the entity to which the returned method belongs
-         * @param signature the signature of the returned method (or a dummy that just contains a subject).
-         * @param recipient the recipient of the returned method.
-         * @param block the content which is to be handled.
-         * 
-         * @return a new method that decodes the given block.
-         * 
-         * @require signature.hasSubject() : "The signature has a subject.";
-         * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
-         * 
-         * @ensure return.hasEntity() : "The returned method has an entity.";
-         * @ensure return.hasSignature() : "The returned method has a signature.";
-         */
-        @Pure
-        @NonCommitting
-        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws ExternalException;
-        
-    }
-    
-    
-    /**
-     * Maps method types to the factory that creates handlers for that type.
-     */
-    private static final @Nonnull Map<SemanticType, Factory> converters = new ConcurrentHashMap<>();
-    
-    /**
-     * Adds the given factory that creates handlers for the given type.
-     * 
-     * @param type the type to handle.
-     * @param factory the factory to add.
-     */
-    protected static void add(@Nonnull SemanticType type, @Nonnull Factory factory) {
-        converters.put(type, factory);
-    }
-    
-    /**
-     * Returns a method that handles the given block.
-     * 
-     * @param entity the entity to which the content belongs.
-     * @param signature the signature of the content.
-     * @param recipient the recipient of the content.
-     * @param block the content which is to be decoded.
-     * 
-     * @return a method that handles the given block.
-     * 
-     * @throws RequestException if no handler is found for the given content type.
-     * 
-     * @require signature.hasSubject() : "The signature has a subject.";
-     * 
-     * @ensure return.hasEntity() : "The returned method has an entity.";
-     * @ensure return.hasSignature() : "The returned method has a signature.";
-     */
-    @Pure
-    @NonCommitting
-    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws ExternalException {
-        final @Nullable Method.Factory factory = converters.get(block.getType());
-        if (factory == null) { throw RequestException.get(RequestErrorCode.METHOD, "No method could be found for the type " + block.getType().getAddress() + "."); }
-        else { return factory.create(entity, signature, recipient, block); }
+    @CallSuper
+    public void validate() {
+        super.validate();
+        Validate.that(!willBeSent() || !isOnHost() || canBeSentByHosts()).orThrow("Methods to be sent on hosts have to be sendable by hosts.");
+        Validate.that(!willBeSent() || !isOnClient() || canBeSentByClients()).orThrow("Methods to be sent on clients have to be sendable by clients.");
+        Validate.that(!hasBeenReceived() || getEntity() != null).orThrow("If the method has been received (by a host), then the entity may not be null.");
     }
     
 }

@@ -16,8 +16,6 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.logging.exceptions.ExternalException;
@@ -50,16 +48,14 @@ public abstract class XDF {
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     @Pure
-    @TODO(task = "Introduce the possibility to provide an external object?", date = "2016-10-31", author = Author.KASPAR_ETTER)
-    public static @Capturable <T> @Nullable T recover(@Nonnull Converter<T, Void> converter, @NonCaptured @Modified @Nonnull InputStream inputStream) throws ExternalException {
+    public static @Capturable <T, E> @Nullable T recover(@Nonnull Converter<T, E> converter, E externallyProvided, @NonCaptured @Modified @Nonnull InputStream inputStream) throws ExternalException {
         final @Nonnull XDFSelectionResult selectionResult = XDFSelectionResult.with(inputStream);
-        return converter.recover(selectionResult, null);
+        return converter.recover(selectionResult, externallyProvided);
     }
     
     @Pure
-    @TODO(task = "Introduce the possibility to provide an external object?", date = "2016-10-31", author = Author.KASPAR_ETTER)
-    public static @Capturable <T> @Nullable T recover(@Nonnull Converter<T, Void> converter, @NonCaptured @Unmodified @Nonnull byte[] bytes) throws ExternalException {
-        return XDF.recover(converter, new ByteArrayInputStream(bytes));
+    public static @Capturable <T, E> @Nullable T recover(@Nonnull Converter<T, E> converter, E externallyProvided, @NonCaptured @Unmodified @Nonnull byte[] bytes) throws ExternalException {
+        return XDF.recover(converter, externallyProvided, new ByteArrayInputStream(bytes));
     }
     
     /* -------------------------------------------------- Hashing -------------------------------------------------- */

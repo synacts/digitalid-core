@@ -8,15 +8,11 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.client.Client;
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.Role;
+import net.digitalid.core.handler.method.InternalMethod;
+import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.packet.exceptions.RequestErrorCode;
-import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.service.handler.CoreServiceInternalQuery;
+import net.digitalid.core.restrictions.Restrictions;
 
 /**
  * Internal queries can only be sent by {@link Client clients} and are always signed identity-based.
@@ -24,8 +20,6 @@ import net.digitalid.core.service.handler.CoreServiceInternalQuery;
  * @invariant hasEntity() : "This internal query has an entity.";
  * @invariant isNonHost() : "This internal query belongs to a non-host.";
  * @invariant getEntityNotNull().getIdentity().equals(getSubject().getIdentity()) : "The identity of the entity and the subject are the same.";
- * 
- * @see CoreServiceInternalQuery
  */
 @Immutable
 public abstract class InternalQuery extends Query implements InternalMethod {

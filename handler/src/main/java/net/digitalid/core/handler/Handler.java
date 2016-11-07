@@ -1,6 +1,5 @@
 package net.digitalid.core.handler;
 
-import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,17 +38,15 @@ public abstract class Handler<E extends Entity> extends RootClass {
      * Returns whether this handler is on a host.
      */
     @Pure
-    @Deprecated // TODO: Are such shortcuts desirable?
     public boolean isOnHost() {
         final @Nullable E entity = getEntity();
         return entity != null && entity.isOnHost();
     }
     
     /**
-     * Returns whether this entity is on a client.
+     * Returns whether this handler is on a client.
      */
     @Pure
-    @Deprecated // TODO: Are such shortcuts desirable?
     public boolean isOnClient() {
         final @Nullable E entity = getEntity();
         return entity != null && entity.isOnClient();
@@ -74,7 +71,23 @@ public abstract class Handler<E extends Entity> extends RootClass {
      */
     @Pure
     @Provided
-    public abstract @Nullable Signature<?> getSignature(); // TODO: Provide the correct type argument if possible.
+    public abstract @Nullable Signature<?> getSignature();
+    
+    /**
+     * Returns whether this handler will be sent.
+     */
+    @Pure
+    public boolean willBeSent() {
+        return getSignature() == null;
+    }
+    
+    /**
+     * Returns whether this handler has been received.
+     */
+    @Pure
+    public boolean hasBeenReceived() {
+        return getSignature() != null;
+    }
     
     /* -------------------------------------------------- Other -------------------------------------------------- */
     
@@ -95,50 +108,5 @@ public abstract class Handler<E extends Entity> extends RootClass {
      */
     @Pure
     public abstract @Nonnull String getDescription();
-    
-    /* -------------------------------------------------- Object -------------------------------------------------- */
-    
-    // TODO: The following methods are probably best generated.
-    
-    /**
-     * Returns whether the given object is equal to this handler.
-     * This method does not override {@link Object#equals(java.lang.Object)}
-     * in order to enforce an equals implementation with an abstract method.
-     * 
-     * @param object the object to be checked for equality.
-     * 
-     * @return whether the given object is equal to this handler.
-     */
-    @Pure
-    protected boolean protectedEquals(@Nullable Object object) {
-        if (object == this) { return true; }
-        if (object == null || !(object instanceof Handler)) { return false; }
-        @SuppressWarnings("rawtypes")
-        final @Nonnull Handler other = (Handler) object;
-        return Objects.equals(this.getEntity(), other.getEntity()) && Objects.equals(this.getSubject(), other.getSubject());
-    }
-    
-    /**
-     * Returns the hash code of this method.
-     * This method does not override {@link Object#hashCode()} in order
-     * to enforce a hash code implementation with an abstract method.
-     * 
-     * @return the hash code of this method.
-     */
-    @Pure
-    protected int protectedHashCode() {
-        int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.getEntity());
-        hash = 89 * hash + Objects.hashCode(this.getSubject());
-        return hash;
-    }
-    
-    @Pure
-    @Override
-    public abstract boolean equals(@Nullable Object object);
-    
-    @Pure
-    @Override
-    public abstract int hashCode();
     
 }
