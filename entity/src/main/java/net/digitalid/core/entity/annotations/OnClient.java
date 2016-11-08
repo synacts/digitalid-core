@@ -18,12 +18,12 @@ import net.digitalid.utility.validation.annotations.meta.ValueValidator;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 import net.digitalid.utility.validation.contract.Contract;
 
-import net.digitalid.core.entity.Entity;
-
 /**
- * This annotation indicates that the annotated {@link Entity entity} is {@link Entity#isOnClient() on a client}.
+ * This annotation indicates that the annotated object is {@link SiteDependency#isOnClient() on a client}.
  * 
  * @see OnHost
+ * @see OnHostRecipient
+ * @see OnClientRecipient
  */
 @Documented
 @Target(ElementType.TYPE_USE)
@@ -37,7 +37,7 @@ public @interface OnClient {
      * This class checks the use of and generates the contract for the surrounding annotation.
      */
     @Stateless
-    public static class Validator extends EntityValidator {
+    public static class Validator extends SiteDependencyValidator {
         
         @Pure
         @Override

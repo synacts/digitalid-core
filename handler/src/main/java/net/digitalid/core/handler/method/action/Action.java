@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.freezable.annotations.Frozen;
@@ -15,6 +16,8 @@ import net.digitalid.database.storage.Storage;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.entity.annotations.OnClientRecipient;
+import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Auditable;
 import net.digitalid.core.handler.method.Method;
@@ -43,21 +46,20 @@ public abstract class Action extends Method<NonHostEntity> implements Auditable 
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     
-    @Pure // TODO
     @Override
     @NonCommitting
+    @OnHostRecipient
+    @PureWithSideEffects
     public abstract @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException;
     
     /**
      * Executes this action on the client.
      * 
      * @throws DatabaseException if this handler cannot be executed.
-     * 
-     * @require isOnClient() : "This method is called on a client.";
      */
-    @Pure // TODO
-    // @OnClient // TODO
     @NonCommitting
+    @OnClientRecipient
+    @PureWithSideEffects
     public abstract void executeOnClient() throws DatabaseException;
     
     /**
@@ -65,8 +67,8 @@ public abstract class Action extends Method<NonHostEntity> implements Auditable 
      * 
      * @throws DatabaseException if this handler cannot be executed.
      */
-    @Pure // TODO
     @NonCommitting
+    @PureWithSideEffects
     public void executeOnSuccess() throws DatabaseException {}
     
     /* -------------------------------------------------- Auditable -------------------------------------------------- */

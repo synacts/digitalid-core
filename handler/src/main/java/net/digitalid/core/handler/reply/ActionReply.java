@@ -10,19 +10,14 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.conversion.wrappers.signature.HostSignatureWrapper;
-import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.packet.exceptions.RequestException;
-import net.digitalid.core.pusher.Pusher;
-import net.digitalid.core.service.handler.CoreServiceActionReply;
-import net.digitalid.core.state.Service;
-import net.digitalid.core.synchronizer.Audit;
+import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.handler.Auditable;
+import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
+import net.digitalid.core.restrictions.Restrictions;
 
 /**
  * This class models a {@link Reply reply} to an {@link ExternalAction external action}.
@@ -33,7 +28,7 @@ import net.digitalid.core.synchronizer.Audit;
  * @see CoreServiceActionReply
  */
 @Immutable
-public abstract class ActionReply extends Reply implements Auditable {
+public abstract class ActionReply extends Reply<NonHostEntity> implements Auditable {
     
     /**
      * Creates an action reply that encodes the content of a packet.
@@ -90,7 +85,7 @@ public abstract class ActionReply extends Reply implements Auditable {
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit() {
-        return FreezableAgentPermissions.NONE;
+        return ReadOnlyAgentPermissions.NONE;
     }
     
     @Pure

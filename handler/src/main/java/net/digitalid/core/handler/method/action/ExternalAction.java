@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.validation.annotations.size.EmptyOrSingle;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -49,6 +50,7 @@ public abstract class ExternalAction extends Action {
      * Executes this action if an error occurred during pushing.
      */
     @NonCommitting
+    @PureWithSideEffects
     public abstract void executeOnFailure() throws DatabaseException;
     
     /**

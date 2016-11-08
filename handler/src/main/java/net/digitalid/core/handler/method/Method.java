@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
@@ -18,6 +19,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.entity.Entity;
+import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Handler;
 import net.digitalid.core.handler.reply.Reply;
@@ -103,15 +105,15 @@ public abstract class Method<E extends Entity> extends Handler<E> {
      * 
      * @ensure matches(return) : "This method matches the returned reply.";
      */
-    @Pure // TODO: Introduce an annotation that can also be used in immutable types.
-    // @OnHost // TODO: Replace with something that generates a precondition.
     @NonCommitting
+    @OnHostRecipient
+    @PureWithSideEffects
     public abstract @Nullable Reply<E> executeOnHost() throws RequestException, DatabaseException;
     
     /* -------------------------------------------------- Send -------------------------------------------------- */
     
-    @Pure // TODO: Introduce an annotation that can also be used in immutable types.
     @NonCommitting
+    @PureWithSideEffects
     public <R extends Reply<E>> @Nullable R send() throws ExternalException {
         // TODO (see net.digitalid.core.initializer.MethodSenderImplementation)
         return null;

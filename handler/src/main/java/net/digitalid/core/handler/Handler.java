@@ -11,6 +11,7 @@ import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.Entity;
+import net.digitalid.core.entity.annotations.SiteDependency;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.service.Service;
@@ -23,7 +24,7 @@ import net.digitalid.core.signature.Signature;
  * @see Reply
  */
 @Immutable
-public abstract class Handler<E extends Entity> extends RootClass {
+public abstract class Handler<E extends Entity> extends RootClass implements SiteDependency {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
@@ -34,22 +35,18 @@ public abstract class Handler<E extends Entity> extends RootClass {
     @Provided
     public abstract @Nullable E getEntity();
     
-    /**
-     * Returns whether this handler is on a host.
-     */
     @Pure
+    @Override
     public boolean isOnHost() {
         final @Nullable E entity = getEntity();
         return entity != null && entity.isOnHost();
     }
     
-    /**
-     * Returns whether this handler is on a client.
-     */
     @Pure
+    @Override
     public boolean isOnClient() {
         final @Nullable E entity = getEntity();
-        return entity != null && entity.isOnClient();
+        return entity == null || entity.isOnClient();
     }
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */

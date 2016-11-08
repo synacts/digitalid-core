@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
-import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.generation.Recover;
@@ -13,6 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.interfaces.Site;
 
+import net.digitalid.core.entity.annotations.SiteDependency;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 
@@ -23,7 +23,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
  */
 @Immutable
 @GenerateConverter
-public interface Entity extends RootInterface {
+public interface Entity extends SiteDependency {
     
     /* -------------------------------------------------- Site -------------------------------------------------- */
     
@@ -53,18 +53,14 @@ public interface Entity extends RootInterface {
     
     /* -------------------------------------------------- Queries -------------------------------------------------- */
     
-    /**
-     * Returns whether this entity is on a host.
-     */
     @Pure
+    @Override
     public default boolean isOnHost() {
         return getSite().isHost();
     }
     
-    /**
-     * Returns whether this entity is on a client.
-     */
     @Pure
+    @Override
     public default boolean isOnClient() {
         return getSite().isClient();
     }
