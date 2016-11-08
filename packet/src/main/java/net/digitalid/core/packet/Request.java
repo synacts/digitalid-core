@@ -329,8 +329,10 @@ public abstract class Request extends Packet {
         try (@Nonnull Socket socket = new Socket("id." + getEncryption().getRecipient().getString(), PORT.get())) {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
             XDF.convert(Selfcontained.convert(this, null /* RequestConverter.INSTANCE */), SelfcontainedConverter.INSTANCE, socket.getOutputStream()); // TODO
-            final @Nonnull Selfcontained selfcontained = XDF.recover(SelfcontainedConverter.INSTANCE, socket.getInputStream()); // TODO: Do we need to check the recovered object for null?
-            return selfcontained.recover(null /* ResponseConverter.INSTANCE */);
+            final @Nullable Selfcontained selfcontained = XDF.recover(SelfcontainedConverter.INSTANCE, null, socket.getInputStream());
+            // TODO: Do we need to check the recovered object for null?
+            assert selfcontained != null;
+            return selfcontained.recover(null /* ResponseConverter.INSTANCE */, null);
 //        } catch (@Nonnull RequestException exception) {
 //            if (exception.getCode() == RequestErrorCode.KEYROTATION && this instanceof ClientRequest) {
 //                return ((ClientRequest) this).recommit(methods, iteration, verified);

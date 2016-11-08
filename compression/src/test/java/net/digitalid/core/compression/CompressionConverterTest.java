@@ -44,7 +44,7 @@ public class CompressionConverterTest {
         Assert.assertTrue("The identifier address was not compressed (length of compressed identifier: " + convertedBytes.length + ", length of uncompressed identifier: " + string.getString().getBytes("UTF-16BE").length + ")", convertedBytes.length < string.getString().getBytes("UTF-16BE").length);
         
         final @Nonnull ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(convertedBytes);
-        final @Nullable Compression<TestString> decodedIdentifier = XDF.recover(CompressionConverter.getInstance(TestStringConverter.INSTANCE), byteArrayInputStream);
+        final @Nullable Compression<TestString> decodedIdentifier = XDF.recover(CompressionConverter.getInstance(TestStringConverter.INSTANCE), null, byteArrayInputStream);
     
         Assert.assertNotNull(decodedIdentifier);
         Assert.assertEquals(string, decodedIdentifier.getObject());

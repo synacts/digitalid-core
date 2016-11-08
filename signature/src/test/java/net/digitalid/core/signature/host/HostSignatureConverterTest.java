@@ -78,8 +78,9 @@ public class HostSignatureConverterTest extends CryptographyTestBase {
         Assert.assertTrue(signedBytes.length > 0);
         
         final @Nonnull ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(signedBytes);
-        final HostSignature<String> recoveredObject = XDF.recover(HostSignatureConverter.getInstance(StringConverter.INSTANCE), byteArrayInputStream);
+        final @Nullable HostSignature<String> recoveredObject = XDF.recover(HostSignatureConverter.getInstance(StringConverter.INSTANCE), null, byteArrayInputStream);
         
-        Assert.assertEquals(message, recoveredObject.getElement());
+        assertNotNull(recoveredObject);
+        assertEquals(message, recoveredObject.getElement());
     }
 }

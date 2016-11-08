@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.testing.RootTest;
 
 import net.digitalid.database.auxiliary.Time;
 
@@ -20,7 +21,7 @@ import org.junit.BeforeClass;
 /**
  *
  */
-public class CryptographyTestBase {
+public class CryptographyTestBase extends RootTest {
     
     /* -------------------------------------------------- Public Key Retriever -------------------------------------------------- */
     

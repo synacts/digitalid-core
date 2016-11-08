@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
@@ -57,9 +58,10 @@ public class ClientSignatureConverterTest extends CryptographyTestBase {
         Assert.assertTrue(signedBytes.length > 0);
         
         final @Nonnull ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(signedBytes);
-        final ClientSignature<CustomString> recoveredObject = XDF.recover(ClientSignatureConverter.getInstance(CustomStringConverter.INSTANCE), byteArrayInputStream);
+        final @Nullable ClientSignature<CustomString> recoveredObject = XDF.recover(ClientSignatureConverter.getInstance(CustomStringConverter.INSTANCE), null, byteArrayInputStream);
         
-        Assert.assertEquals(message, recoveredObject.getElement());
+        assertNotNull(recoveredObject);
+        assertEquals(message, recoveredObject.getElement());
     }
     
 }
