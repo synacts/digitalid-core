@@ -12,6 +12,7 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -35,7 +36,7 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
  * @see Query
  */
 @Immutable
-public abstract class Method<E extends Entity> extends Handler<E> {
+public abstract class Method<E extends Entity> extends RootClass implements Handler<E> {
     
     /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
@@ -92,7 +93,7 @@ public abstract class Method<E extends Entity> extends Handler<E> {
     @Pure
     // TODO: Rather move this method to the reply class (and match methods that generate replies)?
     // TODO: Make the return type void and throw a InvalidReplyParameterValueException instead?
-    public abstract boolean matches(@Nullable Reply reply);
+    public abstract boolean matches(@Nullable Reply<E> reply);
     
     /**
      * Executes this method on the host.
@@ -153,7 +154,7 @@ public abstract class Method<E extends Entity> extends Handler<E> {
         super.validate();
         Validate.that(!willBeSent() || !isOnHost() || canBeSentByHosts()).orThrow("Methods to be sent on hosts have to be sendable by hosts.");
         Validate.that(!willBeSent() || !isOnClient() || canBeSentByClients()).orThrow("Methods to be sent on clients have to be sendable by clients.");
-        Validate.that(!hasBeenReceived() || getEntity() != null).orThrow("If the method has been received (by a host), then the entity may not be null.");
+        Validate.that(!hasBeenReceived() || isOnHost()).orThrow("Methods can only be received on hosts and the entity may not be null then.");
     }
     
 }

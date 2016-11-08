@@ -4,71 +4,39 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.annotations.OnClient;
+import net.digitalid.core.entity.annotations.OnClientRecipient;
+import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.method.InternalMethod;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.ActionReply;
-import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.restrictions.Restrictions;
+import net.digitalid.core.handler.reply.Reply;
 
 /**
  * Internal actions can only be sent by {@link Client clients} and can usually be {@link #reverseOnClient() reversed}.
  * They are always signed identity-based and an audit request or trail is appended during {@link Package packaging}.
  * <p>
  * <em>Important:</em> Do not execute internal actions directly but always pass them to the {@link Synchronizer#execute(net.digitalid.service.core.handler.InternalAction) Synchronizer}!
- * 
- * @invariant hasEntity() : "This internal action has an entity.";
- * @invariant isNonHost() : "This internal action belongs to a non-host.";
- * @invariant getEntityNotNull().getIdentity().equals(getSubject().getIdentity()) : "The identity of the entity and the subject are the same.";
  */
 @Immutable
 public abstract class InternalAction extends Action implements InternalMethod {
     
-    /**
-     * Creates an internal action that encodes the content of a packet for the given recipient.
-     * 
-     * @param role the role to which this handler belongs.
-     * @param recipient the recipient of this method.
-     */
-    @OnlyForClients
-    protected InternalAction(@Nonnull @OnClient NonHostEntity entity, @Nonnull HostIdentifier recipient) {
-        super(entity, entity.getIdentity().getAddress(), recipient);
-    }
-    
-    /**
-     * Creates an internal action that decodes a packet with the given signature for the given entity.
-     * 
-     * @param entity the entity to which this handler belongs.
-     * @param signature the signature of this handler (or a dummy that just contains a subject).
-     * @param recipient the recipient of this method.
-     * 
-     * @require signature.hasSubject() : "The signature has a subject.";
-     * 
-     * @ensure hasSignature() : "This handler has a signature.";
-     */
-    @NonCommitting
-    protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws ExternalException {
-        super(entity, signature, recipient);
-        
-        if (!isNonHost()) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "Internal actions have to belong to a non-host."); }
-        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal actions."); }
-    }
-    
+    /* -------------------------------------------------- Similarity -------------------------------------------------- */
     
     @Pure
     @Override
     public boolean isSimilarTo(@Nonnull Method<?> other) {
         return super.isSimilarTo(other) && other instanceof InternalAction;
     }
+    
+    /* -------------------------------------------------- Requirements -------------------------------------------------- */
     
     @Pure
     @Override
@@ -82,47 +50,41 @@ public abstract class InternalAction extends Action implements InternalMethod {
         return true;
     }
     
+    /* -------------------------------------------------- Execution -------------------------------------------------- */
+    
     @Pure
     @Override
-    public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
-        return Restrictions.MIN;
+    public final boolean matches(@Nullable Reply<NonHostEntity> reply) {
+        return reply == null;
     }
-    
     
     /**
      * Executes this internal action on the host.
      * 
      * @throws RequestException if the authorization is not sufficient.
      * 
-     * @require hasSignature() : "This handler has a signature.";
+     * @require hasBeenReceived() : "This method has been received.";
      */
-    @Hosts
     @NonCommitting
+    @OnHostRecipient
+    @PureWithSideEffects
     protected abstract void executeOnHostInternalAction() throws RequestException, DatabaseException;
     
     @Override
-    @Hosts
     @NonCommitting
+    @OnHostRecipient
+    @PureWithSideEffects
     public final @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException {
         executeOnHostInternalAction();
         return null;
     }
     
-    @Pure
-    @Override
-    public final boolean matches(@Nullable Reply reply) {
-        return reply == null;
-    }
-    
+    /* -------------------------------------------------- Reversion -------------------------------------------------- */
     
     /**
      * Returns whether this internal action interferes with the given action.
      * 
-     * @param action the action which is to be checked for interference.
-     * 
-     * @return whether this internal action interferes with the given action.
-     * 
-     * @require action.getRole().equals(getRole()) : "The role of the given and this action is the same.";
+     * @require action.getEntity().equals(getEntity()) : "The entity of the given and this action is the same.";
      * @require action.getService().equals(getService()) : "The service of the given and this action is the same.";
      */
     @Pure
@@ -132,17 +94,16 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * Returns the reverse of this action or null if this action cannot be reversed.
      */
     @Pure
-    @OnlyForClients
+    @OnClientRecipient
     public abstract @Nullable InternalAction getReverse() throws DatabaseException;
     
     /**
      * Reverses this internal action on the client if this action can be reversed.
      */
     @NonCommitting
-    @OnlyForClients
-    public final void reverseOnClient() throws DatabaseException {
-        Require.that(isOnClient()).orThrow("This method is called on a client.");
-        
+    @OnClientRecipient
+    @PureWithSideEffects
+    public void reverseOnClient() throws DatabaseException {
         final @Nullable InternalAction reverse = getReverse();
         if (reverse != null) { reverse.executeOnClient(); }
     }

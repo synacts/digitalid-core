@@ -26,12 +26,15 @@ import net.digitalid.core.restrictions.Restrictions;
 @Immutable
 public abstract class ExternalAction extends Action {
     
+    /* -------------------------------------------------- Similarity -------------------------------------------------- */
+    
     @Pure
     @Override
     public boolean isSimilarTo(@Nonnull Method<?> other) {
         return super.isSimilarTo(other) && other instanceof ExternalAction;
     }
     
+    /* -------------------------------------------------- Requirements -------------------------------------------------- */
     
     @Pure
     @Override
@@ -45,6 +48,7 @@ public abstract class ExternalAction extends Action {
         return true;
     }
     
+    /* -------------------------------------------------- Execution -------------------------------------------------- */
     
     /**
      * Executes this action if an error occurred during pushing.
@@ -52,6 +56,8 @@ public abstract class ExternalAction extends Action {
     @NonCommitting
     @PureWithSideEffects
     public abstract void executeOnFailure() throws DatabaseException;
+    
+    /* -------------------------------------------------- Audit on Failure -------------------------------------------------- */
     
     /**
      * Returns the permission that an agent needs to cover in order to see the audit of this external action when the pushing failed.

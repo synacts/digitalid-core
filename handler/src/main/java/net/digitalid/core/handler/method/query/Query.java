@@ -1,21 +1,19 @@
 package net.digitalid.core.handler.method.query;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.entity.Entity;
+import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
-import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.identification.identifier.InternalIdentifier;
 
 /**
  * Queries have to be sent by the caller and are thus executed synchronously.
@@ -24,44 +22,17 @@ import net.digitalid.core.identification.identifier.InternalIdentifier;
  * @see ExternalQuery
  */
 @Immutable
-public abstract class Query extends Method {
+public abstract class Query<E extends Entity> extends Method<E> {
     
-    /**
-     * Creates a query that encodes the content of a packet for the given recipient about the given subject.
-     * 
-     * @param role the role to which this handler belongs.
-     * @param subject the subject of this handler.
-     * @param recipient the recipient of this method.
-     */
-    protected Query(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
-        super(role, subject, recipient);
-    }
-    
-    /**
-     * Creates a query that decodes a packet with the given signature for the given entity.
-     * 
-     * @param entity the entity to which this handler belongs.
-     * @param signature the signature of this handler.
-     * @param recipient the recipient of this method.
-     * 
-     * @require signature.hasSubject() : "The signature has a subject.";
-     * 
-     * @ensure hasEntity() : "This method has an entity.";
-     * @ensure hasSignature() : "This handler has a signature.";
-     * @ensure isOnHost() : "Queries are only decoded on hosts.";
-     */
-    protected Query(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InternalException {
-        super(entity, signature, recipient);
-        
-        if (!isOnHost()) { throw InternalException.get("Queries are only decoded on hosts."); }
-    }
-    
+    /* -------------------------------------------------- Lodged -------------------------------------------------- */
     
     @Pure
     @Override
-    public boolean isLodged() {
+    public final boolean isLodged() {
         return false;
     }
+    
+    /* -------------------------------------------------- Requirements -------------------------------------------------- */
     
     @Pure
     @Override
@@ -71,14 +42,16 @@ public abstract class Query extends Method {
     
     @Pure
     @Override
-    public final boolean canOnlyBeSentByHosts() {
-        return false;
+    public final boolean canBeSentByClients() {
+        return true;
     }
     
+    /* -------------------------------------------------- Execution -------------------------------------------------- */
     
     @Override
-    @Hosts
     @NonCommitting
-    public abstract @Nonnull QueryReply executeOnHost() throws RequestException, DatabaseException;
+    @OnHostRecipient
+    @PureWithSideEffects
+    public abstract @Nonnull QueryReply<E> executeOnHost() throws RequestException, DatabaseException;
     
 }
