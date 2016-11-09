@@ -35,7 +35,7 @@ public abstract class MethodIndex {
      * Adds the given converter that recovers handlers for the given type.
      */
     @Impure
-    @TODO(task = "Prevent that someone can overwrite an existing converter?", date = "2016-11-07", author = Author.KASPAR_ETTER)
+    @TODO(task = "Prevent that someone can overwrite an existing converter? (And the type could also be read from the given converter.)", date = "2016-11-07", author = Author.KASPAR_ETTER)
     public static void add(@Nonnull SemanticType type, @Nonnull Converter<? extends Method<?>, @Nonnull Signature<?>> converter) {
         converters.put(type, converter);
     }

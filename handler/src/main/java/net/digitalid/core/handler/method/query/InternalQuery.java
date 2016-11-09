@@ -5,6 +5,8 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -49,6 +51,7 @@ public abstract class InternalQuery extends Query<NonHostEntity> implements Inte
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
+    @TODO(task = "Also pass the present agent as an argument so that it does not have to be recreated again?", date = "2016-11-09", author = Author.KASPAR_ETTER)
     protected abstract @Nonnull QueryReply<NonHostEntity> execute() throws DatabaseException;
     
     @Override

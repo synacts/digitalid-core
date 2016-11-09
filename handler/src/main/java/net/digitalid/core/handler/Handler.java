@@ -12,6 +12,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.SiteDependency;
+import net.digitalid.core.handler.method.Method;
+import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.service.Service;
@@ -59,7 +61,7 @@ public interface Handler<E extends Entity> extends RootInterface, SiteDependency
      */
     @Pure
     @Provided
-    @Default("signature == null ? null : null /* Find a way to derive it from signature.getSubject(), probably make it injectable. */")
+    @Default("/* signature == null ? null : */ null /* Find a way to derive it from signature.getSubject(), probably make it injectable. */")
     public @Nullable E getEntity();
     
     @Pure

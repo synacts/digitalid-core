@@ -22,6 +22,8 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Handler;
+import net.digitalid.core.handler.method.action.Action;
+import net.digitalid.core.handler.method.query.Query;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
