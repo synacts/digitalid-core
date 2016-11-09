@@ -91,6 +91,7 @@ public abstract class ReplyIndex {
     }
     
     @Pure
+    @TODO(task = "Implement this method (here or somewhere/somehow else.", date = "2016-11-09", author = Author.KASPAR_ETTER)
     private static long store(@Nonnull HostSignature<?> signature) {
         return 0;
     }

@@ -51,7 +51,14 @@ public abstract class ExternalAction extends Action {
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     
     /**
-     * Executes this action if an error occurred during pushing.
+     * This method is executed after successful transmission.
+     */
+    @NonCommitting
+    @PureWithSideEffects
+    public void executeOnSuccess() throws DatabaseException {}
+    
+    /**
+     * This method is executed if an error occurred during pushing.
      */
     @NonCommitting
     @PureWithSideEffects

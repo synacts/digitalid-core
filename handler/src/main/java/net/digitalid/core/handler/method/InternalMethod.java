@@ -3,15 +3,12 @@ package net.digitalid.core.handler.method;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.handler.Handler;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.restrictions.Restrictions;
 
@@ -23,8 +20,7 @@ import net.digitalid.core.restrictions.Restrictions;
  * @see InternalQuery
  */
 @Immutable
-@TODO(task = "Make sure that overriding methods in the handler works like this.", date = "2016-11-08", author = Author.KASPAR_ETTER)
-public interface InternalMethod extends Handler<NonHostEntity> {
+public interface InternalMethod extends Method<NonHostEntity> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     

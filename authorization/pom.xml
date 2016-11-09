@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-coreservice</artifactId>
+            <artifactId>core-handler</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

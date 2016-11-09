@@ -16,11 +16,11 @@ import net.digitalid.database.storage.Storage;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.annotations.OnClientRecipient;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Auditable;
 import net.digitalid.core.handler.method.Method;
+import net.digitalid.core.handler.method.MethodImplementation;
 import net.digitalid.core.handler.reply.ActionReply;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
@@ -34,7 +34,7 @@ import net.digitalid.core.restrictions.Restrictions;
  * @see ExternalAction
  */
 @Immutable
-public abstract class Action extends Method<NonHostEntity> implements Auditable {
+public abstract class Action extends MethodImplementation<NonHostEntity> implements Auditable {
     
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
     
@@ -51,25 +51,6 @@ public abstract class Action extends Method<NonHostEntity> implements Auditable 
     @OnHostRecipient
     @PureWithSideEffects
     public abstract @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException;
-    
-    /**
-     * Executes this action on the client.
-     * 
-     * @throws DatabaseException if this handler cannot be executed.
-     */
-    @NonCommitting
-    @OnClientRecipient
-    @PureWithSideEffects
-    public abstract void executeOnClient() throws DatabaseException;
-    
-    /**
-     * This method is executed after successful transmission.
-     * 
-     * @throws DatabaseException if this handler cannot be executed.
-     */
-    @NonCommitting
-    @PureWithSideEffects
-    public void executeOnSuccess() throws DatabaseException {}
     
     /* -------------------------------------------------- Auditable -------------------------------------------------- */
     

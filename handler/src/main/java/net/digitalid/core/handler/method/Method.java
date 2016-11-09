@@ -12,7 +12,6 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -29,14 +28,14 @@ import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 
 /**
- * This class implements a remote method invocation mechanism.
- * All methods have to extend this class and {@link #add(net.digitalid.service.core.identity.SemanticType, net.digitalid.service.core.handler.Method.Factory) register} themselves as handlers.
+ * This type implements a remote method invocation mechanism.
+ * All methods have to extend this interface and {@link MethodIndex#add(net.digitalid.core.identification.identity.SemanticType, net.digitalid.utility.conversion.converter.Converter) register} themselves as handlers.
  * 
  * @see Action
  * @see Query
  */
 @Immutable
-public abstract class Method<E extends Entity> extends RootClass implements Handler<E> {
+public interface Method<E extends Entity> extends Handler<E> {
     
     /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
@@ -44,7 +43,7 @@ public abstract class Method<E extends Entity> extends RootClass implements Hand
      * Returns the recipient of this method.
      */
     @Pure
-    public abstract @Nonnull HostIdentifier getRecipient();
+    public @Nonnull HostIdentifier getRecipient();
     
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
     
@@ -52,7 +51,7 @@ public abstract class Method<E extends Entity> extends RootClass implements Hand
      * Returns whether this method needs to be lodged.
      */
     @Pure
-    public abstract boolean isLodged();
+    public boolean isLodged();
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
@@ -61,7 +60,7 @@ public abstract class Method<E extends Entity> extends RootClass implements Hand
      */
     @Pure
     @Default("null")
-    public abstract @Nullable BigInteger getValue();
+    public @Nullable BigInteger getValue();
     
     /* -------------------------------------------------- Requirements -------------------------------------------------- */
     
@@ -69,19 +68,19 @@ public abstract class Method<E extends Entity> extends RootClass implements Hand
      * Returns whether this method can be sent by hosts.
      */
     @Pure
-    public abstract boolean canBeSentByHosts();
+    public boolean canBeSentByHosts();
     
     /**
      * Returns whether this method can be sent by clients.
      */
     @Pure
-    public abstract boolean canBeSentByClients();
+    public boolean canBeSentByClients();
     
     /**
      * Returns the permissions required for this method.
      */
     @Pure
-    public @Nonnull @Frozen ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
+    public default @Nonnull @Frozen ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return FreezableAgentPermissions.NONE;
     }
     
@@ -93,7 +92,7 @@ public abstract class Method<E extends Entity> extends RootClass implements Hand
     @Pure
     // TODO: Rather move this method to the reply class (and match methods that generate replies)?
     // TODO: Make the return type void and throw a InvalidReplyParameterValueException instead?
-    public abstract boolean matches(@Nullable Reply<E> reply);
+    public boolean matches(@Nullable Reply<E> reply);
     
     /**
      * Executes this method on the host.
@@ -109,13 +108,13 @@ public abstract class Method<E extends Entity> extends RootClass implements Hand
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public abstract @Nullable Reply<E> executeOnHost() throws RequestException, DatabaseException;
+    public @Nullable Reply<E> executeOnHost() throws RequestException, DatabaseException;
     
     /* -------------------------------------------------- Send -------------------------------------------------- */
     
     @NonCommitting
     @PureWithSideEffects
-    public <R extends Reply<E>> @Nullable R send() throws ExternalException {
+    public default <R extends Reply<E>> @Nullable R send() throws ExternalException {
         // TODO (see net.digitalid.core.initializer.MethodSenderImplementation)
         return null;
     }
@@ -138,7 +137,7 @@ public abstract class Method<E extends Entity> extends RootClass implements Hand
      * @return whether the other method is similar to this one.
      */
     @Pure
-    public boolean isSimilarTo(@Nonnull Method<?> other) {
+    public default boolean isSimilarTo(@Nonnull Method<?> other) {
         return Objects.equals(this.getEntity(), other.getEntity())
                 && this.getSubject().equals(other.getSubject())
                 && this.getRecipient().equals(other.getRecipient())
@@ -150,8 +149,8 @@ public abstract class Method<E extends Entity> extends RootClass implements Hand
     @Pure
     @Override
     @CallSuper
-    public void validate() {
-        super.validate();
+    public default void validate() {
+        Handler.super.validate();
         Validate.that(!willBeSent() || !isOnHost() || canBeSentByHosts()).orThrow("Methods to be sent on hosts have to be sendable by hosts.");
         Validate.that(!willBeSent() || !isOnClient() || canBeSentByClients()).orThrow("Methods to be sent on clients have to be sendable by clients.");
         Validate.that(!hasBeenReceived() || isOnHost()).orThrow("Methods can only be received on hosts and the entity may not be null then.");

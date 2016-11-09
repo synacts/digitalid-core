@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-identification</artifactId>
+            <artifactId>core-entity</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

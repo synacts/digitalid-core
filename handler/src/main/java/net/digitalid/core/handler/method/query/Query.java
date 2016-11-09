@@ -12,7 +12,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
-import net.digitalid.core.handler.method.Method;
+import net.digitalid.core.handler.method.MethodImplementation;
 import net.digitalid.core.handler.reply.QueryReply;
 
 /**
@@ -22,7 +22,7 @@ import net.digitalid.core.handler.reply.QueryReply;
  * @see ExternalQuery
  */
 @Immutable
-public abstract class Query<E extends Entity> extends Method<E> {
+public abstract class Query<E extends Entity> extends MethodImplementation<E> {
     
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
     

@@ -35,6 +35,9 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
     public abstract @Nonnull Exponent getSV();
     
     @Pure
+    public abstract boolean isLodged();
+    
+    @Pure
     public abstract @Nonnull List<@Nonnull ClientCredential> getCredentials();
     
     @Pure
