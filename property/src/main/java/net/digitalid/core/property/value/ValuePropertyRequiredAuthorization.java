@@ -15,7 +15,7 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
-import net.digitalid.core.property.RequiredAuthorization;
+import net.digitalid.core.property.PropertyRequiredAuthorization;
 import net.digitalid.core.restrictions.Restrictions;
 
 /**
@@ -24,7 +24,7 @@ import net.digitalid.core.restrictions.Restrictions;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class ValueRequiredAuthorization<E extends Entity, K, C extends Concept<E, K>, V> extends RequiredAuthorization<E, K, C> {
+public abstract class ValuePropertyRequiredAuthorization<E extends Entity, K, C extends Concept<E, K>, V> extends PropertyRequiredAuthorization<E, K, C> {
     
     @Pure
     @Default("(concept, value) -> ReadOnlyAgentPermissions.NONE")

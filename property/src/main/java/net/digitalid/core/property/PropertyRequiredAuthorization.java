@@ -17,17 +17,17 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
-import net.digitalid.core.property.value.ValueRequiredAuthorization;
+import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
 import net.digitalid.core.restrictions.Restrictions;
 
 /**
  * This class models the authorization required to modify a synchronized property and retrieve its state.
  * 
- * @see ValueRequiredAuthorization
+ * @see ValuePropertyRequiredAuthorization
  */
 @Immutable
 @TODO(task = "Maybe remove the generic parameters as they are not needed (at the moment).", date = "2016-11-12", author = Author.KASPAR_ETTER)
-public abstract class RequiredAuthorization<E extends Entity, K, C extends Concept<E, K>> {
+public abstract class PropertyRequiredAuthorization<E extends Entity, K, C extends Concept<E, K>> {
     
     /**
      * Returns the condition with which the returned state is restricted.

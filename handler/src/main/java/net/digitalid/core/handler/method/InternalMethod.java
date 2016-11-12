@@ -35,7 +35,7 @@ public interface InternalMethod extends Method<NonHostEntity> {
     @Pure
     @Override
     @Provided
-    @Derive("entity.getIdentity().getAddress()")
+    @Derive("getEntity().getIdentity().getAddress()")
     public @Nonnull InternalIdentifier getSubject();
     
     /* -------------------------------------------------- Requirements -------------------------------------------------- */

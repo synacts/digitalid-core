@@ -18,7 +18,7 @@ import net.digitalid.core.identification.identity.SemanticType;
  * This factory creates a new property for each concept instance and stores the required converters and methods.
  */
 @Immutable
-public interface SynchronizedPropertyTable<E extends Entity, K, C extends Concept<E, K>, N extends PersistentPropertyEntry<C>, A extends RequiredAuthorization<E, K, C>> extends PersistentPropertyTable<C, N> {
+public interface SynchronizedPropertyTable<E extends Entity, K, C extends Concept<E, K>, N extends PersistentPropertyEntry<C>, A extends PropertyRequiredAuthorization<E, K, C>> extends PersistentPropertyTable<C, N> {
     
     /* -------------------------------------------------- Parent Module -------------------------------------------------- */
     

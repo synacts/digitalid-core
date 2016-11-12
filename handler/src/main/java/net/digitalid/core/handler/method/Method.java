@@ -9,10 +9,11 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -61,8 +62,10 @@ public interface Method<E extends Entity> extends Handler<E> {
      * Returns either the value b' for clients or the value f' for hosts or null if no credential is shortened.
      */
     @Pure
-    @Default("null")
-    public @Nullable BigInteger getValue();
+    @TODO(task = "Do we have to provide the value here rather than in the signature?", date = "2016-11-12", author = Author.KASPAR_ETTER)
+    public default @Nullable BigInteger getCommitmentValue() {
+        return null;
+    }
     
     /* -------------------------------------------------- Requirements -------------------------------------------------- */
     

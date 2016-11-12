@@ -36,8 +36,7 @@ import net.digitalid.core.property.SynchronizedProperty;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 /**
- * This writable property stores a value in the persistent database.
- * property belongs to a concept and stores a replaceable value that cannot be null.
+ * This synchronized property synchronizes a value across sites.
  */
 @ThreadSafe
 @GenerateBuilder

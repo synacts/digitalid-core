@@ -17,7 +17,6 @@ import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
-import net.digitalid.utility.generator.annotations.meta.Interceptor;
 import net.digitalid.utility.generator.information.method.MethodInformation;
 import net.digitalid.utility.generator.information.type.TypeInformation;
 import net.digitalid.utility.generator.interceptor.MethodInterceptor;
@@ -36,7 +35,7 @@ import net.digitalid.core.concept.ConceptModuleBuilder;
  */
 @Documented
 @Target(ElementType.METHOD)
-@Interceptor(GenerateConceptModule.Interceptor.class)
+// TODO: @Interceptor(GenerateConceptModule.Interceptor.class)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GenerateConceptModule {
     

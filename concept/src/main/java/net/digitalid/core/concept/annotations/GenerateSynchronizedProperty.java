@@ -24,7 +24,6 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.contracts.exceptions.PreconditionViolationException;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.functional.failable.FailableConsumer;
-import net.digitalid.utility.generator.annotations.meta.Interceptor;
 import net.digitalid.utility.generator.information.method.MethodInformation;
 import net.digitalid.utility.generator.information.type.TypeInformation;
 import net.digitalid.utility.generator.interceptor.MethodInterceptor;
@@ -42,7 +41,7 @@ import net.digitalid.utility.validation.validator.ValueAnnotationValidator;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Interceptor(GenerateSynchronizedProperty.Interceptor.class)
+// TODO: @Interceptor(GenerateSynchronizedProperty.Interceptor.class)
 public @interface GenerateSynchronizedProperty {
     
     // TODO: Implement the interceptor that generates the property with the info.

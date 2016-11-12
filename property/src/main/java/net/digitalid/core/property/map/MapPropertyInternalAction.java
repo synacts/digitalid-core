@@ -1,26 +1,24 @@
-package net.digitalid.core.property.value;
-
-import java.util.Objects;
+package net.digitalid.core.property.map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.ReadOnlyList;
-import net.digitalid.utility.contracts.Validate;
+import net.digitalid.utility.collections.map.FreezableMap;
+import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.storage.Storage;
 
@@ -34,15 +32,21 @@ import net.digitalid.core.property.PropertyInternalAction;
 import net.digitalid.core.restrictions.Restrictions;
 
 /**
- * This class models the {@link InternalAction internal action} of a {@link WritableSynchronizedValueProperty writable synchronized value property}.
+ * This class models the {@link InternalAction internal action} of a {@link WritableSynchronizedMapProperty writable synchronized map property}.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
 //@GenerateConverter // TODO: Maybe the converter has to be written manually anyway (in order to recover the property). Otherwise, make sure the converter generator can handle generic types.
-public abstract class ValuePropertyInternalAction<E extends Entity, K, C extends Concept<E, K>, V> extends PropertyInternalAction<E, K, C, WritableSynchronizedValueProperty<E, K, C, V>> implements Valid.Value<V> {
+public abstract class MapPropertyInternalAction<E extends Entity, K, C extends Concept<E, K>, U, V, R extends ReadOnlyMap<@Nonnull @Valid("key") U, @Nonnull @Valid V>, F extends FreezableMap<@Nonnull @Valid("key") U, @Nonnull @Valid V>> extends PropertyInternalAction<E, K, C, WritableSynchronizedMapProperty<E, K, C, U, V, R, F>> implements Valid.Key<U>, Valid.Value<V> {
     
-    /* -------------------------------------------------- Validator -------------------------------------------------- */
+    /* -------------------------------------------------- Validators -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Predicate<? super U> getKeyValidator() {
+        return getProperty().getKeyValidator();
+    }
     
     @Pure
     @Override
@@ -53,38 +57,22 @@ public abstract class ValuePropertyInternalAction<E extends Entity, K, C extends
     /* -------------------------------------------------- Values -------------------------------------------------- */
     
     /**
-     * Returns the time of the last modification.
+     * Returns the key added to or removed from the property.
      */
     @Pure
-    protected abstract @Nullable Time getOldTime();
+    protected abstract @Nonnull @Valid("key") U getKey();
     
     /**
-     * Returns the current time.
+     * Returns the value added to or removed from the property.
      */
     @Pure
-    protected abstract @Nullable Time getNewTime();
+    protected abstract @Nonnull @Valid V getValue();
     
     /**
-     * Returns the old value of the property.
+     * Returns whether the key and value are added to or removed from the property.
      */
     @Pure
-    protected abstract @Valid V getOldValue();
-    
-    /**
-     * Returns the new value of the property.
-     */
-    @Pure
-    protected abstract @Valid V getNewValue();
-    
-    /* -------------------------------------------------- Validation -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    @CallSuper
-    public void validate() {
-        super.validate();
-        Validate.that(!Objects.equals(getNewValue(), getOldValue())).orThrow("The new value $ may not be the same as the old value $.", getNewValue(), getOldValue());
-    }
+    protected abstract boolean isAdded();
     
     /* -------------------------------------------------- Action -------------------------------------------------- */
     
@@ -101,20 +89,20 @@ public abstract class ValuePropertyInternalAction<E extends Entity, K, C extends
     @NonCommitting
     @PureWithSideEffects
     protected void executeOnBoth() throws DatabaseException {
-        getProperty().replace(getOldTime(), getNewTime(), getOldValue(), getNewValue());
+        getProperty().modify(getKey(), getValue(), isAdded());
     }
     
     @Pure
     @Override
     public boolean interferesWith(@Nonnull Action action) {
-        return action instanceof ValuePropertyInternalAction<?, ?, ?, ?> && ((ValuePropertyInternalAction<?, ?, ?, ?>) action).getProperty().equals(getProperty());
+        return action instanceof MapPropertyInternalAction<?, ?, ?, ?, ?, ?, ?> && ((MapPropertyInternalAction<?, ?, ?, ?, ?, ?, ?>) action).getProperty().equals(getProperty());
     }
     
     @Pure
     @Override
     @OnClientRecipient
-    public @Nonnull ValuePropertyInternalAction<E, K, C, V> getReverse() throws DatabaseException {
-        return ValuePropertyInternalActionBuilder.withProperty(getProperty()).withOldValue(getNewValue()).withNewValue(getOldValue()).withOldTime(getNewTime()).withNewTime(getOldTime()).build();
+    public @Nonnull MapPropertyInternalAction<E, K, C, U, V, R, F> getReverse() throws DatabaseException {
+        return MapPropertyInternalActionBuilder.withProperty(getProperty()).withKey(getKey()).withValue(getValue()).withAdded(isAdded()).build();
     }
     
     /* -------------------------------------------------- Required Authorization -------------------------------------------------- */
@@ -122,37 +110,37 @@ public abstract class ValuePropertyInternalAction<E extends Entity, K, C extends
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredPermissionsToExecuteMethod().evaluate(getProperty().getConcept(), getNewValue());
+        return getProperty().getTable().getRequiredAuthorization().getRequiredPermissionsToExecuteMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
     }
     
     @Pure
     @Override
     public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredRestrictionsToExecuteMethod().evaluate(getProperty().getConcept(), getNewValue());
+        return getProperty().getTable().getRequiredAuthorization().getRequiredRestrictionsToExecuteMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
     }
     
     @Pure
     @Override
     public @Nullable Agent getRequiredAgentToExecuteMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToExecuteMethod().evaluate(getProperty().getConcept(), getNewValue());
+        return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToExecuteMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
     }
     
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredPermissionsToSeeMethod().evaluate(getProperty().getConcept(), getNewValue());
+        return getProperty().getTable().getRequiredAuthorization().getRequiredPermissionsToSeeMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
     }
     
     @Pure
     @Override
     public @Nonnull Restrictions getRequiredRestrictionsToSeeMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredRestrictionsToSeeMethod().evaluate(getProperty().getConcept(), getNewValue());
+        return getProperty().getTable().getRequiredAuthorization().getRequiredRestrictionsToSeeMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
     }
     
     @Pure
     @Override
     public @Nullable Agent getRequiredAgentToSeeMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToSeeMethod().evaluate(getProperty().getConcept(), getNewValue());
+        return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToSeeMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
     }
     
 }

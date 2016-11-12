@@ -1,4 +1,4 @@
-package net.digitalid.core.property.value;
+package net.digitalid.core.property.set;
 
 import javax.annotation.Nonnull;
 
@@ -10,28 +10,28 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.property.value.PersistentValuePropertyEntry;
-import net.digitalid.database.property.value.PersistentValuePropertyEntryConverter;
-import net.digitalid.database.property.value.PersistentValuePropertyTable;
+import net.digitalid.database.property.set.PersistentSetPropertyEntry;
+import net.digitalid.database.property.set.PersistentSetPropertyEntryConverter;
+import net.digitalid.database.property.set.PersistentSetPropertyTable;
 
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedPropertyTable;
 
 /**
- * The synchronized value property table stores the {@link PersistentValuePropertyEntry value property entries}.
+ * The synchronized set property table stores the {@link PersistentSetPropertyEntry set property entries}.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SynchronizedValuePropertyTable<E extends Entity, K, C extends Concept<E, K>, V, T> extends PersistentValuePropertyTable<C, V, T>, SynchronizedPropertyTable<E, K, C, PersistentValuePropertyEntry<C, V>, ValuePropertyRequiredAuthorization<E, K, C, V>> {
+public interface SynchronizedSetPropertyTable<E extends Entity, K, C extends Concept<E, K>, V, T> extends PersistentSetPropertyTable<C, V, T>, SynchronizedPropertyTable<E, K, C, PersistentSetPropertyEntry<C, V>, SetPropertyRequiredAuthorization<E, K, C, V>> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
     @TODO(task = "Is it really necessary to override this method manually?", date = "2016-11-12", author = Author.KASPAR_ETTER)
-    @Derive("net.digitalid.database.property.value.PersistentValuePropertyEntryConverterBuilder.<C, V, T>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public @Nonnull PersistentValuePropertyEntryConverter<C, V, T> getEntryConverter();
+    @Derive("net.digitalid.database.property.set.PersistentSetPropertyEntryConverterBuilder.<C, V, T>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    public @Nonnull PersistentSetPropertyEntryConverter<C, V, T> getEntryConverter();
     
 }
