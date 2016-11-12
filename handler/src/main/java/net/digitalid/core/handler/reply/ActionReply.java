@@ -82,19 +82,19 @@ public abstract class ActionReply extends Reply<NonHostEntity> implements Audita
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeMethod() {
         return ReadOnlyAgentPermissions.NONE;
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit() {
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeMethod() {
         return Restrictions.MIN;
     }
     
     @Pure
     @Override
-    public @Nullable Agent getRequiredAgentToSeeAudit() {
+    public @Nullable Agent getRequiredAgentToSeeMethod() {
         return null;
     }
     

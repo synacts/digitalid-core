@@ -4,29 +4,37 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.functional.interfaces.UnaryFunction;
+import net.digitalid.utility.tuples.Triplet;
+import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanExpression;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.concept.Concept;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
-import net.digitalid.core.property.nonnullable.NonNullableRequiredAuthorization;
+import net.digitalid.core.property.value.ValueRequiredAuthorization;
 import net.digitalid.core.restrictions.Restrictions;
 
 /**
- * This class models the authorization required to modify a concept property and retrieve its state.
+ * This class models the authorization required to modify a synchronized property and retrieve its state.
  * 
- * @see NonNullableRequiredAuthorization
+ * @see ValueRequiredAuthorization
  */
 @Immutable
-public abstract class RequiredAuthorization<C extends Concept<?, ?>, V> {
+@TODO(task = "Maybe remove the generic parameters as they are not needed (at the moment).", date = "2016-11-12", author = Author.KASPAR_ETTER)
+public abstract class RequiredAuthorization<E extends Entity, K, C extends Concept<E, K>> {
     
     /**
      * Returns the condition with which the returned state is restricted.
      */
     @Pure
     // TODO: Improve the flexibility so that tables can also be joined.
-    public abstract @Nonnull SQLBooleanExpression getStateFilter(@Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent);
+    @Default("null") // TODO: Make the return value non-null.
+    public abstract @Nullable UnaryFunction<@Nonnull Triplet<@Nonnull ReadOnlyAgentPermissions, @Nonnull Restrictions, @Nullable Agent>, @Nonnull SQLBooleanExpression<?>> getStateFilter();
     
 }

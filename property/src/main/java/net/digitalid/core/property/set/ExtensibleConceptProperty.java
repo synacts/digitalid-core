@@ -1,4 +1,4 @@
-package net.digitalid.core.property.extensible;
+package net.digitalid.core.property.set;
 
 /**
  * Description.

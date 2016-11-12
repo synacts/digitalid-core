@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.concurrency.map.ConcurrentHashMapBuilder;
 import net.digitalid.utility.concurrency.map.ConcurrentMap;
@@ -36,7 +37,7 @@ public abstract class ConceptIndex<E extends Entity, K, C extends Concept<E, K>>
      * Removes the entries of the given entity from all indexes.
      */
     // TODO: Make sure this method is called in the right places!
-    @Pure // TODO: Should be impure!
+    @Impure
     @SingleAccess
     public static void remove(@Nonnull Entity entity) {
         Require.that(Database.isSingleAccess()).orThrow("The database is in single-access mode.");

@@ -1,4 +1,4 @@
-package net.digitalid.core.property.indexed;
+package net.digitalid.core.property.map;
 
 /**
  * Description.
