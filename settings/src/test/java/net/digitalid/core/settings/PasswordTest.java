@@ -1,38 +1,47 @@
 package net.digitalid.core.settings;
 
-import java.sql.SQLException;
-
 import javax.annotation.Nonnull;
 
-import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+
+import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.testing.TestSite;
 
-import net.digitalid.core.server.IdentitySetup;
+import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.identification.identity.InternalNonHostIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
 
-/**
- * Unit testing of the {@link Settings password} with its {@link Action actions}.
- */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public final class PasswordTest extends IdentitySetup {
+@Immutable
+@GenerateBuilder
+@GenerateSubclass
+interface TestNonHostEntity extends NonHostEntity {
+    
+    @Pure
+    @Override
+    public @Nonnull InternalNonHostIdentity getIdentity();
+    
+}
+
+public class PasswordTest extends SQLTestBase {
     
     private static final @Nonnull String VALUE = "Pa$$word";
         
     @Test
-    @Committing
     public void _01_testValueReplace() throws DatabaseException {
-        print("_01_testValueReplace");
         try {
-            final @Nonnull Settings password = Settings.get(getRole());
-            password.setValue(VALUE);
-            Settings.reset(getRole()); // Not necessary but I want to test the database state.
-            Assert.assertEquals(VALUE, password.getValue());
+            final @Nonnull Settings settings = Settings.of(TestNonHostEntityBuilder.withSite(TestSite.INSTANCE).withKey(0).withIdentity(SemanticType.map("test@core.digitalid.net")).build());
+            settings.password().set(VALUE);
+            settings.password().reset(); // Not necessary but I want to test the database state.
+            assertEquals(VALUE, settings.password().get());
             Database.commit();
-        } catch (@Nonnull SQLException exception) {
+        } catch (@Nonnull DatabaseException exception) {
             exception.printStackTrace();
             Database.rollback();
             throw exception;
@@ -40,3 +49,10 @@ public final class PasswordTest extends IdentitySetup {
     }
     
 }
+
+/*
+
+interface Type (rename the existing Type to TypeIdentity (similar to HostIdentity))
+enum PrimitiveType
+
+*/

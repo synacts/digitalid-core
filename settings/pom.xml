@@ -19,6 +19,12 @@
             <artifactId>core-property</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-testing</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     
 </project>

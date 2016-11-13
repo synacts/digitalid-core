@@ -1,5 +1,7 @@
 package net.digitalid.core.identification.identity;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -28,6 +30,7 @@ import net.digitalid.core.identification.annotations.type.loaded.Loaded;
 import net.digitalid.core.identification.annotations.type.loaded.LoadedRecipient;
 import net.digitalid.core.identification.annotations.type.loaded.NonLoaded;
 import net.digitalid.core.identification.annotations.type.loaded.NonLoadedRecipient;
+import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identifier.NonHostIdentifier;
 
 /**
@@ -105,7 +108,7 @@ public abstract class SemanticType extends Type {
     public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
         // TODO: What to do here?
         // return Mapper.mapSemanticType(InternalNonHostIdentifier.get(identifier));
-        return null;
+        return new SemanticTypeSubclass(ThreadLocalRandom.current().nextInt(1, 1000), InternalNonHostIdentifier.with(identifier));
     }
     
     

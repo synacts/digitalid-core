@@ -10,6 +10,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.InternalPerson;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * This class models the core service.
@@ -23,7 +24,7 @@ public abstract class CoreService extends Service {
     /**
      * Stores the single instance of this service.
      */
-    public static final @Nonnull CoreService INSTANCE = new CoreServiceSubclass(null /* TODO: Identity.IDENTIFIER */, "Core Service", "1.0");
+    public static final @Nonnull CoreService INSTANCE = new CoreServiceSubclass(SemanticType.map("@digitalid.net") /* TODO: Identity.IDENTIFIER */, "Core Service", "1.0");
     
     /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
