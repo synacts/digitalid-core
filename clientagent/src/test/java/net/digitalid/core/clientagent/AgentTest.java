@@ -1,3 +1,5 @@
+package net.digitalid.core.clientagent;
+
 // TODO: Write integration tests like these.
 
 //package net.digitalid.core.agent;

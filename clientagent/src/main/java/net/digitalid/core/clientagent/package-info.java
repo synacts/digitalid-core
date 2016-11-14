@@ -1,4 +1,4 @@
 /**
- * Provides classes for handling agents and their authorization.
+ * Provides classes for handling client agents.
  */
-package net.digitalid.core.agent;
+package net.digitalid.core.clientagent;

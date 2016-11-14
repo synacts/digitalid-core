@@ -132,7 +132,7 @@ public abstract class Credential extends RootClass {
      * @require isRoleBased() : "This credential is role-based.";
      */
     @Pure
-    public @Nonnull ReadOnlyAgentPermissions getExposedPermissions() {
+    public @Nonnull @Frozen ReadOnlyAgentPermissions getExposedPermissions() {
         Require.that(isRoleBased()).orThrow("This credential has to be role-based.");
         
         return getExposedExponent().getHashedOrSaltedPermissions().getExposedPermissions();

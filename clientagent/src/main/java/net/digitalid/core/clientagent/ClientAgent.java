@@ -30,7 +30,7 @@ public abstract class ClientAgent extends Agent {
     /* -------------------------------------------------- Commitment -------------------------------------------------- */
     
     /**
-     * Stores the required authorization to change the password.
+     * Stores the required authorization to change the commitment.
      */
     static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity, Long, ClientAgent, Commitment> COMMITMENT_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity, Long, ClientAgent, Commitment>withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
     
@@ -44,7 +44,7 @@ public abstract class ClientAgent extends Agent {
     /* -------------------------------------------------- Name -------------------------------------------------- */
     
     /**
-     * Stores the required authorization to change the password.
+     * Stores the required authorization to change the name.
      */
     static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity, Long, ClientAgent, String> NAME_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity, Long, ClientAgent, String>withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
     
