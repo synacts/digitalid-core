@@ -82,7 +82,7 @@ public abstract class Settings extends CoreConcept<NonHostEntity, None> {
     private final @Nonnull WritablePersistentValueProperty<Settings, @Nonnull @MaxSize(50) String> password = WritableSynchronizedValuePropertyBuilder.<NonHostEntity, None, Settings, String>withConcept(this).withTable(PASSWORD_TABLE).build();
     
     /**
-     * Stores the password of these settings.
+     * Returns the password property of these settings.
      */
     @Pure
 //    @Default("\"\"") // TODO: "The generation annotation may only be used on abstract getters."

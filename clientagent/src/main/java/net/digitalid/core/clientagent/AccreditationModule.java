@@ -1,19 +1,12 @@
-package net.digitalid.core.agent;
-
-import java.sql.Statement;
+package net.digitalid.core.clientagent;
 
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.table.Site;
-import net.digitalid.database.interfaces.Database;
-
 import net.digitalid.core.service.CoreService;
-import net.digitalid.core.state.ClientModule;
-import net.digitalid.core.state.Service;
+import net.digitalid.core.service.Service;
 
 /**
  * This class provides database access to the accreditation requests of the core service.
@@ -21,7 +14,7 @@ import net.digitalid.core.state.Service;
  * @see ClientAgent
  */
 @Stateless
-public final class AccreditationModule implements ClientModule {
+public final class AccreditationModule /* implements ClientModule */ {
     
     /**
      * Stores an instance of this module.
@@ -29,27 +22,25 @@ public final class AccreditationModule implements ClientModule {
     public static final AccreditationModule MODULE = new AccreditationModule();
     
     @Pure
-    @Override
+//    @Override
     public @Nonnull Service getService() {
-        return CoreService.SERVICE;
+        return CoreService.INSTANCE;
     }
     
-    @Override
-    @NonCommitting
-    public void createTables(@Nonnull Site site) throws DatabaseException {
-        try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Create the tables of this module.
-        }
-    }
-    
-    @Override
-    @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws DatabaseException {
-        try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Delete the tables of this module.
-        }
-    }
-    
-    static { CoreService.SERVICE.add(MODULE); }
+//    @Override
+//    @NonCommitting
+//    public void createTables(@Nonnull Site site) throws DatabaseException {
+//            // TODO: Create the tables of this module.
+//    }
+//    
+//    @Override
+//    @NonCommitting
+//    public void deleteTables(@Nonnull Site site) throws DatabaseException {
+//        try (@Nonnull Statement statement = Database.createStatement()) {
+//            // TODO: Delete the tables of this module.
+//        }
+//    }
+//    
+//    static { CoreService.SERVICE.add(MODULE); }
     
 }
