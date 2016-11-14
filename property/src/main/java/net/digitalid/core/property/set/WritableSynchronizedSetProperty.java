@@ -105,7 +105,7 @@ public abstract class WritableSynchronizedSetProperty<E extends Entity, K, C ext
     @NonCommitting
     @TODO(task = "Implement and use SQL.delete().", date = "2016-11-12", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
     protected void modify(@Nonnull @Valid V value, boolean added) throws DatabaseException {
-        lock.lock();
+        lock.getReentrantLock().lock();
         try {
             final @Nonnull PersistentSetPropertyEntry<C, V> entry = PersistentSetPropertyEntryBuilder.<C, V>withSubject(getSubject()).withValue(value).build();
             if (added) {

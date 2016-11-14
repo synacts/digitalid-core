@@ -108,7 +108,7 @@ public abstract class WritableSynchronizedMapProperty<E extends Entity, K, C ext
     @NonCommitting
     @TODO(task = "Implement and use SQL.delete().", date = "2016-11-12", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
     protected void modify(@Nonnull @Valid("key") U key, @Nonnull @Valid V value, boolean added) throws DatabaseException {
-        lock.lock();
+        lock.getReentrantLock().lock();
         try {
             final @Nonnull PersistentMapPropertyEntry<C, U, V> entry = PersistentMapPropertyEntryBuilder.<C, U, V>withSubject(getSubject()).withKey(key).withValue(value).build();
             if (added) {

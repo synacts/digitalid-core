@@ -50,7 +50,7 @@ public @interface OnClientRecipient {
         @Pure
         @Override
         public @Nonnull Contract generateContract(@Nonnull Element element, @Nonnull AnnotationMirror annotationMirror, @NonCaptured @Modified @Nonnull TypeImporter typeImporter) {
-            return Contract.with("!isOnClient()", "The method " + Quotes.inSingle(element.getSimpleName().toString()) + " may only be called on a client.");
+            return Contract.with("isOnClient()", "The method " + Quotes.inSingle(element.getSimpleName().toString()) + " may only be called on a client.");
         }
         
     }

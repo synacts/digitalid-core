@@ -82,7 +82,7 @@ public abstract class WritableSynchronizedValueProperty<E extends Entity, K, C e
     @NonCommitting
     @TODO(task = "Implement and use SQL.insertOrUpdate() instead of using SQL.insert().", date = "2016-11-10", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
     protected void replace(@Nullable Time oldTime, @Nullable Time newTime, @Valid V oldValue, @Valid V newValue) throws DatabaseException {
-        lock.lock();
+        lock.getReentrantLock().lock();
         try {
             final @Nonnull PersistentValuePropertyEntry<C, V> entry = PersistentValuePropertyEntryBuilder.<C, V>withSubject(getSubject()).withTime(newTime).withValue(newValue).build();
             SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite()); // TODO: Only update if the oldTime and oldValue match the replaced entry.

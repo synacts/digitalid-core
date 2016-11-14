@@ -8,6 +8,7 @@ import net.digitalid.utility.validation.annotations.generation.NonRepresentative
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.property.Subject;
@@ -42,6 +43,7 @@ public abstract class Concept<E extends Entity, K> extends RootClass implements 
      * Returns the key which identifies this concept.
      */
     @Pure
+    @Embedded // TODO: Depends on the key type!
     public abstract @Nonnull K getKey();
     
     /* -------------------------------------------------- Site -------------------------------------------------- */

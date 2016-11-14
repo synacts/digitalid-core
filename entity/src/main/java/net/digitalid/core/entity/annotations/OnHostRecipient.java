@@ -50,7 +50,7 @@ public @interface OnHostRecipient {
         @Pure
         @Override
         public @Nonnull Contract generateContract(@Nonnull Element element, @Nonnull AnnotationMirror annotationMirror, @NonCaptured @Modified @Nonnull TypeImporter typeImporter) {
-            return Contract.with("!isOnHost()", "The method " + Quotes.inSingle(element.getSimpleName().toString()) + " may only be called on a host.");
+            return Contract.with("isOnHost()", "The method " + Quotes.inSingle(element.getSimpleName().toString()) + " may only be called on a host.");
         }
         
     }
