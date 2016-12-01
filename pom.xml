@@ -42,7 +42,6 @@
         <module>entity</module>
         <module>service</module>
         <module>concept</module>
-        <module>node</module>
         <module>restrictions</module>
         <module>agent</module>
         
@@ -71,8 +70,7 @@
         <module>outgoingrole</module>
         <module>error</module>
         <module>pusher</module>
-        <module>contact</module>
-        <module>context</module>
+        <module>node</module>
         
         <module>expression</module>
         <module>certificate</module>

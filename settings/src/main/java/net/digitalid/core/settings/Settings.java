@@ -66,7 +66,7 @@ public abstract class Settings extends CoreConcept<NonHostEntity, None> {
         return SettingsSubclass.MODULE.getConceptIndex().get(entity, None.INSTANCE);
     }
     
-    /* -------------------------------------------------- Value Property -------------------------------------------------- */
+    /* -------------------------------------------------- Password -------------------------------------------------- */
     
     /**
      * Stores the required authorization to change the password.

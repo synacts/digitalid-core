@@ -16,7 +16,6 @@ import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
-import net.digitalid.core.node.Node;
 
 /**
  * This class models the restrictions of an agent's authorization.

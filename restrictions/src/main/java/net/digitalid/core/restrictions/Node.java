@@ -1,4 +1,4 @@
-package net.digitalid.core.node;
+package net.digitalid.core.restrictions;
 
 import javax.annotation.Nonnull;
 
@@ -29,8 +29,6 @@ public abstract class Node extends CoreConcept<NonHostEntity, Long> {
     
     /* -------------------------------------------------- Permissions -------------------------------------------------- */
     
-    // TODO: Declare the required authorization object.
-    
     /**
      * Returns the permissions of this node.
      */
@@ -45,13 +43,13 @@ public abstract class Node extends CoreConcept<NonHostEntity, Long> {
      */
     @Pure
     @GenerateSynchronizedProperty
-//    @GenerateProperty(requiredPermissionsToExecuteMethod = "value, false", requiredRestrictionsToExecuteMethod = "false, false, true, concept", requiredPermissionsToSeeMethod = "value, false", requiredRestrictionsToSeeMethod = "false, false, false, concept")
     public abstract @Nonnull WritablePersistentSetProperty<Node, SemanticType, ReadOnlyAuthentications, FreezableAuthentications> authentications();
     
     /* -------------------------------------------------- Supernode -------------------------------------------------- */
     
     /**
      * Returns whether this node is a supernode of the given node.
+     * This relation is reflexive (i.e. the method returns {@code true} for the same node).
      */
     @Pure
     @NonCommitting
@@ -59,7 +57,7 @@ public abstract class Node extends CoreConcept<NonHostEntity, Long> {
     
     // TODO: Include methods to aggregate the permissions and authentications over the contexts to which this node belongs.
     
-    /* -------------------------------------------------- Recover -------------------------------------------------- */
+    /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     /**
      * Returns the node with the given key.

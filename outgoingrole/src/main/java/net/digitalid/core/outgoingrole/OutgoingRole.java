@@ -23,7 +23,7 @@ import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.identification.annotations.type.kind.RoleType;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.node.Node;
+import net.digitalid.core.restrictions.Node;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;

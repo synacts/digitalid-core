@@ -16,12 +16,12 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-concept</artifactId>
+            <artifactId>core-outgoingrole</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-typeset</artifactId>
+            <artifactId>core-pusher</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

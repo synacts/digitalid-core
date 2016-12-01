@@ -1,3 +1,5 @@
+package net.digitalid.core.node;
+
 // TODO (and maybe move to another project)
 
 //package net.digitalid.core.contact;

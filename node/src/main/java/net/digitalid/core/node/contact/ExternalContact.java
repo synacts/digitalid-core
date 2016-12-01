@@ -1,4 +1,4 @@
-package net.digitalid.core.contact;
+package net.digitalid.core.node.contact;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +27,7 @@ public abstract class ExternalContact extends Contact {
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     /**
-     * Returns the potentially cached contact of the given entity and person that might not yet exist in the database.
+     * Returns the potentially cached contact of the given entity for the given person that might not yet exist in the database.
      */
     @Pure
     @Recover

@@ -1,3 +1,5 @@
+package net.digitalid.core.node.contact;
+
 // TODO: Remove this class once all of this works.
 
 //package net.digitalid.core.contact;
