@@ -8,7 +8,6 @@ import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.agent.Agent;
@@ -88,7 +87,6 @@ public abstract class ClientAgent extends Agent {
      */
     @Pure
     @Recover
-    @NonCommitting
     public static @Nonnull ClientAgent of(@Nonnull NonHostEntity entity, long key) {
         return null;
 //        return ClientAgentSubclass.MODULE.getConceptIndex().get(entity, key); // TODO

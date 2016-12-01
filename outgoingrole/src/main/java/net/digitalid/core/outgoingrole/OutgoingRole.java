@@ -263,7 +263,6 @@ public abstract class OutgoingRole extends Agent {
      */
     @Pure
     @Recover
-    @NonCommitting
     public static @Nonnull OutgoingRole of(@Nonnull NonHostEntity entity, long key) {
         return null;
 //        return OutgoingRoleSubclass.MODULE.getConceptIndex().get(entity, key); // TODO

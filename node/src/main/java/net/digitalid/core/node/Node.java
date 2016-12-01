@@ -36,8 +36,6 @@ public abstract class Node extends CoreConcept<NonHostEntity, Long> {
      */
     @Pure
     @GenerateSynchronizedProperty
-//    @GenerateProperty(requiredPermissionsToExecuteMethod = "value, false", requiredRestrictionsToExecuteMethod = "false, false, true, concept", requiredPermissionsToSeeMethod = "value, false", requiredRestrictionsToSeeMethod = "false, false, false, concept")
-//    @GenerateProperty(requiredPermissionsToExecuteMethod = "value, false", requiredRestrictionsToExecuteMethod = "RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()", requiredPermissionsToSeeMethod = "value, false", requiredRestrictionsToSeeMethod = "RestrictionsBuilder.withNode(concept).build()")
     public abstract @Nonnull WritablePersistentSetProperty<Node, SemanticType, ReadOnlyNodePermissions, FreezableNodePermissions> permissions();
     
     /* -------------------------------------------------- Authentications -------------------------------------------------- */
@@ -58,6 +56,8 @@ public abstract class Node extends CoreConcept<NonHostEntity, Long> {
     @Pure
     @NonCommitting
     public abstract boolean isSupernodeOf(@Nonnull Node node) throws DatabaseException;
+    
+    // TODO: Include methods to aggregate the permissions and authentications over the contexts to which this node belongs.
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
     

@@ -13,7 +13,6 @@ import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.auxiliary.None;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
@@ -63,7 +62,6 @@ public abstract class Settings extends CoreConcept<NonHostEntity, None> {
      */
     @Pure
     @Recover
-    @NonCommitting
     public static @Nonnull Settings of(@Nonnull NonHostEntity entity) {
         return SettingsSubclass.MODULE.getConceptIndex().get(entity, None.INSTANCE);
     }

@@ -1,8 +1,10 @@
-package net.digitalid.core.contact;
+package net.digitalid.core.context;
 
 import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.core.contact.Contact;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.interfaces.Database;
