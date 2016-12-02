@@ -128,7 +128,7 @@ public abstract class Context extends ExtendedNode {
      */
     @Pure
     @NonCommitting
-    public @Nonnull @Capturable @NonFrozen FreezableSet<Contact> getAllContacts() throws DatabaseException {
+    public @Capturable @Nonnull @NonFrozen FreezableSet<Contact> getAllContacts() throws DatabaseException {
         return contacts().get().clone(); // TODO: Make a real aggregation.
     }
     

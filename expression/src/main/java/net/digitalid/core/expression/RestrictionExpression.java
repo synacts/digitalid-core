@@ -3,73 +3,81 @@ package net.digitalid.core.expression;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
-import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
-import net.digitalid.utility.collections.freezable.FreezableSet;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collaboration.enumerations.Priority;
+import net.digitalid.utility.collections.set.FreezableLinkedHashSetBuilder;
+import net.digitalid.utility.collections.set.FreezableSet;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.contracts.Validate;
+import net.digitalid.utility.conversion.converters.StringConverter;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.value.Valid;
 
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.signature.CredentialsSignatureWrapper;
-import net.digitalid.service.core.block.wrappers.value.string.StringWrapper;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.entity.NonHostEntity;
-import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.core.expression.operators.BinaryOperator;
+import net.digitalid.core.expression.operators.RestrictionOperator;
+import net.digitalid.core.identification.annotations.type.kind.AttributeType;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.node.contact.Contact;
+import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
  * This class models restriction expressions.
  * 
- * @invariant (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
+ * @invariant (operator == null) == (string == null) : "Either both the operator and the string are null or none of them.";
  */
 @Immutable
-final class RestrictionExpression extends Expression {
+@GenerateSubclass
+abstract class RestrictionExpression extends Expression {
+    
+    /* -------------------------------------------------- Valid -------------------------------------------------- */
     
     /**
-     * Stores the attribute type for the restriction.
-     * 
-     * @invariant type.isAttributeType() : "The type denotes an attribute.";
+     * Returns whether the given string is valid.
      */
-    private final @Nonnull SemanticType type;
-    
-    /**
-     * Stores the string for the restriction.
-     * 
-     * @invariant string == null || isQuoted(string) || string.matches("\\d+") : "If not null, the string either is a string or a number.";
-     */
-    private final @Nullable String string;
-    
-    /**
-     * Stores the symbol of this expression.
-     * 
-     * @invariant symbol == null || symbols.contains(symbol) : "If not null, the symbol is valid.";
-     */
-    private final @Nullable String symbol;
-    
-    /**
-     * Creates a new restriction expression with the given type, string and symbol.
-     * 
-     * @param type the attribute type for the restriction or zero for public access.
-     * @param string the string for the restriction.
-     * @param symbol the symbol of this expression.
-     * 
-     * @require type.isAttributeType() : "The type denotes an attribute.";
-     * @require (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
-     * @require string == null || isQuoted(string) || string.matches("\\d+") : "If not null, the string either is a string or a number.";
-     * @require symbol == null || symbols.contains(symbol) : "If not null, the symbol is valid.";
-     */
-    RestrictionExpression(@Nonnull NonHostEntity entity, @Nonnull SemanticType type, @Nullable String string, @Nullable String symbol) {
-        super(entity);
-        
-        Require.that(type.isAttributeType()).orThrow("The type denotes an attribute.");
-        Require.that((string == null) == (symbol == null)).orThrow("Either both string and symbol are null or none of them.");
-        Require.that(string == null || isQuoted(string) || string.matches("\\d+")).orThrow("If not null, the string either is a string or a number.");
-        Require.that(symbol == null || symbols.contains(symbol)).orThrow("If not null, the symbol is valid.");
-        
-        this.type = type;
-        this.string = string;
-        this.symbol = symbol;
+    @Pure
+    boolean isValid(@Nonnull String string) {
+        return ExpressionParser.isQuoted(string) || string.matches("\\d+");
     }
     
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
+    
+    /**
+     * Returns the attribute type for the restriction.
+     */
+    @Pure
+    abstract @Nonnull @AttributeType SemanticType getType();
+    
+    /**
+     * Returns the operator for the restriction.
+     */
+    @Pure
+    abstract @Nullable RestrictionOperator getOperator();
+    
+    /**
+     * Returns the string for the restriction.
+     */
+    @Pure
+    abstract @Nullable @Valid String getString();
+    
+    /* -------------------------------------------------- Validation -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @CallSuper
+    public void validate() {
+        Validate.that((getOperator() == null) == (getString() == null)).orThrow("Either both the operator and the string have to be null or none of them.");
+        super.validate();
+    }
+    
+    /* -------------------------------------------------- Queries -------------------------------------------------- */
     
     @Pure
     @Override
@@ -89,55 +97,69 @@ final class RestrictionExpression extends Expression {
         return true;
     }
     
+    /* -------------------------------------------------- Aggregations -------------------------------------------------- */
     
     @Pure
     @Override
-    @Nonnull @Capturable FreezableSet<Contact> getContacts() {
-        Require.that(isActive()).orThrow("This expression is active.");
+    @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() {
+        Require.that(isActive()).orThrow("This expression has to be active but was $.", this);
         
-        return new FreezableLinkedHashSet<>();
+        return FreezableLinkedHashSetBuilder.build();
     }
     
     @Pure
     @Override
-    boolean matches(@Nonnull Block attributeContent) {
+    boolean matches(@Nonnull Selfcontained attributeContent) {
         Require.that(isImpersonal()).orThrow("This expression is impersonal.");
         
-        if (!attributeContent.getType().equals(type)) { return false; }
+        if (!attributeContent.getType().equals(getType())) { return false; }
         
-        if (string == null || symbol == null) { return true; }
+        final @Nullable RestrictionOperator operator = getOperator();
+        final @Nullable String string = getString();
         
-        if (isQuoted(string)) {
-            final byte[] bytes = attributeContent.getBytes(1);
-            final @Nonnull String substring = removeQuotes(string).toLowerCase();
-            final @Nonnull String attribute = new String(bytes, 0, bytes.length, StringWrapper.CHARSET).toLowerCase();
-            if (symbol.equals("=")) { return attribute.equals(substring); }
-            if (symbol.equals("≠")) { return !attribute.equals(substring); }
-            if (symbol.equals("<")) { return attribute.compareTo(substring) < 0; }
-            if (symbol.equals(">")) { return attribute.compareTo(substring) > 0; }
-            if (symbol.equals("≤")) { return attribute.compareTo(substring) <= 0; }
-            if (symbol.equals("≥")) { return attribute.compareTo(substring) >= 0; }
-            if (symbol.equals("/")) { return attribute.startsWith(substring); }
-            if (symbol.equals("!/")) { return !attribute.startsWith(substring); }
-            if (symbol.equals("|")) { return attribute.contains(substring); }
-            if (symbol.equals("!|")) { return !attribute.contains(substring); }
-            if (symbol.equals("\\")) { return attribute.endsWith(substring); }
-            if (symbol.equals("!\\")) { return !attribute.endsWith(substring); }
-        } else {
-            final int length = attributeContent.getLength();
-            if (length > 8) { return false; }
-            long attribute = 0;
-            for (int i = 0; i < length; i++) {
-                attribute = (attribute << 8) | (attributeContent.getByte(i) & 0xFF);
-            }
+        if (operator == null || string == null) { return true; }
+        
+        if (ExpressionParser.isQuoted(string)) {
+            final @Nonnull String substring = ExpressionParser.removeQuotes(string).toLowerCase();
+            final @Nonnull String attribute;
             try {
-                final long number = Long.parseLong(this.string);
-                if (symbol.equals("=")) { return attribute == number; }
-                if (symbol.equals("≠")) { return attribute != number; }
-                if (symbol.equals("<")) { return attribute < number; }
-                if (symbol.equals(">")) { return attribute > number; }
-                if (symbol.equals("≤")) { return attribute <= number; }
-                if (symbol.equals("≥")) { return attribute >= number; }
+                final @Nullable String content = attributeContent.recover(StringConverter.INSTANCE, null);
+                attribute = content != null ? content.toLowerCase() : "";
+            } catch (@Nonnull ExternalException exception) {
+                throw new RuntimeException(exception); // TODO
+            }
+            switch (operator) {
+                case EQUAL: return attribute.equals(substring);
+                case UNEQUAL: return !attribute.equals(substring);
+                case LESS: return attribute.compareTo(substring) < 0;
+                case GREATER: return attribute.compareTo(substring) > 0;
+                case LESS_OR_EQUAL: return attribute.compareTo(substring) <= 0;
+                case GREATER_OR_EQUAL: return attribute.compareTo(substring) >= 0;
+                case PREFIX: return attribute.startsWith(substring);
+                case NOT_PREFIX: return !attribute.startsWith(substring);
+                case INFIX: return attribute.contains(substring);
+                case NOT_INFIX: return !attribute.contains(substring);
+                case POSTFIX: return attribute.endsWith(substring);
+                case NOT_POSTFIX: return !attribute.endsWith(substring);
+            }
+        } else {
+            // TODO: Use a NumberConverter to retrieve the value from the attribute content:
+//            final int length = attributeContent.getLength();
+//            if (length > 8) { return false; }
+            long attribute = 0;
+//            for (int i = 0; i < length; i++) {
+//                attribute = (attribute << 8) | (attributeContent.getByte(i) & 0xFF);
+//            }
+            try {
+                final long number = Long.parseLong(string);
+                switch (operator) {
+                    case EQUAL: return attribute == number;
+                    case UNEQUAL: return attribute != number;
+                    case LESS: return attribute < number;
+                    case GREATER: return attribute > number;
+                    case LESS_OR_EQUAL: return attribute <= number;
+                    case GREATER_OR_EQUAL: return attribute >= number;
+                }
             } catch (@Nonnull NumberFormatException exception) {}
         }
         
@@ -146,39 +168,20 @@ final class RestrictionExpression extends Expression {
     
     @Pure
     @Override
-    boolean matches(@Nonnull CredentialsSignatureWrapper signature) {
-        final @Nullable Block attributeContent = signature.getAttributeContent(type);
-        if (attributeContent == null) { return false; }
-        return matches(attributeContent);
+    @TODO(task = "Implement the check.", date = "2016-12-02", author = Author.KASPAR_ETTER, priority = Priority.HIGH)
+    boolean matches(@Nonnull CredentialsSignature<?> signature) {
+        return true;
+//        final @Nullable Block attributeContent = signature.getAttributeContent(type);
+//        if (attributeContent == null) { return false; }
+//        return matches(attributeContent);
     }
     
+    /* -------------------------------------------------- String -------------------------------------------------- */
     
     @Pure
     @Override
-    @Nonnull String toString(@Nullable Character operator, boolean right) {
-        Require.that(operator == null || operators.contains(operator)).orThrow("The operator is valid.");
-        
-        return addQuotesIfNecessary(type) + (symbol == null ? "" : symbol) + (string == null ? "" : string);
-    }
-    
-    
-    @Pure
-    @Override
-    public boolean equals(@Nullable Object object) {
-        if (object == this) { return true; }
-        if (object == null || !(object instanceof RestrictionExpression)) { return false; }
-        final @Nonnull RestrictionExpression other = (RestrictionExpression) object;
-        return this.type.equals(other.type) && this.string.equals(other.string) && this.symbol.equals(other.symbol);
-    }
-    
-    @Pure
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 19 * hash + type.hashCode();
-        hash = 19 * hash + string.hashCode();
-        hash = 19 * hash + symbol.hashCode();
-        return hash;
+    @Nonnull String toString(@Nullable BinaryOperator operator, boolean right) {
+        return ExpressionParser.addQuotesIfNecessary(getType()) + (getOperator() == null ? "" : getOperator().getSymbol()) + (getString() == null ? "" : getString());
     }
     
 }

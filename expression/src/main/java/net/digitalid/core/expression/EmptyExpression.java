@@ -3,32 +3,28 @@ package net.digitalid.core.expression;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.ownership.Capturable;
-import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
-import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.collections.set.FreezableLinkedHashSetBuilder;
+import net.digitalid.utility.collections.set.FreezableSet;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.signature.CredentialsSignatureWrapper;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.core.expression.operators.BinaryOperator;
+import net.digitalid.core.node.contact.Contact;
+import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
  * This class models empty expressions.
  */
 @Immutable
-final class EmptyExpression extends Expression {
+@GenerateSubclass
+abstract class EmptyExpression extends Expression {
     
-    /**
-     * Creates a new empty expression.
-     * 
-     * @param entity the entity to which this expression belongs.
-     */
-    EmptyExpression(@Nonnull NonHostEntity entity) {
-        super(entity);
-    }
-    
+    /* -------------------------------------------------- Queries -------------------------------------------------- */
     
     @Pure
     @Override
@@ -48,49 +44,50 @@ final class EmptyExpression extends Expression {
         return true;
     }
     
+    /* -------------------------------------------------- Aggregations -------------------------------------------------- */
     
     @Pure
     @Override
-    @Nonnull @Capturable FreezableSet<Contact> getContacts() {
-        Require.that(isActive()).orThrow("This expression is active.");
+    @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() {
+        Require.that(isActive()).orThrow("This expression has to be active but was $.", this);
         
-        return new FreezableLinkedHashSet<>();
+        return FreezableLinkedHashSetBuilder.build();
     }
     
     @Pure
     @Override
-    boolean matches(@Nonnull Block attributeContent) {
-        Require.that(isImpersonal()).orThrow("This expression is impersonal.");
+    boolean matches(@Nonnull Selfcontained attributeContent) {
+        Require.that(isImpersonal()).orThrow("This expression has to be impersonal but was $.", this);
         
         return true;
     }
     
     @Pure
     @Override
-    boolean matches(@Nonnull CredentialsSignatureWrapper signature) {
+    boolean matches(@Nonnull CredentialsSignature<?> signature) {
         return false;
     }
     
+    /* -------------------------------------------------- String -------------------------------------------------- */
     
     @Pure
     @Override
-    @Nonnull String toString(@Nullable Character operator, boolean right) {
-        Require.that(operator == null || operators.contains(operator)).orThrow("The operator is valid.");
-        
+    @Nonnull String toString(@Nullable BinaryOperator operator, boolean right) {
         return "";
     }
     
+    // TODO: Check whether the equals and hashCode methods are correctly generated.
     
-    @Pure
-    @Override
-    public boolean equals(@Nullable Object object) {
-        return object instanceof EmptyExpression;
-    }
-    
-    @Pure
-    @Override
-    public int hashCode() {
-        return 1234567;
-    }
-    
+//    @Pure
+//    @Override
+//    public boolean equals(@Nullable Object object) {
+//        return object instanceof EmptyExpression;
+//    }
+//    
+//    @Pure
+//    @Override
+//    public int hashCode() {
+//        return 1234567;
+//    }
+//    
 }

@@ -5,39 +5,40 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
-import net.digitalid.utility.collections.freezable.FreezableSet;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collaboration.enumerations.Priority;
+import net.digitalid.utility.collections.set.FreezableSet;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.signature.CredentialsSignatureWrapper;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.concepts.contact.Context;
-import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.core.expression.operators.BinaryOperator;
+import net.digitalid.core.node.contact.Contact;
+import net.digitalid.core.node.context.Context;
+import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
  * This class models context expressions.
  */
 @Immutable
-final class ContextExpression extends Expression {
+@GenerateSubclass
+abstract class ContextExpression extends Expression {
+    
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
-     * Stores the context of this expression.
+     * Returns the context of this expression.
      */
-    private final @Nonnull Context context;
+    @Pure
+    abstract @Nonnull Context getContext();
     
-    /**
-     * Creates a new context expression with the given context.
-     * 
-     * @param context the context to use.
-     */
-    ContextExpression(@Nonnull NonHostEntity entity, @Nonnull Context context) {
-        super(entity);
-        
-        this.context = context;
-    }
-    
+    /* -------------------------------------------------- Queries -------------------------------------------------- */
     
     @Pure
     @Override
@@ -57,20 +58,21 @@ final class ContextExpression extends Expression {
         return false;
     }
     
+    /* -------------------------------------------------- Aggregations -------------------------------------------------- */
     
     @Pure
     @Override
     @NonCommitting
-    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws DatabaseException {
-        Require.that(isActive()).orThrow("This expression is active.");
+    @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() throws DatabaseException {
+        Require.that(isActive()).orThrow("This expression has to be active but was $.", this);
         
-        return context.getAllContacts();
+        return getContext().getAllContacts();
     }
     
     @Pure
     @Override
-    boolean matches(@Nonnull Block attributeContent) {
-        Require.that(isImpersonal()).orThrow("This expression is impersonal.");
+    boolean matches(@Nonnull Selfcontained attributeContent) {
+        Require.that(isImpersonal()).orThrow("This expression has to be impersonal but was $.", this);
         
         return false;
     }
@@ -78,33 +80,18 @@ final class ContextExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws DatabaseException {
-        return signature.isIdentityBased() && !signature.isRoleBased() && context.contains(Contact.get(getEntity(), signature.getIssuer()));
+    @TODO(task = "Implement the check.", date = "2016-12-02", author = Author.KASPAR_ETTER, priority = Priority.HIGH)
+    boolean matches(@Nonnull CredentialsSignature<?> signature) throws DatabaseException {
+        return true;
+//        return signature.isIdentityBased() && !signature.isRoleBased() && context.contains(Contact.get(getEntity(), signature.getIssuer()));
     }
     
+    /* -------------------------------------------------- String -------------------------------------------------- */
     
     @Pure
     @Override
-    @Nonnull String toString(@Nullable Character operator, boolean right) {
-        Require.that(operator == null || operators.contains(operator)).orThrow("The operator is valid.");
-        
-        return context.toString();
-    }
-    
-    
-    @Pure
-    @Override
-    public boolean equals(@Nullable Object object) {
-        if (object == this) { return true; }
-        if (object == null || !(object instanceof ContextExpression)) { return false; }
-        final @Nonnull ContextExpression other = (ContextExpression) object;
-        return this.context.equals(other.context);
-    }
-    
-    @Pure
-    @Override
-    public int hashCode() {
-        return context.hashCode();
+    @Nonnull String toString(@Nullable BinaryOperator operator, boolean right) {
+        return getContext().getKey().toString();
     }
     
 }

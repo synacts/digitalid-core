@@ -3,39 +3,39 @@ package net.digitalid.core.expression;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.ownership.Capturable;
-import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
-import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collaboration.enumerations.Priority;
+import net.digitalid.utility.collections.set.FreezableLinkedHashSet;
+import net.digitalid.utility.collections.set.FreezableSet;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.signature.CredentialsSignatureWrapper;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.core.expression.operators.BinaryOperator;
+import net.digitalid.core.node.contact.Contact;
+import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
  * This class models contact expressions.
  */
 @Immutable
-final class ContactExpression extends Expression {
+@GenerateSubclass
+abstract class ContactExpression extends Expression {
+    
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
-     * Stores the contact of this expression.
+     * Returns the contact of this expression.
      */
-    private final @Nonnull Contact contact;
+    @Pure
+    abstract @Nonnull Contact getContact();
     
-    /**
-     * Creates a new contact expression with the given contact.
-     * 
-     * @param contact the contact to use.
-     */
-    ContactExpression(@Nonnull NonHostEntity entity, @Nonnull Contact contact) {
-        super(entity);
-        
-        this.contact = contact;
-    }
-    
+    /* -------------------------------------------------- Queries -------------------------------------------------- */
     
     @Pure
     @Override
@@ -55,52 +55,38 @@ final class ContactExpression extends Expression {
         return false;
     }
     
+    /* -------------------------------------------------- Aggregations -------------------------------------------------- */
     
     @Pure
     @Override
-    @Nonnull @Capturable FreezableSet<Contact> getContacts() {
-        Require.that(isActive()).orThrow("This expression is active.");
+    @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() {
+        Require.that(isActive()).orThrow("This expression has to be active but was $.", this);
         
-        return new FreezableLinkedHashSet<>(contact);
+        return FreezableLinkedHashSet.withElement(getContact());
     }
     
     @Pure
     @Override
-    boolean matches(@Nonnull Block attributeContent) {
-        Require.that(isImpersonal()).orThrow("This expression is impersonal.");
+    boolean matches(@Nonnull Selfcontained attributeContent) {
+        Require.that(isImpersonal()).orThrow("This expression has to be impersonal but was $.", this);
         
         return false;
     }
     
     @Pure
     @Override
-    boolean matches(@Nonnull CredentialsSignatureWrapper signature) {
-        return signature.isIdentityBased() && !signature.isRoleBased() && signature.getIssuer().equals(contact.getPerson());
+    @TODO(task = "Implement the check.", date = "2016-12-02", author = Author.KASPAR_ETTER, priority = Priority.HIGH)
+    boolean matches(@Nonnull CredentialsSignature<?> signature) {
+        return true;
+//        return signature.isIdentityBased() && !signature.isRoleBased() && signature.getIssuer().equals(contact.getPerson());
     }
     
+    /* -------------------------------------------------- String -------------------------------------------------- */
     
     @Pure
     @Override
-    @Nonnull String toString(@Nullable Character operator, boolean right) {
-        Require.that(operator == null || operators.contains(operator)).orThrow("The operator is valid.");
-        
-        return addQuotesIfNecessary(contact.getPerson());
-    }
-    
-    
-    @Pure
-    @Override
-    public boolean equals(@Nullable Object object) {
-        if (object == this) { return true; }
-        if (object == null || !(object instanceof ContactExpression)) { return false; }
-        final @Nonnull ContactExpression other = (ContactExpression) object;
-        return this.contact.equals(other.contact);
-    }
-    
-    @Pure
-    @Override
-    public int hashCode() {
-        return contact.hashCode();
+    @Nonnull String toString(@Nullable BinaryOperator operator, boolean right) {
+        return ExpressionParser.addQuotesIfNecessary(getContact().getPerson());
     }
     
 }

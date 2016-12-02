@@ -43,10 +43,10 @@ public abstract class MethodIndex {
     @Pure
     @TODO(task = "Provide only the signature but with an appropriate generic type?", date = "2016-11-07", author = Author.KASPAR_ETTER)
     public static @Nonnull Method get(@Nonnull Selfcontained selfcontained, @Nonnull Signature<?> signature) throws ExternalException {
-        final @Nullable Converter<? extends Method<?>, @Nonnull Signature<?>> converter = converters.get(selfcontained.getSemanticType());
-        if (converter == null) { throw RequestException.with(RequestErrorCode.METHOD, "No method could be found for the type $.", selfcontained.getSemanticType()); }
+        final @Nullable Converter<? extends Method<?>, @Nonnull Signature<?>> converter = converters.get(selfcontained.getType());
+        if (converter == null) { throw RequestException.with(RequestErrorCode.METHOD, "No method could be found for the type $.", selfcontained.getType()); }
         final @Nullable Method<?> method = selfcontained.recover(converter, signature);
-        if (method == null) { throw RequestException.with(RequestErrorCode.METHOD, "The method could not be recovered for the type $.", selfcontained.getSemanticType()); }
+        if (method == null) { throw RequestException.with(RequestErrorCode.METHOD, "The method could not be recovered for the type $.", selfcontained.getType()); }
         return method;
     }
     

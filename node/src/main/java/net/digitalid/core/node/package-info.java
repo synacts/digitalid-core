@@ -1,4 +1,4 @@
 /**
- * Provides classes for handling contacts with their permissions and authentications.
+ * Provides classes for handling nodes with their permissions and authentications.
  */
 package net.digitalid.core.node;

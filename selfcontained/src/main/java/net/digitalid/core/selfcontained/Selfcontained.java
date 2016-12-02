@@ -24,7 +24,7 @@ public abstract class Selfcontained {
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     @Pure
-    public abstract @Nonnull SemanticType getSemanticType();
+    public abstract @Nonnull SemanticType getType();
     
     @Pure
     protected abstract @Nonnull byte[] getObject();

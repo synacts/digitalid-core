@@ -31,7 +31,7 @@ public abstract class AttributeValue extends RootClass {
      * Returns the signature with the selfcontained attribute value.
      */
     @Pure
-    public abstract @Nonnull @Invariant(condition = "signature.getElement().getSemanticType().isAttributeType()", message = "The type of the selfcontained value denotes an attribute.") Signature<Selfcontained> getSignature();
+    public abstract @Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the selfcontained value denotes an attribute.") Signature<Selfcontained> getSignature();
     
     /**
      * Returns whether this attribute value is certified.
@@ -67,7 +67,7 @@ public abstract class AttributeValue extends RootClass {
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     @Pure
-    public static @Nonnull AttributeValue with(@Nonnull @Invariant(condition = "signature.getElement().getSemanticType().isAttributeType()", message = "The type of the selfcontained value denotes an attribute.") Signature<Selfcontained> signature) {
+    public static @Nonnull AttributeValue with(@Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the selfcontained value denotes an attribute.") Signature<Selfcontained> signature) {
         if (signature instanceof HostSignature<?>) { return new CertifiedAttributeValueSubclass((HostSignature<Selfcontained>) signature); }
         else { return new UncertifiedAttributeValueSubclass(signature); }
     }

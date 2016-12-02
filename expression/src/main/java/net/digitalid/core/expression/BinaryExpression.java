@@ -3,75 +3,59 @@ package net.digitalid.core.expression;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.ownership.Capturable;
-import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
-import net.digitalid.utility.collections.freezable.FreezableSet;
-import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.collections.set.FreezableSet;
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.packet.exceptions.RequestException;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.signature.CredentialsSignatureWrapper;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.core.expression.operators.BinaryOperator;
+import net.digitalid.core.node.contact.Contact;
+import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
  * This class models binary expressions.
  */
 @Immutable
-final class BinaryExpression extends Expression {
+@GenerateSubclass
+abstract class BinaryExpression extends Expression {
+    
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
-     * Stores the left child of this binary expression.
+     * Returns the left child of this binary expression.
      */
-    private final @Nonnull Expression left;
+    @Pure
+    abstract @Nonnull Expression getLeftChild();
     
     /**
-     * Stores the right child of this binary expression.
+     * Returns the right child of this binary expression.
      */
-    private final @Nonnull Expression right;
+    @Pure
+    abstract @Nonnull Expression getRightChild();
     
     /**
-     * Stores the operator this binary expression.
-     * 
-     * @invariant operators.contains(operator) : "The operator is valid.";
+     * Returns the operator of this binary expression.
      */
-    private final char operator;
+    @Pure
+    abstract @Nonnull BinaryOperator getOperator();
     
-    /**
-     * Creates a new binary expression with the given left and right children.
-     * 
-     * @param entity the entity to which this expression belongs.
-     * @param left the left child to parse.
-     * @param right the right child to parse.
-     * @param operator the operator to use.
-     * 
-     * @require operators.contains(operator) : "The operator is valid.";
-     */
-    @NonCommitting
-    BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, char operator) throws ExternalException {
-        super(entity);
-        
-        Require.that(operators.contains(operator)).orThrow("The operator is valid.");
-        
-        this.left = Expression.parse(entity, left);
-        this.right = Expression.parse(entity, right);
-        this.operator = operator;
-    }
-    
+    /* -------------------------------------------------- Queries -------------------------------------------------- */
     
     @Pure
     @Override
     boolean isPublic() {
-        switch (operator) {
-            case '+': return left.isPublic() || right.isPublic();
-            case '-': return left.isPublic() && right instanceof EmptyExpression;
-            case '*': return left.isPublic() && right.isPublic();
+        switch (getOperator()) {
+            case ADDITION: return getLeftChild().isPublic() || getRightChild().isPublic();
+            case SUBTRACTION: return getLeftChild().isPublic() && getRightChild() instanceof EmptyExpression;
+            case MULTIPLICATION: return getLeftChild().isPublic() && getRightChild().isPublic();
             default: return false;
         }
     }
@@ -79,41 +63,43 @@ final class BinaryExpression extends Expression {
     @Pure
     @Override
     boolean isActive() {
-        return left.isActive() && right.isActive();
+        return getLeftChild().isActive() && getRightChild().isActive();
     }
     
     @Pure
     @Override
     boolean isImpersonal() {
-        return left.isImpersonal() && right.isImpersonal();
+        return getLeftChild().isImpersonal() && getRightChild().isImpersonal();
     }
     
+    /* -------------------------------------------------- Aggregations -------------------------------------------------- */
     
     @Pure
     @Override
     @NonCommitting
-    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws DatabaseException {
-        Require.that(isActive()).orThrow("This expression is active.");
+    @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() throws DatabaseException {
+        Require.that(isActive()).orThrow("This expression has to be active but was $.", this);
         
-        final @Nonnull FreezableSet<Contact> leftContacts = left.getContacts();
-        final @Nonnull FreezableSet<Contact> rightContacts = right.getContacts();
-        switch (operator) {
-            case '+': return leftContacts.add(rightContacts);
-            case '-': return leftContacts.subtract(rightContacts);
-            case '*': return leftContacts.intersect(rightContacts);
-            default: return new FreezableLinkedHashSet<>();
+        final @Nonnull FreezableSet<Contact> leftContacts = getLeftChild().getContacts();
+        final @Nonnull FreezableSet<Contact> rightContacts = getRightChild().getContacts();
+        switch (getOperator()) {
+            case ADDITION: leftContacts.addAll(rightContacts); break;
+            case SUBTRACTION: leftContacts.removeAll(rightContacts); break;
+            case MULTIPLICATION: leftContacts.retainAll(rightContacts); break;
+            default: throw UnexpectedValueException.with("operator", getOperator());
         }
+        return leftContacts;
     }
     
     @Pure
     @Override
-    boolean matches(@Nonnull Block attributeContent) {
-        Require.that(isImpersonal()).orThrow("This expression is impersonal.");
+    boolean matches(@Nonnull Selfcontained attributeContent) {
+        Require.that(isImpersonal()).orThrow("This expression has to be impersonal but was $.", this);
         
-        switch (operator) {
-            case '+': return left.matches(attributeContent) || right.matches(attributeContent);
-            case '-': return left.matches(attributeContent) && !right.matches(attributeContent);
-            case '*': return left.matches(attributeContent) && right.matches(attributeContent);
+        switch (getOperator()) {
+            case ADDITION: return getLeftChild().matches(attributeContent) || getRightChild().matches(attributeContent);
+            case SUBTRACTION: return getLeftChild().matches(attributeContent) && !getRightChild().matches(attributeContent);
+            case MULTIPLICATION: return getLeftChild().matches(attributeContent) && getRightChild().matches(attributeContent);
             default: return false;
         }
     }
@@ -121,55 +107,34 @@ final class BinaryExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws DatabaseException {
-        switch (operator) {
-            case '+': return left.matches(signature) || right.matches(signature);
-            case '-': return left.matches(signature) && !right.matches(signature);
-            case '*': return left.matches(signature) && right.matches(signature);
+    boolean matches(@Nonnull CredentialsSignature<?> signature) throws DatabaseException {
+        switch (getOperator()) {
+            case ADDITION: return getLeftChild().matches(signature) || getRightChild().matches(signature);
+            case SUBTRACTION: return getLeftChild().matches(signature) && !getRightChild().matches(signature);
+            case MULTIPLICATION: return getLeftChild().matches(signature) && getRightChild().matches(signature);
             default: return false;
         }
     }
     
+    /* -------------------------------------------------- String -------------------------------------------------- */
     
     @Pure
     @Override
-    @Nonnull String toString(@Nullable Character operator, boolean right) {
-        Require.that(operator == null || operators.contains(operator)).orThrow("The operator is valid.");
-        
-        final @Nonnull String string = this.left.toString(this.operator, false) + this.operator + this.right.toString(this.operator, true);
+    @Nonnull String toString(@Nullable BinaryOperator operator, boolean right) {
+        final @Nonnull String string = this.getLeftChild().toString(getOperator(), false) + getOperator().getSymbol() + this.getRightChild().toString(getOperator(), true);
         
         final boolean parentheses;
-        if (operator == null || operator == '+') {
+        if (operator == null || operator == BinaryOperator.ADDITION) {
             parentheses = false;
-        } else if (operator == '-') {
-            parentheses = right && this.operator != '*';
-        } else if (operator == '*') {
-            parentheses = this.operator != '*';
+        } else if (operator == BinaryOperator.SUBTRACTION) {
+            parentheses = right && getOperator() != BinaryOperator.MULTIPLICATION;
+        } else if (operator == BinaryOperator.MULTIPLICATION) {
+            parentheses = getOperator() != BinaryOperator.MULTIPLICATION;
         } else {
             throw UnexpectedValueException.with("operator", operator);
         }
         
         return parentheses ? "(" + string + ")" : string;
-    }
-    
-    
-    @Pure
-    @Override
-    public boolean equals(@Nullable Object object) {
-        if (object == this) { return true; }
-        if (object == null || !(object instanceof BinaryExpression)) { return false; }
-        final @Nonnull BinaryExpression other = (BinaryExpression) object;
-        return this.left.equals(other.left) && this.right.equals(other.right) && this.operator == other.operator;
-    }
-    
-    @Pure
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 19 * hash + left.hashCode();
-        hash = 19 * hash + right.hashCode();
-        hash = 19 * hash + operator;
-        return hash;
     }
     
 }
