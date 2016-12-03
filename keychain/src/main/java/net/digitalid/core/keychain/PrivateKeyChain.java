@@ -22,6 +22,7 @@ import net.digitalid.core.asymmetrickey.PrivateKey;
  */
 @Immutable
 @GenerateSubclass
+// TODO: @GenerateConverter
 public abstract class PrivateKeyChain extends KeyChain<PrivateKey> {
     
     /**

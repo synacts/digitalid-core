@@ -141,7 +141,7 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
         final @Nonnull BigInteger hash = new BigInteger(1, digestInputStream.getMessageDigest().digest());
 //        System.out.println("hash: " + hash);
     
-        final @Nonnull HostSignature<T> hostSignature = HostSignatureBuilder.<T>withSigner(signer).withTime(time).withElement(object).withSubject(subject).build();
+        final @Nonnull HostSignature<T> hostSignature = HostSignatureBuilder.withElement(object).withSigner(signer).withTime(time).withSubject(subject).build();
         if (publicKey != null) {
     
             try {

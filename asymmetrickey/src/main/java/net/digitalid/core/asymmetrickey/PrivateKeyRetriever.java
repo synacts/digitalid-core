@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.type.Functional;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -18,6 +19,7 @@ import net.digitalid.core.identification.identity.HostIdentity;
  * The private key retriever retrieves the private key of a host at a given time.
  */
 @Stateless
+@Functional
 public interface PrivateKeyRetriever {
     
     /* -------------------------------------------------- Interface -------------------------------------------------- */

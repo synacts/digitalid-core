@@ -69,7 +69,7 @@ public class HostSignatureConverterTest extends CryptographyTestBase {
         final @Nonnull InternalIdentifier subject = InternalIdentifier.with("bob@digitalid.net");
         final @Nonnull InternalIdentifier signer = InternalIdentifier.with("alice@digitalid.net");
         
-        final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureBuilder.<String>withSigner(signer).withTime(TimeBuilder.build()).withElement(message).withSubject(subject).build();
+        final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureBuilder.withElement(message).withSigner(signer).withTime(TimeBuilder.build()).withSubject(subject).build();
     
         final @Nonnull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         XDF.convert(signedIdentifier, HostSignatureConverter.getInstance(StringConverter.INSTANCE), byteArrayOutputStream);

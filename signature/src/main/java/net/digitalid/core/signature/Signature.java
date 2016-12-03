@@ -30,7 +30,7 @@ public abstract class Signature<T> extends RootClass {
     public abstract @Nullable @Positive Time getTime();
     
     @Pure
-    public abstract @Nullable T getElement();
+    public abstract @Nonnull T getElement();
     
     @Pure
     public boolean isVerified() {

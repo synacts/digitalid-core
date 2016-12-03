@@ -123,7 +123,7 @@ public class ClientSignatureConverter<T> implements Converter<ClientSignature<T>
         final @Nullable BigInteger t = selectionResult.getInteger();
         final @Nullable Exponent s = ExponentConverter.INSTANCE.recover(selectionResult, null);
         
-        final @Nonnull ClientSignature<T> clientSignature = ClientSignatureBuilder.<T>withSecretCommitment(commitment).withElement(object).withSubject(subject).withTime(time).build();
+        final @Nonnull ClientSignature<T> clientSignature = ClientSignatureBuilder.withElement(object).withSecretCommitment(commitment).withSubject(subject).withTime(time).build();
         final @Nonnull BigInteger hash = new BigInteger(1, digestInputStream.getMessageDigest().digest());
         clientSignature.verifySignature(t, s, hash);
         return clientSignature;

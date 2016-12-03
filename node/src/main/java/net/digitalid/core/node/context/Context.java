@@ -1,6 +1,5 @@
 package net.digitalid.core.node.context;
 
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;

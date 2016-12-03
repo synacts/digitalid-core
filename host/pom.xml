@@ -16,11 +16,6 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-keychain</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
             <artifactId>core-client</artifactId>
             <version>${project.version}</version>
         </dependency>
