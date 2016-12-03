@@ -5,9 +5,9 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.identity.InternalIdentity;
-import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.annotations.AttributeType;
+import net.digitalid.core.identification.annotations.type.kind.AttributeType;
+import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * This exception is thrown when an attribute cannot be found.
@@ -36,7 +36,7 @@ public class AttributeNotFoundException extends NotFoundException {
      * @return a new attribute not found exception with the given identity and type.
      */
     @Pure
-    public static @Nonnull AttributeNotFoundException get(@Nonnull InternalIdentity identity, @Nonnull @AttributeType SemanticType type) {
+    public static @Nonnull AttributeNotFoundException with(@Nonnull InternalIdentity identity, @Nonnull @AttributeType SemanticType type) {
         return new AttributeNotFoundException(identity, type);
     }
     

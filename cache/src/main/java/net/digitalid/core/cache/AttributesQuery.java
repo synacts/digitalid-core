@@ -1,45 +1,39 @@
 package net.digitalid.core.cache;
 
-import java.sql.SQLException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.collections.list.FreezableList;
+import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.conversion.Block;
-import net.digitalid.core.conversion.wrappers.signature.CredentialsSignatureWrapper;
-import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-import net.digitalid.core.conversion.wrappers.value.BooleanWrapper;
+import net.digitalid.core.attribute.Attribute;
+import net.digitalid.core.entity.Entity;
+import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.entity.annotations.OnHostRecipient;
+import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.expression.PassiveExpression;
-import net.digitalid.core.packet.exceptions.RequestException;
-
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.concepts.attribute.Attribute;
-import net.digitalid.service.core.concepts.attribute.AttributeValue;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.concepts.contact.FreezableAttributeTypeSet;
-import net.digitalid.service.core.concepts.contact.ReadOnlyAttributeTypeSet;
-import net.digitalid.service.core.concepts.contact.ReadOnlyContactPermissions;
-import net.digitalid.service.core.entity.Account;
-import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-import net.digitalid.service.core.handler.Method;
-import net.digitalid.service.core.handler.Reply;
-import net.digitalid.service.core.handler.core.CoreServiceExternalQuery;
-import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.InternalIdentifier;
-import net.digitalid.service.core.identity.InternalPerson;
-import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.core.handler.CoreHandler;
+import net.digitalid.core.handler.method.query.ExternalQuery;
+import net.digitalid.core.handler.reply.Reply;
+import net.digitalid.core.identification.identity.InternalPerson;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.node.contact.Contact;
+import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
+import net.digitalid.core.signature.Signature;
+import net.digitalid.core.signature.attribute.AttributeValue;
+import net.digitalid.core.signature.credentials.CredentialsSignature;
+import net.digitalid.core.typeset.ReadOnlyAttributeTypeSet;
+import net.digitalid.core.typeset.permissions.ReadOnlyNodePermissions;
 
 /**
  * Queries the given attributes from the given subject.
@@ -47,132 +41,83 @@ import net.digitalid.service.core.identity.SemanticType;
  * @see AttributesReply
  */
 @Immutable
-public final class AttributesQuery extends CoreServiceExternalQuery {
+@GenerateBuilder
+@GenerateSubclass
+// TODO: @GenerateConverter
+public abstract class AttributesQuery extends ExternalQuery<Entity> implements CoreHandler<Entity> {
+    
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
-     * Stores the semantic type {@code query.attribute@core.digitalid.net}.
+     * Returns the attribute types that are queried.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("query.attribute@core.digitalid.net").load(TupleWrapper.XDF_TYPE, FreezableAttributeTypeSet.TYPE, Attribute.PUBLISHED);
-    
-    
-    /**
-     * Stores the attribute types that are queried.
-     * 
-     * @invariant attributeTypes.isFrozen() : "The attribute types are frozen.";
-     * @invariant !attributeTypes.isEmpty() : "The attribute types are not empty.";
-     */
-    private final @Nonnull ReadOnlyAttributeTypeSet attributeTypes;
-    
-    /**
-     * Stores whether the published values are queried.
-     */
-    private final boolean published;
-    
-    /**
-     * Creates an attributes query to query the given attributes of the given subject.
-     * 
-     * @param role the role to which this handler belongs.
-     * @param subject the subject of this handler.
-     * @param attributeTypes the queried attribute types.
-     * @param published whether the published values are queried.
-     * 
-     * @require attributeTypes.isFrozen() : "The attribute types are frozen.";
-     * @require !attributeTypes.isEmpty() : "The attribute types are not empty.";
-     */
-    public AttributesQuery(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull ReadOnlyAttributeTypeSet attributeTypes, boolean published) {
-        super(role, subject);
-        
-        Require.that(attributeTypes.isFrozen()).orThrow("The attribute types are frozen.");
-        Require.that(!attributeTypes.isEmpty()).orThrow("The attribute types are not empty.");
-        
-        this.attributeTypes = attributeTypes;
-        this.published = published;
-    }
-    
-    /**
-     * Creates an attributes query that decodes the given block.
-     * 
-     * @param entity the entity to which this handler belongs.
-     * @param signature the signature of this handler.
-     * @param recipient the recipient of this method.
-     * @param block the content which is to be decoded.
-     * 
-     * @require signature.hasSubject() : "The signature has a subject.";
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     * 
-     * @ensure hasEntity() : "This method has an entity.";
-     * @ensure hasSignature() : "This handler has a signature.";
-     * @ensure isOnHost() : "Queries are only decoded on hosts.";
-     */
-    @NonCommitting
-    private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws ExternalException {
-        super(entity, signature, recipient);
-        
-        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(2);
-        this.attributeTypes = new FreezableAttributeTypeSet(elements.getNonNullable(0)).freeze();
-        if (attributeTypes.isEmpty()) { throw InvalidParameterValueException.get("attribute types", attributeTypes); }
-        this.published = BooleanWrapper.decode(elements.getNonNullable(1));
-    }
-    
     @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        return TupleWrapper.encode(TYPE, attributeTypes, BooleanWrapper.encode(Attribute.PUBLISHED, published));
-    }
+    public abstract @Nonnull @Frozen @NonEmpty ReadOnlyAttributeTypeSet getAttributeTypes();
+    
+    /**
+     * Returns whether the published values are queried.
+     */
+    @Pure
+    public abstract boolean isPublished();
+    
+    /* -------------------------------------------------- Description -------------------------------------------------- */
     
     @Pure
     @Override
     public @Nonnull String getDescription() {
-        return "Queries the " + (published ? "published" : "unpublished") + " attributes " + attributeTypes + ".";
+        return "Queries the " + (isPublished() ? "published" : "unpublished") + " attributes " + getAttributeTypes() + ".";
     }
     
+    /* -------------------------------------------------- Required Authorization -------------------------------------------------- */
     
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
-        return attributeTypes.toAgentPermissions().freeze();
+        return getAttributeTypes().toAgentPermissions().freeze();
     }
     
+    /* -------------------------------------------------- Execution -------------------------------------------------- */
     
     @Override
     @NonCommitting
-    public @Nonnull AttributesReply executeOnHost() throws RequestException, SQLException {
-        final @Nonnull FreezableList<AttributeValue> attributeValues = FreezableArrayList.getWithCapacity(attributeTypes.size());
+    @OnHostRecipient
+    @PureWithSideEffects
+    public @Nonnull AttributesReply executeOnHost() throws RequestException, DatabaseException {
+        final @Nonnull FreezableList<AttributeValue> attributeValues = FreezableArrayList.withInitialCapacity(getAttributeTypes().size());
         
-        final @Nonnull Account account = getAccount();
-        final @Nonnull SignatureWrapper signature = getSignatureNotNull();
-        final boolean isInternalPerson = account.getIdentity() instanceof InternalPerson;
-        if (signature instanceof CredentialsSignatureWrapper && isInternalPerson) {
-            final @Nonnull CredentialsSignatureWrapper credentialsSignature = (CredentialsSignatureWrapper) signature;
+        @SuppressWarnings("null") final @Nonnull Signature<?> signature = getSignature();
+        @SuppressWarnings("null") final boolean isInternalPerson = getEntity().getIdentity() instanceof InternalPerson;
+        if (signature instanceof CredentialsSignature<?> && isInternalPerson) {
+            final @Nonnull CredentialsSignature<?> credentialsSignature = (CredentialsSignature<?>) signature;
             
-            final @Nullable ReadOnlyContactPermissions contactPermissions;
-            if (credentialsSignature.isIdentityBased() && !credentialsSignature.isRoleBased()) {
-                final @Nonnull InternalPerson issuer = credentialsSignature.getIssuer();
-                final @Nonnull Contact contact = Contact.get(getNonHostEntity(), issuer);
-                contactPermissions = contact.getPermissions();
+            final @Nullable ReadOnlyNodePermissions contactPermissions;
+            if (false /* TODO: credentialsSignature.isIdentityBased() && !credentialsSignature.isRoleBased() */) {
+                final @Nonnull InternalPerson issuer = null; // TODO: credentialsSignature.getIssuer();
+                final @Nonnull Contact contact = Contact.of((NonHostEntity) getEntity(), issuer);
+                contactPermissions = contact.permissions().get();
             } else {
                 contactPermissions = null;
             }
             
-            for (final @Nonnull SemanticType attributeType : attributeTypes) {
-                final @Nonnull Attribute attribute = Attribute.get(account, attributeType);
-                final @Nullable AttributeValue attributeValue = published ? attribute.getValue() : attribute.getUnpublishedValue();
+            for (final @Nonnull SemanticType attributeType : getAttributeTypes()) {
+                final @Nonnull Attribute attribute = Attribute.of(getEntity(), attributeType);
+                final @Nullable AttributeValue attributeValue = isPublished() ? attribute.value().get() : attribute.unpublished().get();
                 if (attributeValue != null) {
                     if (contactPermissions != null && contactPermissions.contains(attributeType)) { attributeValues.add(attributeValue); }
                     else {
-                        final @Nullable PassiveExpression attributeVisibility = attribute.getVisibility();
+                        final @Nullable PassiveExpression attributeVisibility = attribute.visibility().get();
                         if (attributeVisibility != null && attributeVisibility.matches(credentialsSignature)) { attributeValues.add(attributeValue); }
                         else { attributeValues.add(null); }
                     }
                 } else { attributeValues.add(null); }
             }
         } else {
-            for (final @Nonnull SemanticType attributeType : attributeTypes) {
-                final @Nonnull Attribute attribute = Attribute.get(account, attributeType);
-                final @Nullable AttributeValue attributeValue = published ? attribute.getValue() : attribute.getUnpublishedValue();
+            for (final @Nonnull SemanticType attributeType : getAttributeTypes()) {
+                final @Nonnull Attribute attribute = Attribute.of(getEntity(), attributeType);
+                final @Nullable AttributeValue attributeValue = isPublished() ? attribute.value().get() : attribute.unpublished().get();
                 if (attributeValue != null) {
                     if (isInternalPerson) {
-                        final @Nullable PassiveExpression attributeVisibility = attribute.getVisibility();
+                        final @Nullable PassiveExpression attributeVisibility = attribute.visibility().get();
                         if (attributeVisibility != null && attributeVisibility.isPublic()) { attributeValues.add(attributeValue); }
                         else { attributeValues.add(null); }
                     } else { attributeValues.add(attributeValue); }
@@ -180,56 +125,15 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
             }
         }
         
-        return new AttributesReply(account, attributeValues.freeze());
+        return AttributesReplyBuilder.withType(/* TODO: This method should be overriden in the AttributesReply class. */ null).withAttributeValues(attributeValues.freeze()).withEntity(getEntity()).build();
     }
+    
+    /* -------------------------------------------------- Match -------------------------------------------------- */
     
     @Pure
     @Override
     public boolean matches(@Nullable Reply reply) {
         return reply instanceof AttributesReply;
-    }
-    
-    
-    @Pure
-    @Override
-    public boolean equals(@Nullable Object object) {
-        if (protectedEquals(object) && object instanceof AttributesQuery) {
-            final @Nonnull AttributesQuery other = (AttributesQuery) object;
-            return this.attributeTypes.equals(other.attributeTypes) && this.published == other.published;
-        }
-        return false;
-    }
-    
-    @Pure
-    @Override
-    public int hashCode() {
-        int hash = protectedHashCode();
-        hash = 89 * hash + attributeTypes.hashCode();
-        hash = 89 * hash + (published ? 1 : 0);
-        return hash;
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    /**
-     * The factory class for the surrounding method.
-     */
-    private static final class Factory extends Method.Factory {
-        
-        static { Method.add(TYPE, new Factory()); }
-        
-        @Pure
-        @Override
-        @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws ExternalException {
-            return new AttributesQuery(entity, signature, recipient, block);
-        }
-        
     }
     
 }

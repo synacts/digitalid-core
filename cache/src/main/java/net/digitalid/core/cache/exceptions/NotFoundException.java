@@ -3,12 +3,13 @@ package net.digitalid.core.cache.exceptions;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.service.core.identity.InternalIdentity;
-import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.annotations.AttributeType;
+import net.digitalid.core.identification.annotations.type.kind.AttributeType;
+import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * This exception is thrown when something cannot be found.
@@ -21,15 +22,10 @@ public abstract class NotFoundException extends ExternalException {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
-    /**
-     * Stores the identity whose something could not be found.
-     */
     private final @Nonnull InternalIdentity identity;
     
     /**
      * Returns the identity whose something could not be found.
-     * 
-     * @return the identity whose something could not be found.
      */
     @Pure
     public final @Nonnull InternalIdentity getIdentity() {
@@ -38,15 +34,10 @@ public abstract class NotFoundException extends ExternalException {
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
-    /**
-     * Stores the type of the something that could not be found.
-     */
     private final @Nonnull @AttributeType SemanticType type;
     
     /**
      * Returns the type of the something that could not be found.
-     * 
-     * @return the type of the something that could not be found.
      */
     @Pure
     public final @Nonnull SemanticType getType() {
