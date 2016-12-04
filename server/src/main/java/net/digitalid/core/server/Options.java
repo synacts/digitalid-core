@@ -4,21 +4,20 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Impure;
+import net.digitalid.utility.collections.collection.ReadOnlyCollection;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
-import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.console.Console;
 import net.digitalid.utility.console.Option;
 import net.digitalid.utility.console.exceptions.EscapeOptionException;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
-import net.digitalid.database.interfaces.Database;
 
-import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.state.Service;
+import net.digitalid.core.service.Service;
 
 /**
  * This class contains the command-line options of the {@link Server}.
@@ -26,30 +25,32 @@ import net.digitalid.core.state.Service;
  * @see Option
  * @see Console
  */
-final class Options {
+@Utility
+abstract class Options {
     
     /**
      * Starts the console with the command-line options.
      */
+    @Impure
     static void start() {
-        Console.write();
-        Console.addOption(new ExitServer());
-        Console.addOption(new ShowVersion());
-        Console.addOption(new ShowHosts());
-        Console.addOption(new CreateHost());
-        Console.addOption(new ExportHost());
-        Console.addOption(new ImportHost());
-        Console.addOption(new ShowServices());
-        Console.addOption(new LoadServices());
-        Console.addOption(new ActivateService());
-        Console.addOption(new DeactivateService());
-        Console.addOption(new ChangeProvider());
-        Console.addOption(new GenerateTokens());
-        Console.addOption(new ShowMembers());
-        Console.addOption(new AddMembers());
-        Console.addOption(new RemoveMembers());
-        Console.addOption(new OpenHost());
-        Console.addOption(new CloseHost());
+        Console.writeLine();
+        Console.options.add(new ExitServer());
+        Console.options.add(new ShowVersion());
+        Console.options.add(new ShowHosts());
+        Console.options.add(new CreateHost());
+        Console.options.add(new ExportHost());
+        Console.options.add(new ImportHost());
+        Console.options.add(new ShowServices());
+        Console.options.add(new LoadServices());
+        Console.options.add(new ActivateService());
+        Console.options.add(new DeactivateService());
+        Console.options.add(new ChangeProvider());
+        Console.options.add(new GenerateTokens());
+        Console.options.add(new ShowMembers());
+        Console.options.add(new AddMembers());
+        Console.options.add(new RemoveMembers());
+        Console.options.add(new OpenHost());
+        Console.options.add(new CloseHost());
         Console.start();
     }
     
@@ -58,25 +59,26 @@ final class Options {
      * 
      * @return the selected host or a {@link EscapeOptionException} if the user escaped.
      */
+    @Impure
     private static @Nonnull Host selectHost() throws EscapeOptionException {
-        final @Nonnull ReadOnlyList<Host> hosts = FreezableArrayList.getNonNullable((Collection<? extends Host>) Server.getHosts()).freeze();
+        final @Nonnull ReadOnlyList<Host> hosts = FreezableArrayList.withElementsOf((Collection<? extends Host>) Server.getHosts()).freeze();
         if (!hosts.isEmpty()) {
-            Console.write("Please select one of the following hosts:");
-            Console.write("- 0: [Escape]");
+            Console.writeLine("Please select one of the following hosts:");
+            Console.writeLine("- 0: [Escape]");
             int i = 1;
             for (final @Nonnull Host host : hosts) {
-                Console.write("- " + (i++) + ": " + host.getIdentifier());
+                Console.writeLine("- " + (i++) + ": " + host.getIdentifier());
             }
-            Console.write();
+            Console.writeLine();
             final int input = Console.readNumber("Choice: ", 0) - 1;
-            Console.write();
+            Console.writeLine();
             if (input >= 0 && input < hosts.size()) {
-                return hosts.getNonNullable(input);
+                return hosts.get(input);
             } else if (input > 0) {
-                Console.write("Please choose one of the given options!");
+                Console.writeLine("Please choose one of the given options!");
             }
         } else {
-            Console.write("There are no hosts to proceed with.");
+            Console.writeLine("There are no hosts to proceed with.");
         }
         throw new EscapeOptionException();
     }
@@ -93,8 +95,8 @@ final class Options {
         public void execute() {
             // TODO: Remove the true on the following line!
             if (true || Console.readBoolean("Are you sure you want to shut down the server? Yes or no (the default is no): ", false)) {
-                Console.write("The server is shutting down...");
-                Console.write();
+                Console.writeLine("The server is shutting down...");
+                Console.writeLine();
                 Server.shutDown();
             }
         }
@@ -111,8 +113,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("Version: " + Server.VERSION + " (" + Server.DATE + ")");
-            Console.write("Authors: " + Server.AUTHORS);
+            Console.writeLine("Version: " + Server.VERSION + " (" + Server.DATE + ")");
         }
         
     }
@@ -127,11 +128,11 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("The following hosts are running on this server:");
+            Console.writeLine("The following hosts are running on this server:");
             for (final @Nonnull Host host : Server.getHosts()) {
-                Console.write("- " + host.getIdentifier().getString());
+                Console.writeLine("- " + host.getIdentifier().getString());
             }
-            if (Server.getHosts().isEmpty()) { Console.write("(None)"); }
+            if (Server.getHosts().isEmpty()) { Console.writeLine("(None)"); }
         }
         
     }
@@ -151,13 +152,14 @@ final class Options {
                 while (!HostIdentifier.isValid(string)) {
                     string = Console.readString("Bad input! Please enter a valid host identifier: ", null);
                 }
-                final @Nonnull HostIdentifier identifier = new HostIdentifier(string);
-                try {
-                    new Host(identifier);
-                } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-                    Console.write("Could not create the host " + identifier + " (" + exception + ").");
-                    Database.rollback();
-                }
+                final @Nonnull HostIdentifier identifier = HostIdentifier.with(string);
+                // TODO
+//                try {
+//                    new Host(identifier);
+//                } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
+//                    Console.writeLine("Could not create the host " + identifier + " (" + exception + ").");
+//                    Database.rollback();
+//                }
             }
         }
         
@@ -173,7 +175,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }
@@ -188,7 +190,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }
@@ -204,11 +206,11 @@ final class Options {
         @Committing
         public void execute() {
             final @Nonnull ReadOnlyCollection<Service> services = Service.getServices();
-            Console.write("The following services are installed on this server:");
+            Console.writeLine("The following services are installed on this server:");
             for (final @Nonnull Service service : services) {
-                Console.write("- " + service.getNameWithVersion());
+                Console.writeLine("- " + service.getTitleWithVersion());
             }
-            if (services.isEmpty()) { Console.write("(None)"); }
+            if (services.isEmpty()) { Console.writeLine("(None)"); }
         }
         
     }
@@ -223,7 +225,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("The services are reloaded.");
+            Console.writeLine("The services are reloaded.");
             Server.loadServices();
         }
         
@@ -239,7 +241,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }
@@ -254,7 +256,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }
@@ -269,7 +271,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }
@@ -284,7 +286,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }
@@ -299,7 +301,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }
@@ -314,7 +316,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }
@@ -329,7 +331,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }
@@ -344,7 +346,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }
@@ -359,7 +361,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be implemented."); // TODO
+            Console.writeLine("To be implemented."); // TODO
         }
         
     }

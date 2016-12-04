@@ -10,15 +10,17 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.system.errors.InitializationError;
-import net.digitalid.utility.system.logger.Log;
-import net.digitalid.utility.system.thread.NamedThreadFactory;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.threading.NamedThreadFactory;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.packet.Request;
 
 /**
  * A listener accepts incoming {@link Request requests} and lets them handle by {@link Worker workers}.
  */
+@Immutable
 public final class Listener extends Thread {
     
     /**
@@ -29,7 +31,7 @@ public final class Listener extends Thread {
     /**
      * The thread pool executor runs the {@link Worker workers} that handle the incoming {@link Request requests}.
      */
-    private final @Nonnull ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(8, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(32), NamedThreadFactory.get("Worker"), new ThreadPoolExecutor.AbortPolicy());
+    private final @Nonnull ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(8, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(32), NamedThreadFactory.with("Worker"), new ThreadPoolExecutor.AbortPolicy());
     
     /**
      * Creates a new listener that accepts incoming requests on the given port.
@@ -40,7 +42,7 @@ public final class Listener extends Thread {
         try {
             serverSocket = new ServerSocket(port);
         } catch (@Nonnull IOException exception) {
-            throw InitializationError.get("The server could not bind to Digital ID's port (" + Server.PORT + ").", exception);
+            throw new RuntimeException("The server could not bind to Digital ID's port (" + Server.PORT + ").", exception); // TODO: InitializationException or something similar.
         }
     }
     
@@ -48,6 +50,7 @@ public final class Listener extends Thread {
      * Accepts incoming requests and lets them handle by {@link Worker workers}.
      */
     @Override
+    @PureWithSideEffects
     public void run() {
         while (!serverSocket.isClosed()) {
             try {
@@ -69,6 +72,7 @@ public final class Listener extends Thread {
     /**
      * Shuts down the listener after having handled all pending requests.
      */
+    @PureWithSideEffects
     void shutDown() {
         try {
             serverSocket.close();
