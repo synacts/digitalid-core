@@ -1,88 +1,60 @@
-package net.digitalid.core.entity;
-
-import java.sql.SQLException;
+package net.digitalid.core.host.account;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.validation.annotations.generation.Provided;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.exceptions.DatabaseException;
-
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identification.identity.HostIdentity;
-import net.digitalid.core.identification.identity.Identity;
-import net.digitalid.core.identification.identity.IdentityImplementation;
 import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 
 /**
- * This class models an account on the host-side.
+ * This class models an account on the host.
  * 
  * @see HostAccount
  * @see NonHostAccount
  */
 @Immutable
-public abstract class Account extends EntityImplementation {
+@GenerateConverter
+public abstract class Account implements Entity {
     
-    /**
-     * Stores the host of this account.
-     */
-    private final @Nonnull Host host;
-    
-    /**
-     * Creates a new account with the given host.
-     * 
-     * @param host the host of this account.
-     */
-    Account(@Nonnull Host host) {
-        this.host = host;
-    }
-    
+    /* -------------------------------------------------- Host -------------------------------------------------- */
     
     /**
      * Returns the host of this account.
-     * 
-     * @return the host of this account.
      */
     @Pure
-    public final @Nonnull Host getHost() {
-        return host;
-    }
-    
+    @Provided
+    public abstract @Nonnull Host getHost();
     
     @Pure
     @Override
-    public final @Nonnull Host getSite() {
-        return host;
+    public @Nonnull Host getSite() {
+        return getHost();
     }
+    
+    /* -------------------------------------------------- Identity -------------------------------------------------- */
     
     @Pure
     @Override
-    public final long getKey() {
+    public abstract @Nonnull InternalIdentity getIdentity();
+    
+    /* -------------------------------------------------- Key -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public long getKey() {
         return getIdentity().getKey();
     }
     
-    
-    /**
-     * Notifies the observers that this account has been opened.
-     */
-    @Pure
-    public void opened() {
-        notify(Entity.CREATED);
-    }
-    
-    /**
-     * Notifies the observers that this account has been closed.
-     */
-    @Pure
-    public void closed() {
-        notify(Entity.DELETED);
-    }
-    
+    /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     /**
      * Returns a potentially locally cached account.
@@ -93,50 +65,15 @@ public abstract class Account extends EntityImplementation {
      * @return a new or existing account with the given host and identity.
      */
     @Pure
-    public static @Nonnull Account get(@Nonnull Host host, @Nonnull InternalIdentity identity) {
+    @Recover
+    public static @Nonnull Account with(@Nonnull Host host, @Nonnull InternalIdentity identity) {
         if (identity instanceof HostIdentity) {
-            return HostAccount.get(host, (HostIdentity) identity);
+            return HostAccount.with(host, (HostIdentity) identity);
         } else if (identity instanceof InternalNonHostIdentity) {
-            return NonHostAccount.get(host, (InternalNonHostIdentity) identity);
+            return NonHostAccount.with(host, (InternalNonHostIdentity) identity);
         } else {
             throw UnexpectedValueException.with("identity", identity);
         }
-    }
-    
-    /**
-     * Returns the given column of the result set as an instance of this class.
-     * 
-     * @param host the host on which the account is hosted.
-     * @param resultSet the result set to retrieve the data from.
-     * @param columnIndex the index of the column containing the data.
-     * 
-     * @return the given column of the result set as an instance of this class.
-     */
-    @Pure
-    @NonCommitting
-    public static @Nonnull Account getNotNull(@Nonnull Host host, @NonCapturable @Nonnull SelectionResult result) throws DatabaseException {
-        final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
-        if (identity instanceof InternalIdentity) { return get(host, (InternalIdentity) identity); }
-        else { throw new SQLException("The identity of " + identity.getAddress() + " is not internal."); }
-    }
-    
-    
-    @Pure
-    @Override
-    public final int hashCode() {
-        int hash = 7;
-        hash = 41 * hash + host.hashCode();
-        hash = 41 * hash + getIdentity().hashCode();
-        return hash;
-    }
-    
-    @Pure
-    @Override
-    public final boolean equals(@Nullable Object object) {
-        if (object == this) { return true; }
-        if (object == null || !(object instanceof Account)) { return false; }
-        final @Nonnull Account other = (Account) object;
-        return this.host.equals(other.host) && this.getIdentity().equals(other.getIdentity());
     }
     
 }

@@ -7,9 +7,14 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
+import net.digitalid.utility.property.value.WritableVolatileValueProperty;
+import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.generation.Derive;
@@ -26,7 +31,6 @@ import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.property.annotations.GeneratePersistentProperty;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
-import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
@@ -146,13 +150,13 @@ public abstract class Client extends RootClass implements Site {
 //        }
 //    }
     
+    @TODO(task = "Find a way to defer the loading of the client secret until the identifier is no longer null.", date = "2016-12-04", author = Author.KASPAR_ETTER)
+    protected final @Nonnull WritableVolatileValueProperty<@Nonnull Exponent> protectedSecret = WritableVolatileValuePropertyBuilder.withValue(ClientSecretLoader.load(getIdentifier())).build();
+    
     /**
-     * Returns the secret of this client.
+     * Stores the secret of this client.
      */
-    @Pure
-    @GeneratePersistentProperty
-//    @Derive("ClientSecretLoader.load(identifier)") // TODO
-    public abstract @Nonnull WritablePersistentValueProperty<Client, @Nonnull Exponent> secret();
+    public final @Nonnull ReadOnlyVolatileValueProperty<@Nonnull Exponent> secret = protectedSecret;
     
     /* -------------------------------------------------- Commitment -------------------------------------------------- */
     
@@ -175,7 +179,7 @@ public abstract class Client extends RootClass implements Site {
     @Pure
     @NonCommitting
     public @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject) throws ExternalException {
-        return getCommitment(subject, secret().get());
+        return getCommitment(subject, protectedSecret.get());
     }
     
     /**
@@ -202,7 +206,7 @@ public abstract class Client extends RootClass implements Site {
         }
         
         ClientSecretLoader.store(getIdentifier(), newSecret);
-        secret().set(newSecret);
+        protectedSecret.set(newSecret);
         
         // TODO: Remove the following code once the client secret loader is implemented.
 //        final @Nonnull File file = new File(Files.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
