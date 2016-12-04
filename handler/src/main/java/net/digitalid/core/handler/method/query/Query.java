@@ -28,7 +28,7 @@ public abstract class Query<E extends Entity> extends MethodImplementation<E> {
     
     @Pure
     @Override
-    public final boolean isLodged() {
+    public boolean isLodged() {
         return false;
     }
     
