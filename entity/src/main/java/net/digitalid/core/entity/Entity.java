@@ -5,12 +5,12 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
-import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.interfaces.Subject;
 
 import net.digitalid.core.entity.annotations.SiteDependency;
 import net.digitalid.core.identification.identity.Identity;
@@ -23,16 +23,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
  */
 @Immutable
 @GenerateConverter
-public interface Entity extends SiteDependency {
-    
-    /* -------------------------------------------------- Site -------------------------------------------------- */
-    
-    /**
-     * Returns the site of this entity.
-     */
-    @Pure
-    @Provided
-    public @Nonnull Site getSite();
+public interface Entity extends Subject, SiteDependency {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     

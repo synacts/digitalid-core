@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.property.Subject;
+import net.digitalid.database.interfaces.Subject;
 import net.digitalid.database.testing.SQLTestBase;
 import net.digitalid.database.testing.TestSite;
 
@@ -47,7 +47,7 @@ public class PasswordTest extends SQLTestBase {
     @Test
     public void _01_testValueReplace() throws DatabaseException {
         try {
-            final @Nonnull Settings settings = Settings.of(TestNonHostEntityBuilder.withSite(TestSite.INSTANCE).withKey(0).withIdentity(SemanticType.map("test@core.digitalid.net")).build());
+            final @Nonnull Settings settings = Settings.of(TestNonHostEntityBuilder.withKey(0).withIdentity(SemanticType.map("test@core.digitalid.net")).withSite(TestSite.INSTANCE).build());
             settings.password().set(VALUE);
             settings.password().reset(); // Not necessary but I want to test the database state.
             assertEquals(VALUE, settings.password().get());

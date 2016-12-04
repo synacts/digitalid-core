@@ -27,7 +27,7 @@ public interface NonHostEntity extends Entity {
     @NonRepresentative
     public @Nonnull InternalNonHostIdentity getIdentity();
     
-    /* -------------------------------------------------- Recover -------------------------------------------------- */
+    /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     @Pure
     @Recover

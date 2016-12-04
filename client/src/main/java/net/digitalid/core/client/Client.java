@@ -5,20 +5,18 @@ import java.security.SecureRandom;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.freezable.annotations.Frozen;
-import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
-import net.digitalid.utility.math.ExponentBuilder;
-import net.digitalid.utility.property.set.WritableSetProperty;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.string.DomainName;
-import net.digitalid.utility.validation.annotations.type.Mutable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -26,6 +24,9 @@ import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.property.annotations.GeneratePersistentProperty;
+import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
+import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
@@ -34,6 +35,7 @@ import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.commitment.CommitmentBuilder;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
+import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.parameters.Parameters;
@@ -44,9 +46,9 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
  * 
  * TODO: Make sure that the client secret gets rotated!
  */
-@Mutable
-@GenerateSubclass
-public abstract class Client extends Site {
+@Immutable
+// TODO: @GenerateSubclass
+public abstract class Client extends RootClass implements Site {
     
     /* -------------------------------------------------- Stop -------------------------------------------------- */
     
@@ -88,20 +90,23 @@ public abstract class Client extends Site {
 //        Database.commit();
 //    }
     
-    /* -------------------------------------------------- Database Name -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    @Derive("identifier.replace(\".\", \"_\")")
-    public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getName();
-    
     /* -------------------------------------------------- Entity Reference -------------------------------------------------- */
     
+    // TODO: How do we do this with the converters?
+    
+//    @Pure
+//    @Override
+//    public final @Nonnull String getEntityReference() {
+//        return "REFERENCES " + this + "role (role) ON DELETE CASCADE";
+//    }
+    
+    /* -------------------------------------------------- Name -------------------------------------------------- */
+    
+    /**
+     * Returns the name of this client that is used for accreditation.
+     */
     @Pure
-    @Override
-    public final @Nonnull String getEntityReference() {
-        return "REFERENCES " + this + "role (role) ON DELETE CASCADE";
-    }
+    public abstract @Nonnull @MaxSize(50) String getName();
     
     /* -------------------------------------------------- Identifier -------------------------------------------------- */
     
@@ -111,19 +116,12 @@ public abstract class Client extends Site {
     @Pure
     public abstract @Nonnull @DomainName @MaxSize(63) String getIdentifier();
     
-    /* -------------------------------------------------- Name -------------------------------------------------- */
+    /* -------------------------------------------------- Schema Name -------------------------------------------------- */
     
-    /**
-     * Returns the name of this client.
-     */
     @Pure
-    public abstract @Nonnull @MaxSize(50) String getName();
-    
-    /**
-     * Sets the name of this client.
-     */
-    @Impure
-    public abstract void setName(@Nonnull @MaxSize(50) String name);
+    @Override
+    @Derive("identifier.replace(\".\", \"_\")")
+    public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getSchemaName();
     
     /* -------------------------------------------------- Preferred Permissions -------------------------------------------------- */
     
@@ -152,14 +150,9 @@ public abstract class Client extends Site {
      * Returns the secret of this client.
      */
     @Pure
-    @Derive("ClientSecretLoader.load(identifier)")
-    public abstract @Nonnull Exponent getSecret();
-    
-    /**
-     * Sets the secret of this client.
-     */
-    @Impure
-    protected abstract void setSecret(@Nonnull Exponent secret);
+    @GeneratePersistentProperty
+//    @Derive("ClientSecretLoader.load(identifier)") // TODO
+    public abstract @Nonnull WritablePersistentValueProperty<Client, @Nonnull Exponent> secret();
     
     /* -------------------------------------------------- Commitment -------------------------------------------------- */
     
@@ -170,10 +163,10 @@ public abstract class Client extends Site {
     @NonCommitting
     protected @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject, @Nonnull Exponent secret) throws ExternalException {
         final @Nonnull HostIdentity host = subject.getHostIdentifier().resolve();
-        final @Nonnull Time time = TimeBuilder.get().build();
+        final @Nonnull Time time = TimeBuilder.build();
         final @Nonnull PublicKey publicKey = PublicKeyRetriever.retrieve(host, time);
         final @Nonnull Element value = publicKey.getAu().pow(secret);
-        return CommitmentBuilder.withHost(host).withTime(time).withValue(value.getValue()).build();
+        return CommitmentBuilder.withHost(host).withTime(time).withValue(value.getValue()).withPublicKey(publicKey).build();
     }
     
     /**
@@ -182,7 +175,7 @@ public abstract class Client extends Site {
     @Pure
     @NonCommitting
     public @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject) throws ExternalException {
-        return getCommitment(subject, getSecret());
+        return getCommitment(subject, secret().get());
     }
     
     /**
@@ -190,11 +183,11 @@ public abstract class Client extends Site {
      * 
      * TODO: Make sure that other instances of the same client learn about the key rotation.
      */
-    @Impure
     @Committing
+    @PureWithSideEffects
     public void rotateSecret() throws InterruptedException, ExternalException {
         final @Nonnull Exponent newSecret = ExponentBuilder.withValue(new BigInteger(Parameters.HASH.get(), new SecureRandom())).build();
-        final @Nonnull ReadOnlySet<NativeRole> roles = this.roles.get();
+        final @Nonnull ReadOnlySet<NativeRole> roles = roles().get();
         Database.commit();
         
         for (@Nonnull NativeRole role : roles) {
@@ -209,7 +202,7 @@ public abstract class Client extends Site {
         }
         
         ClientSecretLoader.store(getIdentifier(), newSecret);
-        setSecret(newSecret);
+        secret().set(newSecret);
         
         // TODO: Remove the following code once the client secret loader is implemented.
 //        final @Nonnull File file = new File(Files.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
@@ -218,7 +211,12 @@ public abstract class Client extends Site {
     
     /* -------------------------------------------------- Roles -------------------------------------------------- */
     
-    public final @Nonnull WritableSetProperty<NativeRole, ReadOnlySet<NativeRole>> roles = null; // TODO: Implement such a WritableExtensibleProperty.
+    /**
+     * Returns the native roles of this client.
+     */
+    @Pure
+    @GeneratePersistentProperty
+    public abstract @Nonnull WritablePersistentSimpleSetProperty<Client, NativeRole> roles();
     
     // TODO: Remove the following code once the writable extensible property for roles is implemented.
     

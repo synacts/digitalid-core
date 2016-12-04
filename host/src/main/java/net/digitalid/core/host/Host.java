@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
@@ -18,25 +19,17 @@ import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.Site;
 
-import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.attribute.Attribute;
-import net.digitalid.core.attribute.AttributeValue;
-import net.digitalid.core.attribute.CertifiedAttributeValue;
-import net.digitalid.core.attribute.UncertifiedAttributeValue;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.conversion.Block;
-import net.digitalid.core.conversion.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.entity.HostAccount;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.keychain.PrivateKeyChain;
 import net.digitalid.core.keychain.PublicKeyChain;
-import net.digitalid.core.resolution.Mapper;
-import net.digitalid.core.server.Server;
 import net.digitalid.core.service.CoreService;
-import net.digitalid.core.state.Service;
+import net.digitalid.core.service.Service;
 
 /**
  * A host stores a {@link KeyPair} and is run by a {@link Server}.
@@ -45,7 +38,7 @@ import net.digitalid.core.state.Service;
  */
 @Mutable
 @GenerateSubclass
-public class Host extends Site {
+public abstract class Host extends RootClass implements Site {
     
     @Pure
     @Override
@@ -123,7 +116,7 @@ public class Host extends Site {
             publicKeyBlock.writeTo(new FileOutputStream(publicKeyFile), true);
         }
         
-        CoreService.SERVICE.createTables(this);
+        CoreService.INSTANCE.createTables(this);
         Server.addHost(this);
         Database.commit();
         

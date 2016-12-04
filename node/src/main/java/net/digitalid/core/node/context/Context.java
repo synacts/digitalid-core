@@ -66,7 +66,7 @@ public abstract class Context extends ExtendedNode {
     static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity, Long, Context, String> NAME_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity, Long, Context, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /**
-     * Returns the name property of this context.
+     * Returns the name of this context.
      */
     @Pure
     @GenerateSynchronizedProperty
