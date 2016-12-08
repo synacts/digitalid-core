@@ -5,17 +5,16 @@ import java.security.SecureRandom;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
-import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.rootclass.RootClassWithException;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -52,7 +51,7 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
  */
 @Immutable
 // TODO: @GenerateSubclass
-public abstract class Client extends RootClass implements Site {
+public abstract class Client extends RootClassWithException<ExternalException> implements Site {
     
     /* -------------------------------------------------- Stop -------------------------------------------------- */
     
@@ -66,20 +65,6 @@ public abstract class Client extends RootClass implements Site {
 //        Synchronizer.shutDown();
 //        ResponseAudit.shutDown();
 //    }
-    
-    /* -------------------------------------------------- Types -------------------------------------------------- */
-    
-    // TODO: Remove the following code.
-    
-//    /**
-//     * Stores the semantic type {@code secret.client@core.digitalid.net}.
-//     */
-//    public static final @Nonnull SemanticType SECRET = SemanticType.map("secret.client@core.digitalid.net").load(Exponent.TYPE);
-//    
-//    /**
-//     * Stores the semantic type {@code name.client.agent@core.digitalid.net}.
-//     */
-//    public static final @Nonnull SemanticType NAME = SemanticType.map("name.client.agent@core.digitalid.net").load(StringWrapper.XDF_TYPE);
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
@@ -137,26 +122,21 @@ public abstract class Client extends RootClass implements Site {
     
     /* -------------------------------------------------- Secret -------------------------------------------------- */
     
-    // TODO: Remove the following code once the client secret loader is implemented somewhere.
-    
-//    @Pure
-//    static @Nonnull Exponent loadSecret(@Nonnull @DomainName String identifier) {
-//        final @Nonnull File file = new File(Files.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
-//        if (file.exists()) {
-//            this.secret = Exponent.get(SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(file), true).checkType(SECRET));
-//        } else {
-//            this.secret = Exponent.get(new BigInteger(Parameters.HASH, new SecureRandom()));
-//            SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, Encode.nonNullable(SECRET, secret)).writeTo(new FileOutputStream(file), true);
-//        }
-//    }
-    
-    @TODO(task = "Find a way to defer the loading of the client secret until the identifier is no longer null.", date = "2016-12-04", author = Author.KASPAR_ETTER)
-    protected final @Nonnull WritableVolatileValueProperty<@Nonnull Exponent> protectedSecret = WritableVolatileValuePropertyBuilder.withValue(ClientSecretLoader.load(getIdentifier())).build();
+    protected final @Nonnull WritableVolatileValueProperty<@Nonnull Exponent> protectedSecret = WritableVolatileValuePropertyBuilder.withValue(ExponentBuilder.withValue(BigInteger.ZERO).build()).build();
     
     /**
      * Stores the secret of this client.
      */
     public final @Nonnull ReadOnlyVolatileValueProperty<@Nonnull Exponent> secret = protectedSecret;
+    
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @CallSuper
+    protected void initialize() throws ExternalException {
+        protectedSecret.set(ClientSecretLoader.load(getIdentifier()));
+    }
     
     /* -------------------------------------------------- Commitment -------------------------------------------------- */
     
@@ -207,10 +187,6 @@ public abstract class Client extends RootClass implements Site {
         
         ClientSecretLoader.store(getIdentifier(), newSecret);
         protectedSecret.set(newSecret);
-        
-        // TODO: Remove the following code once the client secret loader is implemented.
-//        final @Nonnull File file = new File(Files.getClientsDirectory().getPath() + File.separator + identifier + ".client.xdf");
-//        SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, secret.toBlock().setType(SECRET)).writeTo(new FileOutputStream(file), true);
     }
     
     /* -------------------------------------------------- Roles -------------------------------------------------- */
