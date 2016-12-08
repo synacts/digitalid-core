@@ -1,9 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
+    <parent>
+        <groupId>net.digitalid</groupId>
+        <artifactId>master</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
     <groupId>net.digitalid.core</groupId>
     <artifactId>core</artifactId>
     <version>1.0.0</version>
@@ -12,27 +15,6 @@
     <name>Digital ID Core</name>
     <description>This project contains the Digital ID core protocol: www.digitalid.net.</description>
     <url>https://code.digitalid.net/digitalid/core</url>
-    
-    <organization>
-        <name>Synacts GmbH</name>
-        <url>https://www.synacts.com</url>
-    </organization>
-    
-    <licenses>
-        <license>
-            <name>To be determined</name>
-            <url>https://www.synacts.com/company/#become-partner</url>
-            <comments>Until the license is determined, all rights are reserved by Synacts GmbH.</comments>
-        </license>
-    </licenses>
-    
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.version>1.8</maven.compiler.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <tests.skip>false</tests.skip> <!-- To re-enable tests, run 'mvn install -Dtests.skip=false'. -->
-    </properties>
     
     <modules>
         <module>exceptions</module>
@@ -86,195 +68,31 @@
         <module>server</module>
     </modules>
     
+    <properties>
+        <jacoco.skip>true</jacoco.skip> <!-- [ERROR] Failed to execute goal org.jacoco:jacoco-maven-plugin:0.7.7.201606060606:report (jacoco-report) on project core-identification: An error has occurred in JaCoCo report generation. Error while creating report: Error while analyzing [...]/digitalid/core/identification/target/classes/net/digitalid/core/identification/CategoryConverter.class. -->
+    </properties>
+    
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-property</artifactId>
             <version>1.0.0</version>
         </dependency>
+        
         <dependency>
             <groupId>net.digitalid.utility</groupId>
             <artifactId>utility-parent</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <!-- Activate this dependency as soon as needed:
-        <dependency>
-            <groupId>com.google.j2objc</groupId>
-            <artifactId>j2objc-annotations</artifactId>
-            <version>0.9.8</version>
-        </dependency>
-        -->
-        <!-- Add this dependency wherever you have testcases:
+        
         <dependency>
             <groupId>net.digitalid.utility</groupId>
             <artifactId>utility-testing</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-        -->
+        
     </dependencies>
-    
-    <repositories>
-        <repository>
-            <id>digitalid-releases</id>
-            <name>Digital ID Releases</name>
-            <url>https://repo.digitalid.net/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>digitalid-snapshots</id>
-            <name>Digital ID Snapshots</name>
-            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
-    
-    <distributionManagement>
-        <repository>
-            <id>digitalid-deployment</id>
-            <name>Final Releases</name>
-            <url>https://repo.digitalid.net/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>digitalid-deployment</id>
-            <name>Snapshot Releases</name>
-            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-    
-    <build>
-        <plugins>
-            
-            <!-- If your IDE has difficulties in locating the generated sources:
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.10</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>target/generated-sources/annotations</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <configuration>
-                    <fork>true</fork>
-                    <verbose>true</verbose>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <executable>${maven.compiler.executable}</executable>
-                    <compilerVersion>${maven.compiler.version}</compilerVersion>
-                    <compilerArguments>
-                        <bootclasspath>${compiler.bootclasspath.android}</bootclasspath>
-                    </compilerArguments>
-                    <!-- NetBeans seems to need the following line sometimes: -->
-                    <generatedSourcesDirectory>target/generated-sources/annotations</generatedSourcesDirectory>
-                    <!-- Uncomment the following 2 lines if you need to remotely debug the annotation processing. -->
-<!--
-                    <compilerArgument>-J-Xdebug</compilerArgument>
-                    <compilerArgument>-J-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005</compilerArgument>
--->
-                </configuration>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <testFailureIgnore>false</testFailureIgnore>
-                    <trimStackTrace>false</trimStackTrace>
-                    <skipTests>${tests.skip}</skipTests>
-                </configuration>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
-                <configuration>
-                    <quiet>true</quiet>
-                    <linksource>false</linksource>
-                    <doctitle>Digital ID Core</doctitle>
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                    <links>
-                        <!-- TODO: Include all utility, database and core Javadocs here! -->
-                        <!--<link>https://docs.digitalid.net/utility/logging/${project.version}/</link>-->
-                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
-                    </links>
-                    <tagletArtifacts>
-                        <tagletArtifact>
-                            <groupId>net.digitalid.utility</groupId>
-                            <artifactId>utility-taglets</artifactId>
-                            <version>${project.version}</version>
-                        </tagletArtifact>
-                    </tagletArtifacts>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>none</phase> <!-- TODO: Remove this line again! -->
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>none</phase> <!-- TODO: Remove this line again! -->
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.6.201602180812</version>
-                <configuration>
-                    <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
-                    <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <phase>none</phase> <!-- TODO: Remove this line again! -->
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-unit-test</id>
-                        <phase>none</phase> <!-- TODO: Change back to 'test'! ('none' skips it.) -->
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> 
-            
-        </plugins>
-    </build>
     
 </project>
