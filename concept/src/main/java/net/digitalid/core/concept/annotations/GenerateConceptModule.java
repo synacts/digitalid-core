@@ -19,12 +19,13 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.generator.information.method.MethodInformation;
 import net.digitalid.utility.generator.information.type.TypeInformation;
-import net.digitalid.utility.generator.interceptor.MethodInterceptor;
+import net.digitalid.utility.processing.logging.ProcessingLog;
 import net.digitalid.utility.processing.utility.ProcessingUtility;
 import net.digitalid.utility.processing.utility.StaticProcessingEnvironment;
 import net.digitalid.utility.processor.generator.JavaFileGenerator;
-import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
+
+import net.digitalid.database.subject.annotations.GenerateSubjectModule;
 
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.concept.ConceptModule;
@@ -40,35 +41,27 @@ import net.digitalid.core.concept.ConceptModuleBuilder;
 public @interface GenerateConceptModule {
     
     /**
-     * This class generates content for the annotated method.
+     * This class generates the interceptor for the surrounding annotation.
      */
     @Stateless
-    public static class Interceptor extends MethodInterceptor {
-        
-        @Pure
-        @Override
-        protected @Nonnull @NonEmpty String getPrefix() {
-            return "implemented";
-        }
+    public static class Interceptor extends GenerateSubjectModule.Interceptor {
         
         @Pure
         @Override
         public void generateFieldsRequiredByMethod(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull MethodInformation method, @Nonnull TypeInformation typeInformation) {
+            final @Nullable DeclaredType conceptType = ProcessingUtility.getSupertype(typeInformation.getType(), Concept.class);
+            if (conceptType == null) { ProcessingLog.error("The type $ is not a subtype of Concept.", typeInformation.getName()); }
+            
             final @Nonnull List<@Nonnull ? extends TypeMirror> superTypes = StaticProcessingEnvironment.getTypeUtils().directSupertypes(typeInformation.getType());
             final @Nonnull DeclaredType conceptType = (DeclaredType) FiniteIterable.of(superTypes).findUnique(superType -> ProcessingUtility.isRawlyAssignable(superType, Concept.class));
 //            final @Nonnull FiniteIterable<@Nonnull TypeVariable> typeArguments = FiniteIterable.of(conceptType.getTypeArguments()).instanceOf(TypeVariable.class);
             final FiniteIterable<? extends TypeMirror> typeArguments = FiniteIterable.of(conceptType.getTypeArguments());
-    
+            
             Require.that(typeArguments.size() == 2).orThrow("Expected two type arguments for type $, but got $", typeInformation.getName(), typeArguments.size());
             
             javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(ConceptModule.class) + Brackets.inPointy(javaFileGenerator.importIfPossible(typeArguments.get(0)) + ", " + javaFileGenerator.importIfPossible(typeArguments.get(1)) + ", " + typeInformation.getName()) + " CONCEPT_MODULE = " + javaFileGenerator.importIfPossible(ConceptModuleBuilder.class) + "." + Brackets.inPointy(javaFileGenerator.importIfPossible(typeArguments.get(0)) + ", " + javaFileGenerator.importIfPossible(typeArguments.get(1)) + ", " + typeInformation.getName()) + "withName" + Brackets.inRound(Quotes.inDouble(typeInformation.getName())) + ".withService" + Brackets.inRound("SERVICE") + ".withConceptFactory" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedSubclass() + "::new") + ".withEntityConverter" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedConverter() + ".INSTANCE") + ".build()");
         }
-    
-        @Pure
-        @Override
-        protected void implementInterceptorMethod(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull MethodInformation method, @Nonnull String statement, @Nullable String resultVariable, @Nullable String defaultValue) {
-        }
-    
+        
     }
     
 }

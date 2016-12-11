@@ -1,20 +1,19 @@
 package net.digitalid.core.settings;
 
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.interfaces.Subject;
+import net.digitalid.database.subject.Subject;
 import net.digitalid.database.testing.SQLTestBase;
-import net.digitalid.database.testing.TestSite;
 
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
@@ -26,6 +25,7 @@ import org.junit.Test;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
+@GenerateConverter
 interface TestNonHostEntity extends NonHostEntity {
     
     @Pure
@@ -34,7 +34,7 @@ interface TestNonHostEntity extends NonHostEntity {
     
 }
 
-public class PasswordTest extends SQLTestBase {
+public class SettingsTest extends SQLTestBase {
     
     private static final @Nonnull String VALUE = ""; // TODO: Choose a non-default password like "Pa$$word" once properties can be loaded from the database.
         
@@ -47,7 +47,7 @@ public class PasswordTest extends SQLTestBase {
     @Test
     public void _01_testValueReplace() throws DatabaseException {
         try {
-            final @Nonnull Settings settings = Settings.of(TestNonHostEntityBuilder.withKey(0).withIdentity(SemanticType.map("test@core.digitalid.net")).withSite(TestSite.INSTANCE).build());
+            final @Nonnull Settings settings = Settings.of(TestNonHostEntityBuilder.withKey(0).withIdentity(SemanticType.map("test@core.digitalid.net")).build());
             settings.password().set(VALUE);
             settings.password().reset(); // Not necessary but I want to test the database state.
             assertEquals(VALUE, settings.password().get());

@@ -23,9 +23,9 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.type.Embedded;
-import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.property.PersistentProperty;
-import net.digitalid.database.property.SubjectModule;
+import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.subject.SubjectModule;
 
 import net.digitalid.core.entity.Entity;
 
@@ -34,7 +34,7 @@ import net.digitalid.core.entity.Entity;
  */
 @Immutable
 @GenerateSubclass
-public abstract class ConceptConverter<E extends Entity, K, C extends Concept<E, K>> implements Converter<C, @Nonnull Site> {
+public abstract class SubjectConverter<E extends Entity, K, C extends Concept<E, K>> implements Converter<C, @Nonnull Site> {
     
     /* -------------------------------------------------- Concept Module -------------------------------------------------- */
     

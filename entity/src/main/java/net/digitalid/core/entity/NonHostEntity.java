@@ -9,7 +9,7 @@ import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.site.Site;
 
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 

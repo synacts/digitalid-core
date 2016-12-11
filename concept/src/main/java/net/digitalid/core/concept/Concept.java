@@ -4,14 +4,13 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.rootclass.RootClass;
-import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.interfaces.Site;
-import net.digitalid.database.interfaces.Subject;
+import net.digitalid.database.subject.Subject;
+import net.digitalid.database.subject.site.Site;
 
 import net.digitalid.core.concept.annotations.GenerateConceptModule;
 import net.digitalid.core.entity.Entity;
@@ -57,12 +56,12 @@ public abstract class Concept<E extends Entity, K> extends RootClass implements 
     /* -------------------------------------------------- Module -------------------------------------------------- */
     
     /**
-     * Returns the module of this concept.
+     * Generates and returns the {@link ConceptModule} required to store synchronized properties.
      */
     @Pure
-    @NonRepresentative
+    @Override
     @GenerateConceptModule
-    public abstract @Nonnull ConceptModule<E, K, ?> getConceptModule();
+    public abstract @Nonnull ConceptModule<E, K, ?> module();
     
     /* -------------------------------------------------- Properties -------------------------------------------------- */
     

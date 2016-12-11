@@ -11,7 +11,7 @@ import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.site.Site;
 
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.client.Client;

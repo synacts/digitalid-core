@@ -8,10 +8,12 @@ import net.digitalid.utility.functional.interfaces.BinaryFunction;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.interfaces.Site;
-import net.digitalid.database.property.SubjectModule;
+import net.digitalid.database.subject.SubjectModule;
+import net.digitalid.database.subject.site.Site;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.service.Service;
@@ -65,7 +67,15 @@ public abstract class ConceptModule<E extends Entity, K, C extends Concept<E, K>
     
     @Pure
     @Override
-    @Derive("new ConceptConverterSubclass<E, K, C>(\"ConceptConverter\", this)")
+    @Derive("new SubjectConverterSubclass<E, K, C>(\"SubjectConverter\", this)")
     public abstract @Nonnull Converter<C, @Nonnull Site> getSubjectConverter();
+    
+    /* -------------------------------------------------- Name -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @CodeIdentifier @MaxSize(63) String getName() {
+        return getConceptConverter().getName();
+    }
     
 }

@@ -12,8 +12,8 @@ import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.property.annotations.GeneratePersistentProperty;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
+import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.client.Client;

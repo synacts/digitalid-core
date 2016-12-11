@@ -7,9 +7,9 @@ import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.property.Property;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
-import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.property.PersistentProperty;
 import net.digitalid.database.property.PersistentPropertyEntry;
+import net.digitalid.database.subject.site.Site;
 
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.entity.Entity;

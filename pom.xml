@@ -6,7 +6,7 @@
         <artifactId>master</artifactId>
         <version>1.0.0</version>
     </parent>
-
+    
     <groupId>net.digitalid.core</groupId>
     <artifactId>core</artifactId>
     <version>1.0.0</version>
@@ -84,6 +84,13 @@
             <groupId>net.digitalid.utility</groupId>
             <artifactId>utility-parent</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-testing</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         
         <dependency>

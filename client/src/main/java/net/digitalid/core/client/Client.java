@@ -27,9 +27,9 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.interfaces.Site;
-import net.digitalid.database.property.annotations.GeneratePersistentProperty;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
+import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
