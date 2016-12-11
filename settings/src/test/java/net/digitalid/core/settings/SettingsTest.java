@@ -41,7 +41,7 @@ public class SettingsTest extends SQLTestBase {
     @Impure
     @BeforeClass
     public static void createTables() throws Exception {
-        SQL.create(Settings.PASSWORD_TABLE.getEntryConverter(), Subject.DEFAULT_SITE);
+        SQL.create(SettingsSubclass.PASSWORD_TABLE.getEntryConverter(), Subject.DEFAULT_SITE);
     }
     
     @Test
