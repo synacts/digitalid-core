@@ -52,7 +52,7 @@ public abstract class Selfcontained {
     @Pure
     @TODO(task = "Throw a more specific exception?", date = "2016-10-31", author = Author.KASPAR_ETTER)
     public static <T> @Nonnull Selfcontained convert(@Nullable T object, @Nonnull Converter<T, ?> converter) throws ExternalException {
-        final /* @Nonnull */ SemanticType semanticType = null; // TODO: Derive from the given converter.
+        final @Nonnull SemanticType semanticType = SemanticType.map(converter.getName().toLowerCase() + "@core.digitalid.net"); // TODO: Derive something smarter from the given converter.
         return new SelfcontainedSubclass(semanticType, XDF.convert(object, converter));
     }
     

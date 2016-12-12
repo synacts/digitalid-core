@@ -41,7 +41,7 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticT
     /**
      * Stores the semantic type {@code general.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull @AttributeType SemanticType GENERAL = null; // TODO: SemanticType.map("general.permission.agent@core.digitalid.net").load(new Category[] {Category.HOST, Category.SYNTACTIC_TYPE, Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, BooleanWrapper.XDF_TYPE);
+    public static final @Nonnull @AttributeType SemanticType GENERAL = SemanticType.map("general.permission.agent@core.digitalid.net"); // TODO: SemanticType.map("general.permission.agent@core.digitalid.net").load(new Category[] {Category.HOST, Category.SYNTACTIC_TYPE, Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, BooleanWrapper.XDF_TYPE);
     
     /* -------------------------------------------------- Constants -------------------------------------------------- */
     

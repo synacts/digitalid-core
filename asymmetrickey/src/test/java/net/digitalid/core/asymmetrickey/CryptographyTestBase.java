@@ -80,7 +80,7 @@ public class CryptographyTestBase extends RootTest {
                 return createHostIdentity(1L, (HostIdentifier) identifier);
             } else if (identifier instanceof InternalNonHostIdentifier) {
                 // TODO: How do we know whether the identifier is one of a natural or artificial person or a type?
-                return createNaturalPerson(2L, (InternalNonHostIdentifier) identifier);
+                return createSemanticType(2L, (InternalNonHostIdentifier) identifier);
             } else {
                 throw new UnsupportedOperationException("The identifier resolver does not support '" + identifier.getClass() + "' yet.");
             }

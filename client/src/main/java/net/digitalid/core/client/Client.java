@@ -8,8 +8,12 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
@@ -28,8 +32,8 @@ import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
-import net.digitalid.database.subject.site.Site;
 import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
+import net.digitalid.database.subject.site.Site;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
@@ -50,8 +54,10 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
  * TODO: Make sure that the client secret gets rotated!
  */
 @Immutable
-// TODO: @GenerateSubclass
-public abstract class Client extends RootClassWithException<ExternalException> implements Site {
+@GenerateBuilder
+@GenerateSubclass
+@TODO(task = "Change back the exception back to External Exception as soon as the builder can handle it.", date = "2016-12-12", author = Author.KASPAR_ETTER)
+public abstract class Client extends RootClassWithException<RuntimeException /* ExternalException */> implements Site {
     
     /* -------------------------------------------------- Stop -------------------------------------------------- */
     
@@ -134,8 +140,12 @@ public abstract class Client extends RootClassWithException<ExternalException> i
     @Pure
     @Override
     @CallSuper
-    protected void initialize() throws ExternalException {
-        protectedSecret.set(ClientSecretLoader.load(getIdentifier()));
+    protected void initialize() /* throws ExternalException */ {
+        try {
+            protectedSecret.set(ClientSecretLoader.load(getIdentifier()));
+        } catch (@Nonnull ExternalException exception) {
+            throw new RuntimeException(exception); // TODO
+        }
     }
     
     /* -------------------------------------------------- Commitment -------------------------------------------------- */

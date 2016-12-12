@@ -10,21 +10,33 @@
     <artifactId>core-client</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-authorization</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-clientagent</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-cache</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-asymmetrickey</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        
     </dependencies>
     
 </project>

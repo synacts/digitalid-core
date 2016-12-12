@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 
@@ -16,12 +17,14 @@ import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.generator.annotations.meta.Interceptor;
 import net.digitalid.utility.generator.information.method.MethodInformation;
 import net.digitalid.utility.generator.information.type.TypeInformation;
 import net.digitalid.utility.processing.logging.ProcessingLog;
 import net.digitalid.utility.processing.utility.ProcessingUtility;
+import net.digitalid.utility.processing.utility.StaticProcessingEnvironment;
 import net.digitalid.utility.processor.generator.JavaFileGenerator;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Default;
@@ -81,7 +84,21 @@ public @interface GenerateSynchronizedProperty {
             final @Nullable DeclaredType conceptType = ProcessingUtility.getSupertype(typeInformation.getType(), Concept.class);
             if (conceptType == null) { ProcessingLog.error("The type $ is not a subtype of Concept.", ProcessingUtility.getQualifiedName(typeInformation.getType())); }
             final @Nonnull TypeMirror valueType = ((DeclaredType) method.getReturnType()).getTypeArguments().get(1);
-            final @Nonnull FiniteIterable<@Nonnull String> types = FiniteIterable.of(conceptType.getTypeArguments()).combine(FiniteIterable.of(typeInformation.getType(), valueType/*, StaticProcessingEnvironment.getTypeUtils().getNoType(TypeKind.VOID)*/)).map(javaFileGenerator::importIfPossible).evaluate().combine(FiniteIterable.of("Void"));
+            
+            // TODO: The following code does not yet work for value converters that do not yet exist (i.e. will be generated in the same round).
+            final @Nonnull String valueConverterName = ProcessingUtility.getQualifiedName(valueType) + "Converter";
+            final @Nullable TypeElement valueConverterElement = StaticProcessingEnvironment.getElementUtils().getTypeElement(valueConverterName);
+            if (valueConverterElement == null) { ProcessingLog.warning("No type element was found for $, which might be because that type will only be generated in this round.", valueConverterElement); }
+            final @Nullable DeclaredType valueConverterType = valueConverterElement == null ? null : ProcessingUtility.getSupertype((DeclaredType) valueConverterElement.asType(), Converter.class);
+            
+            final @Nonnull String externallyProvidedType;
+            if (valueConverterType != null) {
+                externallyProvidedType = javaFileGenerator.importIfPossible(valueConverterType.getTypeArguments().get(1));
+            } else {
+                externallyProvidedType = "Void";
+            }
+            
+            final @Nonnull FiniteIterable<@Nonnull String> types = FiniteIterable.of(conceptType.getTypeArguments()).combine(FiniteIterable.of(typeInformation.getType(), valueType)).map(javaFileGenerator::importIfPossible).evaluate().combine(FiniteIterable.of(externallyProvidedType));
             
             final @Nonnull String valueConverter = (types.get(3).equals("String") ? javaFileGenerator.importIfPossible("net.digitalid.utility.conversion.converters.StringConverter") : javaFileGenerator.importIfPossible(ProcessingUtility.getQualifiedName(valueType) + "Converter")) + ".INSTANCE";
             
