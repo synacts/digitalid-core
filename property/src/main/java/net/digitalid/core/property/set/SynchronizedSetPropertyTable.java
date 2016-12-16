@@ -15,6 +15,7 @@ import net.digitalid.database.property.set.PersistentSetPropertyEntryConverter;
 import net.digitalid.database.property.set.PersistentSetPropertyTable;
 
 import net.digitalid.core.concept.Concept;
+import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedPropertyTable;
 
@@ -24,14 +25,14 @@ import net.digitalid.core.property.SynchronizedPropertyTable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SynchronizedSetPropertyTable<E extends Entity, K, C extends Concept<E, K>, V, T> extends PersistentSetPropertyTable<C, V, T>, SynchronizedPropertyTable<E, K, C, PersistentSetPropertyEntry<C, V>, SetPropertyRequiredAuthorization<E, K, C, V>> {
+public interface SynchronizedSetPropertyTable<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE, PROVIDED_FOR_VALUE> extends PersistentSetPropertyTable<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, PersistentSetPropertyEntry<CONCEPT, VALUE>, SetPropertyRequiredAuthorization<ENTITY, KEY, CONCEPT, VALUE>> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
     @TODO(task = "Is it really necessary to override this method manually?", date = "2016-11-12", author = Author.KASPAR_ETTER)
-    @Derive("net.digitalid.database.property.set.PersistentSetPropertyEntryConverterBuilder.<C, V, T>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public @Nonnull PersistentSetPropertyEntryConverter<C, V, T> getEntryConverter();
+    @Derive("net.digitalid.database.property.set.PersistentSetPropertyEntryConverterBuilder.<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    public @Nonnull PersistentSetPropertyEntryConverter<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE> getEntryConverter();
     
 }

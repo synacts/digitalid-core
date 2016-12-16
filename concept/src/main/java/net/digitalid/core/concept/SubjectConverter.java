@@ -24,9 +24,9 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.property.PersistentProperty;
-import net.digitalid.database.subject.site.Site;
 import net.digitalid.database.subject.SubjectModule;
 
+import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 
 /**
@@ -34,7 +34,7 @@ import net.digitalid.core.entity.Entity;
  */
 @Immutable
 @GenerateSubclass
-public abstract class SubjectConverter<E extends Entity, K, C extends Concept<E, K>> implements Converter<C, @Nonnull Site> {
+public abstract class SubjectConverter<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>> implements Converter<CONCEPT, @Nonnull CoreSite<?>> {
     
     /* -------------------------------------------------- Concept Module -------------------------------------------------- */
     
@@ -42,7 +42,7 @@ public abstract class SubjectConverter<E extends Entity, K, C extends Concept<E,
      * Returns the concept module, which contains the entity and actual concept converters.
      */
     @Pure
-    public abstract @Nonnull ConceptModule<E, K, C> getConceptModule();
+    public abstract @Nonnull ConceptModule<ENTITY, KEY, CONCEPT> getConceptModule();
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -60,7 +60,7 @@ public abstract class SubjectConverter<E extends Entity, K, C extends Concept<E,
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable C concept, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
+    public <X extends ExternalException> int convert(@Nullable CONCEPT concept, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
         int i = 1;
         i *= getConceptModule().getEntityConverter().convert(concept == null ? null : concept.getEntity(), valueCollector);
         i *= getConceptModule().getConceptConverter().convert(concept == null ? null : concept, valueCollector);
@@ -72,8 +72,8 @@ public abstract class SubjectConverter<E extends Entity, K, C extends Concept<E,
     @Pure
     @Override
     @Review(comment = "How would you handle the nullable recovered objects?", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
-    public @Capturable <X extends ExternalException> @Nullable C recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nonnull Site site) throws X {
-        final @Nullable E entity = getConceptModule().getEntityConverter().recover(selectionResult, site);
+    public @Capturable <X extends ExternalException> @Nullable CONCEPT recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nonnull CoreSite<?> site) throws X {
+        final @Nullable ENTITY entity = getConceptModule().getEntityConverter().recover(selectionResult, site);
         return entity != null ? getConceptModule().getConceptConverter().recover(selectionResult, entity) : null;
     }
     

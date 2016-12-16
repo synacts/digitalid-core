@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.type.ThreadSafe;
-import net.digitalid.utility.property.Property;
+import net.digitalid.utility.property.Observer;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.property.PersistentProperty;
@@ -22,7 +22,7 @@ import net.digitalid.core.property.value.WritableSynchronizedValueProperty;
  */
 @Mutable
 @ThreadSafe
-public interface SynchronizedProperty<E extends Entity, K, C extends Concept<E, K>, N extends PersistentPropertyEntry<C>, O extends Property.Observer> extends PersistentProperty<C, N, O> {
+public interface SynchronizedProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, ENTRY extends PersistentPropertyEntry<CONCEPT>, OBSERVER extends Observer> extends PersistentProperty<CONCEPT, ENTRY, OBSERVER> {
     
     /* -------------------------------------------------- Concept -------------------------------------------------- */
     
@@ -30,13 +30,13 @@ public interface SynchronizedProperty<E extends Entity, K, C extends Concept<E, 
      * Returns the concept to which this property belongs.
      */
     @Pure
-    public @Nonnull C getConcept();
+    public @Nonnull CONCEPT getConcept();
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     
     @Pure
     @Override
-    public default @Nonnull C getSubject() {
+    public default @Nonnull CONCEPT getSubject() {
         return getConcept();
     }
     
@@ -44,6 +44,6 @@ public interface SynchronizedProperty<E extends Entity, K, C extends Concept<E, 
     
     @Pure
     @Override
-    public @Nonnull SynchronizedPropertyTable<E, K, C, N, ?> getTable();
+    public @Nonnull SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, ENTRY, ?> getTable();
     
 }

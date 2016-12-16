@@ -31,7 +31,7 @@ public abstract class ExternalContact extends Contact {
      */
     @Pure
     @Recover
-    public static @Nonnull ExternalContact of(@Nonnull NonHostEntity entity, @Nonnull ExternalPerson person) {
+    public static @Nonnull ExternalContact of(@Nonnull NonHostEntity<?> entity, @Nonnull ExternalPerson person) {
         return null; // TODO
     }
     

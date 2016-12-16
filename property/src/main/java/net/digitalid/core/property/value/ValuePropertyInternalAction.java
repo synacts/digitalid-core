@@ -40,13 +40,13 @@ import net.digitalid.core.restrictions.Restrictions;
 @GenerateBuilder
 @GenerateSubclass
 //@GenerateConverter // TODO: Maybe the converter has to be written manually anyway (in order to recover the property). Otherwise, make sure the converter generator can handle generic types.
-public abstract class ValuePropertyInternalAction<E extends Entity, K, C extends Concept<E, K>, V> extends PropertyInternalAction<E, K, C, WritableSynchronizedValueProperty<E, K, C, V>> implements Valid.Value<V> {
+public abstract class ValuePropertyInternalAction<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE> extends PropertyInternalAction<ENTITY, KEY, CONCEPT, WritableSynchronizedValueProperty<ENTITY, KEY, CONCEPT, VALUE>> implements Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Predicate<? super V> getValueValidator() {
+    public @Nonnull Predicate<? super VALUE> getValueValidator() {
         return getProperty().getValueValidator();
     }
     
@@ -68,13 +68,13 @@ public abstract class ValuePropertyInternalAction<E extends Entity, K, C extends
      * Returns the old value of the property.
      */
     @Pure
-    protected abstract @Valid V getOldValue();
+    protected abstract @Valid VALUE getOldValue();
     
     /**
      * Returns the new value of the property.
      */
     @Pure
-    protected abstract @Valid V getNewValue();
+    protected abstract @Valid VALUE getNewValue();
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */
     
@@ -113,7 +113,7 @@ public abstract class ValuePropertyInternalAction<E extends Entity, K, C extends
     @Pure
     @Override
     @OnClientRecipient
-    public @Nonnull ValuePropertyInternalAction<E, K, C, V> getReverse() throws DatabaseException {
+    public @Nonnull ValuePropertyInternalAction<ENTITY, KEY, CONCEPT, VALUE> getReverse() throws DatabaseException {
         return ValuePropertyInternalActionBuilder.withProperty(getProperty()).withOldValue(getNewValue()).withNewValue(getOldValue()).withOldTime(getNewTime()).withNewTime(getOldTime()).build();
     }
     

@@ -10,9 +10,9 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.site.Site;
 
 import net.digitalid.core.concept.annotations.GenerateConceptModule;
+import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 
@@ -20,12 +20,12 @@ import net.digitalid.core.entity.NonHostEntity;
  * This class models a concept in the {@link Database database}.
  * A concept always belongs to an {@link Entity entity}.
  * 
- * @param <E> either {@link Entity} for a general concept or {@link NonHostEntity} for a concept that exists only for non-hosts.
+ * @param <ENTITY> either {@link Entity} for a general concept or {@link NonHostEntity} for a concept that exists only for non-hosts.
  *            (The type has to be a supertype of {@link NonHostEntity}, which cannot be declared in Java, unfortunately!)
- * @param <K> the type of the key which identifies an instance among all instances of a concept at the same entity.
+ * @param <KEY> the type of the key which identifies an instance among all instances of a concept at the same entity.
  */
 @Immutable
-public abstract class Concept<E extends Entity, K> extends RootClass implements Subject {
+public abstract class Concept<ENTITY extends Entity<?>, KEY> extends RootClass implements Subject<CoreSite<?>> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
@@ -34,7 +34,7 @@ public abstract class Concept<E extends Entity, K> extends RootClass implements 
      */
     @Pure
     @Provided
-    public abstract @Nonnull E getEntity();
+    public abstract @Nonnull ENTITY getEntity();
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
@@ -43,13 +43,13 @@ public abstract class Concept<E extends Entity, K> extends RootClass implements 
      */
     @Pure
     @Embedded // TODO: Depends on the key type!
-    public abstract @Nonnull K getKey();
+    public abstract @Nonnull KEY getKey();
     
     /* -------------------------------------------------- Site -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Site getSite() {
+    public @Nonnull CoreSite<?> getSite() {
         return getEntity().getSite();
     }
     
@@ -61,7 +61,7 @@ public abstract class Concept<E extends Entity, K> extends RootClass implements 
     @Pure
     @Override
     @GenerateConceptModule
-    public abstract @Nonnull ConceptModule<E, K, ?> module();
+    public abstract @Nonnull ConceptModule<ENTITY, KEY, ?> module();
     
     /* -------------------------------------------------- Properties -------------------------------------------------- */
     

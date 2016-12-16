@@ -27,7 +27,7 @@ import net.digitalid.core.restrictions.Restrictions;
  */
 @Immutable
 @TODO(task = "Maybe remove the generic parameters as they are not needed (at the moment).", date = "2016-11-12", author = Author.KASPAR_ETTER)
-public abstract class PropertyRequiredAuthorization<E extends Entity, K, C extends Concept<E, K>> {
+public abstract class PropertyRequiredAuthorization<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>> {
     
     /**
      * Returns the condition with which the returned state is restricted.

@@ -24,7 +24,7 @@ import net.digitalid.core.entity.Entity;
  */
 @Immutable
 @GenerateSubclass
-public abstract class ConceptIndex<E extends Entity, K, C extends Concept<E, K>> {
+public abstract class ConceptIndex<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>> {
     
     /* -------------------------------------------------- Removal -------------------------------------------------- */
     
@@ -39,7 +39,7 @@ public abstract class ConceptIndex<E extends Entity, K, C extends Concept<E, K>>
     // TODO: Make sure this method is called in the right places!
     @Impure
     @SingleAccess
-    public static void remove(@Nonnull Entity entity) {
+    public static void remove(@Nonnull Entity<?> entity) {
         Require.that(Database.isSingleAccess()).orThrow("The database is in single-access mode.");
         
         for (@Nonnull ConceptIndex<?, ?, ?> index : indexes) {
@@ -53,7 +53,7 @@ public abstract class ConceptIndex<E extends Entity, K, C extends Concept<E, K>>
      * Returns the concept module, which contains the concept factory.
      */
     @Pure
-    protected abstract @Nonnull ConceptModule<E, K, C> getConceptModule();
+    protected abstract @Nonnull ConceptModule<ENTITY, KEY, CONCEPT> getConceptModule();
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -66,17 +66,17 @@ public abstract class ConceptIndex<E extends Entity, K, C extends Concept<E, K>>
     /**
      * Stores the concepts of this index.
      */
-    private final @Nonnull ConcurrentMap<@Nonnull E, @Nonnull ConcurrentMap<@Nonnull K, @Nonnull C>> concepts = ConcurrentHashMapBuilder.build();
+    private final @Nonnull ConcurrentMap<@Nonnull ENTITY, @Nonnull ConcurrentMap<@Nonnull KEY, @Nonnull CONCEPT>> concepts = ConcurrentHashMapBuilder.build();
     
     /**
      * Returns the potentially cached concept with the given entity and key that might not yet exist in the database.
      */
     @Pure
-    public @Nonnull C get(@Nonnull E entity, @Nonnull K key) {
+    public @Nonnull CONCEPT get(@Nonnull ENTITY entity, @Nonnull KEY key) {
         if (Database.isSingleAccess()) {
-            @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
-            if (map == null) { map = concepts.putIfAbsentElseReturnPresent(entity, ConcurrentHashMapBuilder.<K, C>build()); }
-            @Nullable C concept = map.get(key);
+            @Nullable ConcurrentMap<KEY, CONCEPT> map = concepts.get(entity);
+            if (map == null) { map = concepts.putIfAbsentElseReturnPresent(entity, ConcurrentHashMapBuilder.<KEY, CONCEPT>build()); }
+            @Nullable CONCEPT concept = map.get(key);
             if (concept == null) { concept = map.putIfAbsentElseReturnPresent(key, getConceptModule().getConceptFactory().evaluate(entity, key)); }
             return concept;
         } else {

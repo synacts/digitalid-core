@@ -21,7 +21,9 @@ import net.digitalid.core.packet.Request;
  * A listener accepts incoming {@link Request requests} and lets them handle by {@link Worker workers}.
  */
 @Immutable
-public final class Listener extends Thread {
+public class Listener extends Thread {
+    
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
      * Stores the server socket to accept incoming requests.
@@ -31,18 +33,18 @@ public final class Listener extends Thread {
     /**
      * The thread pool executor runs the {@link Worker workers} that handle the incoming {@link Request requests}.
      */
-    private final @Nonnull ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(8, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(32), NamedThreadFactory.with("Worker"), new ThreadPoolExecutor.AbortPolicy());
+    private final @Nonnull ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(8, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(32), NamedThreadFactory.with("Worker"), new ThreadPoolExecutor.AbortPolicy());
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new listener that accepts incoming requests on the given port.
-     * 
-     * @param port the port number on which incoming requests are accepted.
      */
-    Listener(int port) {
+    public Listener(int port) {
         try {
             serverSocket = new ServerSocket(port);
         } catch (@Nonnull IOException exception) {
-            throw new RuntimeException("The server could not bind to Digital ID's port (" + Server.PORT + ").", exception); // TODO: InitializationException or something similar.
+            throw new RuntimeException("The server could not bind to Digital ID's port (" + port + ").", exception); // TODO: InitializationException or something similar.
         }
     }
     

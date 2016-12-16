@@ -3,19 +3,22 @@ package net.digitalid.core.host.account;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.host.Host;
-import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 
 /**
  * This class models a non-host account.
  */
 @Immutable
-public abstract class NonHostAccount extends Account implements NonHostEntity {
+@GenerateSubclass
+@GenerateConverter
+public abstract class NonHostAccount extends Account implements NonHostEntity<Host> {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
@@ -27,9 +30,8 @@ public abstract class NonHostAccount extends Account implements NonHostEntity {
     
     @Pure
     @Recover
-    public static @Nonnull NonHostAccount with(@Nonnull Host host, @Nonnull HostIdentity identity) {
-        // TODO: Think about how to recover accounts.
-        throw new UnsupportedOperationException();
+    public static @Nonnull NonHostAccount with(@Nonnull Host host, @Nonnull InternalNonHostIdentity identity) {
+        return new NonHostAccountSubclass(host, identity);
     }
     
     /* -------------------------------------------------- Indexing -------------------------------------------------- */

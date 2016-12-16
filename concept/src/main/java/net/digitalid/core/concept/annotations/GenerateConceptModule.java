@@ -19,6 +19,7 @@ import net.digitalid.utility.generator.information.type.TypeInformation;
 import net.digitalid.utility.processing.logging.ProcessingLog;
 import net.digitalid.utility.processing.utility.ProcessingUtility;
 import net.digitalid.utility.processor.generator.JavaFileGenerator;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.subject.annotations.GenerateSubjectModule;
@@ -51,7 +52,7 @@ public @interface GenerateConceptModule {
             if (conceptType == null) { ProcessingLog.error("The type $ is not a subtype of Concept.", ProcessingUtility.getQualifiedName(typeInformation.getType())); }
             final @Nonnull FiniteIterable<@Nonnull String> types = FiniteIterable.of(conceptType.getTypeArguments()).combine(FiniteIterable.of(typeInformation.getType())).map(javaFileGenerator::importIfPossible).evaluate();
             
-            javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(ConceptModule.class) + types.join(Brackets.POINTY) + " MODULE = " + javaFileGenerator.importIfPossible(ConceptModuleBuilder.class) + "." + types.join(Brackets.POINTY) + "withService(SERVICE).withConceptFactory" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedSubclass() + "::new") + ".withEntityConverter" + Brackets.inRound(javaFileGenerator.importIfPossible("net.digitalid.core.entity." + types.get(0) + "Converter") + ".INSTANCE") + ".withConceptConverter" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedConverter() + ".INSTANCE") + ".build()");
+            javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(ConceptModule.class) + types.join(Brackets.POINTY) + " MODULE = " + javaFileGenerator.importIfPossible(ConceptModuleBuilder.class) + "." + types.join(Brackets.POINTY) + "withService(SERVICE).withConceptFactory" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedSubclass() + "::new") + ".withEntityConverter" + Brackets.inRound(javaFileGenerator.importIfPossible("net.digitalid.core.entity." + Strings.substringUntilFirst(types.get(0), '<') + "Converter") + ".INSTANCE") + ".withConceptConverter" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedConverter() + ".INSTANCE") + ".build()");
         }
         
     }

@@ -52,6 +52,7 @@ public class ClientSecretLoader {
      * Sets the secret of the client with the given identifier.
      */
     @Impure
+    @TODO(task = "Throw a net.digitalid.core.conversion.FileException instead.", date = "2016-12-08", author = Author.KASPAR_ETTER)
     public void setClientSecret(@Nonnull @DomainName @MaxSize(63) String identifier, @Nonnull Exponent secret) throws ExternalException {
         final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier + ".client.xdf");
         Selfcontained.convert(secret, ExponentConverter.INSTANCE).storeTo(file);
@@ -60,7 +61,7 @@ public class ClientSecretLoader {
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
     /**
-     * Stores the client secret loader, which has to be provided by another package.
+     * Stores the configured client secret loader.
      */
     public static final @Nonnull Configuration<ClientSecretLoader> configuration = Configuration.with(new ClientSecretLoader());
     

@@ -33,14 +33,14 @@ public abstract class ExtendedNode extends Node {
     /**
      * Stores the required authorization to change the permissions.
      */
-    public static final @Nonnull SetPropertyRequiredAuthorization<NonHostEntity, Long, Node, SemanticType> PERMISSIONS_AUTHORIZATION = SetPropertyRequiredAuthorizationBuilder.<NonHostEntity, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    public static final @Nonnull SetPropertyRequiredAuthorization<NonHostEntity<?>, Long, Node, SemanticType> PERMISSIONS = SetPropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /* -------------------------------------------------- Authentications -------------------------------------------------- */
     
     /**
      * Stores the required authorization to change the authentications.
      */
-    public static final @Nonnull SetPropertyRequiredAuthorization<NonHostEntity, Long, Node, SemanticType> AUTHENTICATIONS_AUTHORIZATION = SetPropertyRequiredAuthorizationBuilder.<NonHostEntity, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    public static final @Nonnull SetPropertyRequiredAuthorization<NonHostEntity<?>, Long, Node, SemanticType> AUTHENTICATIONS = SetPropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /* -------------------------------------------------- Supercontexts -------------------------------------------------- */
     
@@ -60,7 +60,7 @@ public abstract class ExtendedNode extends Node {
      */
     @Pure
     @Recover
-    static @Nonnull ExtendedNode of(@Nonnull NonHostEntity entity, long key) {
+    static @Nonnull ExtendedNode of(@Nonnull NonHostEntity<?> entity, long key) {
         // TODO: Make it injectable? (Use the key to determine whether it is a context or a contact (either with ranges or even vs. uneven)?)
         return null;
     }

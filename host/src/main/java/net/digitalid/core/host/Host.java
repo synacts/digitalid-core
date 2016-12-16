@@ -1,20 +1,26 @@
 package net.digitalid.core.host;
 
-
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
-import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-
-import net.digitalid.database.subject.site.Site;
 
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.client.Client;
+import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.host.account.HostAccount;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
@@ -29,8 +35,9 @@ import net.digitalid.core.service.Service;
  * TODO: Make sure that the host keys get rotated!
  */
 @Immutable
-// TODO: @GenerateSubclass
-public abstract class Host extends RootClass implements Site {
+@GenerateBuilder
+@GenerateSubclass
+public abstract class Host extends CoreSite<Host> {
     
 //    @Pure
 //    @Override
@@ -57,11 +64,21 @@ public abstract class Host extends RootClass implements Site {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
+    @Pure
+    @TODO(task = "Remove this method once derivation statements can throw exceptions", date = "2016-12-14", author = Author.KASPAR_ETTER)
+    @Nonnull HostIdentity deriveIdentity(@Nonnull HostIdentifier identifier) {
+        try {
+            return identifier.resolve();
+        } catch (@Nonnull ExternalException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+    
     /**
      * Returns the identity of this host.
      */
     @Pure
-    // TODO: @Derive("Mapper.mapHostIdentity(identifier)")
+    @Derive("deriveIdentity(identifier)") // TODO: The identity has to be mapped and not resolved (Mapper.mapHostIdentity(identifier)).
     public abstract @Nonnull HostIdentity getIdentity();
     
     /* -------------------------------------------------- Account -------------------------------------------------- */
@@ -72,6 +89,13 @@ public abstract class Host extends RootClass implements Site {
     @Pure
     @Derive("HostAccount.with(this, identity)")
     public abstract @Nonnull HostAccount getAccount();
+    
+    /* -------------------------------------------------- Schema Name -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @Derive("identifier.asSchemaName()")
+    public abstract @Nonnull @CodeIdentifier @MaxSize(61) @Unequal("general") String getSchemaName();
     
     /* -------------------------------------------------- Private Key -------------------------------------------------- */
     
@@ -97,70 +121,62 @@ public abstract class Host extends RootClass implements Site {
      * Returns the client associated with this host.
      */
     @Pure
-    // TODO: @Derive
+    // TODO: What are the right permissions to pass here? Probably an aggregation of all the services.
+    @Derive("net.digitalid.core.client.ClientBuilder.withName(\"Host \" + identifier.getString()).withIdentifier(identifier.getString()).withPreferredPermissions(net.digitalid.core.permissions.ReadOnlyAgentPermissions.GENERAL_WRITE).build()")
     public abstract @Nonnull Client getClient();
     
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
-    // TODO: Move the loading of the key chains to a separate class.
-    
-//    /**
-//     * Creates a new host with the given identifier by either reading the cryptographic keys from the file system or creating them.
-//     * 
-//     * @param identifier the identifier of the new host.
-//     */
-//    @Committing
-//    public Host(@Nonnull HostIdentifier identifier) throws IOException, ExternalException {
-//        super(identifier.asHostName());
-//        
-//        this.identifier = identifier;
-//        this.identity = Mapper.mapHostIdentity(identifier);
-//        
-//        final @Nonnull String path = Directory.getHostsDirectory().getPath() + File.separator + identifier.getString();
-//        final @Nonnull File privateKeyFile = new File(path + ".private.xdf");
-//        final @Nonnull File publicKeyFile = new File(path + ".public.xdf");
-//        
-//        if (privateKeyFile.exists() && publicKeyFile.exists()) {
-//            this.privateKeyChain = PrivateKeyChain.XDF_CONVERTER.decodeNonNullable(None.OBJECT, SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(privateKeyFile), true).checkType(PrivateKeyChain.TYPE));
-//            this.publicKeyChain = PublicKeyChain.XDF_CONVERTER.decodeNonNullable(None.OBJECT, SelfcontainedWrapper.decodeBlockFrom(new FileInputStream(publicKeyFile), true).checkType(PublicKeyChain.TYPE));
-//        } else {
-//            final @Nonnull KeyPair keyPair = KeyPair.withRandomValues();
-//            final @Nonnull Time time = TimeBuilder.get().build();
-//            this.privateKeyChain = PrivateKeyChain.get(time, keyPair.getPrivateKey());
-//            this.publicKeyChain = PublicKeyChain.get(time, keyPair.getPublicKey());
-//        }
-//        
-//        final @Nonnull Block privateKeyBlock = SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, privateKeyChain);
-//        final @Nonnull Block publicKeyBlock = SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, publicKeyChain);
-//        
-//        if (!privateKeyFile.exists() || !publicKeyFile.exists()) {
-//            privateKeyBlock.writeTo(new FileOutputStream(privateKeyFile), true);
-//            publicKeyBlock.writeTo(new FileOutputStream(publicKeyFile), true);
-//        }
-//        
-//        CoreService.INSTANCE.createTables(this);
-//        Server.addHost(this);
-//        Database.commit();
-//        
-//        final @Nonnull HostAccount account = HostAccount.get(this, identity);
-//        final @Nonnull Attribute attribute = Attribute.get(account, PublicKeyChain.TYPE);
-//        if (attribute.getValue() == null) {
-//            final @Nonnull AttributeValue value;
-//            if (Server.hasHost(HostIdentifier.DIGITALID) || identifier.equals(HostIdentifier.DIGITALID)) {
-//                // If the new host is running on the same server as 'core.digitalid.net', certify its public key immediately.
-//                value = new CertifiedAttributeValue(publicKeyChain, identity, PublicKeyChain.TYPE);
-//            } else {
-//                value = new UncertifiedAttributeValue(publicKeyChain);
+    @Pure
+    @Override
+    @CallSuper
+    protected void initialize() /* throws ExternalException */ {
+        try {
+            protectedPrivateKeyChain.set(PrivateKeyChainLoader.load(getIdentifier()));
+            protectedPublicKeyChain.set(PublicKeyChainLoader.load(getIdentifier()));
+        } catch (@Nonnull ExternalException exception) {
+            throw new RuntimeException(exception); // TODO
+        }
+        
+        // TODO:
+//        try {
+//            final @Nonnull Attribute attribute = Attribute.of(getAccount(), PublicKeyChain.TYPE);
+//            if (attribute.value().get() == null) {
+//                final @Nonnull AttributeValue value;
+//                if (Server.hasHost(HostIdentifier.DIGITALID) || identifier.equals(HostIdentifier.DIGITALID)) {
+//                    // If the new host is running on the same server as 'core.digitalid.net', certify its public key immediately.
+//                    value = new CertifiedAttributeValue(publicKeyChain, identity, PublicKeyChain.TYPE);
+//                } else {
+//                    value = new UncertifiedAttributeValue(publicKeyChain);
+//                }
+//                attribute.value().set(value);
 //            }
-//            attribute.replaceValue(null, value);
+//        } catch (@Nonnull DatabaseException exception) {
+//            throw new RuntimeException(exception); // TODO
 //        }
-//        
-//        // TODO: Load which services this host runs and initialize them afterwards.
-//        Database.commit();
-//        
-//        // TODO: What are the right permissions to pass here? Probably an aggregation of all the services.
-//        this.client = Client("_" + identifier.asHostName(), identifier.getString(), FreezableAgentPermissions.GENERAL_WRITE);
-//    }
+    }
+    
+    /* -------------------------------------------------- Subject -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public final @Nonnull Host getSite() {
+        return this;
+    }
+    
+    /* -------------------------------------------------- CoreSite -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public final boolean isHost() {
+        return true;
+    }
+    
+    @Pure
+    @Override
+    public final boolean isClient() {
+        return false;
+    }
     
     /* -------------------------------------------------- Other -------------------------------------------------- */
     
@@ -172,9 +188,11 @@ public abstract class Host extends RootClass implements Site {
         return identity.getAddress().getHostIdentifier().equals(getIdentifier());
     }
     
-    
+    /**
+     * Returns whether this host supports the given service.
+     */
     @Pure
-    public boolean supports(final @Nonnull Service service) {
+    public boolean supports(@Nonnull Service service) {
         return true; // TODO!
     }
     

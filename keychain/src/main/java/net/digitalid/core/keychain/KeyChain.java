@@ -10,6 +10,7 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.tuples.Pair;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.order.StrictlyDescending;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -33,6 +34,7 @@ public abstract class KeyChain<K extends AsymmetricKey> {
      * Returns the items of this key chain in chronological order with the newest one first.
      */
     @Pure
+    @NonRepresentative // TODO: Remove this, as soon as lists can be properly converted.
     public abstract @Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull Pair<@Nonnull Time, @Nonnull K>> getItems();
     
     /* -------------------------------------------------- Times -------------------------------------------------- */

@@ -9,7 +9,9 @@ import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
@@ -80,7 +82,7 @@ public abstract class HostIdentifier extends RootClass implements InternalIdenti
      */
     @Pure
     @TODO(task = "If we take the host name as the database name and not as table prefixes, then we might be able to increase the length restrictions.", date = "2016-06-19", author = Author.KASPAR_ETTER)
-    public @Nonnull @MaxSize(39) String asHostName() {
+    public @Nonnull @CodeIdentifier @MaxSize(61) @Unequal("general") String asSchemaName() {
         final @Nonnull String string = getString();
         return (Character.isDigit(string.charAt(0)) ? "_" : "") + string.replace(".", "_").replace("-", "$");
     }

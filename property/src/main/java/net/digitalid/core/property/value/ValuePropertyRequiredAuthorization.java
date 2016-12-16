@@ -24,30 +24,30 @@ import net.digitalid.core.restrictions.Restrictions;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class ValuePropertyRequiredAuthorization<E extends Entity, K, C extends Concept<E, K>, V> extends PropertyRequiredAuthorization<E, K, C> {
+public abstract class ValuePropertyRequiredAuthorization<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE> extends PropertyRequiredAuthorization<ENTITY, KEY, CONCEPT> {
     
     @Pure
     @Default("(concept, value) -> ReadOnlyAgentPermissions.NONE")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull V, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToExecuteMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToExecuteMethod();
     
     @Pure
     @Default("(concept, value) -> Restrictions.MIN")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull V, @Nonnull Restrictions> getRequiredRestrictionsToExecuteMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nonnull Restrictions> getRequiredRestrictionsToExecuteMethod();
     
     @Pure
     @Default("(concept, value) -> null")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull V, @Nullable Agent> getRequiredAgentToExecuteMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nullable Agent> getRequiredAgentToExecuteMethod();
     
     @Pure
     @Default("(concept, value) -> ReadOnlyAgentPermissions.NONE")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull V, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToSeeMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToSeeMethod();
     
     @Pure
     @Default("(concept, value) -> Restrictions.MIN")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull V, @Nonnull Restrictions> getRequiredRestrictionsToSeeMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nonnull Restrictions> getRequiredRestrictionsToSeeMethod();
     
     @Pure
     @Default("(concept, value) -> null")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull V, @Nullable Agent> getRequiredAgentToSeeMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nullable Agent> getRequiredAgentToSeeMethod();
     
 }

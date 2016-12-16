@@ -4,10 +4,11 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.collections.collection.ReadOnlyCollection;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
-import net.digitalid.utility.console.Console;
+import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
@@ -16,7 +17,9 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.host.Host;
+import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.packet.Request;
 
 /**
  * The server runs the configured hosts.
@@ -24,26 +27,7 @@ import net.digitalid.core.identification.identifier.HostIdentifier;
 @Utility
 public abstract class Server {
     
-    /**
-     * Stores the version of the Digital ID implementation.
-     */
-    public static final @Nonnull String VERSION = "0.7.4";
-    
-    /**
-     * Stores the date of the Digital ID implementation.
-     */
-    public static final @Nonnull String DATE = "4 December 2016";
-    
-    /**
-     * Stores the server listens on the given port number.
-     */
-    public static final int PORT = 1988;
-    
-    
-    /**
-     * References the thread that listens on the socket.
-     */
-    private static @Nonnull Listener listener;
+    /* -------------------------------------------------- Hosts -------------------------------------------------- */
     
     /**
      * Maps the identifiers of the hosts that are running on this server to their instances.
@@ -118,6 +102,7 @@ public abstract class Server {
 //        }
     }
     
+    /* -------------------------------------------------- Services -------------------------------------------------- */
     
     /**
      * Loads all services with their code in the services directory.
@@ -139,30 +124,36 @@ public abstract class Server {
 //        }
     }
     
+    /* -------------------------------------------------- Listener -------------------------------------------------- */
+    
+    /**
+     * References the thread that listens on the socket.
+     */
+    private static @Nonnull Listener listener;
     
     /**
      * Starts the server with the configured and given hosts.
      * 
-     * @param arguments the identifiers of hosts to be created when starting up.
+     * @param identifiers the identifiers of hosts to be created when starting up.
      */
     @Impure
     @Committing
-    public static void start(@Nonnull String... arguments) {
-        try {
-            loadServices();
-            loadHosts();
-            
-            for (final @Nonnull String argument : arguments) {
-//                try {
-//                    new Host(new HostIdentifier(argument));
-//                } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-//                    throw InitializationError.get("Could not create the host '" + argument + "'.", exception);
-//                }
+    public static void start(@Nonnull String... identifiers) {
+        loadServices();
+        loadHosts();
+        
+        for (final @Nonnull String identifier : identifiers) {
+            if (HostIdentifier.isValid(identifier)) {
+                addHost(HostBuilder.withIdentifier(HostIdentifier.with(identifier)).build());
+            } else {
+                new RuntimeException(Quotes.inSingle(identifier) + " is not a valid host identifier.");
             }
-            
-            listener = new Listener(PORT);
-            listener.start();
-            
+        }
+        
+        listener = new Listener(Request.PORT.get());
+        listener.start();
+        
+        try {
 //            Cache.getPublicKeyChain(HostIdentity.DIGITALID);
             Database.commit();
         } catch (@Nonnull DatabaseException exception) {
@@ -189,6 +180,8 @@ public abstract class Server {
         System.exit(0);
     }
     
+    /* -------------------------------------------------- Main Method -------------------------------------------------- */
+    
     /**
      * The main method starts the server with the configured hosts and shows the console.
      * 
@@ -198,40 +191,32 @@ public abstract class Server {
     @Committing
     public static void main(@Nonnull String[] arguments) {
         Thread.currentThread().setName("Main");
+        Configuration.initializeAllConfigurations();
         
-        // TODO: Initialize the library properly.
-        
-//        Directory.initialize(Directory.DEFAULT);
-//        Logger.initialize(DefaultLogger.get(Level.INFORMATION, "Server", VERSION));
-        
-//        final @Nonnull Configuration configuration;
 //        try {
 //            if (MySQLConfiguration.exists()) { configuration = new MySQLConfiguration(false); }
 //            else if (PostgreSQLConfiguration.exists()) { configuration = new PostgreSQLConfiguration(false); }
 //            else if (SQLiteConfiguration.exists()) { configuration = new SQLiteConfiguration(false); }
 //            else {
-                Console.writeLine();
-                Console.writeLine("Please select one of the following databases:");
-                Console.writeLine("- 1: MySQL (default)");
-                Console.writeLine("- 2: PostgreSQL");
-                Console.writeLine("- 3: SQLite");
-                Console.writeLine();
-                final int input = Console.readNumber("Choice: ", 1);
+//                Console.writeLine();
+//                Console.writeLine("Please select one of the following databases:");
+//                Console.writeLine("- 1: MySQL (default)");
+//                Console.writeLine("- 2: PostgreSQL");
+//                Console.writeLine("- 3: SQLite");
+//                Console.writeLine();
+//                final int input = Console.readNumber("Choice: ", 1);
 //                if (input == 1) { configuration = new MySQLConfiguration(false); }
 //                else if (input == 2) { configuration = new PostgreSQLConfiguration(false); }
 //                else if (input == 3) { configuration = new SQLiteConfiguration(false); }
 //                else {
-                    Console.writeLine(Integer.toString(input) + " was not a valid option.");
-                    Console.writeLine();
+//                    Console.writeLine(Integer.toString(input) + " was not a valid option.");
+//                    Console.writeLine();
 //                    return;
 //                }
 //            }
 //        } catch (@Nonnull Exception exception) {
 //            throw InitializationError.get("Could not load the database configuration.", exception);
 //        }
-        
-//        Database.initialize(configuration, false);
-//        Loader.initialize();
         
         Server.start(arguments);
         Options.start();

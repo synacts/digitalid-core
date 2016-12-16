@@ -9,8 +9,8 @@ import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.subject.site.Site;
 import net.digitalid.database.subject.Subject;
+import net.digitalid.database.subject.site.Site;
 
 import net.digitalid.core.entity.annotations.SiteDependency;
 import net.digitalid.core.identification.identity.Identity;
@@ -23,7 +23,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
  */
 @Immutable
 @GenerateConverter
-public interface Entity extends Subject, SiteDependency {
+public interface Entity<SITE extends CoreSite<?>> extends Subject<SITE>, SiteDependency {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
@@ -61,7 +61,7 @@ public interface Entity extends Subject, SiteDependency {
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull Entity with(@Nonnull Site site, long key) /* throws DatabaseException */ {
+    public static @Nonnull Entity<?> with(@Nonnull CoreSite<?> site, long key) /* throws DatabaseException */ {
         // TODO: Think about how to recover entities. Maybe make it configurable/injectable?
 //        if (site instanceof Host) {
 //            return Account.getNotNull((Host) site, resultSet, columnIndex);

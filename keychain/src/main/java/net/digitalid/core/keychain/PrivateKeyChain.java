@@ -3,12 +3,16 @@ package net.digitalid.core.keychain;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.tuples.Pair;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.order.StrictlyDescending;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -22,7 +26,7 @@ import net.digitalid.core.asymmetrickey.PrivateKey;
  */
 @Immutable
 @GenerateSubclass
-// TODO: @GenerateConverter
+@GenerateConverter
 public abstract class PrivateKeyChain extends KeyChain<PrivateKey> {
     
     /**
@@ -44,6 +48,13 @@ public abstract class PrivateKeyChain extends KeyChain<PrivateKey> {
     @Override
     protected @Nonnull PrivateKeyChain createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull Pair<@Nonnull Time, @Nonnull PrivateKey>> items) {
         return new PrivateKeyChainSubclass(items);
+    }
+    
+    @Pure
+    @Recover
+    @TODO(task = "Remove this method once the read-only list can be properly converted.", date = "2016-12-14", author = Author.KASPAR_ETTER)
+    public static @Nonnull PrivateKeyChain recover() {
+        return new PrivateKeyChainSubclass(FreezableLinkedList.<@Nonnull Pair<@Nonnull Time, @Nonnull PrivateKey>>withNoElements().freeze());
     }
     
 }

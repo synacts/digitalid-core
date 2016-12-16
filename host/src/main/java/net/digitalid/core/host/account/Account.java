@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
-import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -23,22 +22,7 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
  */
 @Immutable
 @GenerateConverter
-public abstract class Account implements Entity {
-    
-    /* -------------------------------------------------- Host -------------------------------------------------- */
-    
-    /**
-     * Returns the host of this account.
-     */
-    @Pure
-    @Provided
-    public abstract @Nonnull Host getHost();
-    
-    @Pure
-    @Override
-    public @Nonnull Host getSite() {
-        return getHost();
-    }
+public abstract class Account implements Entity<Host> {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
@@ -58,19 +42,14 @@ public abstract class Account implements Entity {
     
     /**
      * Returns a potentially locally cached account.
-     * 
-     * @param host the host of the account to return.
-     * @param identity the identity of the account to return.
-     * 
-     * @return a new or existing account with the given host and identity.
      */
     @Pure
     @Recover
-    public static @Nonnull Account with(@Nonnull Host host, @Nonnull InternalIdentity identity) {
+    public static @Nonnull Account with(@Nonnull Host site, @Nonnull InternalIdentity identity) {
         if (identity instanceof HostIdentity) {
-            return HostAccount.with(host, (HostIdentity) identity);
+            return HostAccount.with(site, (HostIdentity) identity);
         } else if (identity instanceof InternalNonHostIdentity) {
-            return NonHostAccount.with(host, (InternalNonHostIdentity) identity);
+            return NonHostAccount.with(site, (InternalNonHostIdentity) identity);
         } else {
             throw UnexpectedValueException.with("identity", identity);
         }

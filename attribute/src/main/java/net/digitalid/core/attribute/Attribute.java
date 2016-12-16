@@ -38,7 +38,7 @@ import net.digitalid.core.signature.attribute.AttributeValue;
 @Immutable
 // TODO: @GenerateSubclass
 @GenerateConverter
-public abstract class Attribute extends CoreConcept<Entity, SemanticType> {
+public abstract class Attribute extends CoreConcept<Entity<?>, SemanticType> {
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */
     
@@ -55,7 +55,7 @@ public abstract class Attribute extends CoreConcept<Entity, SemanticType> {
     /**
      * Stores the required authorization to change the published value.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<Entity, SemanticType, Attribute, AttributeValue> VALUE_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull ValuePropertyRequiredAuthorization<Entity<?>, SemanticType, Attribute, AttributeValue> VALUE = ValuePropertyRequiredAuthorizationBuilder.<Entity<?>, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the published value property of this attribute.
@@ -71,7 +71,7 @@ public abstract class Attribute extends CoreConcept<Entity, SemanticType> {
     /**
      * Stores the required authorization to change the unpublished value.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<Entity, SemanticType, Attribute, AttributeValue> UNPUBLISHED_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull ValuePropertyRequiredAuthorization<Entity<?>, SemanticType, Attribute, AttributeValue> UNPUBLISHED = ValuePropertyRequiredAuthorizationBuilder.<Entity<?>, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the unpublished value property of this attribute.
@@ -87,7 +87,7 @@ public abstract class Attribute extends CoreConcept<Entity, SemanticType> {
     /**
      * Stores the required authorization to change the visibility.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<Entity, SemanticType, Attribute, AttributeValue> VISIBILITY_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull ValuePropertyRequiredAuthorization<Entity<?>, SemanticType, Attribute, AttributeValue> VISIBILITY = ValuePropertyRequiredAuthorizationBuilder.<Entity<?>, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the visibility property of this attribute.
@@ -103,7 +103,7 @@ public abstract class Attribute extends CoreConcept<Entity, SemanticType> {
      */
     @Pure
     @Recover
-    public static @Nonnull Attribute of(@Nonnull Entity entity, @Nonnull SemanticType key) {
+    public static @Nonnull Attribute of(@Nonnull Entity<?> entity, @Nonnull SemanticType key) {
         return null; // TODO
     }
     
@@ -113,7 +113,7 @@ public abstract class Attribute extends CoreConcept<Entity, SemanticType> {
     @Pure
     @NonCommitting
     @TODO(task = "Do we need/want such a method?", date = "2016-12-02", author = Author.KASPAR_ETTER)
-    public static @Capturable @Nonnull @NonFrozen FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws DatabaseException {
+    public static @Capturable @Nonnull @NonFrozen FreezableSet<Attribute> getAll(@Nonnull Entity<?> entity) throws DatabaseException {
         return FreezableHashSetBuilder.build();
 //        return AttributeModule.getAll(entity);
     }

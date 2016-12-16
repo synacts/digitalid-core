@@ -1,13 +1,11 @@
 package net.digitalid.core.client.role;
 
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
-import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -28,22 +26,7 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
  */
 @Immutable
 @GenerateConverter
-public abstract class Role extends RootClass implements NonHostEntity {
-    
-    /* -------------------------------------------------- Client -------------------------------------------------- */
-    
-    /**
-     * Returns the client that can assume this role.
-     */
-    @Pure
-    @Provided
-    public abstract @Nonnull Client getClient();
-    
-    @Pure
-    @Override
-    public @Nonnull Client getSite() {
-        return getClient();
-    }
+public abstract class Role extends RootClass implements NonHostEntity<Client> {
     
     /* -------------------------------------------------- Issuer -------------------------------------------------- */
     
@@ -216,7 +199,7 @@ public abstract class Role extends RootClass implements NonHostEntity {
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull Role with(@Nonnull Client client, long key) /*throws DatabaseException */{
+    public static @Nonnull Role with(@Nonnull Client site, long key) /*throws DatabaseException */{
         // TODO: Think about how to recover roles.
         throw new UnsupportedOperationException();
     }

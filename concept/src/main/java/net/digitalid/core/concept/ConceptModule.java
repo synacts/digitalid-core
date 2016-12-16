@@ -13,8 +13,8 @@ import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.subject.SubjectModule;
-import net.digitalid.database.subject.site.Site;
 
+import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.service.Service;
 
@@ -24,7 +24,7 @@ import net.digitalid.core.service.Service;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class ConceptModule<E extends Entity, K, C extends Concept<E, K>> extends SubjectModule<C> {
+public abstract class ConceptModule<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>> extends SubjectModule<CoreSite<?>, CONCEPT> {
     
     /* -------------------------------------------------- Service -------------------------------------------------- */
     
@@ -40,7 +40,7 @@ public abstract class ConceptModule<E extends Entity, K, C extends Concept<E, K>
      * Returns the factory that can produce a new concept instance with a given entity and key.
      */
     @Pure
-    protected abstract @Nonnull BinaryFunction<@Nonnull E, @Nonnull K, @Nonnull C> getConceptFactory();
+    protected abstract @Nonnull BinaryFunction<@Nonnull ENTITY, @Nonnull KEY, @Nonnull CONCEPT> getConceptFactory();
     
     /* -------------------------------------------------- Index -------------------------------------------------- */
     
@@ -49,7 +49,7 @@ public abstract class ConceptModule<E extends Entity, K, C extends Concept<E, K>
      */
     @Pure
     @Derive("new ConceptIndexSubclass<>(this)")
-    public abstract @Nonnull ConceptIndex<E, K, C> getConceptIndex();
+    public abstract @Nonnull ConceptIndex<ENTITY, KEY, CONCEPT> getConceptIndex();
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
@@ -57,18 +57,18 @@ public abstract class ConceptModule<E extends Entity, K, C extends Concept<E, K>
      * Returns the converter used to convert and recover the entity.
      */
     @Pure
-    public abstract @Nonnull Converter<E, @Nonnull Site> getEntityConverter();
+    public abstract @Nonnull Converter<ENTITY, @Nonnull CoreSite<?>> getEntityConverter();
     
     /**
      * Returns the converter used to convert and recover the concept.
      */
     @Pure
-    public abstract @Nonnull Converter<C, @Nonnull E> getConceptConverter();
+    public abstract @Nonnull Converter<CONCEPT, @Nonnull ENTITY> getConceptConverter();
     
     @Pure
     @Override
-    @Derive("new SubjectConverterSubclass<E, K, C>(\"SubjectConverter\", this)")
-    public abstract @Nonnull Converter<C, @Nonnull Site> getSubjectConverter();
+    @Derive("new SubjectConverterSubclass<ENTITY, KEY, CONCEPT>(\"SubjectConverter\", this)")
+    public abstract @Nonnull Converter<CONCEPT, @Nonnull CoreSite<?>> getSubjectConverter();
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
     

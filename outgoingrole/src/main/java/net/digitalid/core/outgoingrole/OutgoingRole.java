@@ -106,7 +106,7 @@ public abstract class OutgoingRole extends Agent {
     /**
      * Stores the required authorization to change the relation.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity, Long, OutgoingRole, SemanticType> RELATION_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity, Long, OutgoingRole, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, true)).withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
+    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity<?>, Long, OutgoingRole, SemanticType> RELATION_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, OutgoingRole, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, true)).withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
     
     /**
      * Returns the relation between the issuing and the receiving identity.
@@ -132,7 +132,7 @@ public abstract class OutgoingRole extends Agent {
     /**
      * Stores the required authorization to change the node.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity, Long, OutgoingRole, Node> NODE_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity, Long, OutgoingRole, Node>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withNode(value).withWriteToNode(true).build()).withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
+    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity<?>, Long, OutgoingRole, Node> NODE_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, OutgoingRole, Node>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withNode(value).withWriteToNode(true).build()).withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
     
     /**
      * Returns the node to which this outgoing role is assigned.
@@ -263,7 +263,7 @@ public abstract class OutgoingRole extends Agent {
      */
     @Pure
     @Recover
-    public static @Nonnull OutgoingRole of(@Nonnull NonHostEntity entity, long key) {
+    public static @Nonnull OutgoingRole of(@Nonnull NonHostEntity<?> entity, long key) {
         return null;
 //        return OutgoingRoleSubclass.MODULE.getConceptIndex().get(entity, key); // TODO
     }

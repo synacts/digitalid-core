@@ -313,7 +313,7 @@ public abstract class Request extends Packet {
     /**
      * Stores the port number on which a Digital ID server listens by default.
      */
-    public static final @Nonnull Configuration<Integer> PORT = Configuration.with(494);
+    public static final @Nonnull Configuration<Integer> PORT = Configuration.with(1494); // TODO: Figure out how to run the server on port 494 with Maven.
     
     /**
      * Sends this request and returns the response.

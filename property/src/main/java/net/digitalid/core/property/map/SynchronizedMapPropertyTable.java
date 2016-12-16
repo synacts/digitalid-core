@@ -15,6 +15,7 @@ import net.digitalid.database.property.map.PersistentMapPropertyEntryConverter;
 import net.digitalid.database.property.map.PersistentMapPropertyTable;
 
 import net.digitalid.core.concept.Concept;
+import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedPropertyTable;
 
@@ -24,14 +25,14 @@ import net.digitalid.core.property.SynchronizedPropertyTable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SynchronizedMapPropertyTable<E extends Entity, K, C extends Concept<E, K>, U, V, EU, EV> extends PersistentMapPropertyTable<C, U, V, EU, EV>, SynchronizedPropertyTable<E, K, C, PersistentMapPropertyEntry<C, U, V>, MapPropertyRequiredAuthorization<E, K, C, U, V>> {
+public interface SynchronizedMapPropertyTable<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentMapPropertyTable<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, PersistentMapPropertyEntry<CONCEPT, MAP_KEY, MAP_VALUE>, MapPropertyRequiredAuthorization<ENTITY, KEY, CONCEPT, MAP_KEY, MAP_VALUE>> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
     @TODO(task = "Is it really necessary to override this method manually?", date = "2016-11-12", author = Author.KASPAR_ETTER)
-    @Derive("net.digitalid.database.property.map.PersistentMapPropertyEntryConverterBuilder.<C, U, V, EU, EV>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public @Nonnull PersistentMapPropertyEntryConverter<C, U, V, EU, EV> getEntryConverter();
+    @Derive("net.digitalid.database.property.map.PersistentMapPropertyEntryConverterBuilder.<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    public @Nonnull PersistentMapPropertyEntryConverter<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> getEntryConverter();
     
 }

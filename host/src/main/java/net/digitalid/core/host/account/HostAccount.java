@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -14,9 +15,9 @@ import net.digitalid.core.identification.identity.HostIdentity;
  * This class models a host account.
  */
 @Immutable
-// TODO: @GenerateSubclass
+@GenerateSubclass
 @GenerateConverter
-public abstract class HostAccount extends Account implements HostEntity {
+public abstract class HostAccount extends Account implements HostEntity<Host> {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
@@ -29,8 +30,7 @@ public abstract class HostAccount extends Account implements HostEntity {
     @Pure
     @Recover
     public static @Nonnull HostAccount with(@Nonnull Host host, @Nonnull HostIdentity identity) {
-        // TODO: Think about how to recover accounts.
-        throw new UnsupportedOperationException();
+        return new HostAccountSubclass(host, identity);
     }
     
     /* -------------------------------------------------- Indexing -------------------------------------------------- */

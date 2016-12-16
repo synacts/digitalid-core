@@ -24,12 +24,14 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.property.set.PersistentSetObserver;
 import net.digitalid.database.property.set.PersistentSetPropertyEntry;
 import net.digitalid.database.property.set.PersistentSetPropertyEntryBuilder;
 import net.digitalid.database.property.set.ReadOnlyPersistentSetProperty;
-import net.digitalid.database.property.set.WritablePersistentSetProperty;
+import net.digitalid.database.property.set.WritablePersistentSetPropertyImplementation;
 
 import net.digitalid.core.concept.Concept;
+import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedProperty;
 import net.digitalid.core.synchronizer.Synchronizer;
@@ -41,7 +43,7 @@ import net.digitalid.core.synchronizer.Synchronizer;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentSetProperty.class)
-public abstract class WritableSynchronizedSetProperty<E extends Entity, K, C extends Concept<E, K>, V, R extends ReadOnlySet<@Nonnull @Valid V>, F extends FreezableSet<@Nonnull @Valid V>> extends WritablePersistentSetProperty<C, V, R, F> implements SynchronizedProperty<E, K, C, PersistentSetPropertyEntry<C, V>, ReadOnlyPersistentSetProperty.Observer<C, V, R>> {
+public abstract class WritableSynchronizedSetProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritablePersistentSetPropertyImplementation<CoreSite<?>, CONCEPT, VALUE, READONLY_SET, FREEZABLE_SET> implements SynchronizedProperty<ENTITY, KEY, CONCEPT, PersistentSetPropertyEntry<CONCEPT, VALUE>, PersistentSetObserver<CONCEPT, VALUE, READONLY_SET>> {
     
     /* -------------------------------------------------- Set -------------------------------------------------- */
     
@@ -50,20 +52,20 @@ public abstract class WritableSynchronizedSetProperty<E extends Entity, K, C ext
      */
     @Pure
     @Override
-    protected abstract @Nonnull @NonFrozen F getSet();
+    protected abstract @Nonnull @NonFrozen FREEZABLE_SET getSet();
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
     @Pure
     @Override
-    public abstract @Nonnull SynchronizedSetPropertyTable<E, K, C, V, ?> getTable();
+    public abstract @Nonnull SynchronizedSetPropertyTable<ENTITY, KEY, CONCEPT, VALUE, ?> getTable();
     
     /* -------------------------------------------------- Operations -------------------------------------------------- */
     
     @Impure
     @Override
     @Committing
-    public boolean add(@Captured @Nonnull @Valid V value) throws DatabaseException, ReentranceException {
+    public boolean add(@Captured @Nonnull @Valid VALUE value) throws DatabaseException, ReentranceException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -81,7 +83,7 @@ public abstract class WritableSynchronizedSetProperty<E extends Entity, K, C ext
     @Impure
     @Override
     @Committing
-    public boolean remove(@NonCaptured @Unmodified @Nonnull @Valid V value) throws DatabaseException, ReentranceException {
+    public boolean remove(@NonCaptured @Unmodified @Nonnull @Valid VALUE value) throws DatabaseException, ReentranceException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -104,10 +106,10 @@ public abstract class WritableSynchronizedSetProperty<E extends Entity, K, C ext
     @Impure
     @NonCommitting
     @TODO(task = "Implement and use SQL.delete().", date = "2016-11-12", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
-    protected void modify(@Nonnull @Valid V value, boolean added) throws DatabaseException {
+    protected void modify(@Nonnull @Valid VALUE value, boolean added) throws DatabaseException {
         lock.getReentrantLock().lock();
         try {
-            final @Nonnull PersistentSetPropertyEntry<C, V> entry = PersistentSetPropertyEntryBuilder.<C, V>withSubject(getSubject()).withValue(value).build();
+            final @Nonnull PersistentSetPropertyEntry<CONCEPT, VALUE> entry = PersistentSetPropertyEntryBuilder.<CONCEPT, VALUE>withSubject(getSubject()).withValue(value).build();
             if (added) {
                 SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite());
                 getSet().add(value);

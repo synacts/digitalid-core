@@ -15,6 +15,7 @@ import net.digitalid.database.property.value.PersistentValuePropertyEntryConvert
 import net.digitalid.database.property.value.PersistentValuePropertyTable;
 
 import net.digitalid.core.concept.Concept;
+import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedPropertyTable;
 
@@ -24,14 +25,14 @@ import net.digitalid.core.property.SynchronizedPropertyTable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SynchronizedValuePropertyTable<E extends Entity, K, C extends Concept<E, K>, V, T> extends PersistentValuePropertyTable<C, V, T>, SynchronizedPropertyTable<E, K, C, PersistentValuePropertyEntry<C, V>, ValuePropertyRequiredAuthorization<E, K, C, V>> {
+public interface SynchronizedValuePropertyTable<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE, PROVIDED_FOR_VALUE> extends PersistentValuePropertyTable<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, PersistentValuePropertyEntry<CONCEPT, VALUE>, ValuePropertyRequiredAuthorization<ENTITY, KEY, CONCEPT, VALUE>> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
     @TODO(task = "Is it really necessary to override this method manually?", date = "2016-11-12", author = Author.KASPAR_ETTER)
-    @Derive("net.digitalid.database.property.value.PersistentValuePropertyEntryConverterBuilder.<C, V, T>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public @Nonnull PersistentValuePropertyEntryConverter<C, V, T> getEntryConverter();
+    @Derive("net.digitalid.database.property.value.PersistentValuePropertyEntryConverterBuilder.<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    public @Nonnull PersistentValuePropertyEntryConverter<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE> getEntryConverter();
     
 }

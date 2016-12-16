@@ -11,6 +11,7 @@ import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.console.Console;
 import net.digitalid.utility.console.Option;
 import net.digitalid.utility.console.exceptions.EscapeOptionException;
+import net.digitalid.utility.logging.Version;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
@@ -113,7 +114,7 @@ abstract class Options {
         @Override
         @Committing
         public void execute() {
-            Console.writeLine("Version: " + Server.VERSION + " (" + Server.DATE + ")");
+            Console.writeLine("Version: " + Version.string.get());
         }
         
     }

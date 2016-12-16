@@ -25,30 +25,30 @@ import net.digitalid.core.restrictions.Restrictions;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class MapPropertyRequiredAuthorization<E extends Entity, K, C extends Concept<E, K>, U, V> extends PropertyRequiredAuthorization<E, K, C> {
+public abstract class MapPropertyRequiredAuthorization<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, MAP_KEY, MAP_VALUE> extends PropertyRequiredAuthorization<ENTITY, KEY, CONCEPT> {
     
     @Pure
     @Default("(concept, pair) -> ReadOnlyAgentPermissions.NONE")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull Pair<@Nonnull U, @Nonnull V>, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToExecuteMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull Pair<@Nonnull MAP_KEY, @Nonnull MAP_VALUE>, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToExecuteMethod();
     
     @Pure
     @Default("(concept, pair) -> Restrictions.MIN")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull Pair<@Nonnull U, @Nonnull V>, @Nonnull Restrictions> getRequiredRestrictionsToExecuteMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull Pair<@Nonnull MAP_KEY, @Nonnull MAP_VALUE>, @Nonnull Restrictions> getRequiredRestrictionsToExecuteMethod();
     
     @Pure
     @Default("(concept, pair) -> null")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull Pair<@Nonnull U, @Nonnull V>, @Nullable Agent> getRequiredAgentToExecuteMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull Pair<@Nonnull MAP_KEY, @Nonnull MAP_VALUE>, @Nullable Agent> getRequiredAgentToExecuteMethod();
     
     @Pure
     @Default("(concept, pair) -> ReadOnlyAgentPermissions.NONE")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull Pair<@Nonnull U, @Nonnull V>, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToSeeMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull Pair<@Nonnull MAP_KEY, @Nonnull MAP_VALUE>, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToSeeMethod();
     
     @Pure
     @Default("(concept, pair) -> Restrictions.MIN")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull Pair<@Nonnull U, @Nonnull V>, @Nonnull Restrictions> getRequiredRestrictionsToSeeMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull Pair<@Nonnull MAP_KEY, @Nonnull MAP_VALUE>, @Nonnull Restrictions> getRequiredRestrictionsToSeeMethod();
     
     @Pure
     @Default("(concept, pair) -> null")
-    public abstract @Nonnull BinaryFunction<@Nonnull C, @Nonnull Pair<@Nonnull U, @Nonnull V>, @Nullable Agent> getRequiredAgentToSeeMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull Pair<@Nonnull MAP_KEY, @Nonnull MAP_VALUE>, @Nullable Agent> getRequiredAgentToSeeMethod();
     
 }

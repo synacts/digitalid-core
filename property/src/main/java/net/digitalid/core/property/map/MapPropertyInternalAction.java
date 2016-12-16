@@ -38,19 +38,19 @@ import net.digitalid.core.restrictions.Restrictions;
 @GenerateBuilder
 @GenerateSubclass
 //@GenerateConverter // TODO: Maybe the converter has to be written manually anyway (in order to recover the property). Otherwise, make sure the converter generator can handle generic types.
-public abstract class MapPropertyInternalAction<E extends Entity, K, C extends Concept<E, K>, U, V, R extends ReadOnlyMap<@Nonnull @Valid("key") U, @Nonnull @Valid V>, F extends FreezableMap<@Nonnull @Valid("key") U, @Nonnull @Valid V>> extends PropertyInternalAction<E, K, C, WritableSynchronizedMapProperty<E, K, C, U, V, R, F>> implements Valid.Key<U>, Valid.Value<V> {
+public abstract class MapPropertyInternalAction<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, MAP_KEY, MAP_VALUE, READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>, FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>> extends PropertyInternalAction<ENTITY, KEY, CONCEPT, WritableSynchronizedMapProperty<ENTITY, KEY, CONCEPT, MAP_KEY, MAP_VALUE, READONLY_MAP, FREEZABLE_MAP>> implements Valid.Key<MAP_KEY>, Valid.Value<MAP_VALUE> {
     
     /* -------------------------------------------------- Validators -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Predicate<? super U> getKeyValidator() {
+    public @Nonnull Predicate<? super MAP_KEY> getKeyValidator() {
         return getProperty().getKeyValidator();
     }
     
     @Pure
     @Override
-    public @Nonnull Predicate<? super V> getValueValidator() {
+    public @Nonnull Predicate<? super MAP_VALUE> getValueValidator() {
         return getProperty().getValueValidator();
     }
     
@@ -60,13 +60,13 @@ public abstract class MapPropertyInternalAction<E extends Entity, K, C extends C
      * Returns the key added to or removed from the property.
      */
     @Pure
-    protected abstract @Nonnull @Valid("key") U getKey();
+    protected abstract @Nonnull @Valid("key") MAP_KEY getKey();
     
     /**
      * Returns the value added to or removed from the property.
      */
     @Pure
-    protected abstract @Nonnull @Valid V getValue();
+    protected abstract @Nonnull @Valid MAP_VALUE getValue();
     
     /**
      * Returns whether the key and value are added to or removed from the property.
@@ -101,7 +101,7 @@ public abstract class MapPropertyInternalAction<E extends Entity, K, C extends C
     @Pure
     @Override
     @OnClientRecipient
-    public @Nonnull MapPropertyInternalAction<E, K, C, U, V, R, F> getReverse() throws DatabaseException {
+    public @Nonnull MapPropertyInternalAction<ENTITY, KEY, CONCEPT, MAP_KEY, MAP_VALUE, READONLY_MAP, FREEZABLE_MAP> getReverse() throws DatabaseException {
         return MapPropertyInternalActionBuilder.withProperty(getProperty()).withKey(getKey()).withValue(getValue()).withAdded(isAdded()).build();
     }
     

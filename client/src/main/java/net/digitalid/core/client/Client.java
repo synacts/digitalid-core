@@ -8,8 +8,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -18,7 +16,6 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
-import net.digitalid.utility.rootclass.RootClassWithException;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -33,13 +30,13 @@ import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
-import net.digitalid.database.subject.site.Site;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.commitment.CommitmentBuilder;
+import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;
@@ -56,8 +53,7 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@TODO(task = "Change back the exception back to External Exception as soon as the builder can handle it.", date = "2016-12-12", author = Author.KASPAR_ETTER)
-public abstract class Client extends RootClassWithException<RuntimeException /* ExternalException */> implements Site {
+public abstract class Client extends CoreSite<Client> {
     
     /* -------------------------------------------------- Stop -------------------------------------------------- */
     
@@ -109,13 +105,13 @@ public abstract class Client extends RootClassWithException<RuntimeException /* 
      * Returns the identifier of this client.
      */
     @Pure
-    public abstract @Nonnull @DomainName @MaxSize(63) String getIdentifier();
+    public abstract @Nonnull @DomainName @MaxSize(62) String getIdentifier();
     
     /* -------------------------------------------------- Schema Name -------------------------------------------------- */
     
     @Pure
     @Override
-    @Derive("identifier.replace(\".\", \"_\")")
+    @Derive("(Character.isDigit(identifier.charAt(0)) ? \"_\" : \"\") + identifier.replace(\".\", \"_\").replace(\"-\", \"$\")")
     public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getSchemaName();
     
     /* -------------------------------------------------- Preferred Permissions -------------------------------------------------- */
@@ -146,6 +142,28 @@ public abstract class Client extends RootClassWithException<RuntimeException /* 
         } catch (@Nonnull ExternalException exception) {
             throw new RuntimeException(exception); // TODO
         }
+    }
+    
+    /* -------------------------------------------------- Subject -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public final @Nonnull Client getSite() {
+        return this;
+    }
+    
+    /* -------------------------------------------------- CoreSite -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public final boolean isHost() {
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public final boolean isClient() {
+        return true;
     }
     
     /* -------------------------------------------------- Commitment -------------------------------------------------- */

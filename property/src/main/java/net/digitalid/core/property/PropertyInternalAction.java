@@ -25,7 +25,7 @@ import net.digitalid.core.service.Service;
  * @see ValuePropertyInternalAction
  */
 @Immutable
-public abstract class PropertyInternalAction<E extends Entity, K, C extends Concept<E, K>, P extends SynchronizedProperty<E, K, C, ?, ?>> extends InternalAction {
+public abstract class PropertyInternalAction<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, PROPERTY extends SynchronizedProperty<ENTITY, KEY, CONCEPT, ?, ?>> extends InternalAction {
     
     /* -------------------------------------------------- Property -------------------------------------------------- */
     
@@ -33,13 +33,13 @@ public abstract class PropertyInternalAction<E extends Entity, K, C extends Conc
      * Returns the property that is modified by this internal action.
      */
     @Pure
-    public abstract @Nonnull P getProperty();
+    public abstract @Nonnull PROPERTY getProperty();
     
     /* -------------------------------------------------- Handler -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull NonHostEntity getEntity() {
+    public @Nonnull NonHostEntity<?> getEntity() {
         return (NonHostEntity) getProperty().getConcept().getEntity();
     }
     

@@ -11,7 +11,7 @@ public class ClientTest extends CryptographyTestBase {
     
     @Test
     public void testClientCreation() {
-        final @Nonnull Client client = ClientBuilder.withName("Test Client").withIdentifier("net.digitalid.client.test").withPreferredPermissions(ReadOnlyAgentPermissions.GENERAL_WRITE).build();
+        final @Nonnull Client client = ClientBuilder.withName("Test Client").withIdentifier("net.digitalid.test").withPreferredPermissions(ReadOnlyAgentPermissions.GENERAL_WRITE).build();
         assertEquals("Test Client", client.getName());
         assertEquals("net.digitalid.test", client.getIdentifier());
         assertEquals("net_digitalid_test", client.getSchemaName());

@@ -37,13 +37,13 @@ import net.digitalid.core.restrictions.Restrictions;
 @GenerateBuilder
 @GenerateSubclass
 //@GenerateConverter // TODO: Maybe the converter has to be written manually anyway (in order to recover the property). Otherwise, make sure the converter generator can handle generic types.
-public abstract class SetPropertyInternalAction<E extends Entity, K, C extends Concept<E, K>, V, R extends ReadOnlySet<@Nonnull @Valid V>, F extends FreezableSet<@Nonnull @Valid V>> extends PropertyInternalAction<E, K, C, WritableSynchronizedSetProperty<E, K, C, V, R, F>> implements Valid.Value<V> {
+public abstract class SetPropertyInternalAction<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends PropertyInternalAction<ENTITY, KEY, CONCEPT, WritableSynchronizedSetProperty<ENTITY, KEY, CONCEPT, VALUE, READONLY_SET, FREEZABLE_SET>> implements Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Predicate<? super V> getValueValidator() {
+    public @Nonnull Predicate<? super VALUE> getValueValidator() {
         return getProperty().getValueValidator();
     }
     
@@ -53,7 +53,7 @@ public abstract class SetPropertyInternalAction<E extends Entity, K, C extends C
      * Returns the value added to or removed from the property.
      */
     @Pure
-    protected abstract @Nonnull @Valid V getValue();
+    protected abstract @Nonnull @Valid VALUE getValue();
     
     /**
      * Returns whether the value is added to or removed from the property.
@@ -88,7 +88,7 @@ public abstract class SetPropertyInternalAction<E extends Entity, K, C extends C
     @Pure
     @Override
     @OnClientRecipient
-    public @Nonnull SetPropertyInternalAction<E, K, C, V, R, F> getReverse() throws DatabaseException {
+    public @Nonnull SetPropertyInternalAction<ENTITY, KEY, CONCEPT, VALUE, READONLY_SET, FREEZABLE_SET> getReverse() throws DatabaseException {
         return SetPropertyInternalActionBuilder.withProperty(getProperty()).withValue(getValue()).withAdded(isAdded()).build();
     }
     

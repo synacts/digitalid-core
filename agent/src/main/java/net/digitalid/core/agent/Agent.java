@@ -31,7 +31,7 @@ import net.digitalid.core.restrictions.Restrictions;
  */
 @Immutable
 @GenerateConverter
-public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
+public abstract class Agent extends CoreConcept<NonHostEntity<?>, Long> {
     
     /* -------------------------------------------------- Aspects -------------------------------------------------- */
     
@@ -188,7 +188,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity, Long> {
      */
     @Pure
     @Recover
-    public static @Nonnull Agent of(@Nonnull NonHostEntity entity, long key) {
+    public static @Nonnull Agent of(@Nonnull NonHostEntity<?> entity, long key) {
         // TODO: Make this injectable?
         return null;
 //        return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed, false);
