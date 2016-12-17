@@ -18,9 +18,6 @@ import net.digitalid.core.parameters.Parameters;
 
 import org.junit.BeforeClass;
 
-/**
- *
- */
 public class CryptographyTestBase extends RootTest {
     
     /* -------------------------------------------------- Public Key Retriever -------------------------------------------------- */

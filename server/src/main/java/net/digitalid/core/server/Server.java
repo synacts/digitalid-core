@@ -10,11 +10,10 @@ import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
-import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.host.Host;
 import net.digitalid.core.host.HostBuilder;
@@ -153,12 +152,12 @@ public abstract class Server {
         listener = new Listener(Request.PORT.get());
         listener.start();
         
-        try {
+//        try {
 //            Cache.getPublicKeyChain(HostIdentity.DIGITALID);
-            Database.commit();
-        } catch (@Nonnull DatabaseException exception) {
+//            Database.commit();
+//        } catch (@Nonnull DatabaseException exception) {
 //            throw InitializationError.get("Could not retrieve the public key chain of 'digitalid.net'.", exception);
-        }
+//        }
     }
     
     /**
@@ -193,6 +192,8 @@ public abstract class Server {
         Thread.currentThread().setName("Main");
         Configuration.initializeAllConfigurations();
         
+        Log.information("The library is now initialized.");
+        
 //        try {
 //            if (MySQLConfiguration.exists()) { configuration = new MySQLConfiguration(false); }
 //            else if (PostgreSQLConfiguration.exists()) { configuration = new PostgreSQLConfiguration(false); }
@@ -219,6 +220,8 @@ public abstract class Server {
 //        }
         
         Server.start(arguments);
+        Log.information("The server has been started with the following arguments:", arguments);
+        
         Options.start();
     }
     

@@ -1,6 +1,6 @@
 // TODO
 
-//package net.digitalid.core.resolution;
+package net.digitalid.core.resolution;
 //
 //import java.sql.ResultSet;
 //import java.sql.SQLException;
@@ -78,7 +78,7 @@
 // * merged! (If the column can only contain {@link Type types}, this is not necessary.)
 // */
 //@Stateless
-//public final class Mapper {
+public abstract class Mapper {
 //    
 //    /* -------------------------------------------------- Key -------------------------------------------------- */
 //    
@@ -644,4 +644,4 @@
 //        }
 //    }
 //    
-//}
+}
