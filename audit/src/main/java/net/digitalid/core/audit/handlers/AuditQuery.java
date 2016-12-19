@@ -47,7 +47,7 @@ public abstract class AuditQuery extends InternalQuery {
     
     @Pure
     @Override
-    public boolean matches(@Nullable Reply<NonHostEntity> reply) {
+    public boolean matches(@Nullable Reply<NonHostEntity<?>> reply) {
         return reply instanceof AuditReply && ((AuditReply) reply).getService().equals(getService());
     }
     

@@ -4,9 +4,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -16,6 +20,7 @@ import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.selfcontained.Selfcontained;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.signature.Signature;
 
@@ -26,7 +31,7 @@ import net.digitalid.core.signature.Signature;
  * @see Reply
  */
 @Immutable
-public interface Handler<E extends Entity> extends RootInterface, SiteDependency {
+public interface Handler<ENTITY extends Entity<?>> extends RootInterface, SiteDependency {
     
     /* -------------------------------------------------- Signature -------------------------------------------------- */
     
@@ -57,24 +62,31 @@ public interface Handler<E extends Entity> extends RootInterface, SiteDependency
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
     /**
+     * Returns the entity that was provided with the builder.
+     */
+    @Pure
+    @Default("null")
+    @NonRepresentative
+    public @Nullable ENTITY getProvidedEntity();
+    
+    /**
      * Returns the entity to which this handler belongs or null if it is impersonal.
      */
     @Pure
-    @Provided
-    @Default("/* signature == null ? null : */ null /* Find a way to derive it from signature.getSubject(), probably make it injectable. */")
-    public @Nullable E getEntity();
+    @Derive("signature != null ? null /* Find a way to derive it from signature.getSubject(), probably make it injectable. */ : providedEntity")
+    public @Nullable ENTITY getEntity();
     
     @Pure
     @Override
     public default boolean isOnHost() {
-        final @Nullable E entity = getEntity();
+        final @Nullable ENTITY entity = getEntity();
         return entity != null && entity.isOnHost();
     }
     
     @Pure
     @Override
     public default boolean isOnClient() {
-        final @Nullable E entity = getEntity();
+        final @Nullable ENTITY entity = getEntity();
         return entity == null || entity.isOnClient();
     }
     
@@ -84,8 +96,8 @@ public interface Handler<E extends Entity> extends RootInterface, SiteDependency
      * Returns the entity that was provided with the builder.
      */
     @Pure
-    @Provided
     @Default("null")
+    @NonRepresentative
     public @Nullable InternalIdentifier getProvidedSubject();
     
     /**
@@ -95,7 +107,6 @@ public interface Handler<E extends Entity> extends RootInterface, SiteDependency
      * the corresponding identity is not known to (or does not yet) exist.
      */
     @Pure
-    @Provided
     @Derive("signature != null ? signature.getSubject() : providedSubject")
     public @Nonnull InternalIdentifier getSubject();
     
@@ -118,5 +129,13 @@ public interface Handler<E extends Entity> extends RootInterface, SiteDependency
      */
     @Pure
     public @Nonnull String getDescription();
+    
+    /* -------------------------------------------------- Conversion -------------------------------------------------- */
+    
+    @Pure
+    @TODO(task = "Is this the right approach? If yes, we should have this generated automatically.", date = "2016-12-19", author = Author.KASPAR_ETTER)
+    public default @Nonnull Selfcontained convert() throws ExternalException {
+        return null;
+    }
     
 }

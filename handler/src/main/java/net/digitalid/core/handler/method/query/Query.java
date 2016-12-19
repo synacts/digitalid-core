@@ -22,7 +22,7 @@ import net.digitalid.core.handler.reply.QueryReply;
  * @see ExternalQuery
  */
 @Immutable
-public abstract class Query<E extends Entity> extends MethodImplementation<E> {
+public abstract class Query<ENTITY extends Entity<?>> extends MethodImplementation<ENTITY> {
     
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
     
@@ -52,6 +52,6 @@ public abstract class Query<E extends Entity> extends MethodImplementation<E> {
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public abstract @Nonnull QueryReply<E> executeOnHost() throws RequestException, DatabaseException;
+    public abstract @Nonnull QueryReply<ENTITY> executeOnHost() throws RequestException, DatabaseException;
     
 }

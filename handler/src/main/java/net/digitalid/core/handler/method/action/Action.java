@@ -34,7 +34,7 @@ import net.digitalid.core.restrictions.Restrictions;
  * @see ExternalAction
  */
 @Immutable
-public abstract class Action extends MethodImplementation<NonHostEntity> implements Auditable {
+public abstract class Action extends MethodImplementation<NonHostEntity<?>> implements Auditable {
     
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
     

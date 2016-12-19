@@ -7,6 +7,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Default;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -27,7 +28,7 @@ import net.digitalid.core.signature.host.HostSignature;
  */
 @Immutable
 @Referenced
-public abstract class Reply<E extends Entity> extends RootClass implements Handler<E> {
+public abstract class Reply<ENTITY extends Entity<?>> extends RootClass implements Handler<ENTITY> {
     
     /* -------------------------------------------------- Signature -------------------------------------------------- */
     
@@ -45,6 +46,7 @@ public abstract class Reply<E extends Entity> extends RootClass implements Handl
     @Pure
     @PrimaryKey
     @Default("null")
+    @NonRepresentative // TODO: Load this number correctly.
     public abstract @Nullable Long getNumber();
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */

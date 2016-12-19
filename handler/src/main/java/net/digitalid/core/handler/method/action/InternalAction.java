@@ -70,7 +70,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
     
     @Pure
     @Override
-    public final boolean matches(@Nullable Reply<NonHostEntity> reply) {
+    public final boolean matches(@Nullable Reply<NonHostEntity<?>> reply) {
         return reply == null;
     }
     

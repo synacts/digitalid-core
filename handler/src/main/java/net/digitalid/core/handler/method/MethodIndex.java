@@ -29,23 +29,23 @@ public abstract class MethodIndex {
     /**
      * Maps method types to the converter that recovers the handler for that type.
      */
-    private static final @Nonnull Map<@Nonnull SemanticType, @Nonnull Converter<? extends Method<?>, @Nonnull Signature<?>>> converters = new ConcurrentHashMap<>();
+    private static final @Nonnull Map<@Nonnull SemanticType, @Nonnull Converter<? extends Method<?>, ? /* @Nonnull Signature<?> */>> converters = new ConcurrentHashMap<>();
     
     /**
      * Adds the given converter that recovers handlers for the given type.
      */
     @Impure
     @TODO(task = "Prevent that someone can overwrite an existing converter? (And the type could also be read from the given converter.)", date = "2016-11-07", author = Author.KASPAR_ETTER)
-    public static void add(@Nonnull SemanticType type, @Nonnull Converter<? extends Method<?>, @Nonnull Signature<?>> converter) {
+    public static void add(@Nonnull SemanticType type, @Nonnull Converter<? extends Method<?>, ? /* @Nonnull Signature<?> */> converter) {
         converters.put(type, converter);
     }
     
     @Pure
     @TODO(task = "Provide only the signature but with an appropriate generic type?", date = "2016-11-07", author = Author.KASPAR_ETTER)
-    public static @Nonnull Method get(@Nonnull Selfcontained selfcontained, @Nonnull Signature<?> signature) throws ExternalException {
-        final @Nullable Converter<? extends Method<?>, @Nonnull Signature<?>> converter = converters.get(selfcontained.getType());
+    public static @Nonnull Method<?> get(@Nonnull Selfcontained selfcontained, @Nonnull Signature<?> signature) throws ExternalException {
+        final @Nullable Converter<? extends Method<?>, ? /* @Nonnull Signature<?> */> converter = converters.get(selfcontained.getType());
         if (converter == null) { throw RequestException.with(RequestErrorCode.METHOD, "No method could be found for the type $.", selfcontained.getType()); }
-        final @Nullable Method<?> method = selfcontained.recover(converter, signature);
+        final @Nullable Method<?> method = selfcontained.recover(converter, null /* signature */);
         if (method == null) { throw RequestException.with(RequestErrorCode.METHOD, "The method could not be recovered for the type $.", selfcontained.getType()); }
         return method;
     }

@@ -20,7 +20,7 @@ import net.digitalid.core.restrictions.Restrictions;
  * @see InternalQuery
  */
 @Immutable
-public interface InternalMethod extends Method<NonHostEntity> {
+public interface InternalMethod extends Method<NonHostEntity<?>> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
@@ -28,7 +28,7 @@ public interface InternalMethod extends Method<NonHostEntity> {
     @Override
     @Provided
     @Default("signature == null ? null : null /* Find a way to derive it from signature.getSubject(), probably make it injectable. */")
-    public @Nonnull NonHostEntity getEntity();
+    public @Nonnull NonHostEntity<?> getEntity();
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     

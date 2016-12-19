@@ -9,6 +9,7 @@ import net.digitalid.utility.collections.collection.ReadOnlyCollection;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.configuration.Configuration;
+import net.digitalid.utility.console.Console;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Utility;
@@ -131,23 +132,13 @@ public abstract class Server {
     private static @Nonnull Listener listener;
     
     /**
-     * Starts the server with the configured and given hosts.
-     * 
-     * @param identifiers the identifiers of hosts to be created when starting up.
+     * Starts the server with the configured hosts.
      */
     @Impure
     @Committing
-    public static void start(@Nonnull String... identifiers) {
+    public static void start() {
         loadServices();
         loadHosts();
-        
-        for (final @Nonnull String identifier : identifiers) {
-            if (HostIdentifier.isValid(identifier)) {
-                addHost(HostBuilder.withIdentifier(HostIdentifier.with(identifier)).build());
-            } else {
-                new RuntimeException(Quotes.inSingle(identifier) + " is not a valid host identifier.");
-            }
-        }
         
         listener = new Listener(Request.PORT.get());
         listener.start();
@@ -189,10 +180,10 @@ public abstract class Server {
     @Impure
     @Committing
     public static void main(@Nonnull String[] arguments) {
-        Thread.currentThread().setName("Main");
+        Console.writeLine();
         Configuration.initializeAllConfigurations();
-        
-        Log.information("The library is now initialized.");
+        Log.information("The library has been initialized.");
+        Console.writeLine("The library has been initialized.");
         
 //        try {
 //            if (MySQLConfiguration.exists()) { configuration = new MySQLConfiguration(false); }
@@ -219,8 +210,20 @@ public abstract class Server {
 //            throw InitializationError.get("Could not load the database configuration.", exception);
 //        }
         
-        Server.start(arguments);
-        Log.information("The server has been started with the following arguments:", arguments);
+        Server.start();
+        Log.information("The server has been started.");
+        Console.writeLine("The server has been started and is now listening on port " + Request.PORT.get() + ".");
+        
+        for (final @Nonnull String argument : arguments) {
+            Console.writeLine();
+            if (HostIdentifier.isValid(argument)) {
+                Console.writeLine("Creating a host with the identifier " + Quotes.inSingle(argument) + ", which can take several minutes.");
+                addHost(HostBuilder.withIdentifier(HostIdentifier.with(argument)).build());
+            } else {
+                Console.writeLine(Quotes.inSingle(argument) + " is not a valid host identifier!");
+                shutDown();
+            }
+        }
         
         Options.start();
     }

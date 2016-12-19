@@ -41,6 +41,8 @@ public class Listener extends Thread {
      * Creates a new listener that accepts incoming requests on the given port.
      */
     public Listener(int port) {
+        super("Listener");
+        
         try {
             serverSocket = new ServerSocket(port);
         } catch (@Nonnull IOException exception) {

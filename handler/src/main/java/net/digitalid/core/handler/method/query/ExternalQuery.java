@@ -12,7 +12,7 @@ import net.digitalid.core.handler.method.Method;
  * External queries can be sent by both {@link Host hosts} and {@link Client clients}.
  */
 @Immutable
-public abstract class ExternalQuery<E extends Entity> extends Query<E> {
+public abstract class ExternalQuery<ENTITY extends Entity<?>> extends Query<ENTITY> {
     
     /* -------------------------------------------------- Similarity -------------------------------------------------- */
     

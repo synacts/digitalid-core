@@ -11,6 +11,7 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
@@ -19,9 +20,13 @@ import net.digitalid.database.auxiliary.TimeBuilder;
 
 import net.digitalid.core.audit.RequestAudit;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
+import net.digitalid.core.handler.method.Method;
+import net.digitalid.core.handler.method.MethodIndex;
+import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.Response;
+import net.digitalid.core.selfcontained.Selfcontained;
 import net.digitalid.core.service.Service;
 
 /**
@@ -67,7 +72,16 @@ public class Worker implements Runnable {
             @Nullable Request request = null;
             @Nonnull Response response;
             
-            // TODO
+            // TODO: Implement the real worker again.
+            
+            try {
+                final @Nonnull Selfcontained selfcontained = Selfcontained.loadFrom(socket.getInputStream());
+                final @Nonnull Method<?> method = MethodIndex.get(selfcontained, null);
+                final @Nullable Reply<?> reply = method.executeOnHost();
+                if (reply != null) { reply.convert().storeTo(socket.getOutputStream()); }
+            } catch (@Nonnull ExternalException | IOException exception) {
+                throw new RuntimeException(exception);
+            }
             
 //            try {
 //                try {
@@ -150,16 +164,16 @@ public class Worker implements Runnable {
 //                    
 //                    response = new Response(request, replies.freeze(), exceptions.freeze(), responseAudit);
 //                } catch (@Nonnull DatabaseException exception) {
-//                    throw RequestException.get(RequestErrorCode.DATABASE, "A database exception occurred.", exception);
+//                    throw RequestException.with(RequestErrorCode.DATABASE, "A database exception occurred.", exception);
 //                } catch (@Nonnull NetworkException exception) {
-//                    throw RequestException.get(RequestErrorCode.NETWORK, "A network exception occurred.", exception);
+//                    throw RequestException.with(RequestErrorCode.NETWORK, "A network exception occurred.", exception);
 //                } catch (@Nonnull InternalException exception) {
-//                    throw RequestException.get(RequestErrorCode.INTERNAL, "An internal exception occurred.", exception);
+//                    throw RequestException.with(RequestErrorCode.INTERNAL, "An internal exception occurred.", exception);
 //                } catch (@Nonnull ExternalException exception) {
-//                    throw RequestException.get(RequestErrorCode.EXTERNAL, "An external exception occurred.", exception);
+//                    throw RequestException.with(RequestErrorCode.EXTERNAL, "An external exception occurred.", exception);
 //                }
 //            } catch (@Nonnull RequestException exception) {
-//                response = new Response(request, exception.isDecoded() ? RequestException.get(RequestErrorCode.REQUEST, "An external request error occurred.", exception) : exception);
+//                response = new Response(request, exception.isDecoded() ? RequestException.with(RequestErrorCode.REQUEST, "An external request error occurred.", exception) : exception);
 //                error = exception.getCode();
 //                Database.rollback();
 //            }

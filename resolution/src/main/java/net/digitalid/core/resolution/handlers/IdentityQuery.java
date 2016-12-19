@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -28,9 +29,10 @@ import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
  * @see IdentityReply
  */
 @Immutable
+@GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class IdentityQuery extends ExternalQuery<NonHostEntity> implements CoreHandler<NonHostEntity> {
+public abstract class IdentityQuery extends ExternalQuery<NonHostEntity<?>> implements CoreHandler<NonHostEntity<?>> {
     
     /* -------------------------------------------------- Description -------------------------------------------------- */
     
@@ -57,7 +59,7 @@ public abstract class IdentityQuery extends ExternalQuery<NonHostEntity> impleme
     
     @Pure
     @Override
-    public boolean matches(@Nullable Reply<NonHostEntity> reply) {
+    public boolean matches(@Nullable Reply<NonHostEntity<?>> reply) {
         return reply instanceof IdentityReply;
     }
     

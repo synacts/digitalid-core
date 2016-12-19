@@ -9,4 +9,4 @@ import net.digitalid.core.entity.Entity;
  * Query replies are read with getter methods on the handler.
  */
 @Immutable
-public abstract class QueryReply<E extends Entity> extends Reply<E> {}
+public abstract class QueryReply<ENTITY extends Entity<?>> extends Reply<ENTITY> {}

@@ -26,7 +26,7 @@ import net.digitalid.core.restrictions.Restrictions;
 @Immutable
 // TODO: @GenerateSubclass
 // TODO: @GenerateConverter
-abstract class CredentialReply extends QueryReply<NonHostEntity> implements CoreHandler<NonHostEntity> {
+abstract class CredentialReply extends QueryReply<NonHostEntity<?>> implements CoreHandler<NonHostEntity<?>> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     

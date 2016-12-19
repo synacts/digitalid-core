@@ -44,7 +44,7 @@ import net.digitalid.core.typeset.permissions.ReadOnlyNodePermissions;
 @GenerateBuilder
 @GenerateSubclass
 // TODO: @GenerateConverter
-public abstract class AttributesQuery extends ExternalQuery<Entity> implements CoreHandler<Entity> {
+public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implements CoreHandler<Entity<?>> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -93,7 +93,7 @@ public abstract class AttributesQuery extends ExternalQuery<Entity> implements C
             final @Nullable ReadOnlyNodePermissions contactPermissions;
             if (false /* TODO: credentialsSignature.isIdentityBased() && !credentialsSignature.isRoleBased() */) {
                 final @Nonnull InternalPerson issuer = null; // TODO: credentialsSignature.getIssuer();
-                final @Nonnull Contact contact = Contact.of((NonHostEntity) getEntity(), issuer);
+                final @Nonnull Contact contact = Contact.of((NonHostEntity<?>) getEntity(), issuer);
                 contactPermissions = contact.permissions().get();
             } else {
                 contactPermissions = null;
@@ -125,7 +125,7 @@ public abstract class AttributesQuery extends ExternalQuery<Entity> implements C
             }
         }
         
-        return AttributesReplyBuilder.withType(/* TODO: This method should be overriden in the AttributesReply class. */ null).withAttributeValues(attributeValues.freeze()).withEntity(getEntity()).build();
+        return AttributesReplyBuilder.withType(/* TODO: This method should be overriden in the AttributesReply class. */ null).withAttributeValues(attributeValues.freeze()).withProvidedEntity(getEntity()).build();
     }
     
     /* -------------------------------------------------- Match -------------------------------------------------- */

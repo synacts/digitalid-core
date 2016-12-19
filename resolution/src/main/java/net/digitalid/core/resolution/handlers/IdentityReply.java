@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -22,9 +23,10 @@ import net.digitalid.core.resolution.predecessor.ReadOnlyPredecessors;
  * @see IdentityQuery
  */
 @Immutable
+@GenerateBuilder
 @GenerateSubclass
 // TODO: @GenerateConverter
-public abstract class IdentityReply extends QueryReply<NonHostEntity> implements CoreHandler<NonHostEntity> {
+public abstract class IdentityReply extends QueryReply<NonHostEntity<?>> implements CoreHandler<NonHostEntity<?>> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     

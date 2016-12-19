@@ -1,6 +1,8 @@
 package net.digitalid.core.handler.method;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.net.Socket;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -27,8 +29,10 @@ import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.query.Query;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.packet.Request;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
+import net.digitalid.core.selfcontained.Selfcontained;
 
 /**
  * This type implements a remote method invocation mechanism.
@@ -38,7 +42,7 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
  * @see Query
  */
 @Immutable
-public interface Method<E extends Entity> extends Handler<E> {
+public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     
     /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
@@ -97,7 +101,7 @@ public interface Method<E extends Entity> extends Handler<E> {
     @Pure
     // TODO: Rather move this method to the reply class (and match methods that generate replies)?
     // TODO: Make the return type void and throw a InvalidReplyParameterValueException instead?
-    public boolean matches(@Nullable Reply<E> reply);
+    public boolean matches(@Nullable Reply<ENTITY> reply);
     
     /**
      * Executes this method on the host.
@@ -113,15 +117,20 @@ public interface Method<E extends Entity> extends Handler<E> {
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public @Nullable Reply<E> executeOnHost() throws RequestException, DatabaseException;
+    public @Nullable Reply<ENTITY> executeOnHost() throws RequestException, DatabaseException;
     
     /* -------------------------------------------------- Send -------------------------------------------------- */
     
     @NonCommitting
     @PureWithSideEffects
-    public default <R extends Reply<E>> @Nullable R send() throws ExternalException {
-        // TODO (see net.digitalid.core.initializer.MethodSenderImplementation)
-        return null;
+    public default <R extends Reply<ENTITY>> @Nullable /* R */ Selfcontained send() throws ExternalException {
+        try (@Nonnull Socket socket = new Socket("id." + getRecipient().getString(), Request.PORT.get())) {
+            socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
+            convert().storeTo(socket.getOutputStream());
+            return Selfcontained.loadFrom(socket.getInputStream());
+        } catch (@Nonnull IOException exception) {
+            throw new RuntimeException(exception); // TODO
+        }
     }
     
     /* -------------------------------------------------- Similarity -------------------------------------------------- */

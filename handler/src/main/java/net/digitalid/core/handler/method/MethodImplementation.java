@@ -11,7 +11,7 @@ import net.digitalid.core.entity.Entity;
  * This class makes sure that the validation method in the method class is properly called.
  */
 @Immutable
-public abstract class MethodImplementation<E extends Entity> extends RootClass implements Method<E> {
+public abstract class MethodImplementation<ENTITY extends Entity<?>> extends RootClass implements Method<ENTITY> {
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */
     

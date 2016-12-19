@@ -24,7 +24,7 @@ import net.digitalid.core.identification.identity.SemanticType;
 @GenerateSubclass
 @GenerateConverter
 @TODO(task = "Make sure that this query gets registered as a handler. Maybe with an annotation?", date = "2016-11-09", author = Author.KASPAR_ETTER)
-public abstract class AuditReply extends QueryReply<NonHostEntity> {
+public abstract class AuditReply extends QueryReply<NonHostEntity<?>> {
     
     // TODO: So far, the response audit has been appended to the signature, which will probably no longer be the case.
     

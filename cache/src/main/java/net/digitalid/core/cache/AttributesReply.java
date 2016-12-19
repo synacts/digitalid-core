@@ -26,7 +26,7 @@ import net.digitalid.core.signature.attribute.AttributeValue;
 @GenerateBuilder
 @GenerateSubclass
 // TODO: @GenerateConverter
-public abstract class AttributesReply extends QueryReply<Entity> implements CoreHandler<Entity> {
+public abstract class AttributesReply extends QueryReply<Entity<?>> implements CoreHandler<Entity<?>> {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     

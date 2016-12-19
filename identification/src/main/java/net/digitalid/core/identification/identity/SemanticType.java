@@ -1,5 +1,7 @@
 package net.digitalid.core.identification.identity;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
@@ -94,6 +96,7 @@ public abstract class SemanticType extends Type {
 //     */
 //    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(BinaryWrapper.XDF_TYPE);
     
+    private static @Nonnull Map<@Nonnull String, @Nonnull SemanticType> map = new HashMap<>();
     
     /**
      * Maps the semantic type with the given identifier.
@@ -108,7 +111,12 @@ public abstract class SemanticType extends Type {
     public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
         // TODO: What to do here?
         // return Mapper.mapSemanticType(InternalNonHostIdentifier.get(identifier));
-        return new SemanticTypeSubclass(ThreadLocalRandom.current().nextInt(1, 1000), InternalNonHostIdentifier.with(identifier));
+        @Nullable SemanticType type = map.get(identifier);
+        if (type == null) {
+            type = new SemanticTypeSubclass(ThreadLocalRandom.current().nextInt(1, 1000), InternalNonHostIdentifier.with(identifier));
+            map.put(identifier, type);
+        }
+        return type;
     }
     
     

@@ -15,7 +15,7 @@ import net.digitalid.core.service.Service;
  * @see CoreService
  */
 @Immutable
-public interface CoreHandler<E extends Entity> extends Handler<E> {
+public interface CoreHandler<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     
     @Pure
     @Override
