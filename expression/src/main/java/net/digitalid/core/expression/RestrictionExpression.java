@@ -25,7 +25,7 @@ import net.digitalid.core.expression.operators.RestrictionOperator;
 import net.digitalid.core.identification.annotations.type.kind.AttributeType;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.node.contact.Contact;
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
@@ -109,7 +109,7 @@ abstract class RestrictionExpression extends Expression {
     
     @Pure
     @Override
-    boolean matches(@Nonnull Selfcontained attributeContent) {
+    boolean matches(@Nonnull Pack attributeContent) {
         Require.that(isImpersonal()).orThrow("This expression is impersonal.");
         
         if (!attributeContent.getType().equals(getType())) { return false; }
@@ -123,7 +123,7 @@ abstract class RestrictionExpression extends Expression {
             final @Nonnull String substring = ExpressionParser.removeQuotes(string).toLowerCase();
             final @Nonnull String attribute;
             try {
-                final @Nullable String content = attributeContent.recover(StringConverter.INSTANCE, null);
+                final @Nullable String content = attributeContent.unpack(StringConverter.INSTANCE, null);
                 attribute = content != null ? content.toLowerCase() : "";
             } catch (@Nonnull ExternalException exception) {
                 throw new RuntimeException(exception); // TODO

@@ -98,14 +98,6 @@ abstract class CredentialReply extends QueryReply<NonHostEntity<?>> implements C
 //        if (issuance.isLessThan(Time.HOUR.ago())) { throw InvalidParameterValueException.get("issuance time", issuance); }
 //    }
     
-    /* -------------------------------------------------- Decription -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull String getDescription() {
-        return "Replies the parameters of a new credential.";
-    }
-    
     /* -------------------------------------------------- Client Credential -------------------------------------------------- */
     
     // TODO

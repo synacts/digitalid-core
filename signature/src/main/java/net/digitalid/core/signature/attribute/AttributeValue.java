@@ -10,7 +10,7 @@ import net.digitalid.utility.validation.annotations.value.Invariant;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.exceptions.InvalidSignatureException;
 import net.digitalid.core.signature.host.HostSignature;
@@ -28,10 +28,10 @@ public abstract class AttributeValue extends RootClass {
     /* -------------------------------------------------- Signature -------------------------------------------------- */
     
     /**
-     * Returns the signature with the selfcontained attribute value.
+     * Returns the signature with the packed attribute value.
      */
     @Pure
-    public abstract @Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the selfcontained value denotes an attribute.") Signature<Selfcontained> getSignature();
+    public abstract @Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the packed value denotes an attribute.") Signature<Pack> getSignature();
     
     /**
      * Returns whether this attribute value is certified.
@@ -67,8 +67,8 @@ public abstract class AttributeValue extends RootClass {
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     @Pure
-    public static @Nonnull AttributeValue with(@Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the selfcontained value denotes an attribute.") Signature<Selfcontained> signature) {
-        if (signature instanceof HostSignature<?>) { return new CertifiedAttributeValueSubclass((HostSignature<Selfcontained>) signature); }
+    public static @Nonnull AttributeValue with(@Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the packed value denotes an attribute.") Signature<Pack> signature) {
+        if (signature instanceof HostSignature<?>) { return new CertifiedAttributeValueSubclass((HostSignature<Pack>) signature); }
         else { return new UncertifiedAttributeValueSubclass(signature); }
     }
     

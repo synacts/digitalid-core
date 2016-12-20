@@ -24,9 +24,9 @@ import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.Response;
-import net.digitalid.core.selfcontained.Selfcontained;
 import net.digitalid.core.service.Service;
 
 /**
@@ -75,10 +75,10 @@ public class Worker implements Runnable {
             // TODO: Implement the real worker again.
             
             try {
-                final @Nonnull Selfcontained selfcontained = Selfcontained.loadFrom(socket.getInputStream());
-                final @Nonnull Method<?> method = MethodIndex.get(selfcontained, null);
+                final @Nonnull Pack pack = Pack.loadFrom(socket.getInputStream());
+                final @Nonnull Method<?> method = MethodIndex.get(pack, null);
                 final @Nullable Reply<?> reply = method.executeOnHost();
-                if (reply != null) { reply.convert().storeTo(socket.getOutputStream()); }
+                if (reply != null) { reply.pack().storeTo(socket.getOutputStream()); }
             } catch (@Nonnull ExternalException | IOException exception) {
                 throw new RuntimeException(exception);
             }

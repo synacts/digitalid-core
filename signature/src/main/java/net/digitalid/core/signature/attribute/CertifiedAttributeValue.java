@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.value.Invariant;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.auxiliary.Time;
 
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.exceptions.InactiveSignatureException;
 import net.digitalid.core.signature.host.HostSignature;
 
@@ -31,7 +31,7 @@ public abstract class CertifiedAttributeValue extends AttributeValue {
     
     @Pure
     @Override
-    public abstract @Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the selfcontained value denotes an attribute.") HostSignature<Selfcontained> getSignature();
+    public abstract @Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the packed value denotes an attribute.") HostSignature<Pack> getSignature();
     
     // TODO: Check somewhere that:
 //        Require.that(content.getType().isAttributeFor(subject.getCategory())).orThrow("The content is an attribute for the subject.");

@@ -11,7 +11,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 
 /**
  * This class models impersonal expressions.
@@ -38,7 +38,7 @@ public abstract class ImpersonalExpression extends AbstractExpression {
      * Returns whether this impersonal expression matches the given attribute content.
      */
     @Pure
-    public boolean matches(@Nonnull Selfcontained attributeContent) {
+    public boolean matches(@Nonnull Pack attributeContent) {
         return getExpression().matches(attributeContent);
     }
     

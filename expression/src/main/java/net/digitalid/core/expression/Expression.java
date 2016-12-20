@@ -15,7 +15,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.expression.operators.BinaryOperator;
 import net.digitalid.core.node.contact.Contact;
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
@@ -68,7 +68,7 @@ abstract class Expression extends RootClass {
      * @require isImpersonal() : "This expression is impersonal.";
      */
     @Pure
-    abstract boolean matches(@Nonnull Selfcontained attributeContent);
+    abstract boolean matches(@Nonnull Pack attributeContent);
     
     /**
      * Returns whether this expression matches the given signature.

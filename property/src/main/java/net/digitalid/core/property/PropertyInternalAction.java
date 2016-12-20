@@ -4,6 +4,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
@@ -15,7 +18,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.method.action.InternalAction;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.property.value.ValuePropertyInternalAction;
 import net.digitalid.core.service.Service;
 
@@ -49,11 +52,11 @@ public abstract class PropertyInternalAction<ENTITY extends Entity<?>, KEY, CONC
         return getProperty().getConcept().getEntity().getIdentity().getAddress();
     }
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return getProperty().getTable().getActionType();
-    }
+//    @Pure
+//    @Override
+//    public @Nonnull SemanticType getType() {
+//        return getProperty().getTable().getActionType();
+//    }
     
     @Pure
     @Override
@@ -61,11 +64,11 @@ public abstract class PropertyInternalAction<ENTITY extends Entity<?>, KEY, CONC
         return getProperty().getTable().getParentModule().getService();
     }
     
-    @Pure
-    @Override
-    public @Nonnull String getDescription() {
-        return "Synchronized the " + getProperty().getTable().getName() + " property of the " + getProperty().getTable().getParentModule().getName() + " concept of the identity " + getProperty().getConcept().getEntity().getIdentity().getAddress().getString() + ".";
-    }
+//    @Pure
+//    @Override
+//    public @Nonnull String getDescription() {
+//        return "Synchronized the " + getProperty().getTable().getName() + " property of the " + getProperty().getTable().getParentModule().getName() + " concept of the identity " + getProperty().getConcept().getEntity().getIdentity().getAddress().getString() + ".";
+//    }
     
     /* -------------------------------------------------- Method -------------------------------------------------- */
     
@@ -85,6 +88,15 @@ public abstract class PropertyInternalAction<ENTITY extends Entity<?>, KEY, CONC
     @Override
     public @Nonnull Storage getStorage() {
         return getProperty().getTable();
+    }
+    
+    /* -------------------------------------------------- Packable -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @TODO(task = "Remove this method as soon as the property actions have converters.", date = "2016-12-20", author = Author.KASPAR_ETTER)
+    public @Nonnull Pack pack() throws ExternalException {
+        return null;
     }
     
 }

@@ -10,31 +10,25 @@
     <artifactId>core-packet</artifactId>
     
     <dependencies>
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
-            <artifactId>core-selfcontained</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-compression</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-encryption</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-signature</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
-            <artifactId>core-conversion</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        
     </dependencies>
     
 </project>

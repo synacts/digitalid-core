@@ -4,10 +4,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -15,6 +18,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.CoreHandler;
 import net.digitalid.core.handler.reply.QueryReply;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.attribute.AttributeValue;
 
 /**
@@ -92,12 +96,13 @@ public abstract class AttributesReply extends QueryReply<Entity<?>> implements C
 //        this.attributeValues = attributeValues.freeze();
 //    }
     
-    /* -------------------------------------------------- Description -------------------------------------------------- */
+    /* -------------------------------------------------- Packable -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull String getDescription() {
-        return "Replies the queried attribute values.";
+    @TODO(task = "Remove this method as soon as the handler has a converter.", date = "2016-12-20", author = Author.KASPAR_ETTER)
+    public @Nonnull Pack pack() throws ExternalException {
+        return null;
     }
     
 }

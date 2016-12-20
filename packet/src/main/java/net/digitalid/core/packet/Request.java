@@ -22,8 +22,8 @@ import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.selfcontained.Selfcontained;
-import net.digitalid.core.selfcontained.SelfcontainedConverter;
+import net.digitalid.core.pack.Pack;
+import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.symmetrickey.SymmetricKey;
 import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
 
@@ -328,11 +328,11 @@ public abstract class Request extends Packet {
         // TODO: Use the specific NetworkExceptions.
         try (@Nonnull Socket socket = new Socket("id." + getEncryption().getRecipient().getString(), PORT.get())) {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
-            XDF.convert(Selfcontained.convert(this, null /* RequestConverter.INSTANCE */), SelfcontainedConverter.INSTANCE, socket.getOutputStream()); // TODO
-            final @Nullable Selfcontained selfcontained = XDF.recover(SelfcontainedConverter.INSTANCE, null, socket.getInputStream());
+            XDF.convert(Pack.pack(this, null /* RequestConverter.INSTANCE */), PackConverter.INSTANCE, socket.getOutputStream()); // TODO
+            final @Nullable Pack pack = XDF.recover(PackConverter.INSTANCE, null, socket.getInputStream());
             // TODO: Do we need to check the recovered object for null?
-            assert selfcontained != null;
-            return selfcontained.recover(null /* ResponseConverter.INSTANCE */, null);
+            assert pack != null;
+            return pack.unpack(null /* ResponseConverter.INSTANCE */, null);
 //        } catch (@Nonnull RequestException exception) {
 //            if (exception.getCode() == RequestErrorCode.KEYROTATION && this instanceof ClientRequest) {
 //                return ((ClientRequest) this).recommit(methods, iteration, verified);

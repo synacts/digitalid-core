@@ -21,7 +21,7 @@ import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.keychain.PrivateKeyChain;
 import net.digitalid.core.keychain.PrivateKeyChainConverter;
 import net.digitalid.core.keychain.PublicKeyChain;
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 
 /**
  * The private key chain loader loads and stores the private key chain of a host.
@@ -39,8 +39,8 @@ public class PrivateKeyChainLoader {
     public @Nonnull PrivateKeyChain getPrivateKeyChain(@Nonnull HostIdentifier identifier) throws ExternalException {
         final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier.getString() + ".private.xdf");
         if (file.exists()) {
-            // TODO: Check the type of the loaded selfcontained?
-            return Selfcontained.loadFrom(file).recover(PrivateKeyChainConverter.INSTANCE, null);
+            // TODO: Check the type of the loaded pack?
+            return Pack.loadFrom(file).unpack(PrivateKeyChainConverter.INSTANCE, null);
         } else {
             final @Nonnull KeyPair keyPair = KeyPair.withRandomValues();
             final @Nonnull Time time = TimeBuilder.build();
@@ -59,7 +59,7 @@ public class PrivateKeyChainLoader {
     @TODO(task = "Throw a net.digitalid.core.conversion.FileException instead.", date = "2016-12-14", author = Author.KASPAR_ETTER)
     public void setPrivateKeyChain(@Nonnull HostIdentifier identifier, @Nonnull PrivateKeyChain privateKeyChain) throws ExternalException {
         final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier.getString() + ".private.xdf");
-        Selfcontained.convert(privateKeyChain, PrivateKeyChainConverter.INSTANCE).storeTo(file);
+        Pack.pack(privateKeyChain, PrivateKeyChainConverter.INSTANCE).storeTo(file);
     }
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */

@@ -36,7 +36,7 @@
         <module>conversion</module>
         <module>encryption</module>
         <module>commitment</module>
-        <module>selfcontained</module>
+        <module>pack</module>
         <module>credential</module>
         <module>signature</module>
         <module>compression</module>

@@ -29,10 +29,10 @@ import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.query.Query;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
-import net.digitalid.core.selfcontained.Selfcontained;
 
 /**
  * This type implements a remote method invocation mechanism.
@@ -123,11 +123,11 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     
     @NonCommitting
     @PureWithSideEffects
-    public default <R extends Reply<ENTITY>> @Nullable /* R */ Selfcontained send() throws ExternalException {
+    public default <R extends Reply<ENTITY>> @Nullable /* R */ Pack send() throws ExternalException {
         try (@Nonnull Socket socket = new Socket("id." + getRecipient().getString(), Request.PORT.get())) {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
-            convert().storeTo(socket.getOutputStream());
-            return Selfcontained.loadFrom(socket.getInputStream());
+            pack().storeTo(socket.getOutputStream());
+            return Pack.loadFrom(socket.getInputStream());
         } catch (@Nonnull IOException exception) {
             throw new RuntimeException(exception); // TODO
         }

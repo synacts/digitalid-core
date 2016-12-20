@@ -20,7 +20,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.core.expression.operators.BinaryOperator;
 import net.digitalid.core.node.contact.Contact;
 import net.digitalid.core.node.context.Context;
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
@@ -71,7 +71,7 @@ abstract class ContextExpression extends Expression {
     
     @Pure
     @Override
-    boolean matches(@Nonnull Selfcontained attributeContent) {
+    boolean matches(@Nonnull Pack attributeContent) {
         Require.that(isImpersonal()).orThrow("This expression has to be impersonal but was $.", this);
         
         return false;

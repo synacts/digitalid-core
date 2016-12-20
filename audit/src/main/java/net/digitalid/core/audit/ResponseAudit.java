@@ -14,7 +14,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.auxiliary.Time;
 
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 
 /**
  * This class models a response audit with the trail and the times of the last and this audit.
@@ -42,7 +42,7 @@ public abstract class ResponseAudit extends Audit {
      */
     @Pure
     @TODO(task = "Find a way to return the signatures without having to decode them first. (The generic type was Block before.)", date = "2016-11-09", author = Author.KASPAR_ETTER)
-    public abstract @Nonnull @Frozen @NonNullableElements ReadOnlyList<Selfcontained> getTrail();
+    public abstract @Nonnull @Frozen @NonNullableElements ReadOnlyList<Pack> getTrail();
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     

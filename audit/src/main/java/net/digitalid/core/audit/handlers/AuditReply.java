@@ -1,8 +1,5 @@
 package net.digitalid.core.audit.handlers;
 
-import javax.annotation.Nonnull;
-
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -12,7 +9,6 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.reply.QueryReply;
-import net.digitalid.core.identification.identity.SemanticType;
 
 /**
  * Replies the audit of the given entity.
@@ -27,24 +23,5 @@ import net.digitalid.core.identification.identity.SemanticType;
 public abstract class AuditReply extends QueryReply<NonHostEntity<?>> {
     
     // TODO: So far, the response audit has been appended to the signature, which will probably no longer be the case.
-    
-    /* -------------------------------------------------- Other -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code reply.audit@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("reply.audit@core.digitalid.net").load(null /* TODO: SemanticType.IDENTIFIER */);
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull String getDescription() {
-        return "Replies the audit.";
-    }
     
 }

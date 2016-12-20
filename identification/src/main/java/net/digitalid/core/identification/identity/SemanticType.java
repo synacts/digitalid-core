@@ -9,9 +9,12 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.array.FreezableArray;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -96,6 +99,8 @@ public abstract class SemanticType extends Type {
 //     */
 //    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(BinaryWrapper.XDF_TYPE);
     
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
+    
     private static @Nonnull Map<@Nonnull String, @Nonnull SemanticType> map = new HashMap<>();
     
     /**
@@ -119,6 +124,18 @@ public abstract class SemanticType extends Type {
         return type;
     }
     
+    /**
+     * Maps the semantic type with the given converter.
+     */
+    @Pure
+    @MainThread
+    @NonCommitting
+    @TODO(task = "Use the fully qualified name to derive a suitable identifier.", date = "2016-12-20", author = Author.KASPAR_ETTER)
+    public static @Nonnull @NonLoaded SemanticType map(@Nonnull Converter<?, ?> converter) {
+        return map(converter.getName().toLowerCase() + "@core.digitalid.net");
+    }
+    
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
      * Stores the categories for which this semantic type can be used as an attribute.

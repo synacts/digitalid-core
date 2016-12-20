@@ -34,15 +34,13 @@ import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 @GenerateConverter
 public abstract class IdentityQuery extends ExternalQuery<NonHostEntity<?>> implements CoreHandler<NonHostEntity<?>> {
     
-    /* -------------------------------------------------- Description -------------------------------------------------- */
+    /* -------------------------------------------------- Execution -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull String getDescription() {
-        return "Queries the identity.";
+    public boolean matches(@Nullable Reply<NonHostEntity<?>> reply) {
+        return reply instanceof IdentityReply;
     }
-    
-    /* -------------------------------------------------- Execution -------------------------------------------------- */
     
     @Override
     @NonCommitting
@@ -53,14 +51,6 @@ public abstract class IdentityQuery extends ExternalQuery<NonHostEntity<?>> impl
         if (!(subject instanceof InternalNonHostIdentifier)) { throw RequestException.with(RequestErrorCode.IDENTIFIER, "The identity may only be queried of non-host identities."); }
         // TODO: return IdentityReplySubclass((InternalNonHostIdentifier) subject);
         throw new UnsupportedOperationException();
-    }
-    
-    /* -------------------------------------------------- Match -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public boolean matches(@Nullable Reply<NonHostEntity<?>> reply) {
-        return reply instanceof IdentityReply;
     }
     
 }

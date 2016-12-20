@@ -21,7 +21,7 @@ import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.identification.annotations.type.kind.RoleType;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 
 /**
  * This class models the exposed exponent of {@link Credential credentials}.
@@ -88,6 +88,6 @@ public abstract class ExposedExponent extends RootClass {
      * Returns the attribute content for attribute-based access control or null in case of identity-based authentication.
      */
     @Pure
-    public abstract @Nullable Selfcontained getAttributeContent();
+    public abstract @Nullable Pack getAttributeContent();
     
 }

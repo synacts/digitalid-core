@@ -14,7 +14,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.expression.operators.BinaryOperator;
 import net.digitalid.core.node.contact.Contact;
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
@@ -56,7 +56,7 @@ abstract class EmptyExpression extends Expression {
     
     @Pure
     @Override
-    boolean matches(@Nonnull Selfcontained attributeContent) {
+    boolean matches(@Nonnull Pack attributeContent) {
         Require.that(isImpersonal()).orThrow("This expression has to be impersonal but was $.", this);
         
         return true;

@@ -5,11 +5,14 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -28,6 +31,7 @@ import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.node.contact.Contact;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.attribute.AttributeValue;
@@ -60,14 +64,6 @@ public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implement
     @Pure
     public abstract boolean isPublished();
     
-    /* -------------------------------------------------- Description -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull String getDescription() {
-        return "Queries the " + (isPublished() ? "published" : "unpublished") + " attributes " + getAttributeTypes() + ".";
-    }
-    
     /* -------------------------------------------------- Required Authorization -------------------------------------------------- */
     
     @Pure
@@ -77,6 +73,12 @@ public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implement
     }
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply<Entity<?>> reply) {
+        return reply instanceof AttributesReply;
+    }
     
     @Override
     @NonCommitting
@@ -125,15 +127,16 @@ public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implement
             }
         }
         
-        return AttributesReplyBuilder.withType(/* TODO: This method should be overriden in the AttributesReply class. */ null).withAttributeValues(attributeValues.freeze()).withProvidedEntity(getEntity()).build();
+        return AttributesReplyBuilder.withAttributeValues(attributeValues.freeze()).withProvidedEntity(getEntity()).build();
     }
     
-    /* -------------------------------------------------- Match -------------------------------------------------- */
+    /* -------------------------------------------------- Packable -------------------------------------------------- */
     
     @Pure
     @Override
-    public boolean matches(@Nullable Reply reply) {
-        return reply instanceof AttributesReply;
+    @TODO(task = "Remove this method as soon as the handler has a converter.", date = "2016-12-20", author = Author.KASPAR_ETTER)
+    public @Nonnull Pack pack() throws ExternalException {
+        return null;
     }
     
 }

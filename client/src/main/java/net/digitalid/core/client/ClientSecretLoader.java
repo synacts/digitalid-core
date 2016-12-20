@@ -20,8 +20,8 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.group.ExponentConverter;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.parameters.Parameters;
-import net.digitalid.core.selfcontained.Selfcontained;
 
 /**
  * The client secret loader loads and stores the secret of a client.
@@ -39,8 +39,8 @@ public class ClientSecretLoader {
     public @Nonnull Exponent getClientSecret(@Nonnull @DomainName @MaxSize(63) String identifier) throws ExternalException {
         final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier + ".client.xdf");
         if (file.exists()) {
-            // TODO: Check the type of the loaded selfcontained?
-            return Selfcontained.loadFrom(file).recover(ExponentConverter.INSTANCE, null);
+            // TODO: Check the type of the loaded pack?
+            return Pack.loadFrom(file).unpack(ExponentConverter.INSTANCE, null);
         } else {
             final @Nonnull Exponent secret = ExponentBuilder.withValue(new BigInteger(Parameters.HASH.get(), new SecureRandom())).build();
             setClientSecret(identifier, secret);
@@ -55,7 +55,7 @@ public class ClientSecretLoader {
     @TODO(task = "Throw a net.digitalid.core.conversion.FileException instead.", date = "2016-12-08", author = Author.KASPAR_ETTER)
     public void setClientSecret(@Nonnull @DomainName @MaxSize(63) String identifier, @Nonnull Exponent secret) throws ExternalException {
         final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier + ".client.xdf");
-        Selfcontained.convert(secret, ExponentConverter.INSTANCE).storeTo(file);
+        Pack.pack(secret, ExponentConverter.INSTANCE).storeTo(file);
     }
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */

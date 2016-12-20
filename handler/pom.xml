@@ -10,16 +10,19 @@
     <artifactId>core-handler</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-packet</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-agent</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
     </dependencies>
     
 </project>

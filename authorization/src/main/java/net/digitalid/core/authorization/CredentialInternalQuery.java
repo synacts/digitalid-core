@@ -117,14 +117,6 @@ abstract class CredentialInternalQuery extends InternalQuery implements CoreHand
 //        else { throw RequestException.get(RequestErrorCode.SIGNATURE, "A credential request must be signed by a client or with credentials."); }
 //    }
     
-    /* -------------------------------------------------- Description -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull String getDescription() {
-        return "Requests an identity- or role-based credential.";
-    }
-    
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
     
     @Pure
@@ -146,6 +138,12 @@ abstract class CredentialInternalQuery extends InternalQuery implements CoreHand
     public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
         if (getRelation() == null) { return Restrictions.MIN; }
         else { return Restrictions.CAN_ASSUME_ROLES; } // TODO: Is this the right one?
+    }
+    
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply<NonHostEntity<?>> reply) {
+        return reply instanceof CredentialReply;
     }
     
     // TODO:
@@ -181,11 +179,5 @@ abstract class CredentialInternalQuery extends InternalQuery implements CoreHand
 //            throw new SQLException("No key was found for the time of the signature.");
 //        }
 //    }
-    
-    @Pure
-    @Override
-    public boolean matches(@Nullable Reply<NonHostEntity<?>> reply) {
-        return reply instanceof CredentialReply;
-    }
     
 }

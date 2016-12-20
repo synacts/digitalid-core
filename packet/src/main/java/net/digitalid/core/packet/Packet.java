@@ -4,11 +4,12 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.encryption.Encryption;
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.Signature;
 
 /**
@@ -18,10 +19,10 @@ import net.digitalid.core.signature.Signature;
  * @see Response
  */
 @Immutable
-public abstract class Packet {
+public abstract class Packet extends RootClass /* TODO: implements Packable */ {
     
     @Pure
-    public abstract @Nonnull Encryption<ReadOnlyList<Signature<Compression<Selfcontained>>>> getEncryption();
+    public abstract @Nonnull Encryption<ReadOnlyList<Signature<Compression<Pack>>>> getEncryption();
     
 //    /**
 //     * Stores the semantic type {@code content.packet@core.digitalid.net}.

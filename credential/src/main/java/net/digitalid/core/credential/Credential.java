@@ -26,9 +26,9 @@ import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.identification.annotations.type.kind.RoleType;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
-import net.digitalid.core.selfcontained.Selfcontained;
 
 /**
  * This class abstracts from client and host credentials.
@@ -160,7 +160,7 @@ public abstract class Credential extends RootClass {
      * @require isAttributeBased() : "This credential is attribute-based.";
      */
     @Pure
-    public @Nonnull Selfcontained getProvidedAttributeContent() {
+    public @Nonnull Pack getProvidedAttributeContent() {
         Require.that(isAttributeBased()).orThrow("This credential has to be attribute-based.");
         
         return getExposedExponent().getAttributeContent();

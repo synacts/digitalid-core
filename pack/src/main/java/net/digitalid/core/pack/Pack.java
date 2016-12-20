@@ -1,4 +1,4 @@
-package net.digitalid.core.selfcontained;
+package net.digitalid.core.pack;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,47 +26,64 @@ import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.identification.identity.SemanticType;
 
 /**
- * A selfcontained object also contains its type.
+ * A pack combines the serialization of its content with its type.
  */
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class Selfcontained {
+public abstract class Pack {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
+    /**
+     * Returns the type of this pack.
+     */
     @Pure
     public abstract @Nonnull SemanticType getType();
     
+    /**
+     * Returns the bytes of the serialized content.
+     */
     @Pure
-    protected abstract @Nonnull byte[] getObject();
+    protected abstract @Nonnull byte[] getBytes();
     
     /* -------------------------------------------------- Conversion -------------------------------------------------- */
     
+    /**
+     * Unpacks this pack with the given converter and the provided object.
+     */
     @Pure
-    @TODO(task = "Throw a more specific exception? ", date = "2016-10-31", author = Author.KASPAR_ETTER)
-    public <T, E> @Nullable T recover(@Nonnull Converter<T, E> converter, E externallyProvided) throws ExternalException {
-        return XDF.recover(converter, externallyProvided, getObject());
+    @TODO(task = "Throw a recovery and stream exception instead!", date = "2016-10-31", author = Author.KASPAR_ETTER)
+    public <TYPE, PROVIDED> @Nullable TYPE unpack(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED provided) throws ExternalException {
+        return XDF.recover(converter, provided, getBytes());
     }
     
+    /**
+     * Packs the given object with the given converter by serializing its content and deriving the type from the given converter.
+     */
     @Pure
-    @TODO(task = "Throw a more specific exception?", date = "2016-10-31", author = Author.KASPAR_ETTER)
-    public static <T> @Nonnull Selfcontained convert(@Nullable T object, @Nonnull Converter<T, ?> converter) throws ExternalException {
-        final @Nonnull SemanticType semanticType = SemanticType.map(converter.getName().toLowerCase() + "@core.digitalid.net"); // TODO: Derive something smarter from the given converter.
-        return new SelfcontainedSubclass(semanticType, XDF.convert(object, converter));
+    @TODO(task = "Throw a stream exception instead!", date = "2016-10-31", author = Author.KASPAR_ETTER)
+    public static <TYPE> @Nonnull Pack pack(@Nullable TYPE object, @Nonnull Converter<TYPE, ?> converter) throws ExternalException {
+        return new PackSubclass(SemanticType.map(converter), XDF.convert(object, converter));
     }
     
     /* -------------------------------------------------- Load -------------------------------------------------- */
     
+    /**
+     * Loads a pack from the given input stream.
+     */
     @Pure
-    public static @Nonnull Selfcontained loadFrom(@NonCaptured @Modified @Nonnull InputStream inputStream) throws ExternalException {
-        final @Nullable Selfcontained selfcontained = XDF.recover(SelfcontainedConverter.INSTANCE, null, inputStream);
-        if (selfcontained == null) { throw ExternalException.with("The recovered object should not be null."); }
-        return selfcontained;
+    public static @Nonnull Pack loadFrom(@NonCaptured @Modified @Nonnull InputStream inputStream) throws ExternalException {
+        final @Nullable Pack pack = XDF.recover(PackConverter.INSTANCE, null, inputStream);
+        if (pack == null) { throw ExternalException.with("The recovered object should not be null."); }
+        return pack;
     }
     
+    /**
+     * Loads a pack from the given file.
+     */
     @Pure
-    public static @Nonnull Selfcontained loadFrom(@Nonnull @Existent File file) throws ExternalException {
+    public static @Nonnull Pack loadFrom(@Nonnull @Existent File file) throws ExternalException {
         try {
             return loadFrom(new FileInputStream(file));
         } catch (@Nonnull FileNotFoundException exception) {
@@ -76,11 +93,17 @@ public abstract class Selfcontained {
     
     /* -------------------------------------------------- Store -------------------------------------------------- */
     
+    /**
+     * Stores this pack to the given output stream.
+     */
     @Pure
     public void storeTo(@NonCaptured @Modified @Nonnull OutputStream outputStream) throws ExternalException {
-        XDF.convert(this, SelfcontainedConverter.INSTANCE, outputStream);
+        XDF.convert(this, PackConverter.INSTANCE, outputStream);
     }
     
+    /**
+     * Stores this pack to the given file.
+     */
     @Pure
     public void storeTo(@Nonnull File file) throws ExternalException {
         try {
@@ -100,7 +123,7 @@ public abstract class Selfcontained {
 //        if (attributeContent.getType().isBasedOn(StringWrapper.XDF_TYPE)) {
 //            string.append(": ").append(StringWrapper.decodeNonNullable(attributeContent));
 //        }
-        return "Selfcontained";
+        return "Pack";
     }
     
 }

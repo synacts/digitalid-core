@@ -3,10 +3,9 @@ package net.digitalid.core.server;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.logging.Log;
-
 import net.digitalid.core.handler.method.MethodIndex;
-import net.digitalid.core.selfcontained.Selfcontained;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.server.handlers.TestQuery;
 import net.digitalid.core.server.handlers.TestQueryBuilder;
 import net.digitalid.core.server.handlers.TestQueryConverter;
@@ -22,13 +21,12 @@ public class ServerTest extends ServerSetup {
     
     @Test
     public void testServer() throws Exception {
-        Log.information("TestQuery.TYPE: $", TestQuery.TYPE);
-        MethodIndex.add(TestQuery.TYPE, TestQueryConverter.INSTANCE);
+        MethodIndex.add(SemanticType.map(TestQueryConverter.INSTANCE), TestQueryConverter.INSTANCE);
         
         final @Nonnull TestQuery query = TestQueryBuilder.withRecipient(identifier).withMessage("Hello from the other side!").build();
-        final @Nullable Selfcontained selfcontained = query.send();
-        assertNotNull(selfcontained);
-        final @Nullable TestReply reply = selfcontained.recover(TestReplyConverter.INSTANCE, null);
+        final @Nullable Pack pack = query.send();
+        assertNotNull(pack);
+        final @Nullable TestReply reply = pack.unpack(TestReplyConverter.INSTANCE, null);
         assertNotNull(reply);
         assertEquals("Hi there!", reply.getMessage());
         

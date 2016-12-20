@@ -18,7 +18,6 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.handler.method.query.InternalQuery;
 import net.digitalid.core.handler.reply.Reply;
-import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 
 /**
@@ -56,25 +55,6 @@ public abstract class AuditQuery extends InternalQuery {
     @PureWithSideEffects
     public @Nonnull AuditReply execute() {
         return null; // TODO: AuditReply(getNonHostAccount(), service);
-    }
-    
-    /* -------------------------------------------------- Other -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code query.audit@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType TYPE = SemanticType.map("query.audit@core.digitalid.net").load(null /* TODO: SemanticType.IDENTIFIER */);
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull String getDescription() {
-        return "Queries the audit of the " + getService().getTitle() + ".";
     }
     
 }
