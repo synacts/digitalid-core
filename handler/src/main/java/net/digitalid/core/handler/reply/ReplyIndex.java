@@ -27,7 +27,7 @@ import net.digitalid.core.signature.host.HostSignature;
 public abstract class ReplyIndex {
     
     /**
-     * Each reply needs to {@link #add(net.digitalid.service.core.identity.SemanticType, net.digitalid.service.core.handler.Reply.Factory) register} a factory that inherits from this class.
+     * Each reply needs to {@link #add(net.digitalid.core.identification.identity.SemanticType, net.digitalid.core.handler.reply.ReplyIndex.Factory) register} a factory that inherits from this class.
      */
     protected static abstract class Factory {
         
@@ -37,7 +37,6 @@ public abstract class ReplyIndex {
          * @param entity the entity to which the returned reply belongs
          * @param signature the signature of the returned reply.
          * @param number the number that references the reply.
-         * @param block the content which is to be decoded.
          * 
          * @return a new reply that decodes the given block.
          * 
@@ -74,7 +73,6 @@ public abstract class ReplyIndex {
      * @param entity the entity to which the returned reply belongs.
      * @param signature the signature of the returned reply.
      * @param number the number that references the reply.
-     * @param block the content which is to be decoded.
      * 
      * @return a reply that decodes the given block.
      * 
@@ -101,7 +99,6 @@ public abstract class ReplyIndex {
      * 
      * @param entity the entity to which the returned reply belongs.
      * @param signature the signature of the returned reply.
-     * @param block the content which is to be decoded.
      * 
      * @return a reply that decodes the given block.
      * 

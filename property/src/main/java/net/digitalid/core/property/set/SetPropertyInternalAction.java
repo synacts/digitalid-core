@@ -26,6 +26,7 @@ import net.digitalid.core.concept.Concept;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnClientRecipient;
 import net.digitalid.core.handler.method.action.Action;
+import net.digitalid.core.handler.method.action.InternalAction;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.property.PropertyInternalAction;
 import net.digitalid.core.restrictions.Restrictions;

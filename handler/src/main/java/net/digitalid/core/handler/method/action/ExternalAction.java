@@ -17,9 +17,8 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 
 /**
- * External actions can be sent by both {@link Host hosts} and {@link Client clients}.
- * Depending on whether the reply is needed immediately, external actions can be either sent 
- * directly or passed to the {@link Pusher#send(net.digitalid.service.core.handler.ExternalAction) Pusher}!
+ * External actions can be sent by both hosts and clients.
+ * Depending on whether the reply is needed immediately, external actions can be either sent directly or passed to the pusher!
  * 
  * @invariant hasEntity() : "This external action has an entity.";
  */

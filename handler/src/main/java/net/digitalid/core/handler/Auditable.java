@@ -8,6 +8,8 @@ import net.digitalid.utility.validation.annotations.size.EmptyOrSingle;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.agent.Agent;
+import net.digitalid.core.handler.method.action.Action;
+import net.digitalid.core.handler.reply.ActionReply;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 

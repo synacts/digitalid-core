@@ -6,12 +6,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.digitalid.core.identification.identity.SemanticType;
-
-/**
+/* TODO: Remove this annotation or fix the following Javadoc.
  * This annotation indicates that the {@link Block#getType() type} of a {@link Block block} is
  * {@link SemanticType#isBasedOn(net.digitalid.service.core.identity.SemanticType) based on} the type of the given identifier.
  */
+@Deprecated
 @Documented
 @Retention(RetentionPolicy.CLASS)
 // TODO: Implement a value validator instead: @TargetTypes({Block.class, SemanticType.class})

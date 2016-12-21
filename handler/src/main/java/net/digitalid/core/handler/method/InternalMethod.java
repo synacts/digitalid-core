@@ -9,6 +9,8 @@ import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.handler.method.action.InternalAction;
+import net.digitalid.core.handler.method.query.InternalQuery;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.restrictions.Restrictions;
 

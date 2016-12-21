@@ -23,7 +23,7 @@ public class ServerTest extends ServerSetup {
     public void testServer() throws Exception {
         MethodIndex.add(SemanticType.map(TestQueryConverter.INSTANCE), TestQueryConverter.INSTANCE);
         
-        final @Nonnull TestQuery query = TestQueryBuilder.withRecipient(identifier).withMessage("Hello from the other side!").build();
+        final @Nonnull TestQuery query = TestQueryBuilder.withMessage("Hello from the other side!").withProvidedSubject(identifier).build();
         final @Nullable Pack pack = query.send();
         assertNotNull(pack);
         final @Nullable TestReply reply = pack.unpack(TestReplyConverter.INSTANCE, null);

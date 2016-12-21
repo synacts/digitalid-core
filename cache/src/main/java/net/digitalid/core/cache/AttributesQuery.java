@@ -25,7 +25,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.expression.PassiveExpression;
-import net.digitalid.core.handler.CoreHandler;
+import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.ExternalQuery;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identity.InternalPerson;
@@ -48,7 +48,7 @@ import net.digitalid.core.typeset.permissions.ReadOnlyNodePermissions;
 @GenerateBuilder
 @GenerateSubclass
 // TODO: @GenerateConverter
-public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implements CoreHandler<Entity<?>> {
+public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implements CoreMethod<Entity<?>> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     

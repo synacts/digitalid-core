@@ -95,7 +95,7 @@ public abstract class Agent extends CoreConcept<NonHostEntity<?>, Long> {
      * Returns the permissions of this agent.
      * <p>
      * <em>Important:</em> The additional permissions should not cover any existing permissions. If they do,
-     * make sure to {@link #removePermissions(net.digitalid.service.core.agent.ReadonlyAgentPermissions) remove} them first.
+     * make sure to {@link WritablePersistentMapProperty#remove(java.lang.Object) remove} them first.
      */
     @Pure
     @GenerateSynchronizedProperty

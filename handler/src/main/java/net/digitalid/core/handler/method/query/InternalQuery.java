@@ -28,7 +28,7 @@ import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
- * Internal queries can only be sent by {@link Client clients} and are always signed identity-based.
+ * Internal queries can only be sent by clients and are always signed identity-based.
  */
 @Immutable
 public abstract class InternalQuery extends Query<NonHostEntity<?>> implements InternalMethod {

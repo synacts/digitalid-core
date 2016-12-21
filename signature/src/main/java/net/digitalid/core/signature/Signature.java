@@ -17,7 +17,7 @@ import net.digitalid.core.signature.host.HostSignature;
 /**
  * @see HostSignature
  * @see ClientSignature
- * @see CredentialsSignature
+ * TODO: CredentialsSignature
  */
 @Immutable
 //@GenerateConverter // TODO: Support the generation of converters for types with generic parameters.

@@ -104,7 +104,7 @@ public abstract class WritableSynchronizedMapProperty<ENTITY extends Entity<?>, 
     /* -------------------------------------------------- Action -------------------------------------------------- */
     
     /**
-     * Adds or removes the given value to or from this property from the {@link SetPropertyInternalAction}.
+     * Adds or removes the given value to or from this property from the {@link MapPropertyInternalAction}.
      */
     @Impure
     @NonCommitting

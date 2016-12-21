@@ -9,7 +9,7 @@ import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
 
 /**
- * This class models a concept of the {@link Service#CORE core service}.
+ * This class models a concept of the {@link CoreService core service}.
  */
 @Immutable
 public abstract class CoreConcept<ENTITY extends Entity<?>, KEY> extends Concept<ENTITY, KEY> {

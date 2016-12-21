@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import net.digitalid.core.identification.identity.Type;
 
 /**
- * This annotation indicates that a method should only be invoked on a {@link Type#isNotLoaded() not loaded} {@link Type type}.
+ * This annotation indicates that a method should only be invoked on a not {@link Type#isLoaded() loaded} {@link Type type}.
  * 
  * @see LoadedRecipient
  */

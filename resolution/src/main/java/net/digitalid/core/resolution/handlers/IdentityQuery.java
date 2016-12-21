@@ -17,7 +17,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
-import net.digitalid.core.handler.CoreHandler;
+import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.ExternalQuery;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
@@ -32,7 +32,7 @@ import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class IdentityQuery extends ExternalQuery<NonHostEntity<?>> implements CoreHandler<NonHostEntity<?>> {
+public abstract class IdentityQuery extends ExternalQuery<NonHostEntity<?>> implements CoreMethod<NonHostEntity<?>> {
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     

@@ -45,7 +45,7 @@ public class InvalidDeclarationException extends ExternalException {
      * 
      * @param message a string explaining the problem of the invalid declaration.
      * @param identifier the identifier that has an invalid declaration.
-     * @param reply the reply that contains the invalid declaration.
+     * TODO: reply the reply that contains the invalid declaration.
      */
     protected InvalidDeclarationException(@Nonnull String message, @Nonnull Identifier identifier /*, @Nullable Reply reply */) {
         super(identifier.toString() + " has an invalid declaration: " + message);
@@ -59,7 +59,7 @@ public class InvalidDeclarationException extends ExternalException {
      * 
      * @param message a string explaining the problem of the invalid declaration.
      * @param identifier the identifier that has an invalid declaration.
-     * @param reply the reply that contains the invalid declaration.
+     * TODO: reply the reply that contains the invalid declaration.
      * 
      * @return a new invalid declaration exception with the given message, identifier and reply.
      */

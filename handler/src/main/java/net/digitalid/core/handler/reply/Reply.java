@@ -17,11 +17,12 @@ import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.Handler;
+import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.signature.host.HostSignature;
 
 /**
  * This class models replies to {@link Method methods} and stores them in the {@link Database database}.
- * All replies have to extend this class and {@link #add(net.digitalid.service.core.identity.SemanticType, net.digitalid.service.core.handler.Reply.Factory) register} themselves as handlers.
+ * All replies have to extend this class and {@link ReplyIndex#add(net.digitalid.core.identification.identity.SemanticType, net.digitalid.core.handler.reply.ReplyIndex.Factory) register} themselves as handlers.
  * 
  * @see ActionReply
  * @see QueryReply

@@ -22,10 +22,11 @@ import net.digitalid.core.handler.Auditable;
 import net.digitalid.core.handler.method.action.ExternalAction;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
+import net.digitalid.core.service.Service;
 
 /**
  * This class models a {@link Reply reply} to an {@link ExternalAction external action}.
- * Action replies are added to the {@link Audit audit} by the {@link Pusher pusher} on {@link Service services}.
+ * Action replies are added to the audit by the pusher on {@link Service services}.
  */
 @Immutable
 public abstract class ActionReply extends Reply<NonHostEntity<?>> implements Auditable {

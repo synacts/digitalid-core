@@ -16,7 +16,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.exceptions.request.RequestException;
-import net.digitalid.core.handler.CoreHandler;
+import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.ExternalQuery;
 import net.digitalid.core.handler.reply.Reply;
 
@@ -24,7 +24,7 @@ import net.digitalid.core.handler.reply.Reply;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class TestQuery extends ExternalQuery<Entity<?>> implements CoreHandler<Entity<?>> {
+public abstract class TestQuery extends ExternalQuery<Entity<?>> implements CoreMethod<Entity<?>> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -48,7 +48,7 @@ public abstract class TestQuery extends ExternalQuery<Entity<?>> implements Core
     @PureWithSideEffects
     public @Nonnull TestReply executeOnHost() throws RequestException, DatabaseException {
         Log.information("Received the message $.", getMessage());
-        return TestReplyBuilder.withMessage("Hi there!").withProvidedEntity(getEntity()).build();
+        return TestReplyBuilder.withMessage("Hi there!").build();
     }
     
 }

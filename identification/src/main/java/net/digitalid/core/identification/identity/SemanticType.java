@@ -554,14 +554,14 @@ public abstract class SemanticType extends Type {
 //        return semanticType.equals(UNKNOWN) || equals(semanticType) || semanticBase != null && semanticBase.isBasedOn(semanticType);
 //    }
 //    
-//    /**
-//     * Returns whether this semantic type can be used to denote a role.
-//     */
-//    @Pure
-//    @LoadedRecipient
-//    public boolean isRoleType() {
-//        return isBasedOn(Context.FLAT);
-//    }
+    /**
+     * Returns whether this semantic type can be used to denote a role.
+     */
+    @Pure
+    @LoadedRecipient
+    public boolean isRoleType() {
+        return true; // TODO: isBasedOn(Context.FLAT);
+    }
 //    
 //    /**
 //     * Checks that this semantic type can be used to denote a role.

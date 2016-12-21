@@ -9,7 +9,9 @@ import java.lang.annotation.Target;
 import net.digitalid.core.identification.identifier.Identifier;
 
 /**
- * This annotation indicates that a method should only be invoked on a non-{@link Identifier#isMapped() mapped} {@link Identifier identifier}.
+ * This annotation indicates that a method should only be invoked on a non-mapped {@link Identifier identifier}.
+ * 
+ * TODO: Identifier#isMapped() no longer exists.
  * 
  * @see MappedRecipient
  */

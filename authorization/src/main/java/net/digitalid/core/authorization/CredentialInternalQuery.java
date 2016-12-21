@@ -10,7 +10,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.credential.utility.SaltedAgentPermissions;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.handler.CoreHandler;
+import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.InternalQuery;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.annotations.type.kind.RoleType;
@@ -26,7 +26,7 @@ import net.digitalid.core.restrictions.Restrictions;
 @Immutable
 // TODO: @GenerateSubclass
 // TODO: @GenerateConverter
-abstract class CredentialInternalQuery extends InternalQuery implements CoreHandler<NonHostEntity<?>> {
+abstract class CredentialInternalQuery extends InternalQuery implements CoreMethod<NonHostEntity<?>> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     

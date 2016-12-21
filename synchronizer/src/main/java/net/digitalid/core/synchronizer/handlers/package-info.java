@@ -1,4 +1,4 @@
 /**
- * Provides classes for synchronizing internal actions.
+ * Provides handlers for synchronizing the state.
  */
-package net.digitalid.core.synchronizer;
+package net.digitalid.core.synchronizer.handlers;

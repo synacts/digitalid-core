@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import net.digitalid.core.identification.identity.Type;
 
 /**
- * This annotation indicates that a {@link Type type} is {@link Type#isNotLoaded() not loaded}.
+ * This annotation indicates that a {@link Type type} is not {@link Type#isLoaded() loaded}.
  * 
  * @see Loaded
  */

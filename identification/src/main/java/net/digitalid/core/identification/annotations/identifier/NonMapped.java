@@ -9,7 +9,9 @@ import java.lang.annotation.Target;
 import net.digitalid.core.identification.identifier.Identifier;
 
 /**
- * This annotation indicates that an {@link Identifier identifier} is not {@link Identifier#isMapped() mapped}.
+ * This annotation indicates that an {@link Identifier identifier} is not mapped.
+ * 
+ * TODO: Identifier#isMapped() no longer exists.
  * 
  * @see Mapped
  */

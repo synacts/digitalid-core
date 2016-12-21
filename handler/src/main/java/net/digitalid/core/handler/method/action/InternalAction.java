@@ -28,10 +28,10 @@ import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.credentials.CredentialsSignature;
 
 /**
- * Internal actions can only be sent by {@link Client clients} and can usually be {@link #reverseOnClient() reversed}.
+ * Internal actions can only be sent by clients and can usually be {@link #reverseOnClient() reversed}.
  * They are always signed identity-based and an audit request or trail is appended during {@link Package packaging}.
  * <p>
- * <em>Important:</em> Do not execute internal actions directly but always pass them to the {@link Synchronizer#execute(net.digitalid.service.core.handler.InternalAction) Synchronizer}!
+ * <em>Important:</em> Do not execute internal actions directly but always pass them to the synchronizer!
  */
 @Immutable
 public abstract class InternalAction extends Action implements InternalMethod {
