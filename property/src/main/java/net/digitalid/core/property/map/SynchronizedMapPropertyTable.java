@@ -32,7 +32,7 @@ public interface SynchronizedMapPropertyTable<ENTITY extends Entity<?>, KEY, CON
     @Pure
     @Override
     @TODO(task = "Is it really necessary to override this method manually?", date = "2016-11-12", author = Author.KASPAR_ETTER)
-    @Derive("net.digitalid.database.property.map.PersistentMapPropertyEntryConverterBuilder.<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    @Derive("net.digitalid.database.property.map.PersistentMapPropertyEntryConverterBuilder.withPropertyTable(this).build()")
     public @Nonnull PersistentMapPropertyEntryConverter<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> getEntryConverter();
     
 }

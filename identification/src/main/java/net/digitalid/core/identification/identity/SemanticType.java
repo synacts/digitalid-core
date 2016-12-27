@@ -132,7 +132,7 @@ public abstract class SemanticType extends Type {
     @NonCommitting
     @TODO(task = "Use the fully qualified name to derive a suitable identifier.", date = "2016-12-20", author = Author.KASPAR_ETTER)
     public static @Nonnull @NonLoaded SemanticType map(@Nonnull Converter<?, ?> converter) {
-        return map(converter.getName().toLowerCase() + "@core.digitalid.net");
+        return map(converter.getTypeName().toLowerCase() + "@core.digitalid.net");
     }
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */

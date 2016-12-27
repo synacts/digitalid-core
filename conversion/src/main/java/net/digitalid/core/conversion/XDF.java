@@ -33,9 +33,9 @@ public abstract class XDF {
     
     @Pure
     public static <T> void convert(@NonCaptured @Unmodified @Nullable T object, @Nonnull Converter<T, ?> converter, @NonCaptured @Modified @Nonnull OutputStream outputStream) throws ExternalException {
-        final @Nonnull XDFValueCollector valueCollector = XDFValueCollector.with(outputStream);
-        converter.convert(object, valueCollector);
-        valueCollector.finish();
+        final @Nonnull XDFEncoder encoder = XDFEncoder.with(outputStream);
+        converter.convert(object, encoder);
+        encoder.finish();
     }
     
     @Pure
@@ -49,8 +49,8 @@ public abstract class XDF {
     
     @Pure
     public static @Capturable <T, E> @Nullable T recover(@Nonnull Converter<T, E> converter, E externallyProvided, @NonCaptured @Modified @Nonnull InputStream inputStream) throws ExternalException {
-        final @Nonnull XDFSelectionResult selectionResult = XDFSelectionResult.with(inputStream);
-        return converter.recover(selectionResult, externallyProvided);
+        final @Nonnull XDFDecoder decoder = XDFDecoder.with(inputStream);
+        return converter.recover(decoder, externallyProvided);
     }
     
     @Pure

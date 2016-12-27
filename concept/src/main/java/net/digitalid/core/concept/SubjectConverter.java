@@ -14,8 +14,9 @@ import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.SelectionResult;
-import net.digitalid.utility.conversion.converter.ValueCollector;
+import net.digitalid.utility.conversion.converter.Decoder;
+import net.digitalid.utility.conversion.converter.Encoder;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
@@ -49,7 +50,7 @@ public abstract class SubjectConverter<ENTITY extends Entity<?>, KEY, CONCEPT ex
     @Pure
     @Override
     @TODO(task = "Support @Cached on methods without parameters.", date = "2016-09-24", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
-    public @Nonnull ImmutableList<@Nonnull CustomField> getFields() {
+    public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
         return ImmutableList.withElements(
                 CustomField.with(CustomType.TUPLE.of(getConceptModule().getEntityConverter()), "entity", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(Embedded.class))),
                 CustomField.with(CustomType.TUPLE.of(getConceptModule().getConceptConverter()), "key", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(Embedded.class)/* TODO: Pass them? Probably pass the whole custom field instead. */))
@@ -60,10 +61,10 @@ public abstract class SubjectConverter<ENTITY extends Entity<?>, KEY, CONCEPT ex
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable CONCEPT concept, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
+    public <X extends ExternalException> int convert(@Nullable CONCEPT concept, @Nonnull @NonCaptured @Modified Encoder<X> encoder) throws X {
         int i = 1;
-        i *= getConceptModule().getEntityConverter().convert(concept == null ? null : concept.getEntity(), valueCollector);
-        i *= getConceptModule().getConceptConverter().convert(concept == null ? null : concept, valueCollector);
+        i *= getConceptModule().getEntityConverter().convert(concept == null ? null : concept.getEntity(), encoder);
+        i *= getConceptModule().getConceptConverter().convert(concept == null ? null : concept, encoder);
         return i;
     }
     
@@ -72,9 +73,9 @@ public abstract class SubjectConverter<ENTITY extends Entity<?>, KEY, CONCEPT ex
     @Pure
     @Override
     @Review(comment = "How would you handle the nullable recovered objects?", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
-    public @Capturable <X extends ExternalException> @Nullable CONCEPT recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nonnull CoreSite<?> site) throws X {
-        final @Nullable ENTITY entity = getConceptModule().getEntityConverter().recover(selectionResult, site);
-        return entity != null ? getConceptModule().getConceptConverter().recover(selectionResult, entity) : null;
+    public @Capturable <X extends ExternalException> @Nullable CONCEPT recover(@Nonnull @NonCaptured @Modified Decoder<X> decoder, @Nonnull CoreSite<?> site) throws X {
+        final @Nullable ENTITY entity = getConceptModule().getEntityConverter().recover(decoder, site);
+        return entity != null ? getConceptModule().getConceptConverter().recover(decoder, entity) : null;
     }
     
 }

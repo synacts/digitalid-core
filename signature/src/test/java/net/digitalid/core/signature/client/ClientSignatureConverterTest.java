@@ -28,9 +28,6 @@ import net.digitalid.core.identification.identity.IdentifierResolver;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *
- */
 public class ClientSignatureConverterTest extends CryptographyTestBase {
     
     @Test
@@ -49,7 +46,7 @@ public class ClientSignatureConverterTest extends CryptographyTestBase {
         
         final @Nonnull SecretCommitment commitment = SecretCommitmentBuilder.withHost(hostIdentity).withTime(time).withPublicKey(publicKey).withSecret(secret).build();
         
-        final @Nonnull ClientSignature<CustomString> signedMessage = ClientSignatureBuilder.withElement(message).withSecretCommitment(commitment).withSubject(subject).withTime(time).build(); 
+        final @Nonnull ClientSignature<CustomString> signedMessage = ClientSignatureBuilder.withObject(message).withSubject(subject).withSecretCommitment(commitment).withTime(time).build(); 
     
         final @Nonnull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         XDF.convert(signedMessage, ClientSignatureConverter.getInstance(CustomStringConverter.INSTANCE), byteArrayOutputStream);
@@ -61,7 +58,7 @@ public class ClientSignatureConverterTest extends CryptographyTestBase {
         final @Nullable ClientSignature<CustomString> recoveredObject = XDF.recover(ClientSignatureConverter.getInstance(CustomStringConverter.INSTANCE), null, byteArrayInputStream);
         
         assertNotNull(recoveredObject);
-        assertEquals(message, recoveredObject.getElement());
+        assertEquals(message, recoveredObject.getObject());
     }
     
 }

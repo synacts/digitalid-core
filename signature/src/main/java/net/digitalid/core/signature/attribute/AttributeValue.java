@@ -31,7 +31,7 @@ public abstract class AttributeValue extends RootClass {
      * Returns the signature with the packed attribute value.
      */
     @Pure
-    public abstract @Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the packed value denotes an attribute.") Signature<Pack> getSignature();
+    public abstract @Nonnull @Invariant(condition = "signature.getObject().getType().isAttributeType()", message = "The type of the packed value denotes an attribute.") Signature<Pack> getSignature();
     
     /**
      * Returns whether this attribute value is certified.
@@ -67,7 +67,7 @@ public abstract class AttributeValue extends RootClass {
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     @Pure
-    public static @Nonnull AttributeValue with(@Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the packed value denotes an attribute.") Signature<Pack> signature) {
+    public static @Nonnull AttributeValue with(@Nonnull @Invariant(condition = "signature.getObject().getType().isAttributeType()", message = "The type of the packed value denotes an attribute.") Signature<Pack> signature) {
         if (signature instanceof HostSignature<?>) { return new CertifiedAttributeValueSubclass((HostSignature<Pack>) signature); }
         else { return new UncertifiedAttributeValueSubclass(signature); }
     }

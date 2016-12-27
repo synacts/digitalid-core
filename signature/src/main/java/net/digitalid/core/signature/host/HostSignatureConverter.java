@@ -9,18 +9,23 @@ import java.security.NoSuchAlgorithmException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.SelectionResult;
-import net.digitalid.utility.conversion.converter.ValueCollector;
+import net.digitalid.utility.conversion.converter.Decoder;
+import net.digitalid.utility.conversion.converter.Encoder;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
 import net.digitalid.utility.exceptions.MissingSupportException;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
+import net.digitalid.utility.validation.annotations.string.DomainName;
 
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeConverter;
@@ -36,15 +41,15 @@ import net.digitalid.core.signature.exceptions.InvalidHostSignatureException;
 /**
  *
  */
-public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Void> {
+public class HostSignatureConverter<@Unspecifiable TYPE> implements Converter<HostSignature<TYPE>, Void> {
     
     /* -------------------------------------------------- Object Converter -------------------------------------------------- */
     
-    private final @Nonnull Converter<T, ?> objectConverter;
+    private final @Nonnull Converter<TYPE, ?> objectConverter;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private HostSignatureConverter(@Nonnull Converter<T, ?> objectConverter) {
+    private HostSignatureConverter(@Nonnull Converter<TYPE, ?> objectConverter) {
         this.objectConverter = objectConverter;
     }
     
@@ -53,19 +58,35 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
         return new HostSignatureConverter<>(objectConverter);
     }
     
+    /* -------------------------------------------------- Type -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Class<? super HostSignature<TYPE>> getType() {
+        return HostSignature.class;
+    }
+    
     /* -------------------------------------------------- Name -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull String getName() {
-        return "hostsignature";
+    public @Nonnull @CodeIdentifier @MaxSize(63) String getTypeName() {
+        return "HostSignature";
+    }
+    
+    /* -------------------------------------------------- Package -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @DomainName String getTypePackage() {
+        return "net.digitalid.core.encryption";
     }
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull ImmutableList<@Nonnull CustomField> getFields() {
+    public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
         return null;
     }
     
@@ -73,7 +94,7 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified HostSignature<T> signature, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws ExternalException {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified HostSignature<TYPE> signature, @Nonnull @NonCaptured @Modified Encoder<X> encoder) throws ExternalException {
         // TODO: how do we handle multiple hosts? In the privateKeyRetriever itself?
         @Nullable PrivateKey privateKey = null;
         if (signature != null && signature.getTime() != null) {
@@ -82,29 +103,29 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
         }
         
         try {
-            valueCollector.setSignatureDigest(MessageDigest.getInstance("SHA-256"));
+            encoder.setSignatureDigest(MessageDigest.getInstance("SHA-256"));
         } catch (@Nonnull NoSuchAlgorithmException exception) {
             throw MissingSupportException.with("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
         }
         int i = 1;
-        i *= InternalIdentifierConverter.INSTANCE.convert(signature == null ? null : signature.getSubject(), valueCollector);
+        i *= InternalIdentifierConverter.INSTANCE.convert(signature == null ? null : signature.getSubject(), encoder);
 //        System.out.println("object: " + signature.getSubject());
-        i *= TimeConverter.INSTANCE.convert(signature == null ? null : signature.getTime(), valueCollector);
+        i *= TimeConverter.INSTANCE.convert(signature == null ? null : signature.getTime(), encoder);
 //        System.out.println("time: " + signature.getTime());
-        i *= objectConverter.convert(signature == null ? null : signature.getElement(), valueCollector);
+        i *= objectConverter.convert(signature == null ? null : signature.getObject(), encoder);
 //        System.out.println("element: " + signature.getElement());
-        i *= InternalIdentifierConverter.INSTANCE.convert(signature == null ? null : signature.getSigner(), valueCollector);
+        i *= InternalIdentifierConverter.INSTANCE.convert(signature == null ? null : signature.getSigner(), encoder);
 //        System.out.println("signer: " + signature.getSigner());
         
         if (privateKey != null) {
-            final @Nullable DigestOutputStream digestOutputStream = valueCollector.popSignatureDigest();
+            final @Nullable DigestOutputStream digestOutputStream = encoder.popSignatureDigest();
             final @Nonnull BigInteger hash = new BigInteger(1, digestOutputStream.getMessageDigest().digest());
 //            System.out.println("hash: " + hash);
             final @Nonnull BigInteger signatureValue = privateKey.powD(hash).getValue();
 //            System.out.println("signature value: " + signatureValue);
-            valueCollector.setNullableInteger(signatureValue);
+            encoder.setNullableInteger(signatureValue);
         } else {
-            valueCollector.setNullableInteger(null);
+            encoder.setNullableInteger(null);
         }
         
         return i;
@@ -114,23 +135,23 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
     
     @Pure
     @Override
-    public <X extends ExternalException> @Nonnull HostSignature<T> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void externallyProvided) throws ExternalException {
+    public <X extends ExternalException> @Nonnull HostSignature<TYPE> recover(@Nonnull @NonCaptured @Modified Decoder<X> decoder, Void externallyProvided) throws ExternalException {
         try {
-            selectionResult.setSignatureDigest(MessageDigest.getInstance("SHA-256"));
+            decoder.setSignatureDigest(MessageDigest.getInstance("SHA-256"));
         } catch (@Nonnull NoSuchAlgorithmException exception) {
             throw MissingSupportException.with("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
         }
-        final @Nullable InternalIdentifier subject = InternalIdentifierConverter.INSTANCE.recover(selectionResult, null);
+        final @Nullable InternalIdentifier subject = InternalIdentifierConverter.INSTANCE.recover(decoder, null);
 //        System.out.println("subject: " + subject);
-        final @Nullable Time time = TimeConverter.INSTANCE.recover(selectionResult, null);
+        final @Nullable Time time = TimeConverter.INSTANCE.recover(decoder, null);
 //        System.out.println("time: " + time);
-        final @Nullable T object = objectConverter.recover(selectionResult, null);
+        final @Nullable TYPE object = objectConverter.recover(decoder, null);
 //        System.out.println("element: " + object);
-        final @Nullable InternalIdentifier signer = InternalIdentifierConverter.INSTANCE.recover(selectionResult, null);
+        final @Nullable InternalIdentifier signer = InternalIdentifierConverter.INSTANCE.recover(decoder, null);
 //        System.out.println("signer: " + signer);
-        final @Nonnull DigestInputStream digestInputStream = selectionResult.popSignatureDigest();
+        final @Nonnull DigestInputStream digestInputStream = decoder.popSignatureDigest();
         
-        final @Nullable BigInteger signatureValue = selectionResult.getInteger();
+        final @Nullable BigInteger signatureValue = decoder.getInteger();
 //        System.out.println("signature value: " + signatureValue);
         
         @Nullable PublicKey publicKey = null;
@@ -141,7 +162,7 @@ public class HostSignatureConverter<T> implements Converter<HostSignature<T>, Vo
         final @Nonnull BigInteger hash = new BigInteger(1, digestInputStream.getMessageDigest().digest());
 //        System.out.println("hash: " + hash);
     
-        final @Nonnull HostSignature<T> hostSignature = HostSignatureBuilder.withElement(object).withSigner(signer).withTime(time).withSubject(subject).build();
+        final @Nonnull HostSignature<TYPE> hostSignature = HostSignatureBuilder.withObject(object).withSubject(subject).withSigner(signer).withTime(time).build();
         if (publicKey != null) {
     
             try {

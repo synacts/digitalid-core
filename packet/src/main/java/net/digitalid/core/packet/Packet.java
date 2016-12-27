@@ -3,7 +3,6 @@ package net.digitalid.core.packet;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -22,7 +21,7 @@ import net.digitalid.core.signature.Signature;
 public abstract class Packet extends RootClass /* TODO: implements Packable */ {
     
     @Pure
-    public abstract @Nonnull Encryption<ReadOnlyList<Signature<Compression<Pack>>>> getEncryption();
+    public abstract @Nonnull Encryption</*ReadOnlyList<*/Signature<Compression<Pack>>/*>*/> getEncryption();
     
 //    /**
 //     * Stores the semantic type {@code content.packet@core.digitalid.net}.

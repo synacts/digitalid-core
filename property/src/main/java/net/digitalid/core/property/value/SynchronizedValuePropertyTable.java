@@ -32,7 +32,7 @@ public interface SynchronizedValuePropertyTable<ENTITY extends Entity<?>, KEY, C
     @Pure
     @Override
     @TODO(task = "Is it really necessary to override this method manually?", date = "2016-11-12", author = Author.KASPAR_ETTER)
-    @Derive("net.digitalid.database.property.value.PersistentValuePropertyEntryConverterBuilder.<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    @Derive("net.digitalid.database.property.value.PersistentValuePropertyEntryConverterBuilder.withPropertyTable(this).build()")
     public @Nonnull PersistentValuePropertyEntryConverter<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE> getEntryConverter();
     
 }

@@ -67,7 +67,7 @@ public abstract class ConceptModule<ENTITY extends Entity<?>, KEY, CONCEPT exten
     
     @Pure
     @Override
-    @Derive("new SubjectConverterSubclass<ENTITY, KEY, CONCEPT>(\"SubjectConverter\", this)")
+    @Derive("new SubjectConverterSubclass<ENTITY, KEY, CONCEPT>(Concept.class, \"SubjectConverter\", \"net.digitalid.core.concept\", this)")
     public abstract @Nonnull Converter<CONCEPT, @Nonnull CoreSite<?>> getSubjectConverter();
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
@@ -75,7 +75,7 @@ public abstract class ConceptModule<ENTITY extends Entity<?>, KEY, CONCEPT exten
     @Pure
     @Override
     public @Nonnull @CodeIdentifier @MaxSize(63) String getName() {
-        return getConceptConverter().getName();
+        return getConceptConverter().getTypeName();
     }
     
 }

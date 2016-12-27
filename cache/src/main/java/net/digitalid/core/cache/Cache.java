@@ -341,7 +341,7 @@ public abstract class Cache {
     public static <T> @Nonnull T getAttributeContent(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type, @Nonnull Converter<T, Void> converter, boolean certified) throws ExternalException {
         final @Nonnull AttributeValue value = getAttributeValue(identity, entity, time, type);
         if (certified && !value.isCertified()) { throw CertificateNotFoundException.with(identity, type); }
-        final @Nullable T content = value.getSignature().getElement().unpack(converter, null);
+        final @Nullable T content = value.getSignature().getObject().unpack(converter, null);
         if (content == null) { throw AttributeNotFoundException.with(identity, type); }
         return content;
     }

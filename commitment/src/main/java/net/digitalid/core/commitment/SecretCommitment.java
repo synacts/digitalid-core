@@ -35,12 +35,10 @@ public interface SecretCommitment extends Commitment {
     @Pure
     public @Nonnull Exponent getSecret();
     
-    /**
-     * Returns the value of this commitment.
-     */
     @Pure
-    @Derive("getPublicKey().getAu().pow(getSecret()).getValue()")
+    @Override
     @OrderOfAssignment(1)
+    @Derive("getPublicKey().getAu().pow(getSecret()).getValue()")
     public @Nonnull BigInteger getValue();
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */

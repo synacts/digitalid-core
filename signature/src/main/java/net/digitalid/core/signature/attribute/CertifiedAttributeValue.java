@@ -31,7 +31,7 @@ public abstract class CertifiedAttributeValue extends AttributeValue {
     
     @Pure
     @Override
-    public abstract @Nonnull @Invariant(condition = "signature.getElement().getType().isAttributeType()", message = "The type of the packed value denotes an attribute.") HostSignature<Pack> getSignature();
+    public abstract @Nonnull @Invariant(condition = "signature.getObject().getType().isAttributeType()", message = "The type of the packed value denotes an attribute.") HostSignature<Pack> getSignature();
     
     // TODO: Check somewhere that:
 //        Require.that(content.getType().isAttributeFor(subject.getCategory())).orThrow("The content is an attribute for the subject.");
@@ -58,7 +58,7 @@ public abstract class CertifiedAttributeValue extends AttributeValue {
      */
     @Pure
     public boolean isValid(@Nonnull Time time) {
-        return getSignature().getTime().add(getSignature().getElement().getType().getCachingPeriodNotNull()).isGreaterThan(time);
+        return getSignature().getTime().add(getSignature().getObject().getType().getCachingPeriodNotNull()).isGreaterThan(time);
     }
     
     /**

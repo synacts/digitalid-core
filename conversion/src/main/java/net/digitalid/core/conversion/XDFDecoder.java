@@ -19,7 +19,8 @@ import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.converter.SelectionResult;
+import net.digitalid.utility.conversion.converter.Decoder;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.functional.failable.FailableProducer;
 import net.digitalid.utility.logging.exceptions.io.StreamException;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -31,7 +32,7 @@ import net.digitalid.core.conversion.streams.CustomCipherInputStream;
 /**
  *
  */
-public class XDFSelectionResult implements SelectionResult<StreamException> {
+public class XDFDecoder implements Decoder<StreamException> {
     
     /* -------------------------------------------------- Input Stream Stack Operations -------------------------------------------------- */
     
@@ -60,13 +61,21 @@ public class XDFSelectionResult implements SelectionResult<StreamException> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    XDFSelectionResult(@Nonnull InputStream inputStream) {
+    XDFDecoder(@Nonnull InputStream inputStream) {
         inputStreamStackHandler.addAndWrapStackEntry(inputStream);
     }
     
     @Pure
-    public static @Nonnull XDFSelectionResult with(@Nonnull InputStream inputStream) {
-        return new XDFSelectionResult(inputStream);
+    public static @Nonnull XDFDecoder with(@Nonnull InputStream inputStream) {
+        return new XDFDecoder(inputStream);
+    }
+    
+    /* -------------------------------------------------- Representation -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Representation getRepresentation() {
+        return Representation.EXTERNAL;
     }
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */

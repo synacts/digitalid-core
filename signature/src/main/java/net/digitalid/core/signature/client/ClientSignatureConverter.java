@@ -9,17 +9,22 @@ import java.security.NoSuchAlgorithmException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.SelectionResult;
-import net.digitalid.utility.conversion.converter.ValueCollector;
+import net.digitalid.utility.conversion.converter.Decoder;
+import net.digitalid.utility.conversion.converter.Encoder;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.exceptions.MissingSupportException;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
+import net.digitalid.utility.validation.annotations.string.DomainName;
 
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeConverter;
@@ -35,15 +40,15 @@ import net.digitalid.core.identification.identifier.InternalIdentifierConverter;
 /**
  * TODO: Think about nullable and non-nullable cases.
  */
-public class ClientSignatureConverter<T> implements Converter<ClientSignature<T>,Void> {
+public class ClientSignatureConverter<@Unspecifiable TYPE> implements Converter<ClientSignature<TYPE>, Void> {
     
     /* -------------------------------------------------- Object Converter -------------------------------------------------- */
     
-    private final @Nonnull Converter<T, ?> objectConverter;
+    private final @Nonnull Converter<TYPE, ?> objectConverter;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private ClientSignatureConverter(@Nonnull Converter<T, ?> objectConverter) {
+    private ClientSignatureConverter(@Nonnull Converter<TYPE, ?> objectConverter) {
         this.objectConverter = objectConverter;
     }
     
@@ -52,53 +57,73 @@ public class ClientSignatureConverter<T> implements Converter<ClientSignature<T>
         return new ClientSignatureConverter<>(objectConverter);
     }
     
-    @Pure
-    @Override
-    public @Nonnull String getName() {
-        return "clientsignature";
-    }
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull ImmutableList<CustomField> getFields() {
+    public @Nonnull Class<? super ClientSignature<TYPE>> getType() {
+        return ClientSignature.class;
+    }
+    
+    /* -------------------------------------------------- Name -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @CodeIdentifier @MaxSize(63) String getTypeName() {
+        return "ClientSignature";
+    }
+    
+    /* -------------------------------------------------- Package -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @DomainName String getTypePackage() {
+        return "net.digitalid.core.encryption";
+    }
+    
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull ImmutableList<CustomField> getFields(@Nonnull Representation representation) {
         return null;
     }
     
     @Pure
     @Override 
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified ClientSignature<T> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws ExternalException {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified ClientSignature<TYPE> object, @Nonnull @NonCaptured @Modified Encoder<X> encoder) throws ExternalException {
         int i = 1;
         try {
-            valueCollector.setSignatureDigest(MessageDigest.getInstance("SHA-256"));
+            encoder.setSignatureDigest(MessageDigest.getInstance("SHA-256"));
         } catch (@Nonnull NoSuchAlgorithmException exception) {
             throw MissingSupportException.with("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
         }
-        i *= InternalIdentifierConverter.INSTANCE.convert(object == null ? null : object.getSubject(), valueCollector);
-        i *= TimeConverter.INSTANCE.convert(object == null ? null : object.getTime(), valueCollector);
-        i *= objectConverter.convert(object == null ? null : object.getElement(), valueCollector);
+        i *= InternalIdentifierConverter.INSTANCE.convert(object == null ? null : object.getSubject(), encoder);
+        i *= TimeConverter.INSTANCE.convert(object == null ? null : object.getTime(), encoder);
+        i *= objectConverter.convert(object == null ? null : object.getObject(), encoder);
         
-        final @Nonnull DigestOutputStream digestOutputStream = valueCollector.popSignatureDigest();
+        final @Nonnull DigestOutputStream digestOutputStream = encoder.popSignatureDigest();
         
         if (object != null) {
             final @Nonnull SecretCommitment commitment = object.getSecretCommitment();
             // secret commitment
-            i *= SecretCommitmentConverter.INSTANCE.convert(commitment, valueCollector);
+            i *= SecretCommitmentConverter.INSTANCE.convert(commitment, encoder);
             
 //            final @Nonnull Exponent r = commitment.getPublicKey().getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT.get());
             final @Nonnull Exponent r = ExponentBuilder.withValue(BigInteger.ONE).build();
             
             final @Nonnull BigInteger t = object.getHash(commitment.getPublicKey().getAu().pow(r));
-            valueCollector.setNullableInteger(t);
+            encoder.setNullableInteger(t);
             
             final @Nonnull BigInteger hash = new BigInteger(1, digestOutputStream.getMessageDigest().digest());
             final @Nonnull Exponent h = ExponentBuilder.withValue(t.xor(hash)).build();
             
             final @Nonnull Exponent s = r.subtract(commitment.getSecret().multiply(h));
-            i *= ExponentConverter.INSTANCE.convert(s, valueCollector);
+            i *= ExponentConverter.INSTANCE.convert(s, encoder);
         } else {
-            i *= SecretCommitmentConverter.INSTANCE.convert(null, valueCollector);
-            valueCollector.setNullableInteger(null);
-            i *= ExponentConverter.INSTANCE.convert(null, valueCollector);
+            i *= SecretCommitmentConverter.INSTANCE.convert(null, encoder);
+            encoder.setNullableInteger(null);
+            i *= ExponentConverter.INSTANCE.convert(null, encoder);
         }
         
         return i;
@@ -106,24 +131,24 @@ public class ClientSignatureConverter<T> implements Converter<ClientSignature<T>
     
     @Pure
     @Override
-    public <X extends ExternalException> @Nullable ClientSignature<T> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nullable Void externallyProvided) throws ExternalException {
+    public <X extends ExternalException> @Nullable ClientSignature<TYPE> recover(@Nonnull @NonCaptured @Modified Decoder<X> decoder, @Nullable Void externallyProvided) throws ExternalException {
         try {
-            selectionResult.setSignatureDigest(MessageDigest.getInstance("SHA-256"));
+            decoder.setSignatureDigest(MessageDigest.getInstance("SHA-256"));
         } catch (@Nonnull NoSuchAlgorithmException exception) {
             throw MissingSupportException.with("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
         }
-        final @Nullable InternalIdentifier subject = InternalIdentifierConverter.INSTANCE.recover(selectionResult, null);
-        final @Nullable Time time = TimeConverter.INSTANCE.recover(selectionResult, null);
-        final @Nullable T object = objectConverter.recover(selectionResult, null);
+        final @Nullable InternalIdentifier subject = InternalIdentifierConverter.INSTANCE.recover(decoder, null);
+        final @Nullable Time time = TimeConverter.INSTANCE.recover(decoder, null);
+        final @Nullable TYPE object = objectConverter.recover(decoder, null);
         
-        final @Nonnull DigestInputStream digestInputStream = selectionResult.popSignatureDigest();
+        final @Nonnull DigestInputStream digestInputStream = decoder.popSignatureDigest();
     
         // secret commitment
-        final @Nullable SecretCommitment commitment = SecretCommitmentConverter.INSTANCE.recover(selectionResult, null);
-        final @Nullable BigInteger t = selectionResult.getInteger();
-        final @Nullable Exponent s = ExponentConverter.INSTANCE.recover(selectionResult, null);
+        final @Nullable SecretCommitment commitment = SecretCommitmentConverter.INSTANCE.recover(decoder, null);
+        final @Nullable BigInteger t = decoder.getInteger();
+        final @Nullable Exponent s = ExponentConverter.INSTANCE.recover(decoder, null);
         
-        final @Nonnull ClientSignature<T> clientSignature = ClientSignatureBuilder.withElement(object).withSecretCommitment(commitment).withSubject(subject).withTime(time).build();
+        final @Nonnull ClientSignature<TYPE> clientSignature = ClientSignatureBuilder.withObject(object).withSubject(subject).withSecretCommitment(commitment).withTime(time).build();
         final @Nonnull BigInteger hash = new BigInteger(1, digestInputStream.getMessageDigest().digest());
         clientSignature.verifySignature(t, s, hash);
         return clientSignature;

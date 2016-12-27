@@ -21,7 +21,8 @@ import javax.crypto.CipherOutputStream;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.converter.ValueCollectorImplementation;
+import net.digitalid.utility.conversion.converter.EncoderImplementation;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.functional.failable.FailableUnaryFunction;
 import net.digitalid.utility.logging.exceptions.io.StreamException;
@@ -33,7 +34,7 @@ import net.digitalid.core.conversion.streams.NonClosingOutputStream;
 /**
  *
  */
-public class XDFValueCollector extends ValueCollectorImplementation<StreamException> {
+public class XDFEncoder extends EncoderImplementation<StreamException> {
     
     /**
      * The stack handler keeps track of the state of the output stream. It holds a stack of any output streams, but guarantees
@@ -63,7 +64,7 @@ public class XDFValueCollector extends ValueCollectorImplementation<StreamExcept
     /**
      * Creates a new XDF value collector instance.
      */
-    private XDFValueCollector(@Nonnull OutputStream outputStream) {
+    private XDFEncoder(@Nonnull OutputStream outputStream) {
         this.outputStreamStack = new OutputStreamStackHandler();
         outputStreamStack.addAndWrapStackEntry(outputStream);
     }
@@ -77,8 +78,16 @@ public class XDFValueCollector extends ValueCollectorImplementation<StreamExcept
      * Returns an XDF value collector for a given output stream.
      */
     @Pure
-    public static @Nonnull XDFValueCollector with(@Nonnull OutputStream outputStream) {
-        return new XDFValueCollector(outputStream);
+    public static @Nonnull XDFEncoder with(@Nonnull OutputStream outputStream) {
+        return new XDFEncoder(outputStream);
+    }
+    
+    /* -------------------------------------------------- Representation -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Representation getRepresentation() {
+        return Representation.EXTERNAL;
     }
     
     /* -------------------------------------------------- Overridden Collector Methods -------------------------------------------------- */

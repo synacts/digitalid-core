@@ -15,14 +15,18 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.SelectionResult;
-import net.digitalid.utility.conversion.converter.ValueCollector;
+import net.digitalid.utility.conversion.converter.Decoder;
+import net.digitalid.utility.conversion.converter.Encoder;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.immutable.ImmutableMap;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
+import net.digitalid.utility.validation.annotations.string.DomainName;
 
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeConverter;
@@ -45,23 +49,47 @@ import net.digitalid.core.symmetrickey.SymmetricKeyConverter;
 import static net.digitalid.utility.conversion.converter.types.CustomType.TUPLE;
 
 /**
- *
+ * 
  */
-public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
+public class EncryptionConverter<TYPE> implements Converter<Encryption<TYPE>, Void> {
     
     /* -------------------------------------------------- Object Converter -------------------------------------------------- */
     
-    private final @Nonnull Converter<T, ?> objectConverter;
+    private final @Nonnull Converter<TYPE, Void> objectConverter;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private EncryptionConverter(@Nonnull Converter<T, ?> objectConverter) {
+    private EncryptionConverter(@Nonnull Converter<TYPE, Void> objectConverter) {
         this.objectConverter = objectConverter;
     }
     
     @Pure
-    public static <T> @Nonnull EncryptionConverter<T> getInstance(@Nonnull Converter<T, ?> objectConverter) {
+    public static <TYPE> @Nonnull EncryptionConverter<TYPE> getInstance(@Nonnull Converter<TYPE, Void> objectConverter) {
         return new EncryptionConverter<>(objectConverter);
+    }
+    
+    /* -------------------------------------------------- Type -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Class<? super Encryption<TYPE>> getType() {
+        return Encryption.class;
+    }
+    
+    /* -------------------------------------------------- Name -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @CodeIdentifier @MaxSize(63) String getTypeName() {
+        return "Encryption";
+    }
+    
+    /* -------------------------------------------------- Package -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @DomainName String getTypePackage() {
+        return "net.digitalid.core.encryption";
     }
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
@@ -74,29 +102,26 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
         final @Nonnull Map<@Nonnull String, @Nullable Object> symmetricKey = new HashMap<>();
         final @Nonnull Map<@Nonnull String, @Nullable Object> initializationVector = new HashMap<>();
         
-        fields = FreezableArrayList.withElements(CustomField.with(TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(time)))), CustomField.with(TUPLE.of(HostIdentifierConverter.INSTANCE), "recipient", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(recipient)))), CustomField.with(TUPLE.of(SymmetricKeyConverter.INSTANCE), "symmetricKey", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(symmetricKey)))), CustomField.with(TUPLE.of(InitializationVectorConverter.INSTANCE), "initializationVector", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(initializationVector)))));
+        fields = FreezableArrayList.withElements(
+                CustomField.with(TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(time)))),
+                CustomField.with(TUPLE.of(HostIdentifierConverter.INSTANCE), "recipient", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(recipient)))),
+                CustomField.with(TUPLE.of(SymmetricKeyConverter.INSTANCE), "symmetricKey", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(symmetricKey)))),
+                CustomField.with(TUPLE.of(InitializationVectorConverter.INSTANCE), "initializationVector", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(initializationVector))))
+        );
     }
     
     @Pure
     @Override
-    public @Nonnull ImmutableList<@Nonnull CustomField> getFields() {
+    public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
         final @Nonnull FiniteIterable<@Nonnull CustomField> customFieldForObject = FiniteIterable.of(CustomField.with(CustomType.TUPLE.of(objectConverter), "object", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withNoEntries()))));
         return ImmutableList.withElementsOf(fields.combine(customFieldForObject));
-    }
-    
-    /* -------------------------------------------------- Name -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull String getName() {
-        return "encryption";
     }
     
     /* -------------------------------------------------- Convert -------------------------------------------------- */
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified Encryption<T> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws ExternalException {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified Encryption<TYPE> object, @Nonnull @NonCaptured @Modified Encoder<X> encoder) throws ExternalException {
         if (object == null) {
             throw UnexpectedFailureException.with("Cannot convert encryption object that is null"); // TODO: Why not? Just encode it especially.
         }
@@ -107,16 +132,16 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
         
         final @Nonnull Time time = object.getTime();
         final @Nonnull HostIdentifier recipient = object.getRecipient();
-        i *= TimeConverter.INSTANCE.convert(time, valueCollector);
-        i *= HostIdentifierConverter.INSTANCE.convert(recipient, valueCollector);
+        i *= TimeConverter.INSTANCE.convert(time, encoder);
+        i *= HostIdentifierConverter.INSTANCE.convert(recipient, encoder);
         final @Nonnull PublicKey publicKey = PublicKeyRetriever.retrieve(recipient, time);
         final @Nonnull Element encryptedSymmetricKey = publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE());
-        i *= ElementConverter.INSTANCE.convert(encryptedSymmetricKey, valueCollector);
-        i *= InitializationVectorConverter.INSTANCE.convert(initializationVector, valueCollector);
+        i *= ElementConverter.INSTANCE.convert(encryptedSymmetricKey, encoder);
+        i *= InitializationVectorConverter.INSTANCE.convert(initializationVector, encoder);
         
-        valueCollector.setEncryptionCipher(symmetricKey.getCipher(initializationVector, Cipher.ENCRYPT_MODE));
-        i *= objectConverter.convert(object.getObject(), valueCollector);
-        valueCollector.popEncryptionCipher();
+        encoder.setEncryptionCipher(symmetricKey.getCipher(initializationVector, Cipher.ENCRYPT_MODE));
+        i *= objectConverter.convert(object.getObject(), encoder);
+        encoder.popEncryptionCipher();
         return i;
     }
     
@@ -124,20 +149,19 @@ public class EncryptionConverter<T> implements Converter<Encryption<T>, Void> {
     
     @Pure
     @Override 
-    public <X extends ExternalException> @Nonnull Encryption<T> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nullable Void externallyProvided) throws ExternalException {
-        final @Nonnull Time time = TimeConverter.INSTANCE.recover(selectionResult, externallyProvided);
-        final @Nonnull HostIdentifier recipient = HostIdentifierConverter.INSTANCE.recover(selectionResult, externallyProvided);
+    public <X extends ExternalException> @Nonnull Encryption<TYPE> recover(@Nonnull @NonCaptured @Modified Decoder<X> decoder, @Nullable Void provided) throws ExternalException {
+        final @Nonnull Time time = TimeConverter.INSTANCE.recover(decoder, null);
+        final @Nonnull HostIdentifier recipient = HostIdentifierConverter.INSTANCE.recover(decoder, null);
         final @Nonnull PrivateKey privateKey = PrivateKeyRetriever.retrieve(recipient, time);
         final @Nonnull Group compositeGroup = privateKey.getCompositeGroup();
-        final @Nonnull Element encryptedSymmetricKeyValue = ElementConverter.INSTANCE.recover(selectionResult, compositeGroup);
+        final @Nonnull Element encryptedSymmetricKeyValue = ElementConverter.INSTANCE.recover(decoder, compositeGroup);
         final @Nonnull SymmetricKey decryptedSymmetricKey = SymmetricKeyBuilder.buildWithValue(encryptedSymmetricKeyValue.pow(privateKey.getD()).getValue());
-        final @Nonnull InitializationVector initializationVector = InitializationVectorConverter.INSTANCE.recover(selectionResult, externallyProvided);
+        final @Nonnull InitializationVector initializationVector = InitializationVectorConverter.INSTANCE.recover(decoder, null);
     
-        selectionResult.setDecryptionCipher(decryptedSymmetricKey.getCipher(initializationVector, Cipher.DECRYPT_MODE));
-        // TODO: do we need to hand the externally provided element here?
-        final T object = objectConverter.recover(selectionResult, null);
-        selectionResult.popDecryptionCipher();
-        return EncryptionBuilder.<T>withTime(time).withRecipient(recipient).withSymmetricKey(decryptedSymmetricKey).withInitializationVector(initializationVector).withObject(object).build();
+        decoder.setDecryptionCipher(decryptedSymmetricKey.getCipher(initializationVector, Cipher.DECRYPT_MODE));
+        final TYPE object = objectConverter.recover(decoder, null);
+        decoder.popDecryptionCipher();
+        return EncryptionBuilder.<TYPE>withTime(time).withRecipient(recipient).withSymmetricKey(decryptedSymmetricKey).withInitializationVector(initializationVector).withObject(object).build();
     }
     
 }
