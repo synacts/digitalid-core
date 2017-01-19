@@ -7,7 +7,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.threading.Threading;
 import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.generation.Recover;

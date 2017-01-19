@@ -15,10 +15,11 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.conversion.converter.Converter;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.file.existence.Existent;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -54,7 +55,7 @@ public abstract class Pack {
      */
     @Pure
     @TODO(task = "Throw a recovery and stream exception instead!", date = "2016-10-31", author = Author.KASPAR_ETTER)
-    public <TYPE, PROVIDED> @Nullable TYPE unpack(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED provided) throws ExternalException {
+    public <TYPE, PROVIDED> @Nullable TYPE unpack(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED provided) throws RecoveryException {
         return XDF.recover(converter, provided, getBytes());
     }
     

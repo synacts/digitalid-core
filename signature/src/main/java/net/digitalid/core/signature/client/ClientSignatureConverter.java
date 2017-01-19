@@ -14,14 +14,14 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
-import net.digitalid.utility.conversion.converter.Converter;
-import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.Decoder;
-import net.digitalid.utility.conversion.converter.Encoder;
-import net.digitalid.utility.conversion.converter.Representation;
+import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.model.CustomField;
+import net.digitalid.utility.conversion.interfaces.Decoder;
+import net.digitalid.utility.conversion.interfaces.Encoder;
+import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.exceptions.MissingSupportException;
 import net.digitalid.utility.immutable.ImmutableList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.string.DomainName;
@@ -113,7 +113,7 @@ public class ClientSignatureConverter<@Unspecifiable TYPE> implements Converter<
             final @Nonnull Exponent r = ExponentBuilder.withValue(BigInteger.ONE).build();
             
             final @Nonnull BigInteger t = object.getHash(commitment.getPublicKey().getAu().pow(r));
-            encoder.setNullableInteger(t);
+            encoder.encodeInteger(t);
             
             final @Nonnull BigInteger hash = new BigInteger(1, digestOutputStream.getMessageDigest().digest());
             final @Nonnull Exponent h = ExponentBuilder.withValue(t.xor(hash)).build();
@@ -122,7 +122,7 @@ public class ClientSignatureConverter<@Unspecifiable TYPE> implements Converter<
             i *= ExponentConverter.INSTANCE.convert(s, encoder);
         } else {
             i *= SecretCommitmentConverter.INSTANCE.convert(null, encoder);
-            encoder.setNullableInteger(null);
+            encoder.encodeInteger(null);
             i *= ExponentConverter.INSTANCE.convert(null, encoder);
         }
         

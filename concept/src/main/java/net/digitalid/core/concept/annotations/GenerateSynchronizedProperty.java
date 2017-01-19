@@ -17,7 +17,7 @@ import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.conversion.converter.Converter;
+import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.generator.annotations.meta.Interceptor;
 import net.digitalid.utility.generator.information.method.MethodInformation;

@@ -3,12 +3,14 @@ package net.digitalid.core.concept;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.type.Embedded;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.subject.Subject;
 
 import net.digitalid.core.concept.annotations.GenerateConceptModule;
@@ -17,7 +19,7 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 
 /**
- * This class models a concept in the {@link Database database}.
+ * This class models a concept in the {@link DatabaseUtility database}.
  * A concept always belongs to an {@link Entity entity}.
  * 
  * @param <ENTITY> either {@link Entity} for a general concept or {@link NonHostEntity} for a concept that exists only for non-hosts.
@@ -25,6 +27,7 @@ import net.digitalid.core.entity.NonHostEntity;
  * @param <KEY> the type of the key which identifies an instance among all instances of a concept at the same entity.
  */
 @Immutable
+@TODO(task = "Consider renaming this class to 'CoreSubject'.", date = "2017-01-18", author = Author.KASPAR_ETTER)
 public abstract class Concept<ENTITY extends Entity<?>, KEY> extends RootClass implements Subject<CoreSite<?>> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */

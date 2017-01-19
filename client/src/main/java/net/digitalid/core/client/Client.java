@@ -12,7 +12,7 @@ import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
@@ -27,7 +27,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
 
@@ -200,7 +200,7 @@ public abstract class Client extends CoreSite<Client> {
     public void rotateSecret() throws InterruptedException, ExternalException {
         final @Nonnull Exponent newSecret = ExponentBuilder.withValue(new BigInteger(Parameters.HASH.get(), new SecureRandom())).build();
         final @Nonnull ReadOnlySet<NativeRole> roles = roles().get();
-        Database.commit();
+        DatabaseUtility.commit();
         
         for (@Nonnull NativeRole role : roles) {
 //            final @Nonnull Commitment newCommitment = getCommitment(role.getIssuer().getAddress(), newSecret);

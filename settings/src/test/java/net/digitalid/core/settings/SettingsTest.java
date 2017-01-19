@@ -11,7 +11,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.testing.SQLTestBase;
 
 import net.digitalid.core.entity.CoreSite;
@@ -66,10 +66,10 @@ public class SettingsTest extends SQLTestBase {
             settings.password().set(VALUE);
             settings.password().reset(); // Not necessary but I want to test the database state.
             assertEquals(VALUE, settings.password().get());
-            Database.commit();
+            DatabaseUtility.commit();
         } catch (@Nonnull DatabaseException exception) {
             exception.printStackTrace();
-            Database.rollback();
+            DatabaseUtility.rollback();
             throw exception;
         }
     }

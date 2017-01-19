@@ -3,7 +3,7 @@
 //import javax.annotation.Nonnull;
 //
 //import net.digitalid.utility.annotations.method.Pure;
-//import net.digitalid.utility.logging.exceptions.ExternalException;
+//import net.digitalid.utility.exceptions.ExternalException;
 //
 //import net.digitalid.database.annotations.transaction.Committing;
 //import net.digitalid.database.interfaces.Database;

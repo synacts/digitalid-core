@@ -13,7 +13,7 @@
 //import net.digitalid.utility.collections.freezable.FreezableList;
 //import net.digitalid.utility.collections.list.FreezableLinkedList;
 //import net.digitalid.utility.collections.list.ReadOnlyList;
-//import net.digitalid.utility.logging.exceptions.ExternalException;
+//import net.digitalid.utility.exceptions.ExternalException;
 //import net.digitalid.utility.validation.annotations.type.Stateless;
 //
 //import net.digitalid.database.annotations.transaction.NonCommitting;

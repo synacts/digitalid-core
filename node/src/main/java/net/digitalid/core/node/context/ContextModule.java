@@ -22,7 +22,7 @@ package net.digitalid.core.node.context;
 //import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 //import net.digitalid.utility.freezable.NonFrozen;
 //import net.digitalid.utility.freezable.annotations.Frozen;
-//import net.digitalid.utility.logging.exceptions.ExternalException;
+//import net.digitalid.utility.exceptions.ExternalException;
 //import net.digitalid.utility.validation.annotations.type.Stateless;
 //
 //import net.digitalid.database.annotations.transaction.NonCommitting;

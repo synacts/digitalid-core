@@ -11,7 +11,7 @@ import net.digitalid.utility.tuples.Triplet;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanExpression;
+import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.concept.Concept;

@@ -14,7 +14,7 @@ import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.freezable.annotations.NonFrozenRecipient;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;

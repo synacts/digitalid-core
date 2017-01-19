@@ -12,7 +12,7 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.file.Files;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Mutable;

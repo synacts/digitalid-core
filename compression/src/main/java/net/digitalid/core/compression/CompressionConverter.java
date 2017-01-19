@@ -13,13 +13,13 @@ import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.conversion.converter.Converter;
-import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.Decoder;
-import net.digitalid.utility.conversion.converter.Encoder;
-import net.digitalid.utility.conversion.converter.Representation;
+import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.interfaces.Decoder;
+import net.digitalid.utility.conversion.interfaces.Encoder;
+import net.digitalid.utility.conversion.model.CustomField;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.immutable.ImmutableList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 
 /**
@@ -103,7 +103,7 @@ public class CompressionConverter<@Unspecifiable TYPE> implements Converter<Comp
     public <X extends ExternalException> @Nullable Compression<TYPE> recover(@Nonnull @Modified @NonCaptured Decoder<X> decoder, @Nullable Void externallyProvided) throws ExternalException {
         decoder.setDecompression(new Inflater());
         final @Nullable TYPE object = objectConverter.recover(decoder, null);
-        final Compression<@Nullable TYPE> compression = CompressionBuilder.withObject(object).build();
+        final Compression<TYPE> compression = CompressionBuilder.withObject(object).build();
         decoder.popDecompression();
         return compression;
     }

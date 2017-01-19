@@ -13,7 +13,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.type.Referenced;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.Handler;
@@ -21,7 +21,7 @@ import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.signature.host.HostSignature;
 
 /**
- * This class models replies to {@link Method methods} and stores them in the {@link Database database}.
+ * This class models replies to {@link Method methods} and stores them in the {@link DatabaseUtility database}.
  * All replies have to extend this class and {@link ReplyIndex#add(net.digitalid.core.identification.identity.SemanticType, net.digitalid.core.handler.reply.ReplyIndex.Factory) register} themselves as handlers.
  * 
  * @see ActionReply

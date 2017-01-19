@@ -7,7 +7,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.exceptions.CaseException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -86,7 +86,7 @@ abstract class BinaryExpression extends Expression {
             case ADDITION: leftContacts.addAll(rightContacts); break;
             case SUBTRACTION: leftContacts.removeAll(rightContacts); break;
             case MULTIPLICATION: leftContacts.retainAll(rightContacts); break;
-            default: throw UnexpectedValueException.with("operator", getOperator());
+            default: throw CaseException.with("operator", getOperator());
         }
         return leftContacts;
     }
@@ -131,7 +131,7 @@ abstract class BinaryExpression extends Expression {
         } else if (operator == BinaryOperator.MULTIPLICATION) {
             parentheses = getOperator() != BinaryOperator.MULTIPLICATION;
         } else {
-            throw UnexpectedValueException.with("operator", operator);
+            throw CaseException.with("operator", operator);
         }
         
         return parentheses ? "(" + string + ")" : string;

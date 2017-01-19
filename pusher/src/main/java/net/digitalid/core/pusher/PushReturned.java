@@ -9,7 +9,7 @@
 //import net.digitalid.utility.collections.freezable.FreezableArray;
 //import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 //import net.digitalid.utility.exceptions.InternalException;
-//import net.digitalid.utility.logging.exceptions.ExternalException;
+//import net.digitalid.utility.exceptions.ExternalException;
 //import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 //import net.digitalid.utility.validation.annotations.type.Immutable;
 //

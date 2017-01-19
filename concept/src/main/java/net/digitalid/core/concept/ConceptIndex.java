@@ -15,7 +15,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.mode.SingleAccess;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 
 import net.digitalid.core.entity.Entity;
 
@@ -40,7 +40,7 @@ public abstract class ConceptIndex<ENTITY extends Entity<?>, KEY, CONCEPT extend
     @Impure
     @SingleAccess
     public static void remove(@Nonnull Entity<?> entity) {
-        Require.that(Database.isSingleAccess()).orThrow("The database is in single-access mode.");
+        Require.that(DatabaseUtility.isSingleAccess()).orThrow("The database is in single-access mode.");
         
         for (@Nonnull ConceptIndex<?, ?, ?> index : indexes) {
             index.concepts.remove(entity);
@@ -73,7 +73,7 @@ public abstract class ConceptIndex<ENTITY extends Entity<?>, KEY, CONCEPT extend
      */
     @Pure
     public @Nonnull CONCEPT get(@Nonnull ENTITY entity, @Nonnull KEY key) {
-        if (Database.isSingleAccess()) {
+        if (DatabaseUtility.isSingleAccess()) {
             @Nullable ConcurrentMap<KEY, CONCEPT> map = concepts.get(entity);
             if (map == null) { map = concepts.putIfAbsentElseReturnPresent(entity, ConcurrentHashMapBuilder.<KEY, CONCEPT>build()); }
             @Nullable CONCEPT concept = map.get(key);

@@ -12,7 +12,7 @@
 //import net.digitalid.utility.collections.list.ReadOnlyList;
 //import net.digitalid.utility.contracts.Require;
 //import net.digitalid.utility.exceptions.InternalException;
-//import net.digitalid.utility.logging.exceptions.ExternalException;
+//import net.digitalid.utility.exceptions.ExternalException;
 //import net.digitalid.utility.tuples.Pair;
 //
 //import net.digitalid.database.annotations.transaction.Committing;

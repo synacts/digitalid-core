@@ -10,7 +10,7 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 
 import net.digitalid.core.entity.annotations.OnClient;
 import net.digitalid.core.handler.method.action.InternalAction;
@@ -41,7 +41,7 @@ public abstract class Synchronizer extends Thread {
             action.executeOnClient();
         }
 //        SynchronizerModule.add(action); // TODO
-        Database.commit();
+        DatabaseUtility.commit();
         Thread.yield();
     }
     

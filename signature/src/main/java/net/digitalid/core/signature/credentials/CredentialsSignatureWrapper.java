@@ -18,7 +18,7 @@ package net.digitalid.core.signature.credentials;
 //import net.digitalid.utility.exceptions.InternalException;
 //import net.digitalid.utility.freezable.annotations.Frozen;
 //import net.digitalid.utility.freezable.NonFrozen;
-//import net.digitalid.utility.logging.exceptions.ExternalException;
+//import net.digitalid.utility.exceptions.ExternalException;
 //import net.digitalid.utility.system.logger.Log;
 //import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 //import net.digitalid.utility.annotations.method.Pure;

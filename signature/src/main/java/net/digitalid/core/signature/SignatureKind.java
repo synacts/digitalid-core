@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.exceptions.CaseException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Recover;
@@ -85,7 +85,7 @@ public enum SignatureKind {
             if (kind.value == value) { return kind; }
         }
         
-        throw UnexpectedValueException.with("value", value);
+        throw CaseException.with("value", value);
     }
     
     /* -------------------------------------------------- Object -------------------------------------------------- */

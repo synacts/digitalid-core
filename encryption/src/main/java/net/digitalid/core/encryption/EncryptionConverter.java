@@ -12,18 +12,18 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.conversion.converter.Converter;
-import net.digitalid.utility.conversion.converter.CustomAnnotation;
-import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.Decoder;
-import net.digitalid.utility.conversion.converter.Encoder;
-import net.digitalid.utility.conversion.converter.Representation;
-import net.digitalid.utility.conversion.converter.types.CustomType;
-import net.digitalid.utility.exceptions.UnexpectedFailureException;
+import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.model.CustomAnnotation;
+import net.digitalid.utility.conversion.model.CustomField;
+import net.digitalid.utility.conversion.interfaces.Decoder;
+import net.digitalid.utility.conversion.interfaces.Encoder;
+import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.model.CustomType;
+import net.digitalid.utility.exceptions.UncheckedException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.immutable.ImmutableMap;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.string.DomainName;
@@ -46,7 +46,7 @@ import net.digitalid.core.symmetrickey.SymmetricKey;
 import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
 import net.digitalid.core.symmetrickey.SymmetricKeyConverter;
 
-import static net.digitalid.utility.conversion.converter.types.CustomType.TUPLE;
+import static net.digitalid.utility.conversion.model.CustomType.TUPLE;
 
 /**
  * 
@@ -123,7 +123,7 @@ public class EncryptionConverter<TYPE> implements Converter<Encryption<TYPE>, Vo
     @Override
     public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified Encryption<TYPE> object, @Nonnull @NonCaptured @Modified Encoder<X> encoder) throws ExternalException {
         if (object == null) {
-            throw UnexpectedFailureException.with("Cannot convert encryption object that is null"); // TODO: Why not? Just encode it especially.
+            throw UncheckedException.with("Cannot convert encryption object that is null"); // TODO: Why not? Just encode it especially.
         }
         int i = 1;
         

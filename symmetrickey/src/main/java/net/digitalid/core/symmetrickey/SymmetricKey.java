@@ -29,7 +29,7 @@ import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.MissingSupportException;
-import net.digitalid.utility.exceptions.UnexpectedFailureException;
+import net.digitalid.utility.exceptions.UncheckedException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -101,7 +101,7 @@ public abstract class SymmetricKey extends RootClass {
                         instanceField.setAccessible(true);
                         defaultPolicy.add((Permission) instanceField.get(null));
                     } catch (@Nonnull ClassNotFoundException | NoSuchFieldException | IllegalArgumentException | SecurityException | IllegalAccessException exception) {
-                        throw UnexpectedFailureException.with("Your system allows only a maximal key length of " + length + " bits for symmetric encryption but a length of " + Parameters.ENCRYPTION_KEY.get() + " bits is required for security reasons."
+                        throw UncheckedException.with("Your system allows only a maximal key length of " + length + " bits for symmetric encryption but a length of " + Parameters.ENCRYPTION_KEY.get() + " bits is required for security reasons."
                                 + "Please install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files from http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html for Java 8."
                                 + "(All you have to do is to download the files and replace with them 'local_policy.jar' and 'US_export_policy.jar' in '" + System.getProperty("java.home") + File.separator + "lib" + File.separator + "security" + File.separator + "'.)", exception);
                     }
@@ -173,7 +173,7 @@ public abstract class SymmetricKey extends RootClass {
             cipher.init(cipherMode, getKey(), initializationVector);
             return cipher;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException  e) {
-            throw UnexpectedFailureException.with(e);
+            throw UncheckedException.with(e);
         }
     }
     /**
@@ -192,7 +192,7 @@ public abstract class SymmetricKey extends RootClass {
         } catch (@Nonnull NoSuchAlgorithmException | NoSuchPaddingException exception) {
             throw MissingSupportException.with("Could not encrypt the given bytes.", exception);
         } catch (@Nonnull InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException exception) {
-            throw UnexpectedFailureException.with("Could not encrypt the given bytes.", exception);
+            throw UncheckedException.with("Could not encrypt the given bytes.", exception);
         }
     }
     
@@ -212,7 +212,7 @@ public abstract class SymmetricKey extends RootClass {
         } catch (@Nonnull NoSuchAlgorithmException | NoSuchPaddingException exception) {
             throw MissingSupportException.with("Could not decrypt the given bytes.", exception);
         } catch (@Nonnull InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException exception) {
-            throw UnexpectedFailureException.with("Could not decrypt the given bytes.", exception);
+            throw UncheckedException.with("Could not decrypt the given bytes.", exception);
         }
     }
     

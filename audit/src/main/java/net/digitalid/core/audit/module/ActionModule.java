@@ -17,7 +17,7 @@
 //import net.digitalid.utility.collections.list.ReadOnlyList;
 //import net.digitalid.utility.conversion.None;
 //import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-//import net.digitalid.utility.logging.exceptions.ExternalException;
+//import net.digitalid.utility.exceptions.ExternalException;
 //import net.digitalid.utility.validation.annotations.type.Stateless;
 //
 //import net.digitalid.database.annotations.transaction.NonCommitting;

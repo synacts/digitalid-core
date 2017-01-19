@@ -14,15 +14,15 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
-import net.digitalid.utility.conversion.converter.Converter;
-import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.Decoder;
-import net.digitalid.utility.conversion.converter.Encoder;
-import net.digitalid.utility.conversion.converter.Representation;
+import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
+import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.interfaces.Decoder;
+import net.digitalid.utility.conversion.interfaces.Encoder;
+import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.exceptions.MissingSupportException;
 import net.digitalid.utility.immutable.ImmutableList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.string.DomainName;
@@ -123,9 +123,9 @@ public class HostSignatureConverter<@Unspecifiable TYPE> implements Converter<Ho
 //            System.out.println("hash: " + hash);
             final @Nonnull BigInteger signatureValue = privateKey.powD(hash).getValue();
 //            System.out.println("signature value: " + signatureValue);
-            encoder.setNullableInteger(signatureValue);
+            encoder.encodeInteger(signatureValue);
         } else {
-            encoder.setNullableInteger(null);
+            encoder.encodeInteger(null);
         }
         
         return i;
@@ -164,7 +164,6 @@ public class HostSignatureConverter<@Unspecifiable TYPE> implements Converter<Ho
     
         final @Nonnull HostSignature<TYPE> hostSignature = HostSignatureBuilder.withObject(object).withSubject(subject).withSigner(signer).withTime(time).build();
         if (publicKey != null) {
-    
             try {
                 hostSignature.verifySignature(publicKey, signatureValue, hash);
             } catch (InvalidHostSignatureException e) {

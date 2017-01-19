@@ -11,7 +11,7 @@ package net.digitalid.core.signature.client;
 //import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 //import net.digitalid.utility.exceptions.InternalException;
 //import net.digitalid.utility.freezable.NonFrozen;
-//import net.digitalid.utility.logging.exceptions.ExternalException;
+//import net.digitalid.utility.exceptions.ExternalException;
 //import net.digitalid.utility.system.logger.Log;
 //import net.digitalid.utility.annotations.method.Pure;
 //import net.digitalid.utility.validation.annotations.type.Immutable;

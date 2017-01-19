@@ -3,7 +3,7 @@ package net.digitalid.core.expression.operators;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.exceptions.CaseException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 
@@ -53,7 +53,7 @@ public enum RestrictionOperator {
             if (operator.getSymbol() == symbol) { return operator; }
         }
         
-        throw UnexpectedValueException.with("symbol", symbol);
+        throw CaseException.with("symbol", symbol);
     }
     
 }

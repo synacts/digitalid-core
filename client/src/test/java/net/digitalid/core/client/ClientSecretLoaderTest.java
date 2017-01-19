@@ -5,7 +5,7 @@ import java.security.SecureRandom;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 
 import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.group.Exponent;

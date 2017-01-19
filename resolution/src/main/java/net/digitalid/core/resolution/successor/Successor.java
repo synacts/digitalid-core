@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.threading.Threading;
 import net.digitalid.utility.validation.annotations.type.Utility;
 

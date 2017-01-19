@@ -13,7 +13,7 @@ package net.digitalid.core.signature.host;
 //import net.digitalid.utility.exceptions.InternalException;
 //import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 //import net.digitalid.utility.freezable.NonFrozen;
-//import net.digitalid.utility.logging.exceptions.ExternalException;
+//import net.digitalid.utility.exceptions.ExternalException;
 //import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 //import net.digitalid.utility.system.logger.Log;
 //import net.digitalid.utility.validation.annotations.elements.NullableElements;

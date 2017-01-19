@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.math.Positive;
@@ -26,6 +28,8 @@ import net.digitalid.core.signature.host.HostSignature;
  */
 @Mutable
 @Referenced // TODO: Rather @CreateTable(inheritance = true, name = "signature', module = "Concept.MODULE")?
+@GenerateBuilder
+@GenerateSubclass
 public abstract class Signature<@Unspecifiable TYPE> extends RootClass {
     
     /* -------------------------------------------------- Object -------------------------------------------------- */

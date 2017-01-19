@@ -3,7 +3,7 @@ package net.digitalid.core.asymmetrickey;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.testing.RootTest;
 
 import net.digitalid.database.auxiliary.Time;

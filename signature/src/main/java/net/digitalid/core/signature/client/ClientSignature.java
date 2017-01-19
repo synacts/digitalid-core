@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.UnexpectedFailureException;
+import net.digitalid.utility.exceptions.UncheckedException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 
@@ -37,7 +37,7 @@ public abstract class ClientSignature<T> extends Signature<T> {
             messageDigest.update(value.getValue().toByteArray());
             return new BigInteger(1, messageDigest.digest());
         } catch (NoSuchAlgorithmException e) {
-            throw UnexpectedFailureException.with(e);
+            throw UncheckedException.with(e);
         }
     }
     

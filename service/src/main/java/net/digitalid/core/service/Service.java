@@ -10,7 +10,7 @@ import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;

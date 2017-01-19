@@ -7,7 +7,7 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 

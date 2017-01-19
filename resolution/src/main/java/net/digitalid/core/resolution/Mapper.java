@@ -20,7 +20,7 @@ package net.digitalid.core.resolution;
 //import net.digitalid.utility.exceptions.UnexpectedFailureException;
 //import net.digitalid.utility.exceptions.UnexpectedValueException;
 //import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-//import net.digitalid.utility.logging.exceptions.ExternalException;
+//import net.digitalid.utility.exceptions.ExternalException;
 //import net.digitalid.utility.system.errors.InitializationError;
 //import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 //import net.digitalid.utility.system.logger.Log;

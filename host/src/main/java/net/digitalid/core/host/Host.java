@@ -8,7 +8,7 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;

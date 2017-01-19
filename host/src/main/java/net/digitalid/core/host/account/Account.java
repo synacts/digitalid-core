@@ -3,7 +3,7 @@ package net.digitalid.core.host.account;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.exceptions.CaseException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -51,7 +51,7 @@ public abstract class Account implements Entity<Host> {
         } else if (identity instanceof InternalNonHostIdentity) {
             return NonHostAccount.with(site, (InternalNonHostIdentity) identity);
         } else {
-            throw UnexpectedValueException.with("identity", identity);
+            throw CaseException.with("identity", identity);
         }
     }
     
