@@ -13,7 +13,6 @@ import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
-import net.digitalid.utility.concurrency.exceptions.ReentranceException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Mutable;

@@ -25,7 +25,7 @@ import net.digitalid.core.property.SynchronizedPropertyTable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SynchronizedValuePropertyTable<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE, PROVIDED_FOR_VALUE> extends PersistentValuePropertyTable<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, PersistentValuePropertyEntry<CONCEPT, VALUE>, ValuePropertyRequiredAuthorization<ENTITY, KEY, CONCEPT, VALUE>> {
+public interface SynchronizedValuePropertyTable<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE, PROVIDED_FOR_VALUE> extends PersistentValuePropertyTable<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, PersistentValuePropertyEntry<CONCEPT, VALUE>, VALUE> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     

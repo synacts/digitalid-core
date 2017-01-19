@@ -14,7 +14,6 @@ import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
@@ -111,37 +110,37 @@ public abstract class MapPropertyInternalAction<ENTITY extends Entity<?>, KEY, C
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredPermissionsToExecuteMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
+        return getProperty().getTable().getRequiredAuthorization().getRequiredPermissionsToExecuteMethod().evaluate(getProperty().getConcept(), getKey());
     }
     
     @Pure
     @Override
     public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredRestrictionsToExecuteMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
+        return getProperty().getTable().getRequiredAuthorization().getRequiredRestrictionsToExecuteMethod().evaluate(getProperty().getConcept(), getKey());
     }
     
     @Pure
     @Override
     public @Nullable Agent getRequiredAgentToExecuteMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToExecuteMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
+        return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToExecuteMethod().evaluate(getProperty().getConcept(), getKey());
     }
     
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredPermissionsToSeeMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
+        return getProperty().getTable().getRequiredAuthorization().getRequiredPermissionsToSeeMethod().evaluate(getProperty().getConcept(), getKey());
     }
     
     @Pure
     @Override
     public @Nonnull Restrictions getRequiredRestrictionsToSeeMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredRestrictionsToSeeMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
+        return getProperty().getTable().getRequiredAuthorization().getRequiredRestrictionsToSeeMethod().evaluate(getProperty().getConcept(), getKey());
     }
     
     @Pure
     @Override
     public @Nullable Agent getRequiredAgentToSeeMethod() {
-        return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToSeeMethod().evaluate(getProperty().getConcept(), Pair.of(getKey(), getValue()));
+        return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToSeeMethod().evaluate(getProperty().getConcept(), getKey());
     }
     
 }
