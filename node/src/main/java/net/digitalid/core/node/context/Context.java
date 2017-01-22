@@ -16,7 +16,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
-import net.digitalid.core.concept.annotations.GenerateSynchronizedProperty;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.node.ExtendedNode;

@@ -9,20 +9,20 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.property.PersistentProperty;
 import net.digitalid.database.property.PersistentPropertyEntry;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
-import net.digitalid.core.concept.Concept;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.value.WritableSynchronizedValueProperty;
 
 /**
- * A synchronized property belongs to a {@link Concept concept} and synchronizes across {@link Site sites}.
+ * A synchronized property belongs to a {@link CoreSubject concept} and synchronizes across {@link Unit sites}.
  * 
  * @see WritableSynchronizedValueProperty
  */
 @Mutable
 @ThreadSafe
-public interface SynchronizedProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, ENTRY extends PersistentPropertyEntry<CONCEPT>, OBSERVER extends Observer> extends PersistentProperty<CONCEPT, ENTRY, OBSERVER> {
+public interface SynchronizedProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, ENTRY extends PersistentPropertyEntry<CONCEPT>, OBSERVER extends Observer> extends PersistentProperty<CONCEPT, ENTRY, OBSERVER> {
     
     /* -------------------------------------------------- Concept -------------------------------------------------- */
     

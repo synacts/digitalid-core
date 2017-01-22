@@ -1,4 +1,4 @@
-package net.digitalid.core.concept;
+package net.digitalid.core.subject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,11 +31,11 @@ import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 
 /**
- * This class converts a {@link Concept concept} with its {@link Entity entity} and is used as the {@link SubjectModule#getSubjectConverter() subject converter} of {@link PersistentProperty persistent properties}.
+ * This class converts a {@link CoreSubject concept} with its {@link Entity entity} and is used as the {@link SubjectModule#getSubjectConverter() subject converter} of {@link PersistentProperty persistent properties}.
  */
 @Immutable
 @GenerateSubclass
-public abstract class SubjectConverter<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>> implements Converter<CONCEPT, @Nonnull CoreSite<?>> {
+public abstract class SubjectConverter<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>> implements Converter<CONCEPT, @Nonnull CoreSite<?>> {
     
     /* -------------------------------------------------- Concept Module -------------------------------------------------- */
     
@@ -43,7 +43,7 @@ public abstract class SubjectConverter<ENTITY extends Entity<?>, KEY, CONCEPT ex
      * Returns the concept module, which contains the entity and actual concept converters.
      */
     @Pure
-    public abstract @Nonnull ConceptModule<ENTITY, KEY, CONCEPT> getConceptModule();
+    public abstract @Nonnull CoreSubjectModule<ENTITY, KEY, CONCEPT> getConceptModule();
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     

@@ -16,7 +16,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.concept.annotations.GenerateSynchronizedProperty;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.credential.Credential;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.request.RequestException;

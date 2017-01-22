@@ -15,8 +15,8 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.map.WritablePersistentMapProperty;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
-import net.digitalid.core.concept.CoreConcept;
-import net.digitalid.core.concept.annotations.GenerateSynchronizedProperty;
+import net.digitalid.core.subject.CoreServiceCoreSubject;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -31,7 +31,7 @@ import net.digitalid.core.restrictions.Restrictions;
  */
 @Immutable
 @GenerateConverter
-public abstract class Agent extends CoreConcept<NonHostEntity<?>, Long> {
+public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity<?>, Long> {
     
     /* -------------------------------------------------- Aspects -------------------------------------------------- */
     

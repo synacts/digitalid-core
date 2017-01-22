@@ -14,7 +14,7 @@ import net.digitalid.database.property.map.PersistentMapPropertyEntry;
 import net.digitalid.database.property.map.PersistentMapPropertyEntryConverter;
 import net.digitalid.database.property.map.PersistentMapPropertyTable;
 
-import net.digitalid.core.concept.Concept;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedPropertyTable;
@@ -25,7 +25,7 @@ import net.digitalid.core.property.SynchronizedPropertyTable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SynchronizedMapPropertyTable<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentMapPropertyTable<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, PersistentMapPropertyEntry<CONCEPT, MAP_KEY, MAP_VALUE>, MAP_KEY> {
+public interface SynchronizedMapPropertyTable<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentMapPropertyTable<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, PersistentMapPropertyEntry<CONCEPT, MAP_KEY, MAP_VALUE>, MAP_KEY> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     

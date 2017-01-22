@@ -31,7 +31,7 @@ import net.digitalid.database.property.map.PersistentMapPropertyEntryBuilder;
 import net.digitalid.database.property.map.ReadOnlyPersistentMapProperty;
 import net.digitalid.database.property.map.WritablePersistentMapPropertyImplementation;
 
-import net.digitalid.core.concept.Concept;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedProperty;
@@ -44,7 +44,7 @@ import net.digitalid.core.synchronizer.Synchronizer;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentMapProperty.class)
-public abstract class WritableSynchronizedMapProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, MAP_KEY, MAP_VALUE, READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>, FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>> extends WritablePersistentMapPropertyImplementation<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, READONLY_MAP, FREEZABLE_MAP> implements SynchronizedProperty<ENTITY, KEY, CONCEPT, PersistentMapPropertyEntry<CONCEPT, MAP_KEY, MAP_VALUE>, PersistentMapObserver<CONCEPT, MAP_KEY, MAP_VALUE, READONLY_MAP>> {
+public abstract class WritableSynchronizedMapProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, MAP_KEY, MAP_VALUE, READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>, FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>> extends WritablePersistentMapPropertyImplementation<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, READONLY_MAP, FREEZABLE_MAP> implements SynchronizedProperty<ENTITY, KEY, CONCEPT, PersistentMapPropertyEntry<CONCEPT, MAP_KEY, MAP_VALUE>, PersistentMapObserver<CONCEPT, MAP_KEY, MAP_VALUE, READONLY_MAP>> {
     
     /* -------------------------------------------------- Map -------------------------------------------------- */
     

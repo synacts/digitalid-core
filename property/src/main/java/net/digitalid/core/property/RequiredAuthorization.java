@@ -19,7 +19,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.concept.Concept;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
@@ -32,7 +32,7 @@ import net.digitalid.core.restrictions.Restrictions;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface RequiredAuthorization<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable CONCEPT extends Concept<ENTITY, KEY>, VALUE> {
+public interface RequiredAuthorization<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable CONCEPT extends CoreSubject<ENTITY, KEY>, VALUE> {
     
     /**
      * Returns a function that determines the required permissions to set or add the given value to the property of the given concept.

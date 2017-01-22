@@ -1,4 +1,4 @@
-package net.digitalid.core.concept;
+package net.digitalid.core.subject;
 
 import javax.annotation.Nonnull;
 
@@ -19,12 +19,12 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.service.Service;
 
 /**
- * Objects of this class store (static) information about a {@link Concept concept}.
+ * Objects of this class store (static) information about a {@link CoreSubject concept}.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class ConceptModule<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>> extends SubjectModule<CoreSite<?>, CONCEPT> {
+public abstract class CoreSubjectModule<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>> extends SubjectModule<CoreSite<?>, CONCEPT> {
     
     /* -------------------------------------------------- Service -------------------------------------------------- */
     
@@ -49,7 +49,7 @@ public abstract class ConceptModule<ENTITY extends Entity<?>, KEY, CONCEPT exten
      */
     @Pure
     @Derive("new ConceptIndexSubclass<>(this)")
-    public abstract @Nonnull ConceptIndex<ENTITY, KEY, CONCEPT> getConceptIndex();
+    public abstract @Nonnull CoreSubjectIndex<ENTITY, KEY, CONCEPT> getConceptIndex();
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     

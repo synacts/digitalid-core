@@ -1,4 +1,4 @@
-package net.digitalid.core.concept;
+package net.digitalid.core.subject;
 
 import javax.annotation.Nonnull;
 
@@ -12,7 +12,7 @@ import net.digitalid.core.service.Service;
  * This class models a concept of the {@link CoreService core service}.
  */
 @Immutable
-public abstract class CoreConcept<ENTITY extends Entity<?>, KEY> extends Concept<ENTITY, KEY> {
+public abstract class CoreServiceCoreSubject<ENTITY extends Entity<?>, KEY> extends CoreSubject<ENTITY, KEY> {
     
     /* -------------------------------------------------- Service -------------------------------------------------- */
     

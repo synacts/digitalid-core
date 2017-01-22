@@ -16,8 +16,8 @@ import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.auxiliary.None;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
-import net.digitalid.core.concept.CoreConcept;
-import net.digitalid.core.concept.annotations.GenerateSynchronizedProperty;
+import net.digitalid.core.subject.CoreServiceCoreSubject;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
 import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuilder;
@@ -30,7 +30,7 @@ import net.digitalid.core.restrictions.RestrictionsBuilder;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class Settings extends CoreConcept<NonHostEntity<?>, None> {
+public abstract class Settings extends CoreServiceCoreSubject<NonHostEntity<?>, None> {
     
     @Pure
     @Override

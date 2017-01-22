@@ -23,7 +23,7 @@
         <module>typeset</module>
         <module>entity</module>
         <module>service</module>
-        <module>concept</module>
+        <module>subject</module>
         <module>restrictions</module>
         <module>agent</module>
         

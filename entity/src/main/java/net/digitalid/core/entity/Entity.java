@@ -10,14 +10,14 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.entity.annotations.SiteDependency;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 
 /**
- * An entity captures the {@link Site site} and the {@link Identity identity} of a concept or handler.
+ * An entity captures the {@link Unit site} and the {@link Identity identity} of a concept or handler.
  * 
  * @see NonHostEntity
  */

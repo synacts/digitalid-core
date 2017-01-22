@@ -20,8 +20,8 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
-import net.digitalid.core.concept.CoreConcept;
-import net.digitalid.core.concept.annotations.GenerateSynchronizedProperty;
+import net.digitalid.core.subject.CoreServiceCoreSubject;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.expression.PassiveExpression;
 import net.digitalid.core.identification.identity.SemanticType;
@@ -38,7 +38,7 @@ import net.digitalid.core.signature.attribute.AttributeValue;
 @Immutable
 // TODO: @GenerateSubclass
 @GenerateConverter
-public abstract class Attribute extends CoreConcept<Entity<?>, SemanticType> {
+public abstract class Attribute extends CoreServiceCoreSubject<Entity<?>, SemanticType> {
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */
     

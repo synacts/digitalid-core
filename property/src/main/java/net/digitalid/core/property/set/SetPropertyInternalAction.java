@@ -22,7 +22,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.storage.Storage;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.concept.Concept;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnClientRecipient;
 import net.digitalid.core.handler.method.action.Action;
@@ -38,7 +38,7 @@ import net.digitalid.core.restrictions.Restrictions;
 @GenerateBuilder
 @GenerateSubclass
 //@GenerateConverter // TODO: Maybe the converter has to be written manually anyway (in order to recover the property). Otherwise, make sure the converter generator can handle generic types.
-public abstract class SetPropertyInternalAction<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends PropertyInternalAction<ENTITY, KEY, CONCEPT, WritableSynchronizedSetProperty<ENTITY, KEY, CONCEPT, VALUE, READONLY_SET, FREEZABLE_SET>> implements Valid.Value<VALUE> {
+public abstract class SetPropertyInternalAction<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends PropertyInternalAction<ENTITY, KEY, CONCEPT, WritableSynchronizedSetProperty<ENTITY, KEY, CONCEPT, VALUE, READONLY_SET, FREEZABLE_SET>> implements Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     

@@ -30,7 +30,7 @@ import net.digitalid.database.property.value.PersistentValuePropertyEntryBuilder
 import net.digitalid.database.property.value.ReadOnlyPersistentValueProperty;
 import net.digitalid.database.property.value.WritablePersistentValuePropertyImplementation;
 
-import net.digitalid.core.concept.Concept;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedProperty;
@@ -43,7 +43,7 @@ import net.digitalid.core.synchronizer.Synchronizer;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentValueProperty.class)
-public abstract class WritableSynchronizedValueProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE> extends WritablePersistentValuePropertyImplementation<CoreSite<?>, CONCEPT, VALUE> implements SynchronizedProperty<ENTITY, KEY, CONCEPT, PersistentValuePropertyEntry<CONCEPT, VALUE>, PersistentValueObserver<CONCEPT, VALUE>> {
+public abstract class WritableSynchronizedValueProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, VALUE> extends WritablePersistentValuePropertyImplementation<CoreSite<?>, CONCEPT, VALUE> implements SynchronizedProperty<ENTITY, KEY, CONCEPT, PersistentValuePropertyEntry<CONCEPT, VALUE>, PersistentValueObserver<CONCEPT, VALUE>> {
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     

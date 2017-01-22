@@ -2,14 +2,14 @@ package net.digitalid.core.certificate;
 
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.concept.CoreConcept;
+import net.digitalid.core.subject.CoreServiceCoreSubject;
 import net.digitalid.core.entity.NonHostEntity;
 
 /**
  * Description.
  */
 @Immutable
-public abstract class Certificate extends CoreConcept<NonHostEntity<?>, Long> {
+public abstract class Certificate extends CoreServiceCoreSubject<NonHostEntity<?>, Long> {
     
     // TODO:
     

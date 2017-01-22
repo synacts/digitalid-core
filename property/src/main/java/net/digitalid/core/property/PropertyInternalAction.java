@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.storage.Storage;
 
-import net.digitalid.core.concept.Concept;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.method.action.InternalAction;
@@ -28,7 +28,7 @@ import net.digitalid.core.service.Service;
  * @see ValuePropertyInternalAction
  */
 @Immutable
-public abstract class PropertyInternalAction<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, PROPERTY extends SynchronizedProperty<ENTITY, KEY, CONCEPT, ?, ?>> extends InternalAction {
+public abstract class PropertyInternalAction<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, PROPERTY extends SynchronizedProperty<ENTITY, KEY, CONCEPT, ?, ?>> extends InternalAction {
     
     /* -------------------------------------------------- Property -------------------------------------------------- */
     

@@ -1,4 +1,4 @@
-package net.digitalid.core.concept;
+package net.digitalid.core.subject;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +8,8 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.concurrency.map.ConcurrentHashMapBuilder;
 import net.digitalid.utility.concurrency.map.ConcurrentMap;
 import net.digitalid.utility.contracts.Require;
@@ -20,18 +22,19 @@ import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.core.entity.Entity;
 
 /**
- * This class indexes the instances of a {@link Concept concept} by their {@link Entity entity} and key.
+ * This class indexes the instances of a {@link CoreSubject concept} by their {@link Entity entity} and key.
  */
 @Immutable
 @GenerateSubclass
-public abstract class ConceptIndex<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>> {
+@TODO(task = "Don't we need a SubjectIndex in the database layer?", date = "2017-01-22", author = Author.KASPAR_ETTER)
+public abstract class CoreSubjectIndex<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>> {
     
     /* -------------------------------------------------- Removal -------------------------------------------------- */
     
     /**
      * Stores a list of all the indexes that were created.
      */
-    private static final @Nonnull List<@Nonnull ConceptIndex<?, ?, ?>> indexes = new LinkedList<>();
+    private static final @Nonnull List<@Nonnull CoreSubjectIndex<?, ?, ?>> indexes = new LinkedList<>();
     
     /**
      * Removes the entries of the given entity from all indexes.
@@ -42,7 +45,7 @@ public abstract class ConceptIndex<ENTITY extends Entity<?>, KEY, CONCEPT extend
     public static void remove(@Nonnull Entity<?> entity) {
         Require.that(DatabaseUtility.isSingleAccess()).orThrow("The database is in single-access mode.");
         
-        for (@Nonnull ConceptIndex<?, ?, ?> index : indexes) {
+        for (@Nonnull CoreSubjectIndex<?, ?, ?> index : indexes) {
             index.concepts.remove(entity);
         }
     }
@@ -53,11 +56,11 @@ public abstract class ConceptIndex<ENTITY extends Entity<?>, KEY, CONCEPT extend
      * Returns the concept module, which contains the concept factory.
      */
     @Pure
-    protected abstract @Nonnull ConceptModule<ENTITY, KEY, CONCEPT> getConceptModule();
+    protected abstract @Nonnull CoreSubjectModule<ENTITY, KEY, CONCEPT> getConceptModule();
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    protected ConceptIndex() {
+    protected CoreSubjectIndex() {
         indexes.add(this);
     }
     

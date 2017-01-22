@@ -1,4 +1,4 @@
-package net.digitalid.core.concept.annotations;
+package net.digitalid.core.subject.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -32,7 +32,7 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
 
-import net.digitalid.core.concept.Concept;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.identification.identity.SemanticType;
 
 /**
@@ -81,7 +81,7 @@ public @interface GenerateSynchronizedProperty {
             final @Nonnull String propertyPackage = ProcessingUtility.getQualifiedPackageName(((DeclaredType) method.getReturnType()).asElement());
             final @Nonnull String propertyType = Strings.substringFromLast(ProcessingUtility.getSimpleName(method.getReturnType()), "Persistent");
             
-            final @Nullable DeclaredType conceptType = ProcessingUtility.getSupertype(typeInformation.getType(), Concept.class);
+            final @Nullable DeclaredType conceptType = ProcessingUtility.getSupertype(typeInformation.getType(), CoreSubject.class);
             if (conceptType == null) { ProcessingLog.error("The type $ is not a subtype of Concept.", ProcessingUtility.getQualifiedName(typeInformation.getType())); }
             final @Nonnull TypeMirror valueType = ((DeclaredType) method.getReturnType()).getTypeArguments().get(1);
             

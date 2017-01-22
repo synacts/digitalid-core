@@ -29,7 +29,7 @@ import net.digitalid.database.property.set.PersistentSetPropertyEntryBuilder;
 import net.digitalid.database.property.set.ReadOnlyPersistentSetProperty;
 import net.digitalid.database.property.set.WritablePersistentSetPropertyImplementation;
 
-import net.digitalid.core.concept.Concept;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedProperty;
@@ -42,7 +42,7 @@ import net.digitalid.core.synchronizer.Synchronizer;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentSetProperty.class)
-public abstract class WritableSynchronizedSetProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritablePersistentSetPropertyImplementation<CoreSite<?>, CONCEPT, VALUE, READONLY_SET, FREEZABLE_SET> implements SynchronizedProperty<ENTITY, KEY, CONCEPT, PersistentSetPropertyEntry<CONCEPT, VALUE>, PersistentSetObserver<CONCEPT, VALUE, READONLY_SET>> {
+public abstract class WritableSynchronizedSetProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritablePersistentSetPropertyImplementation<CoreSite<?>, CONCEPT, VALUE, READONLY_SET, FREEZABLE_SET> implements SynchronizedProperty<ENTITY, KEY, CONCEPT, PersistentSetPropertyEntry<CONCEPT, VALUE>, PersistentSetObserver<CONCEPT, VALUE, READONLY_SET>> {
     
     /* -------------------------------------------------- Set -------------------------------------------------- */
     

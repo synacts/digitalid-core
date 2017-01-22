@@ -14,7 +14,7 @@ import net.digitalid.database.property.value.PersistentValuePropertyEntry;
 import net.digitalid.database.property.value.PersistentValuePropertyEntryConverter;
 import net.digitalid.database.property.value.PersistentValuePropertyTable;
 
-import net.digitalid.core.concept.Concept;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedPropertyTable;
@@ -25,7 +25,7 @@ import net.digitalid.core.property.SynchronizedPropertyTable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SynchronizedValuePropertyTable<ENTITY extends Entity<?>, KEY, CONCEPT extends Concept<ENTITY, KEY>, VALUE, PROVIDED_FOR_VALUE> extends PersistentValuePropertyTable<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, PersistentValuePropertyEntry<CONCEPT, VALUE>, VALUE> {
+public interface SynchronizedValuePropertyTable<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, VALUE, PROVIDED_FOR_VALUE> extends PersistentValuePropertyTable<CoreSite<?>, CONCEPT, VALUE, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, PersistentValuePropertyEntry<CONCEPT, VALUE>, VALUE> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     

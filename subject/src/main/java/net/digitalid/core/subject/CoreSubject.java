@@ -1,4 +1,4 @@
-package net.digitalid.core.concept;
+package net.digitalid.core.subject;
 
 import javax.annotation.Nonnull;
 
@@ -13,8 +13,8 @@ import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.subject.Subject;
 
-import net.digitalid.core.concept.annotations.GenerateConceptModule;
-import net.digitalid.core.entity.CoreSite;
+import net.digitalid.core.subject.annotations.GenerateCoreSubjectModule;
+import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 
@@ -28,7 +28,7 @@ import net.digitalid.core.entity.NonHostEntity;
  */
 @Immutable
 @TODO(task = "Consider renaming this class to 'CoreSubject'.", date = "2017-01-18", author = Author.KASPAR_ETTER)
-public abstract class Concept<ENTITY extends Entity<?>, KEY> extends RootClass implements Subject<CoreSite<?>> {
+public abstract class CoreSubject<ENTITY extends Entity<?>, KEY> extends RootClass implements Subject<CoreUnit> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
@@ -48,23 +48,23 @@ public abstract class Concept<ENTITY extends Entity<?>, KEY> extends RootClass i
     @Embedded // TODO: Depends on the key type!
     public abstract @Nonnull KEY getKey();
     
-    /* -------------------------------------------------- Site -------------------------------------------------- */
+    /* -------------------------------------------------- Unit -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull CoreSite<?> getSite() {
-        return getEntity().getSite();
+    public @Nonnull CoreUnit getUnit() {
+        return getEntity().getUnit();
     }
     
     /* -------------------------------------------------- Module -------------------------------------------------- */
     
     /**
-     * Generates and returns the {@link ConceptModule} required to store synchronized properties.
+     * Generates and returns the {@link CoreSubjectModule} required to store synchronized properties.
      */
     @Pure
     @Override
-    @GenerateConceptModule
-    public abstract @Nonnull ConceptModule<ENTITY, KEY, ?> module();
+    @GenerateCoreSubjectModule
+    public abstract @Nonnull CoreSubjectModule<ENTITY, KEY, ?> module();
     
     /* -------------------------------------------------- Properties -------------------------------------------------- */
     
