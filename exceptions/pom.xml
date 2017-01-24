@@ -9,4 +9,14 @@
     
     <artifactId>core-exceptions</artifactId>
     
+    <dependencies>
+        
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-identification</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+    </dependencies>
+    
 </project>

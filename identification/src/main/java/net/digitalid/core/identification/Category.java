@@ -6,7 +6,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.exceptions.CaseException;
+import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.string.Strings;
@@ -106,7 +106,7 @@ public enum Category {
             if (category.value == value) { return category; }
         }
         
-        throw CaseException.with("value", value);
+        throw CaseExceptionBuilder.withVariable("value").withValue(value).build();
     }
     
     /* -------------------------------------------------- Queries -------------------------------------------------- */

@@ -4,13 +4,12 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.exceptions.CaseException;
+import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
-
 
 /**
  * This class enumerates the various request error codes.
@@ -99,9 +98,9 @@ public enum RequestErrorCode {
     METHOD(14),
     
     /**
-     * The error code for an invalid identifier as subject.
+     * The error code for a non-existent identity.
      */
-    IDENTIFIER(15),
+    IDENTITY(15),
     
     /**
      * The error code for a relocated identity.
@@ -156,7 +155,7 @@ public enum RequestErrorCode {
             if (code.value == value) { return code; }
         }
         
-        throw CaseException.with("value", value);
+        throw CaseExceptionBuilder.withVariable("value").withValue(value).build();
     }
     
     /* -------------------------------------------------- Object -------------------------------------------------- */

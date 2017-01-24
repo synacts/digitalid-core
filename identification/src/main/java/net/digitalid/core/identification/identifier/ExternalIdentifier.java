@@ -3,9 +3,9 @@ package net.digitalid.core.identification.identifier;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.CaseException;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -61,7 +61,7 @@ public interface ExternalIdentifier extends NonHostIdentifier {
         switch (scheme) {
             case "email": return EmailIdentifier.with(string);
             case "mobile": return MobileIdentifier.with(string);
-            default: throw CaseException.with("scheme", scheme);
+            default: throw CaseExceptionBuilder.withVariable("scheme").withValue(scheme).build();
         }
     }
     

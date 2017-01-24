@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -14,7 +14,6 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.identification.exceptions.IdentityNotFoundException;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalIdentity;
 
@@ -73,14 +72,15 @@ public interface InternalIdentifier extends Identifier {
     
     /**
      * Returns whether an identity with this internal identifier exists.
+     * If any exceptions occur, this method returns false.
      */
     @Pure
     @NonCommitting
-    public default boolean exists() throws ExternalException {
+    public default boolean exists() {
         try {
             IdentifierResolver.resolve(this);
             return true;
-        } catch (@Nonnull IdentityNotFoundException exception) {
+        } catch (@Nonnull ExternalException exception) {
             return false;
         }
     }

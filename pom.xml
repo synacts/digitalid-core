@@ -17,8 +17,8 @@
     <url>https://code.digitalid.net/digitalid/core</url>
     
     <modules>
-        <module>exceptions</module>
         <module>identification</module>
+        <module>exceptions</module>
         <module>permissions</module>
         <module>typeset</module>
         <module>entity</module>
