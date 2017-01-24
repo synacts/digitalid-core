@@ -9,8 +9,8 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.configuration.Configuration;
-import net.digitalid.utility.file.Files;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.file.Files;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.auxiliary.Time;

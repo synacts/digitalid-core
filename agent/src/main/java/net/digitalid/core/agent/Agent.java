@@ -15,8 +15,6 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.map.WritablePersistentMapProperty;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
-import net.digitalid.core.subject.CoreServiceCoreSubject;
-import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -25,6 +23,8 @@ import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
+import net.digitalid.core.subject.CoreServiceCoreSubject;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 
 /**
  * This class models an agent that acts on behalf of an {@link Identity identity}.

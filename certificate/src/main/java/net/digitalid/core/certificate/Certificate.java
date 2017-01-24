@@ -2,8 +2,8 @@ package net.digitalid.core.certificate;
 
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.subject.CoreServiceCoreSubject;
 import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.subject.CoreServiceCoreSubject;
 
 /**
  * Description.

@@ -16,7 +16,6 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.credential.Credential;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -30,6 +29,7 @@ import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuild
 import net.digitalid.core.restrictions.Node;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.restrictions.RestrictionsBuilder;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 
 /**
  * This class models an outgoing role that acts on behalf of an {@link Identity identity}.

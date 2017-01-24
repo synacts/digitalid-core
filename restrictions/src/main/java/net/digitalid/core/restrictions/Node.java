@@ -11,10 +11,10 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.set.WritablePersistentSetProperty;
 
-import net.digitalid.core.subject.CoreServiceCoreSubject;
-import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.subject.CoreServiceCoreSubject;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.typeset.authentications.FreezableAuthentications;
 import net.digitalid.core.typeset.authentications.ReadOnlyAuthentications;
 import net.digitalid.core.typeset.permissions.FreezableNodePermissions;

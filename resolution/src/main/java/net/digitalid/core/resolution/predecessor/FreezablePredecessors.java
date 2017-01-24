@@ -9,12 +9,12 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Freezable;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.freezable.annotations.NonFrozenRecipient;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;

@@ -24,9 +24,9 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.subject.annotations.GenerateSubjectModule;
 
+import net.digitalid.core.concept.ConceptModuleBuilder;
 import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.subject.CoreSubjectModule;
-import net.digitalid.core.concept.ConceptModuleBuilder;
 
 /**
  * This method interceptor generates a concept module with the service, the index, with which factory an instance of the type is built, and its converter.

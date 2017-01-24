@@ -25,7 +25,6 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.storage.Storage;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnClientRecipient;
 import net.digitalid.core.handler.method.action.Action;
@@ -33,6 +32,7 @@ import net.digitalid.core.handler.method.action.InternalAction;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.property.PropertyInternalAction;
 import net.digitalid.core.restrictions.Restrictions;
+import net.digitalid.core.subject.CoreSubject;
 
 /**
  * This class models the {@link InternalAction internal action} of a {@link WritableSynchronizedValueProperty writable synchronized value property}.

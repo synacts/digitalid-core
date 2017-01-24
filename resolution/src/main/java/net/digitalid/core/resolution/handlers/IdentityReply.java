@@ -7,10 +7,10 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.NonHostEntity;

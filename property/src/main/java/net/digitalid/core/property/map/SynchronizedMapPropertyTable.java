@@ -14,10 +14,10 @@ import net.digitalid.database.property.map.PersistentMapPropertyEntry;
 import net.digitalid.database.property.map.PersistentMapPropertyEntryConverter;
 import net.digitalid.database.property.map.PersistentMapPropertyTable;
 
-import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedPropertyTable;
+import net.digitalid.core.subject.CoreSubject;
 
 /**
  * The synchronized map property table stores the {@link PersistentMapPropertyEntry map property entries}.

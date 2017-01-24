@@ -5,8 +5,8 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.CaseException;
-import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;

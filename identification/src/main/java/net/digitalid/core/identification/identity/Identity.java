@@ -3,8 +3,8 @@ package net.digitalid.core.identification.identity;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;

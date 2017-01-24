@@ -21,16 +21,14 @@ import javax.crypto.CipherOutputStream;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.interfaces.EncoderImplementation;
 import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.interfaces.EncoderImplementation;
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.functional.failable.FailableUnaryFunction;
-
-import net.digitalid.core.conversion.exceptions.StreamException;
-
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
+import net.digitalid.core.conversion.exceptions.StreamException;
 import net.digitalid.core.conversion.streams.NonClosingOutputStream;
 
 /**

@@ -16,7 +16,6 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
-import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.node.ExtendedNode;
@@ -27,6 +26,7 @@ import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
 import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuilder;
 import net.digitalid.core.restrictions.Node;
 import net.digitalid.core.restrictions.RestrictionsBuilder;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 
 /**
  * This class models the contexts for {@link Contact contacts}.

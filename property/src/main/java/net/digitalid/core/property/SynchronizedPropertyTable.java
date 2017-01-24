@@ -10,12 +10,12 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.property.PersistentPropertyEntry;
 import net.digitalid.database.property.PersistentPropertyTable;
 
-import net.digitalid.core.subject.CoreSubject;
-import net.digitalid.core.subject.CoreSubjectModule;
 import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.identification.annotations.type.loaded.Loaded;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.subject.CoreSubject;
+import net.digitalid.core.subject.CoreSubjectModule;
 
 /**
  * This factory creates a new property for each concept instance and stores the required converters and methods.

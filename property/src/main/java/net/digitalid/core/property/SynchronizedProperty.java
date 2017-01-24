@@ -11,9 +11,9 @@ import net.digitalid.database.property.PersistentProperty;
 import net.digitalid.database.property.PersistentPropertyEntry;
 import net.digitalid.database.unit.Unit;
 
-import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.value.WritableSynchronizedValueProperty;
+import net.digitalid.core.subject.CoreSubject;
 
 /**
  * A synchronized property belongs to a {@link CoreSubject concept} and synchronizes across {@link Unit sites}.

@@ -12,11 +12,11 @@ import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.commitment.Commitment;
-import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
 import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuilder;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 
 /**
  * This class models a client agent that acts on behalf of an {@link Identity identity}.

@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
-import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.core.identification.identifier.HostIdentifier;

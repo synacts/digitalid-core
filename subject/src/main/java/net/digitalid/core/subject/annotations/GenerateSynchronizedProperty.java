@@ -32,8 +32,8 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
 
-import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.subject.CoreSubject;
 
 /**
  * This method interceptor generates a persistent property with the corresponding property table.

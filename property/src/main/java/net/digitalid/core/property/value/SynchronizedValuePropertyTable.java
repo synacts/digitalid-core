@@ -14,10 +14,10 @@ import net.digitalid.database.property.value.PersistentValuePropertyEntry;
 import net.digitalid.database.property.value.PersistentValuePropertyEntryConverter;
 import net.digitalid.database.property.value.PersistentValuePropertyTable;
 
-import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedPropertyTable;
+import net.digitalid.core.subject.CoreSubject;
 
 /**
  * The synchronized value property table stores the {@link PersistentValuePropertyEntry value property entries}.

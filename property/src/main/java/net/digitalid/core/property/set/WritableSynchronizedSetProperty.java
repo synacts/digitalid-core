@@ -29,10 +29,10 @@ import net.digitalid.database.property.set.PersistentSetPropertyEntryBuilder;
 import net.digitalid.database.property.set.ReadOnlyPersistentSetProperty;
 import net.digitalid.database.property.set.WritablePersistentSetPropertyImplementation;
 
-import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedProperty;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 /**

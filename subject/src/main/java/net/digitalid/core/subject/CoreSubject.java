@@ -13,10 +13,10 @@ import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.subject.Subject;
 
-import net.digitalid.core.subject.annotations.GenerateCoreSubjectModule;
 import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.subject.annotations.GenerateCoreSubjectModule;
 
 /**
  * This class models a concept in the {@link DatabaseUtility database}.

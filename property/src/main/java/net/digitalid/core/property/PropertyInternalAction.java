@@ -12,7 +12,6 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.storage.Storage;
 
-import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.method.action.InternalAction;
@@ -21,6 +20,7 @@ import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.property.value.ValuePropertyInternalAction;
 import net.digitalid.core.service.Service;
+import net.digitalid.core.subject.CoreSubject;
 
 /**
  * Internal actions are used to synchronize properties across sites.

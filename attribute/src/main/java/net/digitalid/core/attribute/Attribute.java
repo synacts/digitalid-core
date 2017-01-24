@@ -20,8 +20,6 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
-import net.digitalid.core.subject.CoreServiceCoreSubject;
-import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.expression.PassiveExpression;
 import net.digitalid.core.identification.identity.SemanticType;
@@ -29,6 +27,8 @@ import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
 import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuilder;
 import net.digitalid.core.signature.attribute.AttributeValue;
+import net.digitalid.core.subject.CoreServiceCoreSubject;
+import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 
 /**
  * This class models an attribute with its value and visibility.

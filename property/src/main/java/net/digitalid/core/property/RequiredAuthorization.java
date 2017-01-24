@@ -19,10 +19,10 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
+import net.digitalid.core.subject.CoreSubject;
 
 /**
  * This type models the authorization required to modify a synchronized property and retrieve its state.

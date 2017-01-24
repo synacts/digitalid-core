@@ -31,10 +31,10 @@ import net.digitalid.database.property.map.PersistentMapPropertyEntryBuilder;
 import net.digitalid.database.property.map.ReadOnlyPersistentMapProperty;
 import net.digitalid.database.property.map.WritablePersistentMapPropertyImplementation;
 
-import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.entity.CoreSite;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedProperty;
+import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 /**

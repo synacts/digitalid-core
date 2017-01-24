@@ -10,8 +10,8 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.concurrency.map.ConcurrentHashMapBuilder;
 import net.digitalid.utility.concurrency.map.ConcurrentMap;
 import net.digitalid.utility.configuration.Configuration;
-import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 

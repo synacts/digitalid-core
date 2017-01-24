@@ -3,8 +3,6 @@ package net.digitalid.core.entity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.database.unit.Unit;
-
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
@@ -26,6 +24,8 @@ import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+
+import net.digitalid.database.unit.Unit;
 
 /**
  * TODO: if we change the hierarchy of site such that it does not extend from Subject, we won't need the converter here.
