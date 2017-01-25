@@ -35,12 +35,12 @@ public abstract class Service extends RootClass {
     /* -------------------------------------------------- Services -------------------------------------------------- */
     
     /**
-     * Maps the services that are installed on this site from their type.
+     * Maps the services that are installed on this unit from their type.
      */
     private static final @Nonnull @NonFrozen FreezableMap<@Nonnull SemanticType, @Nonnull Service> services = FreezableLinkedHashMapBuilder.build();
     
     /**
-     * Returns the services installed on this site.
+     * Returns the services installed on this unit.
      */
     @Pure
     public static @Nonnull @NonFrozen ReadOnlyCollection<@Nonnull Service> getServices() {

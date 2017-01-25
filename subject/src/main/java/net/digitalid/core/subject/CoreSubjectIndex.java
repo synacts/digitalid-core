@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
@@ -17,17 +18,17 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.mode.SingleAccess;
-import net.digitalid.database.interfaces.DatabaseUtility;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.entity.Entity;
 
 /**
- * This class indexes the instances of a {@link CoreSubject concept} by their {@link Entity entity} and key.
+ * This class indexes the instances of a {@link CoreSubject core subject} by their {@link Entity entity} and key.
  */
 @Immutable
 @GenerateSubclass
 @TODO(task = "Don't we need a SubjectIndex in the database layer?", date = "2017-01-22", author = Author.KASPAR_ETTER)
-public abstract class CoreSubjectIndex<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>> {
+public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>> {
     
     /* -------------------------------------------------- Removal -------------------------------------------------- */
     
@@ -43,20 +44,20 @@ public abstract class CoreSubjectIndex<ENTITY extends Entity<?>, KEY, CONCEPT ex
     @Impure
     @SingleAccess
     public static void remove(@Nonnull Entity<?> entity) {
-        Require.that(DatabaseUtility.isSingleAccess()).orThrow("The database is in single-access mode.");
+        Require.that(Database.singleAccess.get()).orThrow("The database has to be in single-access mode.");
         
         for (@Nonnull CoreSubjectIndex<?, ?, ?> index : indexes) {
-            index.concepts.remove(entity);
+            index.subjects.remove(entity);
         }
     }
     
     /* -------------------------------------------------- Module -------------------------------------------------- */
     
     /**
-     * Returns the concept module, which contains the concept factory.
+     * Returns the core subject module, which contains the core subject factory.
      */
     @Pure
-    protected abstract @Nonnull CoreSubjectModule<ENTITY, KEY, CONCEPT> getConceptModule();
+    protected abstract @Nonnull CoreSubjectModule<ENTITY, KEY, SUBJECT> getSubjectModule();
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -64,26 +65,26 @@ public abstract class CoreSubjectIndex<ENTITY extends Entity<?>, KEY, CONCEPT ex
         indexes.add(this);
     }
     
-    /* -------------------------------------------------- Concepts -------------------------------------------------- */
+    /* -------------------------------------------------- Subjects -------------------------------------------------- */
     
     /**
-     * Stores the concepts of this index.
+     * Stores the core subjects of this index.
      */
-    private final @Nonnull ConcurrentMap<@Nonnull ENTITY, @Nonnull ConcurrentMap<@Nonnull KEY, @Nonnull CONCEPT>> concepts = ConcurrentHashMapBuilder.build();
+    private final @Nonnull ConcurrentMap<@Nonnull ENTITY, @Nonnull ConcurrentMap<@Nonnull KEY, @Nonnull SUBJECT>> subjects = ConcurrentHashMapBuilder.build();
     
     /**
-     * Returns the potentially cached concept with the given entity and key that might not yet exist in the database.
+     * Returns the potentially cached core subject with the given entity and key that might not yet exist in the database.
      */
     @Pure
-    public @Nonnull CONCEPT get(@Nonnull ENTITY entity, @Nonnull KEY key) {
-        if (DatabaseUtility.isSingleAccess()) {
-            @Nullable ConcurrentMap<KEY, CONCEPT> map = concepts.get(entity);
-            if (map == null) { map = concepts.putIfAbsentElseReturnPresent(entity, ConcurrentHashMapBuilder.<KEY, CONCEPT>build()); }
-            @Nullable CONCEPT concept = map.get(key);
-            if (concept == null) { concept = map.putIfAbsentElseReturnPresent(key, getConceptModule().getConceptFactory().evaluate(entity, key)); }
-            return concept;
+    public @Nonnull SUBJECT get(@Nonnull ENTITY entity, @Nonnull KEY key) {
+        if (Database.singleAccess.get()) {
+            @Nullable ConcurrentMap<KEY, SUBJECT> map = subjects.get(entity);
+            if (map == null) { map = subjects.putIfAbsentElseReturnPresent(entity, ConcurrentHashMapBuilder.<KEY, SUBJECT>build()); }
+            @Nullable SUBJECT subject = map.get(key);
+            if (subject == null) { subject = map.putIfAbsentElseReturnPresent(key, getSubjectModule().getSubjectFactory().evaluate(entity, key)); }
+            return subject;
         } else {
-            return getConceptModule().getConceptFactory().evaluate(entity, key);
+            return getSubjectModule().getSubjectFactory().evaluate(entity, key);
         }
     }
     

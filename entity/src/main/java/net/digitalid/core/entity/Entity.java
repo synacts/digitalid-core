@@ -2,6 +2,7 @@ package net.digitalid.core.entity;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
@@ -23,7 +24,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
  */
 @Immutable
 @GenerateConverter
-public interface Entity<UNIT extends CoreUnit> extends Subject<UNIT>, UnitDependency {
+public interface Entity<@Unspecifiable UNIT extends CoreUnit> extends Subject<UNIT>, UnitDependency {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     

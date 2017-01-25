@@ -38,7 +38,7 @@ import net.digitalid.core.subject.CoreSubject;
 /**
  * This method interceptor generates a persistent property with the corresponding property table.
  * 
- * @see GenerateConceptModule
+ * @see GenerateCoreSubjectModule
  */
 @Documented
 @Target(ElementType.METHOD)
@@ -81,8 +81,8 @@ public @interface GenerateSynchronizedProperty {
             final @Nonnull String propertyPackage = ProcessingUtility.getQualifiedPackageName(((DeclaredType) method.getReturnType()).asElement());
             final @Nonnull String propertyType = Strings.substringFromLast(ProcessingUtility.getSimpleName(method.getReturnType()), "Persistent");
             
-            final @Nullable DeclaredType conceptType = ProcessingUtility.getSupertype(typeInformation.getType(), CoreSubject.class);
-            if (conceptType == null) { ProcessingLog.error("The type $ is not a subtype of Concept.", ProcessingUtility.getQualifiedName(typeInformation.getType())); }
+            final @Nullable DeclaredType subjectType = ProcessingUtility.getSupertype(typeInformation.getType(), CoreSubject.class);
+            if (subjectType == null) { ProcessingLog.error("The type $ is not a subtype of CoreSubject.", ProcessingUtility.getQualifiedName(typeInformation.getType())); }
             final @Nonnull TypeMirror valueType = ((DeclaredType) method.getReturnType()).getTypeArguments().get(1);
             
             // TODO: The following code does not yet work for value converters that do not yet exist (i.e. will be generated in the same round).
@@ -98,7 +98,7 @@ public @interface GenerateSynchronizedProperty {
                 externallyProvidedType = "Void";
             }
             
-            final @Nonnull FiniteIterable<@Nonnull String> types = FiniteIterable.of(conceptType.getTypeArguments()).combine(FiniteIterable.of(typeInformation.getType(), valueType)).map(javaFileGenerator::importIfPossible).evaluate().combine(FiniteIterable.of(externallyProvidedType));
+            final @Nonnull FiniteIterable<@Nonnull String> types = FiniteIterable.of(subjectType.getTypeArguments()).combine(FiniteIterable.of(typeInformation.getType(), valueType)).map(javaFileGenerator::importIfPossible).evaluate().combine(FiniteIterable.of(externallyProvidedType));
             
             final @Nonnull String valueConverter = (types.get(3).equals("String") ? javaFileGenerator.importIfPossible("net.digitalid.utility.conversion.converters.StringConverter") : javaFileGenerator.importIfPossible(ProcessingUtility.getQualifiedName(valueType) + "Converter")) + ".INSTANCE";
             

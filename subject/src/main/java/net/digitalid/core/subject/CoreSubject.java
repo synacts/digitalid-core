@@ -2,15 +2,13 @@ package net.digitalid.core.subject;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.type.Embedded;
-import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.subject.Subject;
 
 import net.digitalid.core.entity.CoreUnit;
@@ -19,21 +17,20 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.subject.annotations.GenerateCoreSubjectModule;
 
 /**
- * This class models a concept in the {@link DatabaseUtility database}.
- * A concept always belongs to an {@link Entity entity}.
+ * This class models a core subject in the {@link DatabaseUtility database}.
+ * A core subject always belongs to an {@link Entity entity}.
  * 
- * @param <ENTITY> either {@link Entity} for a general concept or {@link NonHostEntity} for a concept that exists only for non-hosts.
+ * @param <ENTITY> either {@link Entity} for a general core subject or {@link NonHostEntity} for a core subject that exists only for non-hosts.
  *            (The type has to be a supertype of {@link NonHostEntity}, which cannot be declared in Java, unfortunately!)
- * @param <KEY> the type of the key which identifies an instance among all instances of a concept at the same entity.
+ * @param <KEY> the type of the key which identifies an instance among all instances of a core subject at the same entity.
  */
 @Immutable
-@TODO(task = "Consider renaming this class to 'CoreSubject'.", date = "2017-01-18", author = Author.KASPAR_ETTER)
-public abstract class CoreSubject<ENTITY extends Entity<?>, KEY> extends RootClass implements Subject<CoreUnit> {
+public abstract class CoreSubject<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY> extends RootClass implements Subject<CoreUnit> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
     /**
-     * Returns the entity to which this concept belongs.
+     * Returns the entity to which this core subject belongs.
      */
     @Pure
     @Provided
@@ -42,7 +39,7 @@ public abstract class CoreSubject<ENTITY extends Entity<?>, KEY> extends RootCla
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
     /**
-     * Returns the key which identifies this concept.
+     * Returns the key which identifies this core subject.
      */
     @Pure
     @Embedded // TODO: Depends on the key type!
@@ -71,25 +68,25 @@ public abstract class CoreSubject<ENTITY extends Entity<?>, KEY> extends RootCla
     // TODO
     
 //    /**
-//     * Stores the properties of this concept.
+//     * Stores the properties of this core subject.
 //     */
 //    private final @Nonnull @NonNullableElements @NonFrozen FreezableList<ConceptProperty<?, C, E>> properties = FreezableLinkedList.get();
 //    
 //    /**
-//     * Registers the given property at this concept.
+//     * Registers the given property at this core subject.
 //     * 
 //     * @param property the property to be registered.
 //     * 
-//     * @require property.getConcept() == this : "The given property belongs to this concept.";
+//     * @require property.getConcept() == this : "The given property belongs to this core subject.";
 //     */
 //    public void register(@Nonnull ConceptProperty<?, C, E> property) {
-//        Require.that(property.getConcept() == this).orThrow("The given property belongs to this concept.");
+//        Require.that(property.getConcept() == this).orThrow("The given property belongs to this core subject.");
 //        
 //        properties.add(property);
 //    }
 //    
 //    /**
-//     * Returns the properties of this concept.
+//     * Returns the properties of this core subject.
 //     */
 //    @Pure
 //    public final @Nonnull @NonNullableElements ReadOnlyList<ConceptProperty<?, C, E>> getProperties() {
@@ -97,9 +94,7 @@ public abstract class CoreSubject<ENTITY extends Entity<?>, KEY> extends RootCla
 //    }
 //    
 //    /**
-//     * Returns the property of this concept with the given table.
-//     * 
-//     * @return the property of this concept with the given table.
+//     * Returns the property of this core subject with the given table.
 //     */
 //    @Pure
 //    public final @Nonnull ConceptProperty<?, C, E> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws DatabaseException { // TODO: Change the parameter to ConceptPropertySetup!
@@ -110,7 +105,7 @@ public abstract class CoreSubject<ENTITY extends Entity<?>, KEY> extends RootCla
 //    }
 //    
 //    /**
-//     * Resets the property of this concept with the given table.
+//     * Resets the property of this core subject with the given table.
 //     * 
 //     * @param table the table which initiated the reset of its properties.
 //     */
@@ -120,7 +115,7 @@ public abstract class CoreSubject<ENTITY extends Entity<?>, KEY> extends RootCla
 //    }
 //    
 //    /**
-//     * Resets the properties of this concept.
+//     * Resets the properties of this core subject.
 //     */
 //    @NonCommitting
 //    public void resetAll() throws DatabaseException {
