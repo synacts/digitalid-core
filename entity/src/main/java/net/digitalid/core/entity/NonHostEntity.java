@@ -17,7 +17,7 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
  */
 @Immutable
 @GenerateConverter
-public interface NonHostEntity<SITE extends CoreSite<?>> extends Entity<SITE> {
+public interface NonHostEntity<UNIT extends CoreUnit> extends Entity<UNIT> {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
@@ -31,14 +31,14 @@ public interface NonHostEntity<SITE extends CoreSite<?>> extends Entity<SITE> {
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull NonHostEntity<?> with(@Nonnull CoreSite<?> site, long key) /*throws DatabaseException */{
+    public static @Nonnull NonHostEntity<?> with(@Nonnull CoreUnit unit, long key) /*throws DatabaseException */{
         // TODO: Think about how to recover entities. Maybe make it configurable?
-//        if (site instanceof Host) {
-//            return Account.getNotNull((Host) site, resultSet, columnIndex);
-//        } else if (site instanceof Client) {
-//            return Role.getNotNull((Client) site, resultSet, columnIndex);
+//        if (unit instanceof Host) {
+//            return Account.getNotNull((Host) unit, resultSet, columnIndex);
+//        } else if (unit instanceof Client) {
+//            return Role.getNotNull((Client) unit, resultSet, columnIndex);
 //        } else {
-//            throw UnexpectedValueException.with("A site is either a host or a client.");
+//            throw UnexpectedValueException.with("A unit is either a host or a client.");
 //        }
         throw new RuntimeException();
     }

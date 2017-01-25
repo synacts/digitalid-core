@@ -12,18 +12,18 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.unit.Unit;
 
-import net.digitalid.core.entity.annotations.SiteDependency;
+import net.digitalid.core.entity.annotations.UnitDependency;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 
 /**
- * An entity captures the {@link Unit site} and the {@link Identity identity} of a concept or handler.
+ * An entity captures the {@link Unit unit} and the {@link Identity identity} of a core subject or handler.
  * 
  * @see NonHostEntity
  */
 @Immutable
 @GenerateConverter
-public interface Entity<SITE extends CoreSite<?>> extends Subject<SITE>, SiteDependency {
+public interface Entity<UNIT extends CoreUnit> extends Subject<UNIT>, UnitDependency {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
@@ -47,13 +47,13 @@ public interface Entity<SITE extends CoreSite<?>> extends Subject<SITE>, SiteDep
     @Pure
     @Override
     public default boolean isOnHost() {
-        return getSite().isHost();
+        return getUnit().isHost();
     }
     
     @Pure
     @Override
     public default boolean isOnClient() {
-        return getSite().isClient();
+        return getUnit().isClient();
     }
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
@@ -61,14 +61,14 @@ public interface Entity<SITE extends CoreSite<?>> extends Subject<SITE>, SiteDep
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull Entity<?> with(@Nonnull CoreSite<?> site, long key) /* throws DatabaseException */ {
+    public static @Nonnull Entity<?> with(@Nonnull CoreUnit unit, long key) /* throws DatabaseException */ {
         // TODO: Think about how to recover entities. Maybe make it configurable/injectable?
-//        if (site instanceof Host) {
-//            return Account.getNotNull((Host) site, resultSet, columnIndex);
-//        } else if (site instanceof Client) {
-//            return Role.getNotNull((Client) site, resultSet, columnIndex);
+//        if (unit instanceof Host) {
+//            return Account.getNotNull((Host) unit, resultSet, columnIndex);
+//        } else if (unit instanceof Client) {
+//            return Role.getNotNull((Client) unit, resultSet, columnIndex);
 //        } else {
-//            throw UnexpectedValueException.with("A site is either a host or a client.");
+//            throw UnexpectedValueException.with("A unit is either a host or a client.");
 //        }
         throw new RuntimeException();
     }

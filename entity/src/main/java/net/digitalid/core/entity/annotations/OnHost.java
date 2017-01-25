@@ -19,7 +19,7 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 import net.digitalid.utility.validation.contract.Contract;
 
 /**
- * This annotation indicates that the annotated object is {@link SiteDependency#isOnHost() on a host}.
+ * This annotation indicates that the annotated object is {@link UnitDependency#isOnHost() on a host}.
  * 
  * @see OnClient
  * @see OnHostRecipient
@@ -37,7 +37,7 @@ public @interface OnHost {
      * This class checks the use of and generates the contract for the surrounding annotation.
      */
     @Stateless
-    public static class Validator extends SiteDependencyValidator {
+    public static class Validator extends UnitDependencyValidator {
         
         @Pure
         @Override

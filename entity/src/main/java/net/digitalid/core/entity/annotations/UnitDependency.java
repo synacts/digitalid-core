@@ -7,7 +7,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.core.entity.Entity;
 
 /**
- * This interface allows to use annotations on site-dependent objects.
+ * This interface allows to use annotations on unit-dependent objects.
  * 
  * @see Entity
  * @see OnHost
@@ -16,7 +16,7 @@ import net.digitalid.core.entity.Entity;
  * @see OnClientRecipient
  */
 @Immutable
-public interface SiteDependency extends RootInterface {
+public interface UnitDependency extends RootInterface {
     
     /**
      * Returns whether this object is on a host.

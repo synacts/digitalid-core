@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.annotations.SiteDependency;
+import net.digitalid.core.entity.annotations.UnitDependency;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
@@ -27,7 +27,7 @@ import net.digitalid.core.signature.Signature;
  * @see Reply
  */
 @Immutable
-public interface Handler<@Unspecifiable ENTITY extends Entity<?>> extends SiteDependency, Packable {
+public interface Handler<@Unspecifiable ENTITY extends Entity<?>> extends UnitDependency, Packable {
     
     /* -------------------------------------------------- Signature -------------------------------------------------- */
     

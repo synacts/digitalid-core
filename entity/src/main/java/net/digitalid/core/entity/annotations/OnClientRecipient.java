@@ -21,7 +21,7 @@ import net.digitalid.utility.validation.contract.Contract;
 import net.digitalid.utility.validation.validator.MethodAnnotationValidator;
 
 /**
- * This annotation indicates that a method may only be called {@link SiteDependency#isOnClient() on a client}.
+ * This annotation indicates that a method may only be called {@link UnitDependency#isOnClient() on a client}.
  * 
  * @see OnHost
  * @see OnClient
@@ -44,7 +44,7 @@ public @interface OnClientRecipient {
         @Pure
         @Override
         public @Nonnull Class<?> getReceiverType() {
-            return SiteDependency.class;
+            return UnitDependency.class;
         }
         
         @Pure

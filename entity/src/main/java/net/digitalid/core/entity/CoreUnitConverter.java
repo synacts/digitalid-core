@@ -25,16 +25,13 @@ import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.unit.Unit;
-
 /**
- * TODO: if we change the hierarchy of site such that it does not extend from Subject, we won't need the converter here.
- * This class converts a specific {@link Unit site} so that the site itself is {@link Provided provided}.
+ * This class converts a specific {@link CoreUnit unit} so that the unit itself is {@link Provided provided}.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class SiteConverter<SITE extends Unit<?>> implements Converter<SITE, SITE> {
+public abstract class CoreUnitConverter<UNIT extends CoreUnit> implements Converter<UNIT, UNIT> {
     
     @Pure
     @Override
@@ -58,12 +55,12 @@ public abstract class SiteConverter<SITE extends Unit<?>> implements Converter<S
     
     @Pure
     @Override
-    public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@NonCaptured @Unmodified @Nullable SITE site, @NonCaptured @Modified @Nonnull Encoder<EXCEPTION> encoder) throws EXCEPTION {}
+    public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@NonCaptured @Unmodified @Nullable UNIT unit, @NonCaptured @Modified @Nonnull Encoder<EXCEPTION> encoder) throws EXCEPTION {}
     
     @Pure
     @Override
-    public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nullable SITE recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, @Nonnull SITE site) throws EXCEPTION {
-        return site;
+    public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nullable UNIT recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, @Nonnull UNIT unit) throws EXCEPTION {
+        return unit;
     }
     
 }

@@ -12,11 +12,13 @@ import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.identification.annotations.type.kind.AttributeType;
 import net.digitalid.core.identification.identity.SemanticType;
 
@@ -75,7 +77,7 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticT
      */
     @Pure
     public default void checkAllowToRead(@Nonnull @AttributeType SemanticType type) throws RequestException {
-        if (!allowToRead(type)) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "These agent permissions allow not to read $.", type.getAddress()); }
+        if (!allowToRead(type)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage(Strings.format("These agent permissions allow not to read $.", type.getAddress())).build(); }
     }
     
     /* -------------------------------------------------- Writing -------------------------------------------------- */
@@ -93,7 +95,7 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticT
      */
     @Pure
     public default void checkAllowToWrite(@Nonnull @AttributeType SemanticType type) throws RequestException {
-        if (!allowToWrite(type)) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "These agent permissions allow not to write $.", type.getAddress()); }
+        if (!allowToWrite(type)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage(Strings.format("These agent permissions allow not to write $.", type.getAddress())).build(); }
     }
     
     /* -------------------------------------------------- Coverage -------------------------------------------------- */
@@ -122,7 +124,7 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticT
      */
     @Pure
     public default void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws RequestException {
-        if (!cover(permissions)) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "These agent permissions do not cover $.", permissions); }
+        if (!cover(permissions)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage(Strings.format("These agent permissions do not cover $.", permissions)).build(); }
     }
     
     /* -------------------------------------------------- Types -------------------------------------------------- */

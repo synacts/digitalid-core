@@ -8,14 +8,14 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 import net.digitalid.utility.validation.validator.ValueAnnotationValidator;
 
 /**
- * This class declares the target types for site-dependency annotations.
+ * This class declares the target types for unit-dependency annotations.
  */
 @Stateless
-public abstract class SiteDependencyValidator implements ValueAnnotationValidator {
+public abstract class UnitDependencyValidator implements ValueAnnotationValidator {
     
     /* -------------------------------------------------- Target Types -------------------------------------------------- */
     
-    private static final @Nonnull FiniteIterable<@Nonnull Class<?>> targetTypes = FiniteIterable.of(SiteDependency.class);
+    private static final @Nonnull FiniteIterable<@Nonnull Class<?>> targetTypes = FiniteIterable.of(UnitDependency.class);
     
     @Pure
     @Override
