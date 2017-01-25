@@ -8,6 +8,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -16,6 +17,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 
 /**
  * This class models the restrictions of an agent's authorization.
@@ -69,7 +71,7 @@ public abstract class Restrictions extends RootClass {
      */
     @Pure
     public void checkIsOnlyForClients() throws RequestException {
-        if (!isOnlyForClients()) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "The authorization is restricted to clients."); }
+        if (!isOnlyForClients()) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage("The authorization is restricted to clients.").build(); }
     }
     
     /* -------------------------------------------------- Assume Roles -------------------------------------------------- */
@@ -86,7 +88,7 @@ public abstract class Restrictions extends RootClass {
      */
     @Pure
     public void checkCanAssumeRoles() throws RequestException {
-        if (!canAssumeRoles()) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "The authorization is restricted to agents that can assume roles."); }
+        if (!canAssumeRoles()) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage("The authorization is restricted to agents that can assume roles.").build(); }
     }
     
     /* -------------------------------------------------- Write to Node -------------------------------------------------- */
@@ -103,7 +105,7 @@ public abstract class Restrictions extends RootClass {
      */
     @Pure
     public void checkCanWriteToNode() throws RequestException {
-        if (!canWriteToNode()) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "The authorization is restricted to agents that can write to the node."); }
+        if (!canWriteToNode()) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage("The authorization is restricted to agents that can write to the node.").build(); }
     }
     
     /* -------------------------------------------------- Node -------------------------------------------------- */
@@ -130,7 +132,7 @@ public abstract class Restrictions extends RootClass {
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Node node) throws DatabaseException, RequestException {
-        if (!cover(node)) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "The authorization is restricted to agents that cover the node $.", node); }
+        if (!cover(node)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage(Strings.format("The authorization is restricted to agents that cover the node $.", node)).build(); }
     }
     
     /* -------------------------------------------------- Coverage -------------------------------------------------- */
@@ -154,7 +156,7 @@ public abstract class Restrictions extends RootClass {
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Restrictions restrictions) throws DatabaseException, RequestException {
-        if (!cover(restrictions)) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "The authorization is restricted to agents that cover the restrictions $.", restrictions); }
+        if (!cover(restrictions)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage(Strings.format("The authorization is restricted to agents that cover the restrictions $.", restrictions)).build(); }
     }
     
     /* -------------------------------------------------- Restrictions -------------------------------------------------- */
