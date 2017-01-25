@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
-import net.digitalid.utility.exceptions.MissingSupportException;
+import net.digitalid.utility.errors.SupportErrorBuilder;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
@@ -35,7 +35,7 @@ public abstract class HashGenerator {
             }
             return new BigInteger(1, instance.digest());
         } catch (@Nonnull NoSuchAlgorithmException exception) {
-            throw MissingSupportException.with("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
+            throw SupportErrorBuilder.withMessage("The hashing algorithm 'SHA-256' is not supported on this platform.").withCause(exception).build();
         }
     }
     

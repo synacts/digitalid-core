@@ -3,10 +3,12 @@ package net.digitalid.core.asymmetrickey;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.testing.RootTest;
 
 import net.digitalid.database.auxiliary.Time;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
@@ -72,6 +74,12 @@ public class CryptographyTestBase extends RootTest {
         
         @Pure
         @Override
+        public @Nonnull Identity getIdentity(long key) throws DatabaseException, RecoveryException {
+            return createSemanticType(key, InternalNonHostIdentifier.with("todo@digitalid.net"));
+        }
+        
+        @Pure
+        @Override
         public @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws ExternalException {
             if (identifier instanceof HostIdentifier) {
                 return createHostIdentity(1L, (HostIdentifier) identifier);
@@ -85,7 +93,7 @@ public class CryptographyTestBase extends RootTest {
         
     }
     
-    private static @Nonnull IdentifierResolverForTest identifierResolverForTest;
+    protected static @Nonnull IdentifierResolverForTest identifierResolverForTest;
     
     /* -------------------------------------------------- Setup -------------------------------------------------- */
     

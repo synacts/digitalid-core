@@ -28,8 +28,8 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.exceptions.MissingSupportException;
-import net.digitalid.utility.exceptions.UncheckedException;
+import net.digitalid.utility.errors.SupportErrorBuilder;
+import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -101,14 +101,14 @@ public abstract class SymmetricKey extends RootClass {
                         instanceField.setAccessible(true);
                         defaultPolicy.add((Permission) instanceField.get(null));
                     } catch (@Nonnull ClassNotFoundException | NoSuchFieldException | IllegalArgumentException | SecurityException | IllegalAccessException exception) {
-                        throw UncheckedException.with("Your system allows only a maximal key length of " + length + " bits for symmetric encryption but a length of " + Parameters.ENCRYPTION_KEY.get() + " bits is required for security reasons."
+                        throw SupportErrorBuilder.withMessage("Your system allows only a maximal key length of " + length + " bits for symmetric encryption but a length of " + Parameters.ENCRYPTION_KEY.get() + " bits is required for security reasons."
                                 + "Please install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files from http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html for Java 8."
-                                + "(All you have to do is to download the files and replace with them 'local_policy.jar' and 'US_export_policy.jar' in '" + System.getProperty("java.home") + File.separator + "lib" + File.separator + "security" + File.separator + "'.)", exception);
+                                + "(All you have to do is to download the files and replace with them 'local_policy.jar' and 'US_export_policy.jar' in '" + System.getProperty("java.home") + File.separator + "lib" + File.separator + "security" + File.separator + "'.)").withCause(exception).build();
                     }
                 }
             }
         } catch (@Nonnull NoSuchAlgorithmException exception) {
-            throw MissingSupportException.with("Your system does not support the Advanced Encryption Standard (AES). Unfortunately, you are not able to use Digital ID for now.", exception);
+            throw SupportErrorBuilder.withMessage("Your system does not support the Advanced Encryption Standard (AES). Unfortunately, you are not able to use Digital ID for now.").withCause(exception).build();
         }
     }
     
@@ -164,7 +164,7 @@ public abstract class SymmetricKey extends RootClass {
     /**
      * Initializes and returns the cipher of this symmetric key.
      * 
-     * @param cipherMode e.g. Cipher.ENCRYPT_MODE or Cipher.DECRYPT_MODE
+     * @param cipherMode the cipher mode like Cipher.ENCRYPT_MODE or Cipher.DECRYPT_MODE.
      */
     @Pure
     public @Nonnull Cipher getCipher(@Nonnull InitializationVector initializationVector, int cipherMode) {
@@ -172,8 +172,8 @@ public abstract class SymmetricKey extends RootClass {
             final @Nonnull Cipher cipher = Cipher.getInstance(MODE);
             cipher.init(cipherMode, getKey(), initializationVector);
             return cipher;
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException  e) {
-            throw UncheckedException.with(e);
+        } catch (@Nonnull NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException  exception) {
+            throw SupportErrorBuilder.withMessage("Could not initialize the cipher.").withCause(exception).build();
         }
     }
     /**
@@ -186,13 +186,9 @@ public abstract class SymmetricKey extends RootClass {
         Require.that(offset + length <= bytes.length).orThrow("The indicated section may not exceed the given byte array.");
         
         try {
-            final @Nonnull Cipher cipher = Cipher.getInstance(MODE);
-            cipher.init(Cipher.ENCRYPT_MODE, getKey(), initializationVector);
-            return cipher.doFinal(bytes, offset, length);
-        } catch (@Nonnull NoSuchAlgorithmException | NoSuchPaddingException exception) {
-            throw MissingSupportException.with("Could not encrypt the given bytes.", exception);
-        } catch (@Nonnull InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException exception) {
-            throw UncheckedException.with("Could not encrypt the given bytes.", exception);
+            return getCipher(initializationVector, Cipher.ENCRYPT_MODE).doFinal(bytes, offset, length);
+        } catch (@Nonnull IllegalBlockSizeException | BadPaddingException exception) {
+            throw UncheckedExceptionBuilder.withCause(exception).build();
         }
     }
     
@@ -206,13 +202,9 @@ public abstract class SymmetricKey extends RootClass {
         Require.that(offset + length <= bytes.length).orThrow("The indicated section may not exceed the given byte array.");
         
         try {
-            final @Nonnull Cipher cipher = Cipher.getInstance(MODE);
-            cipher.init(Cipher.DECRYPT_MODE, getKey(), initializationVector);
-            return cipher.doFinal(bytes, offset, length);
-        } catch (@Nonnull NoSuchAlgorithmException | NoSuchPaddingException exception) {
-            throw MissingSupportException.with("Could not decrypt the given bytes.", exception);
-        } catch (@Nonnull InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException exception) {
-            throw UncheckedException.with("Could not decrypt the given bytes.", exception);
+            return getCipher(initializationVector, Cipher.DECRYPT_MODE).doFinal(bytes, offset, length);
+        } catch (@Nonnull IllegalBlockSizeException | BadPaddingException exception) {
+            throw UncheckedExceptionBuilder.withCause(exception).build();
         }
     }
     
