@@ -5,8 +5,10 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.list.FreezableList;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -18,6 +20,7 @@ import net.digitalid.database.property.value.WritablePersistentValueProperty;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
@@ -52,15 +55,14 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity<?>, Lon
      */
     @Pure
     @GenerateSynchronizedProperty
-//    @GenerateProperty(requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
-    public abstract @Nonnull WritablePersistentValueProperty<Agent, Boolean> removed();
+    public abstract @Nonnull WritablePersistentValueProperty<Agent, @Nonnull Boolean> removed();
     
     /**
      * Checks that this agent is not removed and throws a {@link RequestException} otherwise.
      */
     @Pure
-    public void checkNotRemoved() throws RequestException, DatabaseException {
-        if (removed().get()) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "The agent has been removed."); }
+    public void checkNotRemoved() throws RequestException, DatabaseException, RecoveryException {
+        if (removed().get()) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage("The agent has been removed.").build(); }
     }
     
     // TODO: How do we issue and revoke outgoing roles? I guess the outgoing role has to observe its own property.
@@ -99,7 +101,6 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity<?>, Lon
      */
     @Pure
     @GenerateSynchronizedProperty
-//    @GenerateProperty(requiredPermissionsToExecuteMethod = "key, value", requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
     public abstract @Nonnull WritablePersistentMapProperty<Agent, SemanticType, Boolean, ReadOnlyAgentPermissions, FreezableAgentPermissions> permissions();
     
     /* -------------------------------------------------- Restrictions -------------------------------------------------- */
@@ -112,8 +113,7 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity<?>, Lon
      */
     @Pure
     @GenerateSynchronizedProperty
-//    @GenerateProperty(requiredRestrictionsToExecuteMethod = "value", requiredAgentToExecuteMethod = "concept", requiredAgentToSeeMethod = "concept")
-    public abstract @Nonnull WritablePersistentValueProperty<Agent, Restrictions> restrictions();
+    public abstract @Nonnull WritablePersistentValueProperty<Agent, @Nonnull Restrictions> restrictions();
     
     /* -------------------------------------------------- Abstract -------------------------------------------------- */
     
@@ -178,7 +178,7 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity<?>, Lon
     @Pure
     @NonCommitting
     public void checkCovers(@Nonnull Agent agent) throws RequestException, DatabaseException {
-        if (!covers(agent)) { throw RequestException.with(RequestErrorCode.AUTHORIZATION, "The agent $ does not cover the agent $.", this, agent); }
+        if (!covers(agent)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage(Strings.format("The agent $ does not cover the agent $.", this, agent)).build(); }
     }
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
