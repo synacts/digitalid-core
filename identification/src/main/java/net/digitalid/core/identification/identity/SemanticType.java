@@ -17,13 +17,11 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.threading.Threading;
 import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.UniqueElements;
-import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -36,7 +34,6 @@ import net.digitalid.core.identification.annotations.type.loaded.LoadedRecipient
 import net.digitalid.core.identification.annotations.type.loaded.NonLoaded;
 import net.digitalid.core.identification.annotations.type.loaded.NonLoadedRecipient;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identification.identifier.NonHostIdentifier;
 
 /**
  * This class models a semantic type.
@@ -46,25 +43,7 @@ import net.digitalid.core.identification.identifier.NonHostIdentifier;
  */
 @Mutable
 @GenerateSubclass
-@GenerateConverter
 public abstract class SemanticType extends Type {
-    
-    /* -------------------------------------------------- Recover -------------------------------------------------- */
-    
-    /**
-     * Returns the identity of the given address.
-     */
-    @Pure
-    @Recover // TODO: Split into @Recover(Representation.INTERNAL) and @Recover(Representation.EXTERNAL) or something similar.
-    static @Nonnull SemanticType with(long key, @Nonnull NonHostIdentifier address) {
-        try {
-            // TODO: The following cast should probably not throw an internal exception.
-            return IdentifierResolver.resolve(address).castTo(SemanticType.class);
-        } catch (@Nonnull ExternalException exception) {
-            // TODO: How to handle this?
-            throw new RuntimeException(exception);
-        }
-    }
     
     // TODO: Find a way to map and load semantic types.
     

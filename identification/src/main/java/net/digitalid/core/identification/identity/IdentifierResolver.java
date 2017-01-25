@@ -6,10 +6,12 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.configuration.Configuration;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.identification.Category;
 import net.digitalid.core.identification.identifier.EmailIdentifier;
@@ -28,6 +30,13 @@ public abstract class IdentifierResolver {
     /* -------------------------------------------------- Interface -------------------------------------------------- */
     
     /**
+     * Returns the identity of the given key.
+     */
+    @Pure
+    @NonCommitting
+    public abstract @Nonnull Identity getIdentity(long key) throws DatabaseException, RecoveryException;
+    
+    /**
      * Returns the identity of the given identifier.
      * The identity is also established if required.
      */
@@ -43,6 +52,15 @@ public abstract class IdentifierResolver {
     public static final @Nonnull Configuration<IdentifierResolver> configuration = Configuration.withUnknownProvider();
     
     /* -------------------------------------------------- Static Access -------------------------------------------------- */
+    
+    /**
+     * Loads the identity with the given key.
+     */
+    @Pure
+    @NonCommitting
+    public static @Nonnull Identity load(long key) throws DatabaseException, RecoveryException {
+        return configuration.get().getIdentity(key);
+    }
     
     /**
      * Resolves the given identifier into an identity.
