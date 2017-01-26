@@ -7,7 +7,7 @@ import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.exceptions.CaseException;
+import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
@@ -69,7 +69,7 @@ public abstract class KeyChain<K extends AsymmetricKey> {
         for (@Nonnull Pair<@Nonnull Time, @Nonnull K> item : getItems()) {
             if (time.isGreaterThanOrEqualTo(item.get0())) { return item.get1(); }
         }
-        throw CaseException.with("time", time);
+        throw CaseExceptionBuilder.withVariable("time").withValue(time).build();
     }
     
     /* -------------------------------------------------- Modification -------------------------------------------------- */

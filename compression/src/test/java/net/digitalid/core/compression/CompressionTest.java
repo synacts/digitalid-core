@@ -10,7 +10,7 @@ import java.util.zip.InflaterInputStream;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.core.conversion.streams.BufferedInflaterInputStream;
+import net.digitalid.core.conversion.streams.input.BufferedInflaterInputStream;
 
 import org.junit.Assert;
 import org.junit.Test;

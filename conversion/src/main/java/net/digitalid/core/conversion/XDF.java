@@ -20,9 +20,11 @@ import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.exceptions.UncheckedException;
+import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.validation.annotations.size.Size;
 import net.digitalid.utility.validation.annotations.type.Utility;
+
+import net.digitalid.core.conversion.encoders.XDFEncoder;
 
 
 /**
@@ -72,7 +74,7 @@ public abstract class XDF {
             XDF.convert(object, converter, output);
             return digest.digest();
         } catch (@Nonnull NoSuchAlgorithmException exception) {
-            throw UncheckedException.with(exception);
+            throw UncheckedExceptionBuilder.withCause(exception).build();
         }
     }
     

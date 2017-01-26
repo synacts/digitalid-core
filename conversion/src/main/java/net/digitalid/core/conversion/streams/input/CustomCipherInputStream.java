@@ -1,4 +1,4 @@
-package net.digitalid.core.conversion.streams;
+package net.digitalid.core.conversion.streams.input;
 
 import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;

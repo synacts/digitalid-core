@@ -26,13 +26,13 @@ import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
 import net.digitalid.core.conversion.exceptions.StreamException;
-import net.digitalid.core.conversion.streams.BufferedInflaterInputStream;
-import net.digitalid.core.conversion.streams.CustomCipherInputStream;
+import net.digitalid.core.conversion.streams.input.BufferedInflaterInputStream;
+import net.digitalid.core.conversion.streams.input.CustomCipherInputStream;
 
 /**
  *
  */
-public class XDFDecoder implements Decoder<StreamException> {
+public abstract class XDFDecoder implements Decoder<StreamException> {
     
     /* -------------------------------------------------- Input Stream Stack Operations -------------------------------------------------- */
     

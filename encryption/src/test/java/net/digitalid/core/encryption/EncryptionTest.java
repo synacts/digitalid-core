@@ -19,8 +19,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.digitalid.utility.annotations.method.Pure;
 
-import net.digitalid.core.conversion.streams.CustomCipherInputStream;
-import net.digitalid.core.conversion.streams.NonClosingOutputStream;
+import net.digitalid.core.conversion.streams.input.CustomCipherInputStream;
+import net.digitalid.core.conversion.streams.output.NonClosingOutputStream;
 import net.digitalid.core.parameters.Parameters;
 import net.digitalid.core.symmetrickey.InitializationVector;
 import net.digitalid.core.symmetrickey.InitializationVectorBuilder;
