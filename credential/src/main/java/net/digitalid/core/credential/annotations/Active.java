@@ -26,7 +26,7 @@ import net.digitalid.core.credential.Credential;
  * This annotation indicates that a {@link Credential credential} is {@link Credential#isActive() active}.
  */
 @Documented
-@Target(ElementType.TYPE_USE)
+@Target({ElementType.TYPE_USE, ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
 @Retention(RetentionPolicy.RUNTIME)
 @ValueValidator(Active.Validator.class)
 public @interface Active {

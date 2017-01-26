@@ -26,7 +26,7 @@ import net.digitalid.utility.validation.contract.Contract;
  * @see OnClientRecipient
  */
 @Documented
-@Target(ElementType.TYPE_USE)
+@Target({ElementType.TYPE_USE, ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
 @Retention(RetentionPolicy.RUNTIME)
 @ValueValidator(OnClient.Validator.class)
 public @interface OnClient {

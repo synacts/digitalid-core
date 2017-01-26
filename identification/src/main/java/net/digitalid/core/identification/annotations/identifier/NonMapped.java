@@ -17,6 +17,6 @@ import net.digitalid.core.identification.identifier.Identifier;
  */
 @Documented
 // TODO: Implement a value validator instead: @TargetTypes(Identifier.class)
-@Target(ElementType.TYPE_USE)
+@Target({ElementType.TYPE_USE, ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
 @Retention(RetentionPolicy.CLASS)
 public @interface NonMapped {}
