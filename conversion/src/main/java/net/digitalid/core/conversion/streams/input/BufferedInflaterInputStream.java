@@ -10,11 +10,15 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.Review;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
-/**
- *
- */
+@Mutable
+@Review(date = "2017-01-27", author = Author.KASPAR_ETTER, comment = "Especially the finish method, which does nothing at the moment.")
 public class BufferedInflaterInputStream extends InflaterInputStream {
+    
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     public BufferedInflaterInputStream(@Nonnull InputStream inputStream, @Nonnull Inflater inflater, int size) {
         super(new BufferedInputStream(inputStream), inflater, size);
@@ -27,6 +31,8 @@ public class BufferedInflaterInputStream extends InflaterInputStream {
     public BufferedInflaterInputStream(@Nonnull InputStream inputStream) {
         this(inputStream, new Inflater());
     }
+    
+    /* -------------------------------------------------- Reading -------------------------------------------------- */
     
     @Impure
     @Override
@@ -43,4 +49,5 @@ public class BufferedInflaterInputStream extends InflaterInputStream {
     public @Nonnull InputStream finish() {
         return super.in;
     }
+    
 }

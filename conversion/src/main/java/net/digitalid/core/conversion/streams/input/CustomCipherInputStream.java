@@ -14,17 +14,22 @@ import javax.crypto.IllegalBlockSizeException;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.Review;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.math.Positive;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 /**
  * The custom cipher input stream can read encrypted data, decrypt it using a given cipher and, unlike 
  * Java's {@link CipherInputStream cipher input stream}, return an input stream which allows further reading 
  * plain text from.
  */
-@GenerateSubclass // TODO: Why is a subclass generated if it's not instantiated?
+@Mutable
+@GenerateSubclass
+@Review(date = "2017-01-27", author = Author.KASPAR_ETTER)
 public class CustomCipherInputStream extends FilterInputStream {
     
     /**
@@ -76,7 +81,7 @@ public class CustomCipherInputStream extends FilterInputStream {
      */
     @Pure
     public static @Nonnull CustomCipherInputStream with(@Nonnull InputStream inputStream, @Nonnull Cipher cipher) {
-        return new CustomCipherInputStream(inputStream, cipher);
+        return new CustomCipherInputStreamSubclass(inputStream, cipher);
     }
     
     /* -------------------------------------------------- Read -------------------------------------------------- */

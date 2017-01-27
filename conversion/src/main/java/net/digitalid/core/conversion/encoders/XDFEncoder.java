@@ -52,7 +52,7 @@ public abstract class XDFEncoder<@Unspecifiable EXCEPTION extends StreamExceptio
     
     /* -------------------------------------------------- Stream -------------------------------------------------- */
     
-    private @Nonnull WrappedOutputStream outputStream;
+    protected @Nonnull WrappedOutputStream outputStream;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -73,6 +73,7 @@ public abstract class XDFEncoder<@Unspecifiable EXCEPTION extends StreamExceptio
     @Impure
     @Override
     public <@Unspecifiable TYPE> void encodeObject(@Nonnull Converter<TYPE, ?> converter, @NonCaptured @Unmodified @Nonnull TYPE object) throws EXCEPTION {
+        // TODO: Handle the hierarchy here!
         converter.convert(object, this);
     }
     
@@ -172,7 +173,16 @@ public abstract class XDFEncoder<@Unspecifiable EXCEPTION extends StreamExceptio
     @Impure
     @Override
     public void encodeBinaryStream(@Nonnull InputStream inputStream, int length) throws EXCEPTION {
-        // TODO: Can we do anything better/smarter?
+        // TODO: Benchmark whether the commented code is faster.
+//        try {
+//            outputStream.writeInt(length);
+//            for (int i = 0; i < length; i++) {
+//                outputStream.write(inputStream.read());
+//
+//            }
+//        } catch (@Nonnull IOException exception) {
+//            throw createException(exception);
+//        }
         final @Nonnull byte[] buffer = new byte[length];
         int offset = 0;
         try {
