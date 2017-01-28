@@ -16,11 +16,13 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.ownership.Shared;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.errors.SupportErrorBuilder;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
+import net.digitalid.utility.validation.annotations.file.existence.Existent;
 import net.digitalid.utility.validation.annotations.size.Size;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
@@ -82,7 +84,7 @@ public abstract class XDF {
      * Recovers and returns an object with the given converter and provided object from the given byte array.
      */
     @Pure
-    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED provided, @NonCaptured @Unmodified @Nonnull byte[] bytes) throws RecoveryException {
+    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided, @NonCaptured @Unmodified @Nonnull byte[] bytes) throws RecoveryException {
         final @Nonnull ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
         try (@Nonnull MemoryDecoder decoder = MemoryDecoder.of(inputStream)) {
             return decoder.decodeObject(converter, provided);
@@ -95,7 +97,7 @@ public abstract class XDF {
      * Recovers and returns an object with the given converter and provided object from the given file.
      */
     @Pure
-    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED provided, @Nonnull File file) throws FileException, RecoveryException {
+    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided, @Nonnull @Existent File file) throws FileException, RecoveryException {
         try (@Nonnull FileDecoder decoder = FileDecoder.of(file)) {
             return decoder.decodeObject(converter, provided);
         }
@@ -105,7 +107,7 @@ public abstract class XDF {
      * Recovers and returns an object with the given converter and provided object from the given socket.
      */
     @Pure
-    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED provided, @Nonnull Socket socket) throws NetworkException, RecoveryException {
+    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided, @Nonnull Socket socket) throws NetworkException, RecoveryException {
         try (@Nonnull NetworkDecoder decoder = NetworkDecoder.of(socket)) {
             return decoder.decodeObject(converter, provided);
         }

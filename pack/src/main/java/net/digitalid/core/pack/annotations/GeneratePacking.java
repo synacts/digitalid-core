@@ -37,7 +37,7 @@ public @interface GeneratePacking {
         @Pure
         @Override
         protected void implementInterceptorMethod(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull MethodInformation method, @Nonnull String statement, @Nullable String resultVariable, @Nullable String defaultValue) {
-            javaFileGenerator.addStatement("return " + javaFileGenerator.importIfPossible(Pack.class) + ".pack(this, " + method.getContainingType().asElement().getSimpleName() + "Converter.INSTANCE)");
+            javaFileGenerator.addStatement("return " + javaFileGenerator.importIfPossible(Pack.class) + ".pack(" + method.getContainingType().asElement().getSimpleName() + "Converter.INSTANCE, this)");
         }
         
     }

@@ -1,29 +1,26 @@
 package net.digitalid.core.pack;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.Socket;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.annotations.ownership.NonCaptured;
-import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.annotations.ownership.Shared;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.file.existence.Existent;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.XDF;
+import net.digitalid.core.conversion.exceptions.FileException;
+import net.digitalid.core.conversion.exceptions.NetworkException;
 import net.digitalid.core.identification.identity.SemanticType;
 
 /**
@@ -54,8 +51,7 @@ public abstract class Pack {
      * Unpacks this pack with the given converter and the provided object.
      */
     @Pure
-    @TODO(task = "Throw a recovery and stream exception instead!", date = "2016-10-31", author = Author.KASPAR_ETTER)
-    public <TYPE, PROVIDED> @Nullable TYPE unpack(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED provided) throws RecoveryException {
+    public <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE unpack(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided) throws RecoveryException {
         return XDF.recover(converter, provided, getBytes());
     }
     
@@ -63,55 +59,44 @@ public abstract class Pack {
      * Packs the given object with the given converter by serializing its content and deriving the type from the given converter.
      */
     @Pure
-    @TODO(task = "Throw a stream exception instead!", date = "2016-10-31", author = Author.KASPAR_ETTER)
-    public static <TYPE> @Nonnull Pack pack(@Nullable TYPE object, @Nonnull Converter<TYPE, ?> converter) throws ExternalException {
-        return new PackSubclass(SemanticType.map(converter), XDF.convert(object, converter));
+    public static <@Unspecifiable TYPE> @Nonnull Pack pack(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object) {
+        return new PackSubclass(SemanticType.map(converter), XDF.convert(converter, object));
     }
     
     /* -------------------------------------------------- Load -------------------------------------------------- */
     
     /**
-     * Loads a pack from the given input stream.
-     */
-    @Pure
-    public static @Nonnull Pack loadFrom(@NonCaptured @Modified @Nonnull InputStream inputStream) throws ExternalException {
-        final @Nullable Pack pack = XDF.recover(PackConverter.INSTANCE, null, inputStream);
-        if (pack == null) { throw ExternalException.with("The recovered object should not be null."); }
-        return pack;
-    }
-    
-    /**
      * Loads a pack from the given file.
      */
     @Pure
-    public static @Nonnull Pack loadFrom(@Nonnull @Existent File file) throws ExternalException {
-        try {
-            return loadFrom(new FileInputStream(file));
-        } catch (@Nonnull FileNotFoundException exception) {
-            throw ExternalException.with(exception);
-        }
+    public static @Nonnull Pack loadFrom(@Nonnull @Existent File file) throws FileException, RecoveryException {
+        return XDF.recover(PackConverter.INSTANCE, null, file);
+    }
+    
+    /**
+     * Loads a pack from the given socket.
+     */
+    @Pure
+    public static @Nonnull Pack loadFrom(@Nonnull Socket socket) throws NetworkException, RecoveryException {
+        return XDF.recover(PackConverter.INSTANCE, null, socket);
     }
     
     /* -------------------------------------------------- Store -------------------------------------------------- */
     
     /**
-     * Stores this pack to the given output stream.
-     */
-    @Pure
-    public void storeTo(@NonCaptured @Modified @Nonnull OutputStream outputStream) throws ExternalException {
-        XDF.convert(this, PackConverter.INSTANCE, outputStream);
-    }
-    
-    /**
      * Stores this pack to the given file.
      */
     @Pure
-    public void storeTo(@Nonnull File file) throws ExternalException {
-        try {
-            storeTo(new FileOutputStream(file));
-        } catch (@Nonnull FileNotFoundException exception) {
-            throw ExternalException.with(exception);
-        }
+    public void storeTo(@Nonnull File file) throws FileException {
+        XDF.convert(PackConverter.INSTANCE, this, file);
+    }
+    
+    /**
+     * Stores this pack to the given socket.
+     */
+    @Pure
+    public void storeTo(@Nonnull Socket socket) throws NetworkException {
+        XDF.convert(PackConverter.INSTANCE, this, socket);
     }
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
