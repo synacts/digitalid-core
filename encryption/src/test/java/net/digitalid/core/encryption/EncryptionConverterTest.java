@@ -1,10 +1,6 @@
 package net.digitalid.core.encryption;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
@@ -28,7 +24,7 @@ public class EncryptionConverterTest extends CryptographyTestBase {
     
     @Test
     public void shouldConvertEncryptedObject() throws Exception {
-        // The identifier is the secret that we're sending.
+        // The identifier is the secret that we are encrypting.
         // TODO: this is probably confusing and we should change it to a secret-message object.
         final @Nonnull Identifier identifier = Identifier.with("alice@digitalid.net");
         final @Nonnull HostIdentifier identifierRecipient = HostIdentifier.with("digitalid.net");
@@ -37,17 +33,12 @@ public class EncryptionConverterTest extends CryptographyTestBase {
         final @Nonnull InitializationVector initializationVector = InitializationVectorBuilder.build();
         
         final @Nonnull Time time = TimeBuilder.build();
-        final @Nonnull Encryption<Identifier> encryptedIdentifier = EncryptionBuilder.<Identifier>withTime(time).withRecipient(identifierRecipient).withSymmetricKey(symmetricKey).withInitializationVector(initializationVector).withObject(identifier).build();
+        final @Nonnull Encryption<Identifier> encryptedIdentifier = EncryptionBuilder.withObject(identifier).withTime(time).withRecipient(identifierRecipient).withSymmetricKey(symmetricKey).withInitializationVector(initializationVector).build();
     
-        final @Nonnull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        XDF.convert(encryptedIdentifier, EncryptionConverter.getInstance(IdentifierConverter.INSTANCE), byteArrayOutputStream);
+        final @Nonnull byte[] encryptedBytes = XDF.convert(EncryptionConverter.getInstance(IdentifierConverter.INSTANCE), encryptedIdentifier);
     
-        final @Nonnull byte[] encryptedBytes = byteArrayOutputStream.toByteArray();
-        
-        final @Nonnull ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(encryptedBytes);
-        final @Nullable Encryption<Identifier> encryption = XDF.recover(EncryptionConverter.getInstance(IdentifierConverter.INSTANCE), null, byteArrayInputStream);
+        final @Nonnull Encryption<Identifier> encryption = XDF.recover(EncryptionConverter.getInstance(IdentifierConverter.INSTANCE), null, encryptedBytes);
     
-        assertNotNull(encryption);
         assertEquals(identifierRecipient, encryption.getRecipient());
         assertEquals(symmetricKey, encryption.getSymmetricKey());
         assertEquals(initializationVector, encryption.getInitializationVector());

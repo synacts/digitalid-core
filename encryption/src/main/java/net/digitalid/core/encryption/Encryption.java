@@ -4,8 +4,12 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.auxiliary.Time;
@@ -23,6 +27,14 @@ import net.digitalid.core.symmetrickey.SymmetricKey;
 @GenerateBuilder
 @GenerateSubclass
 public abstract class Encryption<@Unspecifiable TYPE> {
+    
+    /* -------------------------------------------------- Encrypted Object -------------------------------------------------- */
+    
+    /**
+     * Returns the object which has been or will be encrypted.
+     */
+    @Pure
+    public abstract @Nonnull TYPE getObject();
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
     
@@ -59,12 +71,18 @@ public abstract class Encryption<@Unspecifiable TYPE> {
     @Pure
     public abstract @Nonnull InitializationVector getInitializationVector();
     
-    /* -------------------------------------------------- Encrypted Object -------------------------------------------------- */
+    /* -------------------------------------------------- Public Key -------------------------------------------------- */
     
     /**
-     * Returns the object which has been or will be encrypted.
+     * Returns the public key of the recipient.
      */
     @Pure
-    public abstract @Nonnull TYPE getObject();
+    @Derive("net.digitalid.core.asymmetrickey.PublicKeyRetriever.retrieve(recipient, time)")
+    public abstract @Nonnull PublicKey getPublicKey();
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    @TODO(task = "Remove this constructor as soon as we can declare exceptions in derive expressions.", date = "2017-01-28", author = Author.KASPAR_ETTER)
+    protected Encryption() throws ExternalException {}
     
 }

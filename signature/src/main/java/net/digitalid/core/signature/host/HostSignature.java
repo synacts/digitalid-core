@@ -4,10 +4,12 @@ import java.math.BigInteger;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.math.Positive;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.auxiliary.Time;
 
@@ -19,9 +21,10 @@ import net.digitalid.core.signature.exceptions.InvalidHostSignatureException;
 /**
  *
  */
+@Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class HostSignature<T> extends Signature<T> {
+public abstract class HostSignature<@Unspecifiable TYPE> extends Signature<TYPE> {
     
     @Pure
     public abstract @Nonnull InternalIdentifier getSigner();

@@ -21,6 +21,7 @@ import net.digitalid.utility.annotations.method.Pure;
 
 import net.digitalid.core.conversion.streams.input.CustomCipherInputStream;
 import net.digitalid.core.conversion.streams.output.NonClosingOutputStream;
+import net.digitalid.core.conversion.streams.output.NonClosingOutputStreamBuilder;
 import net.digitalid.core.parameters.Parameters;
 import net.digitalid.core.symmetrickey.InitializationVector;
 import net.digitalid.core.symmetrickey.InitializationVectorBuilder;
@@ -30,9 +31,6 @@ import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *
- */
 public class EncryptionTest {
     
     public static final @Nonnull String MODE = "AES/CBC/PKCS5Padding";
@@ -482,7 +480,7 @@ public class EncryptionTest {
         final @Nonnull DataOutputStream wrappingOutputStream = new DataOutputStream(outputStream);
     
         wrappingOutputStream.writeUTF("pre-encryption");
-        final @Nonnull NonClosingOutputStream nonClosingOutputStream = new NonClosingOutputStream(wrappingOutputStream);
+        final @Nonnull NonClosingOutputStream nonClosingOutputStream = NonClosingOutputStreamBuilder.withOutputStream(wrappingOutputStream).build();
         final @Nonnull Cipher cipher = getEncryptCipher(symmetricKey, initializationVector);
         final @Nonnull CipherOutputStream cipherOutputStream = new CipherOutputStream(nonClosingOutputStream, cipher);
         final @Nonnull DataOutputStream dataOutputStream = new DataOutputStream(cipherOutputStream);

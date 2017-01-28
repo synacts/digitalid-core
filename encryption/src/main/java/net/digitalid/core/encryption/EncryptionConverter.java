@@ -7,12 +7,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.crypto.Cipher;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.exceptions.ConnectionException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.conversion.interfaces.Decoder;
 import net.digitalid.utility.conversion.interfaces.Encoder;
@@ -20,24 +24,23 @@ import net.digitalid.utility.conversion.model.CustomAnnotation;
 import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.exceptions.UncheckedException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.immutable.ImmutableMap;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.string.DomainName;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeConverter;
 
 import net.digitalid.core.asymmetrickey.PrivateKey;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
-import net.digitalid.core.asymmetrickey.PublicKey;
-import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
+import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.ElementConverter;
-import net.digitalid.core.group.Group;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.HostIdentifierConverter;
 import net.digitalid.core.symmetrickey.InitializationVector;
@@ -49,9 +52,10 @@ import net.digitalid.core.symmetrickey.SymmetricKeyConverter;
 import static net.digitalid.utility.conversion.model.CustomType.TUPLE;
 
 /**
- * 
+ * This class converts and recovers encrypted objects.
  */
-public class EncryptionConverter<TYPE> implements Converter<Encryption<TYPE>, Void> {
+@Immutable
+public class EncryptionConverter<@Unspecifiable TYPE> implements Converter<Encryption<TYPE>, Void> {
     
     /* -------------------------------------------------- Object Converter -------------------------------------------------- */
     
@@ -121,47 +125,44 @@ public class EncryptionConverter<TYPE> implements Converter<Encryption<TYPE>, Vo
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified Encryption<TYPE> object, @Nonnull @NonCaptured @Modified Encoder<X> encoder) throws ExternalException {
-        if (object == null) {
-            throw UncheckedException.with("Cannot convert encryption object that is null"); // TODO: Why not? Just encode it especially.
-        }
-        int i = 1;
+    public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@NonCaptured @Unmodified @Nonnull Encryption<TYPE> encryption, @NonCaptured @Modified @Nonnull Encoder<EXCEPTION> encoder) throws EXCEPTION {
+        encoder.encodeObject(TimeConverter.INSTANCE, encryption.getTime());
+        encoder.encodeObject(HostIdentifierConverter.INSTANCE, encryption.getRecipient());
+        final @Nonnull Element encryptedSymmetricKey = encryption.getPublicKey().getCompositeGroup().getElement(encryption.getSymmetricKey().getValue()).pow(encryption.getPublicKey().getE());
+        encoder.encodeObject(ElementConverter.INSTANCE, encryptedSymmetricKey);
+        encoder.encodeObject(InitializationVectorConverter.INSTANCE, encryption.getInitializationVector());
         
-        final @Nonnull SymmetricKey symmetricKey = object.getSymmetricKey();
-        final @Nonnull InitializationVector initializationVector = object.getInitializationVector();
-        
-        final @Nonnull Time time = object.getTime();
-        final @Nonnull HostIdentifier recipient = object.getRecipient();
-        i *= TimeConverter.INSTANCE.convert(time, encoder);
-        i *= HostIdentifierConverter.INSTANCE.convert(recipient, encoder);
-        final @Nonnull PublicKey publicKey = PublicKeyRetriever.retrieve(recipient, time);
-        final @Nonnull Element encryptedSymmetricKey = publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE());
-        i *= ElementConverter.INSTANCE.convert(encryptedSymmetricKey, encoder);
-        i *= InitializationVectorConverter.INSTANCE.convert(initializationVector, encoder);
-        
-        encoder.setEncryptionCipher(symmetricKey.getCipher(initializationVector, Cipher.ENCRYPT_MODE));
-        i *= objectConverter.convert(object.getObject(), encoder);
-        encoder.popEncryptionCipher();
-        return i;
+        encoder.startEncrypting(encryption.getSymmetricKey().getCipher(encryption.getInitializationVector(), Cipher.ENCRYPT_MODE));
+        encoder.encodeObject(objectConverter, encryption.getObject());
+        encoder.stopEncrypting();
     }
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
     
     @Pure
     @Override 
-    public <X extends ExternalException> @Nonnull Encryption<TYPE> recover(@Nonnull @NonCaptured @Modified Decoder<X> decoder, @Nullable Void provided) throws ExternalException {
-        final @Nonnull Time time = TimeConverter.INSTANCE.recover(decoder, null);
-        final @Nonnull HostIdentifier recipient = HostIdentifierConverter.INSTANCE.recover(decoder, null);
-        final @Nonnull PrivateKey privateKey = PrivateKeyRetriever.retrieve(recipient, time);
-        final @Nonnull Group compositeGroup = privateKey.getCompositeGroup();
-        final @Nonnull Element encryptedSymmetricKeyValue = ElementConverter.INSTANCE.recover(decoder, compositeGroup);
-        final @Nonnull SymmetricKey decryptedSymmetricKey = SymmetricKeyBuilder.buildWithValue(encryptedSymmetricKeyValue.pow(privateKey.getD()).getValue());
-        final @Nonnull InitializationVector initializationVector = InitializationVectorConverter.INSTANCE.recover(decoder, null);
+    public <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull Encryption<TYPE> recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, @Nullable Void provided) throws EXCEPTION, RecoveryException {
+        final @Nonnull Time time = decoder.decodeObject(TimeConverter.INSTANCE, null);
+        final @Nonnull HostIdentifier recipient = decoder.decodeObject(HostIdentifierConverter.INSTANCE, null);
+        final @Nonnull PrivateKey privateKey;
+        try {
+            privateKey = PrivateKeyRetriever.retrieve(recipient, time);
+        } catch (@Nonnull RequestException exception) {
+            throw RecoveryExceptionBuilder.withMessage(Strings.format("Could not retrieve the private key of $.", recipient)).withCause(exception).build();
+        }
+        final @Nonnull Element encryptedSymmetricKeyValue = decoder.decodeObject(ElementConverter.INSTANCE, privateKey.getCompositeGroup());
+        final @Nonnull SymmetricKey decryptedSymmetricKey = SymmetricKeyBuilder.buildWithValue(privateKey.powD(encryptedSymmetricKeyValue).getValue());
+        final @Nonnull InitializationVector initializationVector = decoder.decodeObject(InitializationVectorConverter.INSTANCE, null);
     
-        decoder.setDecryptionCipher(decryptedSymmetricKey.getCipher(initializationVector, Cipher.DECRYPT_MODE));
-        final TYPE object = objectConverter.recover(decoder, null);
-        decoder.popDecryptionCipher();
-        return EncryptionBuilder.<TYPE>withTime(time).withRecipient(recipient).withSymmetricKey(decryptedSymmetricKey).withInitializationVector(initializationVector).withObject(object).build();
+        decoder.startDecrypting(decryptedSymmetricKey.getCipher(initializationVector, Cipher.DECRYPT_MODE));
+        final TYPE object = decoder.decodeObject(objectConverter, null);
+        decoder.stopDecrypting();
+        
+        try {
+            return EncryptionBuilder.withObject(object).withTime(time).withRecipient(recipient).withSymmetricKey(decryptedSymmetricKey).withInitializationVector(initializationVector).build();
+        } catch (@Nonnull ExternalException exception) {
+            throw RecoveryExceptionBuilder.withMessage(Strings.format("Could not retrieve the public key of $.", recipient)).withCause(exception).build();
+        }
     }
     
 }

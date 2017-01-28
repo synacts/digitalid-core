@@ -56,7 +56,7 @@ public class CryptographyTestBase extends RootTest {
         
         @Pure
         @Override
-        public @Nonnull PrivateKey getPrivateKey(@Nonnull HostIdentity host, @Nonnull Time time) {
+        public @Nonnull PrivateKey getPrivateKey(@Nonnull HostIdentifier host, @Nonnull Time time) {
             return keyPair.getPrivateKey();
         }
         
