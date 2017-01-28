@@ -1,26 +1,23 @@
 package net.digitalid.core.conversion.value;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.conversion.converters.StringConverter;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.testing.RootTest;
+
+import net.digitalid.core.conversion.XDF;
 
 import org.junit.Test;
 
-public class StringConverterTest {
+public class StringConverterTest extends RootTest {
     
     @Test
-    public void shouldConvertString() throws Exception {
-        final @Nonnull String string = "Hello World!";
-        final @Nonnull ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        XDF.convert(string, StringConverter.INSTANCE, outputStream);
-        
-        final @Nonnull byte[] incomingBytes = outputStream.toByteArray();
-        
-        final @Nonnull ByteArrayInputStream inputStream = new ByteArrayInputStream(incomingBytes);
-//        final @Nonnull String recoveredString = XDF.recover(StringConverter.INSTANCE, null, inputStream);
-    
-//        Assert.assertEquals(string, recoveredString);
+    public void shouldConvertString() throws RecoveryException {
+        final @Nonnull String originalString = "Hello World!";
+        final @Nonnull byte[] bytes = XDF.convert(StringConverter.INSTANCE, originalString);
+        final @Nonnull String recoveredString = XDF.recover(StringConverter.INSTANCE, null, bytes);
+        assertEquals(originalString, recoveredString);
     }
     
 }

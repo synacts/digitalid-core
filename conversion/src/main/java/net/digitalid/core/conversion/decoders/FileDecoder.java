@@ -16,7 +16,7 @@ import net.digitalid.core.conversion.exceptions.FileException;
 import net.digitalid.core.conversion.exceptions.FileExceptionBuilder;
 
 /**
- * A file encoder encodes values as XDF to a file.
+ * A file decoder decodes values as XDF from a file.
  */
 @Mutable
 @GenerateSubclass

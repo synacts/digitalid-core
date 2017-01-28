@@ -1,5 +1,6 @@
 package net.digitalid.core.conversion;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
@@ -10,17 +11,22 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.errors.SupportErrorBuilder;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.validation.annotations.size.Size;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
+import net.digitalid.core.conversion.decoders.FileDecoder;
+import net.digitalid.core.conversion.decoders.MemoryDecoder;
+import net.digitalid.core.conversion.decoders.NetworkDecoder;
 import net.digitalid.core.conversion.encoders.FileEncoder;
 import net.digitalid.core.conversion.encoders.MemoryEncoder;
 import net.digitalid.core.conversion.encoders.NetworkEncoder;
@@ -72,16 +78,38 @@ public abstract class XDF {
     
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
-//    @Pure
-//    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nullable TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED externallyProvided, @NonCaptured @Modified @Nonnull InputStream inputStream) throws ExternalException {
-//        final @Nonnull XDFDecoder decoder = XDFDecoder.with(inputStream);
-//        return converter.recover(decoder, externallyProvided);
-//    }
-//    
-//    @Pure
-//    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nullable TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED externallyProvided, @NonCaptured @Unmodified @Nonnull byte[] bytes) throws ExternalException {
-//        return XDF.recover(converter, externallyProvided, new ByteArrayInputStream(bytes));
-//    }
+    /**
+     * Recovers and returns an object with the given converter and provided object from the given byte array.
+     */
+    @Pure
+    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED provided, @NonCaptured @Unmodified @Nonnull byte[] bytes) throws RecoveryException {
+        final @Nonnull ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+        try (@Nonnull MemoryDecoder decoder = MemoryDecoder.of(inputStream)) {
+            return decoder.decodeObject(converter, provided);
+        } catch (@Nonnull MemoryException exception) {
+            throw UncheckedExceptionBuilder.withCause(exception).build();
+        }
+    }
+    
+    /**
+     * Recovers and returns an object with the given converter and provided object from the given file.
+     */
+    @Pure
+    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED provided, @Nonnull File file) throws FileException, RecoveryException {
+        try (@Nonnull FileDecoder decoder = FileDecoder.of(file)) {
+            return decoder.decodeObject(converter, provided);
+        }
+    }
+    
+    /**
+     * Recovers and returns an object with the given converter and provided object from the given socket.
+     */
+    @Pure
+    public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, PROVIDED provided, @Nonnull Socket socket) throws NetworkException, RecoveryException {
+        try (@Nonnull NetworkDecoder decoder = NetworkDecoder.of(socket)) {
+            return decoder.decodeObject(converter, provided);
+        }
+    }
     
     /* -------------------------------------------------- Hashing -------------------------------------------------- */
     
