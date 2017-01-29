@@ -71,7 +71,7 @@ public abstract class SymmetricKey extends RootClass {
     public static void initializeKeyLength() {
         try {
             final int length = Cipher.getMaxAllowedKeyLength("AES");
-            if (length < Parameters.ENCRYPTION_KEY.get()) {
+            if (length < Parameters.SYMMETRIC_KEY.get()) {
                 if (System.getProperty("java.runtime.name").equals("Java(TM) SE Runtime Environment")) {
                     /*
                      * Do the following, but with reflection to bypass access checks (taken from http://stackoverflow.com/a/22492582):
@@ -101,7 +101,7 @@ public abstract class SymmetricKey extends RootClass {
                         instanceField.setAccessible(true);
                         defaultPolicy.add((Permission) instanceField.get(null));
                     } catch (@Nonnull ClassNotFoundException | NoSuchFieldException | IllegalArgumentException | SecurityException | IllegalAccessException exception) {
-                        throw SupportErrorBuilder.withMessage("Your system allows only a maximal key length of " + length + " bits for symmetric encryption but a length of " + Parameters.ENCRYPTION_KEY.get() + " bits is required for security reasons."
+                        throw SupportErrorBuilder.withMessage("Your system allows only a maximal key length of " + length + " bits for symmetric encryption but a length of " + Parameters.SYMMETRIC_KEY.get() + " bits is required for security reasons."
                                 + "Please install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files from http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html for Java 8."
                                 + "(All you have to do is to download the files and replace with them 'local_policy.jar' and 'US_export_policy.jar' in '" + System.getProperty("java.home") + File.separator + "lib" + File.separator + "security" + File.separator + "'.)").withCause(exception).build();
                     }
@@ -119,7 +119,7 @@ public abstract class SymmetricKey extends RootClass {
      */
     @Pure
     public static @Nonnull BigInteger getRandomValue() {
-        return new BigInteger(Parameters.ENCRYPTION_KEY.get(), new SecureRandom());
+        return new BigInteger(Parameters.SYMMETRIC_KEY.get(), new SecureRandom());
     }
     
     /**
@@ -134,7 +134,7 @@ public abstract class SymmetricKey extends RootClass {
     /**
      * Stores the length of symmetric keys in bytes.
      */
-    public static final int LENGTH = Parameters.ENCRYPTION_KEY.get() / 8;
+    public static final int LENGTH = Parameters.SYMMETRIC_KEY.get() / 8;
     
     /**
      * Derives the key from the given value.

@@ -8,7 +8,6 @@ import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
@@ -24,7 +23,6 @@ import net.digitalid.core.group.Exponent;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@GenerateConverter
 public interface SecretCommitment extends Commitment {
     
     /* -------------------------------------------------- Secret -------------------------------------------------- */

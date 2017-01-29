@@ -10,15 +10,19 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.exceptions.ConnectionException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.conversion.interfaces.Decoder;
 import net.digitalid.utility.conversion.interfaces.Encoder;
+import net.digitalid.utility.conversion.interfaces.GenericTypeConverter;
 import net.digitalid.utility.conversion.model.CustomAnnotation;
 import net.digitalid.utility.conversion.model.CustomField;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
@@ -26,32 +30,27 @@ import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
+import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeConverter;
 
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifierConverter;
-import net.digitalid.core.signature.client.ClientSignatureConverter;
-import net.digitalid.core.signature.host.HostSignatureConverter;
-
-import static net.digitalid.utility.conversion.model.CustomType.TUPLE;
+import net.digitalid.core.signature.client.ClientSignatureConverterBuilder;
+import net.digitalid.core.signature.host.HostSignatureConverterBuilder;
 
 /**
- * This class converts {@link Signature signatures}.
+ * This class converts and recovers a {@link Signature signature}.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class SignatureConverter<@Unspecifiable TYPE> implements Converter<Signature<TYPE>, Void> {
-    
-    /* -------------------------------------------------- Type Converter -------------------------------------------------- */
-    
-    @Pure
-    public abstract @Nonnull Converter<TYPE, Void> getTypeConverter();
+public abstract class SignatureConverter<@Unspecifiable OBJECT> implements GenericTypeConverter<OBJECT, Signature<OBJECT>, Void> {
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Class<? super Signature<TYPE>> getType() {
+    public @Nonnull Class<? super Signature<OBJECT>> getType() {
         return Signature.class;
     }
     
@@ -75,11 +74,11 @@ public abstract class SignatureConverter<@Unspecifiable TYPE> implements Convert
     
     @Pure
     @Override
-    public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
+    public @Nonnull @NonNullableElements ImmutableList<CustomField> getFields(@Nonnull Representation representation) {
         return ImmutableList.withElements(
-                CustomField.with(TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(PrimaryKey.class))),
-                CustomField.with(TUPLE.of(getTypeConverter()), "object", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))),
-                CustomField.with(TUPLE.of(InternalIdentifierConverter.INSTANCE), "subject", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class)))
+                CustomField.with(CustomType.TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(PrimaryKey.class))),
+                CustomField.with(CustomType.TUPLE.of(InternalIdentifierConverter.INSTANCE), "subject", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))),
+                CustomField.with(CustomType.TUPLE.of(getObjectConverter()), "object", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class)))
         );
     }
     
@@ -87,30 +86,29 @@ public abstract class SignatureConverter<@Unspecifiable TYPE> implements Convert
     
     @Pure
     @Override
-    public @Nullable @NonEmpty ImmutableList<@Nonnull Converter<? extends Signature<TYPE>, Void>> getSubtypeConverters() {
-        return ImmutableList.withElements(HostSignatureConverter.getInstance(getTypeConverter()), ClientSignatureConverter.getInstance(getTypeConverter()));
+    public @Nullable @NonEmpty ImmutableList<@Nonnull Converter<? extends Signature<OBJECT>, Void>> getSubtypeConverters() {
+        return ImmutableList.withElements(HostSignatureConverterBuilder.withObjectConverter(getObjectConverter()).build(), ClientSignatureConverterBuilder.withObjectConverter(getObjectConverter()).build());
     }
     
     /* -------------------------------------------------- Convert -------------------------------------------------- */
     
     @Pure
     @Override
-    public <EXCEPTION extends ExternalException> int convert(@NonCaptured @Unmodified @Nullable Signature<TYPE> signature, @NonCaptured @Modified @Nonnull Encoder<EXCEPTION> encoder) throws EXCEPTION {
-        int i = 1;
-        if (signature != null) {
-            encoder.encode(TimeConverter.INSTANCE, signature.getTime());
-        } else {
-            encoder.encode(TimeConverter.INSTANCE, null);
-        }
-        return i;
+    public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@NonCaptured @Unmodified @Nonnull Signature<OBJECT> signature, @NonCaptured @Modified @Nonnull Encoder<EXCEPTION> encoder) throws EXCEPTION {
+        encoder.encodeObject(TimeConverter.INSTANCE, signature.getTime());
+        encoder.encodeObject(InternalIdentifierConverter.INSTANCE, signature.getSubject());
+        encoder.encodeObject(getObjectConverter(), signature.getObject());
     }
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Capturable <EXCEPTION extends ExternalException> @Nullable Signature<TYPE> recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, Void provided) throws EXCEPTION {
-        return null;
+    public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull Signature<OBJECT> recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, Void provided) throws EXCEPTION, RecoveryException {
+        final @Nonnull Time time = decoder.decodeObject(TimeConverter.INSTANCE, null);
+        final @Nonnull InternalIdentifier subject = decoder.decodeObject(InternalIdentifierConverter.INSTANCE, null);
+        final @Nonnull OBJECT object = decoder.decodeObject(getObjectConverter(), null);
+        return SignatureBuilder.withObject(object).withSubject(subject).withTime(time).build();
     }
     
 }

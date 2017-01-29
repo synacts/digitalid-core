@@ -9,6 +9,14 @@
     
     <artifactId>core-conversion</artifactId>
     
+    <dependencies>
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-parameters</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    
     <build>
         <plugins>
             <plugin>

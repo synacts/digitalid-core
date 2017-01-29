@@ -198,7 +198,7 @@ public abstract class Client extends CoreSite<Client> {
     @Committing
     @PureWithSideEffects
     public void rotateSecret() throws InterruptedException, ExternalException {
-        final @Nonnull Exponent newSecret = ExponentBuilder.withValue(new BigInteger(Parameters.HASH.get(), new SecureRandom())).build();
+        final @Nonnull Exponent newSecret = ExponentBuilder.withValue(new BigInteger(Parameters.EXPONENT.get(), new SecureRandom())).build();
         final @Nonnull ReadOnlySet<NativeRole> roles = roles().get();
         DatabaseUtility.commit();
         

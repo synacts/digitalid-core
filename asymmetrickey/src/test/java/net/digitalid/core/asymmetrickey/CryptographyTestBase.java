@@ -107,7 +107,7 @@ public class CryptographyTestBase extends RootTest {
         Parameters.BLINDING_EXPONENT.set(96);
         Parameters.RANDOM_BLINDING_EXPONENT.set(128);
         Parameters.VERIFIABLE_ENCRYPTION.set(128);
-        Parameters.ENCRYPTION_KEY.set(128);
+        Parameters.SYMMETRIC_KEY.set(128);
         
         identifierResolverForTest = new IdentifierResolverForTest();
         final @Nonnull KeyPair keyPair = KeyPair.withRandomValues();

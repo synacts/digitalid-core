@@ -42,7 +42,7 @@ public class ClientSecretLoader {
             // TODO: Check the type of the loaded pack?
             return Pack.loadFrom(file).unpack(ExponentConverter.INSTANCE, null);
         } else {
-            final @Nonnull Exponent secret = ExponentBuilder.withValue(new BigInteger(Parameters.HASH.get(), new SecureRandom())).build();
+            final @Nonnull Exponent secret = ExponentBuilder.withValue(new BigInteger(Parameters.EXPONENT.get(), new SecureRandom())).build();
             setClientSecret(identifier, secret);
             return secret;
         }

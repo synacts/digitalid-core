@@ -46,7 +46,7 @@ public abstract class SaltedAgentPermissions extends RootClass {
      */
     @Pure
     public static @Nonnull SaltedAgentPermissions with(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) {
-        return new SaltedAgentPermissionsSubclass(new BigInteger(Parameters.HASH.get(), new SecureRandom()), permissions);
+        return new SaltedAgentPermissionsSubclass(new BigInteger(Parameters.EXPONENT.get(), new SecureRandom()), permissions);
     }
     
 }

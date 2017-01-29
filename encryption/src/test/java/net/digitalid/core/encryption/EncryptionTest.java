@@ -38,7 +38,7 @@ public class EncryptionTest {
     /**
      * Stores the length of symmetric keys in bytes.
      */
-    public static final int LENGTH = Parameters.ENCRYPTION_KEY.get() / 8;
+    public static final int LENGTH = Parameters.SYMMETRIC_KEY.get() / 8;
     
     @Pure
     protected @Nonnull Key deriveKey(@Nonnull BigInteger value) {

@@ -1,10 +1,6 @@
 package net.digitalid.core.signature.host;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.conversion.converters.StringConverter;
 
@@ -26,17 +22,12 @@ public class HostSignatureConverterTest extends CryptographyTestBase {
         final @Nonnull InternalIdentifier signer = InternalIdentifier.with("alice@digitalid.net");
         
         final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureBuilder.withObject(message).withSubject(subject).withSigner(signer).withTime(TimeBuilder.build()).build();
-    
-        final @Nonnull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        XDF.convert(signedIdentifier, HostSignatureConverter.getInstance(StringConverter.INSTANCE), byteArrayOutputStream);
-    
-        final @Nonnull byte[] signedBytes = byteArrayOutputStream.toByteArray();
-        Assert.assertTrue(signedBytes.length > 0);
         
-        final @Nonnull ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(signedBytes);
-        final @Nullable HostSignature<String> recoveredObject = XDF.recover(HostSignatureConverter.getInstance(StringConverter.INSTANCE), null, byteArrayInputStream);
+        final @Nonnull byte[] bytes = XDF.convert(HostSignatureConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build(), signedIdentifier);
+        Assert.assertTrue(bytes.length > 0);
         
-        assertNotNull(recoveredObject);
+        final @Nonnull HostSignature<String> recoveredObject = XDF.recover(HostSignatureConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build(), null, bytes);
         assertEquals(message, recoveredObject.getObject());
     }
+    
 }

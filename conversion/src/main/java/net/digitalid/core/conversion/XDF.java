@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import javax.annotation.Nonnull;
 
@@ -20,7 +19,6 @@ import net.digitalid.utility.annotations.ownership.Shared;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
-import net.digitalid.utility.errors.SupportErrorBuilder;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.validation.annotations.file.existence.Existent;
 import net.digitalid.utility.validation.annotations.size.Size;
@@ -35,6 +33,7 @@ import net.digitalid.core.conversion.encoders.NetworkEncoder;
 import net.digitalid.core.conversion.exceptions.FileException;
 import net.digitalid.core.conversion.exceptions.MemoryException;
 import net.digitalid.core.conversion.exceptions.NetworkException;
+import net.digitalid.core.parameters.Parameters;
 
 /**
  * This utility class helps converting and recovering objects to and from XDF.
@@ -125,18 +124,14 @@ public abstract class XDF {
      */
     @Pure
     public static <@Unspecifiable TYPE> @Nonnull @Size(32) byte[] hash(@Nonnull Converter<TYPE, ?> converter, @NonCaptured @Unmodified @Nonnull TYPE object) {
-        try {
-            final @Nonnull MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            final @Nonnull DigestOutputStream outputStream = new DigestOutputStream(NULL_OUTPUT_STREAM, messageDigest);
-            try (@Nonnull MemoryEncoder encoder = MemoryEncoder.of(outputStream)) {
-                encoder.encodeObject(converter, object);
-            } catch (@Nonnull MemoryException exception) {
-                throw UncheckedExceptionBuilder.withCause(exception).build();
-            }
-            return messageDigest.digest();
-        } catch (@Nonnull NoSuchAlgorithmException exception) {
-            throw SupportErrorBuilder.withMessage("The message digest 'SHA-256' is not available.").withCause(exception).build();
+        final @Nonnull MessageDigest messageDigest = Parameters.HASH_FUNCTION.get().produce();
+        final @Nonnull DigestOutputStream outputStream = new DigestOutputStream(NULL_OUTPUT_STREAM, messageDigest);
+        try (@Nonnull MemoryEncoder encoder = MemoryEncoder.of(outputStream)) {
+            encoder.encodeObject(converter, object);
+        } catch (@Nonnull MemoryException exception) {
+            throw UncheckedExceptionBuilder.withCause(exception).build();
         }
+        return messageDigest.digest();
     }
     
 }

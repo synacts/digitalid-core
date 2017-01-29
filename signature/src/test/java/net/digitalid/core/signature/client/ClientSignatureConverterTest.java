@@ -1,11 +1,10 @@
 package net.digitalid.core.signature.client;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import net.digitalid.utility.conversion.converters.StringConverter;
 
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
@@ -15,9 +14,6 @@ import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.commitment.SecretCommitment;
 import net.digitalid.core.commitment.SecretCommitmentBuilder;
 import net.digitalid.core.conversion.XDF;
-import net.digitalid.core.conversion.value.testentities.CustomString;
-import net.digitalid.core.conversion.value.testentities.CustomStringBuilder;
-import net.digitalid.core.conversion.value.testentities.CustomStringConverter;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
@@ -32,7 +28,7 @@ public class ClientSignatureConverterTest extends CryptographyTestBase {
     
     @Test
     public void shouldSignAndVerify() throws Exception {
-        final @Nonnull CustomString message = CustomStringBuilder.withValue("This is a secret message").build();
+        final @Nonnull String message = "This is a secret message";
         final @Nonnull HostIdentifier hostIdentifier = HostIdentifier.with("digitalid.net");
         final @Nonnull InternalIdentifier subject = InternalIdentifier.with("bob@digitalid.net");
         
@@ -44,20 +40,14 @@ public class ClientSignatureConverterTest extends CryptographyTestBase {
 //        final @Nonnull BigInteger value = new BigInteger("4");
         final @Nonnull Exponent secret = ExponentBuilder.withValue(BigInteger.TEN).build();
         
-        final @Nonnull SecretCommitment commitment = SecretCommitmentBuilder.withHost(hostIdentity).withTime(time).withPublicKey(publicKey).withSecret(secret).build();
+        final @Nonnull SecretCommitment secretCommitment = SecretCommitmentBuilder.withHost(hostIdentity).withTime(time).withPublicKey(publicKey).withSecret(secret).build();
         
-        final @Nonnull ClientSignature<CustomString> signedMessage = ClientSignatureBuilder.withObject(message).withSubject(subject).withSecretCommitment(commitment).withTime(time).build(); 
-    
-        final @Nonnull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        XDF.convert(signedMessage, ClientSignatureConverter.getInstance(CustomStringConverter.INSTANCE), byteArrayOutputStream);
-    
-        final @Nonnull byte[] signedBytes = byteArrayOutputStream.toByteArray();
-        Assert.assertTrue(signedBytes.length > 0);
+        final @Nonnull ClientSignature<String> signedMessage = ClientSignatureBuilder.withObject(message).withSubject(subject).withCommitment(secretCommitment).withTime(time).build(); 
         
-        final @Nonnull ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(signedBytes);
-        final @Nullable ClientSignature<CustomString> recoveredObject = XDF.recover(ClientSignatureConverter.getInstance(CustomStringConverter.INSTANCE), null, byteArrayInputStream);
+        final @Nonnull byte[] bytes = XDF.convert(ClientSignatureConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build(), signedMessage);
+        Assert.assertTrue(bytes.length > 0);
         
-        assertNotNull(recoveredObject);
+        final @Nonnull ClientSignature<String> recoveredObject = XDF.recover(ClientSignatureConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build(), null, bytes);
         assertEquals(message, recoveredObject.getObject());
     }
     

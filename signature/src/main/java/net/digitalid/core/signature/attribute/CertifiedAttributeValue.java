@@ -14,6 +14,7 @@ import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.exceptions.InactiveSignatureException;
+import net.digitalid.core.signature.exceptions.InactiveSignatureExceptionBuilder;
 import net.digitalid.core.signature.host.HostSignature;
 
 /**
@@ -68,7 +69,7 @@ public abstract class CertifiedAttributeValue extends AttributeValue {
      */
     @Pure
     public void checkIsValid(@Nonnull Time time) throws InactiveSignatureException {
-        if (!isValid(time)) { throw InactiveSignatureException.get(getSignature()); }
+        if (!isValid(time)) { throw InactiveSignatureExceptionBuilder.withSignature(getSignature()).build(); }
     }
     
 }

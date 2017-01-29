@@ -30,7 +30,7 @@ import net.digitalid.core.signature.host.HostSignature;
 @Referenced // TODO: Rather @CreateTable(inheritance = true, name = "signature', module = "Concept.MODULE")?
 @GenerateBuilder
 @GenerateSubclass
-public abstract class Signature<@Unspecifiable TYPE> extends RootClass {
+public abstract class Signature<@Unspecifiable OBJECT> extends RootClass {
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
     
@@ -38,7 +38,7 @@ public abstract class Signature<@Unspecifiable TYPE> extends RootClass {
      * Returns the wrapped object that has been or will be signed.
      */
     @Pure
-    public abstract @Nonnull TYPE getObject();
+    public abstract @Nonnull OBJECT getObject();
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
     

@@ -18,7 +18,7 @@ public class ClientSecretLoaderTest extends CryptographyTestBase {
 
     @Test
     public void testSecretPersistence() throws ExternalException {
-        final @Nonnull Exponent secret = ExponentBuilder.withValue(new BigInteger(Parameters.HASH.get(), new SecureRandom())).build();
+        final @Nonnull Exponent secret = ExponentBuilder.withValue(new BigInteger(Parameters.EXPONENT.get(), new SecureRandom())).build();
         ClientSecretLoader.store("test.secret", secret);
         final @Nonnull Exponent actual = ClientSecretLoader.load("test.secret");
         assertEquals(secret, actual);

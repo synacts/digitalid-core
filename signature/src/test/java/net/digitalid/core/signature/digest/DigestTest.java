@@ -10,18 +10,17 @@ import java.util.Random;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.core.parameters.Parameters;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *
- */
 public class DigestTest {
     
     @Test
     public void shouldProduceSameDigest() throws Exception {
         final @Nonnull Random random = new Random();
-        final @Nonnull MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        final @Nonnull MessageDigest messageDigest = Parameters.HASH_FUNCTION.get().produce();
         final @Nonnull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final @Nonnull DigestOutputStream digestOutputStream = new DigestOutputStream(byteArrayOutputStream, messageDigest);
         
@@ -46,7 +45,7 @@ public class DigestTest {
     @Test
     public void shouldAllowPreAndPostFillingOfOutputStream() throws Exception {
         final @Nonnull Random random = new Random();
-        final @Nonnull MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        final @Nonnull MessageDigest messageDigest = Parameters.HASH_FUNCTION.get().produce();
         final @Nonnull ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     
         final @Nonnull byte[] preDigest = new byte[29];

@@ -79,7 +79,7 @@ public abstract class IdentityConverter<@Unspecifiable IDENTITY extends Identity
     public @Nonnull @NonNullableElements ImmutableList<CustomField> getFields(@Nonnull Representation representation) {
         if (representation == Representation.INTERNAL) {
             return internalFields;
-        } else if (representation == Representation.INTERNAL) {
+        } else if (representation == Representation.EXTERNAL) {
             return externalFields;
         } else {
             throw CaseExceptionBuilder.withVariable("representation").withValue(representation).build();
@@ -94,7 +94,7 @@ public abstract class IdentityConverter<@Unspecifiable IDENTITY extends Identity
         final @Nonnull Representation representation = encoder.getRepresentation();
         if (representation == Representation.INTERNAL) {
             encoder.encodeInteger64(identity.getKey());
-        } else if (representation == Representation.INTERNAL) {
+        } else if (representation == Representation.EXTERNAL) {
             encoder.encodeObject(IdentifierConverter.INSTANCE, identity.getAddress());
         } else {
             throw CaseExceptionBuilder.withVariable("representation").withValue(representation).build();
@@ -112,7 +112,7 @@ public abstract class IdentityConverter<@Unspecifiable IDENTITY extends Identity
             if (representation == Representation.INTERNAL) {
                 final long key = decoder.decodeInteger64();
                 identity = IdentifierResolver.load(key);
-            } else if (representation == Representation.INTERNAL) {
+            } else if (representation == Representation.EXTERNAL) {
                 final @Nonnull Identifier address = decoder.decodeObject(IdentifierConverter.INSTANCE, null);
                 identity = IdentifierResolver.resolve(address);
             } else {

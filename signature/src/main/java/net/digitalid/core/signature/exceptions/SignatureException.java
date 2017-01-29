@@ -1,6 +1,7 @@
 package net.digitalid.core.signature.exceptions;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.ExternalException;
@@ -13,6 +14,7 @@ import net.digitalid.core.signature.Signature;
  * 
  * @see ExpiredSignatureException
  * @see InvalidSignatureException
+ * @see InactiveSignatureException
  */
 @Immutable
 public abstract class SignatureException extends ExternalException {
@@ -20,31 +22,25 @@ public abstract class SignatureException extends ExternalException {
     /* -------------------------------------------------- Signature -------------------------------------------------- */
     
     /**
-     * Stores the signature that has expired or is invalid.
-     */
-    private final @Nonnull Signature<?> signature;
-    
-    /**
      * Returns the signature that has expired or is invalid.
-     * 
-     * @return the signature that has expired or is invalid.
      */
     @Pure
-    public @Nonnull Signature<?> getSignature() {
-        return signature;
+    public abstract @Nonnull Signature<?> getSignature();
+    
+    /* -------------------------------------------------- Message -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull String getMessage() {
+        return "A signature has expired or is invalid.";
     }
     
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    /* -------------------------------------------------- Cause -------------------------------------------------- */
     
-    /**
-     * Creates a new signature exception with the given signature.
-     * 
-     * @param signature the signature that has expired or is invalid.
-     */
-    protected SignatureException(@Nonnull Signature<?> signature) {
-        super("A signature has expired or is invalid.");
-        
-        this.signature = signature;
+    @Pure
+    @Override
+    public @Nullable Throwable getCause() {
+        return null;
     }
     
 }

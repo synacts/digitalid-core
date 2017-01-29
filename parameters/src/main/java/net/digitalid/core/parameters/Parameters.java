@@ -1,8 +1,13 @@
 package net.digitalid.core.parameters;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.configuration.Configuration;
+import net.digitalid.utility.errors.SupportErrorBuilder;
+import net.digitalid.utility.functional.interfaces.Producer;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 /**
@@ -19,7 +24,7 @@ public abstract class Parameters {
     /**
      * The bit-length of the hash function and certain random values.
      */
-    public static final @Nonnull Configuration<Integer> HASH = Configuration.with(256);
+    public static final @Nonnull Configuration<Integer> EXPONENT = Configuration.with(256);
     
     /**
      * The bit-length of the random commitment exponent.
@@ -54,6 +59,21 @@ public abstract class Parameters {
     /**
      * The bit-length of the symmetric encryption key.
      */
-    public static final @Nonnull Configuration<Integer> ENCRYPTION_KEY = Configuration.with(192);
+    public static final @Nonnull Configuration<Integer> SYMMETRIC_KEY = Configuration.with(192);
+    
+    /**
+     * The hash function used throughout the library.
+     */
+    public static final @Nonnull Configuration<Producer<MessageDigest>> HASH_FUNCTION = Configuration.withUnknownProvider();
+    
+    static {
+        HASH_FUNCTION.set(() -> {
+            try {
+                return MessageDigest.getInstance("SHA-256");
+            } catch (@Nonnull NoSuchAlgorithmException exception) {
+                throw SupportErrorBuilder.withMessage("The hashing algorithm 'SHA-256' is not supported on this platform.").withCause(exception).build();
+            }
+        });
+    }
     
 }

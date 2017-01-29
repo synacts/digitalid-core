@@ -2,18 +2,17 @@ package net.digitalid.core.asymmetrickey;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
-import net.digitalid.utility.errors.SupportErrorBuilder;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.core.group.Element;
+import net.digitalid.core.parameters.Parameters;
 
 /**
  * Generates cryptographic hashes.
@@ -26,17 +25,13 @@ public abstract class HashGenerator {
      */
     @Pure
     public static @Nonnull BigInteger generateHash(@NonCaptured @Unmodified @Nonnull @NonNullableElements Element... elements) {
-        try {
-            final @Nonnull MessageDigest instance = MessageDigest.getInstance("SHA-256");
-            for (@Nonnull Element element : elements) {
-                final @Nonnull byte[] bytes = element.getValue().toByteArray();
-                instance.update(bytes); // TODO: Verify that this works!
-                instance.update((byte) 0);
-            }
-            return new BigInteger(1, instance.digest());
-        } catch (@Nonnull NoSuchAlgorithmException exception) {
-            throw SupportErrorBuilder.withMessage("The hashing algorithm 'SHA-256' is not supported on this platform.").withCause(exception).build();
+        final @Nonnull MessageDigest instance = Parameters.HASH_FUNCTION.get().produce();
+        for (@Nonnull Element element : elements) {
+            final @Nonnull byte[] bytes = element.getValue().toByteArray();
+            instance.update(bytes); // TODO: Verify that this works!
+            instance.update((byte) 0);
         }
+        return new BigInteger(1, instance.digest());
     }
     
 }
