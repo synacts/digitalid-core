@@ -20,14 +20,19 @@ import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.conversion.interfaces.Encoder;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.method.Ensures;
 import net.digitalid.utility.validation.annotations.method.Requires;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.size.Size;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -73,8 +78,27 @@ public abstract class XDFEncoder<@Unspecifiable EXCEPTION extends StreamExceptio
     @Impure
     @Override
     public <@Unspecifiable TYPE> void encodeObject(@Nonnull Converter<TYPE, ?> converter, @NonCaptured @Unmodified @Nonnull TYPE object) throws EXCEPTION {
-        // TODO: Handle the hierarchy here!
+        final @Nullable @NonNullableElements @NonEmpty ImmutableList<? extends Converter<? extends TYPE, ?>> subtypeConverters = converter.getSubtypeConverters();
+        if (subtypeConverters != null) {
+            int i = 0;
+            for (@Nonnull Converter<? extends TYPE, ?> subtypeConverter : subtypeConverters) {
+                if (subtypeConverter.getType().isInstance(object)) {
+                    encodeInteger32(i);
+                    encodeObjectWithCasting(subtypeConverter, object);
+                    return;
+                }
+                i++;
+            }
+            encodeInteger32(-1);
+        }
         converter.convert(object, this);
+    }
+    
+    @Impure
+    @SuppressWarnings("unchecked")
+    @TODO(task = "Is there another/better way to achieve this?", date = "2017-01-29", author = Author.KASPAR_ETTER)
+    private <@Unspecifiable TYPE> void encodeObjectWithCasting(@Nonnull Converter<TYPE, ?> converter, @NonCaptured @Unmodified @Nonnull Object object) throws EXCEPTION {
+        encodeObject(converter, (TYPE) object);
     }
     
     @Impure

@@ -29,10 +29,13 @@ import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.conversion.interfaces.Decoder;
 import net.digitalid.utility.functional.failable.FailableCollector;
 import net.digitalid.utility.functional.interfaces.UnaryFunction;
+import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.method.Ensures;
 import net.digitalid.utility.validation.annotations.method.Requires;
 import net.digitalid.utility.validation.annotations.size.Empty;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.size.Size;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -79,7 +82,13 @@ public abstract class XDFDecoder<@Unspecifiable EXCEPTION extends StreamExceptio
     @Impure
     @Override
     public <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE decodeObject(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided) throws EXCEPTION, RecoveryException {
-        // TODO: Handle the hierarchy here!
+        final @Nullable @NonNullableElements @NonEmpty ImmutableList<? extends Converter<? extends TYPE, PROVIDED>> subtypeConverters = converter.getSubtypeConverters();
+        if (subtypeConverters != null) {
+            final int i = decodeInteger32();
+            if (i >= 0) {
+                return decodeObject(subtypeConverters.get(i), provided);
+            }
+        }
         return converter.recover(this, provided);
     }
     
