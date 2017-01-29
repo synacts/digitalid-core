@@ -9,7 +9,6 @@ import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.contracts.Validate;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -84,12 +83,9 @@ public abstract class HashedOrSaltedAgentPermissions extends RootClass {
     protected abstract @Nullable BigInteger getStoredHash();
     
     @Pure
+    @SuppressWarnings("null")
     protected @Nonnull BigInteger deriveHash() {
-        try {
-            return getStoredHash() != null ? getStoredHash() : new BigInteger(1, XDF.hash(getSaltedPermissions(), SaltedAgentPermissionsConverter.INSTANCE));
-        } catch (@Nonnull ExternalException exception) {
-            throw new RuntimeException(exception); // TODO: How to handle or propagate such exceptions?
-        }
+        return getStoredHash() != null ? getStoredHash() : new BigInteger(1, XDF.hash(SaltedAgentPermissionsConverter.INSTANCE, getSaltedPermissions()));
     }
     
     /**
@@ -115,11 +111,11 @@ public abstract class HashedOrSaltedAgentPermissions extends RootClass {
      * Creates new hashed or salted permissions with the given permissions.
      */
     @Pure
-    public static @Nonnull HashedOrSaltedAgentPermissions with(@Nonnull @Frozen ReadOnlyAgentPermissions permissions, boolean exposed) throws ExternalException {
+    public static @Nonnull HashedOrSaltedAgentPermissions with(@Nonnull @Frozen ReadOnlyAgentPermissions permissions, boolean exposed) {
         if (exposed) {
             return new HashedOrSaltedAgentPermissionsSubclass(SaltedAgentPermissions.with(permissions), null);
         } else {
-            return new HashedOrSaltedAgentPermissionsSubclass(null, new BigInteger(1, XDF.hash(SaltedAgentPermissions.with(permissions), SaltedAgentPermissionsConverter.INSTANCE)));
+            return new HashedOrSaltedAgentPermissionsSubclass(null, new BigInteger(1, XDF.hash(SaltedAgentPermissionsConverter.INSTANCE, SaltedAgentPermissions.with(permissions))));
         }
     }
     

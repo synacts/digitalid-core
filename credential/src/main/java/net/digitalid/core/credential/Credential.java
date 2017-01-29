@@ -10,7 +10,6 @@ import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.contracts.Validate;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Derive;
@@ -58,11 +57,7 @@ public abstract class Credential extends RootClass {
     
     @Pure
     protected @Nonnull Exponent deriveO() {
-        try {
-            return ExponentBuilder.withValue(new BigInteger(1, XDF.hash(getExposedExponent(), ExposedExponentConverter.INSTANCE))).build();
-        } catch (@Nonnull ExternalException exception) {
-            throw new RuntimeException(exception); // TODO: How to handle or propagate such exceptions?
-        }
+        return ExponentBuilder.withValue(new BigInteger(1, XDF.hash(ExposedExponentConverter.INSTANCE, getExposedExponent()))).build();
     }
     
     /**

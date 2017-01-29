@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
@@ -52,12 +54,8 @@ public abstract class ExposedExponent extends RootClass {
     /* -------------------------------------------------- Public Key -------------------------------------------------- */
     
     @Pure
-    protected @Nonnull PublicKey derivePublicKey() {
-        try {
-            return PublicKeyRetriever.retrieve(getIssuer().getAddress().getHostIdentifier(), getIssuance());
-        } catch (@Nonnull ExternalException exception) {
-            throw new RuntimeException(exception); // TODO: How to handle or propagate such exceptions?
-        }
+    protected @Nonnull PublicKey derivePublicKey() throws ExternalException {
+        return PublicKeyRetriever.retrieve(getIssuer().getAddress().getHostIdentifier(), getIssuance());
     }
     
     /**
@@ -90,5 +88,10 @@ public abstract class ExposedExponent extends RootClass {
      */
     @Pure
     public abstract @Nullable Pack getAttributeContent();
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    @TODO(task = "Remove as soon as derive statements can indicate exceptions.", date = "2017-01-29", author = Author.KASPAR_ETTER)
+    protected ExposedExponent() throws ExternalException {}
     
 }

@@ -9,7 +9,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Validate;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Default;
@@ -95,11 +94,7 @@ public abstract class ClientCredential extends Credential {
     @CallSuper
     public void validate() {
         Validate.that(getExposedExponent().getHashedOrSaltedPermissions().areExposed()).orThrow("The salted permissions have to be provided for client credentials.");
-        try {
-            Validate.that(getRestrictions() == null || new BigInteger(1, XDF.hash(getRestrictions(), RestrictionsConverter.INSTANCE)).equals(getV().getValue())).orThrow("If the restrictions are not null, their hash has to equal v.");
-        } catch (@Nonnull ExternalException exception) {
-            throw new RuntimeException(exception); // TODO: How to handle or propagate such exceptions?
-        }
+        Validate.that(getRestrictions() == null || new BigInteger(1, XDF.hash(RestrictionsConverter.INSTANCE, getRestrictions())).equals(getV().getValue())).orThrow("If the restrictions are not null, their hash has to equal v.");
         Validate.that(!isOneTime() || isAttributeBased()).orThrow("If the credential can be used only once, it has to be attribute-based.");
         final @Nonnull PublicKey publicKey = getExposedExponent().getPublicKey();
         Validate.that(publicKey.getAo().pow(getO()).equals(getC().pow(getE()).multiply(publicKey.getAb().pow(getB())).multiply(publicKey.getAu().pow(getU())).multiply(publicKey.getAi().pow(getI())).multiply(publicKey.getAv().pow(getV())))).orThrow("The credential issued by $ is invalid.", getExposedExponent().getIssuer().getAddress());
