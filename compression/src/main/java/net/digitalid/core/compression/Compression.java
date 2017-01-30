@@ -15,9 +15,12 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class Compression<@Unspecifiable TYPE> extends RootClass {
+public abstract class Compression<@Unspecifiable OBJECT> extends RootClass {
     
+    /**
+     * Returns the object that was or will be compressed.
+     */
     @Pure
-    public abstract @Nonnull TYPE getObject();
+    public abstract @Nonnull OBJECT getObject();
     
 }

@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Mutable;
@@ -22,6 +24,7 @@ import net.digitalid.core.signature.exceptions.InvalidSignatureExceptionBuilder;
 @Mutable
 @GenerateBuilder
 @GenerateSubclass
+@TODO(task = "I think the signing should not be part of the conversion. Otherwise, a signature (like a certificate) cannot be stored. Another solution might be to wrap signatures in packs so that their byte encoding can be accessed (or implement this here directly).", date = "2017-01-30", author = Author.KASPAR_ETTER)
 public abstract class HostSignature<@Unspecifiable OBJECT> extends Signature<OBJECT> {
     
     /* -------------------------------------------------- Signer -------------------------------------------------- */

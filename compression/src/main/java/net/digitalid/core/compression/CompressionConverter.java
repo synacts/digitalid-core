@@ -4,60 +4,41 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.enumerations.Representation;
-import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.exceptions.ConnectionException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Decoder;
 import net.digitalid.utility.conversion.interfaces.Encoder;
+import net.digitalid.utility.conversion.interfaces.GenericTypeConverter;
+import net.digitalid.utility.conversion.model.CustomAnnotation;
 import net.digitalid.utility.conversion.model.CustomField;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.conversion.model.CustomType;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.string.DomainName;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
- * 
- * @see Deflater
- * @see Inflater
+ * This class converts and recovers a {@link Compression compression}.
  */
-@TODO(task = "Use the @GenerateSubclass mechanism to simplify this class.", date = "2016-12-27", author = Author.KASPAR_ETTER)
-public class CompressionConverter<@Unspecifiable TYPE> implements Converter<Compression<TYPE>, Void> {
-    
-    /* -------------------------------------------------- Object Converter -------------------------------------------------- */
-    
-    private final @Nonnull Converter<TYPE, ?> objectConverter;
-    
-    private final int deflaterMode;
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    private CompressionConverter(@Nonnull Converter<TYPE, ?> objectConverter, int deflaterMode) {
-        this.objectConverter = objectConverter;
-        this.deflaterMode = deflaterMode;
-    }
-    
-    @Pure
-    public static <T> @Nonnull CompressionConverter<T> getInstance(@Nonnull Converter<T, ?> objectConverter) {
-        return new CompressionConverter<>(objectConverter, Deflater.DEFAULT_COMPRESSION);
-    }
-    
-    @Pure
-    public static <T> @Nonnull CompressionConverter<T> getInstance(@Nonnull Converter<T, ?> objectConverter, int deflaterMode) {
-        return new CompressionConverter<>(objectConverter, deflaterMode);
-    }
+@Immutable
+@GenerateBuilder
+@GenerateSubclass
+public abstract class CompressionConverter<@Unspecifiable OBJECT> implements GenericTypeConverter<OBJECT, Compression<OBJECT>, Void> {
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Class<? super Compression<TYPE>> getType() {
+    public @Nonnull Class<? super Compression<OBJECT>> getType() {
         return Compression.class;
     }
     
@@ -81,31 +62,31 @@ public class CompressionConverter<@Unspecifiable TYPE> implements Converter<Comp
     
     @Pure
     @Override
-    public @Nonnull ImmutableList<CustomField> getFields(@Nonnull Representation representation) {
-        return objectConverter.getFields(representation);
+    public @Nonnull @NonNullableElements ImmutableList<CustomField> getFields(@Nonnull Representation representation) {
+        return ImmutableList.withElements(
+                CustomField.with(CustomType.TUPLE.of(getObjectConverter()), "object", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class)))
+        );
     }
     
     /* -------------------------------------------------- Convert -------------------------------------------------- */
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified Compression<TYPE> compression, @Nonnull @Modified @NonCaptured Encoder<X> encoder) throws ExternalException {
-        encoder.setCompression(new Deflater(deflaterMode));
-        objectConverter.convert(compression == null ? null : compression.getObject(), encoder);
-        encoder.popCompression();
-        return 1;
+    public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@NonCaptured @Unmodified @Nonnull Compression<OBJECT> compression, @NonCaptured @Modified @Nonnull Encoder<EXCEPTION> encoder) throws EXCEPTION {
+        encoder.startCompressing(new Deflater(Deflater.DEFAULT_COMPRESSION));
+        encoder.encodeObject(getObjectConverter(), compression.getObject());
+        encoder.stopCompressing();
     }
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
     
     @Pure
     @Override
-    public <X extends ExternalException> @Nullable Compression<TYPE> recover(@Nonnull @Modified @NonCaptured Decoder<X> decoder, @Nullable Void externallyProvided) throws ExternalException {
-        decoder.setDecompression(new Inflater());
-        final @Nullable TYPE object = objectConverter.recover(decoder, null);
-        final Compression<TYPE> compression = CompressionBuilder.withObject(object).build();
-        decoder.popDecompression();
-        return compression;
+    public <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull Compression<OBJECT> recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, Void provided) throws EXCEPTION, RecoveryException {
+        decoder.startDecompressing(new Inflater());
+        final @Nonnull OBJECT object = decoder.decodeObject(getObjectConverter(), null);
+        decoder.stopDecompressing();
+        return CompressionBuilder.withObject(object).build();
     }
     
 }

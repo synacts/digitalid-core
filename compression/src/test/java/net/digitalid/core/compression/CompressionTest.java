@@ -15,9 +15,6 @@ import net.digitalid.core.conversion.streams.input.BufferedInflaterInputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *
- */
 public class CompressionTest {
     
     @Test
