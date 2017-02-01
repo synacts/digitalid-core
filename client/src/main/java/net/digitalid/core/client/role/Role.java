@@ -199,7 +199,7 @@ public abstract class Role extends RootClass implements NonHostEntity<Client> {
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull Role with(@Nonnull Client site, long key) /*throws DatabaseException */{
+    public static @Nonnull Role with(@Nonnull Client unit, long key) /*throws DatabaseException */{
         // TODO: Think about how to recover roles.
         throw new UnsupportedOperationException();
     }

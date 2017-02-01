@@ -27,8 +27,9 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
-import net.digitalid.database.interfaces.DatabaseUtility;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
+import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
@@ -36,7 +37,7 @@ import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.commitment.CommitmentBuilder;
-import net.digitalid.core.entity.CoreSite;
+import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;
@@ -53,7 +54,7 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class Client extends CoreSite<Client> {
+public abstract class Client extends CoreUnit implements Subject<Client> {
     
     /* -------------------------------------------------- Stop -------------------------------------------------- */
     
@@ -91,14 +92,6 @@ public abstract class Client extends CoreSite<Client> {
 //        return "REFERENCES " + this + "role (role) ON DELETE CASCADE";
 //    }
     
-    /* -------------------------------------------------- Name -------------------------------------------------- */
-    
-    /**
-     * Returns the name of this client that is used for accreditation.
-     */
-    @Pure
-    public abstract @Nonnull @MaxSize(50) String getName();
-    
     /* -------------------------------------------------- Identifier -------------------------------------------------- */
     
     /**
@@ -107,12 +100,20 @@ public abstract class Client extends CoreSite<Client> {
     @Pure
     public abstract @Nonnull @DomainName @MaxSize(62) String getIdentifier();
     
-    /* -------------------------------------------------- Schema Name -------------------------------------------------- */
+    /* -------------------------------------------------- Name -------------------------------------------------- */
     
     @Pure
     @Override
     @Derive("(Character.isDigit(identifier.charAt(0)) ? \"_\" : \"\") + identifier.replace(\".\", \"_\").replace(\"-\", \"$\")")
-    public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getSchemaName();
+    public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getName();
+    
+    /* -------------------------------------------------- Display Name -------------------------------------------------- */
+    
+    /**
+     * Returns the name of this client that is used for accreditation.
+     */
+    @Pure
+    public abstract @Nonnull @MaxSize(50) String getDisplayName();
     
     /* -------------------------------------------------- Preferred Permissions -------------------------------------------------- */
     
@@ -148,7 +149,7 @@ public abstract class Client extends CoreSite<Client> {
     
     @Pure
     @Override
-    public final @Nonnull Client getSite() {
+    public final @Nonnull Client getUnit() {
         return this;
     }
     
@@ -200,7 +201,7 @@ public abstract class Client extends CoreSite<Client> {
     public void rotateSecret() throws InterruptedException, ExternalException {
         final @Nonnull Exponent newSecret = ExponentBuilder.withValue(new BigInteger(Parameters.EXPONENT.get(), new SecureRandom())).build();
         final @Nonnull ReadOnlySet<NativeRole> roles = roles().get();
-        DatabaseUtility.commit();
+        Database.instance.get().commit();
         
         for (@Nonnull NativeRole role : roles) {
 //            final @Nonnull Commitment newCommitment = getCommitment(role.getIssuer().getAddress(), newSecret);

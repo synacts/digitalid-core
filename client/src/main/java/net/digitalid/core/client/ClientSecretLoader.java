@@ -8,15 +8,15 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.configuration.Configuration;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.file.Files;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
+import net.digitalid.core.conversion.exceptions.FileException;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.group.ExponentConverter;
@@ -35,8 +35,7 @@ public class ClientSecretLoader {
      * Returns the secret of the client with the given identifier.
      */
     @Pure
-    @TODO(task = "Throw a net.digitalid.core.conversion.FileException instead.", date = "2016-12-08", author = Author.KASPAR_ETTER)
-    public @Nonnull Exponent getClientSecret(@Nonnull @DomainName @MaxSize(63) String identifier) throws ExternalException {
+    public @Nonnull Exponent getClientSecret(@Nonnull @DomainName @MaxSize(63) String identifier) throws FileException, RecoveryException {
         final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier + ".client.xdf");
         if (file.exists()) {
             // TODO: Check the type of the loaded pack?
@@ -52,10 +51,9 @@ public class ClientSecretLoader {
      * Sets the secret of the client with the given identifier.
      */
     @Impure
-    @TODO(task = "Throw a net.digitalid.core.conversion.FileException instead.", date = "2016-12-08", author = Author.KASPAR_ETTER)
-    public void setClientSecret(@Nonnull @DomainName @MaxSize(63) String identifier, @Nonnull Exponent secret) throws ExternalException {
+    public void setClientSecret(@Nonnull @DomainName @MaxSize(63) String identifier, @Nonnull Exponent secret) throws FileException {
         final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier + ".client.xdf");
-        Pack.pack(secret, ExponentConverter.INSTANCE).storeTo(file);
+        Pack.pack(ExponentConverter.INSTANCE, secret).storeTo(file);
     }
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
