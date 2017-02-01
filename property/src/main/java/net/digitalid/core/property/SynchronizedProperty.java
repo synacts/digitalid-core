@@ -2,6 +2,7 @@ package net.digitalid.core.property;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.property.Observer;
@@ -22,28 +23,12 @@ import net.digitalid.core.subject.CoreSubject;
  */
 @Mutable
 @ThreadSafe
-public interface SynchronizedProperty<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, ENTRY extends PersistentPropertyEntry<CONCEPT>, OBSERVER extends Observer> extends PersistentProperty<CONCEPT, ENTRY, OBSERVER> {
-    
-    /* -------------------------------------------------- Concept -------------------------------------------------- */
-    
-    /**
-     * Returns the concept to which this property belongs.
-     */
-    @Pure
-    public @Nonnull CONCEPT getConcept();
-    
-    /* -------------------------------------------------- Subject -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public default @Nonnull CONCEPT getSubject() {
-        return getConcept();
-    }
+public interface SynchronizedProperty<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable ENTRY extends PersistentPropertyEntry<SUBJECT>, @Unspecifiable OBSERVER extends Observer> extends PersistentProperty<SUBJECT, ENTRY, OBSERVER> {
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, ENTRY, ?> getTable();
+    public @Nonnull SynchronizedPropertyTable<ENTITY, KEY, SUBJECT, ENTRY, ?> getTable();
     
 }

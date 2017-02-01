@@ -81,7 +81,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      */
     @NonCommitting
     @PureWithSideEffects
-    protected abstract void executeOnBoth() throws DatabaseException;
+    protected abstract void executeOnBoth() throws DatabaseException, RecoveryException;
     
     /**
      * Executes this action on the client.
@@ -89,7 +89,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
     @NonCommitting
     @OnClientRecipient
     @PureWithSideEffects
-    public void executeOnClient() throws DatabaseException {
+    public void executeOnClient() throws DatabaseException, RecoveryException {
         executeOnBoth();
     }
     
@@ -146,7 +146,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      */
     @Pure
     @OnClientRecipient
-    public abstract @Nullable InternalAction getReverse() throws DatabaseException;
+    public abstract @Nullable InternalAction getReverse();
     
     /**
      * Reverses this internal action on the client if this action can be reversed.
@@ -154,7 +154,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
     @NonCommitting
     @OnClientRecipient
     @PureWithSideEffects
-    public void reverseOnClient() throws DatabaseException {
+    public void reverseOnClient() throws DatabaseException, RecoveryException {
         final @Nullable InternalAction reverse = getReverse();
         if (reverse != null) { reverse.executeOnClient(); }
     }

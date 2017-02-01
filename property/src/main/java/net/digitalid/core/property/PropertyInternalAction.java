@@ -3,6 +3,7 @@ package net.digitalid.core.property;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
@@ -28,7 +29,7 @@ import net.digitalid.core.subject.CoreSubject;
  * @see ValuePropertyInternalAction
  */
 @Immutable
-public abstract class PropertyInternalAction<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, PROPERTY extends SynchronizedProperty<ENTITY, KEY, CONCEPT, ?, ?>> extends InternalAction {
+public abstract class PropertyInternalAction<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable PROPERTY extends SynchronizedProperty<ENTITY, KEY, SUBJECT, ?, ?>> extends InternalAction {
     
     /* -------------------------------------------------- Property -------------------------------------------------- */
     
@@ -43,13 +44,13 @@ public abstract class PropertyInternalAction<ENTITY extends Entity<?>, KEY, CONC
     @Pure
     @Override
     public @Nonnull NonHostEntity<?> getEntity() {
-        return (NonHostEntity) getProperty().getConcept().getEntity();
+        return (NonHostEntity) getProperty().getSubject().getEntity();
     }
     
     @Pure
     @Override
     public @Nullable InternalIdentifier getProvidedSubject() {
-        return getProperty().getConcept().getEntity().getIdentity().getAddress();
+        return getProperty().getSubject().getEntity().getIdentity().getAddress();
     }
     
 //    @Pure

@@ -32,55 +32,55 @@ import net.digitalid.core.subject.CoreSubject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface RequiredAuthorization<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable CONCEPT extends CoreSubject<ENTITY, KEY>, VALUE> {
+public interface RequiredAuthorization<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, VALUE> {
     
     /**
      * Returns a function that determines the required permissions to set or add the given value to the property of the given concept.
      */
     @Pure
     @Default("(concept, value) -> ReadOnlyAgentPermissions.NONE")
-    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToExecuteMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull SUBJECT, @Nonnull VALUE, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToExecuteMethod();
     
     /**
      * Returns a function that determines the required restrictions to set or add the given value to the property of the given concept.
      */
     @Pure
     @Default("(concept, value) -> Restrictions.MIN")
-    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nonnull Restrictions> getRequiredRestrictionsToExecuteMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull SUBJECT, @Nonnull VALUE, @Nonnull Restrictions> getRequiredRestrictionsToExecuteMethod();
     
     /**
      * Returns a function that determines the required agent to set or add the given value to the property of the given concept.
      */
     @Pure
     @Default("(concept, value) -> null")
-    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nullable Agent> getRequiredAgentToExecuteMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull SUBJECT, @Nonnull VALUE, @Nullable Agent> getRequiredAgentToExecuteMethod();
     
     /**
      * Returns a function that determines the required permissions to see the given value being set or added to the property of the given concept.
      */
     @Pure
     @Default("(concept, value) -> ReadOnlyAgentPermissions.NONE")
-    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToSeeMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull SUBJECT, @Nonnull VALUE, @Nonnull @Frozen ReadOnlyAgentPermissions> getRequiredPermissionsToSeeMethod();
     
     /**
      * Returns a function that determines the required restrictions to see the given value being set or added to the property of the given concept.
      */
     @Pure
     @Default("(concept, value) -> Restrictions.MIN")
-    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nonnull Restrictions> getRequiredRestrictionsToSeeMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull SUBJECT, @Nonnull VALUE, @Nonnull Restrictions> getRequiredRestrictionsToSeeMethod();
     
     /**
      * Returns a function that determines the required agent to see the given value being set or added to the property of the given concept.
      */
     @Pure
     @Default("(concept, value) -> null")
-    public abstract @Nonnull BinaryFunction<@Nonnull CONCEPT, @Nonnull VALUE, @Nullable Agent> getRequiredAgentToSeeMethod();
+    public abstract @Nonnull BinaryFunction<@Nonnull SUBJECT, @Nonnull VALUE, @Nullable Agent> getRequiredAgentToSeeMethod();
     
     /**
      * Returns a function that determines, based on the given permissions, restrictions and agent, the condition with which the returned state is restricted.
      */
     @Pure
-    @Default(".digitalid.database.dialect.expression.bool.SQLBooleanLiteral.TRUE")
+    @Default("triplet -> net.digitalid.database.dialect.expression.bool.SQLBooleanLiteral.TRUE")
     @TODO(task = "Improve the flexibility so that tables can also be joined.", date = "2017-01-19", author = Author.KASPAR_ETTER)
     public abstract @Nonnull UnaryFunction<@Nonnull Triplet<@Nonnull ReadOnlyAgentPermissions, @Nonnull Restrictions, @Nullable Agent>, @Nonnull SQLBooleanExpression> getStateFilter();
     

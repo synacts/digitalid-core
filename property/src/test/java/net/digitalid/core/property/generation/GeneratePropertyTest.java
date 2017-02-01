@@ -13,8 +13,8 @@ import net.digitalid.database.auxiliary.None;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuilder;
+import net.digitalid.core.property.RequiredAuthorization;
+import net.digitalid.core.property.RequiredAuthorizationBuilder;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.restrictions.RestrictionsBuilder;
 import net.digitalid.core.subject.CoreServiceCoreSubject;
@@ -25,7 +25,7 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 @GenerateConverter
 abstract class GeneratePropertyClass extends CoreServiceCoreSubject<NonHostEntity<?>, None> {
     
-    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity<?>, None, GeneratePropertyClass, String> PASSWORD = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, None, GeneratePropertyClass, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withOnlyForClients(true).withWriteToNode(true).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> Restrictions.ONLY_FOR_CLIENTS).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, None, GeneratePropertyClass, String> PASSWORD = RequiredAuthorizationBuilder.<NonHostEntity<?>, None, GeneratePropertyClass, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withOnlyForClients(true).withWriteToNode(true).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> Restrictions.ONLY_FOR_CLIENTS).build();
     
     @Pure
     @Default("\"\"")

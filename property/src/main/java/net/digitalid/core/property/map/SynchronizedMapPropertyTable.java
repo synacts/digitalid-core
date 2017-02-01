@@ -2,6 +2,8 @@ package net.digitalid.core.property.map;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
@@ -14,7 +16,7 @@ import net.digitalid.database.property.map.PersistentMapPropertyEntry;
 import net.digitalid.database.property.map.PersistentMapPropertyEntryConverter;
 import net.digitalid.database.property.map.PersistentMapPropertyTable;
 
-import net.digitalid.core.entity.CoreSite;
+import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedPropertyTable;
 import net.digitalid.core.subject.CoreSubject;
@@ -25,7 +27,7 @@ import net.digitalid.core.subject.CoreSubject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SynchronizedMapPropertyTable<ENTITY extends Entity<?>, KEY, CONCEPT extends CoreSubject<ENTITY, KEY>, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentMapPropertyTable<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, CONCEPT, PersistentMapPropertyEntry<CONCEPT, MAP_KEY, MAP_VALUE>, MAP_KEY> {
+public interface SynchronizedMapPropertyTable<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable MAP_KEY, @Unspecifiable MAP_VALUE, @Specifiable PROVIDED_FOR_KEY, @Specifiable PROVIDED_FOR_VALUE> extends PersistentMapPropertyTable<CoreUnit, SUBJECT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE>, SynchronizedPropertyTable<ENTITY, KEY, SUBJECT, PersistentMapPropertyEntry<SUBJECT, MAP_KEY, MAP_VALUE>, MAP_KEY> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
@@ -33,6 +35,6 @@ public interface SynchronizedMapPropertyTable<ENTITY extends Entity<?>, KEY, CON
     @Override
     @TODO(task = "Is it really necessary to override this method manually?", date = "2016-11-12", author = Author.KASPAR_ETTER)
     @Derive("net.digitalid.database.property.map.PersistentMapPropertyEntryConverterBuilder.withPropertyTable(this).build()")
-    public @Nonnull PersistentMapPropertyEntryConverter<CoreSite<?>, CONCEPT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> getEntryConverter();
+    public @Nonnull PersistentMapPropertyEntryConverter<CoreUnit, SUBJECT, MAP_KEY, MAP_VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> getEntryConverter();
     
 }
