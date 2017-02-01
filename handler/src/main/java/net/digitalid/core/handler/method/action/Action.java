@@ -7,6 +7,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -50,7 +51,7 @@ public abstract class Action extends MethodImplementation<NonHostEntity<?>> impl
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public abstract @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException;
+    public abstract @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- Auditable -------------------------------------------------- */
     

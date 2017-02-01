@@ -8,6 +8,7 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -18,6 +19,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.handler.method.InternalMethod;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
@@ -58,7 +60,7 @@ public abstract class InternalQuery extends Query<NonHostEntity<?>> implements I
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public @Nonnull QueryReply<NonHostEntity<?>> executeOnHost() throws RequestException, DatabaseException {
+    public @Nonnull QueryReply<NonHostEntity<?>> executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         Require.that(hasBeenReceived()).orThrow("This internal query can only be executed if it has been received.");
         
         final @Nullable Signature<?> signature = getSignature();
@@ -71,7 +73,7 @@ public abstract class InternalQuery extends Query<NonHostEntity<?>> implements I
             presentPermissions = presentAgent.permissions().get();
             presentRestrictions = presentAgent.restrictions().get();
         } else {
-            if (!(signature instanceof CredentialsSignature<?>)) { throw RequestException.with(RequestErrorCode.SIGNATURE, "Internal queries of a non-core service have to be signed with credentials."); }
+            if (!(signature instanceof CredentialsSignature<?>)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.SIGNATURE).withMessage("Internal queries of a non-core service have to be signed with credentials.").build(); }
             final @Nonnull CredentialsSignature<?> credentialsSignature = (CredentialsSignature<?>) signature;
             presentPermissions = null; // TODO: Get the permissions from the credentials signature.
             presentRestrictions = null; // TODO: Get the restrictions from the credentials signature.

@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -17,6 +18,7 @@ import net.digitalid.core.entity.annotations.OnClientRecipient;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.handler.method.InternalMethod;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.ActionReply;
@@ -95,11 +97,11 @@ public abstract class InternalAction extends Action implements InternalMethod {
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException {
+    public @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         Require.that(hasBeenReceived()).orThrow("This internal action can only be executed if it has been received.");
         
         final @Nullable Signature<?> signature = getSignature();
-        if (signature instanceof CredentialsSignature<?> && !((CredentialsSignature<?>) signature).isLodged()) { throw RequestException.with(RequestErrorCode.SIGNATURE, "The credentials signature of internal actions has to be lodged."); }
+        if (signature instanceof CredentialsSignature<?> && !((CredentialsSignature<?>) signature).isLodged()) { throw RequestExceptionBuilder.withCode(RequestErrorCode.SIGNATURE).withMessage("The credentials signature of internal actions has to be lodged.").build(); }
         
         final @Nonnull ReadOnlyAgentPermissions presentPermissions;
         final @Nonnull Restrictions presentRestrictions;
@@ -112,7 +114,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
             final @Nullable Agent requiredAgent = getRequiredAgentToExecuteMethod();
             if (requiredAgent != null) { presentAgent.checkCovers(requiredAgent); }
         } else {
-            if (!(signature instanceof CredentialsSignature<?>)) { throw RequestException.with(RequestErrorCode.SIGNATURE, "Internal actions of a non-core service have to be signed with credentials."); }
+            if (!(signature instanceof CredentialsSignature<?>)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.SIGNATURE).withMessage("Internal actions of a non-core service have to be signed with credentials.").build(); }
             final @Nonnull CredentialsSignature<?> credentialsSignature = (CredentialsSignature<?>) signature;
             presentPermissions = null; // TODO: Get the permissions from the credentials signature.
             presentRestrictions = null; // TODO: Get the restrictions from the credentials signature.

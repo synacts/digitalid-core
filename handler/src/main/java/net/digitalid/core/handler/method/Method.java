@@ -14,8 +14,9 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Validate;
-import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -117,7 +118,7 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public @Nullable Reply<ENTITY> executeOnHost() throws RequestException, DatabaseException;
+    public @Nullable Reply<ENTITY> executeOnHost() throws RequestException, DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- Send -------------------------------------------------- */
     
@@ -126,8 +127,8 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     public default <R extends Reply<ENTITY>> @Nullable /* R */ Pack send() throws ExternalException {
         try (@Nonnull Socket socket = new Socket("id." + getRecipient().getString(), Request.PORT.get())) {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
-            pack().storeTo(socket.getOutputStream());
-            return Pack.loadFrom(socket.getInputStream());
+            pack().storeTo(socket);
+            return Pack.loadFrom(socket);
         } catch (@Nonnull IOException exception) {
             throw new RuntimeException(exception); // TODO
         }

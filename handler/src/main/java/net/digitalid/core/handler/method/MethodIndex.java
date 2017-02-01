@@ -12,10 +12,11 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.core.exceptions.request.RequestErrorCode;
-import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.Signature;
@@ -44,9 +45,9 @@ public abstract class MethodIndex {
     @TODO(task = "Provide only the signature but with an appropriate generic type?", date = "2016-11-07", author = Author.KASPAR_ETTER)
     public static @Nonnull Method<?> get(@Nonnull Pack pack, @Nonnull Signature<?> signature) throws ExternalException {
         final @Nullable Converter<? extends Method<?>, ? /* @Nonnull Signature<?> */> converter = converters.get(pack.getType());
-        if (converter == null) { throw RequestException.with(RequestErrorCode.METHOD, "No method could be found for the type $.", pack.getType()); }
+        if (converter == null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.METHOD).withMessage(Strings.format("No method could be found for the type $.", pack.getType())).build(); }
         final @Nullable Method<?> method = pack.unpack(converter, null /* signature */);
-        if (method == null) { throw RequestException.with(RequestErrorCode.METHOD, "The method could not be recovered for the type $.", pack.getType()); }
+        if (method == null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.METHOD).withMessage(Strings.format("The method could not be recovered for the type $.", pack.getType())).build(); }
         return method;
     }
     

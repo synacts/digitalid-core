@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -52,6 +53,6 @@ public abstract class Query<ENTITY extends Entity<?>> extends MethodImplementati
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public abstract @Nonnull QueryReply<ENTITY> executeOnHost() throws RequestException, DatabaseException;
+    public abstract @Nonnull QueryReply<ENTITY> executeOnHost() throws RequestException, DatabaseException, RecoveryException;
     
 }
