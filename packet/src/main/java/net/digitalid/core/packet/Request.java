@@ -328,10 +328,8 @@ public abstract class Request extends Packet {
         // TODO: Use the specific NetworkExceptions.
         try (@Nonnull Socket socket = new Socket("id." + getEncryption().getRecipient().getString(), PORT.get())) {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
-            XDF.convert(Pack.pack(this, null /* RequestConverter.INSTANCE */), PackConverter.INSTANCE, socket.getOutputStream()); // TODO
-            final @Nullable Pack pack = XDF.recover(PackConverter.INSTANCE, null, socket.getInputStream());
-            // TODO: Do we need to check the recovered object for null?
-            assert pack != null;
+            XDF.convert(PackConverter.INSTANCE, Pack.pack(null /* RequestConverter.INSTANCE */, this), socket); // TODO
+            final @Nonnull Pack pack = XDF.recover(PackConverter.INSTANCE, null, socket);
             return pack.unpack(null /* ResponseConverter.INSTANCE */, null);
 //        } catch (@Nonnull RequestException exception) {
 //            if (exception.getCode() == RequestErrorCode.KEYROTATION && this instanceof ClientRequest) {

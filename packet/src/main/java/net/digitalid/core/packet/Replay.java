@@ -17,6 +17,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.core.encryption.Encryption;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.symmetrickey.InitializationVector;
 
 /**
@@ -53,8 +54,8 @@ public abstract class Replay {
         final @Nonnull Time time = encryption.getTime();
         final @Nullable InitializationVector initializationVector = encryption.getInitializationVector();
         
-        if (time.isLessThan(Time.HALF_HOUR.ago())) { throw RequestException.with(RequestErrorCode.ENCRYPTION, "The encryption is older than half an hour.", null); }
-        if (time.isGreaterThan(Time.MINUTE.ahead())) { throw RequestException.with(RequestErrorCode.ENCRYPTION, "The encryption is more than a minute ahead.", null); }
+        if (time.isLessThan(Time.HALF_HOUR.ago())) { throw RequestExceptionBuilder.withCode(RequestErrorCode.ENCRYPTION).withMessage("The encryption is older than half an hour.").build(); }
+        if (time.isGreaterThan(Time.MINUTE.ahead())) { throw RequestExceptionBuilder.withCode(RequestErrorCode.ENCRYPTION).withMessage("The encryption is more than a minute ahead.").build(); }
         
 //        if (initializationVector != null) {
 //            final @Nonnull String SQL = "INSERT INTO general_replay (vector, time) VALUES (?, ?)";
