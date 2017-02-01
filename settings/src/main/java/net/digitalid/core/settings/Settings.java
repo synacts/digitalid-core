@@ -17,8 +17,8 @@ import net.digitalid.database.auxiliary.None;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuilder;
+import net.digitalid.core.property.RequiredAuthorization;
+import net.digitalid.core.property.RequiredAuthorizationBuilder;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.restrictions.RestrictionsBuilder;
 import net.digitalid.core.subject.CoreServiceCoreSubject;
@@ -46,7 +46,7 @@ public abstract class Settings extends CoreServiceCoreSubject<NonHostEntity<?>, 
     @Pure
     @Recover
     public static @Nonnull Settings of(@Nonnull NonHostEntity<?> entity) {
-        return SettingsSubclass.MODULE.getConceptIndex().get(entity, None.INSTANCE);
+        return SettingsSubclass.MODULE.getSubjectIndex().get(entity, None.INSTANCE);
     }
     
     /* -------------------------------------------------- Password -------------------------------------------------- */
@@ -54,7 +54,7 @@ public abstract class Settings extends CoreServiceCoreSubject<NonHostEntity<?>, 
     /**
      * Stores the required authorization to change the password.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity<?>, None, Settings, String> PASSWORD = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, None, Settings, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withOnlyForClients(true).withWriteToNode(true).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> Restrictions.ONLY_FOR_CLIENTS).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, None, Settings, String> PASSWORD = RequiredAuthorizationBuilder.<NonHostEntity<?>, None, Settings, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withOnlyForClients(true).withWriteToNode(true).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> Restrictions.ONLY_FOR_CLIENTS).build();
     
     /**
      * Returns the password property of these settings.

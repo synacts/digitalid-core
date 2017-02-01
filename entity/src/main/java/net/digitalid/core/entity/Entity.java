@@ -6,6 +6,7 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
+import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -25,6 +26,13 @@ import net.digitalid.core.identification.identity.InternalIdentity;
 @Immutable
 @GenerateConverter
 public interface Entity<@Unspecifiable UNIT extends CoreUnit> extends Subject<UNIT>, UnitDependency {
+    
+    /* -------------------------------------------------- Unit -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @Provided
+    public @Nonnull UNIT getUnit();
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
