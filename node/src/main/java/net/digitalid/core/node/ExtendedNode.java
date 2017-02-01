@@ -16,8 +16,8 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.node.context.Context;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
-import net.digitalid.core.property.set.SetPropertyRequiredAuthorization;
-import net.digitalid.core.property.set.SetPropertyRequiredAuthorizationBuilder;
+import net.digitalid.core.property.RequiredAuthorization;
+import net.digitalid.core.property.RequiredAuthorizationBuilder;
 import net.digitalid.core.restrictions.Node;
 import net.digitalid.core.restrictions.RestrictionsBuilder;
 
@@ -33,14 +33,14 @@ public abstract class ExtendedNode extends Node {
     /**
      * Stores the required authorization to change the permissions.
      */
-    public static final @Nonnull SetPropertyRequiredAuthorization<NonHostEntity<?>, Long, Node, SemanticType> PERMISSIONS = SetPropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    public static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, Node, SemanticType> PERMISSIONS = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /* -------------------------------------------------- Authentications -------------------------------------------------- */
     
     /**
      * Stores the required authorization to change the authentications.
      */
-    public static final @Nonnull SetPropertyRequiredAuthorization<NonHostEntity<?>, Long, Node, SemanticType> AUTHENTICATIONS = SetPropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    public static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, Node, SemanticType> AUTHENTICATIONS = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /* -------------------------------------------------- Supercontexts -------------------------------------------------- */
     

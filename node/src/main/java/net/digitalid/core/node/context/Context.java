@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.set.FreezableSet;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.generation.Recover;
@@ -20,10 +21,8 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.node.ExtendedNode;
 import net.digitalid.core.node.contact.Contact;
-import net.digitalid.core.property.set.SetPropertyRequiredAuthorization;
-import net.digitalid.core.property.set.SetPropertyRequiredAuthorizationBuilder;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuilder;
+import net.digitalid.core.property.RequiredAuthorization;
+import net.digitalid.core.property.RequiredAuthorizationBuilder;
 import net.digitalid.core.restrictions.Node;
 import net.digitalid.core.restrictions.RestrictionsBuilder;
 import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
@@ -63,7 +62,7 @@ public abstract class Context extends ExtendedNode {
     /**
      * Stores the required authorization to change the password.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity<?>, Long, Context, String> NAME_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Context, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, Context, String> NAME_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Context, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /**
      * Returns the name of this context.
@@ -81,7 +80,7 @@ public abstract class Context extends ExtendedNode {
     /**
      * Stores the required authorization to change the subcontexts.
      */
-    static final @Nonnull SetPropertyRequiredAuthorization<NonHostEntity<?>, Long, Context, Context> SUBCONTEXTS_AUTHORIZATION = SetPropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Context, Context>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, Context, Context> SUBCONTEXTS_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Context, Context>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /**
      * Returns the direct subcontexts of this context.
@@ -113,7 +112,7 @@ public abstract class Context extends ExtendedNode {
     /**
      * Stores the required authorization to change the subcontexts.
      */
-    static final @Nonnull SetPropertyRequiredAuthorization<NonHostEntity<?>, Long, Context, Contact> CONTACTS_AUTHORIZATION = SetPropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Context, Contact>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, Context, Contact> CONTACTS_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Context, Contact>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /**
      * Returns the direct contacts of this context.
@@ -127,7 +126,7 @@ public abstract class Context extends ExtendedNode {
      */
     @Pure
     @NonCommitting
-    public @Capturable @Nonnull @NonFrozen FreezableSet<Contact> getAllContacts() throws DatabaseException {
+    public @Capturable @Nonnull @NonFrozen FreezableSet<Contact> getAllContacts() throws DatabaseException, RecoveryException {
         return contacts().get().clone(); // TODO: Make a real aggregation.
     }
     
@@ -136,7 +135,7 @@ public abstract class Context extends ExtendedNode {
      */
     @Pure
     @NonCommitting
-    public boolean contains(@Nonnull Contact contact) throws DatabaseException {
+    public boolean contains(@Nonnull Contact contact) throws DatabaseException, RecoveryException {
         return getAllContacts().contains(contact);
     }
     

@@ -7,6 +7,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.contracts.Validate;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
@@ -44,7 +45,7 @@ public abstract class ActiveExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() throws DatabaseException {
+    public @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() throws DatabaseException, RecoveryException {
         return getExpression().getContacts();
     }
     

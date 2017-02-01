@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.set.FreezableSet;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -60,7 +61,7 @@ abstract class Expression extends RootClass {
      */
     @Pure
     @NonCommitting
-    abstract @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() throws DatabaseException;
+    abstract @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() throws DatabaseException, RecoveryException;
     
     /**
      * Returns whether this expression matches the given attribute content.
@@ -75,7 +76,7 @@ abstract class Expression extends RootClass {
      */
     @Pure
     @NonCommitting
-    abstract boolean matches(@Nonnull CredentialsSignature<?> signature) throws DatabaseException;
+    abstract boolean matches(@Nonnull CredentialsSignature<?> signature) throws DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- String -------------------------------------------------- */
     

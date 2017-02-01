@@ -4,6 +4,7 @@ package net.digitalid.core.expression;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -38,7 +39,7 @@ public abstract class PassiveExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public boolean matches(@Nonnull CredentialsSignature<?> signature) throws DatabaseException {
+    public boolean matches(@Nonnull CredentialsSignature<?> signature) throws DatabaseException, RecoveryException {
         return getExpression().matches(signature);
     }
     

@@ -3,7 +3,7 @@ package net.digitalid.core.expression.operators;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.CaseException;
+import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -60,7 +60,7 @@ public enum BinaryOperator {
             if (operator.getSymbol() == symbol) { return operator; }
         }
         
-        throw CaseException.with("symbol", symbol);
+        throw CaseExceptionBuilder.withVariable("symbol").withValue(symbol).build();
     }
     
     /* -------------------------------------------------- Values -------------------------------------------------- */

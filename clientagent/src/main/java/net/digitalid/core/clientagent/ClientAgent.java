@@ -14,15 +14,15 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.Identity;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuilder;
+import net.digitalid.core.property.RequiredAuthorization;
+import net.digitalid.core.property.RequiredAuthorizationBuilder;
 import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 
 /**
  * This class models a client agent that acts on behalf of an {@link Identity identity}.
  */
 @Immutable
-// TODO: @GenerateSubclass
+// @GenerateSubclass
 @GenerateConverter
 public abstract class ClientAgent extends Agent {
     
@@ -31,7 +31,7 @@ public abstract class ClientAgent extends Agent {
     /**
      * Stores the required authorization to change the commitment.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity<?>, Long, ClientAgent, Commitment> COMMITMENT = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, ClientAgent, Commitment>withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, ClientAgent, Commitment> COMMITMENT = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, ClientAgent, Commitment>withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
     
     /**
      * Returns the commitment of this client agent.
@@ -45,7 +45,7 @@ public abstract class ClientAgent extends Agent {
     /**
      * Stores the required authorization to change the name.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity<?>, Long, ClientAgent, String> NAME_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, ClientAgent, String>withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, ClientAgent, String> NAME_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, ClientAgent, String>withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
     
     /**
      * Returns the name of this client agent.

@@ -7,7 +7,8 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.exceptions.CaseException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -77,7 +78,7 @@ abstract class BinaryExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() throws DatabaseException {
+    @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() throws DatabaseException, RecoveryException {
         Require.that(isActive()).orThrow("This expression has to be active but was $.", this);
         
         final @Nonnull FreezableSet<Contact> leftContacts = getLeftChild().getContacts();
@@ -86,7 +87,7 @@ abstract class BinaryExpression extends Expression {
             case ADDITION: leftContacts.addAll(rightContacts); break;
             case SUBTRACTION: leftContacts.removeAll(rightContacts); break;
             case MULTIPLICATION: leftContacts.retainAll(rightContacts); break;
-            default: throw CaseException.with("operator", getOperator());
+            default: throw CaseExceptionBuilder.withVariable("operator").withValue(getOperator()).build();
         }
         return leftContacts;
     }
@@ -107,7 +108,7 @@ abstract class BinaryExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    boolean matches(@Nonnull CredentialsSignature<?> signature) throws DatabaseException {
+    boolean matches(@Nonnull CredentialsSignature<?> signature) throws DatabaseException, RecoveryException {
         switch (getOperator()) {
             case ADDITION: return getLeftChild().matches(signature) || getRightChild().matches(signature);
             case SUBTRACTION: return getLeftChild().matches(signature) && !getRightChild().matches(signature);
@@ -131,7 +132,7 @@ abstract class BinaryExpression extends Expression {
         } else if (operator == BinaryOperator.MULTIPLICATION) {
             parentheses = getOperator() != BinaryOperator.MULTIPLICATION;
         } else {
-            throw CaseException.with("operator", operator);
+            throw CaseExceptionBuilder.withVariable("operator").withValue(operator).build();
         }
         
         return parentheses ? "(" + string + ")" : string;

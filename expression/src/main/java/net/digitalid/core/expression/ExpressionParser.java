@@ -4,7 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.exceptions.CaseException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.validation.annotations.type.Utility;
@@ -64,7 +65,7 @@ abstract class ExpressionParser {
      * Returns the last index of one of the given characters in the given string considering quotation marks and parentheses.
      */
     @Pure
-    private static int lastIndexOf(@Nonnull String string, @Nonnull FiniteIterable<@Nonnull BinaryOperator> characters) throws CaseException { // TODO: Use an external exception!
+    private static int lastIndexOf(@Nonnull String string, @Nonnull FiniteIterable<@Nonnull BinaryOperator> characters) throws RecoveryException {
         int parenthesesCounter = 0;
         boolean quotation = false;
         
@@ -86,7 +87,7 @@ abstract class ExpressionParser {
                 parenthesesCounter++;
                 continue;
             } else if (c == '(') {
-                if (parenthesesCounter == 0) { throw CaseException.with("opening parentheses", string); } // TODO: Exception
+                if (parenthesesCounter == 0) { throw RecoveryExceptionBuilder.withMessage("There is an opening parenthesis too much: " + string).build(); }
                 parenthesesCounter--;
                 continue;
             }
@@ -94,8 +95,8 @@ abstract class ExpressionParser {
             if (parenthesesCounter == 0 && characters.map(BinaryOperator::getSymbol).contains(c)) { return i; } // TODO: Do something smarter than mapping and auto-boxing.
         }
         
-        if (parenthesesCounter > 0) { throw CaseException.with("closing parentheses", string); } // TODO: Exception
-        if (quotation) { throw CaseException.with("closing quotation marks", string); } // TODO: Exception
+        if (parenthesesCounter > 0) { throw RecoveryExceptionBuilder.withMessage("There is an opening parenthesis missing: " + string).build(); }
+        if (quotation) { throw RecoveryExceptionBuilder.withMessage("The quotation marks do not match: " + string).build(); }
         
         return -1;
     }
@@ -131,11 +132,11 @@ abstract class ExpressionParser {
             if (index != -1) {
                 @Nonnull String identifier = string.substring(0, index).trim();
                 if (isQuoted(identifier)) { identifier = removeQuotes(identifier); }
-                if (!Identifier.isValid(identifier)) { throw CaseException.with("identifier", identifier); } // TODO: Exception
+                if (!Identifier.isValid(identifier)) { throw RecoveryExceptionBuilder.withMessage("The identifier is invalid: " + identifier).build(); }
                 final @Nonnull SemanticType type = Identifier.with(identifier).resolve().castTo(SemanticType.class); // TODO: .checkIsAttributeType();
                 final @Nonnull String substring = string.substring(index + operator.getSymbol().length(), string.length()).trim();
                 if (isQuoted(substring) || substring.matches("\\d+")) { return new RestrictionExpressionSubclass(type, operator, substring); }
-                else { throw CaseException.with("substring", substring); } // TODO: Exception
+                else { throw RecoveryExceptionBuilder.withMessage("The substring is not a valid restriction: " + substring).build(); }
             }
         }
         
@@ -148,10 +149,10 @@ abstract class ExpressionParser {
             final @Nonnull Identity identity = Identifier.with(identifier).resolve();
             if (identity instanceof Person) { return new ContactExpressionSubclass(Contact.of(entity, (Person) identity)); }
             if (identity instanceof SemanticType) { return new RestrictionExpressionSubclass(((SemanticType) identity)/* TODO: .checkIsAttributeType() */, null, null); }
-            throw CaseException.with("identity", identifier); // TODO: Exception
+            throw RecoveryExceptionBuilder.withMessage("The identity has to be either a person or a semantic type: " + identifier).build();
         }
         
-        throw CaseException.with("string", string); // TODO: Exception
+        throw RecoveryExceptionBuilder.withMessage("The following string could not be parsed: " + string).build();
     }
     
 }

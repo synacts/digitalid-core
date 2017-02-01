@@ -10,6 +10,7 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -63,7 +64,7 @@ abstract class ContextExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() throws DatabaseException {
+    @Capturable @Nonnull @NonFrozen FreezableSet<@Nonnull Contact> getContacts() throws DatabaseException, RecoveryException {
         Require.that(isActive()).orThrow("This expression has to be active but was $.", this);
         
         return getContext().getAllContacts();
@@ -81,7 +82,7 @@ abstract class ContextExpression extends Expression {
     @Override
     @NonCommitting
     @TODO(task = "Implement the check.", date = "2016-12-02", author = Author.KASPAR_ETTER, priority = Priority.HIGH)
-    boolean matches(@Nonnull CredentialsSignature<?> signature) throws DatabaseException {
+    boolean matches(@Nonnull CredentialsSignature<?> signature) throws DatabaseException, RecoveryException {
         return true;
 //        return signature.isIdentityBased() && !signature.isRoleBased() && context.contains(Contact.get(getEntity(), signature.getIssuer()));
     }

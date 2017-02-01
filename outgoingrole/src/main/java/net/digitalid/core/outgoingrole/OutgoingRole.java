@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Recover;
@@ -24,8 +25,8 @@ import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuilder;
+import net.digitalid.core.property.RequiredAuthorization;
+import net.digitalid.core.property.RequiredAuthorizationBuilder;
 import net.digitalid.core.restrictions.Node;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.restrictions.RestrictionsBuilder;
@@ -106,7 +107,7 @@ public abstract class OutgoingRole extends Agent {
     /**
      * Stores the required authorization to change the relation.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity<?>, Long, OutgoingRole, SemanticType> RELATION_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, OutgoingRole, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, true)).withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, OutgoingRole, SemanticType> RELATION_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, OutgoingRole, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, true)).withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
     
     /**
      * Returns the relation between the issuing and the receiving identity.
@@ -132,7 +133,7 @@ public abstract class OutgoingRole extends Agent {
     /**
      * Stores the required authorization to change the node.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<NonHostEntity<?>, Long, OutgoingRole, Node> NODE_AUTHORIZATION = ValuePropertyRequiredAuthorizationBuilder.<NonHostEntity<?>, Long, OutgoingRole, Node>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withNode(value).withWriteToNode(true).build()).withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, OutgoingRole, Node> NODE_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, OutgoingRole, Node>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withNode(value).withWriteToNode(true).build()).withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
     
     /**
      * Returns the node to which this outgoing role is assigned.
@@ -176,7 +177,7 @@ public abstract class OutgoingRole extends Agent {
      */
     @NonCommitting
     @PureWithSideEffects
-    public void restrictTo(@Nonnull Credential credential) throws DatabaseException {
+    public void restrictTo(@Nonnull Credential credential) throws DatabaseException, RecoveryException {
         Require.that(isRestrictable()).orThrow("This outgoing role can be restricted.");
         Require.that(credential.isRoleBased()).orThrow("The credential is role-based.");
         
@@ -207,7 +208,7 @@ public abstract class OutgoingRole extends Agent {
      */
     @Pure
     @NonCommitting
-    public void checkCovers(@Nonnull Credential credential) throws DatabaseException, RequestException {
+    public void checkCovers(@Nonnull Credential credential) throws RequestException, DatabaseException, RecoveryException {
         final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
         Require.that(permissions != null).orThrow("The permissions of the credential may not be null.");
         final @Nullable Restrictions restrictions = credential.getRestrictions();
