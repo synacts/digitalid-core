@@ -9,6 +9,7 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -84,7 +85,7 @@ public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implement
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public @Nonnull AttributesReply executeOnHost() throws RequestException, DatabaseException {
+    public @Nonnull AttributesReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         final @Nonnull FreezableList<AttributeValue> attributeValues = FreezableArrayList.withInitialCapacity(getAttributeTypes().size());
         
         @SuppressWarnings("null") final @Nonnull Signature<?> signature = getSignature();

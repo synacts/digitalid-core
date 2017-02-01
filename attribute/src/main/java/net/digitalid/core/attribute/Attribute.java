@@ -24,8 +24,8 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.expression.PassiveExpression;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorization;
-import net.digitalid.core.property.value.ValuePropertyRequiredAuthorizationBuilder;
+import net.digitalid.core.property.RequiredAuthorization;
+import net.digitalid.core.property.RequiredAuthorizationBuilder;
 import net.digitalid.core.signature.attribute.AttributeValue;
 import net.digitalid.core.subject.CoreServiceCoreSubject;
 import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
@@ -55,7 +55,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity<?>, Semant
     /**
      * Stores the required authorization to change the published value.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<Entity<?>, SemanticType, Attribute, AttributeValue> VALUE = ValuePropertyRequiredAuthorizationBuilder.<Entity<?>, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull RequiredAuthorization<Entity<?>, SemanticType, Attribute, AttributeValue> VALUE = RequiredAuthorizationBuilder.<Entity<?>, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the published value property of this attribute.
@@ -71,7 +71,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity<?>, Semant
     /**
      * Stores the required authorization to change the unpublished value.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<Entity<?>, SemanticType, Attribute, AttributeValue> UNPUBLISHED = ValuePropertyRequiredAuthorizationBuilder.<Entity<?>, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull RequiredAuthorization<Entity<?>, SemanticType, Attribute, AttributeValue> UNPUBLISHED = RequiredAuthorizationBuilder.<Entity<?>, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the unpublished value property of this attribute.
@@ -87,7 +87,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity<?>, Semant
     /**
      * Stores the required authorization to change the visibility.
      */
-    static final @Nonnull ValuePropertyRequiredAuthorization<Entity<?>, SemanticType, Attribute, AttributeValue> VISIBILITY = ValuePropertyRequiredAuthorizationBuilder.<Entity<?>, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull RequiredAuthorization<Entity<?>, SemanticType, Attribute, AttributeValue> VISIBILITY = RequiredAuthorizationBuilder.<Entity<?>, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the visibility property of this attribute.

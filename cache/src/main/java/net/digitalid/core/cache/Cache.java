@@ -9,6 +9,7 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.threading.Threading;
@@ -24,7 +25,9 @@ import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
+import net.digitalid.core.cache.exceptions.AttributeNotFoundExceptionBuilder;
 import net.digitalid.core.cache.exceptions.CertificateNotFoundException;
+import net.digitalid.core.cache.exceptions.CertificateNotFoundExceptionBuilder;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnClient;
 import net.digitalid.core.handler.reply.Reply;
@@ -132,7 +135,7 @@ public abstract class Cache {
      */
     @Pure
     @NonCommitting
-    private static @Nonnull Pair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type) throws ExternalException {
+    private static @Nonnull Pair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type) throws DatabaseException, RecoveryException {
         Require.that(time.isNonNegative()).orThrow("The given time has to be non-negative.");
         Require.that(type.isAttributeFor(identity.getCategory())).orThrow("The type can be used as an attribute for the category of the given identity.");
         
@@ -174,7 +177,7 @@ public abstract class Cache {
      */
     @Impure
     @NonCommitting
-    private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws DatabaseException /* TODO: , InvalidReplyParameterValueException */ {
+    private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws DatabaseException {
         Require.that(time.isNonNegative()).orThrow("The given time has to be non-negative.");
         Require.that(type.isAttributeFor(identity.getCategory())).orThrow("The type can be used as an attribute for the category of the given identity.");
         Require.that(value == null || value.isVerified()).orThrow("The attribute value is null or its signature is verified.");
@@ -309,7 +312,7 @@ public abstract class Cache {
     @NonCommitting
     public static @Nonnull AttributeValue getAttributeValue(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type) throws ExternalException {
         final @Nonnull AttributeValue[] attributeValues = getAttributeValues(identity, entity, time, type);
-        if (attributeValues[0] == null) { throw AttributeNotFoundException.with(identity, type); }
+        if (attributeValues[0] == null) { throw AttributeNotFoundExceptionBuilder.withIdentity(identity).withType(type).build(); }
         else { return attributeValues[0]; }
     }
     
@@ -340,9 +343,9 @@ public abstract class Cache {
     @TODO(task = "Provide a second method that derives the semantic type from the converter (and thus has less method parameters)?", date = "2016-12-03", author = Author.KASPAR_ETTER)
     public static <T> @Nonnull T getAttributeContent(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type, @Nonnull Converter<T, Void> converter, boolean certified) throws ExternalException {
         final @Nonnull AttributeValue value = getAttributeValue(identity, entity, time, type);
-        if (certified && !value.isCertified()) { throw CertificateNotFoundException.with(identity, type); }
+        if (certified && !value.isCertified()) { throw CertificateNotFoundExceptionBuilder.withIdentity(identity).withType(type).build(); }
         final @Nullable T content = value.getSignature().getObject().unpack(converter, null);
-        if (content == null) { throw AttributeNotFoundException.with(identity, type); }
+        if (content == null) { throw AttributeNotFoundExceptionBuilder.withIdentity(identity).withType(type).build(); }
         return content;
     }
     

@@ -11,7 +11,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.core.identification.identity.InternalIdentity;
 
 /**
- * A response exception indicates that a response is semantically invalid.
+ * A response exception indicates that a response is semantically invalid or missing.
  * (Syntactic problems are indicated by the {@link RecoveryException}.
  */
 @Immutable
@@ -20,7 +20,7 @@ public abstract class ResponseException extends ExternalException {
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
     /**
-     * Returns the identity whose response was invalid.
+     * Returns the identity whose response was invalid or missing.
      */
     @Pure
     public abstract @Nonnull InternalIdentity getIdentity();
