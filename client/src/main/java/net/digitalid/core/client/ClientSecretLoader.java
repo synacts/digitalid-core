@@ -10,7 +10,6 @@ import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.file.Files;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.DomainName;
@@ -69,7 +68,7 @@ public class ClientSecretLoader {
      * Loads the secret of the client with the given identifier.
      */
     @Pure
-    public static @Nonnull Exponent load(@Nonnull @DomainName @MaxSize(63) String identifier) throws ExternalException {
+    public static @Nonnull Exponent load(@Nonnull @DomainName @MaxSize(63) String identifier) throws FileException, RecoveryException {
         return configuration.get().getClientSecret(identifier);
     }
     
@@ -77,7 +76,7 @@ public class ClientSecretLoader {
      * Stores the secret of the client with the given identifier.
      */
     @Impure
-    public static void store(@Nonnull @DomainName @MaxSize(63) String identifier, @Nonnull Exponent secret) throws ExternalException {
+    public static void store(@Nonnull @DomainName @MaxSize(63) String identifier, @Nonnull Exponent secret) throws FileException {
         configuration.get().setClientSecret(identifier, secret);
     }
     

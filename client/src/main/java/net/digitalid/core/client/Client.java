@@ -9,6 +9,7 @@ import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collections.set.ReadOnlySet;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -37,6 +38,7 @@ import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.commitment.CommitmentBuilder;
+import net.digitalid.core.conversion.exceptions.FileException;
 import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
@@ -137,10 +139,10 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
     @Pure
     @Override
     @CallSuper
-    protected void initialize() /* throws ExternalException */ {
+    protected void initialize() /* throws FileException, RecoveryException */ {
         try {
             protectedSecret.set(ClientSecretLoader.load(getIdentifier()));
-        } catch (@Nonnull ExternalException exception) {
+        } catch (@Nonnull FileException | RecoveryException exception) {
             throw new RuntimeException(exception); // TODO
         }
     }
@@ -153,7 +155,7 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
         return this;
     }
     
-    /* -------------------------------------------------- CoreSite -------------------------------------------------- */
+    /* -------------------------------------------------- CoreUnit -------------------------------------------------- */
     
     @Pure
     @Override

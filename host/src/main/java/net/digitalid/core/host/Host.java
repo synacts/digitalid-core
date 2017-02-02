@@ -20,7 +20,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.entity.CoreSite;
+import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.host.account.HostAccount;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
@@ -37,7 +37,7 @@ import net.digitalid.core.service.Service;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class Host extends CoreSite<Host> {
+public abstract class Host extends CoreUnit {
     
 //    @Pure
 //    @Override
@@ -90,12 +90,12 @@ public abstract class Host extends CoreSite<Host> {
     @Derive("HostAccount.with(this, identity)")
     public abstract @Nonnull HostAccount getAccount();
     
-    /* -------------------------------------------------- Schema Name -------------------------------------------------- */
+    /* -------------------------------------------------- Name -------------------------------------------------- */
     
     @Pure
     @Override
     @Derive("identifier.asSchemaName()")
-    public abstract @Nonnull @CodeIdentifier @MaxSize(61) @Unequal("general") String getSchemaName();
+    public abstract @Nonnull @CodeIdentifier @MaxSize(61) @Unequal("general") String getName();
     
     /* -------------------------------------------------- Private Key -------------------------------------------------- */
     
@@ -122,7 +122,7 @@ public abstract class Host extends CoreSite<Host> {
      */
     @Pure
     // TODO: What are the right permissions to pass here? Probably an aggregation of all the services.
-    @Derive("net.digitalid.core.client.ClientBuilder.withName(\"Host \" + identifier.getString()).withIdentifier(identifier.getString()).withPreferredPermissions(net.digitalid.core.permissions.ReadOnlyAgentPermissions.GENERAL_WRITE).build()")
+    @Derive("net.digitalid.core.client.ClientBuilder.withIdentifier(identifier.getString()).withDisplayName(\"Host \" + identifier.getString()).withPreferredPermissions(net.digitalid.core.permissions.ReadOnlyAgentPermissions.GENERAL_WRITE).build()")
     public abstract @Nonnull Client getClient();
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
@@ -156,15 +156,7 @@ public abstract class Host extends CoreSite<Host> {
 //        }
     }
     
-    /* -------------------------------------------------- Subject -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final @Nonnull Host getSite() {
-        return this;
-    }
-    
-    /* -------------------------------------------------- CoreSite -------------------------------------------------- */
+    /* -------------------------------------------------- CoreUnit -------------------------------------------------- */
     
     @Pure
     @Override
