@@ -1,5 +1,7 @@
 package net.digitalid.core.packet;
 
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
@@ -8,6 +10,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
  * @invariant getSize() == replies.size() && getSize() == exceptions.size() : "The number of elements equals the number of replies and the number of exceptions.";
  */
 @Immutable
+@GenerateBuilder
+@GenerateSubclass
 // @GenerateConverter // TODO: Support generics.
 public abstract class Response extends Packet {
     

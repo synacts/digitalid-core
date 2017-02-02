@@ -33,11 +33,11 @@ public class EncryptionConverterTest extends CryptographyTestBase {
         final @Nonnull InitializationVector initializationVector = InitializationVectorBuilder.build();
         
         final @Nonnull Time time = TimeBuilder.build();
-        final @Nonnull Encryption<Identifier> encryptedIdentifier = EncryptionBuilder.withObject(identifier).withTime(time).withRecipient(identifierRecipient).withSymmetricKey(symmetricKey).withInitializationVector(initializationVector).build();
+        final @Nonnull Encryption<Identifier> encryptedIdentifier = EncryptionBuilder.withObject(identifier).withRecipient(identifierRecipient).withTime(time).withSymmetricKey(symmetricKey).withInitializationVector(initializationVector).build();
     
-        final @Nonnull byte[] encryptedBytes = XDF.convert(EncryptionConverter.getInstance(IdentifierConverter.INSTANCE), encryptedIdentifier);
+        final @Nonnull byte[] encryptedBytes = XDF.convert(EncryptionConverterBuilder.withObjectConverter(IdentifierConverter.INSTANCE).build(), encryptedIdentifier);
     
-        final @Nonnull Encryption<Identifier> encryption = XDF.recover(EncryptionConverter.getInstance(IdentifierConverter.INSTANCE), null, encryptedBytes);
+        final @Nonnull Encryption<Identifier> encryption = XDF.recover(EncryptionConverterBuilder.withObjectConverter(IdentifierConverter.INSTANCE).build(), null, encryptedBytes);
     
         assertEquals(identifierRecipient, encryption.getRecipient());
         assertEquals(symmetricKey, encryption.getSymmetricKey());

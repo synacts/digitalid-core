@@ -3,6 +3,8 @@ package net.digitalid.core.server;
 import javax.annotation.Nonnull;
 
 import net.digitalid.core.handler.method.MethodIndex;
+import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.server.handlers.TestQuery;
@@ -15,12 +17,16 @@ import org.junit.Test;
 
 /**
  * System testing of the Digital ID {@link Server}.
+ * <p>
+ * <em>Important:</em> Make sure you have {@code 127.0.0.1 id.test.digitalid.net} in your {@code /etc/hosts} file.
+ * If you run into an EOFException, the worker thread on the server crashed before sending a response.
+ * You should be able to find the source of the problem in {@code server/target/test-logs/test.log}.
  */
 public class ServerTest extends ServerSetup {
     
     @Test
     public void testServer() throws Exception {
-        MethodIndex.add(SemanticType.map(TestQueryConverter.INSTANCE), TestQueryConverter.INSTANCE);
+        MethodIndex.add(/* TODO: SemanticType.map(TestQueryConverter.INSTANCE) */ IdentifierResolver.resolve(InternalNonHostIdentifier.with("query.test@core.digitalid.net")).castTo(SemanticType.class), TestQueryConverter.INSTANCE);
         
         final @Nonnull TestQuery query = TestQueryBuilder.withMessage("Hello from the other side!").withProvidedSubject(identifier).build();
         final @Nonnull Pack pack = query.send();

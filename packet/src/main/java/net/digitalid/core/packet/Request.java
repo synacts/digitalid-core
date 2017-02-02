@@ -4,28 +4,20 @@ import java.io.IOException;
 import java.net.Socket;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.concurrency.map.ConcurrentHashMapBuilder;
-import net.digitalid.utility.concurrency.map.ConcurrentMap;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.configuration.Configuration;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.auxiliary.Time;
-import net.digitalid.database.auxiliary.TimeBuilder;
 
-import net.digitalid.core.conversion.XDF;
+import net.digitalid.core.conversion.exceptions.NetworkException;
+import net.digitalid.core.conversion.exceptions.NetworkExceptionBuilder;
 import net.digitalid.core.exceptions.request.RequestException;
-import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.pack.Pack;
-import net.digitalid.core.pack.PackConverter;
-import net.digitalid.core.symmetrickey.SymmetricKey;
-import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
 
 /**
  * This class compresses, signs and encrypts requests.
@@ -38,6 +30,7 @@ import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
  * @see CredentialsRequest
  */
 @Immutable
+@GenerateBuilder
 @GenerateSubclass
 // @GenerateConverter // TODO: Support generics.
 public abstract class Request extends Packet {
@@ -322,14 +315,13 @@ public abstract class Request extends Packet {
      * 
      * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
-    @Pure // TODO: How shall we handle such methods in immutable types?
     @NonCommitting
-    public @Nonnull Response send() throws ExternalException {
-        // TODO: Use the specific NetworkExceptions.
+    @PureWithSideEffects
+    public @Nonnull Response send() throws NetworkException, RecoveryException {
         try (@Nonnull Socket socket = new Socket("id." + getEncryption().getRecipient().getString(), PORT.get())) {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
-            XDF.convert(PackConverter.INSTANCE, Pack.pack(null /* RequestConverter.INSTANCE */, this), socket); // TODO
-            final @Nonnull Pack pack = XDF.recover(PackConverter.INSTANCE, null, socket);
+            pack().storeTo(socket);
+            final @Nonnull Pack pack = Pack.loadFrom(socket);
             return pack.unpack(null /* ResponseConverter.INSTANCE */, null);
 //        } catch (@Nonnull RequestException exception) {
 //            if (exception.getCode() == RequestErrorCode.KEYROTATION && this instanceof ClientRequest) {
@@ -353,58 +345,7 @@ public abstract class Request extends Packet {
 //                throw exception;
 //            }
         } catch (@Nonnull IOException exception) {
-            throw new RuntimeException(exception); // TODO
-        }
-    }
-    
-    // TODO: Move the following code to where the encryption is actually created.
-    
-    /**
-     * Stores a cached symmetric key for every recipient.
-     */
-    private static final @Nonnull ConcurrentMap<HostIdentifier, Pair<Time, SymmetricKey>> symmetricKeys = ConcurrentHashMapBuilder.build();
-    
-    /**
-     * Stores whether the symmetric keys are cached.
-     */
-    private static final boolean cachingKeys = true; // TODO: Remove the final once this static field is in a utility class.
-    
-    /**
-     * Returns whether the symmetric keys are cached.
-     */
-    @Pure
-    public static boolean isCachingKeys() {
-        return cachingKeys;
-    }
-    
-    /**
-     * Sets whether the symmetric keys are cached.
-     * 
-     * @param cachingKeys whether the symmetric keys are cached.
-     */
-    @Pure // TODO: The method is actually @Impure. (The underline can be removed once this method can be impure again.)
-    public static void _setCachingKeys(boolean cachingKeys) {
-//        Request.cachingKeys = cachingKeys;
-    }
-    
-    /**
-     * Returns a new or cached symmetric key for the given recipient.
-     * 
-     * @param recipient the recipient for which a symmetric key is to be returned.
-     * @param rotation determines how often the cached symmetric keys are rotated.
-     */
-    @Pure
-    protected static @Nonnull SymmetricKey getSymmetricKey(@Nonnull HostIdentifier recipient, @Nonnull Time rotation) {
-        if (cachingKeys) {
-            final @Nonnull Time time = TimeBuilder.build();
-            @Nullable Pair<Time, SymmetricKey> value = symmetricKeys.get(recipient);
-            if (value == null || value.get0().isLessThan(time.subtract(rotation))) {
-                value = Pair.of(time, SymmetricKeyBuilder.build());
-                symmetricKeys.put(recipient, value);
-            }
-            return value.get1();
-        } else {
-            return SymmetricKeyBuilder.build();
+            throw NetworkExceptionBuilder.withCause(exception).build();
         }
     }
     

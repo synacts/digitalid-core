@@ -15,9 +15,11 @@ import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.type.Referenced;
 import net.digitalid.database.interfaces.Database;
 
+import net.digitalid.core.compression.Compression;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.Handler;
 import net.digitalid.core.handler.method.Method;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.host.HostSignature;
 
 /**
@@ -37,7 +39,7 @@ public abstract class Reply<ENTITY extends Entity<?>> extends RootClass implemen
     @Override
     @Provided
     @Default("null")
-    public abstract @Nullable HostSignature<?> getSignature();
+    public abstract @Nullable HostSignature<Compression<Pack>> getSignature();
     
     /* -------------------------------------------------- Number -------------------------------------------------- */
     

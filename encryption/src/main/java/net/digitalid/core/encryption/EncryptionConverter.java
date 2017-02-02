@@ -17,14 +17,16 @@ import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.exceptions.ConnectionException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
-import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.conversion.interfaces.Decoder;
 import net.digitalid.utility.conversion.interfaces.Encoder;
+import net.digitalid.utility.conversion.interfaces.GenericTypeConverter;
 import net.digitalid.utility.conversion.model.CustomAnnotation;
 import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.immutable.ImmutableMap;
 import net.digitalid.utility.string.Strings;
@@ -55,28 +57,15 @@ import static net.digitalid.utility.conversion.model.CustomType.TUPLE;
  * This class converts and recovers encrypted objects.
  */
 @Immutable
-public class EncryptionConverter<@Unspecifiable TYPE> implements Converter<Encryption<TYPE>, Void> {
-    
-    /* -------------------------------------------------- Object Converter -------------------------------------------------- */
-    
-    private final @Nonnull Converter<TYPE, Void> objectConverter;
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    private EncryptionConverter(@Nonnull Converter<TYPE, Void> objectConverter) {
-        this.objectConverter = objectConverter;
-    }
-    
-    @Pure
-    public static <TYPE> @Nonnull EncryptionConverter<TYPE> getInstance(@Nonnull Converter<TYPE, Void> objectConverter) {
-        return new EncryptionConverter<>(objectConverter);
-    }
+@GenerateBuilder
+@GenerateSubclass
+public abstract class EncryptionConverter<@Unspecifiable OBJECT> implements GenericTypeConverter<OBJECT, Encryption<OBJECT>, Void> {
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Class<? super Encryption<TYPE>> getType() {
+    public @Nonnull Class<? super Encryption<OBJECT>> getType() {
         return Encryption.class;
     }
     
@@ -117,7 +106,7 @@ public class EncryptionConverter<@Unspecifiable TYPE> implements Converter<Encry
     @Pure
     @Override
     public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
-        final @Nonnull FiniteIterable<@Nonnull CustomField> customFieldForObject = FiniteIterable.of(CustomField.with(CustomType.TUPLE.of(objectConverter), "object", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withNoEntries()))));
+        final @Nonnull FiniteIterable<@Nonnull CustomField> customFieldForObject = FiniteIterable.of(CustomField.with(CustomType.TUPLE.of(getObjectConverter()), "object", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withNoEntries()))));
         return ImmutableList.withElementsOf(fields.combine(customFieldForObject));
     }
     
@@ -125,7 +114,7 @@ public class EncryptionConverter<@Unspecifiable TYPE> implements Converter<Encry
     
     @Pure
     @Override
-    public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@NonCaptured @Unmodified @Nonnull Encryption<TYPE> encryption, @NonCaptured @Modified @Nonnull Encoder<EXCEPTION> encoder) throws EXCEPTION {
+    public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@NonCaptured @Unmodified @Nonnull Encryption<OBJECT> encryption, @NonCaptured @Modified @Nonnull Encoder<EXCEPTION> encoder) throws EXCEPTION {
         encoder.encodeObject(TimeConverter.INSTANCE, encryption.getTime());
         encoder.encodeObject(HostIdentifierConverter.INSTANCE, encryption.getRecipient());
         final @Nonnull Element encryptedSymmetricKey = encryption.getPublicKey().getCompositeGroup().getElement(encryption.getSymmetricKey().getValue()).pow(encryption.getPublicKey().getE());
@@ -133,7 +122,7 @@ public class EncryptionConverter<@Unspecifiable TYPE> implements Converter<Encry
         encoder.encodeObject(InitializationVectorConverter.INSTANCE, encryption.getInitializationVector());
         
         encoder.startEncrypting(encryption.getSymmetricKey().getCipher(encryption.getInitializationVector(), Cipher.ENCRYPT_MODE));
-        encoder.encodeObject(objectConverter, encryption.getObject());
+        encoder.encodeObject(getObjectConverter(), encryption.getObject());
         encoder.stopEncrypting();
     }
     
@@ -141,7 +130,7 @@ public class EncryptionConverter<@Unspecifiable TYPE> implements Converter<Encry
     
     @Pure
     @Override 
-    public <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull Encryption<TYPE> recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, @Nullable Void provided) throws EXCEPTION, RecoveryException {
+    public <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull Encryption<OBJECT> recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, @Nullable Void provided) throws EXCEPTION, RecoveryException {
         final @Nonnull Time time = decoder.decodeObject(TimeConverter.INSTANCE, null);
         final @Nonnull HostIdentifier recipient = decoder.decodeObject(HostIdentifierConverter.INSTANCE, null);
         final @Nonnull PrivateKey privateKey;
@@ -155,11 +144,11 @@ public class EncryptionConverter<@Unspecifiable TYPE> implements Converter<Encry
         final @Nonnull InitializationVector initializationVector = decoder.decodeObject(InitializationVectorConverter.INSTANCE, null);
     
         decoder.startDecrypting(decryptedSymmetricKey.getCipher(initializationVector, Cipher.DECRYPT_MODE));
-        final TYPE object = decoder.decodeObject(objectConverter, null);
+        final OBJECT object = decoder.decodeObject(getObjectConverter(), null);
         decoder.stopDecrypting();
         
         try {
-            return EncryptionBuilder.withObject(object).withTime(time).withRecipient(recipient).withSymmetricKey(decryptedSymmetricKey).withInitializationVector(initializationVector).build();
+            return EncryptionBuilder.withObject(object).withRecipient(recipient).withTime(time).withSymmetricKey(decryptedSymmetricKey).withInitializationVector(initializationVector).build();
         } catch (@Nonnull ExternalException exception) {
             throw RecoveryExceptionBuilder.withMessage(Strings.format("Could not retrieve the public key of $.", recipient)).withCause(exception).build();
         }

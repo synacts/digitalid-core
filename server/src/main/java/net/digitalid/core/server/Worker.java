@@ -29,6 +29,7 @@ import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.packet.Request;
+import net.digitalid.core.packet.RequestConverter;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.Service;
 
@@ -79,7 +80,8 @@ public class Worker implements Runnable {
             
             try {
                 final @Nonnull Pack pack = Pack.loadFrom(socket);
-                final @Nonnull Method<?> method = MethodIndex.get(pack, null);
+                request = pack.unpack(RequestConverter.INSTANCE, null);
+                final @Nonnull Method<?> method = MethodIndex.get(request.getEncryption().getObject());
                 final @Nullable Reply<?> reply = method.executeOnHost();
                 if (reply != null) { reply.pack().storeTo(socket); }
             } catch (@Nonnull NetworkException | RecoveryException | DatabaseException | RequestException exception) {

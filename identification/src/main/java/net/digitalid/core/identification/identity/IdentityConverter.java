@@ -107,19 +107,23 @@ public abstract class IdentityConverter<@Unspecifiable IDENTITY extends Identity
     @Override
     public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull IDENTITY recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, @Shared Void provided) throws EXCEPTION, RecoveryException {
         final @Nonnull Identity identity;
-        try {
-            final @Nonnull Representation representation = decoder.getRepresentation();
-            if (representation == Representation.INTERNAL) {
-                final long key = decoder.decodeInteger64();
+        final @Nonnull Representation representation = decoder.getRepresentation();
+        if (representation == Representation.INTERNAL) {
+            final long key = decoder.decodeInteger64();
+            try {
                 identity = IdentifierResolver.load(key);
-            } else if (representation == Representation.EXTERNAL) {
-                final @Nonnull Identifier address = decoder.decodeObject(IdentifierConverter.INSTANCE, null);
-                identity = IdentifierResolver.resolve(address);
-            } else {
-                throw CaseExceptionBuilder.withVariable("representation").withValue(representation).build();
+            } catch (@Nonnull ExternalException exception) {
+                throw RecoveryExceptionBuilder.withMessage("A problem occurred while resolving the identity with the key " + key + ".").withCause(exception).build();
             }
-        } catch (@Nonnull ExternalException exception) {
-            throw RecoveryExceptionBuilder.withMessage("A problem occurred while recovering an identity.").withCause(exception).build();
+        } else if (representation == Representation.EXTERNAL) {
+            final @Nonnull Identifier address = decoder.decodeObject(IdentifierConverter.INSTANCE, null);
+            try {
+                identity = IdentifierResolver.resolve(address);
+            } catch (@Nonnull ExternalException exception) {
+                throw RecoveryExceptionBuilder.withMessage("A problem occurred while resolving the identity with the address '" + address.getString() + "'.").withCause(exception).build();
+            }
+        } else {
+            throw CaseExceptionBuilder.withVariable("representation").withValue(representation).build();
         }
         Check.that(getType().isInstance(identity)).orThrow("The recovered identity $ has to be an instance of $.", identity, getType());
         return getType().cast(identity);

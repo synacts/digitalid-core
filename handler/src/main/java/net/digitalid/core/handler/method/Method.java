@@ -1,8 +1,6 @@
 package net.digitalid.core.handler.method;
 
-import java.io.IOException;
 import java.math.BigInteger;
-import java.net.Socket;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -16,14 +14,17 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.conversion.exceptions.NetworkException;
-import net.digitalid.core.conversion.exceptions.NetworkExceptionBuilder;
+import net.digitalid.core.compression.Compression;
+import net.digitalid.core.compression.CompressionBuilder;
+import net.digitalid.core.encryption.Encryption;
+import net.digitalid.core.encryption.EncryptionBuilder;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -34,8 +35,12 @@ import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.packet.Request;
+import net.digitalid.core.packet.RequestBuilder;
+import net.digitalid.core.packet.Response;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
+import net.digitalid.core.signature.Signature;
+import net.digitalid.core.signature.SignatureBuilder;
 
 /**
  * This type implements a remote method invocation mechanism.
@@ -126,14 +131,14 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     
     @NonCommitting
     @PureWithSideEffects
-    public default <@Unspecifiable REPLY extends Reply<ENTITY>> @Nonnull /* REPLY */ Pack send() throws NetworkException, RecoveryException {
-        try (@Nonnull Socket socket = new Socket("id." + getRecipient().getString(), Request.PORT.get())) {
-            socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
-            pack().storeTo(socket);
-            return Pack.loadFrom(socket);
-        } catch (@Nonnull IOException exception) {
-            throw NetworkExceptionBuilder.withCause(exception).build();
-        }
+    public default <@Unspecifiable REPLY extends Reply<ENTITY>> @Nonnull /* REPLY */ Pack send() throws ExternalException {
+        final @Nonnull Compression<Pack> compression = CompressionBuilder.withObject(pack()).build();
+        final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObject(compression).withSubject(getSubject()).build();
+        final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = EncryptionBuilder.withObject(signature).withRecipient(getRecipient()).build();
+        final @Nonnull Request request = RequestBuilder.withEncryption(encryption).build();
+        final @Nonnull Response response = request.send();
+        // TODO: All checks still have to be performed somewhere!
+        return response.getEncryption().getObject().getObject().getObject();
     }
     
     /* -------------------------------------------------- Similarity -------------------------------------------------- */

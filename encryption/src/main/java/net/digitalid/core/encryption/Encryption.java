@@ -9,7 +9,9 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.auxiliary.Time;
@@ -36,6 +38,14 @@ public abstract class Encryption<@Unspecifiable TYPE> {
     @Pure
     public abstract @Nonnull TYPE getObject();
     
+    /* -------------------------------------------------- Recipient -------------------------------------------------- */
+    
+    /**
+     * Returns the recipient for which the object has been or will be encrypted.
+     */
+    @Pure
+    public abstract @Nonnull HostIdentifier getRecipient();
+    
     /* -------------------------------------------------- Time -------------------------------------------------- */
     
     /**
@@ -45,15 +55,8 @@ public abstract class Encryption<@Unspecifiable TYPE> {
      * from the host's key chain.
      */
     @Pure
-    public abstract @Nonnull Time getTime();
-    
-    /* -------------------------------------------------- Recipient -------------------------------------------------- */
-    
-    /**
-     * Returns the recipient for which the object has been or will be encrypted.
-     */
-    @Pure
-    public abstract @Nonnull HostIdentifier getRecipient();
+    @Default("net.digitalid.database.auxiliary.TimeBuilder.build()")
+    public abstract @Nonnull @Positive Time getTime();
     
     /* -------------------------------------------------- Symmetric Key -------------------------------------------------- */
     
@@ -61,6 +64,7 @@ public abstract class Encryption<@Unspecifiable TYPE> {
      * Returns the symmetric key that has been or will be used to encrypt the object.
      */
     @Pure
+    @Default("net.digitalid.core.symmetrickey.SymmetricKeyBuilder.build()")
     public abstract @Nonnull SymmetricKey getSymmetricKey();
     
     /* -------------------------------------------------- Initialization Vector -------------------------------------------------- */
@@ -69,6 +73,7 @@ public abstract class Encryption<@Unspecifiable TYPE> {
      * Returns the initialization vector of the symmetric encryption scheme (AES).
      */
     @Pure
+    @Default("net.digitalid.core.symmetrickey.InitializationVectorBuilder.build()")
     public abstract @Nonnull InitializationVector getInitializationVector();
     
     /* -------------------------------------------------- Public Key -------------------------------------------------- */

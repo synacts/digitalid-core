@@ -9,6 +9,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.encryption.Encryption;
 import net.digitalid.core.pack.Pack;
+import net.digitalid.core.pack.Packable;
 import net.digitalid.core.signature.Signature;
 
 /**
@@ -18,7 +19,7 @@ import net.digitalid.core.signature.Signature;
  * @see Response
  */
 @Immutable
-public abstract class Packet extends RootClass /* TODO: implements Packable */ {
+public abstract class Packet extends RootClass implements Packable {
     
     @Pure
     public abstract @Nonnull Encryption</*ReadOnlyList<*/Signature<Compression<Pack>>/*>*/> getEncryption();
