@@ -72,9 +72,7 @@ public abstract class XDF {
      */
     @Pure
     public static <@Unspecifiable TYPE> void convert(@Nonnull Converter<TYPE, ?> converter, @NonCaptured @Unmodified @Nonnull TYPE object, @Nonnull Socket socket) throws NetworkException {
-        try (@Nonnull NetworkEncoder encoder = NetworkEncoder.of(socket)) {
-            encoder.encodeObject(converter, object);
-        }
+        NetworkEncoder.of(socket).encodeObject(converter, object);
     }
     
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
@@ -107,9 +105,7 @@ public abstract class XDF {
      */
     @Pure
     public static @Capturable <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE recover(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided, @Nonnull Socket socket) throws NetworkException, RecoveryException {
-        try (@Nonnull NetworkDecoder decoder = NetworkDecoder.of(socket)) {
-            return decoder.decodeObject(converter, provided);
-        }
+        return NetworkDecoder.of(socket).decodeObject(converter, provided);
     }
     
     /* -------------------------------------------------- Hashing -------------------------------------------------- */

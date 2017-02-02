@@ -10,7 +10,6 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -136,7 +135,7 @@ public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implement
     @Pure
     @Override
     @TODO(task = "Remove this method as soon as the handler has a converter.", date = "2016-12-20", author = Author.KASPAR_ETTER)
-    public @Nonnull Pack pack() throws ExternalException {
+    public @Nonnull Pack pack() {
         return null;
     }
     

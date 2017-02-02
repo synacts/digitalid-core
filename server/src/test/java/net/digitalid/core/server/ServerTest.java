@@ -1,7 +1,6 @@
 package net.digitalid.core.server;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.identification.identity.SemanticType;
@@ -24,10 +23,8 @@ public class ServerTest extends ServerSetup {
         MethodIndex.add(SemanticType.map(TestQueryConverter.INSTANCE), TestQueryConverter.INSTANCE);
         
         final @Nonnull TestQuery query = TestQueryBuilder.withMessage("Hello from the other side!").withProvidedSubject(identifier).build();
-        final @Nullable Pack pack = query.send();
-        assertNotNull(pack);
-        final @Nullable TestReply reply = pack.unpack(TestReplyConverter.INSTANCE, null);
-        assertNotNull(reply);
+        final @Nonnull Pack pack = query.send();
+        final @Nonnull TestReply reply = pack.unpack(TestReplyConverter.INSTANCE, null);
         assertEquals("Hi there!", reply.getMessage());
         
         // Files

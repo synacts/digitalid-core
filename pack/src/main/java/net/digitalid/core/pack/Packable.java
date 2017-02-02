@@ -3,9 +3,6 @@ package net.digitalid.core.pack;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -24,7 +21,6 @@ public interface Packable extends RootInterface {
      */
     @Pure
     @GeneratePacking
-    @TODO(task = "Throw a StreamException instead.", date = "2016-12-20", author = Author.KASPAR_ETTER)
-    public @Nonnull Pack pack() throws ExternalException;
+    public @Nonnull Pack pack();
     
 }

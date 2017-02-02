@@ -8,6 +8,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
@@ -15,13 +16,14 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
+import net.digitalid.core.conversion.exceptions.NetworkException;
+import net.digitalid.core.conversion.exceptions.NetworkExceptionBuilder;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -124,13 +126,13 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     
     @NonCommitting
     @PureWithSideEffects
-    public default <R extends Reply<ENTITY>> @Nullable /* R */ Pack send() throws ExternalException {
+    public default <@Unspecifiable REPLY extends Reply<ENTITY>> @Nonnull /* REPLY */ Pack send() throws NetworkException, RecoveryException {
         try (@Nonnull Socket socket = new Socket("id." + getRecipient().getString(), Request.PORT.get())) {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
             pack().storeTo(socket);
             return Pack.loadFrom(socket);
         } catch (@Nonnull IOException exception) {
-            throw new RuntimeException(exception); // TODO
+            throw NetworkExceptionBuilder.withCause(exception).build();
         }
     }
     

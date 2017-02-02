@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
@@ -33,7 +34,7 @@ public abstract class Synchronizer extends Thread {
      */
     @Impure
     @Committing
-    public static void execute(@Nonnull @OnClient InternalAction action) throws DatabaseException {
+    public static void execute(@Nonnull @OnClient InternalAction action) throws DatabaseException, RecoveryException {
         Require.that(action.isOnClient()).orThrow("The internal action is on a client.");
         
         if (action.isSimilarTo(action)) { // TODO: Change this to something better understandable

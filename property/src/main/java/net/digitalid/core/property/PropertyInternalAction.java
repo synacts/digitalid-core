@@ -7,7 +7,6 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
@@ -96,7 +95,7 @@ public abstract class PropertyInternalAction<@Unspecifiable ENTITY extends Entit
     @Pure
     @Override
     @TODO(task = "Remove this method as soon as the property actions have converters.", date = "2016-12-20", author = Author.KASPAR_ETTER)
-    public @Nonnull Pack pack() throws ExternalException {
+    public @Nonnull Pack pack() {
         return null;
     }
     

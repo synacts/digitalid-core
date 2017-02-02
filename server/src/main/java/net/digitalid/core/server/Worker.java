@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -17,9 +17,12 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.audit.RequestAudit;
+import net.digitalid.core.conversion.exceptions.NetworkException;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
+import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.handler.reply.Reply;
@@ -75,11 +78,11 @@ public class Worker implements Runnable {
             // TODO: Implement the real worker again.
             
             try {
-                final @Nonnull Pack pack = Pack.loadFrom(socket.getInputStream());
+                final @Nonnull Pack pack = Pack.loadFrom(socket);
                 final @Nonnull Method<?> method = MethodIndex.get(pack, null);
                 final @Nullable Reply<?> reply = method.executeOnHost();
-                if (reply != null) { reply.pack().storeTo(socket.getOutputStream()); }
-            } catch (@Nonnull ExternalException | IOException exception) {
+                if (reply != null) { reply.pack().storeTo(socket); }
+            } catch (@Nonnull NetworkException | RecoveryException | DatabaseException | RequestException exception) {
                 throw new RuntimeException(exception);
             }
             

@@ -14,7 +14,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.exceptions.request.RequestErrorCode;
-import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.ExternalIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
@@ -84,7 +84,7 @@ public abstract class Successor {
             }
             
             if (successor != null) { set(identifier, successor, reply); }
-            else { throw RequestException.with(RequestErrorCode.EXTERNAL, "The identity with the identifier " + identifier + " has not been relocated."); }
+            else { throw RequestExceptionBuilder.withCode(RequestErrorCode.EXTERNAL).withMessage("The identity with the identifier " + identifier + " has not been relocated.").build(); }
         }
         return successor;
     }

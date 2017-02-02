@@ -17,6 +17,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.ExternalQuery;
 import net.digitalid.core.handler.reply.Reply;
@@ -48,7 +49,7 @@ public abstract class IdentityQuery extends ExternalQuery<NonHostEntity<?>> impl
     @PureWithSideEffects
     public @Nonnull IdentityReply executeOnHost() throws RequestException, DatabaseException {
         final @Nonnull InternalIdentifier subject = getSubject(); // The following exception should never be thrown as the condition is already checked in the packet class.
-        if (!(subject instanceof InternalNonHostIdentifier)) { throw RequestException.with(RequestErrorCode.IDENTIFIER, "The identity may only be queried of non-host identities."); }
+        if (!(subject instanceof InternalNonHostIdentifier)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identity may only be queried of non-host identities.").build(); }
         // TODO: return IdentityReplySubclass((InternalNonHostIdentifier) subject);
         throw new UnsupportedOperationException();
     }
