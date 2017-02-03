@@ -18,7 +18,6 @@ import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.node.ExtendedNode;
 import net.digitalid.core.node.contact.Contact;
 import net.digitalid.core.property.RequiredAuthorization;
@@ -34,13 +33,6 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 // TODO: @GenerateSubclass
 @GenerateConverter
 public abstract class Context extends ExtendedNode {
-    
-    /* -------------------------------------------------- Types -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type {@code flat.context@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType FLAT = SemanticType.map("flat.context@core.digitalid.net");
     
     /* -------------------------------------------------- Root -------------------------------------------------- */
     

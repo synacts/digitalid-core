@@ -13,8 +13,14 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.method.Chainable;
 import net.digitalid.utility.validation.annotations.size.Single;
 
+import net.digitalid.database.auxiliary.Time;
+
+import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.identification.annotations.AttributeType;
+import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.typeset.FreezableAttributeTypeSet;
 
 /**
@@ -29,7 +35,7 @@ public abstract class FreezableAuthentications extends FreezableAttributeTypeSet
     /**
      * Stores the semantic type {@code identity.based.authentication.contact@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTITY_BASED_TYPE = SemanticType.map("identity.based.authentication.contact@core.digitalid.net"); // TODO: .load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.XDF_TYPE);
+    public static final @Nonnull @Loaded SemanticType IDENTITY_BASED_TYPE = SemanticType.map("identity.based.authentication.contact@core.digitalid.net").load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).withCategories(Category.INTERNAL_IDENTITIES).withCachingPeriod(Time.TROPICAL_YEAR).build());
     
     /**
      * Stores an empty set of authentications.

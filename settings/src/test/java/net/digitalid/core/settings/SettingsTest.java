@@ -13,12 +13,14 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.testing.SQLTestBase;
 
+import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,7 +42,7 @@ interface TestNonHostEntity extends NonHostEntity<TestUnit> {
     
 }
 
-public class SettingsTest extends SQLTestBase {
+public class SettingsTest extends CryptographyTestBase {
     
     private static final @Nonnull String VALUE = ""; // TODO: Choose a non-default password like "Pa$$word" once properties can be loaded from the database.
     
@@ -55,7 +57,7 @@ public class SettingsTest extends SQLTestBase {
     @Test
     public void _01_testValueReplace() throws DatabaseException, RecoveryException {
         try {
-            final @Nonnull Settings settings = Settings.of(TestNonHostEntityBuilder.withUnit(UNIT).withKey(0).withIdentity(SemanticType.map("test@core.digitalid.net")).build());
+            final @Nonnull Settings settings = Settings.of(TestNonHostEntityBuilder.withUnit(UNIT).withKey(0).withIdentity(SemanticType.map("test@core.digitalid.net").load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build())).build());
             settings.password().set(VALUE);
             settings.password().reset(); // Not necessary but I want to test the database state.
             assertEquals(VALUE, settings.password().get());

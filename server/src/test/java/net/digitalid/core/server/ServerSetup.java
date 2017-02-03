@@ -2,8 +2,7 @@ package net.digitalid.core.server;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.testing.RootTest;
-
+import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
@@ -16,7 +15,7 @@ import org.junit.Test;
 /**
  * Sets up the {@link Server} for testing.
  */
-public class ServerSetup extends RootTest {
+public class ServerSetup extends CryptographyTestBase {
     
     protected static @Nonnull HostIdentifier identifier;
     

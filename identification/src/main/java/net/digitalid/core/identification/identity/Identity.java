@@ -9,7 +9,6 @@ import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
-import net.digitalid.core.identification.Category;
 import net.digitalid.core.identification.identifier.Identifier;
 
 /**

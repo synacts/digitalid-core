@@ -1,26 +1,35 @@
 package net.digitalid.core.asymmetrickey;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.testing.RootTest;
+import net.digitalid.utility.threading.annotations.MainThread;
 
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.testing.SQLTestBase;
 
+import net.digitalid.core.annotations.type.NonLoaded;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.parameters.Parameters;
 
 import org.junit.BeforeClass;
 
-public class CryptographyTestBase extends RootTest {
+public class CryptographyTestBase extends SQLTestBase {
     
     /* -------------------------------------------------- Public Key Retriever -------------------------------------------------- */
     
@@ -89,6 +98,34 @@ public class CryptographyTestBase extends RootTest {
             } else {
                 throw new UnsupportedOperationException("The identifier resolver does not support '" + identifier.getClass() + "' yet.");
             }
+        }
+        
+        private static final @Nonnull Map<@Nonnull InternalNonHostIdentifier, @Nonnull SyntacticType> syntacticTypes = new HashMap<>();
+        
+        @Pure
+        @Override
+        @MainThread
+        protected @Nonnull @NonLoaded SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier) {
+            @Nullable SyntacticType type = syntacticTypes.get(identifier);
+            if (type == null) {
+                type = createSyntacticType(ThreadLocalRandom.current().nextInt(), identifier);
+                syntacticTypes.put(identifier, type);
+            }
+            return type;
+        }
+        
+        private static final @Nonnull Map<@Nonnull InternalNonHostIdentifier, @Nonnull SemanticType> semanticTypes = new HashMap<>();
+        
+        @Pure
+        @Override
+        @MainThread
+        protected @Nonnull @NonLoaded SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier) {
+            @Nullable SemanticType type = semanticTypes.get(identifier);
+            if (type == null) {
+                type = createSemanticType(ThreadLocalRandom.current().nextInt(), identifier);
+                semanticTypes.put(identifier, type);
+            }
+            return type;
         }
         
     }

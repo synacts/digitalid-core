@@ -7,13 +7,15 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.errors.InitializationError;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.identification.Category;
+import net.digitalid.core.annotations.type.NonLoaded;
 import net.digitalid.core.identification.identifier.EmailIdentifier;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
@@ -27,7 +29,7 @@ import net.digitalid.core.identification.identifier.MobileIdentifier;
 @Immutable
 public abstract class IdentifierResolver {
     
-    /* -------------------------------------------------- Interface -------------------------------------------------- */
+    /* -------------------------------------------------- Resolution -------------------------------------------------- */
     
     /**
      * Returns the identity of the given key.
@@ -43,6 +45,24 @@ public abstract class IdentifierResolver {
     @Pure
     @NonCommitting
     public abstract @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws ExternalException;
+    
+    /* -------------------------------------------------- Mapping -------------------------------------------------- */
+    
+    /**
+     * Maps the given identifier and returns a syntactic type with that address.
+     * All exceptions are suppressed with an {@link InitializationError}.
+     */
+    @Pure
+    @MainThread
+    protected abstract @Nonnull @NonLoaded SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier);
+    
+    /**
+     * Maps the given identifier and returns a semantic type with that address.
+     * All exceptions are suppressed with an {@link InitializationError}.
+     */
+    @Pure
+    @MainThread
+    protected abstract @Nonnull @NonLoaded SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier);
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
@@ -108,6 +128,13 @@ public abstract class IdentifierResolver {
         return new MobilePersonSubclass(key, address, Category.MOBILE_PERSON);
     }
     
+    /* -------------------------------------------------- Type Loading -------------------------------------------------- */
+    
+    @Pure
+    protected static void load(@Nonnull @NonLoaded Type type) throws ExternalException {
+        type.load();
+    }
+    
     /* -------------------------------------------------- Identity Relocation -------------------------------------------------- */
     
     @Pure
@@ -125,7 +152,7 @@ public abstract class IdentifierResolver {
     /* -------------------------------------------------- Category Change -------------------------------------------------- */
     
     @Pure
-    protected static void setKey(@NonCaptured @Modified @Nonnull ExternalPerson person, @Nonnull Category category) {
+    protected static void setCategory(@NonCaptured @Modified @Nonnull ExternalPerson person, @Nonnull Category category) {
         person.setCategory(category);
     }
     

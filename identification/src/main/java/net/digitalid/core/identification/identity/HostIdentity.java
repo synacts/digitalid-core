@@ -7,7 +7,6 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.identification.Category;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 
 /**

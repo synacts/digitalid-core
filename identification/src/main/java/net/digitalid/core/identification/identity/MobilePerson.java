@@ -8,7 +8,6 @@ import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
-import net.digitalid.core.identification.Category;
 
 /**
  * This class models a mobile person.

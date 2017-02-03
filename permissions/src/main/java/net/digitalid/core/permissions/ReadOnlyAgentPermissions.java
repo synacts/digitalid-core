@@ -16,11 +16,17 @@ import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 
+import net.digitalid.database.auxiliary.Time;
+
+import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.identification.annotations.AttributeType;
+import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 
 /**
  * This interface provides read-only access to {@link FreezableAgentPermissions agent permissions} and should <em>never</em> be cast away.
@@ -43,7 +49,7 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<@Nonnull SemanticT
     /**
      * Stores the semantic type {@code general.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull @AttributeType SemanticType GENERAL = SemanticType.map("general.permission.agent@core.digitalid.net"); // TODO: SemanticType.map("general.permission.agent@core.digitalid.net").load(new Category[] {Category.HOST, Category.SYNTACTIC_TYPE, Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, BooleanWrapper.XDF_TYPE);
+    public static final @Nonnull @Loaded @AttributeType SemanticType GENERAL = SemanticType.map("general.permission.agent@core.digitalid.net").load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).withCategories(Category.INTERNAL_IDENTITIES).withCachingPeriod(Time.TROPICAL_YEAR).build());
     
     /* -------------------------------------------------- Constants -------------------------------------------------- */
     

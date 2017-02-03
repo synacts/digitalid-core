@@ -15,8 +15,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.CoreHandler;
 import net.digitalid.core.handler.reply.QueryReply;
-import net.digitalid.core.identification.Category;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.resolution.predecessor.ReadOnlyPredecessors;
 

@@ -3,6 +3,7 @@ package net.digitalid.core.identification.identity;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
@@ -23,5 +24,13 @@ public abstract class RelocatableIdentity implements NonHostIdentity {
      */
     @Impure
     abstract void setAddress(@Nonnull InternalNonHostIdentifier address);
+    
+    /* -------------------------------------------------- Object -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return "Identity(category: " + getCategory() + ", key: " + getKey() + ", address: " + getAddress().getString() + ")";
+    }
     
 }

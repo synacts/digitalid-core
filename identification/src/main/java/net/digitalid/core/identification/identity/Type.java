@@ -1,7 +1,6 @@
 package net.digitalid.core.identification.identity;
 
 import net.digitalid.utility.annotations.method.Impure;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.method.Ensures;
 import net.digitalid.utility.validation.annotations.type.Mutable;
@@ -22,23 +21,6 @@ public abstract class Type extends RelocatableIdentity implements InternalNonHos
     
     /* -------------------------------------------------- Loaded -------------------------------------------------- */
     
-    private boolean loaded = false;
-    
-    @Pure
-    @Override
-    public boolean isLoaded() {
-        return loaded;
-    }
-    
-    /**
-     * Sets the type declaration to being loaded.
-     */
-    @Impure
-    @Ensures(condition = "isLoaded()", message = "The type declaration has to be loaded.")
-    void setLoaded() {
-        loaded = true;
-    }
-    
     /**
      * Loads the type declaration from the cache or the network.
      * Lazy loading is necessary for recursive type declarations.
@@ -56,7 +38,7 @@ public abstract class Type extends RelocatableIdentity implements InternalNonHos
     @NonCommitting
     @Ensures(condition = "isLoaded()", message = "The type declaration has to be loaded.")
     public void ensureLoaded() throws ExternalException {
-        if (!loaded) { load(); }
+        if (!isLoaded()) { load(); }
     }
     
 }

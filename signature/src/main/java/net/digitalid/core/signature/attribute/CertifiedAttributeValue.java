@@ -59,7 +59,7 @@ public abstract class CertifiedAttributeValue extends AttributeValue {
      */
     @Pure
     public boolean isValid(@Nonnull Time time) {
-        return getSignature().getTime().add(getSignature().getObject().getType().getCachingPeriodNotNull()).isGreaterThan(time);
+        return getSignature().getTime().add(getSignature().getObject().getType().getCachingPeriod()).isGreaterThan(time);
     }
     
     /**

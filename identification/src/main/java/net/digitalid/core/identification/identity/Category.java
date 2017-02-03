@@ -1,15 +1,14 @@
-package net.digitalid.core.identification;
+package net.digitalid.core.identification.identity;
 
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
-import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.string.Strings;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.Empty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -22,7 +21,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 @GenerateConverter
 public enum Category {
     
-    /* -------------------------------------------------- Categories -------------------------------------------------- */
+    /* -------------------------------------------------- Constants -------------------------------------------------- */
     
     /**
      * The category for a host.
@@ -59,14 +58,52 @@ public enum Category {
      */
     MOBILE_PERSON(6);
     
-    /* -------------------------------------------------- Empty List -------------------------------------------------- */
+    /* -------------------------------------------------- Lists -------------------------------------------------- */
     
     /**
      * Stores an empty list of categories that can be shared among semantic types.
-     * (This declaration cannot be in the semantic type class as the initialization would be too late.)
      */
-    @Deprecated // TODO: Do we still need this?
-    public static final @Nonnull @Frozen @Empty ReadOnlyList<Category> NONE = FreezableArrayList.<Category>withInitialCapacity(0).freeze();
+    public static final @Nonnull @Empty ImmutableList<Category> NONE = ImmutableList.withElements();
+    
+    /**
+     * Stores an immutable list with only the host category.
+     */
+    public static final @Nonnull @NonNullableElements ImmutableList<Category> ONLY_HOST = ImmutableList.withElements(HOST);
+    
+    /**
+     * Stores an immutable list with only the natural person category.
+     */
+    public static final @Nonnull @NonNullableElements ImmutableList<Category> ONLY_NATURAL_PERSON = ImmutableList.withElements(NATURAL_PERSON);
+    
+    /**
+     * Stores an immutable list with the internal person categories.
+     */
+    public static final @Nonnull @NonNullableElements ImmutableList<Category> INTERNAL_PERSONS = ImmutableList.withElements(NATURAL_PERSON, ARTIFICIAL_PERSON);
+    
+    /**
+     * Stores an immutable list with the external person categories.
+     */
+    public static final @Nonnull @NonNullableElements ImmutableList<Category> EXTERNAL_PERSONS = ImmutableList.withElements(EMAIL_PERSON, MOBILE_PERSON);
+    
+    /**
+     * Stores an immutable list with the person categories.
+     */
+    public static final @Nonnull @NonNullableElements ImmutableList<Category> PERSONS = ImmutableList.withElements(NATURAL_PERSON, ARTIFICIAL_PERSON, EMAIL_PERSON, MOBILE_PERSON);
+    
+    /**
+     * Stores an immutable list with the type categories.
+     */
+    public static final @Nonnull @NonNullableElements ImmutableList<Category> TYPES = ImmutableList.withElements(SYNTACTIC_TYPE, SEMANTIC_TYPE);
+    
+    /**
+     * Stores an immutable list with the person categories.
+     */
+    public static final @Nonnull @NonNullableElements ImmutableList<Category> INTERNAL_NON_HOST_IDENTITIES = ImmutableList.withElements(SYNTACTIC_TYPE, SEMANTIC_TYPE, NATURAL_PERSON, ARTIFICIAL_PERSON);
+    
+    /**
+     * Stores an immutable list with the person categories.
+     */
+    public static final @Nonnull @NonNullableElements ImmutableList<Category> INTERNAL_IDENTITIES = ImmutableList.withElements(HOST, SYNTACTIC_TYPE, SEMANTIC_TYPE, NATURAL_PERSON, ARTIFICIAL_PERSON);
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     

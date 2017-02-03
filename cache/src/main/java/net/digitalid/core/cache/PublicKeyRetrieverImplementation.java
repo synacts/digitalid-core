@@ -15,8 +15,12 @@ import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
+import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.keychain.PublicKeyChainConverter;
 
@@ -29,13 +33,15 @@ public class PublicKeyRetrieverImplementation implements PublicKeyRetriever {
     
     /* -------------------------------------------------- Retrieval -------------------------------------------------- */
     
+    public static final @Nonnull SemanticType PUBLIC_KEY_CHAIN = SemanticType.map(PublicKeyChainConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(/* TODO: */ SyntacticType.BOOLEAN).withCategories(Category.ONLY_HOST).withCachingPeriod(Time.TROPICAL_YEAR).build());
+    
     /**
      * Returns the public key chain of the given identity.
      */
     @Pure
     @NonCommitting
     public static @Nonnull PublicKeyChain getPublicKeyChain(@Nonnull HostIdentity identity) throws ExternalException {
-        return Cache.getFreshAttributeContent(identity, null, SemanticType.map(PublicKeyChainConverter.INSTANCE), PublicKeyChainConverter.INSTANCE, true);
+        return Cache.getFreshAttributeContent(identity, null, PUBLIC_KEY_CHAIN, PublicKeyChainConverter.INSTANCE, true);
     }
     
     @Pure
@@ -48,10 +54,10 @@ public class PublicKeyRetrieverImplementation implements PublicKeyRetriever {
     /* -------------------------------------------------- Injection -------------------------------------------------- */
     
     /**
-     * Initializes the the public key retriever.
+     * Initializes the public key retriever.
      */
     @Impure
-    @Initialize(target = PublicKeyRetriever.class)
+    @Initialize(target = PublicKeyRetriever.class, dependencies = IdentifierResolver.class)
     public static void initializePublicKeyRetriever() {
         PublicKeyRetriever.configuration.set(new PublicKeyRetrieverImplementation());
     }

@@ -6,7 +6,6 @@ import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.value.Invariant;
 
-import net.digitalid.core.identification.Category;
 
 /**
  * This class models an external person.
