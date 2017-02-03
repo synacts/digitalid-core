@@ -19,7 +19,7 @@ import net.digitalid.utility.validation.annotations.type.ReadOnly;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
-import net.digitalid.core.identification.annotations.type.kind.AttributeType;
+import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identity.SemanticType;
 
 /**

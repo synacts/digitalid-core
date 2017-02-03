@@ -16,6 +16,7 @@ import net.digitalid.database.auxiliary.Time;
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.keychain.PublicKeyChainConverter;
 
@@ -34,7 +35,7 @@ public class PublicKeyRetrieverImplementation implements PublicKeyRetriever {
     @Pure
     @NonCommitting
     public static @Nonnull PublicKeyChain getPublicKeyChain(@Nonnull HostIdentity identity) throws ExternalException {
-        return Cache.getFreshAttributeContent(identity, null, /* TODO: PublicKeyChain.TYPE */ null, PublicKeyChainConverter.INSTANCE, true);
+        return Cache.getFreshAttributeContent(identity, null, SemanticType.map(PublicKeyChainConverter.INSTANCE), PublicKeyChainConverter.INSTANCE, true);
     }
     
     @Pure

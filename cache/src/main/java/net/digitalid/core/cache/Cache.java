@@ -14,6 +14,7 @@ import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.threading.Threading;
 import net.digitalid.utility.tuples.Pair;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Utility;
@@ -31,7 +32,6 @@ import net.digitalid.core.cache.exceptions.CertificateNotFoundExceptionBuilder;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnClient;
 import net.digitalid.core.handler.reply.Reply;
-import net.digitalid.core.identification.annotations.identifier.NonMapped;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.InternalIdentity;
@@ -243,11 +243,11 @@ public abstract class Cache {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AttributeValue[] getAttributeValues(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull @NonEmpty SemanticType... types) throws ExternalException {
+    public static @Nonnull AttributeValue[] getAttributeValues(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull @NonNullableElements @NonEmpty SemanticType... types) throws ExternalException {
         Require.that(time.isNonNegative()).orThrow("The given time is non-negative.");
         Require.that(types.length > 0).orThrow("At least one type is given.");
 //        Require.that(!Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1).orThrow("If the public key chain of a host is queried, it is the only type."); // TODO
-        for (final @Nullable SemanticType type : types) { Require.that(type != null && type.isAttributeFor(identity.getCategory())).orThrow("Each type is not null and can be used as an attribute for the category of the given identity."); }
+        for (final @Nonnull SemanticType type : types) { Require.that(type != null && type.isAttributeFor(identity.getCategory())).orThrow("Each type is not null and can be used as an attribute for the category of the given identity."); }
         
         final @Nonnull AttributeValue[] attributeValues = new AttributeValue[types.length];
         
@@ -430,7 +430,7 @@ public abstract class Cache {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull @NonMapped HostIdentifier identifier) throws ExternalException {
+    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull /* @NonMapped */HostIdentifier identifier) throws ExternalException {
         // TODO: Is this still necessary and at the right place?
         
         throw new UnsupportedOperationException();

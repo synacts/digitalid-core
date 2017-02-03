@@ -13,10 +13,10 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
+import net.digitalid.core.annotations.type.Loaded;
+import net.digitalid.core.annotations.type.LoadedRecipient;
+import net.digitalid.core.annotations.type.NonLoadedRecipient;
 import net.digitalid.core.identification.Category;
-import net.digitalid.core.identification.annotations.type.loaded.Loaded;
-import net.digitalid.core.identification.annotations.type.loaded.LoadedRecipient;
-import net.digitalid.core.identification.annotations.type.loaded.NonLoadedRecipient;
 
 /**
  * This class models a syntactic type.

@@ -13,7 +13,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.method.Chainable;
 import net.digitalid.utility.validation.annotations.size.Single;
 
-import net.digitalid.core.identification.annotations.type.kind.AttributeType;
+import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.typeset.FreezableAttributeTypeSet;
 

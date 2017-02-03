@@ -6,7 +6,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.exceptions.response.ResponseException;
-import net.digitalid.core.identification.annotations.type.kind.AttributeType;
+import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identity.SemanticType;
 
 /**

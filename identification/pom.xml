@@ -9,4 +9,12 @@
     
     <artifactId>core-identification</artifactId>
     
+    <dependencies>
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-annotations</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    
 </project>

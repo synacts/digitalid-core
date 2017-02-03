@@ -22,7 +22,7 @@ import net.digitalid.core.credential.utility.ExposedExponent;
 import net.digitalid.core.credential.utility.ExposedExponentConverter;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;
-import net.digitalid.core.identification.annotations.type.kind.RoleType;
+import net.digitalid.core.identification.annotations.RoleType;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;

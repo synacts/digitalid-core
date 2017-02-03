@@ -11,7 +11,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.client.Client;
-import net.digitalid.core.identification.annotations.type.kind.RoleType;
+import net.digitalid.core.identification.annotations.RoleType;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.outgoingrole.OutgoingRole;
 

@@ -8,7 +8,7 @@ import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 
-import net.digitalid.core.identification.annotations.type.kind.AttributeType;
+import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.typeset.authentications.ReadOnlyAuthentications;

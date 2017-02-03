@@ -21,7 +21,7 @@ import net.digitalid.database.auxiliary.Time;
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.credential.Credential;
-import net.digitalid.core.identification.annotations.type.kind.RoleType;
+import net.digitalid.core.identification.annotations.RoleType;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;

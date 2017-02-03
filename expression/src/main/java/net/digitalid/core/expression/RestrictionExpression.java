@@ -22,7 +22,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.core.expression.operators.BinaryOperator;
 import net.digitalid.core.expression.operators.RestrictionOperator;
-import net.digitalid.core.identification.annotations.type.kind.AttributeType;
+import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.node.contact.Contact;
 import net.digitalid.core.pack.Pack;

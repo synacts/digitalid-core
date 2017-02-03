@@ -11,9 +11,9 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.property.PersistentPropertyEntry;
 import net.digitalid.database.property.PersistentPropertyTable;
 
+import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.identification.annotations.type.loaded.Loaded;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.subject.CoreSubjectModule;
