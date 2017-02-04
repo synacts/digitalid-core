@@ -2,14 +2,15 @@ package net.digitalid.core.encryption;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.conversion.converters.StringConverter;
+import net.digitalid.utility.exceptions.ExternalException;
+
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
 
 import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.identification.identifier.Identifier;
-import net.digitalid.core.identification.identifier.IdentifierConverter;
 import net.digitalid.core.symmetrickey.InitializationVector;
 import net.digitalid.core.symmetrickey.InitializationVectorBuilder;
 import net.digitalid.core.symmetrickey.SymmetricKey;
@@ -17,32 +18,25 @@ import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
 
 import org.junit.Test;
 
-/**
- *
- */
 public class EncryptionConverterTest extends CryptographyTestBase {
     
     @Test
-    public void shouldConvertEncryptedObject() throws Exception {
-        // The identifier is the secret that we are encrypting.
-        // TODO: this is probably confusing and we should change it to a secret-message object.
-        final @Nonnull Identifier identifier = Identifier.with("alice@digitalid.net");
-        final @Nonnull HostIdentifier identifierRecipient = HostIdentifier.with("digitalid.net");
-        
+    public void testEncryptionConverter() throws ExternalException {
+        final @Nonnull String secret = "Hello World!";
+        final @Nonnull HostIdentifier recipient = HostIdentifier.with("digitalid.net");
+        final @Nonnull Time time = TimeBuilder.build();
         final @Nonnull SymmetricKey symmetricKey = SymmetricKeyBuilder.build();
         final @Nonnull InitializationVector initializationVector = InitializationVectorBuilder.build();
         
-        final @Nonnull Time time = TimeBuilder.build();
-        final @Nonnull Encryption<Identifier> encryptedIdentifier = EncryptionBuilder.withObject(identifier).withRecipient(identifierRecipient).withTime(time).withSymmetricKey(symmetricKey).withInitializationVector(initializationVector).build();
-    
-        final @Nonnull byte[] encryptedBytes = XDF.convert(EncryptionConverterBuilder.withObjectConverter(IdentifierConverter.INSTANCE).build(), encryptedIdentifier);
-    
-        final @Nonnull Encryption<Identifier> encryption = XDF.recover(EncryptionConverterBuilder.withObjectConverter(IdentifierConverter.INSTANCE).build(), null, encryptedBytes);
-    
-        assertEquals(identifierRecipient, encryption.getRecipient());
-        assertEquals(symmetricKey, encryption.getSymmetricKey());
-        assertEquals(initializationVector, encryption.getInitializationVector());
-        assertEquals(identifier, encryption.getObject());
+        final @Nonnull Encryption<String> encryption = EncryptionBuilder.withObject(secret).withRecipient(recipient).withTime(time).withSymmetricKey(symmetricKey).withInitializationVector(initializationVector).build();
+        final @Nonnull EncryptionConverter<String> encryptionConverter = EncryptionConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build();
+        final @Nonnull byte[] bytes = XDF.convert(encryptionConverter, encryption);
+        final @Nonnull Encryption<String> recoveredEncryption = XDF.recover(encryptionConverter, null, bytes);
+        
+        assertEquals(recipient, recoveredEncryption.getRecipient());
+        assertEquals(symmetricKey, recoveredEncryption.getSymmetricKey());
+        assertEquals(initializationVector, recoveredEncryption.getInitializationVector());
+        assertEquals(secret, recoveredEncryption.getObject());
     }
     
 }

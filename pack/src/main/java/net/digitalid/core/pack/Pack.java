@@ -8,7 +8,10 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.generics.Specifiable;
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.ownership.Shared;
+import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
@@ -66,6 +69,14 @@ public abstract class Pack {
     /* -------------------------------------------------- Load -------------------------------------------------- */
     
     /**
+     * Loads a pack from the given bytes.
+     */
+    @Pure
+    public static @Nonnull Pack loadFrom(@NonCaptured @Unmodified @Nonnull byte[] bytes) throws RecoveryException {
+        return XDF.recover(PackConverter.INSTANCE, null, bytes);
+    }
+    
+    /**
      * Loads a pack from the given file.
      */
     @Pure
@@ -82,6 +93,14 @@ public abstract class Pack {
     }
     
     /* -------------------------------------------------- Store -------------------------------------------------- */
+    
+    /**
+     * Returns this pack as a byte array.
+     */
+    @Pure
+    public @Capturable @Nonnull byte[] store() {
+        return XDF.convert(PackConverter.INSTANCE, this);
+    }
     
     /**
      * Stores this pack to the given file.
