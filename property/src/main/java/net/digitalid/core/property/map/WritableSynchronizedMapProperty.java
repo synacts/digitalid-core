@@ -118,7 +118,7 @@ public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY exte
                 SQL.insert(getTable().getEntryConverter(), entry, getSubject().getUnit());
                 getMap().put(key, value);
             } else {
-                SQL.delete(getTable().getEntryConverter(), entry, getTable().getEntryConverter(), getSubject().getUnit());
+                SQL.delete(getTable().getEntryConverter(), getTable().getEntryConverter(), entry, getSubject().getUnit());
                 getMap().remove(key);
             }
             notifyObservers(key, value, added);
