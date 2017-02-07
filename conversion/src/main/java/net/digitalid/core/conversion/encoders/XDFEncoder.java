@@ -36,6 +36,7 @@ import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.size.Size;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
+import net.digitalid.core.conversion.decoders.XDFDecoder;
 import net.digitalid.core.conversion.exceptions.StreamException;
 import net.digitalid.core.conversion.streams.output.NonClosingOutputStreamBuilder;
 import net.digitalid.core.conversion.streams.output.WrappedOutputStream;
@@ -43,6 +44,12 @@ import net.digitalid.core.conversion.streams.output.WrappedOutputStreamBuilder;
 
 /**
  * An XDF encoder encodes values as XDF to an output stream.
+ * 
+ * @see NetworkEncoder
+ * @see MemoryEncoder
+ * @see FileEncoder
+ * 
+ * @see XDFDecoder
  */
 @Mutable
 public abstract class XDFEncoder<@Unspecifiable EXCEPTION extends StreamException> implements Encoder<EXCEPTION> {

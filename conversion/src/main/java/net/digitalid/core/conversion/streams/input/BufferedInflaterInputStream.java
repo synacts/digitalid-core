@@ -15,6 +15,7 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 @Mutable
+@Deprecated // TODO: Do we really need this wrapper? Also the mark and reset seems to be implemented wrongly according to the Javadoc.
 @Review(date = "2017-01-27", author = Author.KASPAR_ETTER, comment = "Especially the finish method, which does nothing at the moment.")
 public class BufferedInflaterInputStream extends InflaterInputStream {
     

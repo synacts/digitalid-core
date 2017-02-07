@@ -2,6 +2,7 @@ package net.digitalid.core.packet;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.converters.StringConverter;
 import net.digitalid.utility.exceptions.ExternalException;
 
@@ -26,6 +27,7 @@ import net.digitalid.core.signature.SignatureConverterBuilder;
 
 import org.junit.Test;
 
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class RequestTest extends CryptographyTestBase {
     
     private final @Nonnull InternalNonHostIdentifier subject = InternalNonHostIdentifier.with("subject@core.digitalid.net");
@@ -58,7 +60,8 @@ public class RequestTest extends CryptographyTestBase {
         assertEquals(string, recoveredString);
     }
     
-    @Test
+//    @Test
+    @Pure
     public void testEncryptionConverter() throws ExternalException {
         final @Nonnull String string = "Hello World!";
         final @Nonnull Pack content = Pack.pack(StringConverter.INSTANCE, string);
@@ -76,7 +79,8 @@ public class RequestTest extends CryptographyTestBase {
         assertEquals(string, recoveredString);
     }
     
-    @Test
+//    @Test
+    @Pure
     public void testSignatureConverter() throws ExternalException {
         final @Nonnull String string = "Hello World!";
         final @Nonnull Pack content = Pack.pack(StringConverter.INSTANCE, string);
@@ -90,6 +94,24 @@ public class RequestTest extends CryptographyTestBase {
         final @Nonnull String recoveredString = recoveredContent.unpack(StringConverter.INSTANCE, null);
         
         assertEquals(string, recoveredString);
+    }
+    
+    @Test
+    public void testCompressionWithinEncryption() throws ExternalException {
+        final @Nonnull CompressionConverter<String> compressionConverter = CompressionConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build();
+        final @Nonnull EncryptionConverter<Compression<String>> encryptionConverter = EncryptionConverterBuilder.withObjectConverter(compressionConverter).build();
+        
+        final @Nonnull String string = "Hello World!";
+        final @Nonnull Compression<String> compression = CompressionBuilder.withObject(string).build();
+        final @Nonnull Encryption<Compression<String>> encryption = EncryptionBuilder.withObject(compression).withRecipient(HostIdentifier.DIGITALID).build();
+        final @Nonnull byte[] bytes = XDF.convert(encryptionConverter, encryption);
+        
+        final @Nonnull Encryption<Compression<String>> recoveredEncryption = XDF.recover(encryptionConverter, null, bytes);
+        final @Nonnull Compression<String> recoveredCompression = recoveredEncryption.getObject();
+        final @Nonnull String recoveredString = recoveredCompression.getObject();
+        
+        assertEquals(string, recoveredString);
+        System.out.println("finish");
     }
     
 }

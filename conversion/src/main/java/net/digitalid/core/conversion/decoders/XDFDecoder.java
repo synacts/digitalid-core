@@ -8,6 +8,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.Map;
 import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,14 +40,20 @@ import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.size.Size;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
+import net.digitalid.core.conversion.encoders.XDFEncoder;
 import net.digitalid.core.conversion.exceptions.StreamException;
-import net.digitalid.core.conversion.streams.input.BufferedInflaterInputStream;
 import net.digitalid.core.conversion.streams.input.CustomCipherInputStream;
 import net.digitalid.core.conversion.streams.input.WrappedInputStream;
 import net.digitalid.core.conversion.streams.input.WrappedInputStreamBuilder;
 
 /**
  * An XDF encoder encodes values as XDF to an output stream.
+ * 
+ * @see NetworkDecoder
+ * @see MemoryDecoder
+ * @see FileDecoder
+ * 
+ * @see XDFEncoder
  */
 @Mutable
 public abstract class XDFDecoder<@Unspecifiable EXCEPTION extends StreamException> implements Decoder<EXCEPTION> {
@@ -319,24 +326,21 @@ public abstract class XDFDecoder<@Unspecifiable EXCEPTION extends StreamExceptio
     @Pure
     @Override
     public boolean isDecompressing() {
-        return inputStream.wrapsInstanceOf(BufferedInflaterInputStream.class);
+        return inputStream.wrapsInstanceOf(InflaterInputStream.class);
     }
     
     @Impure
     @Override
     @Ensures(condition = "isDecompressing()", message = "The decoder has to be decompressing.")
     public void startDecompressing(@Nonnull Inflater inflater) {
-        this.inputStream = WrappedInputStreamBuilder.withWrappedStream(new BufferedInflaterInputStream(inputStream)).withPreviousStream(inputStream).build();
+        this.inputStream = WrappedInputStreamBuilder.withWrappedStream(new InflaterInputStream(inputStream)).withPreviousStream(inputStream).build();
     }
     
     @Impure
     @Override
     @Requires(condition = "isDecompressing()", message = "The decoder has to be decompressing.")
     public void stopDecompressing() throws EXCEPTION {
-        // TODO: The following lines were like this in a previous version but seem to do nothing, so I commented them out.
-//        final @Nonnull BufferedInflaterInputStream inflaterInputStream = inputStream.getWrappedStream(BufferedInflaterInputStream.class);
-//        inflaterInputStream.finish();
-        this.inputStream = inputStream.getPreviousStream(BufferedInflaterInputStream.class);
+        this.inputStream = inputStream.getPreviousStream(InflaterInputStream.class);
     }
     
     /* -------------------------------------------------- Decrypting -------------------------------------------------- */
@@ -351,7 +355,7 @@ public abstract class XDFDecoder<@Unspecifiable EXCEPTION extends StreamExceptio
     @Override
     @Ensures(condition = "isDecrypting()", message = "The decoder has to be decrypting.")
     public void startDecrypting(@Nonnull Cipher cipher) {
-        this.inputStream = WrappedInputStreamBuilder.withWrappedStream(CustomCipherInputStream.with(inputStream, cipher)).withPreviousStream(inputStream).build();
+        this.inputStream = WrappedInputStreamBuilder.withWrappedStream(new CustomCipherInputStream(inputStream, cipher)).withPreviousStream(inputStream).build();
     }
     
     @Impure

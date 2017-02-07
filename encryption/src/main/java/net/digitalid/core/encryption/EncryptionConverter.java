@@ -142,7 +142,7 @@ public abstract class EncryptionConverter<@Unspecifiable OBJECT> implements Gene
         final @Nonnull Element encryptedSymmetricKeyValue = decoder.decodeObject(ElementConverter.INSTANCE, privateKey.getCompositeGroup());
         final @Nonnull SymmetricKey decryptedSymmetricKey = SymmetricKeyBuilder.buildWithValue(privateKey.powD(encryptedSymmetricKeyValue).getValue());
         final @Nonnull InitializationVector initializationVector = decoder.decodeObject(InitializationVectorConverter.INSTANCE, null);
-    
+        
         decoder.startDecrypting(decryptedSymmetricKey.getCipher(initializationVector, Cipher.DECRYPT_MODE));
         final OBJECT object = decoder.decodeObject(getObjectConverter(), null);
         decoder.stopDecrypting();
