@@ -322,7 +322,7 @@ public abstract class Request extends Packet {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
             pack().storeTo(socket);
             final @Nonnull Pack pack = Pack.loadFrom(socket);
-            return pack.unpack(null /* ResponseConverter.INSTANCE */, null);
+            return pack.unpack(ResponseConverter.INSTANCE, null);
 //        } catch (@Nonnull RequestException exception) {
 //            if (exception.getCode() == RequestErrorCode.KEYROTATION && this instanceof ClientRequest) {
 //                return ((ClientRequest) this).recommit(methods, iteration, verified);

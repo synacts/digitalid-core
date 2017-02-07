@@ -1,11 +1,14 @@
 package net.digitalid.core.host;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
+import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -21,6 +24,9 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.entity.CoreUnit;
+import net.digitalid.core.exceptions.request.RequestErrorCode;
+import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.host.account.HostAccount;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
@@ -125,6 +131,22 @@ public abstract class Host extends CoreUnit {
     @Derive("net.digitalid.core.client.ClientBuilder.withIdentifier(identifier.getString()).withDisplayName(\"Host \" + identifier.getString()).withPreferredPermissions(net.digitalid.core.permissions.ReadOnlyAgentPermissions.GENERAL_WRITE).build()")
     public abstract @Nonnull Client getClient();
     
+    /* -------------------------------------------------- Hosts -------------------------------------------------- */
+    
+    private static final @Nonnull FreezableMap<@Nonnull HostIdentifier, @Nonnull Host> hosts = FreezableLinkedHashMapBuilder.build();
+    
+    /**
+     * Returns the host with the given identifier.
+     * 
+     * @throws RequestException if there is no host with the given identifier on this server.
+     */
+    @Pure
+    public static final @Nonnull Host of(@Nonnull HostIdentifier identifier) throws RequestException {
+        final @Nullable Host host = hosts.get(identifier);
+        if (host == null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.RECIPIENT).withMessage("The host '" + identifier.getString() + "' does not exist on this server.").build(); }
+        return host;
+    }
+    
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
     @Pure
@@ -137,6 +159,8 @@ public abstract class Host extends CoreUnit {
         } catch (@Nonnull ExternalException exception) {
             throw new RuntimeException(exception); // TODO
         }
+        
+        hosts.put(getIdentifier(), this);
         
         // TODO:
 //        try {
@@ -173,7 +197,7 @@ public abstract class Host extends CoreUnit {
     /* -------------------------------------------------- Other -------------------------------------------------- */
     
     /**
-     * Returns whether this host hosts the given identity.
+     * Returns whether this host hosts the given identity (in the core service).
      */
     @Pure
     public boolean hosts(@Nonnull InternalIdentity identity) {

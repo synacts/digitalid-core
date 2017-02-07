@@ -1,17 +1,24 @@
 package net.digitalid.core.server;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.digitalid.utility.tuples.Pair;
+
+import net.digitalid.core.compression.Compression;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;
+import net.digitalid.core.packet.Response;
 import net.digitalid.core.server.handlers.TestQuery;
 import net.digitalid.core.server.handlers.TestQueryBuilder;
 import net.digitalid.core.server.handlers.TestQueryConverter;
 import net.digitalid.core.server.handlers.TestReply;
 import net.digitalid.core.server.handlers.TestReplyConverter;
+import net.digitalid.core.signature.host.HostSignature;
 
 import org.junit.Test;
 
@@ -29,8 +36,9 @@ public class ServerTest extends ServerSetup {
         MethodIndex.add(/* TODO: SemanticType.map(TestQueryConverter.INSTANCE) */ IdentifierResolver.resolve(InternalNonHostIdentifier.with("query.test@core.digitalid.net")).castTo(SemanticType.class), TestQueryConverter.INSTANCE);
         
         final @Nonnull TestQuery query = TestQueryBuilder.withMessage("Hello from the other side!").withProvidedSubject(identifier).build();
-        final @Nonnull Pack pack = query.send();
-        final @Nonnull TestReply reply = pack.unpack(TestReplyConverter.INSTANCE, null);
+        final @Nonnull Response response = query.send();
+        final @Nonnull Pair<@Nullable Entity<?>, @Nonnull HostSignature<Compression<Pack>>> provided = Pair.of(null, (HostSignature<Compression<Pack>>) response.getEncryption().getObject());
+        final @Nonnull TestReply reply = response.getEncryption().getObject().getObject().getObject().unpack(TestReplyConverter.INSTANCE, provided);
         assertEquals("Hi there!", reply.getMessage());
         
         // Files

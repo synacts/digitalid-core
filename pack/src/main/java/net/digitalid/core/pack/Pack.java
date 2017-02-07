@@ -55,6 +55,7 @@ public abstract class Pack {
      */
     @Pure
     public <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE unpack(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided) throws RecoveryException {
+        // System.out.println("Unpack: " + Strings.hexWithSpaces(getBytes()));
         return XDF.recover(converter, provided, getBytes());
     }
     
@@ -63,7 +64,9 @@ public abstract class Pack {
      */
     @Pure
     public static <@Unspecifiable TYPE> @Nonnull Pack pack(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object) {
-        return new PackSubclass(SemanticType.map(converter), XDF.convert(converter, object));
+        final @Nonnull PackSubclass result = new PackSubclass(SemanticType.map(converter), XDF.convert(converter, object));
+        // System.out.println("Packed: " + Strings.hexWithSpaces(result.getBytes()));
+        return result;
     }
     
     /* -------------------------------------------------- Load -------------------------------------------------- */

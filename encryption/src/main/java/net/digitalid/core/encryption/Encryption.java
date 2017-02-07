@@ -28,6 +28,7 @@ import net.digitalid.core.symmetrickey.SymmetricKey;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
+@TODO(task = "Remove most getters from this class and create the subtypes RequestEncryption and ResponseEncryption.", date = "2017-02-07", author = Author.KASPAR_ETTER)
 public abstract class Encryption<@Unspecifiable TYPE> {
     
     /* -------------------------------------------------- Encrypted Object -------------------------------------------------- */

@@ -1,7 +1,5 @@
 package net.digitalid.core.encryption;
 
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +26,6 @@ import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
-import net.digitalid.utility.immutable.ImmutableMap;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
@@ -90,23 +87,18 @@ public abstract class EncryptionConverter<@Unspecifiable OBJECT> implements Gene
     private static final @Nonnull FreezableArrayList<@Nonnull CustomField> fields;
     
     static {
-        final @Nonnull Map<@Nonnull String, @Nullable Object> time = new HashMap<>();
-        final @Nonnull Map<@Nonnull String, @Nullable Object> recipient = new HashMap<>();
-        final @Nonnull Map<@Nonnull String, @Nullable Object> symmetricKey = new HashMap<>();
-        final @Nonnull Map<@Nonnull String, @Nullable Object> initializationVector = new HashMap<>();
-        
         fields = FreezableArrayList.withElements(
-                CustomField.with(TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(time)))),
-                CustomField.with(TUPLE.of(HostIdentifierConverter.INSTANCE), "recipient", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(recipient)))),
-                CustomField.with(TUPLE.of(SymmetricKeyConverter.INSTANCE), "symmetricKey", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(symmetricKey)))),
-                CustomField.with(TUPLE.of(InitializationVectorConverter.INSTANCE), "initializationVector", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withMappingsOf(initializationVector))))
+                CustomField.with(TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))),
+                CustomField.with(TUPLE.of(HostIdentifierConverter.INSTANCE), "recipient", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))),
+                CustomField.with(TUPLE.of(SymmetricKeyConverter.INSTANCE), "symmetricKey", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))),
+                CustomField.with(TUPLE.of(InitializationVectorConverter.INSTANCE), "initializationVector", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class)))
         );
     }
     
     @Pure
     @Override
     public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
-        final @Nonnull FiniteIterable<@Nonnull CustomField> customFieldForObject = FiniteIterable.of(CustomField.with(CustomType.TUPLE.of(getObjectConverter()), "object", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withNoEntries()))));
+        final @Nonnull FiniteIterable<@Nonnull CustomField> customFieldForObject = FiniteIterable.of(CustomField.with(CustomType.TUPLE.of(getObjectConverter()), "object", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))));
         return ImmutableList.withElementsOf(fields.combine(customFieldForObject));
     }
     

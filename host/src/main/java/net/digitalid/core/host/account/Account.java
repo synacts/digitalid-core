@@ -3,12 +3,15 @@ package net.digitalid.core.host.account;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.Entity;
+import net.digitalid.core.handler.AccountFactory;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.InternalIdentity;
@@ -53,6 +56,17 @@ public abstract class Account implements Entity<Host> {
         } else {
             throw CaseExceptionBuilder.withVariable("identity").withValue(identity).build();
         }
+    }
+    
+    /* -------------------------------------------------- Initializer -------------------------------------------------- */
+    
+    /**
+     * Initializes the account factory.
+     */
+    @PureWithSideEffects
+    @Initialize(target = AccountFactory.class)
+    public static void initializeAccountFactory() {
+        AccountFactory.configuration.set((recipient, subject) -> Account.with(Host.of(recipient), subject.resolve()));
     }
     
 }

@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -17,12 +17,13 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
-import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.audit.RequestAudit;
-import net.digitalid.core.conversion.exceptions.NetworkException;
+import net.digitalid.core.compression.Compression;
+import net.digitalid.core.compression.CompressionBuilder;
+import net.digitalid.core.encryption.Encryption;
+import net.digitalid.core.encryption.EncryptionBuilder;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
-import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.handler.reply.Reply;
@@ -31,7 +32,10 @@ import net.digitalid.core.pack.Pack;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.RequestConverter;
 import net.digitalid.core.packet.Response;
+import net.digitalid.core.packet.ResponseBuilder;
 import net.digitalid.core.service.Service;
+import net.digitalid.core.signature.Signature;
+import net.digitalid.core.signature.SignatureBuilder;
 
 /**
  * A worker processes incoming requests asynchronously.
@@ -81,10 +85,20 @@ public class Worker implements Runnable {
             try {
                 final @Nonnull Pack pack = Pack.loadFrom(socket);
                 request = pack.unpack(RequestConverter.INSTANCE, null);
-                final @Nonnull Method<?> method = MethodIndex.get(request.getEncryption().getObject());
+                final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = request.getEncryption();
+                final @Nonnull Signature<Compression<Pack>> signature = encryption.getObject();
+                final @Nonnull Method<?> method = MethodIndex.get(signature);
                 final @Nullable Reply<?> reply = method.executeOnHost();
-                if (reply != null) { reply.pack().storeTo(socket); }
-            } catch (@Nonnull NetworkException | RecoveryException | DatabaseException | RequestException exception) {
+                if (reply != null) {
+                    final @Nonnull Compression<Pack> compressedResponse = CompressionBuilder.withObject(reply.pack()).build();
+                    final @Nonnull Signature<Compression<Pack>> signedResponse = SignatureBuilder.withObject(compressedResponse).withSubject(signature.getSubject()).build();
+                    final @Nonnull Encryption<Signature<Compression<Pack>>> encryptedResponse = EncryptionBuilder.withObject(signature).withRecipient(encryption.getRecipient()).build();
+                    response = ResponseBuilder.withEncryption(encryptedResponse).build();
+                    response.pack().storeTo(socket);
+                } else {
+                    throw new UnsupportedOperationException("We should also send a response in case the reply is null.");
+                }
+            } catch (@Nonnull ExternalException exception) {
                 throw new RuntimeException(exception);
             }
             

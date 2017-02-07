@@ -15,7 +15,12 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.validation.annotations.generation.Default;
+import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
+import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -28,11 +33,13 @@ import net.digitalid.core.encryption.EncryptionBuilder;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.handler.AccountFactory;
 import net.digitalid.core.handler.Handler;
 import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.query.Query;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.RequestBuilder;
@@ -58,7 +65,35 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
      * Returns the recipient of this method.
      */
     @Pure
+    @OrderOfAssignment(2)
     public @Nonnull HostIdentifier getRecipient();
+    
+    /* -------------------------------------------------- Entity -------------------------------------------------- */
+    
+    /**
+     * Returns the entity that was provided with the builder.
+     */
+    @Pure
+    @Default("null")
+    @NonRepresentative
+    public @Nullable ENTITY getProvidedEntity();
+    
+    @Pure
+    @SuppressWarnings("unchecked")
+    @TODO(task = "Throw the external exception as soon as the derive annotation supports it.", date = "2017-02-07", author = Author.KASPAR_ETTER)
+    public default @Nonnull ENTITY deriveEntity(@Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) {
+        try {
+            return (ENTITY) AccountFactory.create(recipient, subject);
+        } catch (ExternalException exception) {
+            throw UncheckedExceptionBuilder.withCause(exception).build();
+        }
+    }
+    
+    @Pure
+    @Override
+    @OrderOfAssignment(3)
+    @Derive("signature != null ? deriveEntity(recipient, signature.getSubject()) : providedEntity")
+    public @Nullable ENTITY getEntity();
     
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
     
@@ -131,14 +166,15 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     
     @NonCommitting
     @PureWithSideEffects
-    public default <@Unspecifiable REPLY extends Reply<ENTITY>> @Nonnull /* REPLY */ Pack send() throws ExternalException {
+    public default <@Unspecifiable REPLY extends Reply<ENTITY>> @Nonnull /* REPLY */ Response send() throws ExternalException {
         final @Nonnull Compression<Pack> compression = CompressionBuilder.withObject(pack()).build();
         final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObject(compression).withSubject(getSubject()).build();
         final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = EncryptionBuilder.withObject(signature).withRecipient(getRecipient()).build();
         final @Nonnull Request request = RequestBuilder.withEncryption(encryption).build();
         final @Nonnull Response response = request.send();
         // TODO: All checks still have to be performed somewhere!
-        return response.getEncryption().getObject().getObject().getObject();
+        return response;
+//        return response.getEncryption().getObject().getObject().getObject();
     }
     
     /* -------------------------------------------------- Similarity -------------------------------------------------- */

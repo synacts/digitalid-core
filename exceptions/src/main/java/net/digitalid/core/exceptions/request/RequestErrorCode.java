@@ -25,11 +25,13 @@ public enum RequestErrorCode {
     /**
      * The error code for a database problem.
      */
+    @Deprecated // TODO: This is an internal problem.
     DATABASE(0),
     
     /**
      * The error code for a network problem.
      */
+    @Deprecated // TODO: This is an external problem.
     NETWORK(1),
     
     /**
@@ -98,24 +100,29 @@ public enum RequestErrorCode {
     METHOD(14),
     
     /**
+     * The error code for a wrong recipient.
+     */
+    RECIPIENT(15),
+    
+    /**
      * The error code for a non-existent identity.
      */
-    IDENTITY(15),
+    IDENTITY(16),
     
     /**
      * The error code for a relocated identity.
      */
-    RELOCATION(16),
+    RELOCATION(17),
     
     /**
      * The error code for a relocated service provider.
      */
-    SERVICE(17),
+    SERVICE(18),
     
     /**
      * The error code for an insufficient authorization.
      */
-    AUTHORIZATION(18);
+    AUTHORIZATION(19);
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
@@ -124,7 +131,7 @@ public enum RequestErrorCode {
      */
     @Pure
     public static boolean isValid(byte value) {
-        return value >= 0 && value <= 18;
+        return value >= 0 && value <= 19;
     }
     
     private final @Valid byte value;

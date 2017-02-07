@@ -8,6 +8,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
+import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -60,18 +61,10 @@ public interface Handler<@Unspecifiable ENTITY extends Entity<?>> extends UnitDe
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
     /**
-     * Returns the entity that was provided with the builder.
-     */
-    @Pure
-    @Default("null")
-    @NonRepresentative
-    public @Nullable ENTITY getProvidedEntity();
-    
-    /**
      * Returns the entity to which this handler belongs or null if it is impersonal.
      */
     @Pure
-    @Derive("providedEntity != null ? providedEntity : null /* Find a way to derive it from signature.getSubject(), probably make it injectable. */")
+    @Provided
     public @Nullable ENTITY getEntity();
     
     @Pure
@@ -105,6 +98,7 @@ public interface Handler<@Unspecifiable ENTITY extends Entity<?>> extends UnitDe
      * the corresponding identity is not known to (or does not yet) exist.
      */
     @Pure
+    @OrderOfAssignment(1)
     @Derive("signature != null ? signature.getSubject() : providedSubject")
     public @Nonnull InternalIdentifier getSubject();
     
