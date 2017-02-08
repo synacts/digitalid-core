@@ -49,7 +49,7 @@ public abstract class ResponseEncryptionConverter<@Unspecifiable OBJECT> impleme
     @Pure
     @Override
     public @Nonnull Class<? super ResponseEncryption<OBJECT>> getType() {
-        return Encryption.class;
+        return ResponseEncryption.class;
     }
     
     /* -------------------------------------------------- Name -------------------------------------------------- */

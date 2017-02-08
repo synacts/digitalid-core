@@ -28,8 +28,8 @@ import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionBuilder;
-import net.digitalid.core.encryption.Encryption;
-import net.digitalid.core.encryption.EncryptionBuilder;
+import net.digitalid.core.encryption.RequestEncryption;
+import net.digitalid.core.encryption.RequestEncryptionBuilder;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -169,7 +169,7 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     public default <@Unspecifiable REPLY extends Reply<ENTITY>> @Nonnull /* REPLY */ Response send() throws ExternalException {
         final @Nonnull Compression<Pack> compression = CompressionBuilder.withObject(pack()).build();
         final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObject(compression).withSubject(getSubject()).build();
-        final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = EncryptionBuilder.withObject(signature).withRecipient(getRecipient()).build();
+        final @Nonnull RequestEncryption<Signature<Compression<Pack>>> encryption = RequestEncryptionBuilder.withObject(signature).withRecipient(getRecipient()).build();
         final @Nonnull Request request = RequestBuilder.withEncryption(encryption).build();
         final @Nonnull Response response = request.send();
         // TODO: All checks still have to be performed somewhere!

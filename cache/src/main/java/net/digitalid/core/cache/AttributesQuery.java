@@ -127,7 +127,7 @@ public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implement
             }
         }
         
-        return AttributesReplyBuilder.withAttributeValues(attributeValues.freeze()).withProvidedEntity(getEntity()).build();
+        return AttributesReplyBuilder.withEntity(getEntity()).withAttributeValues(attributeValues.freeze()).build();
     }
     
     /* -------------------------------------------------- Packable -------------------------------------------------- */

@@ -16,6 +16,10 @@ import net.digitalid.core.encryption.Encryption;
 import net.digitalid.core.encryption.EncryptionBuilder;
 import net.digitalid.core.encryption.EncryptionConverter;
 import net.digitalid.core.encryption.EncryptionConverterBuilder;
+import net.digitalid.core.encryption.RequestEncryption;
+import net.digitalid.core.encryption.RequestEncryptionBuilder;
+import net.digitalid.core.encryption.ResponseEncryption;
+import net.digitalid.core.encryption.ResponseEncryptionBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.pack.Pack;
@@ -24,6 +28,8 @@ import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.SignatureBuilder;
 import net.digitalid.core.signature.SignatureConverter;
 import net.digitalid.core.signature.SignatureConverterBuilder;
+import net.digitalid.core.symmetrickey.SymmetricKey;
+import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
 
 import org.junit.Test;
 
@@ -97,16 +103,35 @@ public class RequestTest extends CryptographyTestBase {
     }
     
     @Test
-    public void testCompressionWithinEncryption() throws ExternalException {
+    public void testCompressionWithinRequestEncryption() throws ExternalException {
         final @Nonnull CompressionConverter<String> compressionConverter = CompressionConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build();
         final @Nonnull EncryptionConverter<Compression<String>> encryptionConverter = EncryptionConverterBuilder.withObjectConverter(compressionConverter).build();
         
         final @Nonnull String string = "Hello World!";
         final @Nonnull Compression<String> compression = CompressionBuilder.withObject(string).build();
-        final @Nonnull Encryption<Compression<String>> encryption = EncryptionBuilder.withObject(compression).withRecipient(HostIdentifier.DIGITALID).build();
+        final @Nonnull RequestEncryption<Compression<String>> encryption = RequestEncryptionBuilder.withObject(compression).withRecipient(HostIdentifier.DIGITALID).build();
         final @Nonnull byte[] bytes = XDF.convert(encryptionConverter, encryption);
         
         final @Nonnull Encryption<Compression<String>> recoveredEncryption = XDF.recover(encryptionConverter, null, bytes);
+        final @Nonnull Compression<String> recoveredCompression = recoveredEncryption.getObject();
+        final @Nonnull String recoveredString = recoveredCompression.getObject();
+        
+        assertEquals(string, recoveredString);
+        System.out.println("finish");
+    }
+    
+    @Test
+    public void testCompressionWithinResponseEncryption() throws ExternalException {
+        final @Nonnull CompressionConverter<String> compressionConverter = CompressionConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build();
+        final @Nonnull EncryptionConverter<Compression<String>> encryptionConverter = EncryptionConverterBuilder.withObjectConverter(compressionConverter).build();
+        final @Nonnull SymmetricKey symmetricKey = SymmetricKeyBuilder.build();
+        
+        final @Nonnull String string = "Hello World!";
+        final @Nonnull Compression<String> compression = CompressionBuilder.withObject(string).build();
+        final @Nonnull ResponseEncryption<Compression<String>> encryption = ResponseEncryptionBuilder.withObject(compression).withSymmetricKey(symmetricKey).build();
+        final @Nonnull byte[] bytes = XDF.convert(encryptionConverter, encryption);
+        
+        final @Nonnull Encryption<Compression<String>> recoveredEncryption = XDF.recover(encryptionConverter, symmetricKey, bytes);
         final @Nonnull Compression<String> recoveredCompression = recoveredEncryption.getObject();
         final @Nonnull String recoveredString = recoveredCompression.getObject();
         

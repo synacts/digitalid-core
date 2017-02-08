@@ -23,6 +23,8 @@ import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionBuilder;
 import net.digitalid.core.encryption.Encryption;
 import net.digitalid.core.encryption.EncryptionBuilder;
+import net.digitalid.core.encryption.RequestEncryption;
+import net.digitalid.core.encryption.ResponseEncryptionBuilder;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.method.MethodIndex;
@@ -92,7 +94,12 @@ public class Worker implements Runnable {
                 if (reply != null) {
                     final @Nonnull Compression<Pack> compressedResponse = CompressionBuilder.withObject(reply.pack()).build();
                     final @Nonnull Signature<Compression<Pack>> signedResponse = SignatureBuilder.withObject(compressedResponse).withSubject(signature.getSubject()).build();
-                    final @Nonnull Encryption<Signature<Compression<Pack>>> encryptedResponse = EncryptionBuilder.withObject(signature).withRecipient(encryption.getRecipient()).build();
+                    final @Nonnull Encryption<Signature<Compression<Pack>>> encryptedResponse;
+                    if (encryption instanceof RequestEncryption) {
+                        encryptedResponse = ResponseEncryptionBuilder.withObject(signedResponse).withSymmetricKey(((RequestEncryption) encryption).getSymmetricKey()).build();
+                    } else {
+                        encryptedResponse = EncryptionBuilder.withObject(signedResponse).build();
+                    }
                     response = ResponseBuilder.withEncryption(encryptedResponse).build();
                     response.pack().storeTo(socket);
                 } else {

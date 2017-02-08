@@ -14,7 +14,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.encryption.Encryption;
+import net.digitalid.core.encryption.RequestEncryption;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
@@ -50,7 +50,7 @@ public abstract class Replay {
      */
     @Pure
     @NonCommitting
-    public static void check(@Nonnull Encryption<?> encryption) throws DatabaseException, RequestException {
+    public static void check(@Nonnull RequestEncryption<?> encryption) throws DatabaseException, RequestException {
         final @Nonnull Time time = encryption.getTime();
         final @Nullable InitializationVector initializationVector = encryption.getInitializationVector();
         

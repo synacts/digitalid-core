@@ -1,6 +1,7 @@
 package net.digitalid.core.packet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
@@ -32,6 +33,7 @@ import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.SignatureConverter;
 import net.digitalid.core.signature.SignatureConverterBuilder;
+import net.digitalid.core.symmetrickey.SymmetricKey;
 
 import static net.digitalid.utility.conversion.model.CustomType.TUPLE;
 
@@ -42,7 +44,7 @@ import static net.digitalid.utility.conversion.model.CustomType.TUPLE;
  * @see ResponseConverter
  */
 @Immutable
-public abstract class PacketConverter<@Unspecifiable PACKET extends Packet> implements Converter<PACKET, Void> {
+public abstract class PacketConverter<@Unspecifiable PACKET extends Packet> implements Converter<PACKET, @Nullable SymmetricKey> {
     
     /* -------------------------------------------------- Package -------------------------------------------------- */
     
@@ -83,8 +85,8 @@ public abstract class PacketConverter<@Unspecifiable PACKET extends Packet> impl
     
     @Pure
     @Override
-    public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull PACKET recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, Void provided) throws EXCEPTION, RecoveryException {
-        final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = decoder.decodeObject(encryptionConverter, null);
+    public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull PACKET recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, @Nullable SymmetricKey symmetricKey) throws EXCEPTION, RecoveryException {
+        final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = decoder.decodeObject(encryptionConverter, symmetricKey);
         return recover(encryption);
     }
     

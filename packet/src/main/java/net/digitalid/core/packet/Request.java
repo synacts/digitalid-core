@@ -14,10 +14,14 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
+import net.digitalid.core.compression.Compression;
 import net.digitalid.core.conversion.exceptions.NetworkException;
 import net.digitalid.core.conversion.exceptions.NetworkExceptionBuilder;
+import net.digitalid.core.encryption.Encryption;
+import net.digitalid.core.encryption.RequestEncryption;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.pack.Pack;
+import net.digitalid.core.signature.Signature;
 
 /**
  * This class compresses, signs and encrypts requests.
@@ -322,7 +326,8 @@ public abstract class Request extends Packet {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
             pack().storeTo(socket);
             final @Nonnull Pack pack = Pack.loadFrom(socket);
-            return pack.unpack(ResponseConverter.INSTANCE, null);
+            final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = getEncryption();
+            return pack.unpack(ResponseConverter.INSTANCE, encryption instanceof RequestEncryption ? ((RequestEncryption) encryption).getSymmetricKey() : null);
 //        } catch (@Nonnull RequestException exception) {
 //            if (exception.getCode() == RequestErrorCode.KEYROTATION && this instanceof ClientRequest) {
 //                return ((ClientRequest) this).recommit(methods, iteration, verified);
