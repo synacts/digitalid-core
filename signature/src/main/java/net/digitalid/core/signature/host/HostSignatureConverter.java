@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
@@ -101,7 +100,7 @@ public abstract class HostSignatureConverter<@Unspecifiable OBJECT> implements G
     
     @Pure
     @Override
-    public @Nullable Converter<? super HostSignature<OBJECT>, Void> getSupertypeConverter() {
+    public @Nonnull Converter<? super HostSignature<OBJECT>, Void> getSupertypeConverter() {
         return SignatureConverterBuilder.withObjectConverter(getObjectConverter()).build();
     }
     

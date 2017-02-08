@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
@@ -102,7 +101,7 @@ public abstract class ClientSignatureConverter<@Unspecifiable OBJECT> implements
     
     @Pure
     @Override
-    public @Nullable Converter<? super ClientSignature<OBJECT>, Void> getSupertypeConverter() {
+    public @Nonnull Converter<? super ClientSignature<OBJECT>, Void> getSupertypeConverter() {
         return SignatureConverterBuilder.withObjectConverter(getObjectConverter()).build();
     }
     

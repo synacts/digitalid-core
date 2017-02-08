@@ -34,10 +34,10 @@ public class EncryptionConverterTest extends CryptographyTestBase {
         final @Nonnull SymmetricKey symmetricKey = SymmetricKeyBuilder.build();
         final @Nonnull InitializationVector initializationVector = InitializationVectorBuilder.build();
         
-        final @Nonnull Encryption<TYPE> encryption = EncryptionBuilder.withObject(object).withRecipient(recipient).withTime(time).withSymmetricKey(symmetricKey).withInitializationVector(initializationVector).build();
-        final @Nonnull EncryptionConverter<TYPE> encryptionConverter = EncryptionConverterBuilder.withObjectConverter(converter).build();
+        final @Nonnull RequestEncryption<TYPE> encryption = RequestEncryptionBuilder.withObject(object).withRecipient(recipient).withTime(time).withSymmetricKey(symmetricKey).withInitializationVector(initializationVector).build();
+        final @Nonnull RequestEncryptionConverter<TYPE> encryptionConverter = RequestEncryptionConverterBuilder.withObjectConverter(converter).build();
         final @Nonnull byte[] bytes = XDF.convert(encryptionConverter, encryption);
-        final @Nonnull Encryption<TYPE> recoveredEncryption = XDF.recover(encryptionConverter, null, bytes);
+        final @Nonnull RequestEncryption<TYPE> recoveredEncryption = XDF.recover(encryptionConverter, null, bytes);
         
         assertEquals(recipient, recoveredEncryption.getRecipient());
         assertEquals(symmetricKey, recoveredEncryption.getSymmetricKey());

@@ -1,7 +1,6 @@
 package net.digitalid.core.signature;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
@@ -86,7 +85,7 @@ public abstract class SignatureConverter<@Unspecifiable OBJECT> implements Gener
     
     @Pure
     @Override
-    public @Nullable @NonEmpty ImmutableList<@Nonnull Converter<? extends Signature<OBJECT>, Void>> getSubtypeConverters() {
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<Converter<? extends Signature<OBJECT>, Void>> getSubtypeConverters() {
         return ImmutableList.withElements(HostSignatureConverterBuilder.withObjectConverter(getObjectConverter()).build(), ClientSignatureConverterBuilder.withObjectConverter(getObjectConverter()).build());
     }
     
