@@ -32,6 +32,7 @@ import net.digitalid.utility.functional.failable.FailableCollector;
 import net.digitalid.utility.functional.interfaces.UnaryFunction;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.method.Ensures;
 import net.digitalid.utility.validation.annotations.method.Requires;
 import net.digitalid.utility.validation.annotations.size.Empty;
@@ -323,6 +324,16 @@ public abstract class XDFDecoder<@Unspecifiable EXCEPTION extends StreamExceptio
     
     /* -------------------------------------------------- Decompressing -------------------------------------------------- */
     
+    /**
+     * Skips over the given number of bytes in the input stream.
+     * Please note that in order to determine the hash, it is
+     * important that the bytes are read and not just skipped!
+     */
+    @Impure
+    public void skip(@NonNegative long number) throws EXCEPTION {
+        try { for (int i = 0; i < number; i++) { inputStream.readByte(); } } catch (@Nonnull IOException exception) { throw createException(exception); }
+    }
+    
     @Pure
     @Override
     public boolean isDecompressing() {
@@ -332,8 +343,9 @@ public abstract class XDFDecoder<@Unspecifiable EXCEPTION extends StreamExceptio
     @Impure
     @Override
     @Ensures(condition = "isDecompressing()", message = "The decoder has to be decompressing.")
-    public void startDecompressing(@Nonnull Inflater inflater) {
-        this.inputStream = WrappedInputStreamBuilder.withWrappedStream(new InflaterInputStream(inputStream)).withPreviousStream(inputStream).build();
+    public void startDecompressing(@Nonnull Inflater inflater) throws EXCEPTION {
+        this.inputStream = WrappedInputStreamBuilder.withWrappedStream(new InflaterInputStream(inputStream, inflater, 16)).withPreviousStream(inputStream).build();
+        decodeInteger08(); // Reads the initial byte but we are not interested in the result (see the startCompressing method in the XDFencoder).
     }
     
     @Impure
@@ -341,6 +353,9 @@ public abstract class XDFDecoder<@Unspecifiable EXCEPTION extends StreamExceptio
     @Requires(condition = "isDecompressing()", message = "The decoder has to be decompressing.")
     public void stopDecompressing() throws EXCEPTION {
         this.inputStream = inputStream.getPreviousStream(InflaterInputStream.class);
+        skip(5); // Skips over the 4 or 5 unread bytes that are still left in the input stream for unknown reasons.
+        final byte padding = decodeInteger08(); // Reads the number of bytes that are still left in the padding.
+        if (padding >= 0) { skip(padding); } else { createException(new IOException("")); }
     }
     
     /* -------------------------------------------------- Decrypting -------------------------------------------------- */

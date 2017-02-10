@@ -37,7 +37,7 @@ import net.digitalid.core.packet.Response;
 import net.digitalid.core.packet.ResponseBuilder;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.signature.Signature;
-import net.digitalid.core.signature.SignatureBuilder;
+import net.digitalid.core.signature.host.HostSignatureBuilder;
 
 /**
  * A worker processes incoming requests asynchronously.
@@ -93,7 +93,7 @@ public class Worker implements Runnable {
                 final @Nullable Reply<?> reply = method.executeOnHost();
                 if (reply != null) {
                     final @Nonnull Compression<Pack> compressedResponse = CompressionBuilder.withObject(reply.pack()).build();
-                    final @Nonnull Signature<Compression<Pack>> signedResponse = SignatureBuilder.withObject(compressedResponse).withSubject(signature.getSubject()).build();
+                    final @Nonnull Signature<Compression<Pack>> signedResponse = HostSignatureBuilder.withObject(compressedResponse).withSubject(signature.getSubject()).withSigner(encryption.getRecipient()).build();
                     final @Nonnull Encryption<Signature<Compression<Pack>>> encryptedResponse;
                     if (encryption instanceof RequestEncryption) {
                         encryptedResponse = ResponseEncryptionBuilder.withObject(signedResponse).withSymmetricKey(((RequestEncryption) encryption).getSymmetricKey()).build();

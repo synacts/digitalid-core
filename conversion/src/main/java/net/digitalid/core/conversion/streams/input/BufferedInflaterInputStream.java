@@ -10,13 +10,13 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.Review;
+import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 @Mutable
-@Deprecated // TODO: Do we really need this wrapper? Also the mark and reset seems to be implemented wrongly according to the Javadoc.
-@Review(date = "2017-01-27", author = Author.KASPAR_ETTER, comment = "Especially the finish method, which does nothing at the moment.")
+@Deprecated
+@TODO(task = "This class is currently only used in tests and can be removed in the future.", date = "2017-02-10", author = Author.KASPAR_ETTER)
 public class BufferedInflaterInputStream extends InflaterInputStream {
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
@@ -37,6 +37,7 @@ public class BufferedInflaterInputStream extends InflaterInputStream {
     
     @Impure
     @Override
+    @TODO(task = "Why is the offset subtracted from the length on the first line? And what about input streams that don't support resetting?", date = "2017-02-10", author = Author.KASPAR_ETTER)
     public int read(byte[] bytes, int offset, int length) throws IOException {
         super.in.mark(length - offset);
         int inflatedBytes = super.read(bytes, offset, length);
@@ -47,6 +48,7 @@ public class BufferedInflaterInputStream extends InflaterInputStream {
     }
     
     @Pure
+    @TODO(task = "I think this method should be renamed to a getter.", date = "2017-02-10", author = Author.KASPAR_ETTER)
     public @Nonnull InputStream finish() {
         return super.in;
     }

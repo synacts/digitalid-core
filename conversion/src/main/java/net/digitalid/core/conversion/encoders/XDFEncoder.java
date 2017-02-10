@@ -315,8 +315,9 @@ public abstract class XDFEncoder<@Unspecifiable EXCEPTION extends StreamExceptio
     @Impure
     @Override
     @Ensures(condition = "isCompressing()", message = "The encoder has to be compressing.")
-    public void startCompressing(@Nonnull Deflater deflater) {
+    public void startCompressing(@Nonnull Deflater deflater) throws EXCEPTION {
         this.outputStream = WrappedOutputStreamBuilder.withWrappedStream(new DeflaterOutputStream(outputStream, deflater)).withPreviousStream(outputStream).build();
+        encodeInteger08((byte) 0); // This makes sure that something is compressed because an empty compression leads to 8 unread bytes (instead of 4 or 5) that need to be skipped afterwards.
     }
     
     @Impure
@@ -326,6 +327,13 @@ public abstract class XDFEncoder<@Unspecifiable EXCEPTION extends StreamExceptio
         final @Nonnull DeflaterOutputStream deflaterOutputStream = outputStream.getWrappedStream(DeflaterOutputStream.class);
         try { deflaterOutputStream.finish(); } catch (@Nonnull IOException exception) { throw createException(exception); }
         this.outputStream = outputStream.getPreviousStream(DeflaterOutputStream.class);
+        // For some unknown reasons, 4 or 5 bytes are added to the output stream that need to be skipped after reading the compressed data (see the tests in the file CompressionTest.java).
+        // In order to be able to read the input with a buffer size of 16 bytes, we add a padding that encodes how many bytes have to be skipped so that the input stream is aligned again.
+        // For handling the worst case when the 16 bytes buffer is filled for just 1 more byte compressed input with only 4 (instead of 5) unread bytes, we need to add a total of 17 bytes.
+        // (11 bytes are wasted to fill up the buffer (whose content is not recovered) and then we still have to skip 5 bytes (in case the buffer was perfectly aligned) and read 1 byte.)
+        for (byte i = 16; i >= 0; i--) {
+            encodeInteger08(i);
+        }
     }
     
     /* -------------------------------------------------- Encrypting -------------------------------------------------- */

@@ -3,8 +3,7 @@ package net.digitalid.core.signature.host;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.conversion.converters.StringConverter;
-
-import net.digitalid.database.auxiliary.TimeBuilder;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 
 import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.conversion.XDF;
@@ -16,12 +15,12 @@ import org.junit.Test;
 public class HostSignatureConverterTest extends CryptographyTestBase {
     
     @Test
-    public void shouldSignAndVerify() throws Exception {
-        final @Nonnull String message = "This is an authentic message";
+    public void shouldSignAndVerify() throws RecoveryException {
+        final @Nonnull String message = "This is an authentic message.";
         final @Nonnull InternalIdentifier subject = InternalIdentifier.with("bob@digitalid.net");
         final @Nonnull InternalIdentifier signer = InternalIdentifier.with("alice@digitalid.net");
         
-        final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureBuilder.withObject(message).withSubject(subject).withSigner(signer).withTime(TimeBuilder.build()).build();
+        final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureBuilder.withObject(message).withSubject(subject).withSigner(signer).build();
         
         final @Nonnull byte[] bytes = XDF.convert(HostSignatureConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build(), signedIdentifier);
         Assert.assertTrue(bytes.length > 0);

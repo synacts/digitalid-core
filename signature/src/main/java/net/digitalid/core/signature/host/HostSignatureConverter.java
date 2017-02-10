@@ -28,6 +28,7 @@ import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -125,6 +126,8 @@ public abstract class HostSignatureConverter<@Unspecifiable OBJECT> implements G
         final @Nonnull BigInteger hash = new BigInteger(1, encoder.stopHashing());
         final @Nonnull BigInteger value = privateKey.powD(hash).getValue();
         encoder.encodeInteger(value);
+        
+        Log.debugging("$ signed the hash $ about $.", hostSignature.getSigner(), hash, hostSignature.getSubject());
     }
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
@@ -140,6 +143,8 @@ public abstract class HostSignatureConverter<@Unspecifiable OBJECT> implements G
         final @Nonnull OBJECT object = decoder.decodeObject(getObjectConverter(), null);
         final @Nonnull BigInteger hash = new BigInteger(1, decoder.stopHashing());
         final @Nonnull BigInteger value = decoder.decodeInteger();
+        
+        Log.debugging("Verified the hash $ by $ about $.", hash, signer, subject);
         
         final @Nonnull PublicKey publicKey;
         try {

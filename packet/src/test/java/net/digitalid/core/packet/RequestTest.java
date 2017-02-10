@@ -6,6 +6,8 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.converters.StringConverter;
 import net.digitalid.utility.exceptions.ExternalException;
 
+import net.digitalid.database.auxiliary.Time;
+
 import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionBuilder;
@@ -28,6 +30,7 @@ import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.SignatureBuilder;
 import net.digitalid.core.signature.SignatureConverter;
 import net.digitalid.core.signature.SignatureConverterBuilder;
+import net.digitalid.core.signature.host.HostSignatureBuilder;
 import net.digitalid.core.symmetrickey.SymmetricKey;
 import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
 
@@ -117,7 +120,6 @@ public class RequestTest extends CryptographyTestBase {
         final @Nonnull String recoveredString = recoveredCompression.getObject();
         
         assertEquals(string, recoveredString);
-        System.out.println("finish");
     }
     
     @Test
@@ -136,7 +138,25 @@ public class RequestTest extends CryptographyTestBase {
         final @Nonnull String recoveredString = recoveredCompression.getObject();
         
         assertEquals(string, recoveredString);
-        System.out.println("finish");
+    }
+    
+    @Test
+    public void testCompressionWithinHostSignature() throws ExternalException {
+        System.out.println("START");
+        final @Nonnull CompressionConverter<String> compressionConverter = CompressionConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build();
+        final @Nonnull SignatureConverter<Compression<String>> signatureConverter = SignatureConverterBuilder.withObjectConverter(compressionConverter).build();
+        
+        final @Nonnull String string = "Hello World!";
+        final @Nonnull Compression<String> compression = CompressionBuilder.withObject(string).build();
+        final @Nonnull Signature<Compression<String>> signature = HostSignatureBuilder.withObject(compression).withSubject(subject).withSigner(subject).withTime(Time.DECADE).build();
+        final @Nonnull byte[] bytes = XDF.convert(signatureConverter, signature);
+        
+        final @Nonnull Signature<Compression<String>> recoveredSignature = XDF.recover(signatureConverter, null, bytes);
+        final @Nonnull Compression<String> recoveredCompression = recoveredSignature.getObject();
+        final @Nonnull String recoveredString = recoveredCompression.getObject();
+        
+        assertEquals(string, recoveredString);
+        System.out.println("START");
     }
     
 }
