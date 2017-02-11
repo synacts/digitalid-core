@@ -82,7 +82,7 @@
         
         <dependency>
             <groupId>net.digitalid.utility</groupId>
-            <artifactId>utility-parent</artifactId>
+            <artifactId>utility-all</artifactId>
             <version>1.0.0</version>
         </dependency>
         
