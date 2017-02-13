@@ -1,0 +1,118 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>net.digitalid</groupId>
+        <artifactId>master</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    
+    <groupId>net.digitalid.core</groupId>
+    <artifactId>core</artifactId>
+    <version>1.0.0-java7</version>
+    <packaging>pom</packaging>
+    
+    <name>Digital ID Database</name>
+    <description>This project provides core classes for the Digital ID library.</description>
+    <url>https://code.digitalid.net/digitalid/core</url>
+
+    <repositories>
+        <repository>
+            <id>digitalid-releases</id>
+            <name>Digital ID Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>digitalid-snapshots</id>
+            <name>Digital ID Snapshots</name>
+            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+
+    <modules>
+        <module>identification-java7</module>
+        <module>exceptions-java7</module>
+        <module>permissions-java7</module>
+        <module>typeset-java7</module>
+        <module>entity-java7</module>
+        <module>service-java7</module>
+        <module>subject-java7</module>
+        <module>restrictions-java7</module>
+        <module>agent-java7</module>
+        
+        <module>annotations-java7</module>
+        <module>group-java7</module>
+        <module>parameters-java7</module>
+        <module>symmetrickey-java7</module>
+        <module>asymmetrickey-java7</module>
+        <module>keychain-java7</module>
+        <module>conversion-java7</module>
+        <module>encryption-java7</module>
+        <module>commitment-java7</module>
+        <module>pack-java7</module>
+        <module>credential-java7</module>
+        <module>signature-java7</module>
+        <module>compression-java7</module>
+        <module>packet-java7</module>
+        
+        <module>handler-java7</module>
+        <module>audit-java7</module>
+        <module>synchronizer-java7</module>
+        <module>property-java7</module>
+        
+        <module>settings-java7</module>
+        <module>clientagent-java7</module>
+        <module>outgoingrole-java7</module>
+        <module>error-java7</module>
+        <module>pusher-java7</module>
+        <module>node-java7</module>
+        
+        <module>expression-java7</module>
+        <module>certificate-java7</module>
+        <module>attribute-java7</module>
+        <module>cache-java7</module>
+        <module>authorization-java7</module>
+        <module>client-java7</module>
+        <module>host-java7</module>
+        
+        <module>resolution-java7</module>
+        <module>account-java7</module>
+        <module>initializer-java7</module>
+        <module>server-java7</module>
+    </modules>
+    
+    <properties>
+        <jacoco.skip>true</jacoco.skip> <!-- java.lang.instrument.IllegalClassFormatException: Error while instrumenting class net/digitalid/utility/generator/generators/converter/EnumWithRecoverMethodAndNonDirectlyAccessibleFieldConverter. -->
+    </properties>
+    
+    <dependencies>
+        
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-property</artifactId>
+            <version>1.0.0-java7</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.utility</groupId>
+            <artifactId>utility-all</artifactId>
+            <version>1.0.0-java7</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-testing</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.utility</groupId>
+            <artifactId>utility-testing</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+    </dependencies>
+ 
+</project>

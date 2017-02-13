@@ -34,7 +34,6 @@ public abstract class Settings extends CoreServiceCoreSubject<NonHostEntity<?>, 
     
     @Pure
     @Override
-    @Embedded // TODO: Depends on the key type!
     @TODO(task = "Why aren't the annotations inherited and included in the generated converter otherwise? (Remove this method once this issue is fixed.)", date = "2016-11-14", author = Author.KASPAR_ETTER)
     public abstract @Nonnull None getKey();
     

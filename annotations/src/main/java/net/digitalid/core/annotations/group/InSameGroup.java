@@ -30,7 +30,7 @@ import net.digitalid.utility.validation.validators.StringValidator;
  * @see InGroup
  */
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 @ValueValidator(InSameGroup.Validator.class)
 @Target({ElementType.PARAMETER, ElementType.METHOD})
 public @interface InSameGroup {

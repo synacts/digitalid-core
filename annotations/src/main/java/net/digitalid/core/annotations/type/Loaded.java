@@ -26,7 +26,7 @@ import net.digitalid.utility.validation.validator.ValueAnnotationValidator;
  * @see NonLoaded
  */
 @Documented
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.SOURCE)
 @ValueValidator(Loaded.Validator.class)
 @Target({ElementType.TYPE_USE, ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
 public @interface Loaded {

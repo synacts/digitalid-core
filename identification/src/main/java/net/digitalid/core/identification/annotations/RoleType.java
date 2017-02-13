@@ -26,7 +26,7 @@ import net.digitalid.core.identification.identity.SemanticType;
  * This annotation indicates that a {@link SemanticType semantic type} denotes a {@link TypeInterface#isRoleType() role type}.
  */
 @Documented
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.SOURCE)
 @ValueValidator(RoleType.Validator.class)
 @Target({ElementType.TYPE_USE, ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
 public @interface RoleType {
