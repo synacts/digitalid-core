@@ -25,9 +25,10 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.expression.PassiveExpression;
+import net.digitalid.core.handler.annotations.Matching;
+import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.ExternalQuery;
-import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.node.contact.Contact;
@@ -74,17 +75,12 @@ public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implement
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     
-    @Pure
-    @Override
-    public boolean matches(@Nullable Reply<Entity<?>> reply) {
-        return reply instanceof AttributesReply;
-    }
-    
     @Override
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public @Nonnull AttributesReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
+    @MethodHasBeenReceived
+    public @Nonnull @Matching AttributesReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         final @Nonnull FreezableList<AttributeValue> attributeValues = FreezableArrayList.withInitialCapacity(getAttributeTypes().size());
         
         @SuppressWarnings("null") final @Nonnull Signature<?> signature = getSignature();

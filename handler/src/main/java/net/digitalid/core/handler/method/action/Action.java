@@ -20,6 +20,8 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Auditable;
+import net.digitalid.core.handler.annotations.Matching;
+import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.method.MethodImplementation;
 import net.digitalid.core.handler.reply.ActionReply;
@@ -51,7 +53,8 @@ public abstract class Action extends MethodImplementation<NonHostEntity<?>> impl
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public abstract @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException;
+    @MethodHasBeenReceived
+    public abstract @Nullable @Matching ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- Auditable -------------------------------------------------- */
     

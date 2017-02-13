@@ -14,9 +14,11 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
@@ -33,8 +35,11 @@ import net.digitalid.core.encryption.RequestEncryptionBuilder;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.response.DeclarationExceptionBuilder;
 import net.digitalid.core.handler.AccountFactory;
 import net.digitalid.core.handler.Handler;
+import net.digitalid.core.handler.annotations.Matching;
+import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.query.Query;
 import net.digitalid.core.handler.reply.Reply;
@@ -48,6 +53,7 @@ import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.SignatureBuilder;
+import net.digitalid.core.signature.host.HostSignature;
 
 /**
  * This type implements a remote method invocation mechanism.
@@ -139,42 +145,47 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     
     /**
-     * Returns whether this method matches the given reply.
-     */
-    @Pure
-    // TODO: Rather move this method to the reply class (and match methods that generate replies)?
-    // TODO: Make the return type void and throw a InvalidReplyParameterValueException instead?
-    public boolean matches(@Nullable Reply<ENTITY> reply);
-    
-    /**
      * Executes this method on the host.
      * 
      * @return a reply for this method or null.
      * 
      * @throws RequestException if the authorization is not sufficient.
-     * 
-     * @require hasBeenReceived() : "This method has been received.";
-     * 
-     * @ensure matches(return) : "This method matches the returned reply.";
      */
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public @Nullable Reply<ENTITY> executeOnHost() throws RequestException, DatabaseException, RecoveryException;
+    @MethodHasBeenReceived
+    public @Nullable @Matching Reply<ENTITY> executeOnHost() throws RequestException, DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- Send -------------------------------------------------- */
     
+    /**
+     * Sends this method and returns the response.
+     */
     @NonCommitting
     @PureWithSideEffects
-    public default <@Unspecifiable REPLY extends Reply<ENTITY>> @Nonnull /* REPLY */ Response send() throws ExternalException {
+    public default @Nonnull Response send() throws ExternalException {
         final @Nonnull Compression<Pack> compression = CompressionBuilder.withObject(pack()).build();
-        final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObject(compression).withSubject(getSubject()).build();
+        final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObject(compression).withSubject(getSubject()).build(); // TODO: Use the right signature.
         final @Nonnull RequestEncryption<Signature<Compression<Pack>>> encryption = RequestEncryptionBuilder.withObject(signature).withRecipient(getRecipient()).build();
         final @Nonnull Request request = RequestBuilder.withEncryption(encryption).build();
         final @Nonnull Response response = request.send();
         // TODO: All checks still have to be performed somewhere!
         return response;
-//        return response.getEncryption().getObject().getObject().getObject();
+    }
+    
+    /**
+     * Sends this method and returns the reply that is recovered with the given converter.
+     */
+    @NonCommitting
+    @PureWithSideEffects
+    public default <@Unspecifiable REPLY extends Reply<ENTITY>> @Nonnull REPLY send(@Nonnull Converter<REPLY, @Nonnull Pair<@Nullable ENTITY, @Nonnull HostSignature<Compression<Pack>>>> converter) throws ExternalException {
+        final @Nonnull Response response = send();
+        final @Nonnull Pack pack = response.getEncryption().getObject().getObject().getObject(); // TODO: Maybe we could/should check the type of the pack and throw an exception if it does not match the converter.
+        final @Nonnull Pair<@Nullable ENTITY, @Nonnull HostSignature<Compression<Pack>>> provided = Pair.of(getEntity(), (HostSignature<Compression<Pack>>) response.getEncryption().getObject()); // TODO: Make sure that a response is always signed by a host by changing the generic type and converter?
+        final @Nonnull REPLY reply = pack.unpack(converter, provided);
+        if (!reply.matches(this)) { throw DeclarationExceptionBuilder.withMessage("The received reply does not match the sent method.").withIdentity(getSubject().resolve()).build(); }
+        return reply;
     }
     
     /* -------------------------------------------------- Similarity -------------------------------------------------- */
@@ -189,10 +200,6 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
      * You can override this method and return {@code false} if this method
      * should be sent alone (e.g. due to an overridden {@link #send()} method).
      * The implementation has to be transitive but must not be reflexive.
-     * 
-     * @param other the other method to compare this one with.
-     * 
-     * @return whether the other method is similar to this one.
      */
     @Pure
     public default boolean isSimilarTo(@Nonnull Method<?> other) {

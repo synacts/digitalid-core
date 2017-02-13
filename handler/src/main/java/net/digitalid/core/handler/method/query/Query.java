@@ -13,6 +13,8 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.handler.annotations.Matching;
+import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.MethodImplementation;
 import net.digitalid.core.handler.reply.QueryReply;
 
@@ -53,6 +55,7 @@ public abstract class Query<ENTITY extends Entity<?>> extends MethodImplementati
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public abstract @Nonnull QueryReply<ENTITY> executeOnHost() throws RequestException, DatabaseException, RecoveryException;
+    @MethodHasBeenReceived
+    public abstract @Nonnull @Matching QueryReply<ENTITY> executeOnHost() throws RequestException, DatabaseException, RecoveryException;
     
 }

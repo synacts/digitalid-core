@@ -13,16 +13,16 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnClientRecipient;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
+import net.digitalid.core.handler.annotations.Matching;
+import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.InternalMethod;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.ActionReply;
-import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.service.CoreService;
@@ -70,12 +70,6 @@ public abstract class InternalAction extends Action implements InternalMethod {
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     
-    @Pure
-    @Override
-    public final boolean matches(@Nullable Reply<NonHostEntity<?>> reply) {
-        return reply == null;
-    }
-    
     /**
      * Executes this internal action on both the host and client.
      */
@@ -97,7 +91,8 @@ public abstract class InternalAction extends Action implements InternalMethod {
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public @Nullable ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
+    @MethodHasBeenReceived
+    public @Nullable @Matching ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         Require.that(hasBeenReceived()).orThrow("This internal action can only be executed if it has been received.");
         
         final @Nullable Signature<?> signature = getSignature();

@@ -12,7 +12,6 @@ import net.digitalid.core.credential.utility.SaltedAgentPermissions;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.InternalQuery;
-import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.annotations.RoleType;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
@@ -138,12 +137,6 @@ abstract class CredentialInternalQuery extends InternalQuery implements CoreMeth
     public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
         if (getRelation() == null) { return Restrictions.MIN; }
         else { return Restrictions.CAN_ASSUME_ROLES; } // TODO: Is this the right one?
-    }
-    
-    @Pure
-    @Override
-    public boolean matches(@Nullable Reply<NonHostEntity<?>> reply) {
-        return reply instanceof CredentialReply;
     }
     
     // TODO:

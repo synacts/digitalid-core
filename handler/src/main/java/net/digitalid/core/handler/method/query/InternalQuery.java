@@ -20,6 +20,8 @@ import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
+import net.digitalid.core.handler.annotations.Matching;
+import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.InternalMethod;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
@@ -53,14 +55,16 @@ public abstract class InternalQuery extends Query<NonHostEntity<?>> implements I
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
+    @MethodHasBeenReceived
     @TODO(task = "Also pass the present agent as an argument so that it does not have to be recreated again?", date = "2016-11-09", author = Author.KASPAR_ETTER)
-    protected abstract @Nonnull QueryReply<NonHostEntity<?>> execute() throws DatabaseException;
+    protected abstract @Nonnull @Matching QueryReply<NonHostEntity<?>> execute() throws DatabaseException;
     
     @Override
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
-    public @Nonnull QueryReply<NonHostEntity<?>> executeOnHost() throws RequestException, DatabaseException, RecoveryException {
+    @MethodHasBeenReceived
+    public @Nonnull @Matching QueryReply<NonHostEntity<?>> executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         Require.that(hasBeenReceived()).orThrow("This internal query can only be executed if it has been received.");
         
         final @Nullable Signature<?> signature = getSignature();

@@ -14,6 +14,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.CoreHandler;
+import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
@@ -102,6 +103,14 @@ public abstract class IdentityReply extends QueryReply<NonHostEntity<?>> impleme
     @TODO(task = "Remove this method as soon as the handler has a converter.", date = "2016-12-20", author = Author.KASPAR_ETTER)
     public @Nonnull Pack pack() {
         return null;
+    }
+    
+    /* -------------------------------------------------- Matching -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public boolean matches(@Nonnull Method<NonHostEntity<?>> method) {
+        return method instanceof IdentityQuery;
     }
     
 }

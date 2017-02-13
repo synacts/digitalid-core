@@ -16,6 +16,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.CoreHandler;
+import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.attribute.AttributeValue;
@@ -102,6 +103,14 @@ public abstract class AttributesReply extends QueryReply<Entity<?>> implements C
     @TODO(task = "Remove this method as soon as the handler has a converter.", date = "2016-12-20", author = Author.KASPAR_ETTER)
     public @Nonnull Pack pack() {
         return null;
+    }
+    
+    /* -------------------------------------------------- Matching -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public boolean matches(@Nonnull Method<Entity<?>> method) {
+        return method instanceof AttributesQuery;
     }
     
 }

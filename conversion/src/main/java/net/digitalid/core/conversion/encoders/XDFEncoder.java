@@ -323,6 +323,7 @@ public abstract class XDFEncoder<@Unspecifiable EXCEPTION extends StreamExceptio
     @Impure
     @Override
     @Requires(condition = "isCompressing()", message = "The encoder has to be compressing.")
+    @TODO(task = "Maybe we should replace this implementation with 'nowrap' deflaters and inflaters, a certain minimum content size and a method to retrieve the rest of the buffer.", date = "2017-02-13", author = Author.KASPAR_ETTER)
     public void stopCompressing() throws EXCEPTION {
         final @Nonnull DeflaterOutputStream deflaterOutputStream = outputStream.getWrappedStream(DeflaterOutputStream.class);
         try { deflaterOutputStream.finish(); } catch (@Nonnull IOException exception) { throw createException(exception); }

@@ -1,5 +1,8 @@
 package net.digitalid.core.audit.handlers;
 
+import javax.annotation.Nonnull;
+
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -8,6 +11,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
 
 /**
@@ -23,5 +27,13 @@ import net.digitalid.core.handler.reply.QueryReply;
 public abstract class AuditReply extends QueryReply<NonHostEntity<?>> {
     
     // TODO: So far, the response audit has been appended to the signature, which will probably no longer be the case.
+    
+    /* -------------------------------------------------- Matching -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public boolean matches(@Nonnull Method<NonHostEntity<?>> method) {
+        return method instanceof AuditQuery && method.getService().equals(getService());
+    }
     
 }

@@ -12,8 +12,8 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.ownership.Shared;
 import net.digitalid.utility.annotations.parameter.Unmodified;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.circumfixes.Quotes;
+import net.digitalid.utility.conversion.converters.StringConverter;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
@@ -25,6 +25,7 @@ import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.conversion.exceptions.FileException;
 import net.digitalid.core.conversion.exceptions.NetworkException;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SyntacticType;
 
 /**
  * A pack combines the serialization of its content with its type.
@@ -55,7 +56,6 @@ public abstract class Pack {
      */
     @Pure
     public <@Unspecifiable TYPE, @Specifiable PROVIDED> @Nonnull TYPE unpack(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided) throws RecoveryException {
-        // System.out.println("Unpack: " + Strings.hexWithSpaces(getBytes()));
         return XDF.recover(converter, provided, getBytes());
     }
     
@@ -64,9 +64,7 @@ public abstract class Pack {
      */
     @Pure
     public static <@Unspecifiable TYPE> @Nonnull Pack pack(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object) {
-        final @Nonnull PackSubclass result = new PackSubclass(SemanticType.map(converter), XDF.convert(converter, object));
-        // System.out.println("Packed: " + Strings.hexWithSpaces(result.getBytes()));
-        return result;
+        return new PackSubclass(SemanticType.map(converter), XDF.convert(converter, object));
     }
     
     /* -------------------------------------------------- Load -------------------------------------------------- */
@@ -125,13 +123,12 @@ public abstract class Pack {
     
     @Pure
     @Override
-    @TODO(task = "Print the object only if the semantic type is based on a string.", date = "2016-11-01", author = Author.KASPAR_ETTER)
     public @Nonnull String toString() {
-//        string.append(attributeContent.getType().getAddress().getString());
-//        if (attributeContent.getType().isBasedOn(StringWrapper.XDF_TYPE)) {
-//            string.append(": ").append(StringWrapper.decodeNonNullable(attributeContent));
-//        }
-        return "Pack";
+        final @Nonnull StringBuilder string = new StringBuilder("Pack(type: ").append(getType().getAddress().getString());
+        if (getType().isBasedOn(SyntacticType.STRING) || getType().isBasedOn(SyntacticType.STRING64)) {
+            try { string.append(", bytes: ").append(Quotes.inDouble(unpack(StringConverter.INSTANCE, null))); } catch (RecoveryException exception) {}
+        }
+        return string.append(")").toString();
     }
     
 }

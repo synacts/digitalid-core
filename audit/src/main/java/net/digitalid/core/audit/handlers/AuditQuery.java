@@ -1,7 +1,6 @@
 package net.digitalid.core.audit.handlers;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
@@ -14,10 +13,8 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.handler.method.query.InternalQuery;
-import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 
 /**
@@ -43,12 +40,6 @@ public abstract class AuditQuery extends InternalQuery {
     public abstract @Nonnull @Frozen ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod();
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public boolean matches(@Nullable Reply<NonHostEntity<?>> reply) {
-        return reply instanceof AuditReply && ((AuditReply) reply).getService().equals(getService());
-    }
     
     @Override
     @OnHostRecipient

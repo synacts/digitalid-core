@@ -355,7 +355,7 @@ public abstract class XDFDecoder<@Unspecifiable EXCEPTION extends StreamExceptio
         this.inputStream = inputStream.getPreviousStream(InflaterInputStream.class);
         skip(5); // Skips over the 4 or 5 unread bytes that are still left in the input stream for unknown reasons.
         final byte padding = decodeInteger08(); // Reads the number of bytes that are still left in the padding.
-        if (padding >= 0) { skip(padding); } else { createException(new IOException("")); }
+        if (padding >= 0) { skip(padding); } else { throw createException(new IOException("The compression padding contained a negative number.")); }
     }
     
     /* -------------------------------------------------- Decrypting -------------------------------------------------- */

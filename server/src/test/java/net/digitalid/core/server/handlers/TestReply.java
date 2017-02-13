@@ -10,6 +10,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.CoreHandler;
+import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
 
 @Immutable
@@ -25,5 +26,13 @@ public abstract class TestReply extends QueryReply<Entity<?>> implements CoreHan
      */
     @Pure
     public abstract @Nonnull String getMessage();
+    
+    /* -------------------------------------------------- Matching -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public boolean matches(@Nonnull Method<Entity<?>> method) {
+        return method instanceof TestQuery;
+    }
     
 }

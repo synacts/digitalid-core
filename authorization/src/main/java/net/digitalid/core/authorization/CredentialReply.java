@@ -14,6 +14,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.handler.CoreHandler;
+import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
 import net.digitalid.core.restrictions.Restrictions;
 
@@ -147,5 +148,13 @@ abstract class CredentialReply extends QueryReply<NonHostEntity<?>> implements C
 //        final @Nonnull InternalNonHostIdentity issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().castTo(InternalNonHostIdentity.class);
 //        return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, attributeContent, c, e, Exponent.get(b), u, i, v, false);
 //    }
+    
+    /* -------------------------------------------------- Matching -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public boolean matches(@Nonnull Method<NonHostEntity<?>> method) {
+        return method instanceof CredentialInternalQuery;
+    }
     
 }

@@ -1,5 +1,6 @@
 package net.digitalid.core.handler.reply;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.CallSuper;
@@ -32,6 +33,14 @@ import net.digitalid.core.signature.host.HostSignature;
 @Immutable
 @Referenced
 public abstract class Reply<ENTITY extends Entity<?>> extends RootClass implements Handler<ENTITY> {
+    
+    /* -------------------------------------------------- Matching -------------------------------------------------- */
+    
+    /**
+     * Returns whether this reply matches the given method.
+     */
+    @Pure
+    public abstract boolean matches(@Nonnull Method<ENTITY> method);
     
     /* -------------------------------------------------- Signature -------------------------------------------------- */
     

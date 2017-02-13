@@ -94,7 +94,12 @@ public class CryptographyTestBase extends SQLTestBase {
                 return createHostIdentity(1L, (HostIdentifier) identifier);
             } else if (identifier instanceof InternalNonHostIdentifier) {
                 // TODO: How do we know whether the identifier is one of a natural or artificial person or a type?
-                return createSemanticType(2L, (InternalNonHostIdentifier) identifier);
+                final @Nonnull InternalNonHostIdentifier internalIdentifier = (InternalNonHostIdentifier) identifier;
+                if (semanticTypes.containsKey(internalIdentifier)) {
+                    return semanticTypes.get(internalIdentifier);
+                } else {
+                    return createSemanticType(2L, internalIdentifier);
+                }
             } else {
                 throw new UnsupportedOperationException("The identifier resolver does not support '" + identifier.getClass() + "' yet.");
             }

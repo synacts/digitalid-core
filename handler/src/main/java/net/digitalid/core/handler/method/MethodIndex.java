@@ -8,10 +8,9 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
@@ -35,12 +34,13 @@ public abstract class MethodIndex {
     private static final @Nonnull Map<@Nonnull SemanticType, @Nonnull Converter<? extends Method<?>, Signature<Compression<Pack>>>> converters = new ConcurrentHashMap<>();
     
     /**
-     * Adds the given converter that recovers handlers for the given type.
+     * Adds the given converter to recover the methods of its type.
      */
     @Impure
-    @TODO(task = "Prevent that someone can overwrite an existing converter? (And the type could also be read from the given converter.)", date = "2016-11-07", author = Author.KASPAR_ETTER)
-    public static void add(@Nonnull SemanticType type, @Nonnull Converter<? extends Method<?>, Signature<Compression<Pack>>> converter) {
+    public static void add(@Nonnull Converter<? extends Method<?>, Signature<Compression<Pack>>> converter) {
+        final @Nonnull SemanticType type = SemanticType.map(converter);
         converters.put(type, converter);
+        Log.debugging("Registered a converter for the type $.", type);
     }
     
     @Pure

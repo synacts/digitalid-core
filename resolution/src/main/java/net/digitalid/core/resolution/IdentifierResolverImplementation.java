@@ -46,7 +46,12 @@ public class IdentifierResolverImplementation extends IdentifierResolver {
         if (identifier instanceof HostIdentifier) {
             return createHostIdentity(1L, (HostIdentifier) identifier);
         } else if (identifier instanceof InternalNonHostIdentifier) {
-            return createSemanticType(2L, (InternalNonHostIdentifier) identifier);
+            final @Nonnull InternalNonHostIdentifier internalIdentifier = (InternalNonHostIdentifier) identifier;
+            if (semanticTypes.containsKey(internalIdentifier)) {
+                return semanticTypes.get(internalIdentifier);
+            } else {
+                return createSemanticType(2L, internalIdentifier);
+            }
         } else {
             throw new UnsupportedOperationException("The identifier resolver does not support '" + identifier.getClass() + "' yet.");
         }
