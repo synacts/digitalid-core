@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.threading.NamedThreadFactory;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -21,14 +22,17 @@ import net.digitalid.core.packet.Request;
  * A listener accepts incoming {@link Request requests} and lets them handle by {@link Worker workers}.
  */
 @Immutable
+@GenerateBuilder
 public class Listener extends Thread {
     
-    /* -------------------------------------------------- Fields -------------------------------------------------- */
+    /* -------------------------------------------------- Socket -------------------------------------------------- */
     
     /**
      * Stores the server socket to accept incoming requests.
      */
     private final @Nonnull ServerSocket serverSocket;
+    
+    /* -------------------------------------------------- Executor -------------------------------------------------- */
     
     /**
      * The thread pool executor runs the {@link Worker workers} that handle the incoming {@link Request requests}.
@@ -38,17 +42,15 @@ public class Listener extends Thread {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new listener that accepts incoming requests on the given port.
+     * Creates a new listener that accepts incoming requests.
      */
-    public Listener(int port) {
+    Listener() throws IOException {
         super("Listener");
         
-        try {
-            serverSocket = new ServerSocket(port);
-        } catch (@Nonnull IOException exception) {
-            throw new RuntimeException("The server could not bind to Digital ID's port (" + port + ").", exception); // TODO: InitializationException or something similar.
-        }
+        this.serverSocket = new ServerSocket(Request.PORT.get());
     }
+    
+    /* -------------------------------------------------- Running -------------------------------------------------- */
     
     /**
      * Accepts incoming requests and lets them handle by {@link Worker workers}.
@@ -59,9 +61,9 @@ public class Listener extends Thread {
         while (!serverSocket.isClosed()) {
             try {
                 final @Nonnull Socket socket = serverSocket.accept();
-                socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
+                socket.setSoTimeout(Request.TIMEOUT.get());
                 try {
-                    threadPoolExecutor.execute(new Worker(socket));
+                    threadPoolExecutor.execute(WorkerBuilder.withSocket(socket).build());
                     Log.verbose("Connection accepted from '" + socket.getInetAddress().toString().substring(1) + "'.");
                 } catch (@Nonnull RejectedExecutionException exception) {
                     Log.warning("Could not add a new worker.", exception);
@@ -72,6 +74,8 @@ public class Listener extends Thread {
             }
         }
     }
+    
+    /* -------------------------------------------------- Shut Down -------------------------------------------------- */
     
     /**
      * Shuts down the listener after having handled all pending requests.

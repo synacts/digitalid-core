@@ -1,5 +1,7 @@
 package net.digitalid.core.server;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
@@ -136,11 +138,11 @@ public abstract class Server {
      */
     @Impure
     @Committing
-    public static void start() {
+    public static void start() throws IOException {
         loadServices();
         loadHosts();
         
-        listener = new Listener(Request.PORT.get());
+        listener = ListenerBuilder.build();
         listener.start();
         
 //        try {
@@ -179,7 +181,7 @@ public abstract class Server {
      */
     @Impure
     @Committing
-    public static void main(@Nonnull String[] arguments) {
+    public static void main(@Nonnull String[] arguments) throws IOException {
         Console.writeLine();
         Configuration.initializeAllConfigurations();
         Log.information("The library has been initialized.");

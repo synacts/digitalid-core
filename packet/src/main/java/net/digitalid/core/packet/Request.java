@@ -1,13 +1,19 @@
 package net.digitalid.core.packet;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.functional.failable.FailableUnaryFunction;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -19,7 +25,7 @@ import net.digitalid.core.conversion.exceptions.NetworkException;
 import net.digitalid.core.conversion.exceptions.NetworkExceptionBuilder;
 import net.digitalid.core.encryption.Encryption;
 import net.digitalid.core.encryption.RequestEncryption;
-import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.Signature;
 
@@ -308,22 +314,31 @@ public abstract class Request extends Packet {
 //    }
     
     /**
+     * Stores the function which resolves a host identifier into an internet address.
+     * This function is configurable in order that tests can provide a loopback address.
+     */
+    public static final @Nonnull Configuration<FailableUnaryFunction<@Nonnull HostIdentifier, @Nonnull InetAddress, UnknownHostException>> ADDRESS = Configuration.with(identifier -> InetAddress.getByName("id." + identifier.getString()));
+    
+    /**
      * Stores the port number on which a Digital ID server listens by default.
      */
-    public static final @Nonnull Configuration<Integer> PORT = Configuration.with(1494); // TODO: Figure out how to run the server on port 494 with Maven.
+    @TODO(task = "Figure out how to run the server on port 494 with Maven.", date = "2017-02-14", author = Author.KASPAR_ETTER)
+    public static final @Nonnull Configuration<Integer> PORT = Configuration.with(1494);
+    
+    /**
+     * Stores the timeout in milliseconds for which reading from the socket's input stream blocks before raising a {@link SocketTimeoutException}.
+     * This value is configurable in order that tests can set a higher timeout for debugging.
+     */
+    public static final @Nonnull Configuration<Integer> TIMEOUT = Configuration.with(10000);
     
     /**
      * Sends this request and returns the response.
-     * 
-     * @throws RequestException if the recipient responded with a packet error.
-     * 
-     * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
     @NonCommitting
     @PureWithSideEffects
     public @Nonnull Response send() throws NetworkException, RecoveryException {
-        try (@Nonnull Socket socket = new Socket("id." + getEncryption().getRecipient().getString(), PORT.get())) {
-            socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
+        try (@Nonnull Socket socket = new Socket(ADDRESS.get().evaluate(getEncryption().getRecipient()), PORT.get())) {
+            socket.setSoTimeout(TIMEOUT.get());
             pack().storeTo(socket);
             final @Nonnull Pack pack = Pack.loadFrom(socket);
             final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = getEncryption();

@@ -6,11 +6,12 @@ import java.net.Socket;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -45,22 +46,15 @@ import net.digitalid.core.signature.host.HostSignatureBuilder;
  * @see Listener
  */
 @Immutable
-public class Worker implements Runnable {
+@GenerateBuilder
+@GenerateSubclass
+public abstract class Worker implements Runnable {
     
     /**
-     * Stores the socket which this worker is connected to.
+     * Returns the socket which this worker is connected to.
      */
-    private final @Nonnull Socket socket;
-    
-    /**
-     * Creates a new worker with the given socket.
-     * 
-     * @param socket the socket which this worker is connected to.
-     */
-    @TODO(task = "Generate a subclass instead.", date = "2016-12-04", author = Author.KASPAR_ETTER)
-    public Worker(@Nonnull Socket socket) {
-        this.socket = socket;
-    }
+    @Pure
+    protected abstract @Nonnull Socket getSocket();
     
     /**
      * Asynchronous method to handle the incoming request.
@@ -68,7 +62,7 @@ public class Worker implements Runnable {
     @Override
     @Committing
     @PureWithSideEffects
-    @SuppressWarnings("ThrowableResultIgnored")
+//    @SuppressWarnings("ThrowableResultIgnored")
     public void run() {
         try {
             final @Nonnull Time start = TimeBuilder.build();
@@ -85,7 +79,7 @@ public class Worker implements Runnable {
             // TODO: Implement the real worker again.
             
             try {
-                final @Nonnull Pack pack = Pack.loadFrom(socket);
+                final @Nonnull Pack pack = Pack.loadFrom(getSocket());
                 request = pack.unpack(RequestConverter.INSTANCE, null);
                 final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = request.getEncryption();
                 final @Nonnull Signature<Compression<Pack>> signature = encryption.getObject();
@@ -101,7 +95,7 @@ public class Worker implements Runnable {
                         encryptedResponse = EncryptionBuilder.withObject(signedResponse).build();
                     }
                     response = ResponseBuilder.withEncryption(encryptedResponse).build();
-                    response.pack().storeTo(socket);
+                    response.pack().storeTo(getSocket());
                 } else {
                     throw new UnsupportedOperationException("We should also send a response in case the reply is null.");
                 }
@@ -212,7 +206,7 @@ public class Worker implements Runnable {
             Log.warning("Could not send a response.", exception);
         } finally {
             try {
-                if (!socket.isClosed()) { socket.close(); }
+                if (!getSocket().isClosed()) { getSocket().close(); }
             } catch (@Nonnull IOException exception) {
                 Log.warning("Could not close the socket.", exception);
             }
