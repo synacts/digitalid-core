@@ -2,6 +2,8 @@ package net.digitalid.core.server;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.exceptions.ExternalException;
+
 import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.host.HostBuilder;
@@ -22,7 +24,7 @@ public class ServerSetup extends CryptographyTestBase {
     protected static @Nonnull Host host;
     
     @BeforeClass
-    public static void setUpServer() {
+    public static void setUpServer() throws ExternalException {
         Server.start();
         identifier = HostIdentifier.with("test.digitalid.net");
         host = HostBuilder.withIdentifier(identifier).build();

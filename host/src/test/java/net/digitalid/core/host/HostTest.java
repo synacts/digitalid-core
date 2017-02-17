@@ -10,7 +10,7 @@ import org.junit.Test;
 public class HostTest extends CryptographyTestBase {
     
     @Test
-    public void testHostCreation() {
+    public void testHostCreation() throws Exception {
         final @Nonnull Host host = HostBuilder.withIdentifier(HostIdentifier.with("test.digitalid.net")).build();
         assertEquals("test.digitalid.net", host.getIdentifier().getString());
     }

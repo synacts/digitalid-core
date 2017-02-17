@@ -152,7 +152,7 @@ public abstract class Host extends CoreUnit {
     @Pure
     @Override
     @CallSuper
-    protected void initialize() /* throws ExternalException */ {
+    protected void initialize() throws ExternalException {
         try {
             protectedPrivateKeyChain.set(PrivateKeyChainLoader.load(getIdentifier()));
             protectedPublicKeyChain.set(PublicKeyChainLoader.load(getIdentifier()));

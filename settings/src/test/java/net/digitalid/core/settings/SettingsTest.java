@@ -1,6 +1,7 @@
 package net.digitalid.core.settings;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
@@ -54,7 +55,8 @@ public class SettingsTest extends CryptographyTestBase {
     
     private static final @Nonnull String VALUE = ""; // TODO: Choose a non-default password like "Pa$$word" once properties can be loaded from the database.
     
-    private static final @Nonnull TestUnit UNIT = TestUnitBuilder.withName("default").withHost(true).withClient(false).build();
+    // nullable until createTables is called
+    private static @Nullable TestUnit UNIT;
     
     private static final @Nonnull SemanticType TYPE = SemanticType.map("test@core.digitalid.net").load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build());
     
@@ -65,6 +67,7 @@ public class SettingsTest extends CryptographyTestBase {
     @Impure
     @BeforeClass
     public static void createTables() throws Exception {
+        UNIT = TestUnitBuilder.withName("default").withHost(true).withClient(false).build();
         SQL.createTable(SettingsSubclass.MODULE.getSubjectConverter(), UNIT);
         SQL.createTable(SettingsSubclass.PASSWORD_TABLE.getEntryConverter(), UNIT);
         SQL.insert(SettingsSubclass.MODULE.getSubjectConverter(), SETTINGS, UNIT);
