@@ -39,8 +39,8 @@ public abstract class MethodIndex {
     @Impure
     public static void add(@Nonnull Converter<? extends Method<?>, Signature<Compression<Pack>>> converter) {
         final @Nonnull SemanticType type = SemanticType.map(converter);
-        converters.put(type, converter);
         Log.debugging("Registered a converter for the type $.", type);
+        converters.put(type, converter);
     }
     
     @Pure

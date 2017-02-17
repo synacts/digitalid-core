@@ -14,7 +14,6 @@ import org.junit.Test;
 /**
  * System testing of the Digital ID {@link Server}.
  * <p>
- * <em>Important:</em> Make sure you have {@code 127.0.0.1 id.test.digitalid.net} in your {@code /etc/hosts} file.
  * If you run into an EOFException, the worker thread on the server crashed before sending a response.
  * You should be able to find the source of the problem in {@code server/target/test-logs/test.log}.
  */
