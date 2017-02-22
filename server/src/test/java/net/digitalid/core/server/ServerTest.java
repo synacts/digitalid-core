@@ -2,12 +2,17 @@ package net.digitalid.core.server;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.core.asymmetrickey.KeyPair;
+import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
+import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.server.handlers.TestQuery;
 import net.digitalid.core.server.handlers.TestQueryBuilder;
 import net.digitalid.core.server.handlers.TestQueryConverter;
 import net.digitalid.core.server.handlers.TestReply;
 import net.digitalid.core.server.handlers.TestReplyConverter;
+import net.digitalid.core.testing.providers.TestPrivateKeyRetrieverBuilder;
+import net.digitalid.core.testing.providers.TestPublicKeyRetrieverBuilder;
 
 import org.junit.Test;
 
@@ -22,6 +27,11 @@ public class ServerTest extends ServerSetup {
     @Test
     public void testServer() throws Exception {
         MethodIndex.add(TestQueryConverter.INSTANCE);
+        
+        // TODO: Remove the following three lines as soon as the cache works.
+        final @Nonnull KeyPair keyPair = KeyPair.withRandomValues();
+        PublicKeyRetriever.configuration.set(TestPublicKeyRetrieverBuilder.withKeyPair(keyPair).build());
+        PrivateKeyRetriever.configuration.set(TestPrivateKeyRetrieverBuilder.withKeyPair(keyPair).build());
         
         final @Nonnull TestQuery query = TestQueryBuilder.withMessage("Hello from the other side!").withProvidedSubject(identifier).build();
         final @Nonnull TestReply reply = query.send(TestReplyConverter.INSTANCE);

@@ -13,6 +13,7 @@ import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.console.Console;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
@@ -220,7 +221,12 @@ public abstract class Server {
             Console.writeLine();
             if (HostIdentifier.isValid(argument)) {
                 Console.writeLine("Creating a host with the identifier " + Quotes.inSingle(argument) + ", which can take several minutes.");
-                addHost(HostBuilder.withIdentifier(HostIdentifier.with(argument)).build());
+                try {
+                    addHost(HostBuilder.withIdentifier(HostIdentifier.with(argument)).build());
+                } catch (@Nonnull ExternalException exception) {
+                    Log.error("Failed to create a new host with the identifier $.", exception, argument);
+                    Console.writeLine("Failed to create a new host with the identifier " + Quotes.inSingle(argument) + ": " + exception.getMessage() + ".");
+                }
             } else {
                 Console.writeLine(Quotes.inSingle(argument) + " is not a valid host identifier!");
                 shutDown();

@@ -2,9 +2,8 @@ package net.digitalid.core.entity;
 
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Validate;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootClassWithException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -16,8 +15,7 @@ import net.digitalid.database.unit.Unit;
  * @invariant isHost() != isClient() : "This unit is either a host or a client.";
  */
 @Immutable
-@TODO(task = "Change back the exception back to External Exception as soon as the builder can handle it.", date = "2016-12-12", author = Author.KASPAR_ETTER)
-public abstract class CoreUnit extends RootClassWithException<RuntimeException /* ExternalException */> implements Unit {
+public abstract class CoreUnit extends RootClassWithException<ExternalException> implements Unit {
     
     /* -------------------------------------------------- Queries -------------------------------------------------- */
     

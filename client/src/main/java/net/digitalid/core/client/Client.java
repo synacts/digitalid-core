@@ -9,10 +9,10 @@ import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collections.set.ReadOnlySet;
-import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
@@ -28,6 +28,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 import net.digitalid.database.subject.Subject;
@@ -38,7 +39,6 @@ import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.commitment.CommitmentBuilder;
-import net.digitalid.core.conversion.exceptions.FileException;
 import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
@@ -56,6 +56,7 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
+@GenerateConverter
 public abstract class Client extends CoreUnit implements Subject<Client> {
     
     /* -------------------------------------------------- Stop -------------------------------------------------- */
@@ -139,12 +140,11 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
     @Pure
     @Override
     @CallSuper
-    protected void initialize() /* throws FileException, RecoveryException */ {
-        try {
-            protectedSecret.set(ClientSecretLoader.load(getIdentifier()));
-        } catch (@Nonnull FileException | RecoveryException exception) {
-            throw new RuntimeException(exception); // TODO
-        }
+    @NonCommitting
+    protected void initialize() throws ExternalException {
+        SQL.createTable(ClientConverter.INSTANCE, CoreUnit.DEFAULT);
+        SQL.insert(ClientConverter.INSTANCE, this, CoreUnit.DEFAULT);
+        protectedSecret.set(ClientSecretLoader.load(getIdentifier()));
     }
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */

@@ -1,12 +1,14 @@
 package net.digitalid.core.settings;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -54,7 +56,8 @@ public class SettingsTest extends CoreTest {
     
     private static final @Nonnull String VALUE = ""; // TODO: Choose a non-default password like "Pa$$word" once properties can be loaded from the database.
     
-    private static final @Nonnull TestUnit UNIT = TestUnitBuilder.withName("default").withHost(true).withClient(false).build();
+    // nullable until createTables is called
+    private static @Nullable TestUnit UNIT;
     
     private static final @Nonnull SemanticType TYPE = SemanticType.map("test@core.digitalid.net").load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build());
     
@@ -64,7 +67,8 @@ public class SettingsTest extends CoreTest {
     
     @Impure
     @BeforeClass
-    public static void createTables() throws Exception {
+    public static void createTables() throws ExternalException {
+        UNIT = TestUnitBuilder.withName("default").withHost(true).withClient(false).build();
         SQL.createTable(SettingsSubclass.MODULE.getSubjectConverter(), UNIT);
         SQL.createTable(SettingsSubclass.PASSWORD_TABLE.getEntryConverter(), UNIT);
         SQL.insert(SettingsSubclass.MODULE.getSubjectConverter(), SETTINGS, UNIT);

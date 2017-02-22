@@ -5,6 +5,8 @@ import java.net.InetAddress;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.exceptions.ExternalException;
+
 import net.digitalid.core.host.Host;
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
@@ -26,7 +28,7 @@ public class ServerSetup extends CoreTest {
     protected static @Nonnull Host host;
     
     @BeforeClass
-    public static void setUpServer() throws IOException {
+    public static void setUpServer() throws ExternalException, IOException {
         Server.start();
         identifier = HostIdentifier.with("test.digitalid.net");
         host = HostBuilder.withIdentifier(identifier).build();

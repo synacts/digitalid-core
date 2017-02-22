@@ -152,13 +152,9 @@ public abstract class Host extends CoreUnit {
     @Pure
     @Override
     @CallSuper
-    protected void initialize() /* throws ExternalException */ {
-        try {
-            protectedPrivateKeyChain.set(PrivateKeyChainLoader.load(getIdentifier()));
-            protectedPublicKeyChain.set(PublicKeyChainLoader.load(getIdentifier()));
-        } catch (@Nonnull ExternalException exception) {
-            throw new RuntimeException(exception); // TODO
-        }
+    protected void initialize() throws ExternalException {
+        protectedPrivateKeyChain.set(PrivateKeyChainLoader.load(getIdentifier()));
+        protectedPublicKeyChain.set(PublicKeyChainLoader.load(getIdentifier()));
         
         hosts.put(getIdentifier(), this);
         
