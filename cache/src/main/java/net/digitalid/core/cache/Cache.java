@@ -13,6 +13,8 @@ import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.threading.Threading;
+import net.digitalid.utility.time.Time;
+import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
@@ -21,8 +23,6 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.auxiliary.Time;
-import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;

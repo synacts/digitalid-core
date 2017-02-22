@@ -24,7 +24,6 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.property.PersistentProperty;
 import net.digitalid.database.subject.SubjectModule;
 
@@ -53,8 +52,8 @@ public abstract class SubjectConverter<@Unspecifiable ENTITY extends Entity<?>, 
     @TODO(task = "Support @Cached on methods without parameters.", date = "2016-09-24", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
     public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
         return ImmutableList.withElements(
-                CustomField.with(CustomType.TUPLE.of(getSubjectModule().getEntityConverter()), "entity", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(Embedded.class))),
-                CustomField.with(CustomType.TUPLE.of(getSubjectModule().getCoreSubjectConverter()), "key", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(Embedded.class)/* TODO: Pass them? Probably pass the whole custom field instead. */))
+                CustomField.with(CustomType.TUPLE.of(getSubjectModule().getEntityConverter()), "entity", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))),
+                CustomField.with(CustomType.TUPLE.of(getSubjectModule().getCoreSubjectConverter()), "key", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class)/* TODO: Pass them? Probably pass the whole custom field instead. */))
         );
     }
     

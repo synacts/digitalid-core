@@ -32,6 +32,7 @@
         <module>parameters</module>
         <module>symmetrickey</module>
         <module>asymmetrickey</module>
+        <module>testing</module>
         <module>keychain</module>
         <module>conversion</module>
         <module>encryption</module>

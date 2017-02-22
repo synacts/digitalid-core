@@ -8,7 +8,6 @@ import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.subject.Subject;
 
 import net.digitalid.core.entity.CoreUnit;
@@ -42,7 +41,6 @@ public abstract class CoreSubject<@Unspecifiable ENTITY extends Entity<?>, @Unsp
      * Returns the key which identifies this core subject.
      */
     @Pure
-    @Embedded // TODO: Depends on the key type!
     public abstract @Nonnull KEY getKey();
     
     /* -------------------------------------------------- Unit -------------------------------------------------- */

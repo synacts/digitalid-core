@@ -10,16 +10,19 @@
     <artifactId>core-certificate</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-expression</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-pusher</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
     </dependencies>
     
 </project>

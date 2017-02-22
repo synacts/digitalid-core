@@ -17,13 +17,13 @@ import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 
-import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
 import net.digitalid.core.identification.identity.SyntacticType;
+import net.digitalid.core.testing.CoreTest;
 
 import org.junit.BeforeClass;
 
@@ -50,7 +50,7 @@ interface TestNonHostEntity extends NonHostEntity<TestUnit> {
     
 }
 
-public class SettingsTest extends CryptographyTestBase {
+public class SettingsTest extends CoreTest {
     
     private static final @Nonnull String VALUE = ""; // TODO: Choose a non-default password like "Pa$$word" once properties can be loaded from the database.
     
@@ -77,7 +77,7 @@ public class SettingsTest extends CryptographyTestBase {
         try {
             SETTINGS.password().set(VALUE);
             SETTINGS.password().reset(); // Not necessary but I want to test the database state.
-            assertEquals(VALUE, SETTINGS.password().get());
+            assertThat(SETTINGS.password().get()).isEqualTo(VALUE);
             Database.instance.get().commit();
         } catch (@Nonnull DatabaseException | RecoveryException exception) {
             Database.instance.get().rollback();

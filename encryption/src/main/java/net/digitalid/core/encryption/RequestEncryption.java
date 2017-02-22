@@ -9,12 +9,11 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-
-import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.identification.identifier.HostIdentifier;
@@ -44,7 +43,7 @@ public abstract class RequestEncryption<@Unspecifiable OBJECT> extends Encryptio
      * from the host's key chain.
      */
     @Pure
-    @Default("net.digitalid.database.auxiliary.TimeBuilder.build()")
+    @Default("net.digitalid.utility.time.TimeBuilder.build()")
     public abstract @Nonnull @Positive Time getTime();
     
     /* -------------------------------------------------- Symmetric Key -------------------------------------------------- */

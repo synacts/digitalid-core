@@ -13,11 +13,11 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.time.Time;
+import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
-import net.digitalid.database.auxiliary.Time;
-import net.digitalid.database.auxiliary.TimeBuilder;
 
 import net.digitalid.core.audit.RequestAudit;
 import net.digitalid.core.compression.Compression;

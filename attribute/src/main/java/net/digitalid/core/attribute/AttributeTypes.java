@@ -2,9 +2,8 @@ package net.digitalid.core.attribute;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Utility;
-
-import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.identification.identity.Category;

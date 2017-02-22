@@ -5,10 +5,8 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.converters.StringConverter;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.time.Time;
 
-import net.digitalid.database.auxiliary.Time;
-
-import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionBuilder;
 import net.digitalid.core.compression.CompressionConverter;
@@ -33,11 +31,12 @@ import net.digitalid.core.signature.SignatureConverterBuilder;
 import net.digitalid.core.signature.host.HostSignatureBuilder;
 import net.digitalid.core.symmetrickey.SymmetricKey;
 import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
+import net.digitalid.core.testing.CoreTest;
 
 import org.junit.Test;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class RequestTest extends CryptographyTestBase {
+public class RequestTest extends CoreTest {
     
     private final @Nonnull InternalNonHostIdentifier subject = InternalNonHostIdentifier.with("subject@core.digitalid.net");
     
@@ -66,7 +65,7 @@ public class RequestTest extends CryptographyTestBase {
         final @Nonnull Pack recoveredContent = recoveredCompression.getObject();
         final @Nonnull String recoveredString = recoveredContent.unpack(StringConverter.INSTANCE, null);
         
-        assertEquals(string, recoveredString);
+        assertThat(recoveredString).isEqualTo(string);
     }
     
 //    @Test
@@ -85,7 +84,7 @@ public class RequestTest extends CryptographyTestBase {
         final @Nonnull Pack recoveredContent = recoveredCompression.getObject();
         final @Nonnull String recoveredString = recoveredContent.unpack(StringConverter.INSTANCE, null);
         
-        assertEquals(string, recoveredString);
+        assertThat(recoveredString).isEqualTo(string);
     }
     
 //    @Test
@@ -102,7 +101,7 @@ public class RequestTest extends CryptographyTestBase {
         final @Nonnull Pack recoveredContent = recoveredCompression.getObject();
         final @Nonnull String recoveredString = recoveredContent.unpack(StringConverter.INSTANCE, null);
         
-        assertEquals(string, recoveredString);
+        assertThat(recoveredString).isEqualTo(string);
     }
     
     @Test
@@ -119,7 +118,7 @@ public class RequestTest extends CryptographyTestBase {
         final @Nonnull Compression<String> recoveredCompression = recoveredEncryption.getObject();
         final @Nonnull String recoveredString = recoveredCompression.getObject();
         
-        assertEquals(string, recoveredString);
+        assertThat(recoveredString).isEqualTo(string);
     }
     
     @Test
@@ -137,7 +136,7 @@ public class RequestTest extends CryptographyTestBase {
         final @Nonnull Compression<String> recoveredCompression = recoveredEncryption.getObject();
         final @Nonnull String recoveredString = recoveredCompression.getObject();
         
-        assertEquals(string, recoveredString);
+        assertThat(recoveredString).isEqualTo(string);
     }
     
     @Test
@@ -155,7 +154,7 @@ public class RequestTest extends CryptographyTestBase {
         final @Nonnull Compression<String> recoveredCompression = recoveredSignature.getObject();
         final @Nonnull String recoveredString = recoveredCompression.getObject();
         
-        assertEquals(string, recoveredString);
+        assertThat(recoveredString).isEqualTo(string);
         System.out.println("START");
     }
     

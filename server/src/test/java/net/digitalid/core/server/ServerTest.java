@@ -25,7 +25,7 @@ public class ServerTest extends ServerSetup {
         
         final @Nonnull TestQuery query = TestQueryBuilder.withMessage("Hello from the other side!").withProvidedSubject(identifier).build();
         final @Nonnull TestReply reply = query.send(TestReplyConverter.INSTANCE);
-        assertEquals("Hi there!", reply.getMessage());
+        assertThat(reply.getMessage()).isEqualTo("Hi there!");
         
         // Files
 //        Directory.empty(Directory.getClientsDirectory());

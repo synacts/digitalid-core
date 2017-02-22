@@ -45,6 +45,7 @@
         <module>parameters-java7</module>
         <module>symmetrickey-java7</module>
         <module>asymmetrickey-java7</module>
+        <module>testing-java7</module>
         <module>keychain-java7</module>
         <module>conversion-java7</module>
         <module>encryption-java7</module>

@@ -8,10 +8,10 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.threading.Threading;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.encryption.RequestEncryption;

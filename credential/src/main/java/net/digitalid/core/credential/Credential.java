@@ -12,10 +12,9 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-
-import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.credential.utility.ExposedExponent;

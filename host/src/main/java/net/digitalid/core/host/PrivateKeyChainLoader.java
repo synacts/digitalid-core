@@ -9,10 +9,9 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.file.Files;
+import net.digitalid.utility.time.Time;
+import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.validation.annotations.type.Mutable;
-
-import net.digitalid.database.auxiliary.Time;
-import net.digitalid.database.auxiliary.TimeBuilder;
 
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.conversion.exceptions.FileException;

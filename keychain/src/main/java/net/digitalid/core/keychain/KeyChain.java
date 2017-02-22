@@ -9,13 +9,12 @@ import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.order.StrictlyDescending;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-
-import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.asymmetrickey.AsymmetricKey;
 

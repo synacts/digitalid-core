@@ -1,4 +1,4 @@
 /**
- * Provides annotations for concepts.
+ * Provides annotations for core subjects.
  */
 package net.digitalid.core.subject.annotations;

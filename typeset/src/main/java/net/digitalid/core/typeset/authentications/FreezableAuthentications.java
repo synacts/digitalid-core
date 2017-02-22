@@ -10,10 +10,9 @@ import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.freezable.annotations.NonFrozenRecipient;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.method.Chainable;
 import net.digitalid.utility.validation.annotations.size.Single;
-
-import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.identification.annotations.AttributeType;

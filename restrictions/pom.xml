@@ -10,16 +10,19 @@
     <artifactId>core-restrictions</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-typeset</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-subject</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
     </dependencies>
     
 </project>

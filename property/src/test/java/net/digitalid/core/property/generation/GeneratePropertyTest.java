@@ -9,7 +9,6 @@ import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.auxiliary.None;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.entity.NonHostEntity;
@@ -19,6 +18,7 @@ import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.restrictions.RestrictionsBuilder;
 import net.digitalid.core.subject.CoreServiceCoreSubject;
 import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
+import net.digitalid.core.subject.utility.None;
 
 @Immutable
 @GenerateSubclass

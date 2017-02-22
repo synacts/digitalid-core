@@ -10,11 +10,9 @@ import net.digitalid.utility.conversion.converters.StringConverter;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.string.Strings;
+import net.digitalid.utility.time.Time;
+import net.digitalid.utility.time.TimeBuilder;
 
-import net.digitalid.database.auxiliary.Time;
-import net.digitalid.database.auxiliary.TimeBuilder;
-
-import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.symmetrickey.InitializationVector;
@@ -22,10 +20,11 @@ import net.digitalid.core.symmetrickey.InitializationVectorBuilder;
 import net.digitalid.core.symmetrickey.InitializationVectorConverter;
 import net.digitalid.core.symmetrickey.SymmetricKey;
 import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
+import net.digitalid.core.testing.CoreTest;
 
 import org.junit.Test;
 
-public class EncryptionConverterTest extends CryptographyTestBase {
+public class EncryptionConverterTest extends CoreTest {
     
     @Pure
     public <@Unspecifiable TYPE> void assertEncryption(@Nonnull Converter<TYPE, Void> converter, @NonCaptured @Unmodified @Nonnull TYPE object) throws ExternalException {
@@ -39,10 +38,10 @@ public class EncryptionConverterTest extends CryptographyTestBase {
         final @Nonnull byte[] bytes = XDF.convert(encryptionConverter, encryption);
         final @Nonnull RequestEncryption<TYPE> recoveredEncryption = XDF.recover(encryptionConverter, null, bytes);
         
-        assertEquals(recipient, recoveredEncryption.getRecipient());
-        assertEquals(symmetricKey, recoveredEncryption.getSymmetricKey());
-        assertEquals(initializationVector, recoveredEncryption.getInitializationVector());
-        assertEquals(object, recoveredEncryption.getObject());
+        assertThat(recoveredEncryption.getRecipient()).isEqualTo(recipient);
+        assertThat(recoveredEncryption.getSymmetricKey()).isEqualTo(symmetricKey);
+        assertThat(recoveredEncryption.getInitializationVector()).isEqualTo(initializationVector);
+        assertThat(recoveredEncryption.getObject()).isEqualTo(object);
     }
     
     @Test

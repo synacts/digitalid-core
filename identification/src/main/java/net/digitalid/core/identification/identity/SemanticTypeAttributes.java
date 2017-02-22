@@ -8,6 +8,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.UniqueElements;
 import net.digitalid.utility.validation.annotations.generation.Default;
@@ -16,8 +17,6 @@ import net.digitalid.utility.validation.annotations.math.relative.LessThanOrEqua
 import net.digitalid.utility.validation.annotations.size.Empty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Invariant;
-
-import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.annotations.type.Loaded;
 

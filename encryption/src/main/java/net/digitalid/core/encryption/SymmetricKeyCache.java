@@ -9,11 +9,10 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.concurrency.map.ConcurrentHashMapBuilder;
 import net.digitalid.utility.concurrency.map.ConcurrentMap;
 import net.digitalid.utility.configuration.Configuration;
+import net.digitalid.utility.time.Time;
+import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.type.Utility;
-
-import net.digitalid.database.auxiliary.Time;
-import net.digitalid.database.auxiliary.TimeBuilder;
 
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.symmetrickey.SymmetricKey;

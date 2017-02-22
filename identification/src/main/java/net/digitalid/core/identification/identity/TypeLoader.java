@@ -28,7 +28,7 @@ public interface TypeLoader {
      */
     @Pure
     @NonCommitting
-    public abstract @GreaterThanOrEqualTo(-1) byte load(@Nonnull SyntacticType syntacticType) throws ExternalException;
+    public @GreaterThanOrEqualTo(-1) byte load(@Nonnull SyntacticType syntacticType) throws ExternalException;
 //        this.numberOfParameters = Integer08Wrapper.decode(Cache.getStaleAttributeContent(this, null, PARAMETERS));
 //        if (numberOfParameters < -1) { throw InvalidDeclarationException.get("The number of parameters has to be at least -1 but was " + numberOfParameters + ".", getAddress()); }
     
@@ -62,7 +62,7 @@ public interface TypeLoader {
      */
     @Pure
     @NonCommitting
-    public abstract @Nonnull SemanticTypeAttributes load(@Nonnull SemanticType semanticType) throws ExternalException;
+    public @Nonnull SemanticTypeAttributes load(@Nonnull SemanticType semanticType) throws ExternalException;
 //        if (categories != null) { throw InvalidDeclarationException.get("The semantic base may not be circular.", getAddress()); }
 //        
 //        Cache.getAttributeValues(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);

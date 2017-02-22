@@ -10,16 +10,19 @@
     <artifactId>core-cache</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-attribute</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-keychain</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
     </dependencies>
     
 </project>

@@ -13,10 +13,9 @@ import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.string.Strings;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
-
-import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.exceptions.request.RequestErrorCode;

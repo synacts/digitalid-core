@@ -13,7 +13,6 @@ import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
-import net.digitalid.database.annotations.type.Referenced;
 import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.compression.Compression;
@@ -31,7 +30,7 @@ import net.digitalid.core.signature.host.HostSignature;
  * @see QueryReply
  */
 @Immutable
-@Referenced
+// TODO: Implement Subject instead! @Referenced
 public abstract class Reply<ENTITY extends Entity<?>> extends RootClass implements Handler<ENTITY> {
     
     /* -------------------------------------------------- Matching -------------------------------------------------- */

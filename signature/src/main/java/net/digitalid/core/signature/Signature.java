@@ -7,13 +7,12 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
-import net.digitalid.database.annotations.type.Referenced;
-import net.digitalid.database.auxiliary.Time;
 
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.signature.client.ClientSignature;
@@ -27,7 +26,6 @@ import net.digitalid.core.signature.host.HostSignature;
  * TODO: CredentialsSignature
  */
 @Mutable
-@Referenced // TODO: Rather @CreateTable(inheritance = true, name = "signature', module = "Concept.MODULE")?
 @GenerateBuilder
 @GenerateSubclass
 public abstract class Signature<@Unspecifiable OBJECT> extends RootClass {
@@ -47,7 +45,7 @@ public abstract class Signature<@Unspecifiable OBJECT> extends RootClass {
      */
     @Pure
     @PrimaryKey // TODO: The current time might not be unique enough.
-    @Default("net.digitalid.database.auxiliary.TimeBuilder.build()")
+    @Default("net.digitalid.utility.time.TimeBuilder.build()")
     public abstract @Nonnull @Positive Time getTime();
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */

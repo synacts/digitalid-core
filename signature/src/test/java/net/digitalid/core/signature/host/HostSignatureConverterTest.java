@@ -5,14 +5,13 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.conversion.converters.StringConverter;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 
-import net.digitalid.core.asymmetrickey.CryptographyTestBase;
 import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
+import net.digitalid.core.testing.CoreTest;
 
-import org.junit.Assert;
 import org.junit.Test;
 
-public class HostSignatureConverterTest extends CryptographyTestBase {
+public class HostSignatureConverterTest extends CoreTest {
     
     @Test
     public void shouldSignAndVerify() throws RecoveryException {
@@ -23,10 +22,10 @@ public class HostSignatureConverterTest extends CryptographyTestBase {
         final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureBuilder.withObject(message).withSubject(subject).withSigner(signer).build();
         
         final @Nonnull byte[] bytes = XDF.convert(HostSignatureConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build(), signedIdentifier);
-        Assert.assertTrue(bytes.length > 0);
+        assertThat(bytes.length).isPositive();
         
         final @Nonnull HostSignature<String> recoveredObject = XDF.recover(HostSignatureConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build(), null, bytes);
-        assertEquals(message, recoveredObject.getObject());
+        assertThat(recoveredObject.getObject()).isEqualTo(message);
     }
     
 }
