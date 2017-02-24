@@ -17,8 +17,9 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.mode.SingleAccess;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.access.Access;
+import net.digitalid.database.access.Mode;
+import net.digitalid.database.access.annotations.SingleAccess;
 
 import net.digitalid.core.entity.Entity;
 
@@ -44,7 +45,7 @@ public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity<?>, 
     @Impure
     @SingleAccess
     public static void remove(@Nonnull Entity<?> entity) {
-        Require.that(Database.singleAccess.get()).orThrow("The database has to be in single-access mode.");
+        Require.that(Access.mode.get() == Mode.SINGLE).orThrow("The database has to be in single-access mode.");
         
         for (@Nonnull CoreSubjectIndex<?, ?, ?> index : indexes) {
             index.subjects.remove(entity);
@@ -77,7 +78,7 @@ public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity<?>, 
      */
     @Pure
     public @Nonnull SUBJECT get(@Nonnull ENTITY entity, @Nonnull KEY key) {
-        if (Database.singleAccess.get()) {
+        if (Access.mode.get() == Mode.SINGLE) {
             @Nullable ConcurrentMap<KEY, SUBJECT> map = subjects.get(entity);
             if (map == null) { map = subjects.putIfAbsentElseReturnPresent(entity, ConcurrentHashMapBuilder.<KEY, SUBJECT>build()); }
             @Nullable SUBJECT subject = map.get(key);

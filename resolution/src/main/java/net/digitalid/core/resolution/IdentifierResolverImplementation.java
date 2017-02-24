@@ -15,7 +15,10 @@ import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
+import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.annotations.type.NonLoaded;
 import net.digitalid.core.identification.identifier.HostIdentifier;
@@ -25,6 +28,8 @@ import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.identification.identity.SyntacticType;
+import net.digitalid.core.resolution.tables.IdentifierEntryConverter;
+import net.digitalid.core.resolution.tables.IdentityEntryConverter;
 
 /**
  * This class implements the {@link IdentifierResolver}.
@@ -91,8 +96,10 @@ public class IdentifierResolverImplementation extends IdentifierResolver {
      * Initializes the identifier resolver.
      */
     @PureWithSideEffects
-    @Initialize(target = IdentifierResolver.class)
-    public static void initializeIdentifierResolver() {
+    @Initialize(target = IdentifierResolver.class, dependencies = Database.class)
+    public static void initializeIdentifierResolver() throws DatabaseException {
+        SQL.createTable(IdentityEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
+        SQL.createTable(IdentifierEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
         IdentifierResolver.configuration.set(new IdentifierResolverImplementation());
     }
     

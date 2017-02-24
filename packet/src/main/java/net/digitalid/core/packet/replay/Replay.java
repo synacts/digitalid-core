@@ -1,4 +1,4 @@
-package net.digitalid.core.packet;
+package net.digitalid.core.packet.replay;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
