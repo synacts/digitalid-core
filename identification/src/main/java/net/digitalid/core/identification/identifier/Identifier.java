@@ -7,6 +7,7 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.generation.Recover;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
@@ -48,9 +49,10 @@ public interface Identifier extends RootInterface {
     
     /**
      * Returns the string of this identifier.
+     * (The {@link MaxSize} annotation is needed so that an identifier can be used as a primary key in the database.)
      */
     @Pure
-    public abstract @Nonnull @Valid String getString();
+    public abstract @Nonnull @Valid @MaxSize(64) String getString();
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
     
