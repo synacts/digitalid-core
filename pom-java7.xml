@@ -78,7 +78,6 @@
         
         <module>resolution-java7</module>
         <module>account-java7</module>
-        <module>initializer-java7</module>
         <module>server-java7</module>
     </modules>
     

@@ -9,6 +9,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.math.relative.GreaterThanOrEqualTo;
 import net.digitalid.utility.validation.annotations.math.relative.LessThanOrEqualTo;
+import net.digitalid.utility.validation.annotations.method.Chainable;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -107,17 +108,20 @@ public abstract class SyntacticType extends Type {
     
     @Impure
     @Override
+    @Chainable
     @NonCommitting
     @NonLoadedRecipient
-    void load() throws ExternalException {
+    @Nonnull SyntacticType load() throws ExternalException {
         this.numberOfParameters = TypeLoader.configuration.get().load(this);
         this.loaded = true;
+        return this;
     }
     
     /**
      * Loads the type declaration from the given number of generic parameters.
      */
     @Impure
+    @Chainable
     @MainThread
     @NonLoadedRecipient
     public @Nonnull @Loaded SyntacticType load(@GreaterThanOrEqualTo(-1) @LessThanOrEqualTo(127) int numberOfParameters) {

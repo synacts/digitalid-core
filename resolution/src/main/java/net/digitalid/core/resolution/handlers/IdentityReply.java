@@ -1,25 +1,19 @@
 package net.digitalid.core.resolution.handlers;
 
-
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.value.Invariant;
 
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.CoreHandler;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
-import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
-import net.digitalid.core.pack.Pack;
-import net.digitalid.core.resolution.predecessor.ReadOnlyPredecessors;
 
 /**
  * Replies the identity of the given subject.
@@ -29,30 +23,31 @@ import net.digitalid.core.resolution.predecessor.ReadOnlyPredecessors;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-// TODO: @GenerateConverter
+@GenerateConverter
 public abstract class IdentityReply extends QueryReply<NonHostEntity<?>> implements CoreHandler<NonHostEntity<?>> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
      * Returns the category of the subject.
-     * 
-     * @ensure return.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
     @Pure
+    @Invariant(condition = "#.isInternalNonHostIdentity()", message = "The category denotes an internal non-host identity.")
     public abstract @Nonnull Category getCategory();
     
-    /**
-     * Returns the predecessors of the subject.
-     */
-    @Pure
-    public abstract @Nonnull @Frozen ReadOnlyPredecessors getPredecessors();
+    // TODO: Support predecessors and successor.
     
-    /**
-     * Returns the successor of the subject.
-     */
-    @Pure
-    public abstract @Nullable InternalNonHostIdentifier getSuccessor();
+//    /**
+//     * Returns the predecessors of the subject.
+//     */
+//    @Pure
+//    public abstract @Nonnull @Frozen ReadOnlyPredecessors getPredecessors();
+//    
+//    /**
+//     * Returns the successor of the subject.
+//     */
+//    @Pure
+//    public abstract @Nullable InternalNonHostIdentifier getSuccessor();
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
@@ -95,15 +90,6 @@ public abstract class IdentityReply extends QueryReply<NonHostEntity<?>> impleme
 //        this.predecessors = new FreezablePredecessors(tuple.getNonNullableElement(1)).freeze();
 //        this.successor = tuple.isElementNull(2) ? null : IdentifierImplementation.XDF_CONVERTER.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(2)).castTo(InternalNonHostIdentifier.class);
 //    }
-    
-    /* -------------------------------------------------- Packable -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    @TODO(task = "Remove this method as soon as the handler has a converter.", date = "2016-12-20", author = Author.KASPAR_ETTER)
-    public @Nonnull Pack pack() {
-        return null;
-    }
     
     /* -------------------------------------------------- Matching -------------------------------------------------- */
     

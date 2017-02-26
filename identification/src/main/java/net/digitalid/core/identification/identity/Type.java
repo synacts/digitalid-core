@@ -1,7 +1,10 @@
 package net.digitalid.core.identification.identity;
 
+import javax.annotation.Nonnull;
+
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.method.Chainable;
 import net.digitalid.utility.validation.annotations.method.Ensures;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -26,10 +29,11 @@ public abstract class Type extends RelocatableIdentity implements InternalNonHos
      * Lazy loading is necessary for recursive type declarations.
      */
     @Impure
+    @Chainable
     @NonCommitting
     @NonLoadedRecipient
     @Ensures(condition = "isLoaded()", message = "The type declaration has to be loaded.")
-    abstract void load() throws ExternalException;
+    abstract @Nonnull Type load() throws ExternalException;
     
     /**
      * Ensures that the type declaration is loaded.

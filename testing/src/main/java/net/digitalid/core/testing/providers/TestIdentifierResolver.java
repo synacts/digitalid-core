@@ -36,7 +36,7 @@ public class TestIdentifierResolver extends IdentifierResolver {
     
     @Pure
     @Override
-    public @Nonnull Identity getIdentity(long key) {
+    public @Nonnull Identity load(long key) {
         @Nullable Identity identity = keys.get(key);
         if (identity == null) {
             identity = createSemanticType(key, InternalNonHostIdentifier.with("todo@digitalid.net"));
@@ -61,7 +61,7 @@ public class TestIdentifierResolver extends IdentifierResolver {
         return type;
     }
     
-    /* -------------------------------------------------- Syntactic Type Mapping -------------------------------------------------- */
+    /* -------------------------------------------------- Semantic Type Mapping -------------------------------------------------- */
     
     private static final @Nonnull Map<@Nonnull InternalNonHostIdentifier, @Nonnull SemanticType> semanticTypes = new HashMap<>();
     
@@ -83,7 +83,7 @@ public class TestIdentifierResolver extends IdentifierResolver {
     
     @Pure
     @Override
-    public @Nonnull Identity getIdentity(@Nonnull Identifier identifier) {
+    public @Nonnull Identity resolve(@Nonnull Identifier identifier) {
         @Nullable Identity identity = identifiers.get(identifier);
         if (identity == null) {
             if (identifier instanceof HostIdentifier) {

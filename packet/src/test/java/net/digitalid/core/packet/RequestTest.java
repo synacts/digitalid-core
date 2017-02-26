@@ -141,7 +141,6 @@ public class RequestTest extends CoreTest {
     
     @Test
     public void testCompressionWithinHostSignature() throws ExternalException {
-        System.out.println("START");
         final @Nonnull CompressionConverter<String> compressionConverter = CompressionConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build();
         final @Nonnull SignatureConverter<Compression<String>> signatureConverter = SignatureConverterBuilder.withObjectConverter(compressionConverter).build();
         
@@ -155,7 +154,6 @@ public class RequestTest extends CoreTest {
         final @Nonnull String recoveredString = recoveredCompression.getObject();
         
         assertThat(recoveredString).isEqualTo(string);
-        System.out.println("START");
     }
     
 }

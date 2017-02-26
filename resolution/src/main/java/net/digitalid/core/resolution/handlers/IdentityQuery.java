@@ -1,8 +1,12 @@
 package net.digitalid.core.resolution.handlers;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -20,8 +24,8 @@ import net.digitalid.core.handler.annotations.Matching;
 import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.ExternalQuery;
-import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.resolution.IdentifierResolverImplementation;
 
 /**
  * Queries the identity of the given subject.
@@ -41,11 +45,11 @@ public abstract class IdentityQuery extends ExternalQuery<NonHostEntity<?>> impl
     @OnHostRecipient
     @PureWithSideEffects
     @MethodHasBeenReceived
-    public @Nonnull @Matching IdentityReply executeOnHost() throws RequestException, DatabaseException {
-        final @Nonnull InternalIdentifier subject = getSubject(); // The following exception should never be thrown as the condition is already checked in the packet class.
-        if (!(subject instanceof InternalNonHostIdentifier)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identity may only be queried of non-host identities.").build(); }
-        // TODO: return IdentityReplySubclass((InternalNonHostIdentifier) subject);
-        throw new UnsupportedOperationException();
+    @TODO(task = "Check somewhere that the subject is indeed hosted on this server.", date = "2017-02-26", author = Author.KASPAR_ETTER)
+    public @Nonnull @Matching IdentityReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
+        final @Nullable Identity identity = IdentifierResolverImplementation.INSTANCE.load(getSubject());
+        if (identity == null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("There exists no identity with the identifier '" + getSubject() + "'.").build(); }
+        return IdentityReplyBuilder.withEntity(getEntity()).withCategory(identity.getCategory()).build();
     }
     
 }

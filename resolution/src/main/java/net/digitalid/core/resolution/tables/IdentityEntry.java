@@ -13,7 +13,6 @@ import net.digitalid.database.annotations.constraints.PrimaryKey;
 
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identity.Category;
-import net.digitalid.core.identification.identity.Identity;
 
 /**
  * This type models an entry in the identity table.
@@ -27,7 +26,7 @@ public interface IdentityEntry extends RootInterface {
     @Pure
     @PrimaryKey
     // TODO: @AutoIncrement
-    public @Nonnull Identity getIdentity();
+    public long getKey();
     
     @Pure
     public @Nonnull Category getCategory();

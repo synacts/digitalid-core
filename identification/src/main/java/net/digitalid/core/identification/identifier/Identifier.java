@@ -74,6 +74,6 @@ public interface Identifier extends RootInterface {
      */
     @Pure
     @NonCommitting
-    public abstract @Nonnull Identity resolve() throws ExternalException;
+    public @Nonnull Identity resolve() throws ExternalException;
     
 }

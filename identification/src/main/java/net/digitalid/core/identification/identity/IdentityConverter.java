@@ -111,14 +111,14 @@ public abstract class IdentityConverter<@Unspecifiable IDENTITY extends Identity
         if (representation == Representation.INTERNAL) {
             final long key = decoder.decodeInteger64();
             try {
-                identity = IdentifierResolver.load(key);
+                identity = IdentifierResolver.configuration.get().load(key);
             } catch (@Nonnull ExternalException exception) {
                 throw RecoveryExceptionBuilder.withMessage("A problem occurred while resolving the identity with the key " + key + ".").withCause(exception).build();
             }
         } else if (representation == Representation.EXTERNAL) {
             final @Nonnull Identifier address = decoder.decodeObject(IdentifierConverter.INSTANCE, null);
             try {
-                identity = IdentifierResolver.resolve(address);
+                identity = IdentifierResolver.configuration.get().resolve(address);
             } catch (@Nonnull ExternalException exception) {
                 throw RecoveryExceptionBuilder.withMessage("A problem occurred while resolving the identity with the address '" + address.getString() + "'.").withCause(exception).build();
             }

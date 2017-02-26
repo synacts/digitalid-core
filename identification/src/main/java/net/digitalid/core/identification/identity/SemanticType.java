@@ -128,10 +128,12 @@ public abstract class SemanticType extends Type {
     
     @Impure
     @Override
+    @Chainable
     @NonCommitting
     @NonLoadedRecipient
-    void load() throws ExternalException {
+    @Nonnull SemanticType load() throws ExternalException {
         this.attributes = TypeLoader.configuration.get().load(this);
+        return this;
     }
     
     /**

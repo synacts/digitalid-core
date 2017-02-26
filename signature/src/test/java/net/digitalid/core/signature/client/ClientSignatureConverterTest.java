@@ -18,7 +18,6 @@ import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
-import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.testing.CoreTest;
 
 import org.junit.Test;
@@ -32,7 +31,7 @@ public class ClientSignatureConverterTest extends CoreTest {
         final @Nonnull InternalIdentifier subject = InternalIdentifier.with("bob@digitalid.net");
         
         final @Nonnull Time time = TimeBuilder.buildWithValue(1472810684033L);
-        final @Nonnull HostIdentity hostIdentity = (HostIdentity) IdentifierResolver.resolve(hostIdentifier);
+        final @Nonnull HostIdentity hostIdentity = hostIdentifier.resolve();
         final @Nonnull PublicKey publicKey = PublicKeyRetriever.retrieve(hostIdentity, time);
         
         // TODO: what to chose as value and secret?
