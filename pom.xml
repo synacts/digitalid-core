@@ -16,7 +16,21 @@
     <description>This project contains the Digital ID core protocol: www.digitalid.net.</description>
     <url>https://code.digitalid.net/digitalid/core</url>
     
+    <repositories>
+        <repository>
+            <id>digitalid-releases</id>
+            <name>Digital ID Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>digitalid-snapshots</id>
+            <name>Digital ID Snapshots</name>
+            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+    
     <modules>
+        <module>annotations</module>
         <module>identification</module>
         <module>exceptions</module>
         <module>permissions</module>
@@ -27,7 +41,6 @@
         <module>restrictions</module>
         <module>agent</module>
         
-        <module>annotations</module>
         <module>group</module>
         <module>parameters</module>
         <module>symmetrickey</module>
@@ -48,24 +61,25 @@
         <module>synchronizer</module>
         <module>property</module>
         
-        <module>settings</module>
-        <module>clientagent</module>
-        <module>outgoingrole</module>
         <module>error</module>
         <module>pusher</module>
+        <module>outgoingrole</module>
         <module>node</module>
-        
         <module>expression</module>
-        <module>certificate</module>
         <module>attribute</module>
-        <module>cache</module>
-        <module>authorization</module>
+        <module>certificate</module>
+        <module>settings</module>
+        <module>clientagent</module>
+        
         <module>client</module>
         <module>host</module>
+        <module>server</module>
         
+        <module>cache</module>
         <module>resolution</module>
         <module>account</module>
-        <module>server</module>
+        <module>authorization</module>
+        <module>all</module>
     </modules>
     
     <properties>

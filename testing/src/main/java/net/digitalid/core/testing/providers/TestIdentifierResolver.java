@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.annotations.type.NonLoaded;
@@ -51,7 +50,6 @@ public class TestIdentifierResolver extends IdentifierResolver {
     
     @Pure
     @Override
-    @MainThread
     protected @Nonnull @NonLoaded SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier) {
         @Nullable SyntacticType type = syntacticTypes.get(identifier);
         if (type == null) {
@@ -67,7 +65,6 @@ public class TestIdentifierResolver extends IdentifierResolver {
     
     @Pure
     @Override
-    @MainThread
     protected @Nonnull @NonLoaded SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier) {
         @Nullable SemanticType type = semanticTypes.get(identifier);
         if (type == null) {

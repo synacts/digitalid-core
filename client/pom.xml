@@ -13,26 +13,13 @@
         
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-authorization</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
             <artifactId>core-clientagent</artifactId>
             <version>${project.version}</version>
         </dependency>
         
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-cache</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <!-- This dependency was just added to have an initializer for the identifier resolver on which public key retriever implementation depends. Maybe there is a better solution. -->
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
-            <artifactId>core-resolution</artifactId>
+            <artifactId>core-outgoingrole</artifactId>
             <version>${project.version}</version>
         </dependency>
         

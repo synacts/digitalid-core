@@ -13,9 +13,9 @@
     <packaging>pom</packaging>
     
     <name>Digital ID Database</name>
-    <description>This project provides core classes for the Digital ID library.</description>
+    <description>This project contains the Digital ID core protocol: www.digitalid.net.</description>
     <url>https://code.digitalid.net/digitalid/core</url>
-
+    
     <repositories>
         <repository>
             <id>digitalid-releases</id>
@@ -28,8 +28,9 @@
             <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
         </repository>
     </repositories>
-
+    
     <modules>
+        <module>annotations-java7</module>
         <module>identification-java7</module>
         <module>exceptions-java7</module>
         <module>permissions-java7</module>
@@ -40,7 +41,6 @@
         <module>restrictions-java7</module>
         <module>agent-java7</module>
         
-        <module>annotations-java7</module>
         <module>group-java7</module>
         <module>parameters-java7</module>
         <module>symmetrickey-java7</module>
@@ -61,24 +61,25 @@
         <module>synchronizer-java7</module>
         <module>property-java7</module>
         
-        <module>settings-java7</module>
-        <module>clientagent-java7</module>
-        <module>outgoingrole-java7</module>
         <module>error-java7</module>
         <module>pusher-java7</module>
+        <module>outgoingrole-java7</module>
         <module>node-java7</module>
-        
         <module>expression-java7</module>
-        <module>certificate-java7</module>
         <module>attribute-java7</module>
-        <module>cache-java7</module>
-        <module>authorization-java7</module>
+        <module>certificate-java7</module>
+        <module>settings-java7</module>
+        <module>clientagent-java7</module>
+        
         <module>client-java7</module>
         <module>host-java7</module>
+        <module>server-java7</module>
         
+        <module>cache-java7</module>
         <module>resolution-java7</module>
         <module>account-java7</module>
-        <module>server-java7</module>
+        <module>authorization-java7</module>
+        <module>all-java7</module>
     </modules>
     
     <properties>
@@ -114,5 +115,5 @@
         </dependency>
         
     </dependencies>
- 
+    
 </project>

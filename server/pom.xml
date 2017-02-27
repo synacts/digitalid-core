@@ -19,46 +19,11 @@
         
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-certificate</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
-            <artifactId>core-account</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
             <artifactId>core-testing</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         
     </dependencies>
-    
-    <!-- Start the server with 'mvn exec:exec'. -->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.5.0</version>
-                <configuration>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>-classpath</argument>
-                        <classpath/>
-                        <argument>net.digitalid.core.server.Server</argument>
-                        <argument>default.digitalid.net</argument>
-                    </arguments>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    
-    <!-- Get the server with 'mvn org.apache.maven.plugins:maven-dependency-plugin:2.10:get -DrepoUrl=https://repo.digitalid.net/content/repositories/releases/ -Dartifact=net.digitalid.core:core-server:1.0.0'. -->
-    <!-- Run the server with 'mvn -f ~/.m2/repository/net/digitalid/core/core-server/1.0.0/core-server-1.0.0.pom exec:exec'. -->
     
 </project>
