@@ -24,7 +24,6 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.unit.Unit;
 
-import net.digitalid.core.annotations.type.NonLoaded;
 import net.digitalid.core.identification.identifier.EmailIdentifier;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
@@ -62,6 +61,19 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
      */
     public static final @Nonnull IdentifierResolverImplementation INSTANCE = new IdentifierResolverImplementationSubclass();
     
+    /* -------------------------------------------------- Injection -------------------------------------------------- */
+    
+    /**
+     * Initializes the identifier resolver.
+     */
+    @PureWithSideEffects
+    @Initialize(target = IdentifierResolver.class, dependencies = Database.class)
+    public static void initializeIdentifierResolver() throws DatabaseException {
+        SQL.createTable(IdentityEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
+        SQL.createTable(IdentifierEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
+        IdentifierResolver.configuration.set(INSTANCE);
+    }
+    
     /* -------------------------------------------------- Mapper -------------------------------------------------- */
     
     private final @Nonnull Mapper mapper = new MapperSubclass();
@@ -73,7 +85,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     public @Nonnull Identity load(long key) throws DatabaseException, RecoveryException {
         @Nullable Identity identity = mapper.getIdentity(key);
         if (identity == null) {
-            final @Nonnull IdentityEntry entry = SQL.selectOne(IdentityEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key", Unit.DEFAULT);
+            final @Nonnull IdentityEntry entry = SQL.selectOne(IdentityEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key_", Unit.DEFAULT);
             identity = createIdentity(entry.getCategory(), entry.getKey(), entry.getAddress());
             mapper.mapAfterCommit(identity);
         }
@@ -142,7 +154,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     
     @Pure
     @Override
-    protected @Nonnull @NonLoaded SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier) {
+    protected @Nonnull SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier) {
         try {
             @Nullable Identity identity = load(identifier);
             if (identity == null) { identity = map(identifier, Category.SYNTACTIC_TYPE); }
@@ -157,7 +169,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     
     @Pure
     @Override
-    protected @Nonnull @NonLoaded SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier) {
+    protected @Nonnull SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier) {
         try {
             @Nullable Identity identity = load(identifier);
             if (identity == null) { identity = map(identifier, Category.SEMANTIC_TYPE); }
@@ -166,19 +178,6 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
         } catch (@Nonnull DatabaseException | RecoveryException exception) {
             throw UncheckedExceptionBuilder.withCause(exception).build();
         }
-    }
-    
-    /* -------------------------------------------------- Injection -------------------------------------------------- */
-    
-    /**
-     * Initializes the identifier resolver.
-     */
-    @PureWithSideEffects
-    @Initialize(target = IdentifierResolver.class, dependencies = Database.class)
-    public static void initializeIdentifierResolver() throws DatabaseException {
-        SQL.createTable(IdentityEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
-        SQL.createTable(IdentifierEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
-        IdentifierResolver.configuration.set(INSTANCE);
     }
     
 }

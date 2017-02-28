@@ -63,7 +63,7 @@ public abstract class Mapper {
     public void map(@Nonnull Identity identity) {
         keys.put(identity.getKey(), identity);
         identifiers.put(identity.getAddress(), identity);
-        Log.debugging("The identity of " + identity.getAddress() + " was mapped.");
+        Log.debugging("The identity of $ was mapped.", identity.getAddress().getString());
     }
     
     /**
@@ -82,7 +82,7 @@ public abstract class Mapper {
     public void unmap(@Nonnull Identity identity) {
         keys.remove(identity.getKey());
         identifiers.remove(identity.getAddress());
-        Log.debugging("The identity of " + identity.getAddress() + " was unmapped.");
+        Log.debugging("The identity of $ was unmapped.", identity.getAddress().getString());
     }
     
     /**

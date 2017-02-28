@@ -56,14 +56,14 @@ public abstract class IdentifierResolver {
      * All exceptions are suppressed with an {@link UncheckedException}.
      */
     @Pure
-    protected abstract @Nonnull @NonLoaded SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier);
+    protected abstract @Nonnull SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier);
     
     /**
      * Maps the given identifier and returns a semantic type with that address.
      * All exceptions are suppressed with an {@link UncheckedException}.
      */
     @Pure
-    protected abstract @Nonnull @NonLoaded SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier);
+    protected abstract @Nonnull SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier);
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     

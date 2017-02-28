@@ -18,6 +18,7 @@ import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.audit.RequestAudit;
 import net.digitalid.core.compression.Compression;
@@ -79,6 +80,7 @@ public abstract class Worker implements Runnable {
             // TODO: Implement the real worker again.
             
             try {
+                Database.instance.get().commit();  // TODO: This line is only temporary because of a locking issue between client and server!
                 final @Nonnull Pack pack = Pack.loadFrom(getSocket());
                 request = pack.unpack(RequestConverter.INSTANCE, null);
                 final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = request.getEncryption();
@@ -95,6 +97,7 @@ public abstract class Worker implements Runnable {
                         encryptedResponse = EncryptionBuilder.withObject(signedResponse).build();
                     }
                     response = ResponseBuilder.withEncryption(encryptedResponse).build();
+                    Database.instance.get().commit();  // TODO: This line is only temporary because of a locking issue between client and server!
                     response.pack().storeTo(getSocket());
                 } else {
                     throw new UnsupportedOperationException("We should also send a response in case the reply is null.");
