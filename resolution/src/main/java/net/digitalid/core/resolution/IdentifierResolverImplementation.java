@@ -1,27 +1,23 @@
 package net.digitalid.core.resolution;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.converters.Integer64Converter;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.recovery.Check;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
-import net.digitalid.utility.logging.Log;
-import net.digitalid.utility.threading.annotations.MainThread;
-import net.digitalid.utility.validation.annotations.type.Mutable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
@@ -55,56 +51,31 @@ import net.digitalid.core.resolution.tables.IdentityEntryConverter;
 /**
  * This class implements the {@link IdentifierResolver}.
  */
-@Mutable
+@Immutable
 @GenerateSubclass
 public abstract class IdentifierResolverImplementation extends IdentifierResolver {
     
     /* -------------------------------------------------- Instance -------------------------------------------------- */
     
-    public static @Nonnull IdentifierResolverImplementation INSTANCE = new IdentifierResolverImplementationSubclass();
-    
-    /* -------------------------------------------------- Map Caches -------------------------------------------------- */
-    
     /**
-     * Maps numbers onto identities by caching the corresponding entries from the database.
+     * Stores an instance of the surrounding class.
      */
-    private final @Nonnull Map<@Nonnull Long, @Nonnull Identity> keys = new ConcurrentHashMap<>();
+    public static final @Nonnull IdentifierResolverImplementation INSTANCE = new IdentifierResolverImplementationSubclass();
     
-    /**
-     * Maps identifiers onto identities by caching the corresponding entries from the database.
-     */
-    private final @Nonnull Map<@Nonnull Identifier, @Nonnull Identity> identifiers = new ConcurrentHashMap<>();
+    /* -------------------------------------------------- Mapper -------------------------------------------------- */
     
-    /**
-     * Clears the local maps of the mapper.
-     */
-    @Impure
-    public void clearLocalMaps() {
-        keys.clear();
-        identifiers.clear();
-    }
-    
-    /**
-     * Removes the given identity from the local maps.
-     */
-    @Impure
-    public void unmap(@Nonnull Identity identity) {
-        keys.remove(identity.getKey());
-        identifiers.remove(identity.getAddress());
-        Log.debugging("The identity of " + identity.getAddress() + " was unmapped.");
-    }
+    private final @Nonnull Mapper mapper = new MapperSubclass();
     
     /* -------------------------------------------------- Key Resolution -------------------------------------------------- */
     
     @Override
     @PureWithSideEffects
     public @Nonnull Identity load(long key) throws DatabaseException, RecoveryException {
-        @Nullable Identity identity = keys.get(key);
+        @Nullable Identity identity = mapper.getIdentity(key);
         if (identity == null) {
             final @Nonnull IdentityEntry entry = SQL.selectOne(IdentityEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key", Unit.DEFAULT);
             identity = createIdentity(entry.getCategory(), entry.getKey(), entry.getAddress());
-            identifiers.put(entry.getAddress(), identity);
-            keys.put(key, identity);
+            mapper.mapAfterCommit(identity);
         }
         return identity;
     }
@@ -119,53 +90,49 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     private @Nonnull Identity map(@Nonnull Identifier address, @Nonnull Category category) throws DatabaseException {
         final long key = ThreadLocalRandom.current().nextLong();
         
-//        if (address.getString().equals("person@core.digitalid.net")) {
-//            new Exception().printStackTrace();
-//        }
-        
         final @Nonnull IdentityEntry identityEntry = IdentityEntryBuilder.withKey(key).withCategory(category).withAddress(address).build();
         final @Nonnull IdentifierEntry identifierEntry = IdentifierEntryBuilder.withIdentifier(address).withKey(key).build();
         SQL.insert(IdentityEntryConverter.INSTANCE, identityEntry, Unit.DEFAULT);
         SQL.insert(IdentifierEntryConverter.INSTANCE, identifierEntry, Unit.DEFAULT);
         
         final @Nonnull Identity identity = createIdentity(category, key, address);
-        identifiers.put(address, identity);
-        keys.put(key, identity);
+        mapper.mapAfterCommit(identity);
         return identity;
     }
     
     /* -------------------------------------------------- Identifier Resolution -------------------------------------------------- */
     
     /**
-     * Loads and returns the identity with the given identifier from the database.
+     * Loads and returns the identity with the given identifier.
      */
     @PureWithSideEffects
     public @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException {
-        final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, IdentifierConverter.INSTANCE, identifier, "identifier_", Unit.DEFAULT);
-        return entry != null ? load(entry.getKey()) : null;
+        @Nullable Identity identity = mapper.getIdentity(identifier);
+        if (identity == null) {
+            final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, IdentifierConverter.INSTANCE, identifier, "identifier_", Unit.DEFAULT);
+            if (entry != null) { identity = load(entry.getKey()); }
+        }
+        return identity;
     }
     
     @Override
     @PureWithSideEffects
     public @Nonnull Identity resolve(@Nonnull Identifier identifier) throws ExternalException {
-        @Nullable Identity identity = identifiers.get(identifier);
+        @Nullable Identity identity = load(identifier);
         if (identity == null) {
-            identity = load(identifier);
-            if (identity == null) {
-                if (identifier instanceof HostIdentifier) {
-                    // TODO: HostIdentifiers have to be handled differently (because the response signature cannot be verified immediately).
-                    identity = map(identifier, Category.HOST); // TODO: This line is only temporary.
-                } else if (identifier instanceof InternalIdentifier) {
-                    final @Nonnull IdentityQuery query = IdentityQueryBuilder.withProvidedSubject((InternalIdentifier) identifier).build();
-                    final @Nonnull IdentityReply reply = query.send(IdentityReplyConverter.INSTANCE);
-                    identity = map(identifier, reply.getCategory());
-                } else if (identifier instanceof EmailIdentifier) {
-                    identity = map(identifier, Category.EMAIL_PERSON);
-                } else if (identifier instanceof MobileIdentifier) {
-                    identity = map(identifier, Category.MOBILE_PERSON);
-                } else {
-                    throw CaseExceptionBuilder.withVariable("identifier").withValue(identifier).build();
-                }
+            if (identifier instanceof HostIdentifier) {
+                // TODO: HostIdentifiers have to be handled differently (because the response signature cannot be verified immediately).
+                identity = map(identifier, Category.HOST); // TODO: This line is only temporary.
+            } else if (identifier instanceof InternalIdentifier) {
+                final @Nonnull IdentityQuery query = IdentityQueryBuilder.withProvidedSubject((InternalIdentifier) identifier).build();
+                final @Nonnull IdentityReply reply = query.send(IdentityReplyConverter.INSTANCE);
+                identity = map(identifier, reply.getCategory());
+            } else if (identifier instanceof EmailIdentifier) {
+                identity = map(identifier, Category.EMAIL_PERSON);
+            } else if (identifier instanceof MobileIdentifier) {
+                identity = map(identifier, Category.MOBILE_PERSON);
+            } else {
+                throw CaseExceptionBuilder.withVariable("identifier").withValue(identifier).build();
             }
         }
         return identity;
@@ -175,11 +142,13 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     
     @Pure
     @Override
-    @MainThread
     protected @Nonnull @NonLoaded SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier) {
         try {
-            return map(identifier, Category.SYNTACTIC_TYPE).castTo(SyntacticType.class);
-        } catch (@Nonnull DatabaseException exception) {
+            @Nullable Identity identity = load(identifier);
+            if (identity == null) { identity = map(identifier, Category.SYNTACTIC_TYPE); }
+            Check.that(identity instanceof SyntacticType).orThrow("The mapped or loaded identity $ has to be a syntactic type but was $.", identity.getAddress().getString(), identity.getClass().getSimpleName());
+            return (SyntacticType) identity;
+        } catch (@Nonnull DatabaseException | RecoveryException exception) {
             throw UncheckedExceptionBuilder.withCause(exception).build();
         }
     }
@@ -188,11 +157,13 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     
     @Pure
     @Override
-    @MainThread
     protected @Nonnull @NonLoaded SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier) {
         try {
-            return map(identifier, Category.SEMANTIC_TYPE).castTo(SemanticType.class);
-        } catch (@Nonnull DatabaseException exception) {
+            @Nullable Identity identity = load(identifier);
+            if (identity == null) { identity = map(identifier, Category.SEMANTIC_TYPE); }
+            Check.that(identity instanceof SemanticType).orThrow("The mapped or loaded identity $ has to be a semantic type but was $.", identity.getAddress().getString(), identity.getClass().getSimpleName());
+            return (SemanticType) identity;
+        } catch (@Nonnull DatabaseException | RecoveryException exception) {
             throw UncheckedExceptionBuilder.withCause(exception).build();
         }
     }

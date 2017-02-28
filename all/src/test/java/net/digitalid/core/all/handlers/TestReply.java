@@ -1,4 +1,4 @@
-package net.digitalid.core.server.handlers;
+package net.digitalid.core.all.handlers;
 
 import javax.annotation.Nonnull;
 

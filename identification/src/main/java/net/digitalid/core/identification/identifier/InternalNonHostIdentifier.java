@@ -3,6 +3,9 @@ package net.digitalid.core.identification.identifier;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -45,6 +48,15 @@ public abstract class InternalNonHostIdentifier extends RootClass implements Int
     @Recover
     public static @Nonnull InternalNonHostIdentifier with(@Nonnull @Valid String string) {
         return new InternalNonHostIdentifierSubclass(string);
+    }
+    
+    /**
+     * Returns the non-host identifier of the given converter.
+     */
+    @Pure
+    @TODO(task = "Use the fully qualified name to derive a suitable identifier.", date = "2016-12-20", author = Author.KASPAR_ETTER)
+    public static @Nonnull InternalNonHostIdentifier of(@Nonnull Converter<?, ?> converter) {
+        return with(converter.getTypeName().toLowerCase() + "@core.digitalid.net");
     }
     
     /* -------------------------------------------------- Resolve -------------------------------------------------- */

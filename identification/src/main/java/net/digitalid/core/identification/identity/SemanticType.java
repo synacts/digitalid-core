@@ -1,20 +1,19 @@
 package net.digitalid.core.identification.identity;
 
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.circumfixes.Quotes;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.threading.Threading;
 import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
@@ -42,13 +41,25 @@ public abstract class SemanticType extends Type {
     /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     /**
+     * Maps the semantic type with the given identifier.
+     */
+    @Pure
+    @MainThread
+    @NonCommitting
+    public static @Nonnull @NonLoaded SemanticType map(@Nonnull InternalNonHostIdentifier identifier) {
+        Require.that(Threading.isMainThread()).orThrow("The method 'map' may only be called on the main thread.");
+        
+        return IdentifierResolver.configuration.get().mapSemanticType(identifier);
+    }
+    
+    /**
      * Maps the semantic type with the given string, which has to be a valid internal non-host identifier.
      */
     @Pure
     @MainThread
     @NonCommitting
     public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
-        return IdentifierResolver.configuration.get().mapSemanticType(InternalNonHostIdentifier.with(identifier));
+        return map(InternalNonHostIdentifier.with(identifier));
     }
     
     /**
@@ -57,9 +68,19 @@ public abstract class SemanticType extends Type {
     @Pure
     @MainThread
     @NonCommitting
-    @TODO(task = "Use the fully qualified name to derive a suitable identifier.", date = "2016-12-20", author = Author.KASPAR_ETTER)
     public static @Nonnull @NonLoaded SemanticType map(@Nonnull Converter<?, ?> converter) {
-        return map(converter.getTypeName().toLowerCase() + "@core.digitalid.net");
+        return map(InternalNonHostIdentifier.of(converter));
+    }
+    
+    /**
+     * Maps the semantic type of the given converter.
+     * <p>
+     * This method can be called on any thread. However, the result should only be stored temporarily (because the transaction might be rolled back).
+     */
+    @Pure
+    @NonCommitting
+    public static @Nonnull @NonLoaded SemanticType mapWithoutPersistingResult(@Nonnull Converter<?, ?> converter) {
+        return IdentifierResolver.configuration.get().mapSemanticType(InternalNonHostIdentifier.of(converter));
     }
     
     /* -------------------------------------------------- Attributes -------------------------------------------------- */

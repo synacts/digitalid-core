@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.annotations.method.Impure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.testing.DatabaseTest;
@@ -33,8 +33,8 @@ public abstract class CoreTest extends DatabaseTest {
     /**
      * Initializes the cryptographic parameters and all configurations of the core library.
      */
-    @Impure
     @BeforeClass
+    @PureWithSideEffects
     public static void initializeConfigurations() throws IllegalArgumentException, FileNotFoundException {
         if (!initialized) {
             Parameters.FACTOR.set(130);

@@ -10,7 +10,8 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.console.Console;
 import net.digitalid.utility.console.Option;
-import net.digitalid.utility.console.exceptions.EscapeOptionException;
+import net.digitalid.utility.console.exceptions.EscapeException;
+import net.digitalid.utility.console.exceptions.EscapeExceptionBuilder;
 import net.digitalid.utility.logging.Version;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
@@ -58,10 +59,10 @@ abstract class Options {
     /**
      * Prompts the user to select one of the hosts that run on the server.
      * 
-     * @return the selected host or a {@link EscapeOptionException} if the user escaped.
+     * @return the selected host or a {@link EscapeException} if the user escaped.
      */
     @Impure
-    private static @Nonnull Host selectHost() throws EscapeOptionException {
+    private static @Nonnull Host selectHost() throws EscapeException {
         final @Nonnull ReadOnlyList<Host> hosts = FreezableArrayList.withElementsOf((Collection<? extends Host>) Server.getHosts()).freeze();
         if (!hosts.isEmpty()) {
             Console.writeLine("Please select one of the following hosts:");
@@ -81,7 +82,7 @@ abstract class Options {
         } else {
             Console.writeLine("There are no hosts to proceed with.");
         }
-        throw new EscapeOptionException();
+        throw EscapeExceptionBuilder.build();
     }
     
     

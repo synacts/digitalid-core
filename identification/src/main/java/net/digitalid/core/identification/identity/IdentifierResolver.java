@@ -5,12 +5,13 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
-import net.digitalid.utility.errors.InitializationError;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.threading.annotations.MainThread;
+import net.digitalid.utility.exceptions.UncheckedException;
 import net.digitalid.utility.validation.annotations.method.Ensures;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -52,18 +53,16 @@ public abstract class IdentifierResolver {
     
     /**
      * Maps the given identifier and returns a syntactic type with that address.
-     * All exceptions are suppressed with an {@link InitializationError}.
+     * All exceptions are suppressed with an {@link UncheckedException}.
      */
     @Pure
-    @MainThread
     protected abstract @Nonnull @NonLoaded SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier);
     
     /**
      * Maps the given identifier and returns a semantic type with that address.
-     * All exceptions are suppressed with an {@link InitializationError}.
+     * All exceptions are suppressed with an {@link UncheckedException}.
      */
     @Pure
-    @MainThread
     protected abstract @Nonnull @NonLoaded SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier);
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
@@ -163,13 +162,21 @@ public abstract class IdentifierResolver {
     
     /* -------------------------------------------------- Type Loading -------------------------------------------------- */
     
+    /**
+     * Loads the given type.
+     */
     @Pure
+    @Deprecated
+    @TODO(task = "Do we need this?", date = "2017-02-27", author = Author.KASPAR_ETTER)
     protected void load(@Nonnull @NonLoaded Type type) throws ExternalException {
         type.load();
     }
     
     /* -------------------------------------------------- Identity Relocation -------------------------------------------------- */
     
+    /**
+     * Sets the address of the given relocatable identity to the given value.
+     */
     @Pure
     protected void setAddress(@NonCaptured @Modified @Nonnull RelocatableIdentity identity, @Nonnull InternalNonHostIdentifier address) {
         identity.setAddress(address);
@@ -177,6 +184,9 @@ public abstract class IdentifierResolver {
     
     /* -------------------------------------------------- Identity Merging -------------------------------------------------- */
     
+    /**
+     * Sets the key of the given person to the given value.
+     */
     @Pure
     protected void setKey(@NonCaptured @Modified @Nonnull Person person, long key) {
         person.setKey(key);
@@ -184,6 +194,9 @@ public abstract class IdentifierResolver {
     
     /* -------------------------------------------------- Category Change -------------------------------------------------- */
     
+    /**
+     * Sets the category of the given identity to the given value.
+     */
     @Pure
     protected void setCategory(@NonCaptured @Modified @Nonnull ExternalPerson person, @Nonnull Category category) {
         person.setCategory(category);

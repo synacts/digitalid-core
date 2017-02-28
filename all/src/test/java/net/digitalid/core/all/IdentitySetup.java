@@ -1,3 +1,5 @@
+package net.digitalid.core.all;
+
 //package net.digitalid.core.server;
 //
 //import javax.annotation.Nonnull;

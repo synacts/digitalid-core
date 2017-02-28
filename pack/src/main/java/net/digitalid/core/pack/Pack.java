@@ -64,7 +64,7 @@ public abstract class Pack {
      */
     @Pure
     public static <@Unspecifiable TYPE> @Nonnull Pack pack(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object) {
-        return new PackSubclass(SemanticType.map(converter), XDF.convert(converter, object));
+        return new PackSubclass(SemanticType.mapWithoutPersistingResult(converter), XDF.convert(converter, object));
     }
     
     /* -------------------------------------------------- Load -------------------------------------------------- */

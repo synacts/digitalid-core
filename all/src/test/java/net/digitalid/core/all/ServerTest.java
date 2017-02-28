@@ -1,34 +1,92 @@
-package net.digitalid.core.server;
+package net.digitalid.core.all;
+
+import java.io.IOException;
+import java.net.InetAddress;
 
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.ExternalException;
 
+import net.digitalid.core.all.handlers.TestQuery;
+import net.digitalid.core.all.handlers.TestQueryBuilder;
+import net.digitalid.core.all.handlers.TestQueryConverter;
+import net.digitalid.core.all.handlers.TestReply;
+import net.digitalid.core.all.handlers.TestReplyConverter;
+import net.digitalid.core.asymmetrickey.KeyPair;
+import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
+import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.handler.method.MethodIndex;
-import net.digitalid.core.server.handlers.TestQuery;
-import net.digitalid.core.server.handlers.TestQueryBuilder;
-import net.digitalid.core.server.handlers.TestQueryConverter;
-import net.digitalid.core.server.handlers.TestReply;
-import net.digitalid.core.server.handlers.TestReplyConverter;
+import net.digitalid.core.host.Host;
+import net.digitalid.core.host.HostBuilder;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.Identifier;
+import net.digitalid.core.identification.identity.Identity;
+import net.digitalid.core.packet.Request;
+import net.digitalid.core.resolution.handlers.IdentityQueryConverter;
+import net.digitalid.core.server.Server;
+import net.digitalid.core.testing.CoreTest;
+import net.digitalid.core.testing.providers.TestPrivateKeyRetrieverBuilder;
+import net.digitalid.core.testing.providers.TestPublicKeyRetrieverBuilder;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * System testing of the Digital ID {@link Server}.
  * <p>
  * If you run into an EOFException, the worker thread on the server crashed before sending a response.
- * You should be able to find the source of the problem in {@code server/target/test-logs/test.log}.
+ * You should be able to find the source of the problem in {@code core/all/target/test-logs/test.log}.
  */
-public class ServerTest extends ServerSetup {
+public class ServerTest extends CoreTest {
+    
+    /* -------------------------------------------------- Setup -------------------------------------------------- */
+    
+    protected static @Nonnull HostIdentifier hostIdentifier;
+    
+    protected static @Nonnull Host host;
+    
+    @BeforeClass
+    public static void startServer() throws ExternalException, IOException {
+        // TODO: Remove the following three lines as soon as the cache works.
+        final @Nonnull KeyPair keyPair = KeyPair.withRandomValues();
+        PublicKeyRetriever.configuration.set(TestPublicKeyRetrieverBuilder.withKeyPair(keyPair).build());
+        PrivateKeyRetriever.configuration.set(TestPrivateKeyRetrieverBuilder.withKeyPair(keyPair).build());
+        
+        Request.ADDRESS.set(identifier -> InetAddress.getLoopbackAddress());
+        Request.TIMEOUT.set(900000); // 15 minutes
+        
+        MethodIndex.add(TestQueryConverter.INSTANCE);
+        MethodIndex.add(IdentityQueryConverter.INSTANCE);
+        
+        Server.start();
+        hostIdentifier = HostIdentifier.with("test.digitalid.net");
+        host = HostBuilder.withIdentifier(hostIdentifier).build();
+        Server.addHost(host);
+    }
+    
+    @AfterClass
+    public static void stopServer() {
+        Server.stop();
+    }
+    
+    /* -------------------------------------------------- Tests -------------------------------------------------- */
     
     @Test
     public void testServer() throws ExternalException {
-        MethodIndex.add(TestQueryConverter.INSTANCE);
-        
-        final @Nonnull TestQuery query = TestQueryBuilder.withMessage("Hello from the other side!").withProvidedSubject(identifier).build();
+        final @Nonnull TestQuery query = TestQueryBuilder.withMessage("Hello from the other side!").withProvidedSubject(hostIdentifier).build();
         final @Nonnull TestReply reply = query.send(TestReplyConverter.INSTANCE);
         assertThat(reply.getMessage()).isEqualTo("Hi there!");
-        
+    }
+    
+    @Test
+    public void testIdentifierResolution() throws ExternalException {
+        final @Nonnull Identifier identifier = Identifier.with("person@test.digitalid.net");
+        final @Nonnull Identity identity = identifier.resolve();
+    }
+    
+    /* -------------------------------------------------- Old -------------------------------------------------- */
+    
         // Files
 //        Directory.empty(Directory.getClientsDirectory());
 //        Directory.empty(Directory.getHostsDirectory());
@@ -77,6 +135,5 @@ public class ServerTest extends ServerSetup {
 //        assertEquals(authorization, new AgentPermissions(elements[4]));
 //        Request.authorizeClient(client, vid, commitment, restrictions, authorization);
 //        Request.removeClient(client, vid, commitment);
-    }
     
 }
