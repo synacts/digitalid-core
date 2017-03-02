@@ -88,7 +88,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     public @Nonnull Identity load(long key) throws DatabaseException, RecoveryException {
         @Nullable Identity identity = mapper.getIdentity(key);
         if (identity == null) {
-            final @Nonnull IdentityEntry entry = SQL.selectOne(IdentityEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key_", Unit.DEFAULT);
+            final @Nonnull IdentityEntry entry = SQL.selectOne(IdentityEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key", Unit.DEFAULT);
             identity = createIdentity(entry.getCategory(), entry.getKey(), entry.getAddress());
             mapper.mapAfterCommit(identity);
         }
@@ -124,7 +124,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     public @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException {
         @Nullable Identity identity = mapper.getIdentity(identifier);
         if (identity == null) {
-            final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, IdentifierConverter.INSTANCE, identifier, "identifier_", Unit.DEFAULT);
+            final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, IdentifierConverter.INSTANCE, identifier, "identifier", Unit.DEFAULT);
             if (entry != null) { identity = load(entry.getKey()); }
         }
         return identity;
