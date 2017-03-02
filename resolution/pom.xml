@@ -10,11 +10,19 @@
     <artifactId>core-resolution</artifactId>
     
     <dependencies>
+        
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-cache</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
     </dependencies>
     
 </project>

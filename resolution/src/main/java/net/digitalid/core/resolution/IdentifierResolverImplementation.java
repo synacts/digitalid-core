@@ -17,6 +17,7 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.logging.logger.Logger;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.conversion.SQL;
@@ -24,11 +25,12 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.unit.Unit;
 
+import net.digitalid.core.exceptions.request.RequestErrorCode;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.identification.identifier.EmailIdentifier;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identifier.IdentifierConverter;
-import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identifier.MobileIdentifier;
 import net.digitalid.core.identification.identity.Category;
@@ -46,6 +48,7 @@ import net.digitalid.core.resolution.tables.IdentifierEntryConverter;
 import net.digitalid.core.resolution.tables.IdentityEntry;
 import net.digitalid.core.resolution.tables.IdentityEntryBuilder;
 import net.digitalid.core.resolution.tables.IdentityEntryConverter;
+import net.digitalid.core.server.Server;
 
 /**
  * This class implements the {@link IdentifierResolver}.
@@ -67,7 +70,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
      * Initializes the identifier resolver.
      */
     @PureWithSideEffects
-    @Initialize(target = IdentifierResolver.class, dependencies = Database.class)
+    @Initialize(target = IdentifierResolver.class, dependencies = {Logger.class, Database.class})
     public static void initializeIdentifierResolver() throws DatabaseException {
         SQL.createTable(IdentityEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
         SQL.createTable(IdentifierEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
@@ -135,10 +138,15 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
             if (identifier instanceof HostIdentifier) {
                 // TODO: HostIdentifiers have to be handled differently (because the response signature cannot be verified immediately).
                 identity = map(identifier, Category.HOST); // TODO: This line is only temporary.
-            } else if (identifier instanceof InternalIdentifier) {
-                final @Nonnull IdentityQuery query = IdentityQueryBuilder.withProvidedSubject((InternalIdentifier) identifier).build();
-                final @Nonnull IdentityReply reply = query.send(IdentityReplyConverter.INSTANCE);
-                identity = map(identifier, reply.getCategory());
+            } else if (identifier instanceof InternalNonHostIdentifier) {
+                final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) identifier;
+                if (Server.hasHost(internalNonHostIdentifier.getHostIdentifier())) {
+                    throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identifier '" + identifier.getString() + "' is hosted on this server and is not mapped.").build();
+                } else {
+                    final @Nonnull IdentityQuery query = IdentityQueryBuilder.withProvidedSubject(internalNonHostIdentifier).build();
+                    final @Nonnull IdentityReply reply = query.send(IdentityReplyConverter.INSTANCE);
+                    identity = map(identifier, reply.getCategory());
+                }
             } else if (identifier instanceof EmailIdentifier) {
                 identity = map(identifier, Category.EMAIL_PERSON);
             } else if (identifier instanceof MobileIdentifier) {

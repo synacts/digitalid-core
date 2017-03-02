@@ -40,7 +40,7 @@ public class PrivateKeyChainLoader {
             return Pack.loadFrom(file).unpack(PrivateKeyChainConverter.INSTANCE, null);
         } else {
             final @Nonnull KeyPair keyPair = KeyPair.withRandomValues();
-            final @Nonnull Time time = TimeBuilder.build();
+            final @Nonnull Time time = TimeBuilder.build().subtract(Time.SECOND).roundDown(Time.DAY);
             final @Nonnull PrivateKeyChain privateKeyChain = PrivateKeyChain.with(time, keyPair.getPrivateKey());
             final @Nonnull PublicKeyChain publicKeyChain = PublicKeyChain.with(time, keyPair.getPublicKey());
             PrivateKeyChainLoader.store(identifier, privateKeyChain);

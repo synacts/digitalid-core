@@ -3,10 +3,10 @@ package net.digitalid.core.server;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.collections.collection.ReadOnlyCollection;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
@@ -14,7 +14,7 @@ import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.console.Console;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.logging.Level;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
@@ -132,7 +132,7 @@ public abstract class Server {
     /**
      * References the thread that listens on the socket.
      */
-    private static @Nonnull Listener listener;
+    private static @Nullable Listener listener;
     
     /**
      * Starts the server with the configured hosts.
@@ -159,7 +159,9 @@ public abstract class Server {
      */
     @Impure
     public static void stop() {
-        listener.shutDown();
+        if (listener != null) {
+            listener.shutDown();
+        }
 //        Client.stop();
         hosts.clear();
     }
@@ -175,6 +177,8 @@ public abstract class Server {
     
     /* -------------------------------------------------- Main Method -------------------------------------------------- */
     
+    
+    
     /**
      * The main method starts the server with the configured hosts and shows the console.
      * 
@@ -182,12 +186,12 @@ public abstract class Server {
      */
     @Impure
     @Committing
-    public static void main(@Nonnull String[] arguments) throws IOException {
-        Console.writeLine();
-        Configuration.initializeAllConfigurations();
-        Log.information("The library has been initialized.");
-        Console.writeLine("The library has been initialized.");
-        
+    public static void main(@Nonnull String[] arguments) {
+        try {
+            Console.writeLine();
+            Configuration.initializeAllConfigurations();
+            Console.writeLine("The library has been initialized successfully.");
+            
 //        try {
 //            if (MySQLConfiguration.exists()) { configuration = new MySQLConfiguration(false); }
 //            else if (PostgreSQLConfiguration.exists()) { configuration = new PostgreSQLConfiguration(false); }
@@ -212,28 +216,31 @@ public abstract class Server {
 //        } catch (@Nonnull Exception exception) {
 //            throw InitializationError.get("Could not load the database configuration.", exception);
 //        }
-        
-        Server.start();
-        Log.information("The server has been started.");
-        Console.writeLine("The server has been started and is now listening on port " + Request.PORT.get() + ".");
-        
-        for (final @Nonnull String argument : arguments) {
-            Console.writeLine();
-            if (HostIdentifier.isValid(argument)) {
-                Console.writeLine("Creating a host with the identifier " + Quotes.inSingle(argument) + ", which can take several minutes.");
-                try {
-                    addHost(HostBuilder.withIdentifier(HostIdentifier.with(argument)).build());
-                } catch (@Nonnull ExternalException exception) {
-                    Log.error("Failed to create a new host with the identifier $.", exception, argument);
-                    Console.writeLine("Failed to create a new host with the identifier " + Quotes.inSingle(argument) + ": " + exception.getMessage() + ".");
+            
+            Server.start();
+            Console.writeLine("The server has been started and is now listening on port $.", Request.PORT.get());
+            
+            for (final @Nonnull String argument : arguments) {
+                Console.writeLine();
+                if (HostIdentifier.isValid(argument)) {
+                    Console.writeLine("Creating a host with the identifier $, which can take several minutes.", argument);
+                    try {
+                        addHost(HostBuilder.withIdentifier(HostIdentifier.with(argument)).build());
+                    } catch (@Nonnull ExternalException exception) {
+                        Console.log(Level.FATAL, "Failed to create a new host with the identifier $.", exception, argument);
+                        shutDown();
+                    }
+                } else {
+                    Console.log(Level.FATAL, "$ is not a valid host identifier!", argument);
+                    shutDown();
                 }
-            } else {
-                Console.writeLine(Quotes.inSingle(argument) + " is not a valid host identifier!");
-                shutDown();
             }
+            
+            Options.start();
+        } catch (@Nonnull Throwable throwable) {
+            Console.log(Level.FATAL, "The server crashed due to the following problem.", throwable);
+            shutDown();
         }
-        
-        Options.start();
     }
     
 }
