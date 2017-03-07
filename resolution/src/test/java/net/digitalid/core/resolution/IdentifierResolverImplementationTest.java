@@ -12,10 +12,10 @@ import org.junit.Test;
 public class IdentifierResolverImplementationTest extends DatabaseTest {
 
     @Test
-    public void testSomeMethod() {
-        final @Nonnull @NonLoaded SemanticType semanticType = SemanticType.map("type@test.digitalid.net");
-        final @Nonnull @NonLoaded SemanticType irgendwieAnderscht = SemanticType.map("type@test.digitalid.net");
-        assertThat(semanticType.getKey()).isEqualTo(irgendwieAnderscht.getKey());
+    public void testMapping() {
+        final @Nonnull @NonLoaded SemanticType mapping1 = SemanticType.map("type@test.digitalid.net");
+        final @Nonnull @NonLoaded SemanticType mapping2 = SemanticType.map("type@test.digitalid.net");
+        assertThat(mapping1.getKey()).isEqualTo(mapping2.getKey());
     }
 
 }

@@ -21,6 +21,7 @@ import net.digitalid.utility.logging.logger.Logger;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.conversion.SQL;
+import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.unit.Unit;
@@ -70,7 +71,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
      * Initializes the identifier resolver.
      */
     @PureWithSideEffects
-    @Initialize(target = IdentifierResolver.class, dependencies = {Logger.class, Database.class})
+    @Initialize(target = IdentifierResolver.class, dependencies = {Logger.class, SQLDialect.class, Database.class})
     public static void initializeIdentifierResolver() throws DatabaseException {
         SQL.createTable(IdentityEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
         SQL.createTable(IdentifierEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);

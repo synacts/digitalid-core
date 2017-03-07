@@ -188,8 +188,9 @@ public abstract class Server {
     @Committing
     public static void main(@Nonnull String[] arguments) {
         try {
-            Console.writeLine();
             Configuration.initializeAllConfigurations();
+            
+            Console.writeLine();
             Console.writeLine("The library has been initialized successfully.");
             
 //        try {

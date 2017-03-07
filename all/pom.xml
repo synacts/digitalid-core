@@ -51,15 +51,11 @@
                     <includeProjectDependencies>true</includeProjectDependencies>
                     <includePluginDependencies>true</includePluginDependencies>
                     <mainClass>net.digitalid.core.server.Server</mainClass>
-                    <executableDependency>
-                        <groupId>net.digitalid.database</groupId>
-                        <artifactId>database-testing</artifactId>
-                    </executableDependency>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>net.digitalid.database</groupId>
-                        <artifactId>database-testing</artifactId>
+                        <artifactId>database-server</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>
