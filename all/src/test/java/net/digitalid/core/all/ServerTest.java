@@ -5,7 +5,10 @@ import java.net.InetAddress;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.initialization.annotations.Initialize;
 
 import net.digitalid.core.all.handlers.TestQuery;
 import net.digitalid.core.all.handlers.TestQueryBuilder;
@@ -40,6 +43,18 @@ import org.junit.Test;
  */
 public class ServerTest extends CoreTest {
     
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
+    
+    /**
+     * Initializes the request parameters.
+     */
+    @PureWithSideEffects
+    @Initialize(target = Request.class)
+    public static void initializeRequest() {
+        Request.ADDRESS.set(identifier -> InetAddress.getLoopbackAddress());
+        Request.TIMEOUT.set(900000); // 15 minutes
+    }
+    
     /* -------------------------------------------------- Setup -------------------------------------------------- */
     
     protected static @Nonnull HostIdentifier hostIdentifier;
@@ -53,11 +68,10 @@ public class ServerTest extends CoreTest {
         PublicKeyRetriever.configuration.set(TestPublicKeyRetrieverBuilder.withKeyPair(keyPair).build());
         PrivateKeyRetriever.configuration.set(TestPrivateKeyRetrieverBuilder.withKeyPair(keyPair).build());
         
-        Request.ADDRESS.set(identifier -> InetAddress.getLoopbackAddress());
-        Request.TIMEOUT.set(900000); // 15 minutes
-        
         MethodIndex.add(TestQueryConverter.INSTANCE);
         MethodIndex.add(IdentityQueryConverter.INSTANCE);
+        
+        HostIdentifier.DIGITALID.resolve();
         
         Server.start();
         hostIdentifier = HostIdentifier.with("test.digitalid.net");
@@ -79,7 +93,8 @@ public class ServerTest extends CoreTest {
         assertThat(reply.getMessage()).isEqualTo("Hi there!");
     }
     
-    @Test
+//    @Test
+    @Pure
     public void testIdentifierResolution() throws ExternalException {
         final @Nonnull Identifier identifier = Identifier.with("person@test.digitalid.net");
         final @Nonnull Identity identity = identifier.resolve();

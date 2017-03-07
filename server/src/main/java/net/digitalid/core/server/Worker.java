@@ -85,6 +85,8 @@ public abstract class Worker implements Runnable {
                 final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = request.getEncryption();
                 final @Nonnull Signature<Compression<Pack>> signature = encryption.getObject();
                 final @Nonnull Method<?> method = MethodIndex.get(signature);
+                Log.information("Received the method $.", method);
+                
                 final @Nullable Reply<?> reply = method.executeOnHost();
                 if (reply != null) {
                     final @Nonnull Compression<Pack> compressedResponse = CompressionBuilder.withObject(reply.pack()).build();

@@ -1,10 +1,10 @@
 package net.digitalid.core.testing;
 
-import java.io.FileNotFoundException;
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.configuration.Configuration;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.testing.DatabaseTest;
@@ -20,41 +20,79 @@ import net.digitalid.core.testing.providers.TestPrivateKeyRetrieverBuilder;
 import net.digitalid.core.testing.providers.TestPublicKeyRetrieverBuilder;
 import net.digitalid.core.testing.providers.TestTypeLoaderBuilder;
 
-import org.junit.BeforeClass;
-
 /**
  * The base class for all unit tests that need to resolve identifiers or retrieve public and private keys.
  */
 @Stateless
 public abstract class CoreTest extends DatabaseTest {
     
-    private static boolean initialized = false;
+    /* -------------------------------------------------- Parameters -------------------------------------------------- */
     
     /**
-     * Initializes the cryptographic parameters and all configurations of the core library.
+     * Initializes the parameters.
      */
-    @BeforeClass
     @PureWithSideEffects
-    public static void initializeConfigurations() throws IllegalArgumentException, FileNotFoundException {
-        if (!initialized) {
-            Parameters.FACTOR.set(130);
-            Parameters.RANDOM_EXPONENT.set(64);
-            Parameters.CREDENTIAL_EXPONENT.set(64);
-            Parameters.RANDOM_CREDENTIAL_EXPONENT.set(96);
-            Parameters.BLINDING_EXPONENT.set(96);
-            Parameters.RANDOM_BLINDING_EXPONENT.set(128);
-            Parameters.VERIFIABLE_ENCRYPTION.set(128);
-            Parameters.SYMMETRIC_KEY.set(128);
-            
-            if (!IdentifierResolver.configuration.isSet()) { IdentifierResolver.configuration.set(TestIdentifierResolverBuilder.build()); }
-            if (!TypeLoader.configuration.isSet()) { TypeLoader.configuration.set(TestTypeLoaderBuilder.build()); }
-            
-            final @Nonnull KeyPair keyPair = KeyPair.withRandomValues();
-            if (!PublicKeyRetriever.configuration.isSet()) { PublicKeyRetriever.configuration.set(TestPublicKeyRetrieverBuilder.withKeyPair(keyPair).build()); }
-            if (!PrivateKeyRetriever.configuration.isSet()) { PrivateKeyRetriever.configuration.set(TestPrivateKeyRetrieverBuilder.withKeyPair(keyPair).build()); }
-            
-            initialized = true;
-        }
+    @Initialize(target = Parameters.class)
+    public static void initializeParameters() {
+        Parameters.FACTOR.set(130);
+        Parameters.RANDOM_EXPONENT.set(64);
+        Parameters.CREDENTIAL_EXPONENT.set(64);
+        Parameters.RANDOM_CREDENTIAL_EXPONENT.set(96);
+        Parameters.BLINDING_EXPONENT.set(96);
+        Parameters.RANDOM_BLINDING_EXPONENT.set(128);
+        Parameters.VERIFIABLE_ENCRYPTION.set(128);
+        Parameters.SYMMETRIC_KEY.set(128);
+    }
+    
+    /* -------------------------------------------------- Identification -------------------------------------------------- */
+    
+    /**
+     * Initializes the identifier resolver.
+     */
+    @PureWithSideEffects
+    @Initialize(target = IdentifierResolver.class)
+    public static void initializeIdentifierResolver() {
+        if (!IdentifierResolver.configuration.isSet()) { IdentifierResolver.configuration.set(TestIdentifierResolverBuilder.build()); }
+    }
+    
+    /**
+     * Initializes the type loader.
+     */
+    @PureWithSideEffects
+    @Initialize(target = TypeLoader.class)
+    public static void initializeTypeLoader() {
+        if (!TypeLoader.configuration.isSet()) { TypeLoader.configuration.set(TestTypeLoaderBuilder.build()); }
+    }
+    
+    /* -------------------------------------------------- Key Retrievers -------------------------------------------------- */
+    
+    public static final @Nonnull Configuration<KeyPair> keyPair = Configuration.withUnknownProvider();
+    
+    /**
+     * Initializes the key pair.
+     */
+    @PureWithSideEffects
+    @Initialize(target = CoreTest.class, dependencies = Parameters.class)
+    public static void initializeKeyPair() {
+        keyPair.set(KeyPair.withRandomValues());
+    }
+    
+    /**
+     * Initializes the public key retriever.
+     */
+    @PureWithSideEffects
+    @Initialize(target = PublicKeyRetriever.class, dependencies = CoreTest.class)
+    public static void initializePublicKeyRetriever() {
+        if (!PublicKeyRetriever.configuration.isSet()) { PublicKeyRetriever.configuration.set(TestPublicKeyRetrieverBuilder.withKeyPair(keyPair.get()).build()); }
+    }
+    
+    /**
+     * Initializes the private key retriever.
+     */
+    @PureWithSideEffects
+    @Initialize(target = PrivateKeyRetriever.class, dependencies = CoreTest.class)
+    public static void initializePrivateKeyRetriever() {
+        if (!PrivateKeyRetriever.configuration.isSet()) { PrivateKeyRetriever.configuration.set(TestPrivateKeyRetrieverBuilder.withKeyPair(keyPair.get()).build()); }
     }
     
 }

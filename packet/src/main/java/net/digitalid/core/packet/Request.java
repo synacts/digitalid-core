@@ -16,6 +16,7 @@ import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.functional.failable.FailableUnaryFunction;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -26,6 +27,8 @@ import net.digitalid.core.conversion.exceptions.NetworkExceptionBuilder;
 import net.digitalid.core.encryption.Encryption;
 import net.digitalid.core.encryption.RequestEncryption;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.IdentifierResolver;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.Signature;
 
@@ -330,6 +333,16 @@ public abstract class Request extends Packet {
      * This value is configurable in order that tests can set a higher timeout for debugging.
      */
     public static final @Nonnull Configuration<Integer> TIMEOUT = Configuration.with(10000);
+    
+    /**
+     * Maps the converter of this class.
+     */
+    @PureWithSideEffects
+    @Initialize(target = Request.class, dependencies = IdentifierResolver.class)
+    public static void mapConverter() {
+        SemanticType.map(RequestConverter.INSTANCE);
+        SemanticType.map(ResponseConverter.INSTANCE);
+    }
     
     /**
      * Sends this request and returns the response.

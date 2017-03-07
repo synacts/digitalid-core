@@ -60,7 +60,7 @@ public class ClientSecretLoader {
     /**
      * Stores the configured client secret loader.
      */
-    public static final @Nonnull Configuration<ClientSecretLoader> configuration = Configuration.with(new ClientSecretLoader());
+    public static final @Nonnull Configuration<ClientSecretLoader> configuration = Configuration.with(new ClientSecretLoader()).addDependency(Files.directory);
     
     /* -------------------------------------------------- Static Access -------------------------------------------------- */
     

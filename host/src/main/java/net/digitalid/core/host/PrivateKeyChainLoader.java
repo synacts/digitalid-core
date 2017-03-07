@@ -63,7 +63,7 @@ public class PrivateKeyChainLoader {
     /**
      * Stores the configured private key chain loader.
      */
-    public static final @Nonnull Configuration<PrivateKeyChainLoader> configuration = Configuration.with(new PrivateKeyChainLoader());
+    public static final @Nonnull Configuration<PrivateKeyChainLoader> configuration = Configuration.with(new PrivateKeyChainLoader()).addDependency(Files.directory);
     
     /* -------------------------------------------------- Static Access -------------------------------------------------- */
     

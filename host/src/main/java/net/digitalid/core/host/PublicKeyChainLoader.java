@@ -66,7 +66,7 @@ public class PublicKeyChainLoader {
     /**
      * Stores the configured public key chain loader.
      */
-    public static final @Nonnull Configuration<PublicKeyChainLoader> configuration = Configuration.with(new PublicKeyChainLoader());
+    public static final @Nonnull Configuration<PublicKeyChainLoader> configuration = Configuration.with(new PublicKeyChainLoader()).addDependency(Files.directory);
     
     /* -------------------------------------------------- Static Access -------------------------------------------------- */
     

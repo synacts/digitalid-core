@@ -17,11 +17,10 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
-import net.digitalid.utility.logging.logger.Logger;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.unit.Unit;
@@ -39,6 +38,7 @@ import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.identification.identity.SyntacticType;
+import net.digitalid.core.identification.identity.Type;
 import net.digitalid.core.resolution.handlers.IdentityQuery;
 import net.digitalid.core.resolution.handlers.IdentityQueryBuilder;
 import net.digitalid.core.resolution.handlers.IdentityReply;
@@ -71,7 +71,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
      * Initializes the identifier resolver.
      */
     @PureWithSideEffects
-    @Initialize(target = IdentifierResolver.class, dependencies = {Logger.class, SQLDialect.class, Database.class})
+    @Initialize(target = IdentifierResolver.class, dependencies = Database.class)
     public static void initializeIdentifierResolver() throws DatabaseException {
         SQL.createTable(IdentityEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
         SQL.createTable(IdentifierEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
@@ -127,13 +127,15 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
         if (identity == null) {
             final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, IdentifierConverter.INSTANCE, identifier, "identifier", Unit.DEFAULT);
             if (entry != null) { identity = load(entry.getKey()); }
-        }
+            if (identity != null) { Log.verbose("Found the identifier $ in the database.", identifier.getString()); }
+        } else { Log.verbose("Found the identifier $ in the hash map.", identifier.getString()); }
         return identity;
     }
     
     @Override
     @PureWithSideEffects
     public @Nonnull Identity resolve(@Nonnull Identifier identifier) throws ExternalException {
+        Log.verbose("Resolving the identifier $.", identifier.getString());
         @Nullable Identity identity = load(identifier);
         if (identity == null) {
             if (identifier instanceof HostIdentifier) {
@@ -142,7 +144,8 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
             } else if (identifier instanceof InternalNonHostIdentifier) {
                 final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) identifier;
                 if (Server.hasHost(internalNonHostIdentifier.getHostIdentifier())) {
-                    throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identifier '" + identifier.getString() + "' is hosted on this server and is not mapped.").build();
+                    Log.verbose("The identifier $ is hosted on this server and is therefore not mapped.", identifier.getString());
+                    throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identifier '" + identifier.getString() + "' is hosted on this server and is therefore not mapped.").build();
                 } else {
                     final @Nonnull IdentityQuery query = IdentityQueryBuilder.withProvidedSubject(internalNonHostIdentifier).build();
                     final @Nonnull IdentityReply reply = query.send(IdentityReplyConverter.INSTANCE);
@@ -156,6 +159,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
                 throw CaseExceptionBuilder.withVariable("identifier").withValue(identifier).build();
             }
         }
+        if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }
         return identity;
     }
     
@@ -164,6 +168,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     @Pure
     @Override
     protected @Nonnull SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier) {
+        Log.verbose("Mapping the syntactic type $.", identifier.getString());
         try {
             @Nullable Identity identity = load(identifier);
             if (identity == null) { identity = map(identifier, Category.SYNTACTIC_TYPE); }
@@ -179,6 +184,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     @Pure
     @Override
     protected @Nonnull SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier) {
+        Log.verbose("Mapping the semantic type $.", identifier.getString());
         try {
             @Nullable Identity identity = load(identifier);
             if (identity == null) { identity = map(identifier, Category.SEMANTIC_TYPE); }
