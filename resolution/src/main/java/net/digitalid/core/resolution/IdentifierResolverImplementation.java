@@ -116,7 +116,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
         return identity;
     }
     
-    /* -------------------------------------------------- Identifier Resolution -------------------------------------------------- */
+    /* -------------------------------------------------- Identity Loading -------------------------------------------------- */
     
     /**
      * Loads and returns the identity with the given identifier.
@@ -131,6 +131,8 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
         } else { Log.verbose("Found the identifier $ in the hash map.", identifier.getString()); }
         return identity;
     }
+    
+    /* -------------------------------------------------- Identifier Resolution -------------------------------------------------- */
     
     @Override
     @PureWithSideEffects
@@ -147,6 +149,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
                     Log.verbose("The identifier $ is hosted on this server and is therefore not mapped.", identifier.getString());
                     throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identifier '" + identifier.getString() + "' is hosted on this server and is therefore not mapped.").build();
                 } else {
+                    Log.verbose("Querying the identifier $.", identifier.getString());
                     final @Nonnull IdentityQuery query = IdentityQueryBuilder.withProvidedSubject(internalNonHostIdentifier).build();
                     final @Nonnull IdentityReply reply = query.send(IdentityReplyConverter.INSTANCE);
                     identity = map(identifier, reply.getCategory());

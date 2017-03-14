@@ -316,6 +316,8 @@ public abstract class Request extends Packet {
 //        }
 //    }
     
+    /* -------------------------------------------------- Configurations -------------------------------------------------- */
+    
     /**
      * Stores the function which resolves a host identifier into an internet address.
      * This function is configurable in order that tests can provide a loopback address.
@@ -334,8 +336,10 @@ public abstract class Request extends Packet {
      */
     public static final @Nonnull Configuration<Integer> TIMEOUT = Configuration.with(10000);
     
+    /* -------------------------------------------------- Type Mappings -------------------------------------------------- */
+    
     /**
-     * Maps the converter of this class.
+     * Maps the converters with which a packet is unpacked.
      */
     @PureWithSideEffects
     @Initialize(target = Request.class, dependencies = IdentifierResolver.class)
@@ -343,6 +347,8 @@ public abstract class Request extends Packet {
         SemanticType.map(RequestConverter.INSTANCE);
         SemanticType.map(ResponseConverter.INSTANCE);
     }
+    
+    /* -------------------------------------------------- Sending -------------------------------------------------- */
     
     /**
      * Sends this request and returns the response.

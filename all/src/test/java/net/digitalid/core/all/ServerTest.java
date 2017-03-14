@@ -5,10 +5,10 @@ import java.net.InetAddress;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.logging.Log;
 
 import net.digitalid.core.all.handlers.TestQuery;
 import net.digitalid.core.all.handlers.TestQueryBuilder;
@@ -18,12 +18,12 @@ import net.digitalid.core.all.handlers.TestReplyConverter;
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
+import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
-import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.resolution.handlers.IdentityQueryConverter;
 import net.digitalid.core.server.Server;
@@ -88,16 +88,17 @@ public class ServerTest extends CoreTest {
     
     @Test
     public void testServer() throws ExternalException {
+        Log.information("Started the server test.");
         final @Nonnull TestQuery query = TestQueryBuilder.withMessage("Hello from the other side!").withProvidedSubject(hostIdentifier).build();
         final @Nonnull TestReply reply = query.send(TestReplyConverter.INSTANCE);
         assertThat(reply.getMessage()).isEqualTo("Hi there!");
     }
     
-//    @Test
-    @Pure
+    @Test
     public void testIdentifierResolution() throws ExternalException {
+        Log.information("Started the identifier resolution test.");
         final @Nonnull Identifier identifier = Identifier.with("person@test.digitalid.net");
-        final @Nonnull Identity identity = identifier.resolve();
+        assertThatThrownBy(identifier::resolve).isInstanceOf(RequestException.class);
     }
     
     /* -------------------------------------------------- Old -------------------------------------------------- */
