@@ -21,6 +21,7 @@ import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.entity.NonHostEntityConverter;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
@@ -28,6 +29,7 @@ import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.testing.CoreTest;
 
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 @Immutable
 @GenerateBuilder
@@ -56,8 +58,14 @@ public class SettingsTest extends CoreTest {
     
     private static final @Nonnull String VALUE = ""; // TODO: Choose a non-default password like "Pa$$word" once properties can be loaded from the database.
     
-    // nullable until createTables is called
-    private static @Nullable TestUnit UNIT;
+    private static final @Nonnull TestUnit UNIT;
+    static {
+        try {
+            UNIT = TestUnitBuilder.withName("default").withHost(true).withClient(false).build();
+        } catch (ExternalException e) {
+            throw new RuntimeException(e);
+        }
+    }
     
     private static final @Nonnull SemanticType TYPE = SemanticType.map("test@core.digitalid.net").load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build());
     
@@ -68,13 +76,14 @@ public class SettingsTest extends CoreTest {
     @Impure
     @BeforeClass
     public static void createTables() throws ExternalException {
-        UNIT = TestUnitBuilder.withName("default").withHost(true).withClient(false).build();
+        SQL.createTable(NonHostEntityConverter.INSTANCE, UNIT);
         SQL.createTable(SettingsSubclass.MODULE.getSubjectConverter(), UNIT);
         SQL.createTable(SettingsSubclass.PASSWORD_TABLE.getEntryConverter(), UNIT);
+        SQL.insert(NonHostEntityConverter.INSTANCE, ENTITY, UNIT);
         SQL.insert(SettingsSubclass.MODULE.getSubjectConverter(), SETTINGS, UNIT);
     }
     
-//    @Test
+    @Test
     @Pure
     @TODO(task = "Reactivate this test case. Creating the subject table failed.", date = "2017-02-07", author = Author.KASPAR_ETTER)
     public void _01_testValueReplace() throws DatabaseException, RecoveryException {
