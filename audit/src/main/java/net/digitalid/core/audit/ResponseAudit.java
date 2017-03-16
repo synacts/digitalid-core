@@ -182,4 +182,33 @@ public abstract class ResponseAudit extends Audit {
 //        });
 //    }
     
+    // TODO: The following code was copied from the worker class.
+    
+//                    final @Nullable ResponseAudit responseAudit;
+//                    if (requestAudit != null) {
+//                        final @Nonnull Time auditStart = Time.getCurrent();
+//                        if (!(reference instanceof InternalMethod)) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "An audit may only be requested by internal methods."); }
+//                        final @Nullable ReadOnlyAgentPermissions permissions;
+//                        @Nullable Restrictions restrictions;
+//                        if (service.equals(CoreService.SERVICE)) {
+//                            Require.that(agent != null).orThrow("See above.");
+//                            permissions = agent.getPermissions();
+//                            try {
+//                                restrictions = agent.getRestrictions();
+//                            } catch (@Nonnull SQLException exception) {
+//                                restrictions = Restrictions.MIN;
+//                            }
+//                        } else {
+//                            final @Nonnull Credential credential = signature.toCredentialsSignatureWrapper().getCredentials().getNonNullable(0);
+//                            permissions = credential.getPermissions();
+//                            restrictions = credential.getRestrictions();
+//                            if (permissions == null || restrictions == null) { throw RequestException.get(RequestErrorCode.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null."); }
+//                        }
+//                        responseAudit = ActionModule.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
+//                        Database.commit();
+//                        final @Nonnull Time auditEnd = Time.getCurrent();
+//                        Log.debugging("Audit retrieved in " + auditEnd.subtract(auditStart).getValue() + " ms.");
+//                    } else {
+//                        responseAudit = null;
+//                    }
 }

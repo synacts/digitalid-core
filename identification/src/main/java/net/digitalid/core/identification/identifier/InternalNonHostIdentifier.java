@@ -9,7 +9,6 @@ import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -27,7 +26,7 @@ import net.digitalid.core.identification.identity.Type;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class InternalNonHostIdentifier extends RootClass implements InternalIdentifier, NonHostIdentifier {
+public abstract class InternalNonHostIdentifier extends InternalIdentifier implements NonHostIdentifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     

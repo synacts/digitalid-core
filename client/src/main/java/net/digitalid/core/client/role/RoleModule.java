@@ -1,6 +1,6 @@
 // TODO: Do this with the new database API.
 
-//package net.digitalid.core.client.role;
+package net.digitalid.core.client.role;
 //
 //import java.sql.ResultSet;
 //import java.sql.SQLException;
@@ -39,7 +39,7 @@
 // * This class does not inherit from {@link ClientModule} and register itself at the
 // * {@link CoreService} as its table needs be created in advance by a {@link Client}.
 // */
-//public final class RoleModule {
+public final class RoleModule {
 //    
 //    /**
 //     * Creates the database tables for the given client.
@@ -222,4 +222,4 @@
 //        }
 //    }
 //    
-//}
+}

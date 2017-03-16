@@ -23,106 +23,94 @@ public enum RequestErrorCode {
     /* -------------------------------------------------- Error Codes -------------------------------------------------- */
     
     /**
-     * The error code for a database problem.
-     */
-    @Deprecated // TODO: This is an internal problem.
-    DATABASE(0),
-    
-    /**
-     * The error code for a network problem.
-     */
-    @Deprecated // TODO: This is an external problem.
-    NETWORK(1),
-    
-    /**
      * The error code for an internal problem.
      */
-    INTERNAL(2),
+    INTERNAL(0),
     
     /**
      * The error code for an external problem.
      */
-    EXTERNAL(3),
+    EXTERNAL(1),
     
     /**
      * The error code for a request problem.
      */
-    REQUEST(4),
+    REQUEST(2),
     
     /**
      * The error code for an invalid packet.
      */
-    PACKET(5),
+    PACKET(3),
     
     /**
      * The error code for a replayed packet.
      */
-    REPLAY(6),
+    REPLAY(4),
     
     /**
      * The error code for an invalid encryption.
      */
-    ENCRYPTION(7),
+    ENCRYPTION(5),
     
     /**
      * The error code for invalid elements.
      */
-    ELEMENTS(8),
+    ELEMENTS(6),
     
     /**
      * The error code for an invalid audit.
      */
-    AUDIT(9),
+    AUDIT(7),
     
     /**
      * The error code for an invalid signature.
      */
-    SIGNATURE(10),
+    SIGNATURE(8),
     
     /**
      * The error code for a required key rotation.
      */
-    KEYROTATION(11),
+    KEYROTATION(9),
     
     /**
      * The error code for an invalid compression.
      */
-    COMPRESSION(12),
+    COMPRESSION(10),
     
     /**
      * The error code for an invalid content.
      */
-    CONTENT(13),
+    CONTENT(11),
     
     /**
      * The error code for an invalid method type.
      */
-    METHOD(14),
+    METHOD(12),
     
     /**
      * The error code for a wrong recipient.
      */
-    RECIPIENT(15),
+    RECIPIENT(13),
     
     /**
      * The error code for a non-existent identity.
      */
-    IDENTITY(16),
+    IDENTITY(14),
     
     /**
      * The error code for a relocated identity.
      */
-    RELOCATION(17),
+    RELOCATION(15),
     
     /**
      * The error code for a relocated service provider.
      */
-    SERVICE(18),
+    SERVICE(16),
     
     /**
      * The error code for an insufficient authorization.
      */
-    AUTHORIZATION(19);
+    AUTHORIZATION(17);
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     

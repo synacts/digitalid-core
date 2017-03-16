@@ -7,7 +7,9 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
@@ -31,6 +33,7 @@ import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.Signature;
+import net.digitalid.core.symmetrickey.SymmetricKey;
 
 /**
  * This class compresses, signs and encrypts requests.
@@ -351,6 +354,15 @@ public abstract class Request extends Packet {
     /* -------------------------------------------------- Sending -------------------------------------------------- */
     
     /**
+     * Returns the symmetric key of this request if it is encrypted or null otherwise.
+     */
+    @Pure
+    public @Nullable SymmetricKey getSymmetricKey() {
+        final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = getEncryption();
+        return encryption instanceof RequestEncryption ? ((RequestEncryption) encryption).getSymmetricKey() : null;
+    }
+    
+    /**
      * Sends this request and returns the response.
      */
     @NonCommitting
@@ -360,8 +372,7 @@ public abstract class Request extends Packet {
             socket.setSoTimeout(TIMEOUT.get());
             pack().storeTo(socket);
             final @Nonnull Pack pack = Pack.loadFrom(socket);
-            final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = getEncryption();
-            return pack.unpack(ResponseConverter.INSTANCE, encryption instanceof RequestEncryption ? ((RequestEncryption) encryption).getSymmetricKey() : null);
+            return pack.unpack(ResponseConverter.INSTANCE, getSymmetricKey());
 //        } catch (@Nonnull RequestException exception) {
 //            if (exception.getCode() == RequestErrorCode.KEYROTATION && this instanceof ClientRequest) {
 //                return ((ClientRequest) this).recommit(methods, iteration, verified);

@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -24,7 +25,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
  */
 @Immutable
 @GenerateConverter
-public interface InternalIdentifier extends Identifier {
+public abstract class InternalIdentifier extends RootClass implements Identifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     
@@ -75,7 +76,7 @@ public interface InternalIdentifier extends Identifier {
      */
     @Pure
     @NonCommitting
-    public default boolean exists() {
+    public boolean exists() {
         try {
             PseudoIdentifierResolver.resolveWithProvider(this);
             return true;
@@ -92,5 +93,13 @@ public interface InternalIdentifier extends Identifier {
     @Pure
     @NonRepresentative
     public abstract @Nonnull HostIdentifier getHostIdentifier();
+    
+    /* -------------------------------------------------- Object -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return getString();
+    }
     
 }

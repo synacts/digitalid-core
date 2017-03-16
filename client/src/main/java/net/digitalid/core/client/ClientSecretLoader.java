@@ -8,11 +8,9 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.file.Files;
-import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Mutable;
@@ -21,8 +19,6 @@ import net.digitalid.core.conversion.exceptions.FileException;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.group.ExponentConverter;
-import net.digitalid.core.identification.identity.IdentifierResolver;
-import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.parameters.Parameters;
 
@@ -82,17 +78,6 @@ public class ClientSecretLoader {
     @Impure
     public static void store(@Nonnull @DomainName @MaxSize(63) String identifier, @Nonnull Exponent secret) throws FileException {
         configuration.get().setClientSecret(identifier, secret);
-    }
-    
-    /* -------------------------------------------------- Type Mappings -------------------------------------------------- */
-    
-    /**
-     * Maps the converter with which a client secret is unpacked.
-     */
-    @PureWithSideEffects
-    @Initialize(target = ClientSecretLoader.class, dependencies = IdentifierResolver.class)
-    public static void mapConverter() {
-        SemanticType.map(ExponentConverter.INSTANCE);
     }
     
 }

@@ -1,6 +1,6 @@
 // TODO
 
-//package net.digitalid.core.client;
+package net.digitalid.core.client;
 //
 //import java.math.BigInteger;
 //import java.security.SecureRandom;
@@ -22,7 +22,7 @@
 ///**
 // * Description.
 // */
-//public class CredentialsIndex {
+public class CredentialsIndex {
 //    
 //    /* -------------------------------------------------- Credentials Index -------------------------------------------------- */
 //    
@@ -119,4 +119,4 @@
 //        attributeBasedCredentials.remove(role);
 //    }
 //    
-//}
+}

@@ -52,7 +52,7 @@ public interface Identifier extends RootInterface {
      * (The {@link MaxSize} annotation is needed so that an identifier can be used as a primary key in the database.)
      */
     @Pure
-    public abstract @Nonnull @Valid @MaxSize(64) String getString();
+    public @Nonnull @Valid @MaxSize(64) String getString();
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
     

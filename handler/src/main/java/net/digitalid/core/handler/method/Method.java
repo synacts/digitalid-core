@@ -43,6 +43,8 @@ import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.query.Query;
 import net.digitalid.core.handler.reply.Reply;
+import net.digitalid.core.handler.reply.instances.RequestExceptionReply;
+import net.digitalid.core.handler.reply.instances.RequestExceptionReplyConverter;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.pack.Pack;
@@ -170,7 +172,16 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
         final @Nonnull RequestEncryption<Signature<Compression<Pack>>> encryption = RequestEncryptionBuilder.withObject(signature).withRecipient(getRecipient()).build();
         final @Nonnull Request request = RequestBuilder.withEncryption(encryption).build();
         final @Nonnull Response response = request.send();
+        
         // TODO: All checks still have to be performed somewhere!
+        
+        final @Nonnull Pack pack = response.getEncryption().getObject().getObject().getObject();
+        if (pack.getType().equals(RequestExceptionReply.TYPE)) {
+            final @Nonnull Pair<@Nullable Entity<?>, @Nonnull HostSignature<Compression<Pack>>> provided = Pair.of(getEntity(), (HostSignature<Compression<Pack>>) response.getEncryption().getObject());
+            final @Nonnull RequestExceptionReply requestExceptionReply = pack.unpack(RequestExceptionReplyConverter.INSTANCE, provided);
+            throw requestExceptionReply.getRequestException();
+        }
+        
         return response;
     }
     

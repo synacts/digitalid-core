@@ -124,7 +124,7 @@ public abstract class Pack {
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("Pack(type: ").append(getType().getAddress().getString());
+        final @Nonnull StringBuilder string = new StringBuilder("Pack(type: ").append(getType().getAddress());
         if (getType().isBasedOn(SyntacticType.STRING) || getType().isBasedOn(SyntacticType.STRING64)) {
             try { string.append(", bytes: ").append(Quotes.inDouble(unpack(StringConverter.INSTANCE, null))); } catch (RecoveryException exception) {}
         }

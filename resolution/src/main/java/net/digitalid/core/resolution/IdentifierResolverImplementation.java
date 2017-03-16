@@ -145,9 +145,13 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
                 identity = map(identifier, Category.HOST); // TODO: This line is only temporary.
             } else if (identifier instanceof InternalNonHostIdentifier) {
                 final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) identifier;
-                if (Server.hasHost(internalNonHostIdentifier.getHostIdentifier())) {
-                    Log.verbose("The identifier $ is hosted on this server and is therefore not mapped.", identifier.getString());
-                    throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identifier '" + identifier.getString() + "' is hosted on this server and is therefore not mapped.").build();
+                final @Nonnull HostIdentifier hostIdentifier = internalNonHostIdentifier.getHostIdentifier();
+                if (Server.hasHost(hostIdentifier)) {
+                    Log.verbose("The identifier $ is hosted on this server and is therefore not queried.", identifier.getString());
+                    throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identifier '" + identifier.getString() + "' is hosted on this server and is therefore not queried.").build();
+                } else if (hostIdentifier.equals(HostIdentifier.DIGITALID)) {
+                    Log.verbose("The identifier $ is mapped as a semantic type without querying.", identifier.getString());
+                    identity = map(identifier, Category.SEMANTIC_TYPE);
                 } else {
                     Log.verbose("Querying the identifier $.", identifier.getString());
                     final @Nonnull IdentityQuery query = IdentityQueryBuilder.withProvidedSubject(internalNonHostIdentifier).build();

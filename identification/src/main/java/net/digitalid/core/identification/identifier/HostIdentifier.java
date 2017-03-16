@@ -8,7 +8,6 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
@@ -27,7 +26,7 @@ import net.digitalid.core.identification.identity.HostIdentity;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class HostIdentifier extends RootClass implements InternalIdentifier {
+public abstract class HostIdentifier extends InternalIdentifier {
     
     /* -------------------------------------------------- Digital ID Host Identifier -------------------------------------------------- */
     

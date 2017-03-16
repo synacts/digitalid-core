@@ -6,6 +6,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -22,7 +23,7 @@ import net.digitalid.core.identification.identity.Person;
  */
 @Immutable
 @GenerateConverter
-public interface ExternalIdentifier extends NonHostIdentifier {
+public abstract class ExternalIdentifier extends RootClass implements NonHostIdentifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     
@@ -71,5 +72,13 @@ public interface ExternalIdentifier extends NonHostIdentifier {
     @Override
     @NonCommitting
     public abstract @Nonnull Person resolve() throws ExternalException;
+    
+    /* -------------------------------------------------- Object -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return getString();
+    }
     
 }

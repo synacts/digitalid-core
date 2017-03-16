@@ -8,7 +8,6 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -25,7 +24,7 @@ import net.digitalid.core.identification.identity.Person;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class MobileIdentifier extends RootClass implements ExternalIdentifier {
+public abstract class MobileIdentifier extends ExternalIdentifier {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     

@@ -71,8 +71,6 @@ public class ServerTest extends CoreTest {
         MethodIndex.add(TestQueryConverter.INSTANCE);
         MethodIndex.add(IdentityQueryConverter.INSTANCE);
         
-        HostIdentifier.DIGITALID.resolve();
-        
         Server.start();
         hostIdentifier = HostIdentifier.with("test.digitalid.net");
         host = HostBuilder.withIdentifier(hostIdentifier).build();
