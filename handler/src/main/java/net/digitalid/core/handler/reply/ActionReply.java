@@ -3,7 +3,6 @@ package net.digitalid.core.handler.reply;
 import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
@@ -14,14 +13,11 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.agent.Agent;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnClientRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Auditable;
 import net.digitalid.core.handler.method.action.ExternalAction;
-import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
-import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.service.Service;
 
 /**
@@ -78,25 +74,5 @@ public abstract class ActionReply extends Reply<NonHostEntity<?>> implements Aud
     @OnClientRecipient
     @PureWithSideEffects
     public abstract void executeBySynchronizer() throws DatabaseException;
-    
-    /* -------------------------------------------------- Audit Requirements -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeMethod() {
-        return ReadOnlyAgentPermissions.NONE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Restrictions getRequiredRestrictionsToSeeMethod() {
-        return Restrictions.MIN;
-    }
-    
-    @Pure
-    @Override
-    public @Nullable Agent getRequiredAgentToSeeMethod() {
-        return null;
-    }
     
 }

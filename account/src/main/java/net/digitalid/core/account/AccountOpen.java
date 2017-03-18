@@ -1,330 +1,227 @@
-// TODO:
+package net.digitalid.core.account;
 
-//package net.digitalid.core.client;
-//
-//import java.sql.SQLException;
-//import java.util.Objects;
-//import java.util.Random;
-//
-//import javax.annotation.Nonnull;
-//import javax.annotation.Nullable;
-//
-//import net.digitalid.utility.collections.list.FreezableArrayList;
-//import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-//import net.digitalid.utility.exceptions.InternalException;
-//import net.digitalid.utility.exceptions.ExternalException;
-//import net.digitalid.utility.system.errors.ShouldNeverHappenError;
-//import net.digitalid.utility.annotations.method.Pure;
-//import net.digitalid.utility.validation.annotations.type.Immutable;
-//
-//import net.digitalid.database.annotations.transaction.NonCommitting;
-//import net.digitalid.database.core.exceptions.DatabaseException;
-//
-//import net.digitalid.core.agent.Agent;
-//import net.digitalid.core.agent.ClientAgent;
-//import net.digitalid.core.agent.FreezableAgentPermissions;
-//import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-//import net.digitalid.core.agent.Restrictions;
-//import net.digitalid.core.context.Context;
-//import net.digitalid.core.conversion.Block;
-//import net.digitalid.core.conversion.wrappers.annotations.HasSubject;
-//import net.digitalid.core.conversion.wrappers.signature.ClientSignatureWrapper;
-//import net.digitalid.core.conversion.wrappers.signature.SignatureWrapper;
-//import net.digitalid.core.conversion.wrappers.structure.TupleWrapper;
-//import net.digitalid.core.conversion.wrappers.value.integer.Integer64Wrapper;
-//import net.digitalid.core.conversion.wrappers.value.string.StringWrapper;
-//import net.digitalid.core.entity.Entity;
-//import net.digitalid.core.entity.NonHostAccount;
-//import net.digitalid.core.entity.NonHostEntity;
-//import net.digitalid.core.packet.exceptions.NetworkException;
-//import net.digitalid.core.packet.exceptions.RequestErrorCode;
-//import net.digitalid.core.packet.exceptions.RequestException;
-//import net.digitalid.core.handler.Action;
-//import net.digitalid.core.handler.ActionReply;
-//import net.digitalid.core.handler.Method;
-//import net.digitalid.core.handler.Reply;
-//import net.digitalid.core.identification.identifier.HostIdentifier;
-//import net.digitalid.core.identification.identifier.InternalIdentifier;
-//import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
-//import net.digitalid.core.identification.identity.InternalNonHostIdentity;
-//import net.digitalid.core.identification.identity.SemanticType;
-//import net.digitalid.core.identification.identity.annotations.BasedOn;
-//import net.digitalid.core.packet.ClientRequest;
-//import net.digitalid.core.packet.Response;
-//import net.digitalid.core.identification.Category;
-//import net.digitalid.core.resolution.Mapper;
-//import net.digitalid.core.service.CoreService;
-//import net.digitalid.core.state.Service;
-//
-//import net.digitalid.service.core.cryptography.Exponent;
-//import net.digitalid.service.core.dataservice.StateModule;
-//import net.digitalid.service.core.exceptions.external.encoding.InvalidParameterValueException;
-//
-///**
-// * Opens a new account with the given category and client.
-// * (This class inherits directly from the action class because no entity can be given.)
-// * 
-// * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject has to match the recipient for the action to open an account.";
-// */
-//@Immutable
-//public final class AccountOpen extends Action {
-//    
-//    /**
-//     * Stores the semantic type {@code open.account@core.digitalid.net}.
-//     */
-//    public static final @Nonnull SemanticType TYPE = SemanticType.map("open.account@core.digitalid.net").load(TupleWrapper.XDF_TYPE, Category.TYPE, Agent.NUMBER, Client.NAME);
-//    
-//    
-//    /**
-//     * Stores the category of the new account.
-//     * 
-//     * @invariant category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
-//     */
-//    private final @Nonnull Category category;
-//    
-//    /**
-//     * Stores the number of the client agent.
-//     */
-//    private final long agentNumber;
-//    
-//    /**
-//     * Stores the commitment of the client agent.
-//     */
-//    private final @Nonnull Commitment commitment;
-//    
-//    /**
-//     * Stores the secret of the client agent.
-//     */
-//    private final @Nullable Exponent secret;
-//    
-//    /**
-//     * Stores the name of the client agent.
-//     * 
-//     * @invariant Client.isValid(name) : "The name is valid.";
-//     */
-//    private final @Nonnull String name;
-//    
-//    /**
-//     * Creates an action to open a new account.
-//     * 
-//     * @param subject the identifier of the new account.
-//     * @param category the category of the new account.
-//     * @param client the client creating the new account.
-//     * 
-//     * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
-//     */
-//    @NonCommitting
-//    AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws ExternalException {
-//        super(null, subject, subject.getHostIdentifier());
-//        
-//        Require.that(category.isInternalNonHostIdentity()).orThrow("The category denotes an internal non-host identity.");
-//        
-//        this.category = category;
-//        this.agentNumber = new Random().nextLong();
-//        this.commitment = client.getCommitment(subject);
-//        this.secret = client.getSecret();
-//        this.name = client.getName();
-//    }
-//    
-//    /**
-//     * Creates an action that decodes the given block.
-//     * 
-//     * @param entity the entity to which this handler belongs.
-//     * @param signature the signature of this handler (or a dummy that just contains a subject).
-//     * @param recipient the recipient of this method.
-//     * @param block the content which is to be decoded.
-//     */
-//    @NonCommitting
-//    private AccountOpen(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("open.account@core.digitalid.net") Block block) throws ExternalException {
-//        super(entity, signature, recipient);
-//        
-//        if (!getSubject().getHostIdentifier().equals(getRecipient())) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account."); }
-//        
-//        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(3);
-//        
-//        this.category = Category.get(elements.getNonNullable(0));
-//        if (!category.isInternalNonHostIdentity()) { throw InternalException.get("The category has to denote an internal non-host identity but was " + category.name() + "."); }
-//        
-//        this.agentNumber = Integer64Wrapper.decode(elements.getNonNullable(1));
-//        
-//        if (!(signature instanceof ClientSignatureWrapper)) { throw InternalException.get("The action to open an account has to be signed by a client."); }
-//        this.commitment = ((ClientSignatureWrapper) signature).getCommitment();
-//        this.secret = null;
-//        
-//        this.name = StringWrapper.decodeNonNullable(elements.getNonNullable(2));
-//        if (!Client.isValidName(name)) { throw InvalidParameterValueException.get("name", name); }
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull Block toBlock() {
-//        return TupleWrapper.encode(TYPE, category.toBlock(), Integer64Wrapper.encode(Agent.NUMBER, agentNumber), StringWrapper.encodeNonNullable(Client.NAME, name));
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String getDescription() {
-//        return "Opens a new account with the category '" + category.name() + "'.";
-//    }
-//    
-//    
-//    /**
-//     * Returns the number of the client agent.
-//     * 
-//     * @return the number of the client agent.
-//     */
-//    public long getAgentNumber() {
-//        return agentNumber;
-//    }
-//    
-//    /**
-//     * Returns the commitment of the client agent.
-//     * 
-//     * @return the commitment of the client agent.
-//     */
-//    public @Nonnull Commitment getCommitment() {
-//        return commitment;
-//    }
-//    
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit() {
-//        return FreezableAgentPermissions.GENERAL_WRITE;
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit() {
-//        return Restrictions.MAX;
-//    }
-//    
-//    
-//    /**
-//     * Creates the root context and the client agent for the given entity.
-//     * 
-//     * @param entity the entity which is to be initialized.
-//     */
-//    @NonCommitting
-//    public void initialize(@Nonnull NonHostEntity entity) throws DatabaseException {
-//        final @Nonnull Context context = Context.getRoot(entity);
-//        context.createForActions();
-//        context.replaceName("New Context", "Root Context");
-//        
-//        final @Nonnull ClientAgent clientAgent = ClientAgent.get(entity, agentNumber, false);
-//        final @Nonnull Restrictions restrictions = new Restrictions(true, true, true, context);
-//        clientAgent.createForActions(FreezableAgentPermissions.GENERAL_WRITE, restrictions, commitment, name);
-//    }
-//    
-//    @Override
-//    @NonCommitting
-//    public @Nullable ActionReply executeOnHost() throws RequestException, SQLException {
-//        final @Nonnull InternalIdentifier subject = getSubject();
-//        if (subject.isMapped()) { throw RequestException.get(RequestErrorCode.IDENTIFIER, "The account with the identifier " + subject + " already exists."); }
-//        
-//        // TODO: Include the resctriction mechanisms like the tokens.
-//        
-//        final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
-//        final @Nonnull NonHostAccount account = NonHostAccount.get(getAccount().getHost(), identity);
-//        initialize(account);
-//        account.opened();
-//        return null;
-//    }
-//    
-//    @Pure
-//    @Override
-//    public boolean matches(@Nullable Reply reply) {
-//        return reply == null;
-//    }
-//    
-//    @Override
-//    @NonCommitting
-//    public void executeOnClient() throws DatabaseException {
-//        throw ShouldNeverHappenError.get("The action to open an account should never be executed on a client.");
-//    }
-//    
-//    
-//    @Pure
-//    @Override
-//    public boolean canBeSentByHosts() {
-//        return false;
-//    }
-//    
-//    @Pure
-//    @Override
-//    public boolean canOnlyBeSentByHosts() {
-//        return false;
-//    }
-//
-//    @Pure
-//    @Override
-//    public boolean isSimilarTo(@Nonnull Method other) {
-//        return false;
-//    }
-//    
+import java.util.concurrent.ThreadLocalRandom;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.contracts.exceptions.PreconditionExceptionBuilder;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.equality.Unequal;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.value.Invariant;
+
+import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.storage.Storage;
+
+import net.digitalid.core.client.Client;
+import net.digitalid.core.clientagent.ClientAgent;
+import net.digitalid.core.commitment.Commitment;
+import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.entity.annotations.OnClientRecipient;
+import net.digitalid.core.entity.annotations.OnHostRecipient;
+import net.digitalid.core.exceptions.request.RequestErrorCode;
+import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
+import net.digitalid.core.group.Exponent;
+import net.digitalid.core.handler.annotations.Matching;
+import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
+import net.digitalid.core.handler.method.CoreMethod;
+import net.digitalid.core.handler.method.Method;
+import net.digitalid.core.handler.method.action.Action;
+import net.digitalid.core.handler.method.action.InternalAction;
+import net.digitalid.core.handler.reply.ActionReply;
+import net.digitalid.core.host.account.NonHostAccount;
+import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identity.Category;
+import net.digitalid.core.identification.identity.InternalNonHostIdentity;
+import net.digitalid.core.node.context.Context;
+import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
+import net.digitalid.core.restrictions.Restrictions;
+import net.digitalid.core.restrictions.RestrictionsBuilder;
+import net.digitalid.core.server.Server;
+import net.digitalid.core.service.CoreService;
+import net.digitalid.core.signature.Signature;
+import net.digitalid.core.signature.client.ClientSignature;
+
+/**
+ * Opens a new account with the given category and client.
+ */
+@Immutable
+@GenerateBuilder
+@GenerateSubclass
+@GenerateConverter
+public abstract class AccountOpen extends InternalAction implements CoreMethod<NonHostEntity<?>> {
+    
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
+    
+    /**
+     * Returns the category of the new account.
+     */
+    @Pure
+    public abstract @Nonnull @Invariant(condition = "#.isInternalNonHostIdentity()", message = "The category does not denote an internal non-host identity.") Category getCategory();
+    
+    /**
+     * Returns the key of the client agent.
+     */
+    @Pure
+    public abstract long getClientAgentKey();
+    
+    /**
+     * Returns the name of the client agent.
+     */
+    @Pure
+    public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getName();
+    
+    /* -------------------------------------------------- Provided -------------------------------------------------- */
+    
+    /**
+     * Returns the commitment that was provided with the builder.
+     */
+    @Pure
+    @NonRepresentative
+    public abstract @Nullable Commitment getProvidedCommitment();
+    
+    /**
+     * Returns the commitment of the client agent.
+     */
+    @Pure
+    public @Nonnull Commitment getCommitment() {
+        final @Nullable Signature<?> signature = getSignature();
+        if (signature instanceof ClientSignature) {
+            return ((ClientSignature<?>) signature).getCommitment();
+        } else {
+            final @Nullable Commitment commitment = getProvidedCommitment();
+            if (commitment == null) { throw PreconditionExceptionBuilder.withMessage("The commitment has to be provided if this action has not been received.").build(); }
+            return commitment;
+        }
+    }
+    
+    /**
+     * Returns the secret of the client agent on the client or null on the host.
+     */
+    @Pure
+    @NonRepresentative
+    public abstract @Nullable Exponent getSecret();
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    /**
+     * Returns a new action to open an account for the given 
+     */
+    @Pure
+    @NonCommitting
+    public static @Nonnull AccountOpen with(@Nonnull Category category, @Nonnull InternalNonHostIdentifier subject, @Nonnull Client client) throws ExternalException {
+        return AccountOpenBuilder.withCategory(category).withClientAgentKey(ThreadLocalRandom.current().nextLong()).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
+    }
+    
+    /* -------------------------------------------------- Execution -------------------------------------------------- */
+    
+    @Override
+    @NonCommitting
+    @PureWithSideEffects
+    protected void executeOnBoth() throws DatabaseException, RecoveryException {
+        throw PreconditionExceptionBuilder.withMessage("The action to open an account should never be executed on a client.").build();
+    }
+    
+    /**
+     * Creates the root context and the client agent for the given entity.
+     * 
+     * @param entity the entity which is to be initialized.
+     */
+    @NonCommitting
+    @PureWithSideEffects
+    public void initialize(@Nonnull NonHostEntity<?> entity) throws DatabaseException {
+        final @Nonnull Context context = Context.of(entity);
+//        context.createForActions(); // TODO: This should probably become part of the Context.of(entity) method.
+//        context.name().set("Root Context"); // TODO: The name should be stored in the database without synchronization.
+        
+        final @Nonnull ClientAgent clientAgent = ClientAgent.of(entity, getClientAgentKey());
+        final @Nonnull Restrictions restrictions = RestrictionsBuilder.withOnlyForClients(true).withAssumeRoles(true).withWriteToNode(true).withNode(context).build();
+//        clientAgent.createForActions(FreezableAgentPermissions.GENERAL_WRITE, restrictions, getCommitment(), getName()); // TODO: Do this differently.
+    }
+    
+    @Override
+    @NonCommitting
+    @OnHostRecipient
+    @PureWithSideEffects
+    @MethodHasBeenReceived
+    public @Nullable @Matching ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
+        if (PseudoIdentifierResolver.loadWithProvider(getSubject()) != null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("An account with the identifier " + getSubject() + " already exists.").build(); }
+        
+        // TODO: Include the resctriction mechanisms like the tokens.
+        
+        final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) PseudoIdentifierResolver.mapWithProvider(getCategory(), getSubject());
+        final @Nonnull NonHostAccount account = NonHostAccount.with(Server.getHost(getSubject().getHostIdentifier()), identity);
+        initialize(account);
+        return null;
+    }
+    
+    /* -------------------------------------------------- Similarity -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public boolean isSimilarTo(@Nonnull Method<?> other) {
+        return false;
+    }
+    
+    /* -------------------------------------------------- Sending -------------------------------------------------- */
+    
+    // TODO: Use the commitment and the secret to send this action with a client signature.
+    
 //    @Override
 //    @NonCommitting
 //    public @Nonnull Response send() throws ExternalException {
-//        if (secret == null) { throw InternalException.get("The secret may not be null for sending."); }
-//        return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
+//        final @Nullable Exponent secret = getSecret();
+//        if (secret == null) { throw PreconditionExceptionBuilder.withMessage("The secret may not be null for sending.").build(); }
+//        return new ClientRequest(getSubject(), getCommitment().addSecret(secret)).send();
 //    }
-//    
-//    
-//    @Pure
-//    @Override
-//    public boolean equals(@Nullable Object object) {
-//        if (protectedEquals(object) && object instanceof AccountOpen) {
-//            final @Nonnull AccountOpen other = (AccountOpen) object;
-//            return this.category == other.category && this.agentNumber == other.agentNumber && this.commitment.equals(other.commitment) && Objects.equals(this.secret, other.secret) && this.name.equals(other.name);
-//        }
-//        return false;
-//    }
-//    
-//    @Pure
-//    @Override
-//    public int hashCode() {
-//        int hash = protectedHashCode();
-//        hash = 89 * hash + category.hashCode();
-//        hash = 89 * hash + (int) (agentNumber ^ (agentNumber >>> 32));
-//        hash = 89 * hash + commitment.hashCode();
-//        hash = 89 * hash + Objects.hashCode(secret);
-//        hash = 89 * hash + name.hashCode();
-//        return hash;
-//    }
-//    
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull Service getService() {
-//        return CoreService.SERVICE;
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull SemanticType getType() {
-//        return TYPE;
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull StateModule getModule() {
-//        return CoreService.SERVICE;
-//    }
-//    
-//    /**
-//     * The factory class for the surrounding method.
-//     */
-//    private static final class Factory extends Method.Factory {
-//        
-//        static { Method.add(TYPE, new Factory()); }
-//        
-//        @Pure
-//        @Override
-//        @NonCommitting
-//        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws ExternalException {
-//            return new AccountOpen(entity, signature, recipient, block);
-//        }
-//        
-//    }
-//    
-//}
+    
+    /* -------------------------------------------------- Auditable -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeMethod() {
+        return ReadOnlyAgentPermissions.GENERAL_WRITE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeMethod() {
+        return Restrictions.MAX;
+    }
+    
+    /* -------------------------------------------------- Storage -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Storage getStorage() {
+        return CoreService.MODULE;
+    }
+    
+    /* -------------------------------------------------- Reversion -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return false;
+    }
+    
+    @Pure
+    @Override
+    @OnClientRecipient
+    public @Nullable InternalAction getReverse() {
+        return null;
+    }
+    
+}

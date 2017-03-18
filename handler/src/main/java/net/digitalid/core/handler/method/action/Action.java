@@ -15,7 +15,6 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.storage.Storage;
 
-import net.digitalid.core.agent.Agent;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -25,8 +24,6 @@ import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.method.MethodImplementation;
 import net.digitalid.core.handler.reply.ActionReply;
-import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
-import net.digitalid.core.restrictions.Restrictions;
 
 /**
  * Actions affect the state of a digital identity and are thus always audited.
@@ -55,26 +52,6 @@ public abstract class Action extends MethodImplementation<NonHostEntity<?>> impl
     @PureWithSideEffects
     @MethodHasBeenReceived
     public abstract @Nullable @Matching ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException;
-    
-    /* -------------------------------------------------- Auditable -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeMethod() {
-        return ReadOnlyAgentPermissions.NONE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Restrictions getRequiredRestrictionsToSeeMethod() {
-        return Restrictions.MIN;
-    }
-    
-    @Pure
-    @Override
-    public @Nullable Agent getRequiredAgentToSeeMethod() {
-        return null;
-    }
     
     /* -------------------------------------------------- Storage -------------------------------------------------- */
     

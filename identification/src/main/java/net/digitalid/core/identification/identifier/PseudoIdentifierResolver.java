@@ -15,7 +15,7 @@ import net.digitalid.core.identification.identity.Identity;
  * The only purpose of this class is to be able to use the identifier resolution from this package.
  */
 @Stateless
-public abstract class PseudoIdentifierResolver extends IdentifierResolver {
+abstract class PseudoIdentifierResolver extends IdentifierResolver {
     
     @Pure
     @NonCommitting

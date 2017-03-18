@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
-import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.NonHostEntity;
@@ -36,7 +35,7 @@ public interface InternalMethod extends Method<NonHostEntity<?>> {
     
     @Pure
     @Override
-    @Provided
+    @OrderOfAssignment(1)
     @Derive("getEntity().getIdentity().getAddress()")
     public @Nonnull InternalIdentifier getSubject();
     

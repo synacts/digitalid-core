@@ -112,7 +112,7 @@ public abstract class Service extends RootClass {
      */
     @Pure
     @NonCommitting
-    public abstract @Nonnull HostIdentifier getRecipient(@Nonnull NonHostEntity entity) throws DatabaseException;
+    public abstract @Nonnull HostIdentifier getRecipient(@Nonnull NonHostEntity<?> entity) throws DatabaseException;
 //        final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
 //        if (attributeValue == null) { throw DatabaseException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + "."); }
 //        try {
@@ -127,7 +127,7 @@ public abstract class Service extends RootClass {
      */
     @Pure
     @NonCommitting
-    public abstract @Nonnull HostIdentifier getRecipient(@Nonnull InternalPerson subject, @Nullable NonHostEntity entity) throws ExternalException;
+    public abstract @Nonnull HostIdentifier getRecipient(@Nonnull InternalPerson subject, @Nullable NonHostEntity<?> entity) throws ExternalException;
 //        return HostIdentifier.XDF_CONVERTER.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false));
 //    }
     

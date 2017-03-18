@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
-import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -93,8 +92,6 @@ public abstract class InternalAction extends Action implements InternalMethod {
     @PureWithSideEffects
     @MethodHasBeenReceived
     public @Nullable @Matching ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
-        Require.that(hasBeenReceived()).orThrow("This internal action can only be executed if it has been received.");
-        
         final @Nullable Signature<?> signature = getSignature();
         if (signature instanceof CredentialsSignature<?> && !((CredentialsSignature<?>) signature).isLodged()) { throw RequestExceptionBuilder.withCode(RequestErrorCode.SIGNATURE).withMessage("The credentials signature of internal actions has to be lodged.").build(); }
         

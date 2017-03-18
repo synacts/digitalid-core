@@ -26,18 +26,24 @@ public interface Auditable {
      * Returns the permission that an agent needs to cover in order to see the audit of this handler.
      */
     @Pure
-    public @Nonnull @EmptyOrSingle ReadOnlyAgentPermissions getRequiredPermissionsToSeeMethod();
+    public default @Nonnull @EmptyOrSingle ReadOnlyAgentPermissions getRequiredPermissionsToSeeMethod() {
+        return ReadOnlyAgentPermissions.NONE;
+    }
     
     /**
      * Returns the restrictions that an agent needs to cover in order to see the audit of this handler.
      */
     @Pure
-    public @Nonnull Restrictions getRequiredRestrictionsToSeeMethod();
+    public default @Nonnull Restrictions getRequiredRestrictionsToSeeMethod() {
+        return Restrictions.MIN;
+    }
     
     /**
      * Returns the agent that an agent needs to cover in order to see the audit of this handler.
      */
     @Pure
-    public @Nullable Agent getRequiredAgentToSeeMethod();
-
+    public default @Nullable Agent getRequiredAgentToSeeMethod() {
+        return null;
+    }
+    
 }

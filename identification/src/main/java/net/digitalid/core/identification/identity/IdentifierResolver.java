@@ -25,7 +25,6 @@ import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identifier.MobileIdentifier;
-import net.digitalid.core.identification.identifier.PseudoIdentifierResolver;
 
 /**
  * The identifier resolver resolves an identifier into the corresponding identity.
@@ -80,7 +79,7 @@ public abstract class IdentifierResolver {
     /* -------------------------------------------------- Expose Access -------------------------------------------------- */
     
     /**
-     * This method allows the {@link PseudoIdentifierResolver} to access the identifier loading of the configured provider.
+     * This method allows the pseudo identifier resolvers to access the identifier loading of the configured provider.
      */
     @Pure
     @NonCommitting
@@ -89,7 +88,7 @@ public abstract class IdentifierResolver {
     }
     
     /**
-     * This method allows the {@link PseudoIdentifierResolver} to access the identifier mapping of the configured provider.
+     * This method allows the pseudo identifier resolvers to access the identifier mapping of the configured provider.
      */
     @Pure
     @NonCommitting
@@ -98,7 +97,7 @@ public abstract class IdentifierResolver {
     }
     
     /**
-     * This method allows the {@link PseudoIdentifierResolver} to access the identifier resolution of the configured provider.
+     * This method allows the pseudo identifier resolvers to access the identifier resolution of the configured provider.
      */
     @Pure
     @NonCommitting

@@ -10,6 +10,7 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Log;
 
+import net.digitalid.core.account.AccountOpenConverter;
 import net.digitalid.core.all.handlers.TestQuery;
 import net.digitalid.core.all.handlers.TestQueryBuilder;
 import net.digitalid.core.all.handlers.TestQueryConverter;
@@ -70,6 +71,7 @@ public class ServerTest extends CoreTest {
         
         MethodIndex.add(TestQueryConverter.INSTANCE);
         MethodIndex.add(IdentityQueryConverter.INSTANCE);
+        MethodIndex.add(AccountOpenConverter.INSTANCE);
         
         Server.start();
         hostIdentifier = HostIdentifier.with("test.digitalid.net");
