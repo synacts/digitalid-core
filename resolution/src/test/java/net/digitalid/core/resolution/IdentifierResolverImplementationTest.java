@@ -2,14 +2,13 @@ package net.digitalid.core.resolution;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.database.testing.DatabaseTest;
-
 import net.digitalid.core.annotations.type.NonLoaded;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.testing.CoreTest;
 
 import org.junit.Test;
 
-public class IdentifierResolverImplementationTest extends DatabaseTest {
+public class IdentifierResolverImplementationTest extends CoreTest {
 
     @Test
     public void testMapping() {

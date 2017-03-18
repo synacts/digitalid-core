@@ -8,6 +8,7 @@ import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.subject.Subject;
 
 import net.digitalid.core.entity.CoreUnit;
@@ -16,7 +17,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.subject.annotations.GenerateCoreSubjectModule;
 
 /**
- * This class models a core subject in the {@link DatabaseUtility database}.
+ * This class models a core subject in the {@link Database database}.
  * A core subject always belongs to an {@link Entity entity}.
  * 
  * @param <ENTITY> either {@link Entity} for a general core subject or {@link NonHostEntity} for a core subject that exists only for non-hosts.

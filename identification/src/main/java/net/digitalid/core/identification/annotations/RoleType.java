@@ -23,7 +23,7 @@ import net.digitalid.utility.validation.validator.ValueAnnotationValidator;
 import net.digitalid.core.identification.identity.SemanticType;
 
 /**
- * This annotation indicates that a {@link SemanticType semantic type} denotes a {@link TypeInterface#isRoleType() role type}.
+ * This annotation indicates that a {@link SemanticType semantic type} denotes a {@link SemanticType#isRoleType() role type}.
  */
 @Documented
 @Retention(RetentionPolicy.SOURCE)

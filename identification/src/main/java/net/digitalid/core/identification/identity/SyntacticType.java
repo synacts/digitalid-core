@@ -1,11 +1,16 @@
 package net.digitalid.core.identification.identity;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.recovery.Check;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.math.relative.GreaterThanOrEqualTo;
 import net.digitalid.utility.validation.annotations.math.relative.LessThanOrEqualTo;
@@ -13,10 +18,10 @@ import net.digitalid.utility.validation.annotations.method.Chainable;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.annotations.type.LoadedRecipient;
-import net.digitalid.core.annotations.type.NonLoaded;
 import net.digitalid.core.annotations.type.NonLoadedRecipient;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 
@@ -31,11 +36,25 @@ public abstract class SyntacticType extends Type {
     
     /**
      * Maps the syntactic type with the given string, which has to be a valid internal non-host identifier.
+     * 
+     * @throws UncheckedException instead of {@link DatabaseException} and {@link RecoveryException}.
      */
     @Pure
     @MainThread
-    public static @Nonnull @NonLoaded SyntacticType map(@Nonnull String identifier) {
-        return IdentifierResolver.configuration.get().mapSyntacticType(InternalNonHostIdentifier.with(identifier));
+    public static @Nonnull SyntacticType map(@Nonnull String identifier) {
+        Log.verbose("Mapping the syntactic type $.", identifier);
+        
+        final @Nonnull IdentifierResolver identifierResolver = IdentifierResolver.configuration.get();
+        final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = InternalNonHostIdentifier.with(identifier);
+        
+        try {
+            @Nullable Identity identity = identifierResolver.load(internalNonHostIdentifier);
+            if (identity == null) { identity = identifierResolver.map(Category.SYNTACTIC_TYPE, internalNonHostIdentifier); }
+            Check.that(identity instanceof SyntacticType).orThrow("The mapped or loaded identity $ has to be a syntactic type but was $.", identity.getAddress(), identity.getClass().getSimpleName());
+            return (SyntacticType) identity;
+        } catch (@Nonnull DatabaseException | RecoveryException exception) {
+            throw UncheckedExceptionBuilder.withCause(exception).build();
+        }
     }
     
     /* -------------------------------------------------- Types -------------------------------------------------- */

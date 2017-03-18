@@ -25,7 +25,6 @@ import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.ExternalQuery;
 import net.digitalid.core.identification.identity.Identity;
-import net.digitalid.core.resolution.IdentifierResolverImplementation;
 
 /**
  * Queries the identity of the given subject.
@@ -47,7 +46,7 @@ public abstract class IdentityQuery extends ExternalQuery<NonHostEntity<?>> impl
     @MethodHasBeenReceived
     @TODO(task = "Check somewhere that the subject is indeed hosted on this server.", date = "2017-02-26", author = Author.KASPAR_ETTER)
     public @Nonnull @Matching IdentityReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
-        final @Nullable Identity identity = IdentifierResolverImplementation.INSTANCE.load(getSubject());
+        final @Nullable Identity identity = PseudoIdentifierResolver.loadWithProvider(getSubject());
         if (identity == null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("There exists no identity with the identifier '" + getSubject() + "'.").build(); }
         return IdentityReplyBuilder.withEntity(getEntity()).withCategory(identity.getCategory()).build();
     }

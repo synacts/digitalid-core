@@ -59,7 +59,7 @@ import net.digitalid.core.signature.host.HostSignature;
 
 /**
  * This type implements a remote method invocation mechanism.
- * All methods have to extend this interface and {@link MethodIndex#add(net.digitalid.core.identification.identity.SemanticType, net.digitalid.utility.conversion.converter.Converter) register} themselves as handlers.
+ * All methods have to extend this interface and {@link MethodIndex#add(net.digitalid.utility.conversion.interfaces.Converter) register} themselves as handlers.
  * 
  * @see Action
  * @see Query

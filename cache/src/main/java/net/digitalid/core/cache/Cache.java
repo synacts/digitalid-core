@@ -34,6 +34,7 @@ import net.digitalid.core.entity.annotations.OnClient;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
@@ -420,7 +421,7 @@ public abstract class Cache {
     
     /**
      * Establishes the identity of the given host identifier by checking its existence and requesting its public key chain.
-     * (This method is only to be called by {@link Mapper#getIdentity(net.digitalid.service.core.identifier.Identifier)}.)
+     * (This method is only to be called by the identifier resolver implementation.)
      * 
      * @param identifier the host identifier whose identity is to be established.
      * 

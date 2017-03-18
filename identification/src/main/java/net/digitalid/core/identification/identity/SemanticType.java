@@ -10,9 +10,12 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.recovery.Check;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.threading.Threading;
 import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.time.Time;
@@ -24,10 +27,10 @@ import net.digitalid.utility.validation.annotations.method.Chainable;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.annotations.type.LoadedRecipient;
-import net.digitalid.core.annotations.type.NonLoaded;
 import net.digitalid.core.annotations.type.NonLoadedRecipient;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 
@@ -42,45 +45,75 @@ public abstract class SemanticType extends Type {
     
     /**
      * Maps the semantic type with the given identifier.
+     * <p>
+     * This method can be called on any thread. However, the result should only be stored temporarily (because the transaction might be rolled back).
+     * 
+     * @throws UncheckedException instead of {@link DatabaseException} and {@link RecoveryException}.
      */
     @Pure
-    @MainThread
     @NonCommitting
-    public static @Nonnull @NonLoaded SemanticType map(@Nonnull InternalNonHostIdentifier identifier) {
-        Require.that(Threading.isMainThread()).orThrow("The method 'map' may only be called on the main thread.");
-        
-        return IdentifierResolver.configuration.get().mapSemanticType(identifier);
-    }
-    
-    /**
-     * Maps the semantic type with the given string, which has to be a valid internal non-host identifier.
-     */
-    @Pure
-    @MainThread
-    @NonCommitting
-    public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
-        return map(InternalNonHostIdentifier.with(identifier));
-    }
-    
-    /**
-     * Maps the semantic type of the given converter.
-     */
-    @Pure
-    @MainThread
-    @NonCommitting
-    public static @Nonnull @NonLoaded SemanticType map(@Nonnull Converter<?, ?> converter) {
-        return map(InternalNonHostIdentifier.of(converter));
+    public static @Nonnull SemanticType mapWithoutPersistingResult(@Nonnull InternalNonHostIdentifier identifier) {
+        final @Nonnull IdentifierResolver identifierResolver = IdentifierResolver.configuration.get();
+        Log.verbose("Mapping the semantic type $.", identifier);
+        try {
+            @Nullable Identity identity = identifierResolver.load(identifier);
+            if (identity == null) { identity = identifierResolver.map(Category.SEMANTIC_TYPE, identifier); }
+            Check.that(identity instanceof SemanticType).orThrow("The mapped or loaded identity $ has to be a semantic type but was $.", identity.getAddress().getString(), identity.getClass().getSimpleName());
+            return (SemanticType) identity;
+        } catch (@Nonnull DatabaseException | RecoveryException exception) {
+            throw UncheckedExceptionBuilder.withCause(exception).build();
+        }
     }
     
     /**
      * Maps the semantic type of the given converter.
      * <p>
      * This method can be called on any thread. However, the result should only be stored temporarily (because the transaction might be rolled back).
+     * 
+     * @throws UncheckedException instead of {@link DatabaseException} and {@link RecoveryException}.
      */
     @Pure
     @NonCommitting
-    public static @Nonnull @NonLoaded SemanticType mapWithoutPersistingResult(@Nonnull Converter<?, ?> converter) {
-        return IdentifierResolver.configuration.get().mapSemanticType(InternalNonHostIdentifier.of(converter));
+    public static @Nonnull SemanticType mapWithoutPersistingResult(@Nonnull Converter<?, ?> converter) {
+        return mapWithoutPersistingResult(InternalNonHostIdentifier.of(converter));
+    }
+    
+    /**
+     * Maps the semantic type with the given identifier.
+     * 
+     * @throws UncheckedException instead of {@link DatabaseException} and {@link RecoveryException}.
+     */
+    @Pure
+    @MainThread
+    @NonCommitting
+    public static @Nonnull SemanticType map(@Nonnull InternalNonHostIdentifier identifier) {
+        Require.that(Threading.isMainThread()).orThrow("The method 'map' may only be called on the main thread.");
+        
+        return mapWithoutPersistingResult(identifier);
+    }
+    
+    /**
+     * Maps the semantic type with the given string, which has to be a valid internal non-host identifier.
+     * 
+     * @throws UncheckedException instead of {@link DatabaseException} and {@link RecoveryException}.
+     */
+    @Pure
+    @MainThread
+    @NonCommitting
+    public static @Nonnull SemanticType map(@Nonnull String identifier) {
+        return map(InternalNonHostIdentifier.with(identifier));
+    }
+    
+    /**
+     * Maps the semantic type of the given converter.
+     * 
+     * @throws UncheckedException instead of {@link DatabaseException} and {@link RecoveryException}.
+     */
+    @Pure
+    @MainThread
+    @NonCommitting
+    public static @Nonnull SemanticType map(@Nonnull Converter<?, ?> converter) {
+        return map(InternalNonHostIdentifier.of(converter));
     }
     
     /* -------------------------------------------------- Attributes -------------------------------------------------- */

@@ -15,6 +15,7 @@ import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.core.asymmetrickey.PrivateKey;
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.symmetrickey.InitializationVector;

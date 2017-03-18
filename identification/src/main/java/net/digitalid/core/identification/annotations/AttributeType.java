@@ -23,7 +23,7 @@ import net.digitalid.utility.validation.validator.ValueAnnotationValidator;
 import net.digitalid.core.identification.identity.SemanticType;
 
 /**
- * This annotation indicates that a {@link SemanticType semantic type} denotes an {@link TypeInterface#isAttributeType() attribute type}.
+ * This annotation indicates that a {@link SemanticType semantic type} denotes an {@link SemanticType#isAttributeType() attribute type}.
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

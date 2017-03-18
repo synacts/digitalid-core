@@ -5,21 +5,19 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.converters.Integer64Converter;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
-import net.digitalid.utility.conversion.recovery.Check;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
@@ -36,8 +34,6 @@ import net.digitalid.core.identification.identifier.MobileIdentifier;
 import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Identity;
-import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.identification.identity.Type;
 import net.digitalid.core.resolution.handlers.IdentityQuery;
 import net.digitalid.core.resolution.handlers.IdentityQueryBuilder;
@@ -58,13 +54,6 @@ import net.digitalid.core.server.Server;
 @GenerateSubclass
 public abstract class IdentifierResolverImplementation extends IdentifierResolver {
     
-    /* -------------------------------------------------- Instance -------------------------------------------------- */
-    
-    /**
-     * Stores an instance of the surrounding class.
-     */
-    public static final @Nonnull IdentifierResolverImplementation INSTANCE = new IdentifierResolverImplementationSubclass();
-    
     /* -------------------------------------------------- Injection -------------------------------------------------- */
     
     /**
@@ -75,18 +64,19 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     public static void initializeIdentifierResolver() throws DatabaseException {
         SQL.createTable(IdentityEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
         SQL.createTable(IdentifierEntryConverter.INSTANCE, Unit.DEFAULT); // TODO: GeneralUnit.INSTANCE);
-        IdentifierResolver.configuration.set(INSTANCE);
+        IdentifierResolver.configuration.set(new IdentifierResolverImplementationSubclass());
     }
     
     /* -------------------------------------------------- Mapper -------------------------------------------------- */
     
     private final @Nonnull Mapper mapper = new MapperSubclass();
     
-    /* -------------------------------------------------- Key Resolution -------------------------------------------------- */
+    /* -------------------------------------------------- Key Loading -------------------------------------------------- */
     
     @Override
+    @NonCommitting
     @PureWithSideEffects
-    public @Nonnull Identity load(long key) throws DatabaseException, RecoveryException {
+    protected @Nonnull Identity load(long key) throws DatabaseException, RecoveryException {
         @Nullable Identity identity = mapper.getIdentity(key);
         if (identity == null) {
             final @Nonnull IdentityEntry entry = SQL.selectOne(IdentityEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key", Unit.DEFAULT);
@@ -96,14 +86,28 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
         return identity;
     }
     
-    /* -------------------------------------------------- Identity Mapping -------------------------------------------------- */
+    /* -------------------------------------------------- Identifier Loading -------------------------------------------------- */
     
-    /**
-     * Maps the given address to a new key. Make sure that the identifier is not already mapped!
-     */
+    @Override
+    @NonCommitting
+    @PureWithSideEffects
+    protected @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException {
+        @Nullable Identity identity = mapper.getIdentity(identifier);
+        if (identity == null) {
+            final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, IdentifierConverter.INSTANCE, identifier, "identifier", Unit.DEFAULT);
+            if (entry != null) { identity = load(entry.getKey()); }
+            if (identity != null) { Log.verbose("Found the identifier $ in the database.", identifier.getString()); }
+        } else { Log.verbose("Found the identifier $ in the hash map.", identifier.getString()); }
+        return identity;
+    }
+    
+    /* -------------------------------------------------- Identfier Mapping -------------------------------------------------- */
+    
+    @Override
+    @NonCommitting
     @PureWithSideEffects
     @TODO(task = "Instead of a random key, we could/should use an auto-incrementing column in the database.", date = "2017-02-26", author = Author.KASPAR_ETTER)
-    private @Nonnull Identity map(@Nonnull Identifier address, @Nonnull Category category) throws DatabaseException {
+    protected @Nonnull Identity map(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException {
         final long key = ThreadLocalRandom.current().nextLong();
         
         final @Nonnull IdentityEntry identityEntry = IdentityEntryBuilder.withKey(key).withCategory(category).withAddress(address).build();
@@ -116,25 +120,10 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
         return identity;
     }
     
-    /* -------------------------------------------------- Identity Loading -------------------------------------------------- */
-    
-    /**
-     * Loads and returns the identity with the given identifier.
-     */
-    @PureWithSideEffects
-    public @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException {
-        @Nullable Identity identity = mapper.getIdentity(identifier);
-        if (identity == null) {
-            final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, IdentifierConverter.INSTANCE, identifier, "identifier", Unit.DEFAULT);
-            if (entry != null) { identity = load(entry.getKey()); }
-            if (identity != null) { Log.verbose("Found the identifier $ in the database.", identifier.getString()); }
-        } else { Log.verbose("Found the identifier $ in the hash map.", identifier.getString()); }
-        return identity;
-    }
-    
     /* -------------------------------------------------- Identifier Resolution -------------------------------------------------- */
     
     @Override
+    @NonCommitting
     @PureWithSideEffects
     public @Nonnull Identity resolve(@Nonnull Identifier identifier) throws ExternalException {
         Log.verbose("Resolving the identifier $.", identifier.getString());
@@ -142,7 +131,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
         if (identity == null) {
             if (identifier instanceof HostIdentifier) {
                 // TODO: HostIdentifiers have to be handled differently (because the response signature cannot be verified immediately).
-                identity = map(identifier, Category.HOST); // TODO: This line is only temporary.
+                identity = map(Category.HOST, identifier); // TODO: This line is only temporary.
             } else if (identifier instanceof InternalNonHostIdentifier) {
                 final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) identifier;
                 final @Nonnull HostIdentifier hostIdentifier = internalNonHostIdentifier.getHostIdentifier();
@@ -151,55 +140,23 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
                     throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identifier '" + identifier.getString() + "' is hosted on this server and is therefore not queried.").build();
                 } else if (hostIdentifier.equals(HostIdentifier.DIGITALID)) {
                     Log.verbose("The identifier $ is mapped as a semantic type without querying.", identifier.getString());
-                    identity = map(identifier, Category.SEMANTIC_TYPE);
+                    identity = map(Category.SEMANTIC_TYPE, identifier);
                 } else {
                     Log.verbose("Querying the identifier $.", identifier.getString());
                     final @Nonnull IdentityQuery query = IdentityQueryBuilder.withProvidedSubject(internalNonHostIdentifier).build();
                     final @Nonnull IdentityReply reply = query.send(IdentityReplyConverter.INSTANCE);
-                    identity = map(identifier, reply.getCategory());
+                    identity = map(reply.getCategory(), identifier);
                 }
             } else if (identifier instanceof EmailIdentifier) {
-                identity = map(identifier, Category.EMAIL_PERSON);
+                identity = map(Category.EMAIL_PERSON, identifier);
             } else if (identifier instanceof MobileIdentifier) {
-                identity = map(identifier, Category.MOBILE_PERSON);
+                identity = map(Category.MOBILE_PERSON, identifier);
             } else {
                 throw CaseExceptionBuilder.withVariable("identifier").withValue(identifier).build();
             }
         }
         if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }
         return identity;
-    }
-    
-    /* -------------------------------------------------- Syntactic Type Mapping -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    protected @Nonnull SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier) {
-        Log.verbose("Mapping the syntactic type $.", identifier.getString());
-        try {
-            @Nullable Identity identity = load(identifier);
-            if (identity == null) { identity = map(identifier, Category.SYNTACTIC_TYPE); }
-            Check.that(identity instanceof SyntacticType).orThrow("The mapped or loaded identity $ has to be a syntactic type but was $.", identity.getAddress().getString(), identity.getClass().getSimpleName());
-            return (SyntacticType) identity;
-        } catch (@Nonnull DatabaseException | RecoveryException exception) {
-            throw UncheckedExceptionBuilder.withCause(exception).build();
-        }
-    }
-    
-    /* -------------------------------------------------- Semantic Type Mapping -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    protected @Nonnull SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier) {
-        Log.verbose("Mapping the semantic type $.", identifier.getString());
-        try {
-            @Nullable Identity identity = load(identifier);
-            if (identity == null) { identity = map(identifier, Category.SEMANTIC_TYPE); }
-            Check.that(identity instanceof SemanticType).orThrow("The mapped or loaded identity $ has to be a semantic type but was $.", identity.getAddress().getString(), identity.getClass().getSimpleName());
-            return (SemanticType) identity;
-        } catch (@Nonnull DatabaseException | RecoveryException exception) {
-            throw UncheckedExceptionBuilder.withCause(exception).build();
-        }
     }
     
 }

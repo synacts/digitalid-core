@@ -1,8 +1,10 @@
 package net.digitalid.core.identification.identity;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.collaboration.annotations.TODO;
@@ -11,7 +13,6 @@ import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.exceptions.UncheckedException;
 import net.digitalid.utility.validation.annotations.method.Ensures;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -33,14 +34,34 @@ import net.digitalid.core.identification.identifier.PseudoIdentifierResolver;
 @Stateless
 public abstract class IdentifierResolver {
     
-    /* -------------------------------------------------- Resolution -------------------------------------------------- */
+    /* -------------------------------------------------- Key Loading -------------------------------------------------- */
     
     /**
-     * Loads the identity with the given key.
+     * Loads and returns the identity with the given key.
      */
-    @Pure
     @NonCommitting
+    @PureWithSideEffects
     protected abstract @Nonnull Identity load(long key) throws DatabaseException, RecoveryException;
+    
+    /* -------------------------------------------------- Identifier Loading -------------------------------------------------- */
+    
+    /**
+     * Loads and returns the identity with the given identifier.
+     */
+    @NonCommitting
+    @PureWithSideEffects
+    protected abstract @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException;
+    
+    /* -------------------------------------------------- Identifier Mapping -------------------------------------------------- */
+    
+    /**
+     * Maps the given address to a new key. Make sure that the identifier is not already mapped!
+     */
+    @NonCommitting
+    @PureWithSideEffects
+    protected abstract @Nonnull Identity map(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException;
+    
+    /* -------------------------------------------------- Identifier Resolution -------------------------------------------------- */
     
     /**
      * Resolves the given identifier into an identity.
@@ -48,22 +69,6 @@ public abstract class IdentifierResolver {
     @Pure
     @NonCommitting
     protected abstract @Nonnull Identity resolve(@Nonnull Identifier identifier) throws ExternalException;
-    
-    /* -------------------------------------------------- Mapping -------------------------------------------------- */
-    
-    /**
-     * Maps the given identifier and returns a syntactic type with that address.
-     * All exceptions are suppressed with an {@link UncheckedException}.
-     */
-    @Pure
-    protected abstract @Nonnull SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier);
-    
-    /**
-     * Maps the given identifier and returns a semantic type with that address.
-     * All exceptions are suppressed with an {@link UncheckedException}.
-     */
-    @Pure
-    protected abstract @Nonnull SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier);
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
@@ -73,6 +78,24 @@ public abstract class IdentifierResolver {
     public static final @Nonnull Configuration<IdentifierResolver> configuration = Configuration.withUnknownProvider();
     
     /* -------------------------------------------------- Expose Access -------------------------------------------------- */
+    
+    /**
+     * This method allows the {@link PseudoIdentifierResolver} to access the identifier loading of the configured provider.
+     */
+    @Pure
+    @NonCommitting
+    protected static @Nullable Identity loadWithProvider(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException {
+        return configuration.get().load(identifier);
+    }
+    
+    /**
+     * This method allows the {@link PseudoIdentifierResolver} to access the identifier mapping of the configured provider.
+     */
+    @Pure
+    @NonCommitting
+    protected static @Nonnull Identity mapWithProvider(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException {
+        return configuration.get().map(category, address);
+    }
     
     /**
      * This method allows the {@link PseudoIdentifierResolver} to access the identifier resolution of the configured provider.

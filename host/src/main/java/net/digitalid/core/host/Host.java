@@ -36,7 +36,7 @@ import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.service.Service;
 
 /**
- * A host stores a {@link KeyPair} and is run by a {@link Server}.
+ * A host stores a {@link KeyPair} and is run by a server.
  * 
  * TODO: Make sure that the host keys get rotated!
  */

@@ -15,6 +15,8 @@ import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.Person;
 import net.digitalid.core.node.ExtendedNode;
 import net.digitalid.core.restrictions.Node;
+import net.digitalid.core.typeset.authentications.FreezableAuthentications;
+import net.digitalid.core.typeset.permissions.FreezableNodePermissions;
 
 /**
  * Contacts have certain {@link FreezableNodePermissions permissions} and {@link FreezableAuthentications authentications}.
