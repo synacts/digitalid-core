@@ -14,12 +14,12 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.annotations.Matching;
 import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.ExternalQuery;
+import net.digitalid.core.unit.annotations.OnHostRecipient;
 
 @Immutable
 @GenerateBuilder

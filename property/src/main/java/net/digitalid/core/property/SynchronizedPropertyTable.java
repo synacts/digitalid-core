@@ -11,12 +11,11 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.property.PersistentPropertyEntry;
 import net.digitalid.database.property.PersistentPropertyTable;
 
-import net.digitalid.core.annotations.type.Loaded;
-import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.subject.CoreSubjectModule;
+import net.digitalid.core.unit.CoreUnit;
 
 /**
  * This factory creates a new property for each concept instance and stores the required converters and methods.
@@ -45,6 +44,6 @@ public interface SynchronizedPropertyTable<@Unspecifiable ENTITY extends Entity<
      */
     @Pure
     @TODO(task = "Generate this here?", date = "2016-11-14", author = Author.KASPAR_ETTER)
-    public @Nonnull @Loaded SemanticType getActionType();
+    public @Nonnull /* @Loaded */ SemanticType getActionType();
     
 }

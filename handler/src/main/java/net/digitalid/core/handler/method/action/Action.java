@@ -16,7 +16,6 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.storage.Storage;
 
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Auditable;
 import net.digitalid.core.handler.annotations.Matching;
@@ -24,6 +23,7 @@ import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.method.MethodImplementation;
 import net.digitalid.core.handler.reply.ActionReply;
+import net.digitalid.core.unit.annotations.OnHostRecipient;
 
 /**
  * Actions affect the state of a digital identity and are thus always audited.

@@ -13,8 +13,8 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 
-import net.digitalid.core.entity.annotations.OnClient;
 import net.digitalid.core.handler.method.action.InternalAction;
+import net.digitalid.core.unit.annotations.OnClient;
 
 /**
  * This class synchronizes {@link InternalAction internal actions}.

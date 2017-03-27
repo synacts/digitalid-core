@@ -10,11 +10,19 @@
     <artifactId>core-entity</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-identification</artifactId>
+            <artifactId>core-exceptions</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-unit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
     </dependencies>
     
 </project>

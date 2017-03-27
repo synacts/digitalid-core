@@ -17,6 +17,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
+import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.lock.LockNotHeldByCurrentThread;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -31,11 +32,11 @@ import net.digitalid.database.property.value.PersistentValuePropertyEntryBuilder
 import net.digitalid.database.property.value.ReadOnlyPersistentValueProperty;
 import net.digitalid.database.property.value.WritablePersistentValuePropertyImplementation;
 
-import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedProperty;
 import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.synchronizer.Synchronizer;
+import net.digitalid.core.unit.CoreUnit;
 
 /**
  * This synchronized property synchronizes a value across sites.
@@ -57,21 +58,15 @@ public abstract class WritableSynchronizedValueProperty<@Unspecifiable ENTITY ex
     @Impure
     @Override
     @Committing
-    @LockNotHeldByCurrentThread
     public @Capturable @Valid VALUE set(@Captured @Valid VALUE newValue) throws DatabaseException, RecoveryException {
-        lock.lock();
-        try {
-            if (!loaded) { load(false); }
-            final @Valid VALUE oldValue = value;
-            if (!Objects.equals(newValue, oldValue)) {
-                final @Nullable Time oldTime = time;
-                final @Nonnull Time newTime = TimeBuilder.build();
-                Synchronizer.execute(ValuePropertyInternalActionBuilder.withProperty(this).withOldValue(oldValue).withNewValue(newValue).withOldTime(oldTime).withNewTime(newTime).build());
-            }
-            return oldValue;
-        } finally {
-            lock.unlock();
+        final @Nonnull Pair<@Valid VALUE, @Nullable Time> valueWithTimeOfLastModification = getValueWithTimeOfLastModification();
+        final @Valid VALUE oldValue = valueWithTimeOfLastModification.get0();
+        if (!Objects.equals(newValue, oldValue)) {
+            final @Nonnull Time newTime = TimeBuilder.build();
+            final @Nullable Time oldTime = valueWithTimeOfLastModification.get1();
+            Synchronizer.execute(ValuePropertyInternalActionBuilder.withProperty(this).withOldValue(oldValue).withNewValue(newValue).withOldTime(oldTime).withNewTime(newTime).build());
         }
+        return oldValue;
     }
     
     /* -------------------------------------------------- Action -------------------------------------------------- */
@@ -91,6 +86,7 @@ public abstract class WritableSynchronizedValueProperty<@Unspecifiable ENTITY ex
             SQL.insertOrReplace(getTable().getEntryConverter(), entry, getSubject().getUnit());
             this.time = newTime;
             this.value = newValue;
+            this.loaded = true;
             notifyObservers(oldValue, newValue);
         } finally {
             lock.unlock();

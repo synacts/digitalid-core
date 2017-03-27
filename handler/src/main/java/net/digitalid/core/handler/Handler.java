@@ -14,7 +14,6 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.annotations.UnitDependency;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
@@ -22,6 +21,7 @@ import net.digitalid.core.pack.Pack;
 import net.digitalid.core.pack.Packable;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.signature.Signature;
+import net.digitalid.core.unit.annotations.UnitBased;
 
 /**
  * This type provides the features that all handlers share.
@@ -30,7 +30,7 @@ import net.digitalid.core.signature.Signature;
  * @see Reply
  */
 @Immutable
-public interface Handler<@Unspecifiable ENTITY extends Entity<?>> extends UnitDependency, Packable {
+public interface Handler<@Unspecifiable ENTITY extends Entity<?>> extends UnitBased, Packable {
     
     /* -------------------------------------------------- Signature -------------------------------------------------- */
     

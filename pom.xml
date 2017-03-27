@@ -35,6 +35,7 @@
         <module>exceptions</module>
         <module>permissions</module>
         <module>typeset</module>
+        <module>unit</module>
         <module>entity</module>
         <module>service</module>
         <module>subject</module>

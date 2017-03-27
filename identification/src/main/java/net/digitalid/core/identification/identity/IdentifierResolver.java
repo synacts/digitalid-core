@@ -7,8 +7,6 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
@@ -40,7 +38,7 @@ public abstract class IdentifierResolver {
      */
     @NonCommitting
     @PureWithSideEffects
-    protected abstract @Nonnull Identity load(long key) throws DatabaseException, RecoveryException;
+    public abstract @Nonnull Identity load(long key) throws DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- Identifier Loading -------------------------------------------------- */
     
@@ -49,7 +47,7 @@ public abstract class IdentifierResolver {
      */
     @NonCommitting
     @PureWithSideEffects
-    protected abstract @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException;
+    public abstract @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- Identifier Mapping -------------------------------------------------- */
     
@@ -58,7 +56,7 @@ public abstract class IdentifierResolver {
      */
     @NonCommitting
     @PureWithSideEffects
-    protected abstract @Nonnull Identity map(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException;
+    public abstract @Nonnull Identity map(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException;
     
     /* -------------------------------------------------- Identifier Resolution -------------------------------------------------- */
     
@@ -67,7 +65,7 @@ public abstract class IdentifierResolver {
      */
     @Pure
     @NonCommitting
-    protected abstract @Nonnull Identity resolve(@Nonnull Identifier identifier) throws ExternalException;
+    public abstract @Nonnull Identity resolve(@Nonnull Identifier identifier) throws ExternalException;
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
@@ -75,35 +73,6 @@ public abstract class IdentifierResolver {
      * Stores the identifier resolver, which has to be provided by another package.
      */
     public static final @Nonnull Configuration<IdentifierResolver> configuration = Configuration.withUnknownProvider();
-    
-    /* -------------------------------------------------- Expose Access -------------------------------------------------- */
-    
-    /**
-     * This method allows the pseudo identifier resolvers to access the identifier loading of the configured provider.
-     */
-    @Pure
-    @NonCommitting
-    protected static @Nullable Identity loadWithProvider(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException {
-        return configuration.get().load(identifier);
-    }
-    
-    /**
-     * This method allows the pseudo identifier resolvers to access the identifier mapping of the configured provider.
-     */
-    @Pure
-    @NonCommitting
-    protected static @Nonnull Identity mapWithProvider(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException {
-        return configuration.get().map(category, address);
-    }
-    
-    /**
-     * This method allows the pseudo identifier resolvers to access the identifier resolution of the configured provider.
-     */
-    @Pure
-    @NonCommitting
-    protected static @Nonnull Identity resolveWithProvider(@Nonnull Identifier identifier) throws ExternalException {
-        return configuration.get().resolve(identifier);
-    }
     
     /* -------------------------------------------------- Identity Creation -------------------------------------------------- */
     
@@ -180,18 +149,6 @@ public abstract class IdentifierResolver {
             case MOBILE_PERSON: return createMobilePerson(number, address.castTo(MobileIdentifier.class));
             default: throw CaseExceptionBuilder.withVariable("category").withValue(category).build();
         }
-    }
-    
-    /* -------------------------------------------------- Type Loading -------------------------------------------------- */
-    
-    /**
-     * Loads the given type.
-     */
-    @Pure
-    @Deprecated
-    @TODO(task = "Do we need this?", date = "2017-02-27", author = Author.KASPAR_ETTER)
-    protected void load(@Nonnull @NonLoaded Type type) throws ExternalException {
-        type.load();
     }
     
     /* -------------------------------------------------- Identity Relocation -------------------------------------------------- */

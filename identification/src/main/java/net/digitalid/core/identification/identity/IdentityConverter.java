@@ -29,6 +29,8 @@ import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.exceptions.DatabaseException;
+
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identifier.IdentifierConverter;
 
@@ -112,7 +114,7 @@ public abstract class IdentityConverter<@Unspecifiable IDENTITY extends Identity
             final long key = decoder.decodeInteger64();
             try {
                 identity = IdentifierResolver.configuration.get().load(key);
-            } catch (@Nonnull ExternalException exception) {
+            } catch (@Nonnull DatabaseException exception) {
                 throw RecoveryExceptionBuilder.withMessage("A problem occurred while resolving the identity with the key " + key + ".").withCause(exception).build();
             }
         } else if (representation == Representation.EXTERNAL) {

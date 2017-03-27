@@ -35,6 +35,7 @@
         <module>exceptions-java7</module>
         <module>permissions-java7</module>
         <module>typeset-java7</module>
+        <module>unit-java7</module>
         <module>entity-java7</module>
         <module>service-java7</module>
         <module>subject-java7</module>

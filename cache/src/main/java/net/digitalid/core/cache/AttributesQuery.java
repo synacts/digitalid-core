@@ -22,7 +22,6 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.expression.PassiveExpression;
 import net.digitalid.core.handler.annotations.Matching;
@@ -39,6 +38,7 @@ import net.digitalid.core.signature.attribute.AttributeValue;
 import net.digitalid.core.signature.credentials.CredentialsSignature;
 import net.digitalid.core.typeset.ReadOnlyAttributeTypeSet;
 import net.digitalid.core.typeset.permissions.ReadOnlyNodePermissions;
+import net.digitalid.core.unit.annotations.OnHostRecipient;
 
 /**
  * Queries the given attributes from the given subject.

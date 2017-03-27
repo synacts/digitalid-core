@@ -13,9 +13,9 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.handler.method.query.InternalQuery;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
+import net.digitalid.core.unit.annotations.OnHostRecipient;
 
 /**
  * Queries the audit of the given service for the given role.

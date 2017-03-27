@@ -11,7 +11,7 @@ import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.handler.AccountFactory;
+import net.digitalid.core.entity.factories.AccountFactory;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.InternalIdentity;
@@ -66,7 +66,7 @@ public abstract class Account implements Entity<Host> {
     @PureWithSideEffects
     @Initialize(target = AccountFactory.class)
     public static void initializeAccountFactory() {
-        AccountFactory.configuration.set((recipient, subject) -> Account.with(Host.of(recipient), subject.resolve()));
+        AccountFactory.configuration.set((host, identity) -> Account.with((Host) host, identity));
     }
     
 }

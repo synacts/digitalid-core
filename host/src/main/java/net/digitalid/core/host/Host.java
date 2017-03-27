@@ -4,14 +4,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.CallSuper;
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collections.collection.ReadOnlyCollection;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
@@ -21,9 +25,11 @@ import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.transaction.Committing;
+
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.entity.CoreUnit;
+import net.digitalid.core.entity.factories.HostFactory;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
@@ -34,6 +40,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.keychain.PrivateKeyChain;
 import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.service.Service;
+import net.digitalid.core.unit.CoreUnit;
 
 /**
  * A host stores a {@link KeyPair} and is run by a server.
@@ -44,21 +51,6 @@ import net.digitalid.core.service.Service;
 @GenerateBuilder
 @GenerateSubclass
 public abstract class Host extends CoreUnit {
-    
-//    @Pure
-//    @Override
-//    public @Nonnull String getEntityReference() {
-//        return Mapper.REFERENCE;
-//    }
-    
-    /*
-    TODO: Support:
-    services
-    provider
-    tokens
-    members
-    open/close
-    */
     
     /* -------------------------------------------------- Identifier -------------------------------------------------- */
     
@@ -133,7 +125,26 @@ public abstract class Host extends CoreUnit {
     
     /* -------------------------------------------------- Hosts -------------------------------------------------- */
     
+    /**
+     * Maps the identifiers of the hosts that are running on this server to their instances.
+     */
     private static final @Nonnull FreezableMap<@Nonnull HostIdentifier, @Nonnull Host> hosts = FreezableLinkedHashMapBuilder.build();
+    
+    /**
+     * Returns whether the host with the given identifier is running on this server.
+     */
+    @Pure
+    public static boolean exists(@Nonnull HostIdentifier identifier) {
+        return hosts.containsKey(identifier);
+    }
+    
+    /**
+     * Returns all the hosts that are running on this server.
+     */
+    @Pure
+    public static @Nonnull ReadOnlyCollection<@Nonnull Host> getAll() {
+        return hosts.values();
+    }
     
     /**
      * Returns the host with the given identifier.
@@ -141,10 +152,21 @@ public abstract class Host extends CoreUnit {
      * @throws RequestException if there is no host with the given identifier on this server.
      */
     @Pure
-    public static final @Nonnull Host of(@Nonnull HostIdentifier identifier) throws RequestException {
+    public static @Nonnull Host of(@Nonnull HostIdentifier identifier) throws RequestException {
         final @Nullable Host host = hosts.get(identifier);
         if (host == null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.RECIPIENT).withMessage("The host '" + identifier.getString() + "' does not exist on this server.").build(); }
         return host;
+    }
+    
+    /* -------------------------------------------------- Initializer -------------------------------------------------- */
+    
+    /**
+     * Initializes the host factory.
+     */
+    @PureWithSideEffects
+    @Initialize(target = HostFactory.class)
+    public static void initializeHostFactory() {
+        HostFactory.configuration.set(Host::of);
     }
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
@@ -206,6 +228,39 @@ public abstract class Host extends CoreUnit {
     @Pure
     public boolean supports(@Nonnull Service service) {
         return true; // TODO!
+    }
+    
+    /* -------------------------------------------------- Loading -------------------------------------------------- */
+    
+    /**
+     * Loads all hosts with cryptographic keys but without a tables file in the hosts directory.
+     */
+    @Impure
+    @Committing
+    @TODO(task = "Implement this as an initializer?", date = "2017-03-21", author = Author.KASPAR_ETTER)
+    public static void loadHosts() {
+//        // TODO: Remove this special case when the certification mechanism is implemented.
+//        final @Nonnull File digitalid = new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".private.xdf");
+//        if (digitalid.exists() && digitalid.isFile()) {
+//            try {
+//                if (!new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".tables.xdf").exists()) { new Host(HostIdentifier.DIGITALID); }
+//            } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
+//                throw InitializationError.get("Could not load the host configured in the file '" + digitalid.getName() + "'.", exception);
+//            }
+//        }
+//        
+//        final @Nonnull File[] files = Directory.getHostsDirectory().listFiles();
+//        for (final @Nonnull File file : files) {
+//            final @Nonnull String name = file.getName();
+//            if (file.isFile() && name.endsWith(".private.xdf") && !name.equals(HostIdentifier.DIGITALID.getString() + ".private.xdf")) { // TODO: Remove the special case eventually.
+//                try {
+//                    final @Nonnull HostIdentifier identifier = new HostIdentifier(name.substring(0, name.length() - 12));
+//                    if (!new File(Directory.getHostsDirectory().getPath() + File.separator + identifier.getString() + ".tables.xdf").exists()) { new Host(identifier); }
+//                } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
+//                    throw InitializationError.get("Could not load the host configured in the file '" + name + "'.", exception);
+//                }
+//            }
+//        }
     }
     
 }

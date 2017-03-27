@@ -14,11 +14,11 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.annotations.OnClientRecipient;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.handler.Auditable;
 import net.digitalid.core.handler.method.action.ExternalAction;
 import net.digitalid.core.service.Service;
+import net.digitalid.core.unit.annotations.OnClientRecipient;
 
 /**
  * This class models a {@link Reply reply} to an {@link ExternalAction external action}.

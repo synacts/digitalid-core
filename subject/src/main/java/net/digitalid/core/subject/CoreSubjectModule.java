@@ -15,9 +15,9 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.subject.SubjectModule;
 
-import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.service.Service;
+import net.digitalid.core.unit.CoreUnit;
 
 /**
  * Objects of this class store (static) information about a {@link CoreSubject core subject}.

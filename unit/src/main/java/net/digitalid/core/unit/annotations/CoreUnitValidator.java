@@ -1,4 +1,4 @@
-package net.digitalid.core.entity.annotations;
+package net.digitalid.core.unit.annotations;
 
 import javax.annotation.Nonnull;
 
@@ -7,15 +7,17 @@ import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 import net.digitalid.utility.validation.validator.ValueAnnotationValidator;
 
+import net.digitalid.core.unit.CoreUnit;
+
 /**
- * This class declares the target types for unit-dependency annotations.
+ * This class declares the target types for core-unit annotations.
  */
 @Stateless
-public abstract class UnitDependencyValidator implements ValueAnnotationValidator {
+public abstract class CoreUnitValidator implements ValueAnnotationValidator {
     
     /* -------------------------------------------------- Target Types -------------------------------------------------- */
     
-    private static final @Nonnull FiniteIterable<@Nonnull Class<?>> targetTypes = FiniteIterable.of(UnitDependency.class);
+    private static final @Nonnull FiniteIterable<@Nonnull Class<?>> targetTypes = FiniteIterable.of(CoreUnit.class);
     
     @Pure
     @Override

@@ -63,7 +63,7 @@ abstract class Options {
      */
     @Impure
     private static @Nonnull Host selectHost() throws EscapeException {
-        final @Nonnull ReadOnlyList<Host> hosts = FreezableArrayList.withElementsOf((Collection<? extends Host>) Server.getHosts()).freeze();
+        final @Nonnull ReadOnlyList<Host> hosts = FreezableArrayList.withElementsOf((Collection<? extends Host>) Host.getAll()).freeze();
         if (!hosts.isEmpty()) {
             Console.writeLine("Please select one of the following hosts:");
             Console.writeLine("- 0: [Escape]");
@@ -131,10 +131,10 @@ abstract class Options {
         @Committing
         public void execute() {
             Console.writeLine("The following hosts are running on this server:");
-            for (final @Nonnull Host host : Server.getHosts()) {
+            for (final @Nonnull Host host : Host.getAll()) {
                 Console.writeLine("- " + host.getIdentifier().getString());
             }
-            if (Server.getHosts().isEmpty()) { Console.writeLine("(None)"); }
+            if (Host.getAll().isEmpty()) { Console.writeLine("(None)"); }
         }
         
     }

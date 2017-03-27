@@ -1,4 +1,4 @@
-package net.digitalid.core.entity.annotations;
+package net.digitalid.core.unit.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -13,23 +13,25 @@ import javax.lang.model.element.Element;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.processing.utility.TypeImporter;
-import net.digitalid.utility.validation.annotations.meta.ValueValidator;
+import net.digitalid.utility.validation.annotations.meta.MethodValidator;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 import net.digitalid.utility.validation.contract.Contract;
+import net.digitalid.utility.validation.validator.MethodAnnotationValidator;
 
 /**
- * This annotation indicates that the annotated object is {@link UnitDependency#isOnClient() on a client}.
+ * This annotation indicates that a method may only be called {@link UnitBased#isOnHost() on a host}.
  * 
  * @see OnHost
- * @see OnHostRecipient
+ * @see OnClient
  * @see OnClientRecipient
  */
 @Documented
-@Target({ElementType.TYPE_USE, ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@ValueValidator(OnClient.Validator.class)
-public @interface OnClient {
+@MethodValidator(OnHostRecipient.Validator.class)
+public @interface OnHostRecipient {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
@@ -37,12 +39,18 @@ public @interface OnClient {
      * This class checks the use of and generates the contract for the surrounding annotation.
      */
     @Stateless
-    public static class Validator extends UnitDependencyValidator {
+    public static class Validator implements MethodAnnotationValidator {
+        
+        @Pure
+        @Override
+        public @Nonnull Class<?> getReceiverType() {
+            return UnitBased.class;
+        }
         
         @Pure
         @Override
         public @Nonnull Contract generateContract(@Nonnull Element element, @Nonnull AnnotationMirror annotationMirror, @NonCaptured @Modified @Nonnull TypeImporter typeImporter) {
-            return Contract.with("# == null || #.isOnClient()", "The # has to be null or be on a client.", element);
+            return Contract.with("isOnHost()", "The method " + Quotes.inSingle(element.getSimpleName().toString()) + " may only be called on a host.");
         }
         
     }

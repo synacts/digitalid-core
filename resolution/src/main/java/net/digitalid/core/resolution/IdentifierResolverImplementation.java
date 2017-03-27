@@ -25,6 +25,7 @@ import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
+import net.digitalid.core.host.Host;
 import net.digitalid.core.identification.identifier.EmailIdentifier;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
@@ -45,7 +46,6 @@ import net.digitalid.core.resolution.tables.IdentifierEntryConverter;
 import net.digitalid.core.resolution.tables.IdentityEntry;
 import net.digitalid.core.resolution.tables.IdentityEntryBuilder;
 import net.digitalid.core.resolution.tables.IdentityEntryConverter;
-import net.digitalid.core.server.Server;
 
 /**
  * This class implements the {@link IdentifierResolver}.
@@ -76,7 +76,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     @Override
     @NonCommitting
     @PureWithSideEffects
-    protected @Nonnull Identity load(long key) throws DatabaseException, RecoveryException {
+    public @Nonnull Identity load(long key) throws DatabaseException, RecoveryException {
         @Nullable Identity identity = mapper.getIdentity(key);
         if (identity == null) {
             final @Nonnull IdentityEntry entry = SQL.selectOne(IdentityEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key", Unit.DEFAULT);
@@ -91,7 +91,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     @Override
     @NonCommitting
     @PureWithSideEffects
-    protected @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException {
+    public @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException {
         @Nullable Identity identity = mapper.getIdentity(identifier);
         if (identity == null) {
             final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, IdentifierConverter.INSTANCE, identifier, "identifier", Unit.DEFAULT);
@@ -107,7 +107,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     @NonCommitting
     @PureWithSideEffects
     @TODO(task = "Instead of a random key, we could/should use an auto-incrementing column in the database.", date = "2017-02-26", author = Author.KASPAR_ETTER)
-    protected @Nonnull Identity map(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException {
+    public @Nonnull Identity map(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException {
         final long key = ThreadLocalRandom.current().nextLong();
         
         final @Nonnull IdentityEntry identityEntry = IdentityEntryBuilder.withKey(key).withCategory(category).withAddress(address).build();
@@ -135,7 +135,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
             } else if (identifier instanceof InternalNonHostIdentifier) {
                 final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) identifier;
                 final @Nonnull HostIdentifier hostIdentifier = internalNonHostIdentifier.getHostIdentifier();
-                if (Server.hasHost(hostIdentifier)) {
+                if (Host.exists(hostIdentifier)) {
                     Log.verbose("The identifier $ is hosted on this server and is therefore not queried.", identifier.getString());
                     throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identifier '" + identifier.getString() + "' is hosted on this server and is therefore not queried.").build();
                 } else if (hostIdentifier.equals(HostIdentifier.DIGITALID)) {

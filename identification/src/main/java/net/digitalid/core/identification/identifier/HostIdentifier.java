@@ -17,6 +17,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.identification.identity.IdentifierResolver;
 
 /**
  * This interface models host identifiers.
@@ -61,7 +62,7 @@ public abstract class HostIdentifier extends InternalIdentifier {
     @Override
     @NonCommitting
     public @Nonnull HostIdentity resolve() throws ExternalException {
-        return PseudoIdentifierResolver.resolveWithProvider(this).castTo(HostIdentity.class);
+        return IdentifierResolver.configuration.get().resolve(this).castTo(HostIdentity.class);
     }
     
     /* -------------------------------------------------- Host Identifier -------------------------------------------------- */

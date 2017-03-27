@@ -11,10 +11,10 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.subject.Subject;
 
-import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.subject.annotations.GenerateCoreSubjectModule;
+import net.digitalid.core.unit.CoreUnit;
 
 /**
  * This class models a core subject in the {@link Database database}.

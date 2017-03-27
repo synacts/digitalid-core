@@ -30,7 +30,6 @@ import net.digitalid.core.cache.exceptions.AttributeNotFoundExceptionBuilder;
 import net.digitalid.core.cache.exceptions.CertificateNotFoundException;
 import net.digitalid.core.cache.exceptions.CertificateNotFoundExceptionBuilder;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.annotations.OnClient;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
@@ -39,6 +38,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.signature.attribute.AttributeValue;
+import net.digitalid.core.unit.annotations.OnClient;
 
 /**
  * This class caches the {@link AttributeValue attribute values} of {@link Identity identities} for the attribute-specific {@link SemanticType#getCachingPeriod() caching period}.

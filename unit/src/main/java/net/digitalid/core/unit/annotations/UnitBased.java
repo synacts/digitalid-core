@@ -1,22 +1,19 @@
-package net.digitalid.core.entity.annotations;
+package net.digitalid.core.unit.annotations;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.entity.Entity;
-
 /**
- * This interface allows to use annotations on unit-dependent objects.
+ * This interface allows to use annotations on unit-based objects.
  * 
- * @see Entity
  * @see OnHost
  * @see OnClient
  * @see OnHostRecipient
  * @see OnClientRecipient
  */
 @Immutable
-public interface UnitDependency extends RootInterface {
+public interface UnitBased extends RootInterface {
     
     /**
      * Returns whether this object is on a host.

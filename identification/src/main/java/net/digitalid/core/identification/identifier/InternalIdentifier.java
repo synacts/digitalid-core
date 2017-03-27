@@ -15,6 +15,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalIdentity;
 
 /**
@@ -78,7 +79,7 @@ public abstract class InternalIdentifier extends RootClass implements Identifier
     @NonCommitting
     public boolean exists() {
         try {
-            PseudoIdentifierResolver.resolveWithProvider(this);
+            IdentifierResolver.configuration.get().resolve(this);
             return true;
         } catch (@Nonnull ExternalException exception) {
             return false;

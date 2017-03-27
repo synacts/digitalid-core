@@ -12,8 +12,6 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.entity.annotations.OnClientRecipient;
-import net.digitalid.core.entity.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
@@ -27,6 +25,8 @@ import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.credentials.CredentialsSignature;
+import net.digitalid.core.unit.annotations.OnClientRecipient;
+import net.digitalid.core.unit.annotations.OnHostRecipient;
 
 /**
  * Internal actions can only be sent by clients and can usually be {@link #reverseOnClient() reversed}.

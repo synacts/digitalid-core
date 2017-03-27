@@ -6,20 +6,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
-import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.collection.ReadOnlyCollection;
-import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
-import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.console.Console;
-import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.logging.Level;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
 
-import net.digitalid.core.host.Host;
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.packet.Request;
@@ -29,81 +23,6 @@ import net.digitalid.core.packet.Request;
  */
 @Utility
 public abstract class Server {
-    
-    /* -------------------------------------------------- Hosts -------------------------------------------------- */
-    
-    /**
-     * Maps the identifiers of the hosts that are running on this server to their instances.
-     */
-    private static final @Nonnull FreezableMap<HostIdentifier, Host> hosts = FreezableLinkedHashMapBuilder.build();
-    
-    /**
-     * Returns whether the host with the given identifier is running on this server.
-     */
-    @Pure
-    public static boolean hasHost(@Nonnull HostIdentifier hostIdentifier) {
-        return hosts.containsKey(hostIdentifier);
-    }
-    
-    /**
-     * Returns the host with the given identifier that is running on this server.
-     * 
-     * @require hasHost(identifier) : "The host is running on this server.";
-     */
-    @Pure
-    public static @Nonnull Host getHost(@Nonnull HostIdentifier hostIdentifier) {
-        Require.that(hasHost(hostIdentifier)).orThrow("The host is running on this server.");
-        
-        return hosts.get(hostIdentifier);
-    }
-    
-    /**
-     * Returns the hosts that are running on this server.
-     */
-    @Pure
-    public static @Nonnull ReadOnlyCollection<@Nonnull Host> getHosts() {
-        return hosts.values();
-    }
-    
-    /**
-     * Adds the given host to the list of running hosts.
-     */
-    @Impure
-    public static void addHost(@Nonnull Host host) {
-        hosts.put(host.getIdentifier(), host);
-    }
-    
-    /**
-     * Loads all hosts with cryptographic keys but without a tables file in the hosts directory.
-     */
-    @Impure
-    @Committing
-    private static void loadHosts() {
-        // TODO:
-        
-//        // TODO: Remove this special case when the certification mechanism is implemented.
-//        final @Nonnull File digitalid = new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".private.xdf");
-//        if (digitalid.exists() && digitalid.isFile()) {
-//            try {
-//                if (!new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".tables.xdf").exists()) { new Host(HostIdentifier.DIGITALID); }
-//            } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-//                throw InitializationError.get("Could not load the host configured in the file '" + digitalid.getName() + "'.", exception);
-//            }
-//        }
-//        
-//        final @Nonnull File[] files = Directory.getHostsDirectory().listFiles();
-//        for (final @Nonnull File file : files) {
-//            final @Nonnull String name = file.getName();
-//            if (file.isFile() && name.endsWith(".private.xdf") && !name.equals(HostIdentifier.DIGITALID.getString() + ".private.xdf")) { // TODO: Remove the special case eventually.
-//                try {
-//                    final @Nonnull HostIdentifier identifier = new HostIdentifier(name.substring(0, name.length() - 12));
-//                    if (!new File(Directory.getHostsDirectory().getPath() + File.separator + identifier.getString() + ".tables.xdf").exists()) { new Host(identifier); }
-//                } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-//                    throw InitializationError.get("Could not load the host configured in the file '" + name + "'.", exception);
-//                }
-//            }
-//        }
-    }
     
     /* -------------------------------------------------- Services -------------------------------------------------- */
     
@@ -141,7 +60,6 @@ public abstract class Server {
     @Committing
     public static void start() throws IOException {
         loadServices();
-        loadHosts();
         
         listener = ListenerBuilder.build();
         listener.start();
@@ -163,7 +81,6 @@ public abstract class Server {
             listener.shutDown();
         }
 //        Client.stop();
-        hosts.clear();
     }
     
     /**
@@ -226,7 +143,7 @@ public abstract class Server {
                 if (HostIdentifier.isValid(argument)) {
                     Console.writeLine("Creating a host with the identifier $, which can take several minutes.", argument);
                     try {
-                        addHost(HostBuilder.withIdentifier(HostIdentifier.with(argument)).build());
+                        HostBuilder.withIdentifier(HostIdentifier.with(argument)).build();
                     } catch (@Nonnull ExternalException exception) {
                         Console.log(Level.FATAL, "Failed to create a new host with the identifier $.", exception, argument);
                         shutDown();

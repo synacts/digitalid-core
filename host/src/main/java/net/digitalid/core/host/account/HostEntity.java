@@ -7,9 +7,9 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.unit.CoreUnit;
 
 /**
  * This interface models a host entity.

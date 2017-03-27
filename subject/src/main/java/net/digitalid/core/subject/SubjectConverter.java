@@ -27,8 +27,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.property.PersistentProperty;
 import net.digitalid.database.subject.SubjectModule;
 
-import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
+import net.digitalid.core.unit.CoreUnit;
 
 /**
  * This class converts a {@link CoreSubject core subject} with its {@link Entity entity} and is used as the {@link SubjectModule#getSubjectConverter() subject converter} of {@link PersistentProperty persistent properties}.

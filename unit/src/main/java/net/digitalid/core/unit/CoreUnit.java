@@ -1,4 +1,4 @@
-package net.digitalid.core.entity;
+package net.digitalid.core.unit;
 
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;

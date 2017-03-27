@@ -31,11 +31,11 @@ import net.digitalid.database.property.map.PersistentMapPropertyEntryBuilder;
 import net.digitalid.database.property.map.ReadOnlyPersistentMapProperty;
 import net.digitalid.database.property.map.WritablePersistentMapPropertyImplementation;
 
-import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedProperty;
 import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.synchronizer.Synchronizer;
+import net.digitalid.core.unit.CoreUnit;
 
 /**
  * This synchronized property synchronizes a value across sites.
@@ -66,39 +66,25 @@ public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY exte
     @Impure
     @Override
     @Committing
-    @LockNotHeldByCurrentThread
     public boolean add(@Captured @Nonnull @Valid("key") MAP_KEY key, @Captured @Nonnull @Valid MAP_VALUE value) throws DatabaseException, RecoveryException {
-        lock.lock();
-        try {
-            if (!loaded) { load(false); }
-            if (getMap().containsKey(key)) {
-                return false;
-            } else {
-                Synchronizer.execute(MapPropertyInternalActionBuilder.withProperty(this).withKey(key).withValue(value).withAdded(true).build());
-                return true;
-            }
-        } finally {
-            lock.unlock();
+        if (get().containsKey(key)) {
+            return false;
+        } else {
+            Synchronizer.execute(MapPropertyInternalActionBuilder.withProperty(this).withKey(key).withValue(value).withAdded(true).build());
+            return true;
         }
     }
     
     @Impure
     @Override
     @Committing
-    @LockNotHeldByCurrentThread
     public @Capturable @Nullable @Valid MAP_VALUE remove(@NonCaptured @Unmodified @Nonnull @Valid("key") MAP_KEY key) throws DatabaseException, RecoveryException {
-        lock.lock();
-        try {
-            if (!loaded) { load(false); }
-            if (getMap().containsKey(key)) {
-                final @Nullable @Valid MAP_VALUE value = getMap().get(key);
-                Synchronizer.execute(MapPropertyInternalActionBuilder.withProperty(this).withKey(key).withValue(value).withAdded(false).build());
-                return value;
-            } else {
-                return null;
-            }
-        } finally {
-            lock.unlock();
+        if (get().containsKey(key)) {
+            final @Nullable @Valid MAP_VALUE value = getMap().get(key);
+            Synchronizer.execute(MapPropertyInternalActionBuilder.withProperty(this).withKey(key).withValue(value).withAdded(false).build());
+            return value;
+        } else {
+            return null;
         }
     }
     

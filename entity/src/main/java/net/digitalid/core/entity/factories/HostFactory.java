@@ -1,52 +1,54 @@
-package net.digitalid.core.handler;
+package net.digitalid.core.entity.factories;
 
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Functional;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.annotations.OnHost;
+import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.identification.identifier.InternalIdentifier;
+import net.digitalid.core.unit.CoreUnit;
+import net.digitalid.core.unit.annotations.IsHost;
 
 /**
- * The account factory creates an account with a given internal identifier.
+ * The host factory returns the host with the given host identifier.
  */
 @Stateless
 @Functional
-public interface AccountFactory {
+public interface HostFactory {
     
     /* -------------------------------------------------- Interface -------------------------------------------------- */
     
     /**
-     * Returns an account on the given recipient for the given subject.
+     * Returns the host with the given identifier.
+     * 
+     * @throws RequestException if there is no host with the given identifier on this server.
      */
     @Pure
-    @NonCommitting
-    public @Nonnull @OnHost Entity<?> getAccount(@Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws ExternalException;
+    public @Nonnull @IsHost CoreUnit getHost(@Nonnull HostIdentifier identifier) throws RequestException;
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
     /**
      * Stores the account factory, which has to be provided by the host package.
      */
-    public static final @Nonnull Configuration<AccountFactory> configuration = Configuration.withUnknownProvider();
+    public static final @Nonnull Configuration<HostFactory> configuration = Configuration.withUnknownProvider();
     
     /* -------------------------------------------------- Static Access -------------------------------------------------- */
     
     /**
-     * Returns an account on the given recipient for the given subject.
+     * Returns the host with the given identifier.
+     * 
+     * @throws RequestException if there is no host with the given identifier on this server.
      */
     @Pure
     @NonCommitting
-    public static @Nonnull @OnHost Entity<?> create(@Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws ExternalException {
-        return configuration.get().getAccount(recipient, subject);
+    public static @Nonnull @IsHost CoreUnit create(@Nonnull HostIdentifier identifier) throws RequestException {
+        return configuration.get().getHost(identifier);
     }
     
 }

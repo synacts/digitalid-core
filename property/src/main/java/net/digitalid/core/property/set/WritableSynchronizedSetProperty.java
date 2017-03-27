@@ -32,11 +32,11 @@ import net.digitalid.database.property.set.PersistentSetPropertyEntryBuilder;
 import net.digitalid.database.property.set.ReadOnlyPersistentSetProperty;
 import net.digitalid.database.property.set.WritablePersistentSetPropertyImplementation;
 
-import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.SynchronizedProperty;
 import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.synchronizer.Synchronizer;
+import net.digitalid.core.unit.CoreUnit;
 
 /**
  * This synchronized property synchronizes a value across sites.
@@ -67,38 +67,24 @@ public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY exte
     @Impure
     @Override
     @Committing
-    @LockNotHeldByCurrentThread
     public boolean add(@Captured @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
-        lock.lock();
-        try {
-            if (!loaded) { load(false); }
-            if (getSet().contains(value)) {
-                return false;
-            } else {
-                Synchronizer.execute(SetPropertyInternalActionBuilder.withProperty(this).withValue(value).withAdded(true).build());
-                return true;
-            }
-        } finally {
-            lock.unlock();
+        if (get().contains(value)) {
+            return false;
+        } else {
+            Synchronizer.execute(SetPropertyInternalActionBuilder.withProperty(this).withValue(value).withAdded(true).build());
+            return true;
         }
     }
     
     @Impure
     @Override
     @Committing
-    @LockNotHeldByCurrentThread
     public boolean remove(@NonCaptured @Unmodified @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
-        lock.lock();
-        try {
-            if (!loaded) { load(false); }
-            if (getSet().contains(value)) {
-                Synchronizer.execute(SetPropertyInternalActionBuilder.withProperty(this).withValue(value).withAdded(false).build());
-                return true;
-            } else {
-                return false;
-            }
-        } finally {
-            lock.unlock();
+        if (get().contains(value)) {
+            Synchronizer.execute(SetPropertyInternalActionBuilder.withProperty(this).withValue(value).withAdded(false).build());
+            return true;
+        } else {
+            return false;
         }
     }
     

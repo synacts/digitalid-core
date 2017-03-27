@@ -28,8 +28,8 @@ import net.digitalid.core.client.Client;
 import net.digitalid.core.clientagent.ClientAgent;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.annotations.OnClientRecipient;
-import net.digitalid.core.entity.annotations.OnHostRecipient;
+import net.digitalid.core.unit.annotations.OnClientRecipient;
+import net.digitalid.core.unit.annotations.OnHostRecipient;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
@@ -41,15 +41,16 @@ import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.action.InternalAction;
 import net.digitalid.core.handler.reply.ActionReply;
+import net.digitalid.core.host.Host;
 import net.digitalid.core.host.account.NonHostAccount;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.node.context.Context;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.restrictions.RestrictionsBuilder;
-import net.digitalid.core.server.Server;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.client.ClientSignature;
@@ -136,8 +137,6 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
     
     /**
      * Creates the root context and the client agent for the given entity.
-     * 
-     * @param entity the entity which is to be initialized.
      */
     @NonCommitting
     @PureWithSideEffects
@@ -157,12 +156,12 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
     @PureWithSideEffects
     @MethodHasBeenReceived
     public @Nullable @Matching ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
-        if (PseudoIdentifierResolver.loadWithProvider(getSubject()) != null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("An account with the identifier " + getSubject() + " already exists.").build(); }
+        if (IdentifierResolver.configuration.get().load(getSubject()) != null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("An account with the identifier " + getSubject() + " already exists.").build(); }
         
         // TODO: Include the resctriction mechanisms like the tokens.
         
-        final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) PseudoIdentifierResolver.mapWithProvider(getCategory(), getSubject());
-        final @Nonnull NonHostAccount account = NonHostAccount.with(Server.getHost(getSubject().getHostIdentifier()), identity);
+        final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) IdentifierResolver.configuration.get().map(getCategory(), getSubject());
+        final @Nonnull NonHostAccount account = NonHostAccount.with(Host.of(getSubject().getHostIdentifier()), identity);
         initialize(account);
         return null;
     }

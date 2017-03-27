@@ -14,6 +14,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.Type;
 
@@ -62,7 +63,7 @@ public abstract class InternalNonHostIdentifier extends InternalIdentifier imple
     @Override
     @NonCommitting
     public @Nonnull InternalNonHostIdentity resolve() throws ExternalException {
-        final @Nonnull InternalNonHostIdentity identity = PseudoIdentifierResolver.resolveWithProvider(this).castTo(InternalNonHostIdentity.class);
+        final @Nonnull InternalNonHostIdentity identity = IdentifierResolver.configuration.get().resolve(this).castTo(InternalNonHostIdentity.class);
         // If the returned identity is a type, its fields need to be loaded from the type's attributes.
         if (identity instanceof Type) { ((Type) identity).ensureLoaded(); }
         return identity;

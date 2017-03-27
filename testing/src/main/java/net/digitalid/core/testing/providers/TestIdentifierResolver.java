@@ -41,9 +41,7 @@ public class TestIdentifierResolver extends IdentifierResolver {
     @Override
     public @Nonnull Identity load(long key) throws DatabaseException {
         @Nullable Identity identity = keys.get(key);
-        if (identity == null) {
-            throw DatabaseExceptionBuilder.withCause(new SQLException("There exists no identity with the key " + key + ".")).build();
-        }
+        if (identity == null) { throw DatabaseExceptionBuilder.withCause(new SQLException("There exists no identity with the key " + key + ".")).build(); }
         return identity;
     }
     
@@ -54,7 +52,7 @@ public class TestIdentifierResolver extends IdentifierResolver {
     @Override
     @NonCommitting
     @PureWithSideEffects
-    protected @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException {
+    public @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException {
         return identifiers.get(identifier);
     }
     
@@ -63,7 +61,7 @@ public class TestIdentifierResolver extends IdentifierResolver {
     @Override
     @NonCommitting
     @PureWithSideEffects
-    protected @Nonnull Identity map(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException {
+    public @Nonnull Identity map(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException {
         final long key = ThreadLocalRandom.current().nextLong();
         final @Nonnull Identity identity = createIdentity(category, key, address);
         identifiers.put(address, identity);

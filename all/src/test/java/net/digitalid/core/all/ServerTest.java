@@ -10,7 +10,6 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Log;
 
-import net.digitalid.core.account.AccountOpenConverter;
 import net.digitalid.core.all.handlers.TestQuery;
 import net.digitalid.core.all.handlers.TestQueryBuilder;
 import net.digitalid.core.all.handlers.TestQueryConverter;
@@ -26,7 +25,6 @@ import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.packet.Request;
-import net.digitalid.core.resolution.handlers.IdentityQueryConverter;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.testing.CoreTest;
 import net.digitalid.core.testing.providers.TestPrivateKeyRetrieverBuilder;
@@ -56,6 +54,15 @@ public class ServerTest extends CoreTest {
         Request.TIMEOUT.set(900000); // 15 minutes
     }
     
+    /**
+     * Initializes the method index.
+     */
+    @PureWithSideEffects
+    @Initialize(target = MethodIndex.class)
+    public static void initializeMethodIndex() {
+        MethodIndex.add(TestQueryConverter.INSTANCE);
+    }
+    
     /* -------------------------------------------------- Setup -------------------------------------------------- */
     
     protected static @Nonnull HostIdentifier hostIdentifier;
@@ -69,14 +76,9 @@ public class ServerTest extends CoreTest {
         PublicKeyRetriever.configuration.set(TestPublicKeyRetrieverBuilder.withKeyPair(keyPair).build());
         PrivateKeyRetriever.configuration.set(TestPrivateKeyRetrieverBuilder.withKeyPair(keyPair).build());
         
-        MethodIndex.add(TestQueryConverter.INSTANCE);
-        MethodIndex.add(IdentityQueryConverter.INSTANCE);
-        MethodIndex.add(AccountOpenConverter.INSTANCE);
-        
         Server.start();
         hostIdentifier = HostIdentifier.with("test.digitalid.net");
         host = HostBuilder.withIdentifier(hostIdentifier).build();
-        Server.addHost(host);
     }
     
     @AfterClass

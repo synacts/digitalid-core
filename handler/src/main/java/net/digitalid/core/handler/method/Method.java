@@ -33,10 +33,10 @@ import net.digitalid.core.compression.CompressionBuilder;
 import net.digitalid.core.encryption.RequestEncryption;
 import net.digitalid.core.encryption.RequestEncryptionBuilder;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.annotations.OnHostRecipient;
+import net.digitalid.core.entity.factories.AccountFactory;
+import net.digitalid.core.entity.factories.HostFactory;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.response.DeclarationExceptionBuilder;
-import net.digitalid.core.handler.AccountFactory;
 import net.digitalid.core.handler.Handler;
 import net.digitalid.core.handler.annotations.Matching;
 import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
@@ -56,6 +56,7 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.SignatureBuilder;
 import net.digitalid.core.signature.host.HostSignature;
+import net.digitalid.core.unit.annotations.OnHostRecipient;
 
 /**
  * This type implements a remote method invocation mechanism.
@@ -91,7 +92,7 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
     @TODO(task = "Throw the external exception as soon as the derive annotation supports it.", date = "2017-02-07", author = Author.KASPAR_ETTER)
     public default @Nonnull ENTITY deriveEntity(@Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) {
         try {
-            return (ENTITY) AccountFactory.create(recipient, subject);
+            return (ENTITY) AccountFactory.create(HostFactory.create(recipient), subject.resolve());
         } catch (ExternalException exception) {
             throw UncheckedExceptionBuilder.withCause(exception).build();
         }

@@ -3,12 +3,16 @@ package net.digitalid.core.client.role;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.client.Client;
 import net.digitalid.core.identification.annotations.RoleType;
@@ -19,7 +23,7 @@ import net.digitalid.core.outgoingrole.OutgoingRole;
  * This class models a non-native role on the client.
  */
 @Immutable
-// TODO: @GenerateSubclass
+@GenerateSubclass
 @GenerateConverter
 public abstract class NonNativeRole extends Role {
     
@@ -51,9 +55,10 @@ public abstract class NonNativeRole extends Role {
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull NonNativeRole with(@Nonnull Client client, long key) /*throws DatabaseException */{
-        // TODO: Think about how to recover roles.
-        throw new UnsupportedOperationException();
+    public static @Nonnull NonNativeRole with(@Nonnull Client unit, long key) throws DatabaseException, RecoveryException {
+        final @Nonnull Role role = Role.with(unit, key);
+        if (role instanceof NonNativeRole) { return (NonNativeRole) role; }
+        else { throw RecoveryExceptionBuilder.withMessage("The key " + key + " does not denote a non-native role.").build(); }
     }
     
     /* -------------------------------------------------- Indexing -------------------------------------------------- */

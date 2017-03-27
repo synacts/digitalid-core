@@ -4,6 +4,9 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
+import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Provided;
@@ -11,12 +14,17 @@ import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.unit.Unit;
 
-import net.digitalid.core.entity.annotations.UnitDependency;
+import net.digitalid.core.entity.factories.AccountFactory;
+import net.digitalid.core.entity.factories.RoleFactory;
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.unit.CoreUnit;
+import net.digitalid.core.unit.annotations.UnitBased;
 
 /**
  * An entity captures the {@link Unit unit} and the {@link Identity identity} of a core subject or handler.
@@ -25,7 +33,7 @@ import net.digitalid.core.identification.identity.InternalIdentity;
  */
 @Immutable
 @GenerateConverter
-public interface Entity<@Unspecifiable UNIT extends CoreUnit> extends Subject<UNIT>, UnitDependency {
+public interface Entity<@Unspecifiable UNIT extends CoreUnit> extends Subject<UNIT>, UnitBased {
     
     /* -------------------------------------------------- Unit -------------------------------------------------- */
     
@@ -70,16 +78,16 @@ public interface Entity<@Unspecifiable UNIT extends CoreUnit> extends Subject<UN
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull Entity<?> with(@Nonnull CoreUnit unit, long key) /* throws DatabaseException */ {
-        // TODO: Think about how to recover entities. Maybe make it configurable/injectable?
-//        if (unit instanceof Host) {
-//            return Account.getNotNull((Host) unit, resultSet, columnIndex);
-//        } else if (unit instanceof Client) {
-//            return Role.getNotNull((Client) unit, resultSet, columnIndex);
-//        } else {
-//            throw UnexpectedValueException.with("A unit is either a host or a client.");
-//        }
-        throw new RuntimeException();
+    public static @Nonnull Entity<?> with(@Nonnull CoreUnit unit, long key) throws DatabaseException, RecoveryException {
+        if (unit.isHost()) {
+            final @Nonnull Identity identity = IdentifierResolver.configuration.get().load(key);
+            if (identity instanceof InternalIdentity) { return AccountFactory.create(unit, (InternalIdentity) identity); }
+            else { throw RecoveryExceptionBuilder.withMessage("The key " + key + " does not belong to an internal identity.").build(); }
+        } else if (unit.isClient()) {
+            return RoleFactory.create(unit, key);
+        } else {
+            throw CaseExceptionBuilder.withVariable("unit").withValue(unit).build();
+        }
     }
     
     /* -------------------------------------------------- Key Converters -------------------------------------------------- */

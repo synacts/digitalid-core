@@ -1,4 +1,4 @@
-package net.digitalid.core.entity.annotations;
+package net.digitalid.core.unit.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -13,25 +13,23 @@ import javax.lang.model.element.Element;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
-import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.processing.utility.TypeImporter;
-import net.digitalid.utility.validation.annotations.meta.MethodValidator;
+import net.digitalid.utility.validation.annotations.meta.ValueValidator;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 import net.digitalid.utility.validation.contract.Contract;
-import net.digitalid.utility.validation.validator.MethodAnnotationValidator;
+
+import net.digitalid.core.unit.CoreUnit;
 
 /**
- * This annotation indicates that a method may only be called {@link UnitDependency#isOnHost() on a host}.
+ * This annotation indicates that the annotated object {@link CoreUnit#isHost() is a host}.
  * 
- * @see OnHost
- * @see OnClient
- * @see OnClientRecipient
+ * @see IsClient
  */
 @Documented
-@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@MethodValidator(OnHostRecipient.Validator.class)
-public @interface OnHostRecipient {
+@ValueValidator(IsHost.Validator.class)
+@Target({ElementType.TYPE_USE, ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD, ElementType.LOCAL_VARIABLE})
+public @interface IsHost {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
@@ -39,18 +37,12 @@ public @interface OnHostRecipient {
      * This class checks the use of and generates the contract for the surrounding annotation.
      */
     @Stateless
-    public static class Validator implements MethodAnnotationValidator {
-        
-        @Pure
-        @Override
-        public @Nonnull Class<?> getReceiverType() {
-            return UnitDependency.class;
-        }
+    public static class Validator extends CoreUnitValidator {
         
         @Pure
         @Override
         public @Nonnull Contract generateContract(@Nonnull Element element, @Nonnull AnnotationMirror annotationMirror, @NonCaptured @Modified @Nonnull TypeImporter typeImporter) {
-            return Contract.with("isOnHost()", "The method " + Quotes.inSingle(element.getSimpleName().toString()) + " may only be called on a host.");
+            return Contract.with("# == null || #.isHost()", "The # has to be null or be a host.", element);
         }
         
     }

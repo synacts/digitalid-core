@@ -3,19 +3,22 @@ package net.digitalid.core.client.role;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
-import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.entity.factories.RoleFactory;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 
 /**
@@ -46,18 +49,38 @@ public abstract class Role extends RootClass implements NonHostEntity<Client> {
     /* -------------------------------------------------- Agent -------------------------------------------------- */
     
     /**
+     * Returns the key of the agent.
+     */
+    @Pure
+    @NonRepresentative
+    public abstract long getAgentKey();
+    
+    /**
      * Returns the agent of this role.
      */
     @Pure
     @NonRepresentative
     public abstract @Nonnull Agent getAgent();
     
-    /**
-     * Returns the key of the agent.
-     */
+    /* -------------------------------------------------- Recovery -------------------------------------------------- */
+    
     @Pure
-    @NonRepresentative
-    public abstract long getAgentKey();
+    @Recover
+    @NonCommitting
+    public static @Nonnull Role with(@Nonnull Client unit, long key) throws DatabaseException, RecoveryException {
+        return RoleModule.load(unit, key);
+    }
+    
+    /* -------------------------------------------------- Initializer -------------------------------------------------- */
+    
+    /**
+     * Initializes the role factory.
+     */
+    @PureWithSideEffects
+    @Initialize(target = RoleFactory.class)
+    public static void initializeRoleFactory() {
+        RoleFactory.configuration.set((client, key) -> Role.with((Client) client, key));
+    }
     
     /* -------------------------------------------------- State -------------------------------------------------- */
     
@@ -137,12 +160,15 @@ public abstract class Role extends RootClass implements NonHostEntity<Client> {
     
     /* -------------------------------------------------- Roles -------------------------------------------------- */
     
-    /**
-     * Returns the non-native roles of this role.
-     */
-    @Pure
-    @GeneratePersistentProperty
-    public abstract @Nonnull WritablePersistentSimpleSetProperty<Role, NonNativeRole> roles();
+    // TODO: The supplied module in the generated subclass is not compatible with the first parameter of the following property.
+    // TODO: Maybe re-implement the persistent property interface for roles that use the single role table.
+    
+//    /**
+//     * Returns the non-native roles of this role.
+//     */
+//    @Pure
+//    @GeneratePersistentProperty
+//    public abstract @Nonnull WritablePersistentSimpleSetProperty<Role, NonNativeRole> roles();
     
     // TODO: Take care of the commented out observations:
     
@@ -193,15 +219,5 @@ public abstract class Role extends RootClass implements NonHostEntity<Client> {
 //        SynchronizerModule.remove(this);
 //        notify(DELETED);
 //    }
-    
-    /* -------------------------------------------------- Recovery -------------------------------------------------- */
-    
-    @Pure
-    @Recover
-    @NonCommitting
-    public static @Nonnull Role with(@Nonnull Client unit, long key) /*throws DatabaseException */{
-        // TODO: Think about how to recover roles.
-        throw new UnsupportedOperationException();
-    }
     
 }

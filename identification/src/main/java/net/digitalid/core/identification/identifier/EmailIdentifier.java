@@ -14,6 +14,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Person;
 
 /**
@@ -58,7 +59,7 @@ public abstract class EmailIdentifier extends ExternalIdentifier {
     @Override
     @NonCommitting
     public @Nonnull Person resolve() throws ExternalException {
-        return PseudoIdentifierResolver.resolveWithProvider(this).castTo(Person.class);
+        return IdentifierResolver.configuration.get().resolve(this).castTo(Person.class);
     }
     
 }

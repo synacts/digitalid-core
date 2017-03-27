@@ -39,7 +39,6 @@ import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.commitment.CommitmentBuilder;
-import net.digitalid.core.entity.CoreUnit;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;
@@ -47,6 +46,7 @@ import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.parameters.Parameters;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
+import net.digitalid.core.unit.CoreUnit;
 
 /**
  * A client is configured with an identifier and a secret.
