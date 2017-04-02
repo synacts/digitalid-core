@@ -30,7 +30,7 @@ import net.digitalid.core.signature.attribute.AttributeValue;
 @GenerateBuilder
 @GenerateSubclass
 // TODO: @GenerateConverter
-public abstract class AttributesReply extends QueryReply<Entity<?>> implements CoreHandler<Entity<?>> {
+public abstract class AttributesReply extends QueryReply<Entity> implements CoreHandler<Entity> {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
     
@@ -109,7 +109,7 @@ public abstract class AttributesReply extends QueryReply<Entity<?>> implements C
     
     @Pure
     @Override
-    public boolean matches(@Nonnull Method<Entity<?>> method) {
+    public boolean matches(@Nonnull Method<Entity> method) {
         return method instanceof AttributesQuery;
     }
     

@@ -24,7 +24,7 @@ import net.digitalid.core.identification.identity.Category;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class IdentityReply extends QueryReply<NonHostEntity<?>> implements CoreHandler<NonHostEntity<?>> {
+public abstract class IdentityReply extends QueryReply<NonHostEntity> implements CoreHandler<NonHostEntity> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -95,7 +95,7 @@ public abstract class IdentityReply extends QueryReply<NonHostEntity<?>> impleme
     
     @Pure
     @Override
-    public boolean matches(@Nonnull Method<NonHostEntity<?>> method) {
+    public boolean matches(@Nonnull Method<NonHostEntity> method) {
         return method instanceof IdentityQuery;
     }
     

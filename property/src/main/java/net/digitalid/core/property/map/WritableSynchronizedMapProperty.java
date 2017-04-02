@@ -44,7 +44,7 @@ import net.digitalid.core.unit.CoreUnit;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentMapProperty.class)
-public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable MAP_KEY, @Unspecifiable MAP_VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>, @Unspecifiable FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>> extends WritablePersistentMapPropertyImplementation<CoreUnit, SUBJECT, MAP_KEY, MAP_VALUE, READONLY_MAP, FREEZABLE_MAP> implements SynchronizedProperty<ENTITY, KEY, SUBJECT, PersistentMapPropertyEntry<SUBJECT, MAP_KEY, MAP_VALUE>, PersistentMapObserver<SUBJECT, MAP_KEY, MAP_VALUE, READONLY_MAP>> {
+public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable MAP_KEY, @Unspecifiable MAP_VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>, @Unspecifiable FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>> extends WritablePersistentMapPropertyImplementation<CoreUnit, SUBJECT, MAP_KEY, MAP_VALUE, READONLY_MAP, FREEZABLE_MAP> implements SynchronizedProperty<ENTITY, KEY, SUBJECT, PersistentMapPropertyEntry<SUBJECT, MAP_KEY, MAP_VALUE>, PersistentMapObserver<SUBJECT, MAP_KEY, MAP_VALUE, READONLY_MAP>> {
     
     /* -------------------------------------------------- Map -------------------------------------------------- */
     

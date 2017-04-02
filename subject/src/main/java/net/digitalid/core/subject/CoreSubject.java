@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -25,7 +24,7 @@ import net.digitalid.core.unit.CoreUnit;
  * @param <KEY> the type of the key which identifies an instance among all instances of a core subject at the same entity.
  */
 @Immutable
-public abstract class CoreSubject<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY> extends RootClass implements Subject<CoreUnit> {
+public interface CoreSubject<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY> extends Subject<CoreUnit> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
@@ -34,7 +33,7 @@ public abstract class CoreSubject<@Unspecifiable ENTITY extends Entity<?>, @Unsp
      */
     @Pure
     @Provided
-    public abstract @Nonnull ENTITY getEntity();
+    public @Nonnull ENTITY getEntity();
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
@@ -42,13 +41,13 @@ public abstract class CoreSubject<@Unspecifiable ENTITY extends Entity<?>, @Unsp
      * Returns the key which identifies this core subject.
      */
     @Pure
-    public abstract @Nonnull KEY getKey();
+    public @Nonnull KEY getKey();
     
     /* -------------------------------------------------- Unit -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull CoreUnit getUnit() {
+    public default @Nonnull CoreUnit getUnit() {
         return getEntity().getUnit();
     }
     
@@ -60,7 +59,7 @@ public abstract class CoreSubject<@Unspecifiable ENTITY extends Entity<?>, @Unsp
     @Pure
     @Override
     @GenerateCoreSubjectModule
-    public abstract @Nonnull CoreSubjectModule<ENTITY, KEY, ?> module();
+    public @Nonnull CoreSubjectModule<ENTITY, KEY, ?> module();
     
     /* -------------------------------------------------- Properties -------------------------------------------------- */
     

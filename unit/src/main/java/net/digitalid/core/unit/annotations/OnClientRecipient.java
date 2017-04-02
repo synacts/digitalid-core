@@ -44,7 +44,7 @@ public @interface OnClientRecipient {
         @Pure
         @Override
         public @Nonnull Class<?> getReceiverType() {
-            return UnitBased.class;
+            return CoreUnitBased.class;
         }
         
         @Pure

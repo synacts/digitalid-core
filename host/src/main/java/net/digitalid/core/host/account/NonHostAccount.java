@@ -18,7 +18,7 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class NonHostAccount extends Account implements NonHostEntity<Host> {
+public abstract class NonHostAccount extends Account implements NonHostEntity {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     

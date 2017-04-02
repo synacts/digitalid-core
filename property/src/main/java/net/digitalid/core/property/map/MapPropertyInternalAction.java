@@ -40,7 +40,7 @@ import net.digitalid.core.unit.annotations.OnClientRecipient;
 @GenerateBuilder
 @GenerateSubclass
 //@GenerateConverter // TODO: Maybe the converter has to be written manually anyway (in order to recover the property). Otherwise, make sure the converter generator can handle generic types.
-public abstract class MapPropertyInternalAction<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable MAP_KEY, @Unspecifiable MAP_VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>, @Unspecifiable FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>> extends PropertyInternalAction<ENTITY, KEY, SUBJECT, WritableSynchronizedMapProperty<ENTITY, KEY, SUBJECT, MAP_KEY, MAP_VALUE, READONLY_MAP, FREEZABLE_MAP>> implements Valid.Key<MAP_KEY>, Valid.Value<MAP_VALUE> {
+public abstract class MapPropertyInternalAction<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable MAP_KEY, @Unspecifiable MAP_VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>, @Unspecifiable FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>> extends PropertyInternalAction<ENTITY, KEY, SUBJECT, WritableSynchronizedMapProperty<ENTITY, KEY, SUBJECT, MAP_KEY, MAP_VALUE, READONLY_MAP, FREEZABLE_MAP>> implements Valid.Key<MAP_KEY>, Valid.Value<MAP_VALUE> {
     
     /* -------------------------------------------------- Validators -------------------------------------------------- */
     

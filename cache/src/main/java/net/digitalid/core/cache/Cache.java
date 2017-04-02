@@ -8,11 +8,12 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.threading.Threading;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.tuples.Pair;
@@ -23,12 +24,15 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
 import net.digitalid.core.cache.exceptions.AttributeNotFoundExceptionBuilder;
 import net.digitalid.core.cache.exceptions.CertificateNotFoundException;
 import net.digitalid.core.cache.exceptions.CertificateNotFoundExceptionBuilder;
+import net.digitalid.core.client.role.Role;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
@@ -46,33 +50,33 @@ import net.digitalid.core.unit.annotations.OnClient;
 @Utility
 public abstract class Cache {
     
-    /* -------------------------------------------------- Initialization -------------------------------------------------- */
-    
-    static {
-        Require.that(Threading.isMainThread()).orThrow("This static block is called in the main thread.");
-        
-        // TODO: Create the database table differently.
-        
-//        try (@Nonnull Statement statement = Database.createStatement()) {
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_cache (identity " + Mapper.FORMAT + " NOT NULL, entity " + Mapper.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, found BOOLEAN NOT NULL, time " + Time.FORMAT + " NOT NULL, value " + AttributeValue.FORMAT + ", reply " + Reply.FORMAT + ", PRIMARY KEY (identity, entity, type, found), FOREIGN KEY (identity) " + Mapper.REFERENCE + ", FOREIGN KEY (entity) " + Mapper.REFERENCE + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ", FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
-//            Database.onInsertUpdate(statement, "general_cache", 4, "identity", "entity", "type", "found", "time", "value", "reply");
-//            Mapper.addReference("general_cache", "identity", "identity", "entity", "type", "found");
-//            Mapper.addReference("general_cache", "entity", "identity", "entity", "type", "found");
-//        } catch (@Nonnull SQLException exception) {
-//            throw InitializationError.get("Could not initialize the cache.", exception);
-//        }
-    }
+    /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
     /**
-     * Initializes the cache with the public key of {@code digitalid.net}.
-     * 
-     * @require Threading.isMainThread() : "This method is called in the main thread.";
+     * Stores a dummy configuration in order to have an initialization target for table creation.
+     */
+    public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE);
+    
+    /* -------------------------------------------------- Creation -------------------------------------------------- */
+    
+    /**
+     * Creates the database table.
+     */
+    @Committing
+    @PureWithSideEffects
+    @Initialize(target = Cache.class, dependencies = Role.class)
+    public static void createTable() throws DatabaseException {
+        SQL.createTable(CacheEntryConverter.INSTANCE, Unit.DEFAULT);
+    }
+    
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
+    
+    /**
+     * Initializes the cache with the public key of {@code core.digitalid.net}.
      */
     @Committing
     @PureWithSideEffects
     public static void initialize() {
-        Require.that(Threading.isMainThread()).orThrow("This method is called in the main thread.");
-        
         // TODO: Think about how and where to load the public key of digitalid.net.
         
 //        try {
@@ -106,11 +110,9 @@ public abstract class Cache {
     
     /**
      * Invalidates all the cached attribute values of the given identity.
-     * 
-     * @param identity the identity whose cached attribute values are to be invalidated.
      */
-    @Impure
     @NonCommitting
+    @PureWithSideEffects
     public static void invalidateCachedAttributeValues(@Nonnull InternalNonHostIdentity identity) throws DatabaseException {
         // TODO: Do this with the new database API.
         

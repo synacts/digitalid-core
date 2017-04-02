@@ -35,7 +35,7 @@ import net.digitalid.core.unit.CoreUnit;
  */
 @Immutable
 @GenerateSubclass
-public abstract class SubjectConverter<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>> implements Converter<SUBJECT, @Nonnull CoreUnit> {
+public abstract class CoreSubjectConverter<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>> implements Converter<SUBJECT, @Nonnull CoreUnit> {
     
     /* -------------------------------------------------- Subject Module -------------------------------------------------- */
     

@@ -27,7 +27,7 @@ import net.digitalid.core.subject.utility.None;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class Settings extends CoreServiceCoreSubject<NonHostEntity<?>, None> {
+public abstract class Settings extends CoreServiceCoreSubject<NonHostEntity, None> {
     
     @Pure
     @Override
@@ -40,7 +40,7 @@ public abstract class Settings extends CoreServiceCoreSubject<NonHostEntity<?>, 
      */
     @Pure
     @Recover
-    public static @Nonnull Settings of(@Nonnull NonHostEntity<?> entity) {
+    public static @Nonnull Settings of(@Nonnull NonHostEntity entity) {
         return SettingsSubclass.MODULE.getSubjectIndex().get(entity, None.INSTANCE);
     }
     
@@ -49,7 +49,7 @@ public abstract class Settings extends CoreServiceCoreSubject<NonHostEntity<?>, 
     /**
      * Stores the required authorization to change the password.
      */
-    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, None, Settings, String> PASSWORD = RequiredAuthorizationBuilder.<NonHostEntity<?>, None, Settings, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withOnlyForClients(true).withWriteToNode(true).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> Restrictions.ONLY_FOR_CLIENTS).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity, None, Settings, String> PASSWORD = RequiredAuthorizationBuilder.<NonHostEntity, None, Settings, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withOnlyForClients(true).withWriteToNode(true).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> Restrictions.ONLY_FOR_CLIENTS).build();
     
     /**
      * Returns the password property of these settings.

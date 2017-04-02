@@ -66,7 +66,7 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
  * @see Query
  */
 @Immutable
-public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
+public interface Method<ENTITY extends Entity> extends Handler<ENTITY> {
     
     /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
@@ -178,7 +178,7 @@ public interface Method<ENTITY extends Entity<?>> extends Handler<ENTITY> {
         
         final @Nonnull Pack pack = response.getEncryption().getObject().getObject().getObject();
         if (pack.getType().equals(RequestExceptionReply.TYPE)) {
-            final @Nonnull Pair<@Nullable Entity<?>, @Nonnull HostSignature<Compression<Pack>>> provided = Pair.of(getEntity(), (HostSignature<Compression<Pack>>) response.getEncryption().getObject());
+            final @Nonnull Pair<@Nullable Entity, @Nonnull HostSignature<Compression<Pack>>> provided = Pair.of(getEntity(), (HostSignature<Compression<Pack>>) response.getEncryption().getObject());
             final @Nonnull RequestExceptionReply requestExceptionReply = pack.unpack(RequestExceptionReplyConverter.INSTANCE, provided);
             throw requestExceptionReply.getRequestException();
         }

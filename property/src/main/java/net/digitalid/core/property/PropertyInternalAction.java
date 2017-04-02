@@ -28,7 +28,7 @@ import net.digitalid.core.subject.CoreSubject;
  * @see ValuePropertyInternalAction
  */
 @Immutable
-public abstract class PropertyInternalAction<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable PROPERTY extends SynchronizedProperty<ENTITY, KEY, SUBJECT, ?, ?>> extends InternalAction {
+public abstract class PropertyInternalAction<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable PROPERTY extends SynchronizedProperty<ENTITY, KEY, SUBJECT, ?, ?>> extends InternalAction {
     
     /* -------------------------------------------------- Property -------------------------------------------------- */
     
@@ -42,7 +42,7 @@ public abstract class PropertyInternalAction<@Unspecifiable ENTITY extends Entit
     
     @Pure
     @Override
-    public @Nonnull NonHostEntity<?> getEntity() {
+    public @Nonnull NonHostEntity getEntity() {
         return (NonHostEntity) getProperty().getSubject().getEntity();
     }
     

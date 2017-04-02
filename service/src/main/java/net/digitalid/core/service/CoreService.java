@@ -40,13 +40,13 @@ public abstract class CoreService extends Service {
     
     @Pure
     @Override
-    public @Nonnull HostIdentifier getRecipient(@Nonnull NonHostEntity<?> entity) {
+    public @Nonnull HostIdentifier getRecipient(@Nonnull NonHostEntity entity) {
         return entity.getIdentity().getAddress().getHostIdentifier();
     }
     
     @Pure
     @Override
-    public @Nonnull HostIdentifier getRecipient(@Nonnull InternalPerson subject, @Nullable NonHostEntity<?> entity) {
+    public @Nonnull HostIdentifier getRecipient(@Nonnull InternalPerson subject, @Nullable NonHostEntity entity) {
         return subject.getAddress().getHostIdentifier();
     }
     

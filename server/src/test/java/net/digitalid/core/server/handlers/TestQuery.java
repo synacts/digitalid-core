@@ -1,4 +1,4 @@
-package net.digitalid.core.all.handlers;
+package net.digitalid.core.server.handlers;
 
 import javax.annotation.Nonnull;
 
@@ -25,7 +25,7 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class TestQuery extends ExternalQuery<Entity<?>> implements CoreMethod<Entity<?>> {
+public abstract class TestQuery extends ExternalQuery<Entity> implements CoreMethod<Entity> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     

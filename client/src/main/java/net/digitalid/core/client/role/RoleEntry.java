@@ -49,7 +49,13 @@ public abstract class RoleEntry extends RootClass {
     
     @Pure
     public static @Nonnull RoleEntry from(@Nonnull Role role) {
-        return null; // TODO
+        final RoleArgumentsBuilder.@Nonnull InnerRoleArgumentsBuilder builder = RoleArgumentsBuilder.withClient(role.getUnit()).withIssuer(role.getIssuer()).withAgentKey(role.getAgentKey());
+        if (role instanceof NonNativeRole) {
+            final @Nonnull NonNativeRole nonNativeRole = (NonNativeRole) role;
+            builder.withRelation(nonNativeRole.getRelation()).withRecipient(nonNativeRole.getRecipient().getKey());
+        };
+        final @Nonnull RoleArguments arguments = builder.build();
+        return RoleEntryBuilder.withClient(role.getUnit()).withKey(role.getKey()).withArguments(arguments).build();
     }
     
     /* -------------------------------------------------- Export -------------------------------------------------- */
@@ -64,9 +70,9 @@ public abstract class RoleEntry extends RootClass {
         final long agentKey = arguments.getAgentKey();
         
         if (relation != null && recipient != null) {
-            return new NonNativeRoleSubclass(client, getKey(), issuer, agentKey, relation, Role.with(client, recipient));
+            return new NonNativeRoleSubclass(getKey(), client, issuer, agentKey, relation, Role.with(client, recipient));
         } else {
-            return new NativeRoleSubclass(client, getKey(), issuer, agentKey);
+            return new NativeRoleSubclass(getKey(), client, issuer, agentKey);
         }
     }
     

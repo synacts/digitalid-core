@@ -54,7 +54,7 @@ public abstract class Context extends ExtendedNode {
     /**
      * Stores the required authorization to change the password.
      */
-    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, Context, String> NAME_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Context, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Context, String> NAME_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity, Long, Context, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /**
      * Returns the name of this context.
@@ -72,7 +72,7 @@ public abstract class Context extends ExtendedNode {
     /**
      * Stores the required authorization to change the subcontexts.
      */
-    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, Context, Context> SUBCONTEXTS_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Context, Context>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Context, Context> SUBCONTEXTS_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity, Long, Context, Context>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /**
      * Returns the direct subcontexts of this context.
@@ -104,7 +104,7 @@ public abstract class Context extends ExtendedNode {
     /**
      * Stores the required authorization to change the subcontexts.
      */
-    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, Context, Contact> CONTACTS_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, Context, Contact>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Context, Contact> CONTACTS_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity, Long, Context, Contact>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
     
     /**
      * Returns the direct contacts of this context.
@@ -163,7 +163,7 @@ public abstract class Context extends ExtendedNode {
      */
     @Pure
     @Recover
-    public static @Nonnull Context of(@Nonnull NonHostEntity<?> entity, long key) {
+    public static @Nonnull Context of(@Nonnull NonHostEntity entity, long key) {
         return null; // TODO
     }
     
@@ -171,7 +171,7 @@ public abstract class Context extends ExtendedNode {
      * Returns the potentially cached root context of the given entity that might not yet exist in the database.
      */
     @Pure
-    public static @Nonnull Context of(@Nonnull NonHostEntity<?> entity) {
+    public static @Nonnull Context of(@Nonnull NonHostEntity entity) {
         return of(entity, ROOT);
     }
     

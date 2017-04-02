@@ -49,7 +49,7 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
 @GenerateBuilder
 @GenerateSubclass
 // TODO: @GenerateConverter
-public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implements CoreMethod<Entity<?>> {
+public abstract class AttributesQuery extends ExternalQuery<Entity> implements CoreMethod<Entity> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -91,7 +91,7 @@ public abstract class AttributesQuery extends ExternalQuery<Entity<?>> implement
             final @Nullable ReadOnlyNodePermissions contactPermissions;
             if (false /* TODO: credentialsSignature.isIdentityBased() && !credentialsSignature.isRoleBased() */) {
                 final @Nonnull InternalPerson issuer = null; // TODO: credentialsSignature.getIssuer();
-                final @Nonnull Contact contact = Contact.of((NonHostEntity<?>) getEntity(), issuer);
+                final @Nonnull Contact contact = Contact.of((NonHostEntity) getEntity(), issuer);
                 contactPermissions = contact.permissions().get();
             } else {
                 contactPermissions = null;

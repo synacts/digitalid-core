@@ -36,7 +36,7 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class IdentityQuery extends ExternalQuery<NonHostEntity<?>> implements CoreMethod<NonHostEntity<?>> {
+public abstract class IdentityQuery extends ExternalQuery<NonHostEntity> implements CoreMethod<NonHostEntity> {
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     

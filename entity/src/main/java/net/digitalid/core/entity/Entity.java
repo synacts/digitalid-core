@@ -2,7 +2,6 @@ package net.digitalid.core.entity;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
@@ -15,8 +14,6 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.subject.Subject;
-import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.entity.factories.AccountFactory;
 import net.digitalid.core.entity.factories.RoleFactory;
@@ -24,23 +21,25 @@ import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.unit.CoreUnit;
-import net.digitalid.core.unit.annotations.UnitBased;
+import net.digitalid.core.unit.annotations.CoreUnitBased;
 
 /**
- * An entity captures the {@link Unit unit} and the {@link Identity identity} of a core subject or handler.
+ * An entity captures the {@link CoreUnit unit} and the {@link Identity identity} of a core subject or handler.
  * 
  * @see NonHostEntity
  */
 @Immutable
 @GenerateConverter
-public interface Entity<@Unspecifiable UNIT extends CoreUnit> extends Subject<UNIT>, UnitBased {
+public interface Entity extends CoreUnitBased {
     
     /* -------------------------------------------------- Unit -------------------------------------------------- */
     
+    /**
+     * Returns the unit to which this entity belongs.
+     */
     @Pure
-    @Override
     @Provided
-    public @Nonnull UNIT getUnit();
+    public @Nonnull CoreUnit getUnit();
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
@@ -78,7 +77,8 @@ public interface Entity<@Unspecifiable UNIT extends CoreUnit> extends Subject<UN
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull Entity<?> with(@Nonnull CoreUnit unit, long key) throws DatabaseException, RecoveryException {
+    @SuppressWarnings("unchecked")
+    public static @Nonnull Entity with(@Nonnull CoreUnit unit, long key) throws DatabaseException, RecoveryException {
         if (unit.isHost()) {
             final @Nonnull Identity identity = IdentifierResolver.configuration.get().load(key);
             if (identity instanceof InternalIdentity) { return AccountFactory.create(unit, (InternalIdentity) identity); }

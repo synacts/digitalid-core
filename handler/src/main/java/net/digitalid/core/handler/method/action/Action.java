@@ -34,7 +34,7 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
  * @see ExternalAction
  */
 @Immutable
-public abstract class Action extends MethodImplementation<NonHostEntity<?>> implements Auditable {
+public abstract class Action extends MethodImplementation<NonHostEntity> implements Auditable {
     
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
     

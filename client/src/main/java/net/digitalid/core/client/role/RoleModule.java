@@ -13,7 +13,6 @@ import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.conversion.converters.Integer64Converter;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
-import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.UniqueElements;
 import net.digitalid.utility.validation.annotations.type.Utility;
@@ -21,7 +20,6 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.client.Client;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
@@ -36,32 +34,24 @@ import net.digitalid.core.identification.identity.InternalPerson;
 @Utility
 abstract class RoleModule {
     
-    /* -------------------------------------------------- Creation -------------------------------------------------- */
-    
-    /**
-     * Creates the database table.
-     */
-    @PureWithSideEffects
-    @Initialize(target = SQL.class)
-    public static void createTable() throws DatabaseException {
-        SQL.createTable(RoleEntryConverter.INSTANCE, Unit.DEFAULT);
-    }
-    
     /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
     /**
-     * Checks whether the role with the given arguments is already mapped and returns the existing or newly mapped key.
+     * Checks whether the role with the given arguments is already mapped and returns the existing or newly mapped role.
      */
     @NonCommitting
     @PureWithSideEffects
-    static long map(@Nonnull RoleArguments roleArguments) throws DatabaseException, RecoveryException {
+    static @Nonnull Role map(@Nonnull RoleArguments roleArguments) throws DatabaseException, RecoveryException {
         final @Nullable RoleEntry roleEntry = SQL.selectFirst(RoleEntryConverter.INSTANCE, roleArguments.getClient(), RoleArgumentsConverter.INSTANCE, roleArguments, "arguments", roleArguments.getClient());
         if (roleEntry == null) {
             final long key = ThreadLocalRandom.current().nextLong();
-            SQL.insert(RoleEntryConverter.INSTANCE, RoleEntryBuilder.withClient(roleArguments.getClient()).withKey(key).withArguments(roleArguments).build(), roleArguments.getClient());
-            return key;
+            final @Nonnull RoleEntry entry = RoleEntryBuilder.withClient(roleArguments.getClient()).withKey(key).withArguments(roleArguments).build();
+            SQL.insert(RoleEntryConverter.INSTANCE, entry, roleArguments.getClient());
+            final @Nonnull Role role = entry.toRole();
+            SQL.insert(RoleConverter.INSTANCE, role, role.getUnit()); // TODO: Remove this line as soon as a converter can declare its foreign key constraint.
+            return role;
         } else {
-            return roleEntry.getKey();
+            return roleEntry.toRole();
         }
     }
     
@@ -86,6 +76,7 @@ abstract class RoleModule {
     @PureWithSideEffects
     static void remove(@Nonnull Role role) throws DatabaseException {
         SQL.delete(RoleEntryConverter.INSTANCE, Integer64Converter.INSTANCE, role.getKey(), "key", role.getUnit());
+        SQL.delete(RoleConverter.INSTANCE, RoleConverter.INSTANCE, role, role.getUnit()); // TODO: Remove this line as soon as a converter can declare its foreign key constraint.
     }
     
     /* -------------------------------------------------- Native Roles -------------------------------------------------- */

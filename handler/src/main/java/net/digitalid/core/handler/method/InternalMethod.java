@@ -21,7 +21,7 @@ import net.digitalid.core.restrictions.Restrictions;
  * @see InternalQuery
  */
 @Immutable
-public interface InternalMethod extends Method<NonHostEntity<?>> {
+public interface InternalMethod extends Method<NonHostEntity> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
@@ -29,7 +29,7 @@ public interface InternalMethod extends Method<NonHostEntity<?>> {
     @Override
     @OrderOfAssignment(3)
     @Derive("signature != null ? deriveEntity(recipient, signature.getSubject()) : providedEntity")
-    public @Nonnull NonHostEntity<?> getEntity();
+    public @Nonnull NonHostEntity getEntity();
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     

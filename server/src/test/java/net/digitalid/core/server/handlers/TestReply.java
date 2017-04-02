@@ -1,4 +1,4 @@
-package net.digitalid.core.all.handlers;
+package net.digitalid.core.server.handlers;
 
 import javax.annotation.Nonnull;
 
@@ -17,7 +17,7 @@ import net.digitalid.core.handler.reply.QueryReply;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class TestReply extends QueryReply<Entity<?>> implements CoreHandler<Entity<?>> {
+public abstract class TestReply extends QueryReply<Entity> implements CoreHandler<Entity> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -31,7 +31,7 @@ public abstract class TestReply extends QueryReply<Entity<?>> implements CoreHan
     
     @Pure
     @Override
-    public boolean matches(@Nonnull Method<Entity<?>> method) {
+    public boolean matches(@Nonnull Method<Entity> method) {
         return method instanceof TestQuery;
     }
     

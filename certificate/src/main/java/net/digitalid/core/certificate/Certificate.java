@@ -9,7 +9,7 @@ import net.digitalid.core.subject.CoreServiceCoreSubject;
  * Description.
  */
 @Immutable
-public abstract class Certificate extends CoreServiceCoreSubject<NonHostEntity<?>, Long> {
+public abstract class Certificate extends CoreServiceCoreSubject<NonHostEntity, Long> {
     
     // TODO:
     
@@ -79,7 +79,7 @@ public abstract class Certificate extends CoreServiceCoreSubject<NonHostEntity<?
 //        return false;
 //    }
 //    
-//    public Certificate(@Nonnull NonHostEntity<?> entity) {
+//    public Certificate(@Nonnull NonHostEntity entity) {
 //        super(entity);
 //    }
     

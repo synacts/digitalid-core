@@ -28,7 +28,7 @@ import net.digitalid.core.packet.Request;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class RequestExceptionReply extends QueryReply<Entity<?>> implements CoreHandler<Entity<?>> {
+public abstract class RequestExceptionReply extends QueryReply<Entity> implements CoreHandler<Entity> {
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
@@ -58,7 +58,7 @@ public abstract class RequestExceptionReply extends QueryReply<Entity<?>> implem
     
     @Pure
     @Override
-    public boolean matches(@Nonnull Method<Entity<?>> method) {
+    public boolean matches(@Nonnull Method<Entity> method) {
         return true;
     }
     

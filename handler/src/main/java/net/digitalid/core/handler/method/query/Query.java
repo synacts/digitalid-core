@@ -25,7 +25,7 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
  * @see ExternalQuery
  */
 @Immutable
-public abstract class Query<ENTITY extends Entity<?>> extends MethodImplementation<ENTITY> {
+public abstract class Query<ENTITY extends Entity> extends MethodImplementation<ENTITY> {
     
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
     

@@ -31,7 +31,7 @@ public abstract class ClientAgent extends Agent {
     /**
      * Stores the required authorization to change the commitment.
      */
-    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, ClientAgent, Commitment> COMMITMENT = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, ClientAgent, Commitment>withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, ClientAgent, Commitment> COMMITMENT = RequiredAuthorizationBuilder.<NonHostEntity, Long, ClientAgent, Commitment>withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
     
     /**
      * Returns the commitment of this client agent.
@@ -45,7 +45,7 @@ public abstract class ClientAgent extends Agent {
     /**
      * Stores the required authorization to change the name.
      */
-    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, Long, ClientAgent, String> NAME_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity<?>, Long, ClientAgent, String>withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, ClientAgent, String> NAME_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity, Long, ClientAgent, String>withRequiredAgentToExecuteMethod((concept, value) -> concept).withRequiredAgentToSeeMethod((concept, value) -> concept).build();
     
     /**
      * Returns the name of this client agent.
@@ -87,7 +87,7 @@ public abstract class ClientAgent extends Agent {
      */
     @Pure
     @Recover
-    public static @Nonnull ClientAgent of(@Nonnull NonHostEntity<?> entity, long key) {
+    public static @Nonnull ClientAgent of(@Nonnull NonHostEntity entity, long key) {
         return null;
 //        return ClientAgentSubclass.MODULE.getConceptIndex().get(entity, key); // TODO
     }

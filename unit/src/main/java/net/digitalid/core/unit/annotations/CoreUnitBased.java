@@ -13,7 +13,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
  * @see OnClientRecipient
  */
 @Immutable
-public interface UnitBased extends RootInterface {
+public interface CoreUnitBased extends RootInterface {
     
     /**
      * Returns whether this object is on a host.

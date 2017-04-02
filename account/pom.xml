@@ -13,7 +13,7 @@
         
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-resolution</artifactId>
+            <artifactId>core-client</artifactId>
             <version>${project.version}</version>
         </dependency>
         

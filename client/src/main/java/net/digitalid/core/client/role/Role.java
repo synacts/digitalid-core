@@ -4,16 +4,22 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
+import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.subject.Subject;
+import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.client.Client;
@@ -29,7 +35,14 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
  */
 @Immutable
 @GenerateConverter
-public abstract class Role extends RootClass implements NonHostEntity<Client> {
+public abstract class Role extends RootClass implements NonHostEntity, Subject<Client> {
+    
+    /* -------------------------------------------------- Unit -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @Provided
+    public abstract @Nonnull Client getUnit();
     
     /* -------------------------------------------------- Issuer -------------------------------------------------- */
     
@@ -80,6 +93,26 @@ public abstract class Role extends RootClass implements NonHostEntity<Client> {
     @Initialize(target = RoleFactory.class)
     public static void initializeRoleFactory() {
         RoleFactory.configuration.set((client, key) -> Role.with((Client) client, key));
+    }
+    
+    /* -------------------------------------------------- Configuration -------------------------------------------------- */
+    
+    /**
+     * Stores a dummy configuration in order to have an initialization target for table creation.
+     */
+    public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE);
+    
+    /* -------------------------------------------------- Creation -------------------------------------------------- */
+    
+    /**
+     * Creates the database table.
+     */
+    @Committing
+    @PureWithSideEffects
+    @Initialize(target = Role.class, dependencies = SQL.class) // This is not optimal yet. However, these tables have to be created before the cache table.
+    public static void createTable() throws DatabaseException {
+        SQL.createTable(RoleConverter.INSTANCE, Unit.DEFAULT); // TODO: Remove this line as soon as a converter can declare its foreign key constraint.
+        SQL.createTable(RoleEntryConverter.INSTANCE, Unit.DEFAULT);
     }
     
     /* -------------------------------------------------- State -------------------------------------------------- */

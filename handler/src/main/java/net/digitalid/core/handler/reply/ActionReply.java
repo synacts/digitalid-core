@@ -25,7 +25,7 @@ import net.digitalid.core.unit.annotations.OnClientRecipient;
  * Action replies are added to the audit by the pusher on {@link Service services}.
  */
 @Immutable
-public abstract class ActionReply extends Reply<NonHostEntity<?>> implements Auditable {
+public abstract class ActionReply extends Reply<NonHostEntity> implements Auditable {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
@@ -33,7 +33,7 @@ public abstract class ActionReply extends Reply<NonHostEntity<?>> implements Aud
     @Override
     @Provided
     @Default("signature == null ? null : null /* Find a way to derive it from signature.getSubject(), probably make it injectable. */")
-    public abstract @Nonnull NonHostEntity<?> getEntity();
+    public abstract @Nonnull NonHostEntity getEntity();
     
     // TODO: Use an @Derive on getProvidedSubject to derive the provided subject?
     

@@ -52,7 +52,7 @@ public abstract class Contact extends ExtendedNode {
     @Pure
     @Recover
     @TODO(task = "Probably also requires the key.", date = "2016-12-01", author = Author.KASPAR_ETTER)
-    public static @Nonnull Contact of(@Nonnull NonHostEntity<?> entity, @Nonnull Person person) {
+    public static @Nonnull Contact of(@Nonnull NonHostEntity entity, @Nonnull Person person) {
         if (person instanceof InternalPerson) { return InternalContact.of(entity, (InternalPerson) person); }
         else if (person instanceof ExternalPerson) { return ExternalContact.of(entity, (ExternalPerson) person); }
         else { throw new RuntimeException("This should never happen."); } // TODO: Throw a more appropriate exception.

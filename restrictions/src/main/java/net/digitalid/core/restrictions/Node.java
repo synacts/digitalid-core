@@ -25,7 +25,7 @@ import net.digitalid.core.typeset.permissions.ReadOnlyNodePermissions;
  */
 @Immutable
 @GenerateConverter
-public abstract class Node extends CoreServiceCoreSubject<NonHostEntity<?>, Long> {
+public abstract class Node extends CoreServiceCoreSubject<NonHostEntity, Long> {
     
     /* -------------------------------------------------- Permissions -------------------------------------------------- */
     
@@ -64,7 +64,7 @@ public abstract class Node extends CoreServiceCoreSubject<NonHostEntity<?>, Long
      */
     @Pure
     @Recover
-    static @Nonnull Node of(@Nonnull NonHostEntity<?> entity, long key) {
+    static @Nonnull Node of(@Nonnull NonHostEntity entity, long key) {
         // TODO: Make it injectable? (Use the key to determine whether it is a context or a contact (either with ranges or even vs. uneven)?)
         return null;
     }

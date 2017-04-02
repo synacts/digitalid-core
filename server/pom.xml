@@ -13,7 +13,7 @@
         
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-host</artifactId>
+            <artifactId>core-all</artifactId>
             <version>${project.version}</version>
         </dependency>
         
@@ -25,5 +25,33 @@
         </dependency>
         
     </dependencies>
+    
+    <!-- Start the server with 'mvn exec:java -q'. -->
+    <!-- You can pass system properties with '-Dname=value'. -->
+    <!-- You can pass arguments to the main method with '-Dexec.args=arg'. -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <configuration>
+                    <includeProjectDependencies>true</includeProjectDependencies>
+                    <includePluginDependencies>true</includePluginDependencies>
+                    <mainClass>net.digitalid.core.server.Server</mainClass>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.digitalid.database</groupId>
+                        <artifactId>database-server</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <!-- Get the server with 'mvn org.apache.maven.plugins:maven-dependency-plugin:2.10:get -DrepoUrl=https://repo.digitalid.net/content/repositories/releases/ -Dartifact=net.digitalid.core:core-server:1.0.0'. -->
+    <!-- Run the server with 'mvn -f ~/.m2/repository/net/digitalid/core/core-server/1.0.0/core-server-1.0.0.pom exec:java -q'. -->
     
 </project>

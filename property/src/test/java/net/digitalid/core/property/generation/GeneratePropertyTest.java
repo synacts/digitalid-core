@@ -23,9 +23,9 @@ import net.digitalid.core.subject.utility.None;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-abstract class GeneratePropertyClass extends CoreServiceCoreSubject<NonHostEntity<?>, None> {
+abstract class GeneratePropertyClass extends CoreServiceCoreSubject<NonHostEntity, None> {
     
-    static final @Nonnull RequiredAuthorization<NonHostEntity<?>, None, GeneratePropertyClass, String> PASSWORD = RequiredAuthorizationBuilder.<NonHostEntity<?>, None, GeneratePropertyClass, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withOnlyForClients(true).withWriteToNode(true).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> Restrictions.ONLY_FOR_CLIENTS).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity, None, GeneratePropertyClass, String> PASSWORD = RequiredAuthorizationBuilder.<NonHostEntity, None, GeneratePropertyClass, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withOnlyForClients(true).withWriteToNode(true).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> Restrictions.ONLY_FOR_CLIENTS).build();
     
     @Pure
     @Default("\"\"")

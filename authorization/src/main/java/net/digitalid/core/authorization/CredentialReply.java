@@ -26,7 +26,7 @@ import net.digitalid.core.restrictions.Restrictions;
 @Immutable
 // TODO: @GenerateSubclass
 // TODO: @GenerateConverter
-abstract class CredentialReply extends QueryReply<NonHostEntity<?>> implements CoreHandler<NonHostEntity<?>> {
+abstract class CredentialReply extends QueryReply<NonHostEntity> implements CoreHandler<NonHostEntity> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -152,7 +152,7 @@ abstract class CredentialReply extends QueryReply<NonHostEntity<?>> implements C
     
     @Pure
     @Override
-    public boolean matches(@Nonnull Method<NonHostEntity<?>> method) {
+    public boolean matches(@Nonnull Method<NonHostEntity> method) {
         return method instanceof CredentialInternalQuery;
     }
     

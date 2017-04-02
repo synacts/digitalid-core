@@ -30,7 +30,7 @@ public interface RoleFactory {
      */
     @Pure
     @NonCommitting
-    public @Nonnull @OnClient Entity<?> getRole(@Nonnull @IsClient CoreUnit client, long key) throws DatabaseException, RecoveryException;
+    public @Nonnull @OnClient Entity getRole(@Nonnull @IsClient CoreUnit client, long key) throws DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
@@ -46,7 +46,7 @@ public interface RoleFactory {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull @OnClient Entity<?> create(@Nonnull @IsClient CoreUnit client, long key) throws DatabaseException, RecoveryException {
+    public static @Nonnull @OnClient Entity create(@Nonnull @IsClient CoreUnit client, long key) throws DatabaseException, RecoveryException {
         return configuration.get().getRole(client, key);
     }
     

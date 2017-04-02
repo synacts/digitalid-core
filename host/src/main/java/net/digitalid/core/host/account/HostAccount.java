@@ -17,7 +17,7 @@ import net.digitalid.core.identification.identity.HostIdentity;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class HostAccount extends Account implements HostEntity<Host> {
+public abstract class HostAccount extends Account implements HostEntity {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     

@@ -23,7 +23,7 @@ import net.digitalid.core.subject.CoreSubject;
  */
 @Mutable
 @ThreadSafe
-public interface SynchronizedProperty<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable ENTRY extends PersistentPropertyEntry<SUBJECT>, @Unspecifiable OBSERVER extends Observer> extends PersistentProperty<SUBJECT, ENTRY, OBSERVER> {
+public interface SynchronizedProperty<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable ENTRY extends PersistentPropertyEntry<SUBJECT>, @Unspecifiable OBSERVER extends Observer> extends PersistentProperty<SUBJECT, ENTRY, OBSERVER> {
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     

@@ -21,13 +21,13 @@ import net.digitalid.core.handler.reply.QueryReply;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class EmptyReply extends QueryReply<NonHostEntity<?>> implements CoreHandler<NonHostEntity<?>> {
+public abstract class EmptyReply extends QueryReply<NonHostEntity> implements CoreHandler<NonHostEntity> {
     
     /* -------------------------------------------------- Matching -------------------------------------------------- */
     
     @Pure
     @Override
-    public boolean matches(@Nonnull Method<NonHostEntity<?>> method) {
+    public boolean matches(@Nonnull Method<NonHostEntity> method) {
         return method instanceof Action;
     }
     

@@ -25,11 +25,11 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.storage.Storage;
 
 import net.digitalid.core.client.Client;
-import net.digitalid.core.clientagent.ClientAgent;
 import net.digitalid.core.commitment.Commitment;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.unit.annotations.OnClientRecipient;
-import net.digitalid.core.unit.annotations.OnHostRecipient;
+import net.digitalid.core.entity.factories.AccountFactory;
+import net.digitalid.core.entity.factories.HostFactory;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
@@ -41,19 +41,18 @@ import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.action.InternalAction;
 import net.digitalid.core.handler.reply.ActionReply;
-import net.digitalid.core.host.Host;
-import net.digitalid.core.host.account.NonHostAccount;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
-import net.digitalid.core.node.context.Context;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
-import net.digitalid.core.restrictions.RestrictionsBuilder;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.client.ClientSignature;
+import net.digitalid.core.unit.annotations.OnClientRecipient;
+import net.digitalid.core.unit.annotations.OnHost;
+import net.digitalid.core.unit.annotations.OnHostRecipient;
 
 /**
  * Opens a new account with the given category and client.
@@ -62,7 +61,7 @@ import net.digitalid.core.signature.client.ClientSignature;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class AccountOpen extends InternalAction implements CoreMethod<NonHostEntity<?>> {
+public abstract class AccountOpen extends InternalAction implements CoreMethod<NonHostEntity> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -140,13 +139,13 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
      */
     @NonCommitting
     @PureWithSideEffects
-    public void initialize(@Nonnull NonHostEntity<?> entity) throws DatabaseException {
-        final @Nonnull Context context = Context.of(entity);
+    public void initialize(@Nonnull NonHostEntity entity) throws DatabaseException {
+//        final @Nonnull Context context = Context.of(entity);
 //        context.createForActions(); // TODO: This should probably become part of the Context.of(entity) method.
 //        context.name().set("Root Context"); // TODO: The name should be stored in the database without synchronization.
         
-        final @Nonnull ClientAgent clientAgent = ClientAgent.of(entity, getClientAgentKey());
-        final @Nonnull Restrictions restrictions = RestrictionsBuilder.withOnlyForClients(true).withAssumeRoles(true).withWriteToNode(true).withNode(context).build();
+//        final @Nonnull ClientAgent clientAgent = ClientAgent.of(entity, getClientAgentKey());
+//        final @Nonnull Restrictions restrictions = RestrictionsBuilder.withOnlyForClients(true).withAssumeRoles(true).withWriteToNode(true).withNode(context).build();
 //        clientAgent.createForActions(FreezableAgentPermissions.GENERAL_WRITE, restrictions, getCommitment(), getName()); // TODO: Do this differently.
     }
     
@@ -161,8 +160,8 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
         // TODO: Include the resctriction mechanisms like the tokens.
         
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) IdentifierResolver.configuration.get().map(getCategory(), getSubject());
-        final @Nonnull NonHostAccount account = NonHostAccount.with(Host.of(getSubject().getHostIdentifier()), identity);
-        initialize(account);
+        final @Nonnull @OnHost Entity entity = AccountFactory.create(HostFactory.create(getSubject().getHostIdentifier()), identity);
+        initialize((NonHostEntity) entity);
         return null;
     }
     

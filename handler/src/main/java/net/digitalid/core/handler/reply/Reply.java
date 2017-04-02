@@ -31,7 +31,7 @@ import net.digitalid.core.signature.host.HostSignature;
  */
 @Immutable
 // TODO: Implement Subject instead! @Referenced
-public abstract class Reply<ENTITY extends Entity<?>> extends RootClass implements Handler<ENTITY> {
+public abstract class Reply<ENTITY extends Entity> extends RootClass implements Handler<ENTITY> {
     
     /* -------------------------------------------------- Matching -------------------------------------------------- */
     

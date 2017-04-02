@@ -25,7 +25,7 @@ import net.digitalid.core.unit.CoreUnit;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class CoreSubjectModule<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>> extends SubjectModule<CoreUnit, SUBJECT> {
+public abstract class CoreSubjectModule<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>> extends SubjectModule<CoreUnit, SUBJECT> {
     
     /* -------------------------------------------------- Service -------------------------------------------------- */
     
@@ -68,7 +68,7 @@ public abstract class CoreSubjectModule<@Unspecifiable ENTITY extends Entity<?>,
     
     @Pure
     @Override
-    @Derive("new SubjectConverterSubclass<ENTITY, KEY, SUBJECT>(CoreSubject.class, \"SubjectConverter\", \"net.digitalid.core.subject\", this)")
+    @Derive("new CoreSubjectConverterSubclass<ENTITY, KEY, SUBJECT>(CoreSubject.class, \"CoreSubjectConverter\", \"net.digitalid.core.subject\", this)")
     public abstract @Nonnull Converter<SUBJECT, @Nonnull CoreUnit> getSubjectConverter();
     
     /* -------------------------------------------------- Name -------------------------------------------------- */

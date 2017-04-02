@@ -25,7 +25,7 @@ import net.digitalid.core.restrictions.Restrictions;
 @Immutable
 // TODO: @GenerateSubclass
 // TODO: @GenerateConverter
-abstract class CredentialInternalQuery extends InternalQuery implements CoreMethod<NonHostEntity<?>> {
+abstract class CredentialInternalQuery extends InternalQuery implements CoreMethod<NonHostEntity> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     

@@ -45,7 +45,7 @@ import net.digitalid.core.unit.CoreUnit;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentValueProperty.class)
-public abstract class WritableSynchronizedValueProperty<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Specifiable VALUE> extends WritablePersistentValuePropertyImplementation<CoreUnit, SUBJECT, VALUE> implements SynchronizedProperty<ENTITY, KEY, SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>, PersistentValueObserver<SUBJECT, VALUE>> {
+public abstract class WritableSynchronizedValueProperty<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Specifiable VALUE> extends WritablePersistentValuePropertyImplementation<CoreUnit, SUBJECT, VALUE> implements SynchronizedProperty<ENTITY, KEY, SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>, PersistentValueObserver<SUBJECT, VALUE>> {
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     

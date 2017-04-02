@@ -7,6 +7,7 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -25,7 +26,14 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
  */
 @Immutable
 @GenerateConverter
-public abstract class Account implements Entity<Host> {
+public abstract class Account implements Entity {
+    
+    /* -------------------------------------------------- Unit -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @Provided
+    public abstract @Nonnull Host getUnit();
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     

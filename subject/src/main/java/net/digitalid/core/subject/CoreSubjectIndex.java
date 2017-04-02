@@ -29,7 +29,7 @@ import net.digitalid.core.entity.Entity;
 @Immutable
 @GenerateSubclass
 @TODO(task = "Don't we need a SubjectIndex in the database layer?", date = "2017-01-22", author = Author.KASPAR_ETTER)
-public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>> {
+public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>> {
     
     /* -------------------------------------------------- Removal -------------------------------------------------- */
     
@@ -44,7 +44,7 @@ public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity<?>, 
     // TODO: Make sure this method is called in the right places!
     @Impure
     @SingleAccess
-    public static void remove(@Nonnull Entity<?> entity) {
+    public static void remove(@Nonnull Entity entity) {
         Require.that(Access.mode.get() == Mode.SINGLE).orThrow("The database has to be in single-access mode.");
         
         for (@Nonnull CoreSubjectIndex<?, ?, ?> index : indexes) {

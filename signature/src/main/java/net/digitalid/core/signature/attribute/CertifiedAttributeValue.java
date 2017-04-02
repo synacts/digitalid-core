@@ -4,9 +4,10 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.time.Time;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Invariant;
 
@@ -23,9 +24,8 @@ import net.digitalid.core.signature.host.HostSignature;
  * @invariant getContent().getType().isAttributeFor(getSubject().getCategory()) : "The content is an attribute for the subject.";
  */
 @Immutable
-@GenerateBuilder
 @GenerateSubclass
-//@GenerateConverter // The generic signature cannot yet be converted.
+@GenerateConverter
 public abstract class CertifiedAttributeValue extends AttributeValue {
     
     /* -------------------------------------------------- Signature -------------------------------------------------- */
@@ -70,6 +70,14 @@ public abstract class CertifiedAttributeValue extends AttributeValue {
     @Pure
     public void checkIsValid(@Nonnull Time time) throws InactiveSignatureException {
         if (!isValid(time)) { throw InactiveSignatureExceptionBuilder.withSignature(getSignature()).build(); }
+    }
+    
+    /* -------------------------------------------------- Recovery -------------------------------------------------- */
+    
+    @Pure
+    @Recover
+    public static @Nonnull CertifiedAttributeValue with(@Nonnull @Invariant(condition = "signature.getObject().getType().isAttributeType()", message = "The type of the packed value denotes an attribute.") HostSignature<Pack> signature) {
+        return new CertifiedAttributeValueSubclass(signature);
     }
     
 }

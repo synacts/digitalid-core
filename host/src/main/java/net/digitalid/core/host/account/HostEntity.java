@@ -9,7 +9,6 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.identification.identity.HostIdentity;
-import net.digitalid.core.unit.CoreUnit;
 
 /**
  * This interface models a host entity.
@@ -18,7 +17,7 @@ import net.digitalid.core.unit.CoreUnit;
  */
 @Immutable
 @TODO(task = "Do we really want this interface as it serves no purpose other than naming consistency?", date = "2016-12-04", author = Author.KASPAR_ETTER)
-public interface HostEntity<UNIT extends CoreUnit> extends Entity<UNIT> {
+public interface HostEntity extends Entity {
     
     @Pure
     @Override

@@ -1,4 +1,4 @@
-package net.digitalid.core.all;
+package net.digitalid.core.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -10,11 +10,6 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Log;
 
-import net.digitalid.core.all.handlers.TestQuery;
-import net.digitalid.core.all.handlers.TestQueryBuilder;
-import net.digitalid.core.all.handlers.TestQueryConverter;
-import net.digitalid.core.all.handlers.TestReply;
-import net.digitalid.core.all.handlers.TestReplyConverter;
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
@@ -25,7 +20,11 @@ import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.packet.Request;
-import net.digitalid.core.server.Server;
+import net.digitalid.core.server.handlers.TestQuery;
+import net.digitalid.core.server.handlers.TestQueryBuilder;
+import net.digitalid.core.server.handlers.TestQueryConverter;
+import net.digitalid.core.server.handlers.TestReply;
+import net.digitalid.core.server.handlers.TestReplyConverter;
 import net.digitalid.core.testing.CoreTest;
 import net.digitalid.core.testing.providers.TestPrivateKeyRetrieverBuilder;
 import net.digitalid.core.testing.providers.TestPublicKeyRetrieverBuilder;

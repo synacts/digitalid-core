@@ -45,7 +45,7 @@ import net.digitalid.core.unit.CoreUnit;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentSetProperty.class)
-public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritablePersistentSetPropertyImplementation<CoreUnit, SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET> implements SynchronizedProperty<ENTITY, KEY, SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>> {
+public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritablePersistentSetPropertyImplementation<CoreUnit, SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET> implements SynchronizedProperty<ENTITY, KEY, SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>> {
     
     /* -------------------------------------------------- Set -------------------------------------------------- */
     

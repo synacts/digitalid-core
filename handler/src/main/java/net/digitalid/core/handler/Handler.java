@@ -21,7 +21,7 @@ import net.digitalid.core.pack.Pack;
 import net.digitalid.core.pack.Packable;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.signature.Signature;
-import net.digitalid.core.unit.annotations.UnitBased;
+import net.digitalid.core.unit.annotations.CoreUnitBased;
 
 /**
  * This type provides the features that all handlers share.
@@ -30,7 +30,7 @@ import net.digitalid.core.unit.annotations.UnitBased;
  * @see Reply
  */
 @Immutable
-public interface Handler<@Unspecifiable ENTITY extends Entity<?>> extends UnitBased, Packable {
+public interface Handler<@Unspecifiable ENTITY extends Entity> extends CoreUnitBased, Packable {
     
     /* -------------------------------------------------- Signature -------------------------------------------------- */
     

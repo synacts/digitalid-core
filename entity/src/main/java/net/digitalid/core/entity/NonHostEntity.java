@@ -21,7 +21,7 @@ import net.digitalid.core.unit.CoreUnit;
  */
 @Immutable
 @GenerateConverter
-public interface NonHostEntity<UNIT extends CoreUnit> extends Entity<UNIT> {
+public interface NonHostEntity extends Entity {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
@@ -35,9 +35,9 @@ public interface NonHostEntity<UNIT extends CoreUnit> extends Entity<UNIT> {
     @Pure
     @Recover
     @NonCommitting
-    public static @Nonnull NonHostEntity<?> with(@Nonnull CoreUnit unit, long key) throws DatabaseException, RecoveryException {
-        final @Nonnull Entity<?> entity = Entity.with(unit, key);
-        if (entity instanceof NonHostEntity) { return (NonHostEntity<?>) entity; }
+    public static @Nonnull NonHostEntity with(@Nonnull CoreUnit unit, long key) throws DatabaseException, RecoveryException {
+        final @Nonnull Entity entity = Entity.with(unit, key);
+        if (entity instanceof NonHostEntity) { return (NonHostEntity) entity; }
         else { throw RecoveryExceptionBuilder.withMessage("The key " + key + " denotes a host identity.").build(); }
     }
     

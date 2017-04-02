@@ -31,7 +31,7 @@ public abstract class InternalContact extends Contact {
      */
     @Pure
     @Recover
-    public static @Nonnull InternalContact of(@Nonnull NonHostEntity<?> entity, @Nonnull InternalPerson person) {
+    public static @Nonnull InternalContact of(@Nonnull NonHostEntity entity, @Nonnull InternalPerson person) {
         return null; // TODO
     }
     

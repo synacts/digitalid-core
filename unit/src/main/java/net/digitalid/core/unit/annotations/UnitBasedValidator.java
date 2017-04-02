@@ -15,7 +15,7 @@ public abstract class UnitBasedValidator implements ValueAnnotationValidator {
     
     /* -------------------------------------------------- Target Types -------------------------------------------------- */
     
-    private static final @Nonnull FiniteIterable<@Nonnull Class<?>> targetTypes = FiniteIterable.of(UnitBased.class);
+    private static final @Nonnull FiniteIterable<@Nonnull Class<?>> targetTypes = FiniteIterable.of(CoreUnitBased.class);
     
     @Pure
     @Override

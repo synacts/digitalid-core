@@ -26,7 +26,7 @@ public interface AccountFactory {
      * Returns an account on the given host for the given identity.
      */
     @Pure
-    public @Nonnull @OnHost Entity<?> getAccount(@Nonnull @IsHost CoreUnit host, @Nonnull InternalIdentity identity);
+    public @Nonnull @OnHost Entity getAccount(@Nonnull @IsHost CoreUnit host, @Nonnull InternalIdentity identity);
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
@@ -41,7 +41,7 @@ public interface AccountFactory {
      * Returns an account on the given host for the given identity.
      */
     @Pure
-    public static @Nonnull @OnHost Entity<?> create(@Nonnull @IsHost CoreUnit host, @Nonnull InternalIdentity identity) {
+    public static @Nonnull @OnHost Entity create(@Nonnull @IsHost CoreUnit host, @Nonnull InternalIdentity identity) {
         return configuration.get().getAccount(host, identity);
     }
     

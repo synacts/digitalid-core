@@ -38,7 +38,7 @@ abstract class TestUnit extends CoreUnit {}
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-interface TestNonHostEntity extends NonHostEntity<TestUnit> {
+interface TestNonHostEntity extends NonHostEntity {
     
     @Pure
     @Override

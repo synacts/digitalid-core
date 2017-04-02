@@ -13,7 +13,7 @@
         
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-server</artifactId>
+            <artifactId>core-host</artifactId>
             <version>${project.version}</version>
         </dependency>
         

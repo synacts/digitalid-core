@@ -32,7 +32,7 @@ import net.digitalid.core.subject.CoreSubject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface RequiredAuthorization<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, VALUE> {
+public interface RequiredAuthorization<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, VALUE> {
     
     /**
      * Returns a function that determines the required permissions to set or add the given value to the property of the given concept.

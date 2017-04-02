@@ -40,7 +40,7 @@ import net.digitalid.core.unit.annotations.OnClientRecipient;
 @GenerateBuilder
 @GenerateSubclass
 //@GenerateConverter // TODO: Maybe the converter has to be written manually anyway (in order to recover the property). Otherwise, make sure the converter generator can handle generic types.
-public abstract class SetPropertyInternalAction<@Unspecifiable ENTITY extends Entity<?>, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends PropertyInternalAction<ENTITY, KEY, SUBJECT, WritableSynchronizedSetProperty<ENTITY, KEY, SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET>> implements Valid.Value<VALUE> {
+public abstract class SetPropertyInternalAction<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends PropertyInternalAction<ENTITY, KEY, SUBJECT, WritableSynchronizedSetProperty<ENTITY, KEY, SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET>> implements Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     

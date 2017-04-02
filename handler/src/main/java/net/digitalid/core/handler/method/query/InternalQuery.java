@@ -35,7 +35,7 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
  * Internal queries can only be sent by clients and are always signed identity-based.
  */
 @Immutable
-public abstract class InternalQuery extends Query<NonHostEntity<?>> implements InternalMethod {
+public abstract class InternalQuery extends Query<NonHostEntity> implements InternalMethod {
     
     /* -------------------------------------------------- Similarity -------------------------------------------------- */
     
@@ -57,14 +57,14 @@ public abstract class InternalQuery extends Query<NonHostEntity<?>> implements I
     @PureWithSideEffects
     @MethodHasBeenReceived
     @TODO(task = "Also pass the present agent as an argument so that it does not have to be recreated again?", date = "2016-11-09", author = Author.KASPAR_ETTER)
-    protected abstract @Nonnull @Matching QueryReply<NonHostEntity<?>> execute() throws DatabaseException;
+    protected abstract @Nonnull @Matching QueryReply<NonHostEntity> execute() throws DatabaseException;
     
     @Override
     @NonCommitting
     @OnHostRecipient
     @PureWithSideEffects
     @MethodHasBeenReceived
-    public @Nonnull @Matching QueryReply<NonHostEntity<?>> executeOnHost() throws RequestException, DatabaseException, RecoveryException {
+    public @Nonnull @Matching QueryReply<NonHostEntity> executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         Require.that(hasBeenReceived()).orThrow("This internal query can only be executed if it has been received.");
         
         final @Nullable Signature<?> signature = getSignature();
