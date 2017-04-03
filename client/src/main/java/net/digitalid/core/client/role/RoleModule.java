@@ -10,16 +10,20 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableList;
+import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.converters.Integer64Converter;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.UniqueElements;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
+import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.client.Client;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
@@ -32,7 +36,27 @@ import net.digitalid.core.identification.identity.InternalPerson;
  * This class provides database access to the {@link Role roles} of the core service.
  */
 @Utility
-abstract class RoleModule {
+public abstract class RoleModule {
+    
+    /* -------------------------------------------------- Configuration -------------------------------------------------- */
+    
+    /**
+     * Stores a dummy configuration in order to have an initialization target for table creation.
+     */
+    public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE);
+    
+    /* -------------------------------------------------- Creation -------------------------------------------------- */
+    
+    /**
+     * Creates the database table.
+     */
+    @Committing
+    @PureWithSideEffects
+    @Initialize(target = RoleModule.class, dependencies = SQL.class) // This is not optimal yet. However, these tables have to be created before the cache table.
+    public static void createTable() throws DatabaseException {
+        SQL.createTable(RoleConverter.INSTANCE, Unit.DEFAULT); // TODO: Remove this line as soon as a converter can declare its foreign key constraint.
+        SQL.createTable(RoleEntryConverter.INSTANCE, Unit.DEFAULT);
+    }
     
     /* -------------------------------------------------- Mapping -------------------------------------------------- */
     
@@ -44,7 +68,8 @@ abstract class RoleModule {
     static @Nonnull Role map(@Nonnull RoleArguments roleArguments) throws DatabaseException, RecoveryException {
         final @Nullable RoleEntry roleEntry = SQL.selectFirst(RoleEntryConverter.INSTANCE, roleArguments.getClient(), RoleArgumentsConverter.INSTANCE, roleArguments, "arguments", roleArguments.getClient());
         if (roleEntry == null) {
-            final long key = ThreadLocalRandom.current().nextLong();
+            long key = 0; // The cache uses zero to encode a null requester.
+            while (key == 0) { key = ThreadLocalRandom.current().nextLong(); }
             final @Nonnull RoleEntry entry = RoleEntryBuilder.withClient(roleArguments.getClient()).withKey(key).withArguments(roleArguments).build();
             SQL.insert(RoleEntryConverter.INSTANCE, entry, roleArguments.getClient());
             final @Nonnull Role role = entry.toRole();

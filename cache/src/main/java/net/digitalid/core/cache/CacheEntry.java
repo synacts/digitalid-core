@@ -13,7 +13,6 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 
-import net.digitalid.core.client.role.Role;
 import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
@@ -30,7 +29,7 @@ public abstract class CacheEntry extends RootClass {
     
     @Pure
     @PrimaryKey
-    public abstract @Nonnull Role getRequester();
+    public abstract @Nonnull /* Role */ Long getRequester();
     
     @Pure
     @PrimaryKey

@@ -44,6 +44,16 @@ public abstract class AttributeValue extends RootClass implements Packable {
         return this instanceof CertifiedAttributeValue;
     }
     
+    /* -------------------------------------------------- Content -------------------------------------------------- */
+    
+    /**
+     * Returns the packed content of this attribute value.
+     */
+    @Pure
+    public @Nonnull Pack getContent() {
+        return getSignature().getObject();
+    }
+    
     /* -------------------------------------------------- Verification -------------------------------------------------- */
     
     /**

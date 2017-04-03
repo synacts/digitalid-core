@@ -3,43 +3,31 @@ package net.digitalid.core.cache;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
-import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
-import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
 import net.digitalid.core.cache.exceptions.AttributeNotFoundExceptionBuilder;
 import net.digitalid.core.cache.exceptions.CertificateNotFoundException;
 import net.digitalid.core.cache.exceptions.CertificateNotFoundExceptionBuilder;
-import net.digitalid.core.client.role.Role;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
-import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.signature.attribute.AttributeValue;
 import net.digitalid.core.unit.annotations.OnClient;
@@ -49,161 +37,6 @@ import net.digitalid.core.unit.annotations.OnClient;
  */
 @Utility
 public abstract class Cache {
-    
-    /* -------------------------------------------------- Configuration -------------------------------------------------- */
-    
-    /**
-     * Stores a dummy configuration in order to have an initialization target for table creation.
-     */
-    public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE);
-    
-    /* -------------------------------------------------- Creation -------------------------------------------------- */
-    
-    /**
-     * Creates the database table.
-     */
-    @Committing
-    @PureWithSideEffects
-    @Initialize(target = Cache.class, dependencies = Role.class)
-    public static void createTable() throws DatabaseException {
-        SQL.createTable(CacheEntryConverter.INSTANCE, Unit.DEFAULT);
-    }
-    
-    /* -------------------------------------------------- Initialization -------------------------------------------------- */
-    
-    /**
-     * Initializes the cache with the public key of {@code core.digitalid.net}.
-     */
-    @Committing
-    @PureWithSideEffects
-    public static void initialize() {
-        // TODO: Think about how and where to load the public key of digitalid.net.
-        
-//        try {
-//            Database.lock();
-//            if (!getCachedAttributeValue(HostIdentity.DIGITALID, null, Time.MIN, PublicKeyChain.TYPE).getElement0()) {
-//                // Unless it is the root server, the program should have been delivered with the public key chain certificate of 'core.digitalid.net'.
-//                final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/net/digitalid/core/resources/core.digitalid.net.certificate.xdf");
-//                final @Nonnull AttributeValue value;
-//                if (inputStream != null) {
-//                    value = AttributeValue.get(SelfcontainedWrapper.decodeBlockFrom(inputStream, true).checkType(AttributeValue.TYPE), true);
-//                    Log.information("The public key chain of the root host was loaded from the provided resources.");
-//                } else {
-//                    // Since the public key chain of 'core.digitalid.net' is not available, the host 'core.digitalid.net' is created on this server.
-//                    final @Nonnull Host host = new Host(HostIdentifier.DIGITALID);
-//                    value = new CertifiedAttributeValue(host.getPublicKeyChain(), HostIdentity.DIGITALID, PublicKeyChain.TYPE);
-//                    final @Nonnull File certificateFile = new File(Directory.getHostsDirectory().getPath() + "/core.digitalid.net.certificate.xdf");
-//                    SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, value).writeTo(new FileOutputStream(certificateFile), true);
-//                    Log.warning("The public key chain of the root host was not found and thus 'core.digitalid.net' was created on this machine.");
-//                }
-//                setCachedAttributeValue(HostIdentity.DIGITALID, null, Time.MIN, PublicKeyChain.TYPE, value, null);
-//            }
-//            Database.commit();
-//        } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-//            throw InitializationError.get("Could not initialize the cache.", exception);
-//        } finally {
-//            Database.unlock();
-//        }
-    }
-    
-    /* -------------------------------------------------- Database Access -------------------------------------------------- */
-    
-    /**
-     * Invalidates all the cached attribute values of the given identity.
-     */
-    @NonCommitting
-    @PureWithSideEffects
-    public static void invalidateCachedAttributeValues(@Nonnull InternalNonHostIdentity identity) throws DatabaseException {
-        // TODO: Do this with the new database API.
-        
-//        try (@Nonnull Statement statement = Database.createStatement()) {
-//            final @Nonnull Time time = Time.getCurrent();
-//            statement.executeUpdate("UPDATE general_cache SET time = " + time + " WHERE (identity = " + identity + " OR entity = " + identity + ") AND time > " + time);
-//        }
-    }
-    
-    /**
-     * Returns the cached attribute value with the given type of the given identity.
-     * 
-     * @param identity the identity whose cached attribute value is to be returned.
-     * @param entity the entity that queries the attribute value or null for hosts.
-     * @param time the time at which the cached attribute value has to be fresh.
-     * @param type the type of the attribute value which is to be returned.
-     * 
-     * @return a pair of a boolean indicating whether the attribute value of the given type is cached and the value being cached or null if it is not available.
-     * 
-     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
-     * 
-     * @ensure return.getValue1() == null || return.getValue1().getContent().getType().equals(type) : "The content of the returned attribute value is null or matches the given type.";
-     */
-    @Pure
-    @NonCommitting
-    private static @Nonnull Pair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type) throws DatabaseException, RecoveryException {
-        Require.that(time.isNonNegative()).orThrow("The given time has to be non-negative.");
-        Require.that(type.isAttributeFor(identity.getCategory())).orThrow("The type can be used as an attribute for the category of the given identity.");
-        
-        if (time.equals(Time.MAX)) { return Pair.of(false, null); }
-        
-        // TODO:
-        
-        throw new UnsupportedOperationException();
-        
-//        final @Nonnull String query = "SELECT found, value FROM general_cache WHERE identity = " + identity + " AND (entity = " + HostIdentity.DIGITALID + (entity != null ? " OR entity = " + entity.getIdentity() : "") + ") AND type = " + type + " AND time >= " + time;
-//        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
-//            boolean found = false;
-//            @Nullable AttributeValue value = null;
-//            while (resultSet.next()) {
-//                found = true;
-//                if (resultSet.getBoolean(1)) {
-//                    value = AttributeValue.get(resultSet, 2).checkContentType(type);
-//                    break;
-//                }
-//            }
-//            return Pair.of(found, value);
-//        }
-    }
-    
-    /**
-     * Sets the cached attribute value with the given type of the given identity.
-     * 
-     * @param identity the identity whose cached attribute value is to be set.
-     * @param entity the entity that queried the attribute value or null for public.
-     * @param time the time at which the cached attribute value will expire.
-     * @param type the type of the attribute value which is to be set.
-     * @param value the cached attribute value which is to be set.
-     * @param reply the reply that returned the given attribute value.
-     * 
-     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
-     * @require value == null || value.isVerified() : "The attribute value is null or its signature is verified.";
-     * 
-     * @ensure value == null || value.getContent().getType().equals(type) : "The content of the given attribute value is null or matches the given type.";
-     */
-    @Impure
-    @NonCommitting
-    private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws DatabaseException {
-        Require.that(time.isNonNegative()).orThrow("The given time has to be non-negative.");
-        Require.that(type.isAttributeFor(identity.getCategory())).orThrow("The type can be used as an attribute for the category of the given identity.");
-        Require.that(value == null || value.isVerified()).orThrow("The attribute value is null or its signature is verified.");
-        
-        // TODO:
-        
-        throw new UnsupportedOperationException();
-        
-//        if (value != null) { value.checkContentType(type); }
-//        
-//        final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO general_cache (identity, entity, type, found, time, value, reply) VALUES (?, ?, ?, ?, ?, ?, ?)";
-//        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
-//            identity.set(preparedStatement, 1);
-//            if (entity != null) { entity.getIdentity().set(preparedStatement, 2); }
-//            else { HostIdentity.DIGITALID.set(preparedStatement, 2); }
-//            type.set(preparedStatement, 3);
-//            preparedStatement.setBoolean(4, value != null);
-//            time.set(preparedStatement, 5);
-//            AttributeValue.set(value, preparedStatement, 6);
-//            Reply.set(reply, preparedStatement, 7);
-//            preparedStatement.executeUpdate();
-//        }
-    }
     
     /* -------------------------------------------------- Attribute Value -------------------------------------------------- */
     
