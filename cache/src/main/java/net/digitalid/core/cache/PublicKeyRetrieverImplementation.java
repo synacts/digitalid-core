@@ -41,7 +41,7 @@ public class PublicKeyRetrieverImplementation implements PublicKeyRetriever {
     @Pure
     @NonCommitting
     public static @Nonnull PublicKeyChain getPublicKeyChain(@Nonnull HostIdentity identity) throws ExternalException {
-        return Cache.getFreshAttributeContent(identity, null, PUBLIC_KEY_CHAIN, PublicKeyChainConverter.INSTANCE, true);
+        return CacheQueryBuilder.withConverter(PublicKeyChainConverter.INSTANCE).withRequestee(identity).withCertified(true).build().execute();
     }
     
     @Pure

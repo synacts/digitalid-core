@@ -123,7 +123,7 @@ public interface Method<ENTITY extends Entity> extends Handler<ENTITY> {
         return null;
     }
     
-    /* -------------------------------------------------- Requirements -------------------------------------------------- */
+    /* -------------------------------------------------- Required Authorization -------------------------------------------------- */
     
     /**
      * Returns whether this method can be sent by hosts.

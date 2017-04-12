@@ -1,18 +1,23 @@
 package net.digitalid.core.cache;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.time.Time;
-import net.digitalid.utility.time.TimeBuilder;
+import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Utility;
@@ -21,16 +26,17 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
 import net.digitalid.core.cache.exceptions.AttributeNotFoundExceptionBuilder;
-import net.digitalid.core.cache.exceptions.CertificateNotFoundException;
-import net.digitalid.core.cache.exceptions.CertificateNotFoundExceptionBuilder;
-import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.client.role.Role;
+import net.digitalid.core.exceptions.response.DeclarationExceptionBuilder;
+import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.signature.attribute.AttributeValue;
-import net.digitalid.core.unit.annotations.OnClient;
+import net.digitalid.core.signature.attribute.CertifiedAttributeValue;
+import net.digitalid.core.typeset.FreezableAttributeTypeSet;
 
 /**
  * This class caches the {@link AttributeValue attribute values} of {@link Identity identities} for the attribute-specific {@link SemanticType#getCachingPeriod() caching period}.
@@ -46,210 +52,102 @@ public abstract class Cache {
      * @param type the type that was queried.
      * @param value the value that was replied.
      * @param reply the reply containing the value.
-     * 
-     * @return the expiration time of the given attribute value.
      */
     @Pure
-    private static @Nonnull Time getExpiration(@Nonnull SemanticType type, @Nullable AttributeValue value, @Nonnull AttributesReply reply) /* TODO: throws InvalidEncodingException */ {
-        // TODO
-        throw new UnsupportedOperationException();
-//        if (value != null && !value.getContent().getType().equals(type)) { throw InvalidReplyParameterValueException.get(reply, "attribute type", type.getAddress(), value.getContent().getType().getAddress()); }
-//        return type.getCachingPeriodNotNull().add(value instanceof CertifiedAttributeValue ? ((CertifiedAttributeValue) value).getTime() : reply.getSignatureNotNull().getNonNullableTime());
+    private static @Nonnull Time getExpiration(@Nonnull SemanticType type, @Nullable AttributeValue value, @Nonnull AttributesReply reply) {
+        final @Nonnull Time signatureTime = value instanceof CertifiedAttributeValue ? ((CertifiedAttributeValue) value).getSignature().getTime() : reply.getSignature().getTime();
+        final @Nonnull Time cachingPeriod = type.getCachingPeriod();
+        return signatureTime.add(cachingPeriod);
     }
     
     /**
-     * Returns the attribute values of the given identity with the given types.
+     * Returns the attribute values of the given requestee with the given types.
      * The attribute values are returned in the same order as given by the types.
      * If an attribute value is not available, the value null is returned instead.
      * If an attribute value is certified, the certificate is verified and stripped
      * from the attribute values in case the signature or the delegation is invalid.
      * 
-     * @param identity the identity whose attribute values are to be returned.
-     * @param entity the entity that queries the attribute values or null for hosts.
-     * @param time the time at which the cached attribute values have to be fresh.
+     * @param requester the role that queries the attribute values or null for hosts.
+     * @param requestee the identity whose attribute values are to be returned.
+     * @param expiration the time at which the cached attribute values have to be fresh.
      * @param types the types of the attribute values which are to be returned.
      * 
-     * @return the attribute values of the given identity with the given types.
-     * 
-     * @require !Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1 : "If the public key chain of a host is queried, it is the only type.";
-     * @require for (SemanticType type : types) type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity.";
+     * @require !Arrays.asList(types).contains(PublicKeyRetrieverImplementation.PUBLIC_KEY_CHAIN) || types.length == 1 : "If the public key chain of a host is queried, it is the only type.";
+     * @require for (SemanticType type : types) type != null && type.isAttributeFor(requestee.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given requestee.";
      * 
      * @ensure return.length == types.length : "The returned attribute values are as many as the given types.";
      * @ensure for (i = 0; i < return.length; i++) return[i] == null || return[i].getContent().getType().equals(types[i])) : "Each returned attribute value is either null or matches the corresponding type.";
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AttributeValue[] getAttributeValues(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull @NonNullableElements @NonEmpty SemanticType... types) throws ExternalException {
-        Require.that(time.isNonNegative()).orThrow("The given time is non-negative.");
-        Require.that(types.length > 0).orThrow("At least one type is given.");
-//        Require.that(!Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1).orThrow("If the public key chain of a host is queried, it is the only type."); // TODO
-        for (final @Nonnull SemanticType type : types) { Require.that(type != null && type.isAttributeFor(identity.getCategory())).orThrow("Each type is not null and can be used as an attribute for the category of the given identity."); }
+    public static @Capturable @Nonnull @NullableElements @NonEmpty AttributeValue[] getAttributeValues(@Nullable Role requester, @Nonnull InternalIdentity requestee, @Nonnull @NonNegative Time expiration, @Nonnull @NonNullableElements @NonEmpty SemanticType... types) throws ExternalException {
+        Require.that(expiration.isNonNegative()).orThrow("The given time has to be non-negative but was $.", expiration);
+        Require.that(types.length > 0).orThrow("At least one type has to be given.");
+        Require.that(!Arrays.asList(types).contains(PublicKeyRetrieverImplementation.PUBLIC_KEY_CHAIN) || types.length == 1).orThrow("If the public key chain of a host is queried, it has to be the only type.");
+        for (final @Nullable SemanticType type : types) { Require.that(type != null && type.isAttributeFor(requestee.getCategory())).orThrow("Each type has to be non-null and can be used as an attribute for the category of the given requestee."); }
         
-        final @Nonnull AttributeValue[] attributeValues = new AttributeValue[types.length];
+        final @Nonnull AttributeValue[] result = new AttributeValue[types.length];
         
-        // TODO
+        final @Nonnull FreezableAttributeTypeSet typesToRetrieve = FreezableAttributeTypeSet.withNoTypes();
+        final @Nonnull List<Integer> indexesToStore = new LinkedList<>();
+        for (int i = 0; i < types.length; i++) {
+            final @Nonnull Pair<Boolean, AttributeValue> cache = CacheModule.getCachedAttributeValue(requester, requestee, expiration, types[i]);
+            if (cache.get0()) {
+                result[i] = cache.get1();
+            } else {
+                typesToRetrieve.add(types[i]);
+                indexesToStore.add(i);
+            }
+        }
         
-//        final @Nonnull FreezableAttributeTypeSet typesToRetrieve = new FreezableAttributeTypeSet();
-//        final @Nonnull List<Integer> indexesToStore = new LinkedList<>();
-//        for (int i = 0; i < types.length; i++) {
-//            final @Nonnull Pair<Boolean, AttributeValue> cache = getCachedAttributeValue(identity, entity, time, types[i]);
-//            if (cache.get0()) {
-//                attributeValues[i] = cache.get1();
-//            } else {
-//                typesToRetrieve.add(types[i]);
-//                indexesToStore.add(i);
-//            }
-//        }
-//        
-//        if (typesToRetrieve.size() > 0) {
-//            if (typesToRetrieve.contains(PublicKeyChain.TYPE)) {
-//                final @Nonnull AttributesReply reply = new Request(identity.getAddress().getHostIdentifier()).send(false).getReplyNotNull(0);
+        if (typesToRetrieve.size() > 0) {
+            if (typesToRetrieve.contains(PublicKeyRetrieverImplementation.PUBLIC_KEY_CHAIN)) {
+                // TODO: Implement a mechanism where the signature can be verified after the public key chain has been stored.
+//                final @Nonnull AttributesReply reply = new Request(requestee.getAddress().getHostIdentifier()).send(false).getReplyNotNull(0);
 //                final @Nullable AttributeValue value = reply.getAttributeValues().getNullable(0);
 //                setCachedAttributeValue(identity, null, getExpiration(PublicKeyChain.TYPE, value, reply), PublicKeyChain.TYPE, value, reply);
 //                reply.getSignatureNotNull().verify();
-//                attributeValues[0] = value;
-//            } else {
-//                final @Nonnull Response response = new AttributesQuery(entity, identity.getAddress(), typesToRetrieve.freeze(), true).send();
-//                final @Nonnull AttributesReply reply = response.getReplyNotNull(0);
-//                final @Nonnull ReadOnlyList<AttributeValue> values = reply.getAttributeValues();
-//                if (values.size() != typesToRetrieve.size()) { throw InvalidReplyParameterValueException.get(reply, "number of attributes", typesToRetrieve.size(), values.size()); }
-//                int i = 0;
-//                for (final @Nonnull SemanticType type : typesToRetrieve) {
-//                    final @Nullable AttributeValue value = values.getNullable(i);
-//                    setCachedAttributeValue(identity, response.getRequest().isSigned() ? entity : null, getExpiration(type, value, reply), type, value, reply);
-//                    attributeValues[indexesToStore.get(i)] = value;
-//                    i++;
-//                }
-//            }
-//        }
+//                result[0] = value;
+            } else {
+                final @Nonnull AttributesQuery query = AttributesQueryBuilder.withAttributeTypes(typesToRetrieve/* TODO: .freeze() */).withPublished(true).withProvidedEntity(requester).withProvidedSubject(requestee.getAddress()).build();
+                final @Nonnull AttributesReply reply = query.send(AttributesReplyConverter.INSTANCE);
+                final @Nonnull ReadOnlyList<AttributeValue> values = reply.getAttributeValues();
+                if (values.size() != typesToRetrieve.size()) { throw DeclarationExceptionBuilder.withMessage(Strings.format("number of attributes", typesToRetrieve.size(), values.size())).withIdentity(requestee).build(); }
+                for (int i = 0; i < values.size(); i++) {
+                    final @Nullable AttributeValue value = values.get(i);
+                    final @Nonnull SemanticType type = typesToRetrieve.get(i);
+                    if (value != null && !value.getContent().getType().equals(type)) { throw DeclarationExceptionBuilder.withMessage(Strings.format("The queried type $ and the replied type $ should be the same.", type.getAddress(), value.getContent().getType().getAddress())).withIdentity(requestee).build(); }
+                    CacheModule.setCachedAttributeValue(requester, requestee, getExpiration(type, value, reply), type, value, reply);
+                    result[indexesToStore.get(i)] = value;
+                }
+            }
+        }
         
-        return attributeValues;
+        return result;
     }
     
     /**
-     * Returns the attribute value of the given identity with the given type.
+     * Returns the attribute value of the given requestee with the given type.
      * If the attribute value is certified, the certificate is verified and stripped
      * from the attribute value in case the signature or the delegation is invalid.
      * 
-     * @param identity the identity whose attribute value is to be returned.
-     * @param entity the entity that queries the attribute value or null for hosts.
-     * @param time the time at which the cached attribute value has to be fresh.
+     * @param requester the role that queries the attribute value or null for hosts.
+     * @param requestee the identity whose attribute value is to be returned.
+     * @param expiration the time at which the cached attribute value has to be fresh.
      * @param type the type of the attribute value which is to be returned.
-     * 
-     * @return the attribute value of the given identity with the given type.
      * 
      * @throws AttributeNotFoundException if the attribute is not available.
      * 
-     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
+     * @require type.isAttributeFor(requestee.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
      * 
      * @ensure return.getContent().getType().equals(type)) : "The returned attribute value matches the given type.";
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AttributeValue getAttributeValue(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type) throws ExternalException {
-        final @Nonnull AttributeValue[] attributeValues = getAttributeValues(identity, entity, time, type);
-        if (attributeValues[0] == null) { throw AttributeNotFoundExceptionBuilder.withIdentity(identity).withType(type).build(); }
+    public static @Nonnull AttributeValue getAttributeValue(@Nullable Role requester, @Nonnull InternalIdentity requestee, @Nonnull @NonNegative Time expiration, @Nonnull @AttributeType SemanticType type) throws ExternalException {
+        final @Nonnull AttributeValue[] attributeValues = getAttributeValues(requester, requestee, expiration, type);
+        if (attributeValues[0] == null) { throw AttributeNotFoundExceptionBuilder.withIdentity(requestee).withType(type).build(); }
         else { return attributeValues[0]; }
-    }
-    
-    /* -------------------------------------------------- Attribute Content -------------------------------------------------- */
-    
-    // TODO: Adapt the Javadoc of the following methods.
-    
-    /**
-     * Returns the attribute content of the given identity with the given type.
-     * 
-     * @param identity the identity whose attribute content is to be returned.
-     * @param entity the entity that queries the attribute content or null for hosts.
-     * @param time the time at which the cached attribute content has to be fresh.
-     * @param type the type of the attribute content which is to be returned.
-     * @param certified whether the attribute content should be certified.
-     * 
-     * @return the attribute content of the given identity with the given type.
-     * 
-     * @throws AttributeNotFoundException if the attribute value is not available.
-     * @throws CertificateNotFoundException if the value should be certified but is not.
-     * 
-     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
-     * 
-     * @ensure return.getType().equals(type) : "The returned content has the given type.";
-     */
-    @Pure
-    @NonCommitting
-    @TODO(task = "Provide a second method that derives the semantic type from the converter (and thus has less method parameters)?", date = "2016-12-03", author = Author.KASPAR_ETTER)
-    public static <T> @Nonnull T getAttributeContent(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull @NonNegative Time time, @Nonnull SemanticType type, @Nonnull Converter<T, Void> converter, boolean certified) throws ExternalException {
-        final @Nonnull AttributeValue value = getAttributeValue(identity, entity, time, type);
-        if (certified && !value.isCertified()) { throw CertificateNotFoundExceptionBuilder.withIdentity(identity).withType(type).build(); }
-        final @Nullable T content = value.getSignature().getObject().unpack(converter, null);
-        if (content == null) { throw AttributeNotFoundExceptionBuilder.withIdentity(identity).withType(type).build(); }
-        return content;
-    }
-    
-    /**
-     * Returns the fresh attribute content of the given identity with the given type.
-     * 
-     * @param identity the identity whose attribute content is to be returned.
-     * @param entity the entity that queries the attribute content or null for hosts.
-     * @param type the type of the attribute content which is to be returned.
-     * @param certified whether the attribute content should be certified.
-     * 
-     * @return the attribute content of the given identity with the given type.
-     * 
-     * @throws AttributeNotFoundException if the attribute value is not available.
-     * @throws CertificateNotFoundException if the value should be certified but is not.
-     * 
-     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
-     * 
-     * @ensure return.getType().equals(type) : "The returned content has the given type.";
-     */
-    @Pure
-    @NonCommitting
-    public static <T> @Nonnull T getFreshAttributeContent(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull SemanticType type, @Nonnull Converter<T, Void> converter, boolean certified) throws ExternalException {
-        return getAttributeContent(identity, entity, TimeBuilder.build(), type, converter, certified);
-    }
-    
-    /**
-     * Returns the stale attribute content of the given identity with the given type.
-     * 
-     * @param identity the identity whose attribute content is to be returned.
-     * @param entity the entity that queries the attribute content or null for hosts.
-     * @param type the type of the attribute content which is to be returned.
-     * 
-     * @return the attribute content of the given identity with the given type.
-     * 
-     * @throws AttributeNotFoundException if the attribute value is not available.
-     * 
-     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
-     * 
-     * @ensure return.getType().equals(type) : "The returned content has the given type.";
-     */
-    @Pure
-    @NonCommitting
-    public static <T> @Nonnull T getStaleAttributeContent(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull SemanticType type, @Nonnull Converter<T, Void> converter) throws ExternalException {
-        return getAttributeContent(identity, entity, Time.MIN, type, converter, false);
-    }
-    
-    /**
-     * Returns the reloaded attribute content of the given identity with the given type.
-     * 
-     * @param identity the identity whose attribute content is to be returned.
-     * @param entity the entity that queries the attribute content or null for hosts.
-     * @param type the type of the attribute content which is to be returned.
-     * @param certified whether the attribute content should be certified.
-     * 
-     * @return the attribute content of the given identity with the given type.
-     * 
-     * @throws AttributeNotFoundException if the attribute value is not available.
-     * @throws CertificateNotFoundException if the value should be certified but is not.
-     * 
-     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
-     * 
-     * @ensure return.getType().equals(type) : "The returned content has the given type.";
-     */
-    @Pure
-    @NonCommitting
-    public static <T> @Nonnull T getReloadedAttributeContent(@Nonnull InternalIdentity identity, @Nullable @OnClient NonHostEntity entity, @Nonnull SemanticType type, @Nonnull Converter<T, Void> converter, boolean certified) throws ExternalException {
-        return getAttributeContent(identity, entity, Time.MAX, type, converter, certified);
     }
     
     /* -------------------------------------------------- Host Lookup -------------------------------------------------- */

@@ -7,7 +7,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -25,32 +25,32 @@ import net.digitalid.core.pack.Pack;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class CacheEntry extends RootClass {
+public interface CacheEntry extends RootInterface {
     
     @Pure
     @PrimaryKey
-    public abstract @Nonnull /* Role */ Long getRequester();
+    public @Nonnull /* Role */ Long getRequester();
     
     @Pure
     @PrimaryKey
-    public abstract @Nonnull InternalIdentity getRequestee();
+    public @Nonnull InternalIdentity getRequestee();
     
     @Pure
     @PrimaryKey
-    public abstract @Nonnull @AttributeType SemanticType getAttributeType();
+    public @Nonnull @AttributeType SemanticType getAttributeType();
     
     @Pure
     @PrimaryKey
-    public abstract boolean isFound();
+    public boolean isFound();
     
     @Pure
-    public abstract @Nonnull Time getExpirationTime();
+    public @Nonnull Time getExpirationTime();
     
     @Pure
-    public abstract @Nullable Pack getAttributeValue();
+    public @Nullable Pack getAttributeValue();
     
     // TODO (as soon as replies can be converted)
 //    @Pure
-//    public abstract @Nullable Reply<?> getReply();
+//    public @Nullable Reply<?> getReply();
     
 }

@@ -13,6 +13,7 @@ import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -36,7 +37,7 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
  * @invariant getKey().isAttributeFor(getEntity().getIdentity().getCategory()) : "The type is an attribute for the entity of this attribute.";
  */
 @Immutable
-// TODO: @GenerateSubclass
+@GenerateSubclass
 @GenerateConverter
 public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticType> {
     
@@ -87,7 +88,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
     /**
      * Stores the required authorization to change the visibility.
      */
-    static final @Nonnull RequiredAuthorization<Entity, SemanticType, Attribute, AttributeValue> VISIBILITY = RequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull RequiredAuthorization<Entity, SemanticType, Attribute, PassiveExpression> VISIBILITY = RequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, PassiveExpression>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the visibility property of this attribute.
@@ -104,7 +105,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
     @Pure
     @Recover
     public static @Nonnull Attribute of(@Nonnull Entity entity, @Nonnull SemanticType key) {
-        return null; // TODO
+        return AttributeSubclass.MODULE.getSubjectIndex().get(entity, key);
     }
     
     /**
