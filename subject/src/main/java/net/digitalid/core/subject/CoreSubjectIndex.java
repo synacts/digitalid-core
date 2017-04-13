@@ -20,6 +20,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.access.Access;
 import net.digitalid.database.access.Mode;
 import net.digitalid.database.access.annotations.SingleAccess;
+import net.digitalid.database.conversion.SQL;
+import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.entity.Entity;
 
@@ -74,19 +76,21 @@ public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity, @Un
     private final @Nonnull ConcurrentMap<@Nonnull ENTITY, @Nonnull ConcurrentMap<@Nonnull KEY, @Nonnull SUBJECT>> subjects = ConcurrentHashMapBuilder.build();
     
     /**
-     * Returns the potentially cached core subject with the given entity and key that might not yet exist in the database.
+     * Returns the potentially cached core subject with the given entity and key after having inserted it into its database table.
      */
     @Pure
-    public @Nonnull SUBJECT get(@Nonnull ENTITY entity, @Nonnull KEY key) {
+    public @Nonnull SUBJECT get(@Nonnull ENTITY entity, @Nonnull KEY key) throws DatabaseException {
+        @Nullable SUBJECT subject;
         if (Access.mode.get() == Mode.SINGLE) {
             @Nullable ConcurrentMap<KEY, SUBJECT> map = subjects.get(entity);
             if (map == null) { map = subjects.putIfAbsentElseReturnPresent(entity, ConcurrentHashMapBuilder.<KEY, SUBJECT>build()); }
-            @Nullable SUBJECT subject = map.get(key);
+            subject = map.get(key);
             if (subject == null) { subject = map.putIfAbsentElseReturnPresent(key, getSubjectModule().getSubjectFactory().evaluate(entity, key)); }
-            return subject;
         } else {
-            return getSubjectModule().getSubjectFactory().evaluate(entity, key);
+            subject = getSubjectModule().getSubjectFactory().evaluate(entity, key);
         }
+        SQL.insertOrIgnore(getSubjectModule().getSubjectConverter(), subject, entity.getUnit());
+        return subject;
     }
     
     /* -------------------------------------------------- Resetting -------------------------------------------------- */

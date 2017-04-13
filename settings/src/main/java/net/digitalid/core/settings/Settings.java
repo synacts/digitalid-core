@@ -10,6 +10,7 @@ import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.entity.NonHostEntity;
@@ -36,11 +37,11 @@ public abstract class Settings extends CoreServiceCoreSubject<NonHostEntity, Non
     /* -------------------------------------------------- Index -------------------------------------------------- */
     
     /**
-     * Returns the potentially cached settings of the given entity that might not yet exist in the database.
+     * Returns the potentially cached settings of the given entity after having inserted it into its database table.
      */
     @Pure
     @Recover
-    public static @Nonnull Settings of(@Nonnull NonHostEntity entity) {
+    public static @Nonnull Settings of(@Nonnull NonHostEntity entity) throws DatabaseException {
         return SettingsSubclass.MODULE.getSubjectIndex().get(entity, None.INSTANCE);
     }
     

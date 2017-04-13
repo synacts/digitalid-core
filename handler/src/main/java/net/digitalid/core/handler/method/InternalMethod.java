@@ -1,6 +1,7 @@
 package net.digitalid.core.handler.method;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.generation.Derive;
@@ -32,6 +33,12 @@ public interface InternalMethod extends Method<NonHostEntity> {
     public @Nonnull NonHostEntity getEntity();
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public default @Nullable InternalIdentifier getProvidedSubject() {
+        return null;
+    }
     
     @Pure
     @Override

@@ -101,7 +101,7 @@ public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY exte
         try {
             final @Nonnull PersistentMapPropertyEntry<SUBJECT, MAP_KEY, MAP_VALUE> entry = PersistentMapPropertyEntryBuilder.<SUBJECT, MAP_KEY, MAP_VALUE>withSubject(getSubject()).withKey(key).withValue(value).build();
             if (added) {
-                SQL.insert(getTable().getEntryConverter(), entry, getSubject().getUnit());
+                SQL.insertOrAbort(getTable().getEntryConverter(), entry, getSubject().getUnit());
                 getMap().put(key, value);
             } else {
                 SQL.delete(getTable().getEntryConverter(), getTable().getEntryConverter(), entry, getSubject().getUnit());

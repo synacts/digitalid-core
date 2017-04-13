@@ -68,7 +68,7 @@ public abstract class CoreSubjectModule<@Unspecifiable ENTITY extends Entity, @U
     
     @Pure
     @Override
-    @Derive("new CoreSubjectConverterSubclass<ENTITY, KEY, SUBJECT>(CoreSubject.class, \"CoreSubjectConverter\", \"net.digitalid.core.subject\", this)")
+    @Derive("new CoreSubjectConverterSubclass<ENTITY, KEY, SUBJECT>(this)")
     public abstract @Nonnull Converter<SUBJECT, @Nonnull CoreUnit> getSubjectConverter();
     
     /* -------------------------------------------------- Name -------------------------------------------------- */

@@ -22,6 +22,9 @@ import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
+import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.property.PersistentProperty;
@@ -44,6 +47,30 @@ public abstract class CoreSubjectConverter<@Unspecifiable ENTITY extends Entity,
      */
     @Pure
     public abstract @Nonnull CoreSubjectModule<ENTITY, KEY, SUBJECT> getSubjectModule();
+    
+    /* -------------------------------------------------- Type -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Class<? super SUBJECT> getType() {
+        return getSubjectModule().getCoreSubjectConverter().getType();
+    }
+    
+    /* -------------------------------------------------- Name -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @CodeIdentifier @MaxSize(63) String getTypeName() {
+        return getSubjectModule().getCoreSubjectConverter().getTypeName();
+    }
+    
+    /* -------------------------------------------------- Package -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @DomainName String getTypePackage() {
+        return getSubjectModule().getCoreSubjectConverter().getTypePackage();
+    }
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     

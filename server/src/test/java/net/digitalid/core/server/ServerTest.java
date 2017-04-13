@@ -6,25 +6,45 @@ import java.net.InetAddress;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.conversion.converters.StringConverter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Log;
 
+import net.digitalid.core.account.AccountOpen;
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
+import net.digitalid.core.attribute.Attribute;
+import net.digitalid.core.attribute.AttributeTypes;
+import net.digitalid.core.cache.CacheQueryBuilder;
+import net.digitalid.core.client.Client;
+import net.digitalid.core.client.ClientBuilder;
+import net.digitalid.core.client.role.Role;
+import net.digitalid.core.client.role.RoleArguments;
+import net.digitalid.core.client.role.RoleArgumentsBuilder;
+import net.digitalid.core.client.role.RoleModule;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.expression.PassiveExpressionBuilder;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
+import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
+import net.digitalid.core.identification.identity.Category;
+import net.digitalid.core.identification.identity.InternalNonHostIdentity;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.packet.Request;
+import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.server.handlers.TestQuery;
 import net.digitalid.core.server.handlers.TestQueryBuilder;
 import net.digitalid.core.server.handlers.TestQueryConverter;
 import net.digitalid.core.server.handlers.TestReply;
 import net.digitalid.core.server.handlers.TestReplyConverter;
+import net.digitalid.core.signature.Signature;
+import net.digitalid.core.signature.SignatureBuilder;
+import net.digitalid.core.signature.attribute.UncertifiedAttributeValue;
 import net.digitalid.core.testing.CoreTest;
 import net.digitalid.core.testing.providers.TestPrivateKeyRetrieverBuilder;
 import net.digitalid.core.testing.providers.TestPublicKeyRetrieverBuilder;
@@ -100,6 +120,29 @@ public class ServerTest extends CoreTest {
         Log.information("Started the identifier resolution test.");
         final @Nonnull Identifier identifier = Identifier.with("person@test.digitalid.net");
         assertThatThrownBy(identifier::resolve).isInstanceOf(RequestException.class);
+    }
+    
+    @Test
+    public void testIdentityCreation() throws ExternalException {
+        Log.information("Started the identity creation test.");
+        
+        final @Nonnull Client client = ClientBuilder.withIdentifier(/* TODO: "test.client.digitalid.net" */ "default").withDisplayName("Test Client").withPreferredPermissions(ReadOnlyAgentPermissions.GENERAL_WRITE).build();
+        final @Nonnull InternalNonHostIdentifier identifier = InternalNonHostIdentifier.with("person@test.digitalid.net");
+        AccountOpen.with(Category.NATURAL_PERSON, identifier, client).send();
+        
+        final @Nonnull InternalNonHostIdentity identity = identifier.resolve();
+        final @Nonnull RoleArguments arguments = RoleArgumentsBuilder.withClient(client).withIssuer(identity).withAgentKey(0).build();
+        final @Nonnull Role role = RoleModule.map(arguments);
+        
+        final @Nonnull Attribute nameAttribute = Attribute.of(role, AttributeTypes.NAME);
+        final @Nonnull String name = "Test Person";
+        final @Nonnull Pack pack = Pack.pack(StringConverter.INSTANCE, name);
+        final @Nonnull Signature<Pack> signature = SignatureBuilder.withObject(pack).withSubject(identifier).build();
+        nameAttribute.value().set(UncertifiedAttributeValue.with(signature));
+        nameAttribute.visibility().set(PassiveExpressionBuilder.withEntity(role).withString("everybody").build());
+        
+        final @Nonnull String cachedName = CacheQueryBuilder.withConverter(StringConverter.INSTANCE).withRequestee(identity).withType(AttributeTypes.NAME).build().execute();
+        assertThat(cachedName).isEqualTo(name);
     }
     
     /* -------------------------------------------------- Old -------------------------------------------------- */

@@ -65,15 +65,15 @@ public abstract class RoleModule {
      */
     @NonCommitting
     @PureWithSideEffects
-    static @Nonnull Role map(@Nonnull RoleArguments roleArguments) throws DatabaseException, RecoveryException {
+    public static @Nonnull Role map(@Nonnull RoleArguments roleArguments) throws DatabaseException, RecoveryException {
         final @Nullable RoleEntry roleEntry = SQL.selectFirst(RoleEntryConverter.INSTANCE, roleArguments.getClient(), RoleArgumentsConverter.INSTANCE, roleArguments, "arguments", roleArguments.getClient());
         if (roleEntry == null) {
             long key = 0; // The cache uses zero to encode a null requester.
             while (key == 0) { key = ThreadLocalRandom.current().nextLong(); }
             final @Nonnull RoleEntry entry = RoleEntryBuilder.withClient(roleArguments.getClient()).withKey(key).withArguments(roleArguments).build();
-            SQL.insert(RoleEntryConverter.INSTANCE, entry, roleArguments.getClient());
+            SQL.insertOrAbort(RoleEntryConverter.INSTANCE, entry, roleArguments.getClient());
             final @Nonnull Role role = entry.toRole();
-            SQL.insert(RoleConverter.INSTANCE, role, role.getUnit()); // TODO: Remove this line as soon as a converter can declare its foreign key constraint.
+            SQL.insertOrAbort(RoleConverter.INSTANCE, role, role.getUnit()); // TODO: Remove this line as soon as a converter can declare its foreign key constraint.
             return role;
         } else {
             return roleEntry.toRole();

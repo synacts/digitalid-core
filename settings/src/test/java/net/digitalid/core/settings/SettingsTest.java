@@ -70,24 +70,22 @@ public class SettingsTest extends CoreTest {
     
     private static final @Nonnull TestNonHostEntity ENTITY = TestNonHostEntityBuilder.withUnit(UNIT).withKey(0).withIdentity(TYPE).build();
     
-    private static final @Nonnull Settings SETTINGS = Settings.of(ENTITY);
-    
     @Impure
     @BeforeClass
     public static void createTables() throws ExternalException {
         SQL.createTable(NonHostEntityConverter.INSTANCE, UNIT);
         SQL.createTable(SettingsSubclass.MODULE.getSubjectConverter(), UNIT);
         SQL.createTable(SettingsSubclass.PASSWORD_TABLE.getEntryConverter(), UNIT);
-        SQL.insert(NonHostEntityConverter.INSTANCE, ENTITY, UNIT);
-        SQL.insert(SettingsSubclass.MODULE.getSubjectConverter(), SETTINGS, UNIT);
+        SQL.insertOrAbort(NonHostEntityConverter.INSTANCE, ENTITY, UNIT);
     }
     
     @Test
     public void testSynchronizedValueProperty() throws DatabaseException, RecoveryException {
         try {
-            SETTINGS.password().set(VALUE);
-            SETTINGS.password().reset(); // Not necessary but I want to test the database state.
-            assertThat(SETTINGS.password().get()).isEqualTo(VALUE);
+            final @Nonnull Settings settings = Settings.of(ENTITY);
+            settings.password().set(VALUE);
+            settings.password().reset(); // Not necessary but I want to test the database state.
+            assertThat(settings.password().get()).isEqualTo(VALUE);
             Database.instance.get().commit();
         } catch (@Nonnull DatabaseException | RecoveryException exception) {
             Database.instance.get().rollback();

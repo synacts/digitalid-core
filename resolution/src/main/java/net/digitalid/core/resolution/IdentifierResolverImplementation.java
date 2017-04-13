@@ -112,8 +112,8 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
         
         final @Nonnull IdentityEntry identityEntry = IdentityEntryBuilder.withKey(key).withCategory(category).withAddress(address).build();
         final @Nonnull IdentifierEntry identifierEntry = IdentifierEntryBuilder.withIdentifier(address).withKey(key).build();
-        SQL.insert(IdentityEntryConverter.INSTANCE, identityEntry, Unit.DEFAULT);
-        SQL.insert(IdentifierEntryConverter.INSTANCE, identifierEntry, Unit.DEFAULT);
+        SQL.insertOrAbort(IdentityEntryConverter.INSTANCE, identityEntry, Unit.DEFAULT);
+        SQL.insertOrAbort(IdentifierEntryConverter.INSTANCE, identifierEntry, Unit.DEFAULT);
         
         final @Nonnull Identity identity = createIdentity(category, key, address);
         mapper.mapAfterCommit(identity);

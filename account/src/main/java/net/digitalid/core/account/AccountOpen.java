@@ -41,6 +41,7 @@ import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.action.InternalAction;
 import net.digitalid.core.handler.reply.ActionReply;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.IdentifierResolver;
@@ -62,6 +63,44 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
 @GenerateSubclass
 @GenerateConverter
 public abstract class AccountOpen extends InternalAction implements CoreMethod<NonHostEntity> {
+    
+    /* -------------------------------------------------- Entity -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nullable NonHostEntity getProvidedEntity() {
+        return null;
+    }
+    
+    /**
+     * Returns null, which is a violation of the postcondition of {@link Method#getEntity()}.
+     */
+    @Pure
+    @Override
+    public @Nullable NonHostEntity getEntity() {
+        return null;
+    }
+    
+    /**
+     * Returns true whenever this method has been received in order to fulfill the invariant of {@link Method}.
+     */
+    @Pure
+    @Override
+    public boolean isOnHost() {
+        return hasBeenReceived();
+    }
+    
+    /* -------------------------------------------------- Subject -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nullable InternalIdentifier getProvidedSubject() {
+        return null;
+    }
+    
+    @Pure
+    @Override
+    public abstract @Nonnull InternalIdentifier getSubject();
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -122,7 +161,7 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
     @Pure
     @NonCommitting
     public static @Nonnull AccountOpen with(@Nonnull Category category, @Nonnull InternalNonHostIdentifier subject, @Nonnull Client client) throws ExternalException {
-        return AccountOpenBuilder.withCategory(category).withClientAgentKey(ThreadLocalRandom.current().nextLong()).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
+        return AccountOpenBuilder.withSubject(subject).withCategory(category).withClientAgentKey(ThreadLocalRandom.current().nextLong()).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
     }
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */

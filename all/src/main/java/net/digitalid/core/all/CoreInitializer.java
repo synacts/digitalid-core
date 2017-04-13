@@ -10,7 +10,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.account.AccountOpenConverter;
-import net.digitalid.core.attribute.AttributeConverter;
+import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.resolution.handlers.IdentityQueryConverter;
 
@@ -37,7 +37,9 @@ public abstract class CoreInitializer {
     @PureWithSideEffects
     @Initialize(target = SQL.class)
     public static void initializeDatabaseTables() throws DatabaseException {
-        SQL.createTable(AttributeConverter.INSTANCE, Unit.DEFAULT);
+        SQL.createTable(Attribute.MODULE.getSubjectConverter(), Unit.DEFAULT);
+        SQL.createTable(Attribute.VALUE_TABLE.getEntryConverter(), Unit.DEFAULT);
+        SQL.createTable(Attribute.VISIBILITY_TABLE.getEntryConverter(), Unit.DEFAULT);
     }
     
 }

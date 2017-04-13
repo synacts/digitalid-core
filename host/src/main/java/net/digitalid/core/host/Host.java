@@ -175,6 +175,8 @@ public abstract class Host extends CoreUnit {
     @Override
     @CallSuper
     protected void initialize() throws ExternalException {
+        super.initialize();
+        
         protectedPrivateKeyChain.set(PrivateKeyChainLoader.load(getIdentifier()));
         protectedPublicKeyChain.set(PublicKeyChainLoader.load(getIdentifier()));
         

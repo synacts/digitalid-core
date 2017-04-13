@@ -19,11 +19,8 @@ import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
-import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
-import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
-import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
@@ -101,14 +98,14 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
      * Returns the identifier of this client.
      */
     @Pure
-    public abstract @Nonnull @DomainName @MaxSize(62) String getIdentifier();
+    public abstract @Nonnull /* TODO: Temporarily disabled to allow 'default'. @CodeIdentifier */ @MaxSize(62) String getIdentifier();
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
     
     @Pure
     @Override
     @Derive("(Character.isDigit(identifier.charAt(0)) ? \"_\" : \"\") + identifier.replace(\".\", \"_\").replace(\"-\", \"$\")")
-    public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getName();
+    public abstract @Nonnull /* TODO: Temporarily disabled to allow 'default'. @CodeIdentifier */ @MaxSize(63) /* TODO: This seems to be impossible with @CodeIdentifier. @Unequal("general") */ String getName();
     
     /* -------------------------------------------------- Display Name -------------------------------------------------- */
     
@@ -142,8 +139,10 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
     @CallSuper
     @NonCommitting
     protected void initialize() throws ExternalException {
+        super.initialize();
+        
         SQL.createTable(ClientConverter.INSTANCE, CoreUnit.DEFAULT);
-        SQL.insert(ClientConverter.INSTANCE, this, CoreUnit.DEFAULT);
+        SQL.insertOrAbort(ClientConverter.INSTANCE, this, CoreUnit.DEFAULT);
         protectedSecret.set(ClientSecretLoader.load(getIdentifier()));
     }
     

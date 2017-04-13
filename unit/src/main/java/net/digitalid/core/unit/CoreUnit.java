@@ -7,6 +7,8 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootClassWithException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.dialect.statement.schema.SQLCreateSchemaStatementBuilder;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.unit.Unit;
 
 /**
@@ -30,6 +32,17 @@ public abstract class CoreUnit extends RootClassWithException<ExternalException>
      */
     @Pure
     public abstract boolean isClient();
+    
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @CallSuper
+    protected void initialize() throws ExternalException {
+        super.initialize();
+        
+        Database.instance.get().execute(SQLCreateSchemaStatementBuilder.build(), this);
+    }
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */
     
