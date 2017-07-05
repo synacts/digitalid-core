@@ -9,8 +9,6 @@ import net.digitalid.utility.functional.interfaces.BinaryFunction;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.generation.Derive;
-import net.digitalid.utility.validation.annotations.size.MaxSize;
-import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.subject.SubjectModule;
@@ -70,13 +68,5 @@ public abstract class CoreSubjectModule<@Unspecifiable ENTITY extends Entity, @U
     @Override
     @Derive("new CoreSubjectConverterSubclass<ENTITY, KEY, SUBJECT>(this)")
     public abstract @Nonnull Converter<SUBJECT, @Nonnull CoreUnit> getSubjectConverter();
-    
-    /* -------------------------------------------------- Name -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull @CodeIdentifier @MaxSize(63) String getName() {
-        return getCoreSubjectConverter().getTypeName();
-    }
     
 }

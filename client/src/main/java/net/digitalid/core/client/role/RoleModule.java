@@ -15,6 +15,7 @@ import net.digitalid.utility.conversion.converters.Integer64Converter;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.UniqueElements;
 import net.digitalid.utility.validation.annotations.type.Utility;
@@ -23,7 +24,6 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.client.Client;
 import net.digitalid.core.exceptions.request.RequestErrorCode;

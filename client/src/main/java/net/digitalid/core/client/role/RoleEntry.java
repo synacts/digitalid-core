@@ -33,7 +33,7 @@ public abstract class RoleEntry extends RootClass {
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     @Pure
-    @Provided
+    @Provided // TODO: The client should probably be encoded (and recoverable) if the role table should be on the general unit.
     public abstract @Nonnull Client getClient();
     
     @Pure

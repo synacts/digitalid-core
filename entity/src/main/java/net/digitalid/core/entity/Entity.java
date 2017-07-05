@@ -3,6 +3,8 @@ package net.digitalid.core.entity;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
@@ -30,6 +32,7 @@ import net.digitalid.core.unit.annotations.CoreUnitBased;
  */
 @Immutable
 @GenerateConverter
+@TODO(task = "This type should probably implement Subject<CoreUnit> again in order to get the foreign key constraints.", date = "2017-04-15", author = Author.KASPAR_ETTER)
 public interface Entity extends CoreUnitBased {
     
     /* -------------------------------------------------- Unit -------------------------------------------------- */

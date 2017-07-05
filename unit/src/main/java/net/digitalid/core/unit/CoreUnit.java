@@ -5,11 +5,11 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootClassWithException;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.dialect.statement.schema.SQLCreateSchemaStatementBuilder;
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.unit.Unit;
 
 /**
  * A core unit is either a host or a client.
@@ -32,6 +32,12 @@ public abstract class CoreUnit extends RootClassWithException<ExternalException>
      */
     @Pure
     public abstract boolean isClient();
+    
+    /* -------------------------------------------------- Module -------------------------------------------------- */
+    
+    // TODO: Have a public static final module here that contains all submodules and tables that have to be created on this site?
+    
+    // TODO: Create the schema and all the tables of the module (in the right order) during initialization?
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
     

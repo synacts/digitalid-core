@@ -2,9 +2,9 @@ package net.digitalid.core.packet.replay;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
-import net.digitalid.database.unit.Unit;
 import net.digitalid.database.unit.UnitBuilder;
 
 /**

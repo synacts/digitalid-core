@@ -7,10 +7,10 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.storage.Storage;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.storage.Storage;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;

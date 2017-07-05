@@ -12,6 +12,7 @@ import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
@@ -47,7 +48,6 @@ import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.SQLDecoder;
 import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
-import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.client.role.Role;
 import net.digitalid.core.client.role.RoleModule;

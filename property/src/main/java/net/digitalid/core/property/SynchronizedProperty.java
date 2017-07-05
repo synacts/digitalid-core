@@ -6,11 +6,11 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.property.Observer;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.property.PersistentProperty;
 import net.digitalid.database.property.PersistentPropertyEntry;
-import net.digitalid.database.unit.Unit;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.value.WritableSynchronizedValueProperty;

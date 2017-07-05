@@ -12,6 +12,7 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -20,7 +21,9 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
+import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
@@ -29,7 +32,7 @@ import net.digitalid.core.identification.identity.SemanticType;
  * This class models a service of the Digital ID protocol.
  */
 @Immutable
-@GenerateConverter // TODO: What shall we do with the RequestException thrown in the recover method?
+@GenerateConverter
 public abstract class Service extends RootClass {
     
     /* -------------------------------------------------- Services -------------------------------------------------- */
@@ -52,10 +55,9 @@ public abstract class Service extends RootClass {
      */
     @Pure
     @Recover
-    public static @Nonnull Service getService(@Nonnull SemanticType type) /* throws RequestException */ {
+    public static @Nonnull Service getService(@Nonnull SemanticType type) throws RequestException {
         final @Nullable Service service = services.get(type);
-//        if (service == null) { throw RequestException.with(RequestErrorCode.SERVICE, "No service with the type $ was found.", type.getAddress().getString()); }
-        if (service == null) { throw new RuntimeException("No service with the type '" + type.getAddress().getString() + "' was found."); }
+        if (service == null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.SERVICE).withMessage(Strings.format("No service with the type $ was found.", type.getAddress().getString())).build(); }
         return service;
     }
     
