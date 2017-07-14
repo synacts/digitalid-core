@@ -8,8 +8,6 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.storage.Module;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.storage.ModuleBuilder;
-
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.InternalPerson;
@@ -34,7 +32,7 @@ public abstract class CoreService extends Service {
     /**
      * Stores the root module of this service.
      */
-    public static final @Nonnull Module MODULE = ModuleBuilder.withName("core").build();
+    public static final @Nonnull Module MODULE = CoreModuleBuilder.withName("core").build();
     
     /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
