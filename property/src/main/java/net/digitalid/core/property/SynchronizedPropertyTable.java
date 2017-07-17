@@ -13,12 +13,19 @@ import net.digitalid.database.property.PersistentPropertyTable;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.property.map.SynchronizedMapPropertyTable;
+import net.digitalid.core.property.set.SynchronizedSetPropertyTable;
+import net.digitalid.core.property.value.SynchronizedValuePropertyTable;
 import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.subject.CoreSubjectModule;
 import net.digitalid.core.unit.CoreUnit;
 
 /**
- * This factory creates a new property for each concept instance and stores the required converters and methods.
+ * A synchronized property table belongs to a {@link CoreSubjectModule core subject module} and stores the {@link PersistentPropertyEntry property entries}.
+ * 
+ * @see SynchronizedMapPropertyTable
+ * @see SynchronizedSetPropertyTable
+ * @see SynchronizedValuePropertyTable
  */
 @Immutable
 public interface SynchronizedPropertyTable<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable ENTRY extends PersistentPropertyEntry<SUBJECT>, VALUE> extends PersistentPropertyTable<CoreUnit, SUBJECT, ENTRY> {

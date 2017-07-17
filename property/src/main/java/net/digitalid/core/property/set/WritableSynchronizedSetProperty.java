@@ -102,10 +102,10 @@ public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY exte
         try {
             final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = PersistentSetPropertyEntryBuilder.<SUBJECT, VALUE>withSubject(getSubject()).withValue(value).build();
             if (added) {
-                SQL.insertOrAbort(getTable().getEntryConverter(), entry, getSubject().getUnit());
+                SQL.insertOrAbort(getTable(), entry, getSubject().getUnit());
                 getSet().add(value);
             } else {
-                SQL.delete(getTable().getEntryConverter(), getTable().getEntryConverter(), entry, getSubject().getUnit());
+                SQL.delete(getTable(), getTable(), entry, getSubject().getUnit());
                 getSet().remove(value);
             }
             notifyObservers(value, added);

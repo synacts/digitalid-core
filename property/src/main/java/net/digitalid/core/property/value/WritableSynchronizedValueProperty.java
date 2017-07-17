@@ -83,7 +83,7 @@ public abstract class WritableSynchronizedValueProperty<@Unspecifiable ENTITY ex
         lock.getReentrantLock().lock();
         try {
             final @Nonnull PersistentValuePropertyEntry<SUBJECT, VALUE> entry = PersistentValuePropertyEntryBuilder.<SUBJECT, VALUE>withSubject(getSubject()).withTime(newTime).withValue(newValue).build();
-            SQL.insertOrReplace(getTable().getEntryConverter(), entry, getSubject().getUnit());
+            SQL.insertOrReplace(getTable(), entry, getSubject().getUnit());
             this.time = newTime;
             this.value = newValue;
             this.loaded = true;

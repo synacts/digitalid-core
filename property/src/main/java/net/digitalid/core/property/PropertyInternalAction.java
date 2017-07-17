@@ -18,6 +18,8 @@ import net.digitalid.core.handler.method.action.InternalAction;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.pack.Pack;
+import net.digitalid.core.property.map.MapPropertyInternalAction;
+import net.digitalid.core.property.set.SetPropertyInternalAction;
 import net.digitalid.core.property.value.ValuePropertyInternalAction;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.subject.CoreSubject;
@@ -25,6 +27,8 @@ import net.digitalid.core.subject.CoreSubject;
 /**
  * Internal actions are used to synchronize properties across sites.
  * 
+ * @see MapPropertyInternalAction
+ * @see SetPropertyInternalAction
  * @see ValuePropertyInternalAction
  */
 @Immutable
