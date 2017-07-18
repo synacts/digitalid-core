@@ -11,13 +11,13 @@ import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.exceptions.ConnectionException;
-import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.conversion.interfaces.Decoder;
 import net.digitalid.utility.conversion.interfaces.Encoder;
 import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.TableImplementation;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -31,7 +31,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class CoreUnitConverter<UNIT extends CoreUnit> implements Converter<UNIT, UNIT> {
+public abstract class CoreUnitConverter<UNIT extends CoreUnit> extends TableImplementation<UNIT, UNIT> {
     
     @Pure
     @Override

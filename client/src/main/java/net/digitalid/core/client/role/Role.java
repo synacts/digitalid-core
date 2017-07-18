@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
@@ -30,7 +30,7 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
  * @see NonNativeRole
  */
 @Immutable
-@GenerateConverter
+@GenerateTableConverter
 public abstract class Role extends RootClass implements NonHostEntity, Subject<Client> {
     
     /* -------------------------------------------------- Unit -------------------------------------------------- */

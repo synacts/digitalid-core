@@ -5,8 +5,8 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -24,7 +24,7 @@ import net.digitalid.core.pack.Pack;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@GenerateConverter
+@GenerateTableConverter
 public interface CacheEntry extends RootInterface {
     
     @Pure

@@ -12,8 +12,8 @@ import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
@@ -53,7 +53,7 @@ import net.digitalid.core.unit.CoreUnit;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@GenerateConverter
+@GenerateTableConverter
 public abstract class Client extends CoreUnit implements Subject<Client> {
     
     /* -------------------------------------------------- Stop -------------------------------------------------- */

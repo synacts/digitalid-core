@@ -3,7 +3,7 @@ package net.digitalid.core.clientagent;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -23,7 +23,7 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
  */
 @Immutable
 // @GenerateSubclass
-@GenerateConverter
+@GenerateTableConverter
 public abstract class ClientAgent extends Agent {
     
     /* -------------------------------------------------- Commitment -------------------------------------------------- */

@@ -37,7 +37,7 @@ public abstract class CoreInitializer {
     @PureWithSideEffects
     @Initialize(target = SQL.class)
     public static void initializeDatabaseTables() throws DatabaseException {
-        SQL.createTable(Attribute.MODULE.getSubjectConverter(), Unit.DEFAULT);
+        SQL.createTable(Attribute.MODULE.getSubjectTable(), Unit.DEFAULT);
         SQL.createTable(Attribute.VALUE_TABLE, Unit.DEFAULT);
         SQL.createTable(Attribute.VISIBILITY_TABLE, Unit.DEFAULT);
     }

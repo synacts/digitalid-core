@@ -3,8 +3,8 @@ package net.digitalid.core.settings;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -27,7 +27,7 @@ import net.digitalid.core.subject.utility.None;
  */
 @Immutable
 @GenerateSubclass
-@GenerateConverter
+@GenerateTableConverter
 public abstract class Settings extends CoreServiceCoreSubject<NonHostEntity, None> {
     
     @Pure

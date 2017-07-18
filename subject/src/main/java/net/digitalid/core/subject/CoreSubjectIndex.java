@@ -89,7 +89,7 @@ public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity, @Un
         } else {
             subject = getSubjectModule().getSubjectFactory().evaluate(entity, key);
         }
-        SQL.insertOrIgnore(getSubjectModule().getSubjectConverter(), subject, entity.getUnit());
+        SQL.insertOrIgnore(getSubjectModule().getSubjectTable(), subject, entity.getUnit());
         return subject;
     }
     

@@ -6,8 +6,8 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Provide;
 import net.digitalid.utility.validation.annotations.generation.Provided;
@@ -27,7 +27,7 @@ import net.digitalid.core.identification.identity.SemanticType;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@GenerateConverter
+@GenerateTableConverter
 public abstract class RoleEntry extends RootClass {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */

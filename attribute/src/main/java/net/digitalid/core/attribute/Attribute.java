@@ -12,8 +12,8 @@ import net.digitalid.utility.collections.set.FreezableHashSetBuilder;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -41,7 +41,7 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
  */
 @Immutable
 @GenerateSubclass
-@GenerateConverter
+@GenerateTableConverter
 public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticType> {
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */

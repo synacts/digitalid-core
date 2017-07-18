@@ -3,8 +3,8 @@ package net.digitalid.core.property.generation;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -22,7 +22,7 @@ import net.digitalid.core.subject.utility.None;
 
 @Immutable
 @GenerateSubclass
-@GenerateConverter
+@GenerateTableConverter
 abstract class GeneratePropertyClass extends CoreServiceCoreSubject<NonHostEntity, None> {
     
     static final @Nonnull RequiredAuthorization<NonHostEntity, None, GeneratePropertyClass, String> PASSWORD = RequiredAuthorizationBuilder.<NonHostEntity, None, GeneratePropertyClass, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withOnlyForClients(true).withWriteToNode(true).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> Restrictions.ONLY_FOR_CLIENTS).build();

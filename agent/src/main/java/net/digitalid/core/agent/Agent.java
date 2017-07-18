@@ -7,7 +7,7 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -33,7 +33,7 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
  * This class models an agent that acts on behalf of an {@link Identity identity}.
  */
 @Immutable
-@GenerateConverter
+@GenerateTableConverter
 public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> {
     
     /* -------------------------------------------------- Aspects -------------------------------------------------- */

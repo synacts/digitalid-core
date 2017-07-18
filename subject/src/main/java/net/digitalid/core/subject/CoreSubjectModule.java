@@ -4,10 +4,10 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.functional.interfaces.BinaryFunction;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.storage.Table;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -50,23 +50,23 @@ public abstract class CoreSubjectModule<@Unspecifiable ENTITY extends Entity, @U
     @Derive("new CoreSubjectIndexSubclass<>(this)")
     public abstract @Nonnull CoreSubjectIndex<ENTITY, KEY, SUBJECT> getSubjectIndex();
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- Tables -------------------------------------------------- */
     
     /**
      * Returns the converter used to convert and recover the entity.
      */
     @Pure
-    public abstract @Nonnull Converter<ENTITY, @Nonnull CoreUnit> getEntityConverter();
+    public abstract @Nonnull Table<ENTITY, @Nonnull CoreUnit> getEntityTable();
     
     /**
      * Returns the converter used to convert and recover the core subject.
      */
     @Pure
-    public abstract @Nonnull Converter<SUBJECT, @Nonnull ENTITY> getCoreSubjectConverter();
+    public abstract @Nonnull Table<SUBJECT, @Nonnull ENTITY> getCoreSubjectTable();
     
     @Pure
     @Override
-    @Derive("new CoreSubjectConverterSubclass<ENTITY, KEY, SUBJECT>(this)")
-    public abstract @Nonnull Converter<SUBJECT, @Nonnull CoreUnit> getSubjectConverter();
+    @Derive("new CoreSubjectTableSubclass<ENTITY, KEY, SUBJECT>(this)")
+    public abstract @Nonnull CoreSubjectTable<ENTITY, KEY, SUBJECT> getSubjectTable();
     
 }
