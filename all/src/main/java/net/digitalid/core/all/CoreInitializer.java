@@ -38,8 +38,8 @@ public abstract class CoreInitializer {
     @Initialize(target = SQL.class)
     public static void initializeDatabaseTables() throws DatabaseException {
         SQL.createTable(Attribute.MODULE.getSubjectConverter(), Unit.DEFAULT);
-        SQL.createTable(Attribute.VALUE_TABLE.getEntryConverter(), Unit.DEFAULT);
-        SQL.createTable(Attribute.VISIBILITY_TABLE.getEntryConverter(), Unit.DEFAULT);
+        SQL.createTable(Attribute.VALUE_TABLE, Unit.DEFAULT);
+        SQL.createTable(Attribute.VISIBILITY_TABLE, Unit.DEFAULT);
     }
     
 }

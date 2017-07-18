@@ -75,7 +75,7 @@ public class SettingsTest extends CoreTest {
     public static void createTables() throws ExternalException {
         SQL.createTable(NonHostEntityConverter.INSTANCE, UNIT);
         SQL.createTable(SettingsSubclass.MODULE.getSubjectConverter(), UNIT);
-        SQL.createTable(SettingsSubclass.PASSWORD_TABLE.getEntryConverter(), UNIT);
+        SQL.createTable(SettingsSubclass.PASSWORD_TABLE, UNIT);
         SQL.insertOrAbort(NonHostEntityConverter.INSTANCE, ENTITY, UNIT);
     }
     
