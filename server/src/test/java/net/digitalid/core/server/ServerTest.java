@@ -48,6 +48,7 @@ import net.digitalid.core.signature.attribute.UncertifiedAttributeValue;
 import net.digitalid.core.testing.CoreTest;
 import net.digitalid.core.testing.providers.TestPrivateKeyRetrieverBuilder;
 import net.digitalid.core.testing.providers.TestPublicKeyRetrieverBuilder;
+import net.digitalid.core.unit.CoreUnit;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -89,11 +90,17 @@ public class ServerTest extends CoreTest {
     protected static @Nonnull Host host;
     
     @BeforeClass
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void startServer() throws ExternalException, IOException {
         // TODO: Remove the following three lines as soon as the cache works.
         final @Nonnull KeyPair keyPair = KeyPair.withRandomValues();
         PublicKeyRetriever.configuration.set(TestPublicKeyRetrieverBuilder.withKeyPair(keyPair).build());
         PrivateKeyRetriever.configuration.set(TestPrivateKeyRetrieverBuilder.withKeyPair(keyPair).build());
+        
+        System.out.println();
+        System.out.println("Tables created on each CoreUnit:");
+        CoreUnit.MODULE.accept(table -> System.out.println(table.getFullNameWithUnderlines()));
+        System.out.println();
         
         Server.start();
         hostIdentifier = HostIdentifier.with("test.digitalid.net");

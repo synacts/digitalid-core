@@ -243,7 +243,7 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
     @Pure
     @Override
     public @Nonnull Storage getStorage() {
-        return CoreService.MODULE;
+        return CoreService.INSTANCE.getModule();
     }
     
     /* -------------------------------------------------- Reversion -------------------------------------------------- */

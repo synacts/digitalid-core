@@ -1,13 +1,17 @@
 package net.digitalid.core.unit;
 
+import javax.annotation.Nonnull;
+
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.rootclass.RootClassWithException;
+import net.digitalid.utility.storage.Module;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.dialect.statement.schema.SQLCreateSchemaStatementBuilder;
 import net.digitalid.database.interfaces.Database;
 
@@ -35,9 +39,10 @@ public abstract class CoreUnit extends RootClassWithException<ExternalException>
     
     /* -------------------------------------------------- Module -------------------------------------------------- */
     
-    // TODO: Have a public static final module here that contains all submodules and tables that have to be created on this site?
-    
-    // TODO: Create the schema and all the tables of the module (in the right order) during initialization?
+    /**
+     * All modules and tables that have to be created on each unit are added to this module.
+     */
+    public static final @Nonnull Module MODULE = CoreModuleBuilder.withName("unit").build();
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
@@ -48,6 +53,7 @@ public abstract class CoreUnit extends RootClassWithException<ExternalException>
         super.initialize();
         
         Database.instance.get().execute(SQLCreateSchemaStatementBuilder.build(), this);
+        MODULE.accept(table -> SQL.createTable(table, this));
     }
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */

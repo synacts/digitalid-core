@@ -12,6 +12,7 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.storage.Module;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;
@@ -94,6 +95,15 @@ public abstract class Service extends RootClass {
     public @Nonnull String getTitleWithVersion() {
         return getTitle() + " (" + getVersion() + ")";
     }
+    
+    /* -------------------------------------------------- Module -------------------------------------------------- */
+    
+    /**
+     * Returns the module of this service.
+     */
+    @Pure
+    @NonRepresentative
+    public abstract @Nonnull Module getModule();
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
     

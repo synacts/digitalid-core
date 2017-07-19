@@ -1,4 +1,4 @@
-package net.digitalid.core.service;
+package net.digitalid.core.unit;
 
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;

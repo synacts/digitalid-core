@@ -22,16 +22,13 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.expression.PassiveExpression;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.property.RequiredAuthorization;
 import net.digitalid.core.property.RequiredAuthorizationBuilder;
-import net.digitalid.core.property.value.SynchronizedValuePropertyTable;
 import net.digitalid.core.signature.attribute.AttributeValue;
 import net.digitalid.core.subject.CoreServiceCoreSubject;
-import net.digitalid.core.subject.CoreSubjectModule;
 import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 
 /**
@@ -121,16 +118,5 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
         return FreezableHashSetBuilder.build();
 //        return AttributeModule.getAll(entity);
     }
-    
-    /* -------------------------------------------------- Temporary -------------------------------------------------- */
-    
-    @TODO(task = "Remove once the table can be created implicitly.", date = "2017-04-13", author = Author.KASPAR_ETTER)
-    public static final @Nonnull CoreSubjectModule<Entity, SemanticType, Attribute> MODULE = AttributeSubclass.MODULE;
-    
-    @TODO(task = "Remove once the table can be created implicitly.", date = "2017-04-13", author = Author.KASPAR_ETTER)
-    public static final @Nonnull SynchronizedValuePropertyTable<Entity, SemanticType, Attribute, AttributeValue, Void> VALUE_TABLE = AttributeSubclass.VALUE_TABLE;
-    
-    @TODO(task = "Remove once the table can be created implicitly.", date = "2017-04-13", author = Author.KASPAR_ETTER)
-    public static final @Nonnull SynchronizedValuePropertyTable<Entity, SemanticType, Attribute, PassiveExpression, NonHostEntity> VISIBILITY_TABLE = AttributeSubclass.VISIBILITY_TABLE;
     
 }

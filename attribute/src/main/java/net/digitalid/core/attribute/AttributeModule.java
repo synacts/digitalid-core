@@ -1,7 +1,7 @@
+package net.digitalid.core.attribute;
+
 // TODO: Remove this class once the functionality is covered.
 
-//package net.digitalid.core.attribute;
-//
 //import java.sql.PreparedStatement;
 //import java.sql.ResultSet;
 //import java.sql.SQLException;
@@ -56,7 +56,7 @@
 // * This class provides database access to the {@link Attribute attributes} of the core service.
 // */
 //@Stateless
-//public final class AttributeModule implements StateModule {
+public final class AttributeModule /* implements StateModule */ {
 //    
 //    /* -------------------------------------------------- Module Initialization -------------------------------------------------- */
 //    
@@ -539,4 +539,4 @@
 //    
 //    static { CoreService.SERVICE.add(MODULE); }
 //    
-//}
+}

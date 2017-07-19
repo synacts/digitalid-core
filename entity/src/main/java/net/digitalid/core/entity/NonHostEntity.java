@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
-import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -20,7 +19,6 @@ import net.digitalid.core.unit.CoreUnit;
  * This interface models a non-host entity.
  */
 @Immutable
-@GenerateTableConverter
 public interface NonHostEntity extends Entity {
     
     /* -------------------------------------------------- Identity -------------------------------------------------- */
