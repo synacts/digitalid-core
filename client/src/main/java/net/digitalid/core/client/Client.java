@@ -4,32 +4,45 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collections.collection.ReadOnlyCollection;
+import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
+import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.collections.set.ReadOnlySet;
+import net.digitalid.utility.conversion.exceptions.ConversionException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
+import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
+import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
+import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
+import net.digitalid.database.subject.SubjectModule;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
@@ -53,44 +66,34 @@ import net.digitalid.core.unit.CoreUnit;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@GenerateTableConverter
+@GenerateConverter
 public abstract class Client extends CoreUnit implements Subject<Client> {
     
-    /* -------------------------------------------------- Stop -------------------------------------------------- */
+    /* -------------------------------------------------- Clients -------------------------------------------------- */
     
-    // TODO: Move the following code somewhere else.
+    /**
+     * Maps all created clients from their identifier.
+     */
+    private static final @Nonnull @NonFrozen FreezableMap<@Nonnull String, @Nonnull Client> clients = FreezableLinkedHashMapBuilder.build();
     
-//    /**
-//     * Stops the background threads of the client without shutting down.
-//     */
-//    public static void stop() {
-//        Database.stopPurging();
-//        Synchronizer.shutDown();
-//        ResponseAudit.shutDown();
-//    }
+    /**
+     * Returns all created clients.
+     */
+    @Pure
+    public static @Nonnull @NonFrozen ReadOnlyCollection<@Nonnull Client> getClients() {
+        return clients.values();
+    }
     
-    /* -------------------------------------------------- Constructors -------------------------------------------------- */
-    
-    // TODO: Remove the following code once its logic is reflected somewhere else.
-    
-//    @Committing
-//    public Client() throws IOException, ExternalException {
-//        // The role table needs to be created in advance.
-//        RoleModule.createTable(this);
-//        CoreService.SERVICE.createTables(this);
-//        SynchronizerModule.load(this);
-//        Database.commit();
-//    }
-    
-    /* -------------------------------------------------- Entity Reference -------------------------------------------------- */
-    
-    // TODO: How do we do this with the converters?
-    
-//    @Pure
-//    @Override
-//    public final @Nonnull String getEntityReference() {
-//        return "REFERENCES " + this + "role (role) ON DELETE CASCADE";
-//    }
+    /**
+     * Returns the client with the given identifier or throws a {@link RecoveryException} if no such service is found.
+     */
+    @Pure
+    @Recover
+    public static @Nonnull Client getClient(@Nonnull String identifier) throws RecoveryException {
+        final @Nullable Client client = clients.get(identifier);
+        if (client == null) { throw RecoveryExceptionBuilder.withMessage(Strings.format("No client with the identifier $ was found.", identifier)).build(); }
+        return client;
+    }
     
     /* -------------------------------------------------- Identifier -------------------------------------------------- */
     
@@ -98,14 +101,14 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
      * Returns the identifier of this client.
      */
     @Pure
-    public abstract @Nonnull /* TODO: Temporarily disabled to allow 'default'. @CodeIdentifier */ @MaxSize(62) String getIdentifier();
+    public abstract @Nonnull @DomainName @MaxSize(62) String getIdentifier();
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
     
     @Pure
     @Override
     @Derive("(Character.isDigit(identifier.charAt(0)) ? \"_\" : \"\") + identifier.replace(\".\", \"_\").replace(\"-\", \"$\")")
-    public abstract @Nonnull /* TODO: Temporarily disabled to allow 'default'. @CodeIdentifier */ @MaxSize(63) /* TODO: This seems to be impossible with @CodeIdentifier. @Unequal("general") */ String getName();
+    public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getName();
     
     /* -------------------------------------------------- Display Name -------------------------------------------------- */
     
@@ -113,6 +116,7 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
      * Returns the name of this client that is used for accreditation.
      */
     @Pure
+    @NonRepresentative
     public abstract @Nonnull @MaxSize(50) String getDisplayName();
     
     /* -------------------------------------------------- Preferred Permissions -------------------------------------------------- */
@@ -121,6 +125,7 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
      * Returns the preferred permissions of this client.
      */
     @Pure
+    @NonRepresentative
     public abstract @Nonnull @Frozen ReadOnlyAgentPermissions getPreferredPermissions();
     
     /* -------------------------------------------------- Secret -------------------------------------------------- */
@@ -138,20 +143,10 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
     @Override
     @CallSuper
     @NonCommitting
-    protected void initialize() throws ExternalException {
+    protected void initialize() throws ConversionException {
         super.initialize();
         
-        SQL.createTable(ClientConverter.INSTANCE, CoreUnit.DEFAULT);
-        SQL.insertOrAbort(ClientConverter.INSTANCE, this, CoreUnit.DEFAULT);
         protectedSecret.set(ClientSecretLoader.load(getIdentifier()));
-    }
-    
-    /* -------------------------------------------------- Subject -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final @Nonnull Client getUnit() {
-        return this;
     }
     
     /* -------------------------------------------------- CoreUnit -------------------------------------------------- */
@@ -219,50 +214,30 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
         protectedSecret.set(newSecret);
     }
     
+    /* -------------------------------------------------- Subject -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Client getUnit() {
+        return this;
+    }
+    
+    @Pure
+    @Override
+    public @Nullable SubjectModule<Client, ?> module() {
+        return null;
+    }
+    
     /* -------------------------------------------------- Roles -------------------------------------------------- */
+    
+    private final @Nonnull NativeRolesProperty roles = new NativeRolesPropertySubclass(this);
     
     /**
      * Returns the native roles of this client.
      */
     @Pure
-    @GeneratePersistentProperty
-    public abstract @Nonnull WritablePersistentSimpleSetProperty<Client, NativeRole> roles();
-    
-    // TODO: Remove the following code once the writable extensible property for roles is implemented.
-    
-//    /**
-//     * Returns the roles of this client.
-//     */
-//    @Pure
-//    @NonCommitting
-//    public @Nonnull @NonFrozen @UniqueElements ReadOnlyList<@Nonnull NativeRole> getRoles() throws DatabaseException {
-//        if (Database.isMultiAccess()) { return RoleModule.getRoles(this); }
-//        if (roles == null) { roles = RoleModule.getRoles(this); }
-//        return roles;
-//    }
-//    
-//    /**
-//     * Adds the given role to the roles of this client.
-//     * 
-//     * @param issuer the issuer of the role to add.
-//     * @param agentNumber the agent number of the role to add.
-//     * 
-//     * @return the newly created role of this client.
-//     */
-//    @Impure
-//    @NonCommitting
-//    private @Nonnull NativeRole addRole(@Nonnull InternalNonHostIdentity issuer, long agentNumber) throws DatabaseException {
-//        final @Nonnull NativeRole role = NativeRole.add(this, issuer, agentNumber);
-//        if (Database.isSingleAccess()) { role.observe(this, Role.DELETED); }
-//        
-//        if (roles != null) { roles.add(role); }
-////        notify(ROLE_ADDED);
-//        return role;
-//    }
-    
-//    @Override
-//    public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
-//        if (aspect.equals(Role.DELETED) && roles != null) { roles.remove(instance); }
-//    }
+    public @Nonnull WritablePersistentSimpleSetProperty<Client, NativeRole> roles() {
+        return roles;
+    }
     
 }

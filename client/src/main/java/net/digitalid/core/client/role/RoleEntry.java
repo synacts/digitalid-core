@@ -10,7 +10,6 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Provide;
-import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
@@ -33,13 +32,12 @@ public abstract class RoleEntry extends RootClass {
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     @Pure
-    @Provided // TODO: The client should probably be encoded (and recoverable) if the role table should be on the general unit.
-    public abstract @Nonnull Client getClient();
-    
-    @Pure
     @PrimaryKey
     // TODO: @AutoIncrement
     public abstract long getKey();
+    
+    @Pure
+    public abstract @Nonnull Client getClient();
     
     @Pure
     @Provide("client")
@@ -55,7 +53,7 @@ public abstract class RoleEntry extends RootClass {
             builder.withRelation(nonNativeRole.getRelation()).withRecipient(nonNativeRole.getRecipient().getKey());
         };
         final @Nonnull RoleArguments arguments = builder.build();
-        return RoleEntryBuilder.withClient(role.getUnit()).withKey(role.getKey()).withArguments(arguments).build();
+        return RoleEntryBuilder.withKey(role.getKey()).withClient(role.getUnit()).withArguments(arguments).build();
     }
     
     /* -------------------------------------------------- Export -------------------------------------------------- */

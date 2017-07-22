@@ -12,6 +12,7 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.collection.ReadOnlyCollection;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
+import net.digitalid.utility.conversion.exceptions.ConversionException;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -174,7 +175,7 @@ public abstract class Host extends CoreUnit {
     @Pure
     @Override
     @CallSuper
-    protected void initialize() throws ExternalException {
+    protected void initialize() throws ConversionException {
         super.initialize();
         
         protectedPrivateKeyChain.set(PrivateKeyChainLoader.load(getIdentifier()));

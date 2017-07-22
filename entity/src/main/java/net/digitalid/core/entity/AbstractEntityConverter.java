@@ -58,7 +58,7 @@ public abstract class AbstractEntityConverter<@Unspecifiable ENTITY extends Enti
         if (unit instanceof CoreUnit) {
             final @Nonnull CoreUnit coreUnit = (CoreUnit) unit;
             if (coreUnit.isHost()) { return "Identity"; } // TODO: Figure out the correct value and ideally reference instead of copy it.
-            else if (coreUnit.isClient()) { return "Role"; }  // TODO: Figure out the correct value and ideally reference instead of copy it.
+            else if (coreUnit.isClient()) { return "RoleEntry"; }  // TODO: Figure out the correct value and ideally reference instead of copy it.
         }
         throw CaseExceptionBuilder.withVariable("unit").withValue(unit).build();
     }

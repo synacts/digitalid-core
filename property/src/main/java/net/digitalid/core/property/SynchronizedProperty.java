@@ -27,12 +27,14 @@ import net.digitalid.core.subject.CoreSubject;
  */
 @Mutable
 @ThreadSafe
-public interface SynchronizedProperty<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable ENTRY extends PersistentPropertyEntry<SUBJECT>, @Unspecifiable OBSERVER extends Observer> extends PersistentProperty<SUBJECT, ENTRY, OBSERVER> {
+public interface SynchronizedProperty<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable ENTRY extends PersistentPropertyEntry<SUBJECT>, @Unspecifiable OBSERVER extends Observer> extends PersistentProperty<SUBJECT, OBSERVER> {
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
+    /**
+     * Returns the property table that contains the property name, subject module and entry converter.
+     */
     @Pure
-    @Override
     public @Nonnull SynchronizedPropertyTable<ENTITY, KEY, SUBJECT, ENTRY, ?> getTable();
     
 }

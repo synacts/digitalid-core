@@ -5,12 +5,13 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Validate;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.conversion.exceptions.ConversionException;
 import net.digitalid.utility.rootclass.RootClassWithException;
 import net.digitalid.utility.storage.Module;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.dialect.statement.schema.SQLCreateSchemaStatementBuilder;
 import net.digitalid.database.interfaces.Database;
@@ -21,7 +22,7 @@ import net.digitalid.database.interfaces.Database;
  * @invariant isHost() != isClient() : "This unit is either a host or a client.";
  */
 @Immutable
-public abstract class CoreUnit extends RootClassWithException<ExternalException> implements Unit {
+public abstract class CoreUnit extends RootClassWithException<ConversionException> implements Unit {
     
     /* -------------------------------------------------- Queries -------------------------------------------------- */
     
@@ -49,11 +50,13 @@ public abstract class CoreUnit extends RootClassWithException<ExternalException>
     @Pure
     @Override
     @CallSuper
-    protected void initialize() throws ExternalException {
+    @Committing
+    protected void initialize() throws ConversionException {
         super.initialize();
         
         Database.instance.get().execute(SQLCreateSchemaStatementBuilder.build(), this);
         MODULE.accept(table -> SQL.createTable(table, this));
+        Database.instance.get().commit();
     }
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */
