@@ -12,7 +12,6 @@ import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.initialization.annotations.Initialize;
-import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
@@ -60,6 +59,7 @@ import net.digitalid.core.pack.Pack;
 import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.signature.attribute.AttributeValue;
 import net.digitalid.core.signature.attribute.AttributeValueConverter;
+import net.digitalid.core.unit.GeneralUnit;
 
 /**
  * This class provides database access to the {@link Cache cache}.
@@ -83,7 +83,7 @@ public abstract class CacheModule {
     @PureWithSideEffects
     @Initialize(target = CacheModule.class, dependencies = RoleModule.class)
     public static void createTable() throws DatabaseException {
-        SQL.createTable(CacheEntryConverter.INSTANCE, Unit.DEFAULT);
+        SQL.createTable(CacheEntryConverter.INSTANCE, GeneralUnit.INSTANCE);
     }
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
@@ -127,7 +127,7 @@ public abstract class CacheModule {
     
     private static final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(CacheEntryConverter.INSTANCE.getTypeName()).build();
     
-    private static final @Nonnull SQLSchemaName schemaName = SQLSchemaNameBuilder.withString(Unit.DEFAULT.getName()).build();
+    private static final @Nonnull SQLSchemaName schemaName = SQLSchemaNameBuilder.withString(GeneralUnit.INSTANCE.getName()).build();
     
     private static final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schemaName).build();
     
@@ -145,7 +145,7 @@ public abstract class CacheModule {
         whereClause = whereClause.and(SQLColumnNameBuilder.withString("expirationtime_value").build().greater(SQLNumberLiteralBuilder.withValue(currentTime.getValue()).build())); // TODO: Implement it in such a way that the representation of the time can change?
         
         final @Nonnull SQLUpdateStatement updateStatement = SQLUpdateStatementBuilder.withTable(qualifiedTable).withAssignments(ImmutableList.withElements(assignment)).withWhereClause(whereClause).build();
-        final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(updateStatement, Unit.DEFAULT);
+        final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(updateStatement, GeneralUnit.INSTANCE);
         actionEncoder.execute();
     }
     
@@ -190,7 +190,7 @@ public abstract class CacheModule {
         
         final @Nonnull SQLSimpleSelectStatement selectStatement = SQLSimpleSelectStatementBuilder.withColumns(resultColumns).withSources(sources).withWhereClause(whereClause).build();
         
-        final @Nonnull SQLQueryEncoder queryEncoder = Database.instance.get().getEncoder(selectStatement, Unit.DEFAULT);
+        final @Nonnull SQLQueryEncoder queryEncoder = Database.instance.get().getEncoder(selectStatement, GeneralUnit.INSTANCE);
         final @Nonnull SQLDecoder decoder = queryEncoder.execute();
         
         boolean found = false;
@@ -235,7 +235,7 @@ public abstract class CacheModule {
         Require.that(value == null || value.getContent().getType().equals(type)).orThrow("The content of the given attribute value has to be null or match the given type.");
         
         final @Nonnull CacheEntry entry = CacheEntryBuilder.withRequester(requester != null ? requester.getKey() : 0).withRequestee(requestee).withAttributeType(type).withFound(value != null).withExpirationTime(expiration).withAttributeValue(value != null ? value.pack() : null).build();
-        SQL.insertOrReplace(CacheEntryConverter.INSTANCE, entry, Unit.DEFAULT);
+        SQL.insertOrReplace(CacheEntryConverter.INSTANCE, entry, GeneralUnit.INSTANCE);
     }
     
 }

@@ -16,11 +16,13 @@ import net.digitalid.core.identification.identity.Category;
 
 /**
  * This type models an entry in the identity table.
+ * 
+ * @see IdentifierEntry
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@GenerateTableConverter
+@GenerateTableConverter(schema = "general")
 public interface IdentityEntry extends RootInterface {
     
     @Pure

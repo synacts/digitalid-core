@@ -9,7 +9,6 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.rootclass.RootClass;
-import net.digitalid.utility.validation.annotations.generation.Provide;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
@@ -26,7 +25,7 @@ import net.digitalid.core.identification.identity.SemanticType;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@GenerateTableConverter
+@GenerateTableConverter(schema = "general")
 public abstract class RoleEntry extends RootClass {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
@@ -37,10 +36,6 @@ public abstract class RoleEntry extends RootClass {
     public abstract long getKey();
     
     @Pure
-    public abstract @Nonnull Client getClient();
-    
-    @Pure
-    @Provide("client")
     public abstract @Nonnull RoleArguments getArguments();
     
     /* -------------------------------------------------- Import -------------------------------------------------- */
@@ -53,7 +48,7 @@ public abstract class RoleEntry extends RootClass {
             builder.withRelation(nonNativeRole.getRelation()).withRecipient(nonNativeRole.getRecipient().getKey());
         };
         final @Nonnull RoleArguments arguments = builder.build();
-        return RoleEntryBuilder.withKey(role.getKey()).withClient(role.getUnit()).withArguments(arguments).build();
+        return RoleEntryBuilder.withKey(role.getKey()).withArguments(arguments).build();
     }
     
     /* -------------------------------------------------- Export -------------------------------------------------- */

@@ -12,7 +12,6 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.rootclass.RootClass;
-import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.client.Client;
@@ -36,7 +35,6 @@ public abstract class RoleArguments extends RootClass {
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     @Pure
-    @Provided
     public abstract @Nonnull Client getClient();
     
     @Pure

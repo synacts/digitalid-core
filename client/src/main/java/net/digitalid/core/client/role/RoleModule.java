@@ -15,7 +15,6 @@ import net.digitalid.utility.conversion.converters.Integer64Converter;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.initialization.annotations.Initialize;
-import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.UniqueElements;
 import net.digitalid.utility.validation.annotations.type.Utility;
@@ -29,8 +28,10 @@ import net.digitalid.core.client.Client;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalNonHostIdentityConverter;
 import net.digitalid.core.identification.identity.InternalPerson;
+import net.digitalid.core.unit.GeneralUnit;
 
 /**
  * This class provides database access to the {@link Role roles} of the core service.
@@ -52,10 +53,9 @@ public abstract class RoleModule {
      */
     @Committing
     @PureWithSideEffects
-    @Initialize(target = RoleModule.class, dependencies = SQL.class) // This is not optimal yet. However, these tables have to be created before the cache table.
+    @Initialize(target = RoleModule.class, dependencies = {IdentifierResolver.class, GeneralUnit.class})
     public static void createTable() throws DatabaseException {
-        SQL.createTable(RoleConverter.INSTANCE, Unit.DEFAULT); // TODO: Remove this line as soon as a converter can declare its foreign key constraint.
-        SQL.createTable(RoleEntryConverter.INSTANCE, Unit.DEFAULT);
+        SQL.createTable(RoleEntryConverter.INSTANCE, GeneralUnit.INSTANCE);
     }
     
     /* -------------------------------------------------- Mapping -------------------------------------------------- */
@@ -66,29 +66,25 @@ public abstract class RoleModule {
     @NonCommitting
     @PureWithSideEffects
     public static @Nonnull Role map(@Nonnull RoleArguments roleArguments) throws DatabaseException, RecoveryException {
-        final @Nullable RoleEntry roleEntry = SQL.selectFirst(RoleEntryConverter.INSTANCE, null, RoleArgumentsConverter.INSTANCE, roleArguments, "arguments", roleArguments.getClient());
+        @Nullable RoleEntry roleEntry = SQL.selectFirst(RoleEntryConverter.INSTANCE, null, RoleArgumentsConverter.INSTANCE, roleArguments, "arguments", GeneralUnit.INSTANCE);
         if (roleEntry == null) {
             long key = 0; // The cache uses zero to encode a null requester.
             while (key == 0) { key = ThreadLocalRandom.current().nextLong(); }
-            final @Nonnull RoleEntry entry = RoleEntryBuilder.withKey(key).withClient(roleArguments.getClient()).withArguments(roleArguments).build();
-            SQL.insertOrAbort(RoleEntryConverter.INSTANCE, entry, roleArguments.getClient());
-            final @Nonnull Role role = entry.toRole();
-            SQL.insertOrAbort(RoleConverter.INSTANCE, role, role.getUnit()); // TODO: Remove this line as soon as a converter can declare its foreign key constraint.
-            return role;
-        } else {
-            return roleEntry.toRole();
+            roleEntry = RoleEntryBuilder.withKey(key).withArguments(roleArguments).build();
+            SQL.insertOrAbort(RoleEntryConverter.INSTANCE, roleEntry, GeneralUnit.INSTANCE);
         }
+        return roleEntry.toRole();
     }
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
     /**
-     * Returns the role of the given client with the given key.
+     * Returns the role with the given key.
      */
     @Pure
     @NonCommitting
-    static @Nonnull Role load(@Nonnull Client client, long key) throws DatabaseException, RecoveryException {
-        final @Nonnull RoleEntry roleEntry = SQL.selectOne(RoleEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key", client);
+    static @Nonnull Role load(long key) throws DatabaseException, RecoveryException {
+        final @Nonnull RoleEntry roleEntry = SQL.selectOne(RoleEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key", GeneralUnit.INSTANCE);
         return roleEntry.toRole();
     }
     
@@ -100,7 +96,7 @@ public abstract class RoleModule {
     @NonCommitting
     @PureWithSideEffects
     public static void remove(@Nonnull Role role) throws DatabaseException {
-        SQL.delete(RoleEntryConverter.INSTANCE, Integer64Converter.INSTANCE, role.getKey(), "key", role.getUnit());
+        SQL.delete(RoleEntryConverter.INSTANCE, Integer64Converter.INSTANCE, role.getKey(), "key", GeneralUnit.INSTANCE);
     }
     
     /* -------------------------------------------------- Native Roles -------------------------------------------------- */
@@ -112,8 +108,8 @@ public abstract class RoleModule {
     @NonCommitting
     @TODO(task = "Make sure that the prefix is correct and that a null where-argument is translated to 'IS NULL' in SQL.", date = "2017-03-27", author = Author.KASPAR_ETTER)
     public static @Nonnull @UniqueElements @NonNullableElements FiniteIterable<NativeRole> getNativeRoles(@Nonnull Client client) throws DatabaseException, RecoveryException {
-        final @Nonnull FreezableList<RoleEntry> entries = SQL.selectAll(RoleEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, null, "arguments_recipient", client);
-        return entries.map(RoleEntry::toRole).instanceOf(NativeRole.class);
+        final @Nonnull FreezableList<RoleEntry> entries = SQL.selectAll(RoleEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, null, "arguments_recipient", GeneralUnit.INSTANCE);
+        return entries.map(RoleEntry::toRole).instanceOf(NativeRole.class).filter(role -> role.getUnit().equals(client)); // TODO: Filter the client with the where condition in the SQL select statement.
     }
     
     /* -------------------------------------------------- Non-Native Roles -------------------------------------------------- */
@@ -125,7 +121,7 @@ public abstract class RoleModule {
     @NonCommitting
     @TODO(task = "Make sure that the prefix is correct.", date = "2017-03-27", author = Author.KASPAR_ETTER)
     public static @Nonnull @UniqueElements @NonNullableElements FiniteIterable<NonNativeRole> getNonNativeRoles(@Nonnull Role role) throws DatabaseException, RecoveryException {
-        final @Nonnull FreezableList<RoleEntry> entries = SQL.selectAll(RoleEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, role.getKey(), "arguments_recipient", role.getUnit());
+        final @Nonnull FreezableList<RoleEntry> entries = SQL.selectAll(RoleEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, role.getKey(), "arguments_recipient", GeneralUnit.INSTANCE);
         return entries.map(RoleEntry::toRole).instanceOf(NonNativeRole.class);
     }
     
@@ -140,7 +136,7 @@ public abstract class RoleModule {
     @NonCommitting
     @TODO(task = "Make sure that the prefix is correct.", date = "2017-03-27", author = Author.KASPAR_ETTER)
     static @Nonnull Role getRole(@Nonnull Client client, @Nonnull InternalPerson person) throws DatabaseException, RecoveryException, RequestException {
-        final @Nullable RoleEntry entry = SQL.selectFirst(RoleEntryConverter.INSTANCE, null, InternalNonHostIdentityConverter.INSTANCE, person, "arguments_issuer", client);
+        final @Nullable RoleEntry entry = SQL.selectFirst(RoleEntryConverter.INSTANCE, null, InternalNonHostIdentityConverter.INSTANCE, person, "arguments_issuer", GeneralUnit.INSTANCE); // TODO: Also filter for the right client.
         if (entry != null) { return entry.toRole(); }
         else { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("No role for the person '" + person.getAddress() + "' could be found.").build(); }
     }

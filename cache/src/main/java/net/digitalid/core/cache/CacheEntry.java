@@ -24,7 +24,7 @@ import net.digitalid.core.pack.Pack;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@GenerateTableConverter
+@GenerateTableConverter(schema = "general")
 public interface CacheEntry extends RootInterface {
     
     @Pure

@@ -44,12 +44,7 @@ public abstract class AbstractEntityConverter<@Unspecifiable ENTITY extends Enti
     @Pure
     @Override
     public @Nonnull String getSchemaName(@Nonnull Unit unit) {
-        if (unit instanceof CoreUnit) {
-            final @Nonnull CoreUnit coreUnit = (CoreUnit) unit;
-            if (coreUnit.isHost()) { return GeneralUnit.INSTANCE.getName(); }
-            else if (coreUnit.isClient()) { return unit.getName(); }
-        }
-        throw CaseExceptionBuilder.withVariable("unit").withValue(unit).build();
+        return GeneralUnit.INSTANCE.getName();
     }
     
     @Pure
@@ -57,8 +52,8 @@ public abstract class AbstractEntityConverter<@Unspecifiable ENTITY extends Enti
     public @Nonnull String getTableName(@Nonnull Unit unit) {
         if (unit instanceof CoreUnit) {
             final @Nonnull CoreUnit coreUnit = (CoreUnit) unit;
-            if (coreUnit.isHost()) { return "Identity"; } // TODO: Figure out the correct value and ideally reference instead of copy it.
-            else if (coreUnit.isClient()) { return "RoleEntry"; }  // TODO: Figure out the correct value and ideally reference instead of copy it.
+            if (coreUnit.isHost()) { return "IdentityEntry"; }
+            else if (coreUnit.isClient()) { return "RoleEntry"; }
         }
         throw CaseExceptionBuilder.withVariable("unit").withValue(unit).build();
     }
@@ -66,12 +61,7 @@ public abstract class AbstractEntityConverter<@Unspecifiable ENTITY extends Enti
     @Pure
     @Override
     public @Nonnull @NonNullableElements ImmutableList<String> getColumnNames(@Nonnull Unit unit) {
-        if (unit instanceof CoreUnit) {
-            final @Nonnull CoreUnit coreUnit = (CoreUnit) unit;
-            if (coreUnit.isHost()) { return ImmutableList.withElements("identifier"); } // TODO: Figure out the correct value and ideally reference instead of copy it.
-            else if (coreUnit.isClient()) { return ImmutableList.withElements("key"); }  // TODO: Figure out the correct value and ideally reference instead of copy it.
-        }
-        throw CaseExceptionBuilder.withVariable("unit").withValue(unit).build();
+        return ImmutableList.withElements("key");
     }
     
     /* -------------------------------------------------- Parent Module -------------------------------------------------- */
