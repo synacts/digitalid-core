@@ -196,7 +196,7 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
     public @Nullable @Matching ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         if (IdentifierResolver.configuration.get().load(getSubject()) != null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("An account with the identifier " + getSubject() + " already exists.").build(); }
         
-        // TODO: Include the resctriction mechanisms like the tokens.
+        // TODO: Include the restriction mechanisms like the tokens.
         
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) IdentifierResolver.configuration.get().map(getCategory(), getSubject());
         final @Nonnull @OnHost Entity entity = AccountFactory.create(HostFactory.create(getSubject().getHostIdentifier()), identity);
