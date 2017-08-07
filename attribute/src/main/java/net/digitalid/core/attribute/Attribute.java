@@ -38,7 +38,7 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
  */
 @Immutable
 @GenerateSubclass
-@GenerateTableConverter
+@GenerateTableConverter(table = "unit_core_Attribute_Attribute") // TODO: How can we get the table name without adding the generated attribute table converter to the attribute core subject module?
 public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticType> {
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */

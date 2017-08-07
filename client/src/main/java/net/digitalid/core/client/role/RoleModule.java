@@ -136,7 +136,7 @@ public abstract class RoleModule {
     @NonCommitting
     @TODO(task = "Make sure that the prefix is correct.", date = "2017-03-27", author = Author.KASPAR_ETTER)
     static @Nonnull Role getRole(@Nonnull Client client, @Nonnull InternalPerson person) throws DatabaseException, RecoveryException, RequestException {
-        final @Nullable RoleEntry entry = SQL.selectFirst(RoleEntryConverter.INSTANCE, null, InternalNonHostIdentityConverter.INSTANCE, person, "arguments_issuer", GeneralUnit.INSTANCE); // TODO: Also filter for the right client.
+        final @Nullable RoleEntry entry = SQL.selectFirst(RoleEntryConverter.INSTANCE, null, InternalNonHostIdentityConverter.INSTANCE, person, "arguments_issuer_key", GeneralUnit.INSTANCE); // TODO: Also filter for the right client.
         if (entry != null) { return entry.toRole(); }
         else { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("No role for the person '" + person.getAddress() + "' could be found.").build(); }
     }
