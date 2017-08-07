@@ -30,8 +30,6 @@ import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.constraints.PrimaryKey;
-
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifierConverter;
 import net.digitalid.core.signature.client.ClientSignatureConverterBuilder;
@@ -75,7 +73,7 @@ public abstract class SignatureConverter<@Unspecifiable OBJECT> implements Gener
     @Override
     public @Nonnull @NonNullableElements ImmutableList<CustomField> getFields(@Nonnull Representation representation) {
         return ImmutableList.withElements(
-                CustomField.with(CustomType.TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(PrimaryKey.class))),
+                CustomField.with(CustomType.TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))),
                 CustomField.with(CustomType.TUPLE.of(InternalIdentifierConverter.INSTANCE), "subject", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))),
                 CustomField.with(CustomType.TUPLE.of(getObjectConverter()), "object", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class)))
         );

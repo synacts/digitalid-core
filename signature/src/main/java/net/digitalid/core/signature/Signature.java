@@ -12,8 +12,6 @@ import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
-import net.digitalid.database.annotations.constraints.PrimaryKey;
-
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.signature.client.ClientSignature;
 import net.digitalid.core.signature.host.HostSignature;
@@ -44,7 +42,6 @@ public abstract class Signature<@Unspecifiable OBJECT> extends RootClass {
      * Returns the time at which the object has been or will be signed.
      */
     @Pure
-    @PrimaryKey // TODO: The current time might not be unique enough.
     @Default("net.digitalid.utility.time.TimeBuilder.build()")
     public abstract @Nonnull @Positive Time getTime();
     
