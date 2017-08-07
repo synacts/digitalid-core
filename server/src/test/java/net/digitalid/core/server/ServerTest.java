@@ -133,7 +133,7 @@ public class ServerTest extends CoreTest {
     public void testIdentityCreation() throws ExternalException {
         Log.information("Started the identity creation test.");
         
-        final @Nonnull Client client = ClientBuilder.withIdentifier(/* TODO: "test.client.digitalid.net" */ "default").withDisplayName("Test Client").withPreferredPermissions(ReadOnlyAgentPermissions.GENERAL_WRITE).build();
+        final @Nonnull Client client = ClientBuilder.withIdentifier("test.client.digitalid.net").withDisplayName("Test Client").withPreferredPermissions(ReadOnlyAgentPermissions.GENERAL_WRITE).build();
         final @Nonnull InternalNonHostIdentifier identifier = InternalNonHostIdentifier.with("person@test.digitalid.net");
         AccountOpen.with(Category.NATURAL_PERSON, identifier, client).send();
         
