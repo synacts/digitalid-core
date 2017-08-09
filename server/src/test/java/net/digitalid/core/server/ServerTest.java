@@ -6,17 +6,17 @@ import java.net.InetAddress;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
-import net.digitalid.utility.conversion.converters.StringConverter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Log;
+
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.account.AccountOpen;
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.attribute.Attribute;
-import net.digitalid.core.attribute.AttributeTypes;
 import net.digitalid.core.cache.CacheQueryBuilder;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.ClientBuilder;
@@ -133,7 +133,7 @@ public class ServerTest extends CoreTest {
     public void testIdentityCreation() throws ExternalException {
         Log.information("Started the identity creation test.");
         
-        final @Nonnull Client client = ClientBuilder.withIdentifier(/* TODO: "test.client.digitalid.net" */ "default").withDisplayName("Test Client").withPreferredPermissions(ReadOnlyAgentPermissions.GENERAL_WRITE).build();
+        final @Nonnull Client client = ClientBuilder.withIdentifier("test.client.digitalid.net").withDisplayName("Test Client").withPreferredPermissions(ReadOnlyAgentPermissions.GENERAL_WRITE).build();
         final @Nonnull InternalNonHostIdentifier identifier = InternalNonHostIdentifier.with("person@test.digitalid.net");
         AccountOpen.with(Category.NATURAL_PERSON, identifier, client).send();
         
@@ -141,14 +141,16 @@ public class ServerTest extends CoreTest {
         final @Nonnull RoleArguments arguments = RoleArgumentsBuilder.withClient(client).withIssuer(identity).withAgentKey(0).build();
         final @Nonnull Role role = RoleModule.map(arguments);
         
-        final @Nonnull Attribute nameAttribute = Attribute.of(role, AttributeTypes.NAME);
-        final @Nonnull String name = "Test Person";
-        final @Nonnull Pack pack = Pack.pack(StringConverter.INSTANCE, name);
-        final @Nonnull Signature<Pack> signature = SignatureBuilder.withObject(pack).withSubject(identifier).build();
+        final @Nonnull Attribute nameAttribute = Attribute.of(role, Name.TYPE);
+        Database.instance.get().commit(); // This is necessary because otherwise the type is mapped a second time.
+        
+        final @Nonnull Name name = NameBuilder.withValue("Test Person").build();
+        final @Nonnull Signature<Pack> signature = SignatureBuilder.withObject(name.pack()).withSubject(identifier).build();
+        
         nameAttribute.value().set(UncertifiedAttributeValue.with(signature));
         nameAttribute.visibility().set(PassiveExpressionBuilder.withEntity(role).withString("everybody").build());
         
-        final @Nonnull String cachedName = CacheQueryBuilder.withConverter(StringConverter.INSTANCE).withRequestee(identity).withType(AttributeTypes.NAME).build().execute();
+        final @Nonnull Name cachedName = CacheQueryBuilder.withConverter(NameConverter.INSTANCE).withRequestee(identity).withType(Name.TYPE).build().execute();
         assertThat(cachedName).isEqualTo(name);
     }
     

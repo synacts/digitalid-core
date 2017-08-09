@@ -120,8 +120,9 @@ public abstract class Host extends CoreUnit {
      * Returns the client associated with this host.
      */
     @Pure
+    // TODO: What is a good prefix for the identifier of the client?
     // TODO: What are the right permissions to pass here? Probably an aggregation of all the services.
-    @Derive("net.digitalid.core.client.ClientBuilder.withIdentifier(identifier.getString()).withDisplayName(\"Host \" + identifier.getString()).withPreferredPermissions(net.digitalid.core.permissions.ReadOnlyAgentPermissions.GENERAL_WRITE).build()")
+    @Derive("net.digitalid.core.client.ClientBuilder.withIdentifier(\"client.\" + identifier.getString()).withDisplayName(\"Host \" + identifier.getString()).withPreferredPermissions(net.digitalid.core.permissions.ReadOnlyAgentPermissions.GENERAL_WRITE).build()")
     public abstract @Nonnull Client getClient();
     
     /* -------------------------------------------------- Hosts -------------------------------------------------- */

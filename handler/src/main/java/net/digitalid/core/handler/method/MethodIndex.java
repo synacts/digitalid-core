@@ -9,10 +9,13 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.string.Strings;
+import net.digitalid.utility.threading.Threading;
+import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.core.compression.Compression;
@@ -44,7 +47,10 @@ public abstract class MethodIndex {
      * Adds the given converter to recover the methods of its type.
      */
     @Impure
+    @MainThread
     public static void add(@Nonnull Converter<? extends Method<?>, Signature<Compression<Pack>>> converter) {
+        Require.that(Threading.isMainThread()).orThrow("The method 'add' may only be called on the main thread.");
+        
         final @Nonnull SemanticType type = SemanticType.map(converter);
         Log.debugging("Registered a converter for the type $.", type);
         converters.put(type, converter);
