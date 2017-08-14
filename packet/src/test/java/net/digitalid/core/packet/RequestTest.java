@@ -29,6 +29,7 @@ import net.digitalid.core.signature.SignatureBuilder;
 import net.digitalid.core.signature.SignatureConverter;
 import net.digitalid.core.signature.SignatureConverterBuilder;
 import net.digitalid.core.signature.host.HostSignatureBuilder;
+import net.digitalid.core.signature.host.HostSignatureSigner;
 import net.digitalid.core.symmetrickey.SymmetricKey;
 import net.digitalid.core.symmetrickey.SymmetricKeyBuilder;
 import net.digitalid.core.testing.CoreTest;
@@ -146,7 +147,7 @@ public class RequestTest extends CoreTest {
         
         final @Nonnull String string = "Hello World!";
         final @Nonnull Compression<String> compression = CompressionBuilder.withObject(string).build();
-        final @Nonnull Signature<Compression<String>> signature = HostSignatureBuilder.withObject(compression).withSubject(subject).withSigner(subject).withTime(Time.DECADE).build();
+        final @Nonnull Signature<Compression<String>> signature = HostSignatureSigner.sign(compression, compressionConverter).to(subject).as(subject);
         final @Nonnull byte[] bytes = XDF.convert(signatureConverter, signature);
         
         final @Nonnull Signature<Compression<String>> recoveredSignature = XDF.recover(signatureConverter, null, bytes);

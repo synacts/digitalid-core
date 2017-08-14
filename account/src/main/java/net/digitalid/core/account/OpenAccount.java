@@ -173,7 +173,7 @@ public abstract class OpenAccount extends InternalAction implements CoreMethod<N
     @Pure
     @NonCommitting
     public static @Nonnull NativeRole of(@Nonnull Category category, @Nonnull InternalNonHostIdentifier subject, @Nonnull Client client) throws ExternalException {
-        final @Nonnull OpenAccount openAccount = AccountOpenBuilder.withSubject(subject).withCategory(category).withClientAgentKey(ThreadLocalRandom.current().nextLong()).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
+        final @Nonnull OpenAccount openAccount = OpenAccountBuilder.withSubject(subject).withCategory(category).withClientAgentKey(ThreadLocalRandom.current().nextLong()).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
         openAccount.send();
 
         final @Nonnull InternalNonHostIdentity identity = subject.resolve();

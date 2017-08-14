@@ -23,6 +23,7 @@ import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionBuilder;
+import net.digitalid.core.compression.CompressionConverterBuilder;
 import net.digitalid.core.conversion.exceptions.NetworkException;
 import net.digitalid.core.encryption.Encryption;
 import net.digitalid.core.encryption.EncryptionBuilder;
@@ -38,6 +39,7 @@ import net.digitalid.core.handler.reply.instances.EmptyReplyBuilder;
 import net.digitalid.core.handler.reply.instances.RequestExceptionReplyBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.pack.Pack;
+import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.RequestConverter;
 import net.digitalid.core.packet.Response;
@@ -45,6 +47,7 @@ import net.digitalid.core.packet.ResponseBuilder;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.SignatureBuilder;
 import net.digitalid.core.signature.host.HostSignatureBuilder;
+import net.digitalid.core.signature.host.HostSignatureSigner;
 
 /**
  * A worker processes incoming requests asynchronously.
@@ -108,7 +111,7 @@ public abstract class Worker implements Runnable {
             
             final @Nonnull Signature<Compression<Pack>> signedReply;
             if (encryptedMethod != null && signedMethod != null) {
-                signedReply = HostSignatureBuilder.withObject(compressedReply).withSubject(signedMethod.getSubject()).withSigner(encryptedMethod.getRecipient()).build();
+                signedReply = HostSignatureSigner.sign(compressedReply, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(signedMethod.getSubject()).as(encryptedMethod.getRecipient());
             } else {
                 signedReply = SignatureBuilder.withObject(compressedReply).withSubject(HostIdentifier.DIGITALID).build();
             }
