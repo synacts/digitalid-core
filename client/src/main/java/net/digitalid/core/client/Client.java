@@ -49,6 +49,7 @@ import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.commitment.CommitmentBuilder;
+import net.digitalid.core.commitment.SecretCommitment;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;

@@ -6,6 +6,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.credential.utility.SaltedAgentPermissions;
@@ -18,13 +21,15 @@ import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 
 /**
- * Requests a new identity- or role-based credential with the given permissions and relation.
+ * Requests a new identity-based or role-based credential with the given permissions and relation.
  * 
  * @see CredentialReply
  */
 @Immutable
-// TODO: @GenerateSubclass
-// TODO: @GenerateConverter
+// TODO:
+//@GenerateBuilder
+//@GenerateSubclass
+//@GenerateConverter
 abstract class CredentialInternalQuery extends InternalQuery implements CoreMethod<NonHostEntity> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */

@@ -54,7 +54,7 @@ interface TestNonHostEntity extends NonHostEntity {
 
 public class SettingsTest extends CoreTest {
     
-    private static final @Nonnull String VALUE = ""; // TODO: Choose a non-default password like "Pa$$word" once properties can be loaded from the database.
+    private static final @Nonnull String PASSWORD_VALUE = ""; // TODO: Choose a non-default password like "Pa$$word" once properties can be loaded from the database.
     
     private static final @Nonnull TestUnit UNIT;
     
@@ -83,9 +83,9 @@ public class SettingsTest extends CoreTest {
     public void testSynchronizedValueProperty() throws DatabaseException, RecoveryException {
         try {
             final @Nonnull Settings settings = Settings.of(ENTITY);
-            settings.password().set(VALUE);
+            settings.password().set(PASSWORD_VALUE);
             settings.password().reset(); // Not necessary but I want to test the database state.
-            assertThat(settings.password().get()).isEqualTo(VALUE);
+            assertThat(settings.password().get()).isEqualTo(PASSWORD_VALUE);
             Database.instance.get().commit();
         } catch (@Nonnull DatabaseException | RecoveryException exception) {
             Database.instance.get().rollback();

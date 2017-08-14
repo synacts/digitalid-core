@@ -112,17 +112,7 @@ public interface Method<ENTITY extends Entity> extends Handler<ENTITY> {
     @Pure
     public boolean isLodged();
     
-    /* -------------------------------------------------- Value -------------------------------------------------- */
-    
-    /**
-     * Returns either the value b' for clients or the value f' for hosts or null if no credential is shortened.
-     */
-    @Pure
-    @TODO(task = "Do we have to provide the value here rather than in the signature?", date = "2016-11-12", author = Author.KASPAR_ETTER)
-    public default @Nullable BigInteger getCommitmentValue() {
-        return null;
-    }
-    
+   
     /* -------------------------------------------------- Required Authorization -------------------------------------------------- */
     
     /**
@@ -163,14 +153,22 @@ public interface Method<ENTITY extends Entity> extends Handler<ENTITY> {
     /* -------------------------------------------------- Send -------------------------------------------------- */
     
     /**
+     * Signs the compressed content. The signature depends on the type of method.
+     */
+    @Pure
+    public default @Nonnull Signature<Compression<Pack>> getSignature(@Nonnull Compression<Pack> compression) throws ExternalException {
+        return SignatureBuilder.withObject(compression).withSubject(getSubject()).build();
+    }
+    
+    /**
      * Sends this method and returns the response.
      */
     @NonCommitting
     @PureWithSideEffects
     public default @Nonnull Response send() throws ExternalException {
         final @Nonnull Compression<Pack> compression = CompressionBuilder.withObject(pack()).build();
-        final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObject(compression).withSubject(getSubject()).build(); // TODO: Use the right signature.
-        final @Nonnull RequestEncryption<Signature<Compression<Pack>>> encryption = RequestEncryptionBuilder.withObject(signature).withRecipient(getRecipient()).build();
+    
+        final @Nonnull RequestEncryption<Signature<Compression<Pack>>> encryption = RequestEncryptionBuilder.withObject(getSignature(compression)).withRecipient(getRecipient()).build();
         final @Nonnull Request request = RequestBuilder.withEncryption(encryption).build();
         final @Nonnull Response response = request.send();
         
