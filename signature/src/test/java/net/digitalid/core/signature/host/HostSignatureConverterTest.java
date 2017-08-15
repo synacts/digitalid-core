@@ -1,5 +1,7 @@
 package net.digitalid.core.signature.host;
 
+import java.math.BigInteger;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.conversion.converters.StringConverter;
@@ -14,12 +16,12 @@ import org.junit.Test;
 public class HostSignatureConverterTest extends CoreTest {
     
     @Test
-    public void shouldSignAndVerify() throws RecoveryException {
+    public void shouldConvertCorrectly() throws RecoveryException {
         final @Nonnull String message = "This is an authentic message.";
         final @Nonnull InternalIdentifier subject = InternalIdentifier.with("bob@digitalid.net");
         final @Nonnull InternalIdentifier signer = InternalIdentifier.with("alice@digitalid.net");
         
-        final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureBuilder.withObject(message).withSubject(subject).withSigner(signer).build();
+        final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureBuilder.withObjectConverter(StringConverter.INSTANCE).withObject(message).withSubject(subject).withSigner(signer).withSignatureValue(BigInteger.ONE).build();
         
         final @Nonnull byte[] bytes = XDF.convert(HostSignatureConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build(), signedIdentifier);
         assertThat(bytes.length).isPositive();

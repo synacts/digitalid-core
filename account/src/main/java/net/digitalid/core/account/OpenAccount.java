@@ -7,6 +7,9 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.contracts.Ensure;
 import net.digitalid.utility.contracts.exceptions.PreconditionExceptionBuilder;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
@@ -25,7 +28,14 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.client.Client;
+import net.digitalid.core.client.role.NativeRole;
+import net.digitalid.core.client.role.Role;
+import net.digitalid.core.client.role.RoleArguments;
+import net.digitalid.core.client.role.RoleArgumentsBuilder;
+import net.digitalid.core.client.role.RoleModule;
 import net.digitalid.core.commitment.Commitment;
+import net.digitalid.core.compression.Compression;
+import net.digitalid.core.compression.CompressionConverterBuilder;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.factories.AccountFactory;
@@ -46,12 +56,15 @@ import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
-import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.pack.Pack;
+import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.client.ClientSignature;
+import net.digitalid.core.signature.client.ClientSignatureBuilder;
+import net.digitalid.core.signature.client.ClientSignatureCreator;
 import net.digitalid.core.unit.annotations.OnClientRecipient;
 import net.digitalid.core.unit.annotations.OnHost;
 import net.digitalid.core.unit.annotations.OnHostRecipient;
@@ -63,17 +76,16 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class AccountOpen extends InternalAction implements CoreMethod<NonHostEntity> {
-    
-    /* -------------------------------------------------- Type -------------------------------------------------- */
-    
-    /**
-     * Stores the semantic type of this action.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map(AccountOpenConverter.INSTANCE);
+public abstract class OpenAccount extends InternalAction implements CoreMethod<NonHostEntity> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
+    @Pure
+    @Override
+    public @Nullable NonHostEntity getProvidedEntity() {
+        return null;
+    }
+
     /**
      * Returns null, which is a violation of the postcondition of {@link Method#getEntity()}.
      */
@@ -137,6 +149,7 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
      * Returns the commitment of the client agent.
      */
     @Pure
+    @TODO(author = Author.STEPHANIE_STROKA, task = "Use secret commitment instead of adding the secret to the commitment again in the getSignature() method", date = "2017-08-14")
     public @Nonnull Commitment getCommitment() {
         final @Nullable Signature<?> signature = getSignature();
         if (signature instanceof ClientSignature) {
@@ -162,8 +175,17 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AccountOpen with(@Nonnull Category category, @Nonnull InternalNonHostIdentifier subject, @Nonnull Client client) throws ExternalException {
-        return AccountOpenBuilder.withProvidedEntity(null).withSubject(subject).withCategory(category).withClientAgentKey(ThreadLocalRandom.current().nextLong()).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
+    public static @Nonnull NativeRole of(@Nonnull Category category, @Nonnull InternalNonHostIdentifier subject, @Nonnull Client client) throws ExternalException {
+        final @Nonnull OpenAccount openAccount = OpenAccountBuilder.withSubject(subject).withCategory(category).withClientAgentKey(ThreadLocalRandom.current().nextLong()).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
+        openAccount.send();
+
+        final @Nonnull InternalNonHostIdentity identity = subject.resolve();
+        // The following tests whether the client can be assigned a native role.
+        final @Nonnull RoleArguments arguments = RoleArgumentsBuilder.withClient(client).withIssuer(identity).withAgentKey(0).build();
+        final @Nonnull Role role = RoleModule.map(arguments);
+        
+        Ensure.that(role instanceof NativeRole).orThrow("The role is supposed to be a native role.");
+        return (NativeRole) role;
     }
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */
@@ -198,7 +220,7 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
     public @Nullable @Matching ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         if (IdentifierResolver.configuration.get().load(getSubject()) != null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("An account with the identifier " + getSubject() + " already exists.").build(); }
         
-        // TODO: Include the resctriction mechanisms like the tokens.
+        // TODO: Include the restriction mechanisms like the tokens.
         
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) IdentifierResolver.configuration.get().map(getCategory(), getSubject());
         final @Nonnull @OnHost Entity entity = AccountFactory.create(HostFactory.create(getSubject().getHostIdentifier()), identity);
@@ -216,15 +238,11 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
     
     /* -------------------------------------------------- Sending -------------------------------------------------- */
     
-    // TODO: Use the commitment and the secret to send this action with a client signature.
-    
-//    @Override
-//    @NonCommitting
-//    public @Nonnull Response send() throws ExternalException {
-//        final @Nullable Exponent secret = getSecret();
-//        if (secret == null) { throw PreconditionExceptionBuilder.withMessage("The secret may not be null for sending.").build(); }
-//        return new ClientRequest(getSubject(), getCommitment().addSecret(secret)).send();
-//    }
+    @Pure
+    @Override
+    public @Nonnull Signature<Compression<Pack>> getSignature(@Nonnull Compression<Pack> compression) throws ExternalException {
+        return ClientSignatureCreator.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(getSubject()).with(getCommitment().addSecret(getSecret()));
+    }
     
     /* -------------------------------------------------- Auditable -------------------------------------------------- */
     

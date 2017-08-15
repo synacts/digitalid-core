@@ -12,7 +12,7 @@ import net.digitalid.utility.logging.Log;
 
 import net.digitalid.database.interfaces.Database;
 
-import net.digitalid.core.account.AccountOpen;
+import net.digitalid.core.account.OpenAccount;
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
@@ -20,10 +20,7 @@ import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.cache.CacheQueryBuilder;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.ClientBuilder;
-import net.digitalid.core.client.role.Role;
-import net.digitalid.core.client.role.RoleArguments;
-import net.digitalid.core.client.role.RoleArgumentsBuilder;
-import net.digitalid.core.client.role.RoleModule;
+import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.expression.PassiveExpressionBuilder;
 import net.digitalid.core.handler.method.MethodIndex;
@@ -135,11 +132,8 @@ public class ServerTest extends CoreTest {
         
         final @Nonnull Client client = ClientBuilder.withIdentifier("test.client.digitalid.net").withDisplayName("Test Client").withPreferredPermissions(ReadOnlyAgentPermissions.GENERAL_WRITE).build();
         final @Nonnull InternalNonHostIdentifier identifier = InternalNonHostIdentifier.with("person@test.digitalid.net");
-        AccountOpen.with(Category.NATURAL_PERSON, identifier, client).send();
-        
-        final @Nonnull InternalNonHostIdentity identity = identifier.resolve();
-        final @Nonnull RoleArguments arguments = RoleArgumentsBuilder.withClient(client).withIssuer(identity).withAgentKey(0).build();
-        final @Nonnull Role role = RoleModule.map(arguments);
+        // AccountOpen should probably create a native role, but it does not yet do it, which is why we create the role below explicitly.
+        final @Nonnull NativeRole role = OpenAccount.of(Category.NATURAL_PERSON, identifier, client);
         
         final @Nonnull Attribute nameAttribute = Attribute.of(role, Name.TYPE);
         Database.instance.get().commit(); // This is necessary because otherwise the type is mapped a second time.
@@ -149,6 +143,8 @@ public class ServerTest extends CoreTest {
         
         nameAttribute.value().set(UncertifiedAttributeValue.with(signature));
         nameAttribute.visibility().set(PassiveExpressionBuilder.withEntity(role).withString("everybody").build());
+    
+        final @Nonnull InternalNonHostIdentity identity = identifier.resolve();
         
         final @Nonnull Name cachedName = CacheQueryBuilder.withConverter(NameConverter.INSTANCE).withRequestee(identity).withType(Name.TYPE).build().execute();
         assertThat(cachedName).isEqualTo(name);

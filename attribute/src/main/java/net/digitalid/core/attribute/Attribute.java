@@ -29,6 +29,7 @@ import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.property.RequiredAuthorization;
 import net.digitalid.core.property.RequiredAuthorizationBuilder;
 import net.digitalid.core.signature.attribute.AttributeValue;
+import net.digitalid.core.signature.attribute.UncertifiedAttributeValue;
 import net.digitalid.core.subject.CoreServiceCoreSubject;
 import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 
@@ -73,7 +74,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
     /**
      * Stores the required authorization to change the unpublished value.
      */
-    static final @Nonnull RequiredAuthorization<Entity, SemanticType, Attribute, AttributeValue> UNPUBLISHED = RequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull RequiredAuthorization<Entity, SemanticType, Attribute, UncertifiedAttributeValue> UNPUBLISHED = RequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, UncertifiedAttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the unpublished value property of this attribute.
@@ -82,7 +83,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
      */
     @Pure
     @GenerateSynchronizedProperty
-    public abstract @Nonnull WritablePersistentValueProperty<Attribute, @Nullable AttributeValue> unpublished();
+    public abstract @Nonnull WritablePersistentValueProperty<Attribute, @Nullable UncertifiedAttributeValue> unpublished();
     
     /* -------------------------------------------------- Visibility Expression -------------------------------------------------- */
     

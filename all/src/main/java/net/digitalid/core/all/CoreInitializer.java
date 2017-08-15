@@ -8,7 +8,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.account.AccountOpenConverter;
+import net.digitalid.core.account.OpenAccountConverter;
 import net.digitalid.core.cache.AttributesQueryConverter;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.resolution.handlers.IdentityQueryConverter;
@@ -26,7 +26,7 @@ public abstract class CoreInitializer {
     @Initialize(target = MethodIndex.class)
     public static void initializeMethodIndex() {
         MethodIndex.add(IdentityQueryConverter.INSTANCE);
-        MethodIndex.add(AccountOpenConverter.INSTANCE);
+        MethodIndex.add(OpenAccountConverter.INSTANCE);
         MethodIndex.add(AttributesQueryConverter.INSTANCE);
     }
     
