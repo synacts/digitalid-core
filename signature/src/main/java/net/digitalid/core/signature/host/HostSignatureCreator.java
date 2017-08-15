@@ -30,16 +30,16 @@ import net.digitalid.core.parameters.Parameters;
 @Utility
 public abstract class HostSignatureCreator {
     
-    public interface SubjectHostSignatureSigner<OBJECT> {
+    public interface SubjectHostSignatureCreator<OBJECT> {
     
         /**
          * Addresses the signature to a certain subject.
          */
-        public @Nonnull HostSignatureCreator.SignerHostSignatureSigner<OBJECT> to(@Nonnull InternalIdentifier subject);
+        public @Nonnull HostSignatureCreator.SignerHostSignatureCreator<OBJECT> to(@Nonnull InternalIdentifier subject);
         
     }
     
-    public interface SignerHostSignatureSigner<OBJECT> {
+    public interface SignerHostSignatureCreator<OBJECT> {
     
         /**
          * Signs the object as a specific signer.
@@ -51,7 +51,7 @@ public abstract class HostSignatureCreator {
     /**
      * Inner class for the host signature creator which structures the parameters required for signing.
      */
-    public static class InnerHostSignatureCreator<OBJECT> implements SubjectHostSignatureSigner<OBJECT>, SignerHostSignatureSigner<OBJECT> {
+    public static class InnerHostSignatureCreator<OBJECT> implements SubjectHostSignatureCreator<OBJECT>, SignerHostSignatureCreator<OBJECT> {
         
         private final @Nonnull OBJECT object;
         
@@ -89,23 +89,12 @@ public abstract class HostSignatureCreator {
                 throw UncheckedExceptionBuilder.withCause(exception).build();
             }
     
-            final @Nonnull MessageDigest messageDigest = Parameters.HASH_FUNCTION.get().produce();
-            final @Nonnull ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            try (@Nonnull MemoryEncoder encoder = MemoryEncoder.of(outputStream)) {
-                encoder.startHashing(messageDigest);
-                encoder.encodeObject(TimeConverter.INSTANCE, time);
-                encoder.encodeObject(InternalIdentifierConverter.INSTANCE, subject);
-                encoder.encodeObject(InternalIdentifierConverter.INSTANCE, signer);
-                encoder.encodeObject(objectConverter, object);
-                final @Nonnull BigInteger hash = new BigInteger(1, encoder.stopHashing());
-                final @Nonnull BigInteger value = privateKey.powD(hash).getValue();
-        
-                Log.debugging("$ signed the hash $ about $.", signer, hash, subject);
+            final @Nonnull BigInteger hash = HostSignature.getContentHash(time, subject, signer, objectConverter, object);
+            final @Nonnull BigInteger value = privateKey.powD(hash).getValue();
     
-                return HostSignatureBuilder.withObjectConverter(objectConverter).withObject(object).withSubject(subject).withSigner(signer).withSignatureValue(value).withTime(time).build();
-            } catch (@Nonnull MemoryException exception) {
-                throw UncheckedExceptionBuilder.withCause(exception).build();
-            }
+            Log.debugging("$ signed the hash $ about $.", signer, hash, subject);
+
+            return HostSignatureBuilder.withObjectConverter(objectConverter).withObject(object).withSubject(subject).withSigner(signer).withSignatureValue(value).withTime(time).build();
         }
         
     }
@@ -114,7 +103,7 @@ public abstract class HostSignatureCreator {
      * Initializes the signing of a given object with a host signature.
      */
     @Pure
-    public static <OBJECT> @Nonnull SubjectHostSignatureSigner<OBJECT> sign(@Nonnull OBJECT object, @Nonnull Converter<OBJECT, Void> objectConverter) {
+    public static <OBJECT> @Nonnull SubjectHostSignatureCreator<OBJECT> sign(@Nonnull OBJECT object, @Nonnull Converter<OBJECT, Void> objectConverter) {
         return new InnerHostSignatureCreator<>(object, objectConverter);
     }
     

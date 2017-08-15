@@ -14,7 +14,9 @@ import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeConverter;
+import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
@@ -67,24 +69,42 @@ public abstract class HostSignature<@Unspecifiable OBJECT> extends Signature<OBJ
     @Pure
     public abstract @Nonnull BigInteger getSignatureValue();
     
+    /* -------------------------------------------------- Hash -------------------------------------------------- */
+    
+    /**
+     * Creates a content hash with a given time, subject, signer, object converter and object.
+     */
+    @Pure
+    public static <OBJECT> @Nonnull BigInteger getContentHash(@Nonnull Time time, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer, @Nonnull Converter<OBJECT, Void> objectConverter, @Nonnull OBJECT object) {
+        final @Nonnull MessageDigest messageDigest = Parameters.HASH_FUNCTION.get().produce();
+            final @Nonnull ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            try (@Nonnull MemoryEncoder encoder = MemoryEncoder.of(outputStream)) {
+                encoder.startHashing(messageDigest);
+                encoder.encodeObject(TimeConverter.INSTANCE, time);
+                encoder.encodeObject(InternalIdentifierConverter.INSTANCE, subject);
+                encoder.encodeObject(InternalIdentifierConverter.INSTANCE, signer);
+                encoder.encodeObject(objectConverter, object);
+                return new BigInteger(1, encoder.stopHashing());
+            } catch (@Nonnull MemoryException exception) {
+                throw UncheckedExceptionBuilder.withCause(exception).build();
+            }
+    }
+    
+    /**
+     * Calculates the hash of the client signature content.
+     */
+    @Pure
+    public @Nonnull BigInteger deriveHostSignatureContentHash() {
+        return getContentHash(getTime(), getSubject(), getSigner(), objectConverter, getObject());
+    }
+    
     /**
      * Returns the hash of the host signature object.
      */
     @Pure
-    public @Nonnull BigInteger getHash() {
-        final @Nonnull MessageDigest messageDigest = Parameters.HASH_FUNCTION.get().produce();
-        final @Nonnull ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (@Nonnull MemoryEncoder encoder = MemoryEncoder.of(outputStream)) {
-            encoder.startHashing(messageDigest);
-            encoder.encodeObject(TimeConverter.INSTANCE, getTime());
-            encoder.encodeObject(InternalIdentifierConverter.INSTANCE, getSubject());
-            encoder.encodeObject(InternalIdentifierConverter.INSTANCE, getSigner());
-            encoder.encodeObject(objectConverter, getObject());
-            return new BigInteger(1, encoder.stopHashing());
-        } catch (@Nonnull MemoryException exception) {
-            throw UncheckedExceptionBuilder.withCause(exception).build();
-        }
-    }
+    @Derive("deriveHostSignatureContentHash()")
+    public abstract @Nonnull BigInteger getHostSignatureContentHash();
+    
     /* -------------------------------------------------- Verification -------------------------------------------------- */
     
     /**
@@ -94,7 +114,7 @@ public abstract class HostSignature<@Unspecifiable OBJECT> extends Signature<OBJ
     @Pure
     public void verifySignature(@Nonnull PublicKey publicKey) throws InvalidSignatureException {
         final @Nonnull BigInteger computedHash = publicKey.getCompositeGroup().getElement(getSignatureValue()).pow(publicKey.getE()).getValue();
-        if (!computedHash.equals(getHash())) {
+        if (!computedHash.equals(getHostSignatureContentHash())) {
             throw InvalidSignatureExceptionBuilder.withSignature(this).build();
         }
     }

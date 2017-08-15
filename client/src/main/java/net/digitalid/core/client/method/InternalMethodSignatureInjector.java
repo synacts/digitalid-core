@@ -12,14 +12,16 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.client.role.Role;
 import net.digitalid.core.compression.Compression;
+import net.digitalid.core.compression.CompressionConverterBuilder;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.handler.method.InternalMethod;
 import net.digitalid.core.pack.Pack;
+import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.signature.Signature;
-import net.digitalid.core.signature.client.ClientSignatureBuilder;
+import net.digitalid.core.signature.client.ClientSignatureCreator;
 
 /**
  * Injects the internal method signature function into the internal method configuration.
@@ -46,7 +48,7 @@ public abstract class InternalMethodSignatureInjector {
         if (internalMethod.getService().equals(CoreService.INSTANCE)) {
             if (role instanceof NativeRole) {
                 final @Nonnull NativeRole nativeRole = (NativeRole) role;
-                return ClientSignatureBuilder.withObject(compression).withSubject(internalMethod.getSubject()).withCommitment(nativeRole.getAgent().commitment().get().addSecret(role.getUnit().secret.get())).build();
+                return ClientSignatureCreator.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(internalMethod.getSubject()).with(nativeRole.getAgent().commitment().get().addSecret(role.getUnit().secret.get()));
             } else {
                 // see Method for implementation hints
                 throw new UnsupportedOperationException("Non-native roles are not yet implemented");

@@ -35,6 +35,7 @@ import net.digitalid.core.client.role.RoleArgumentsBuilder;
 import net.digitalid.core.client.role.RoleModule;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.compression.Compression;
+import net.digitalid.core.compression.CompressionConverterBuilder;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.factories.AccountFactory;
@@ -56,12 +57,14 @@ import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.pack.Pack;
+import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.client.ClientSignature;
 import net.digitalid.core.signature.client.ClientSignatureBuilder;
+import net.digitalid.core.signature.client.ClientSignatureCreator;
 import net.digitalid.core.unit.annotations.OnClientRecipient;
 import net.digitalid.core.unit.annotations.OnHost;
 import net.digitalid.core.unit.annotations.OnHostRecipient;
@@ -238,7 +241,7 @@ public abstract class OpenAccount extends InternalAction implements CoreMethod<N
     @Pure
     @Override
     public @Nonnull Signature<Compression<Pack>> getSignature(@Nonnull Compression<Pack> compression) throws ExternalException {
-        return ClientSignatureBuilder.withObject(compression).withSubject(getSubject()).withCommitment(getCommitment().addSecret(getSecret())).build();
+        return ClientSignatureCreator.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(getSubject()).with(getCommitment().addSecret(getSecret()));
     }
     
     /* -------------------------------------------------- Auditable -------------------------------------------------- */
