@@ -46,8 +46,7 @@ import net.digitalid.core.packet.Response;
 import net.digitalid.core.packet.ResponseBuilder;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.SignatureBuilder;
-import net.digitalid.core.signature.host.HostSignatureBuilder;
-import net.digitalid.core.signature.host.HostSignatureSigner;
+import net.digitalid.core.signature.host.HostSignatureCreator;
 
 /**
  * A worker processes incoming requests asynchronously.
@@ -111,7 +110,7 @@ public abstract class Worker implements Runnable {
             
             final @Nonnull Signature<Compression<Pack>> signedReply;
             if (encryptedMethod != null && signedMethod != null) {
-                signedReply = HostSignatureSigner.sign(compressedReply, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(signedMethod.getSubject()).as(encryptedMethod.getRecipient());
+                signedReply = HostSignatureCreator.sign(compressedReply, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(signedMethod.getSubject()).as(encryptedMethod.getRecipient());
             } else {
                 signedReply = SignatureBuilder.withObject(compressedReply).withSubject(HostIdentifier.DIGITALID).build();
             }

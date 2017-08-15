@@ -25,7 +25,7 @@ import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.signature.Signature;
-import net.digitalid.core.signature.host.HostSignatureSigner;
+import net.digitalid.core.signature.host.HostSignatureCreator;
 
 /**
  * External actions can be sent by both hosts and clients.
@@ -61,7 +61,7 @@ public abstract class ExternalAction extends Action {
 //            throw new UnsupportedOperationException("Client credentials are not yet implemented");
 //            return CredentialsSignatureBuilder.withObject(compression).withSubject(getSubject()).withT(t).withSU(su).withSV(sv).withLodged(isLodged()).withCredentials(FreezableArrayList.withElement(credential)).withCertificates(FreezableArrayList.withElement(certificate)).build();
 //        } else {
-            return HostSignatureSigner.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(getSubject()).as(getEntity().getIdentity().getAddress());
+            return HostSignatureCreator.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(getSubject()).as(getEntity().getIdentity().getAddress());
 //        }
     }
     

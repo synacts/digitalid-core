@@ -25,42 +25,60 @@ import net.digitalid.core.identification.identifier.InternalIdentifierConverter;
 import net.digitalid.core.parameters.Parameters;
 
 /**
- *
+ * Creates a host signature by signing an object of generic type OBJECT.
  */
 @Utility
-public abstract class HostSignatureSigner {
+public abstract class HostSignatureCreator {
     
     public interface SubjectHostSignatureSigner<OBJECT> {
     
-        public @Nonnull HostSignatureSigner.SignerHostSignatureSigner<OBJECT> to(@Nonnull InternalIdentifier subject);
+        /**
+         * Addresses the signature to a certain subject.
+         */
+        public @Nonnull HostSignatureCreator.SignerHostSignatureSigner<OBJECT> to(@Nonnull InternalIdentifier subject);
         
     }
     
     public interface SignerHostSignatureSigner<OBJECT> {
-        
+    
+        /**
+         * Signs the object as a specific signer.
+         */
         public @Nonnull HostSignature<OBJECT> as(@Nonnull InternalIdentifier signer);
         
     }
     
-    public static class InnerHostSignatureSigner<OBJECT> implements SubjectHostSignatureSigner<OBJECT>, SignerHostSignatureSigner<OBJECT> {
+    /**
+     * Inner class for the host signature creator which structures the parameters required for signing.
+     */
+    public static class InnerHostSignatureCreator<OBJECT> implements SubjectHostSignatureSigner<OBJECT>, SignerHostSignatureSigner<OBJECT> {
         
         private final @Nonnull OBJECT object;
         
         private final @Nonnull Converter<OBJECT, Void> objectConverter;
-        
-        InnerHostSignatureSigner(@Nonnull OBJECT object, @Nonnull Converter<OBJECT, Void> objectConverter) {
+    
+        /**
+         * Creates a new InnerHostSignatureSigner.
+         */
+        private InnerHostSignatureCreator(@Nonnull OBJECT object, @Nonnull Converter<OBJECT, Void> objectConverter) {
             this.object = object;
             this.objectConverter = objectConverter;
         }
         
         private @Nonnull InternalIdentifier subject;
-        
+    
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public @Nonnull InnerHostSignatureSigner to(@Nonnull InternalIdentifier subject) {
+        public @Nonnull HostSignatureCreator.InnerHostSignatureCreator to(@Nonnull InternalIdentifier subject) {
             this.subject = subject;
             return this;
         }
-        
+    
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public @Nonnull HostSignature<OBJECT> as(@Nonnull InternalIdentifier signer) {
             final @Nonnull Time time = TimeBuilder.build();
@@ -92,9 +110,12 @@ public abstract class HostSignatureSigner {
         
     }
     
+    /**
+     * Initializes the signing of a given object with a host signature.
+     */
     @Pure
     public static <OBJECT> @Nonnull SubjectHostSignatureSigner<OBJECT> sign(@Nonnull OBJECT object, @Nonnull Converter<OBJECT, Void> objectConverter) {
-        return new InnerHostSignatureSigner<>(object, objectConverter);
+        return new InnerHostSignatureCreator<>(object, objectConverter);
     }
     
 }
