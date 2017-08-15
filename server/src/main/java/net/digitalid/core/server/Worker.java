@@ -21,6 +21,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 
+import net.digitalid.core.account.AccountOpen;
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionBuilder;
 import net.digitalid.core.conversion.exceptions.NetworkException;
@@ -36,7 +37,10 @@ import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.handler.reply.instances.EmptyReplyBuilder;
 import net.digitalid.core.handler.reply.instances.RequestExceptionReplyBuilder;
+import net.digitalid.core.host.Host;
+import net.digitalid.core.host.account.Account;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.RequestConverter;
@@ -84,8 +88,16 @@ public abstract class Worker implements Runnable {
                     final @Nonnull Request request = pack.unpack(RequestConverter.INSTANCE, null);
                     
                     encryptedMethod = request.getEncryption();
+                    final @Nullable HostIdentifier recipient = encryptedMethod.getRecipient();
+                    if (recipient == null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.RECIPIENT).withMessage("The recipient may not be null.").build(); }
+                    final @Nonnull Host host = Host.of(recipient);
+                    
                     signedMethod = encryptedMethod.getObject();
-                    method = MethodIndex.get(signedMethod);
+                    final @Nonnull InternalIdentifier subject;
+                    if (signedMethod.getObject().getObject().getType().equals(AccountOpen.TYPE)) { subject = recipient; } else { subject = signedMethod.getSubject(); }
+                    final @Nonnull Account account = Account.with(host, subject.resolve());
+                    
+                    method = MethodIndex.get(signedMethod, account);
                     reply = method.executeOnHost();
                     
                     Database.instance.get().commit();

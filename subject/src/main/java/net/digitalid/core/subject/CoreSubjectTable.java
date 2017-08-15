@@ -26,7 +26,7 @@ import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.property.PersistentProperty;
-import net.digitalid.database.subject.SubjectModule;
+import net.digitalid.database.property.subject.SubjectModule;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.unit.CoreUnit;

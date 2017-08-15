@@ -46,6 +46,7 @@ import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.service.CoreService;
@@ -64,13 +65,14 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
 @GenerateConverter
 public abstract class AccountOpen extends InternalAction implements CoreMethod<NonHostEntity> {
     
-    /* -------------------------------------------------- Entity -------------------------------------------------- */
+    /* -------------------------------------------------- Type -------------------------------------------------- */
     
-    @Pure
-    @Override
-    public @Nullable NonHostEntity getProvidedEntity() {
-        return null;
-    }
+    /**
+     * Stores the semantic type of this action.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.map(AccountOpenConverter.INSTANCE);
+    
+    /* -------------------------------------------------- Entity -------------------------------------------------- */
     
     /**
      * Returns null, which is a violation of the postcondition of {@link Method#getEntity()}.
@@ -161,7 +163,7 @@ public abstract class AccountOpen extends InternalAction implements CoreMethod<N
     @Pure
     @NonCommitting
     public static @Nonnull AccountOpen with(@Nonnull Category category, @Nonnull InternalNonHostIdentifier subject, @Nonnull Client client) throws ExternalException {
-        return AccountOpenBuilder.withSubject(subject).withCategory(category).withClientAgentKey(ThreadLocalRandom.current().nextLong()).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
+        return AccountOpenBuilder.withProvidedEntity(null).withSubject(subject).withCategory(category).withClientAgentKey(ThreadLocalRandom.current().nextLong()).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
     }
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */

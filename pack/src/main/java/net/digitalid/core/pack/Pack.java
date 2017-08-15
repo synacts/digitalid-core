@@ -60,11 +60,19 @@ public abstract class Pack {
     }
     
     /**
+     * Packs the given object with the given converter by serializing its content and using the given semantic type.
+     */
+    @Pure
+    public static <@Unspecifiable TYPE> @Nonnull Pack pack(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull SemanticType type) {
+        return new PackSubclass(type, XDF.convert(converter, object));
+    }
+    
+    /**
      * Packs the given object with the given converter by serializing its content and deriving the type from the given converter.
      */
     @Pure
     public static <@Unspecifiable TYPE> @Nonnull Pack pack(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object) {
-        return new PackSubclass(SemanticType.mapWithoutPersistingResult(converter), XDF.convert(converter, object));
+        return pack(converter, object, SemanticType.mapWithoutPersistingResult(converter));
     }
     
     /* -------------------------------------------------- Load -------------------------------------------------- */

@@ -50,7 +50,7 @@ public interface SynchronizedPropertyTable<@Unspecifiable ENTITY extends Entity,
      * Returns the type of the synchronized property internal action.
      */
     @Pure
-    @TODO(task = "Generate this here?", date = "2016-11-14", author = Author.KASPAR_ETTER)
+    @TODO(task = "Generate this here with @Derive?", date = "2016-11-14", author = Author.KASPAR_ETTER)
     public @Nonnull /* @Loaded */ SemanticType getActionType();
     
 }

@@ -2,6 +2,7 @@ package net.digitalid.core.handler.method.query;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
@@ -25,7 +26,7 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
  * @see ExternalQuery
  */
 @Immutable
-public abstract class Query<ENTITY extends Entity> extends MethodImplementation<ENTITY> {
+public abstract class Query<@Unspecifiable ENTITY extends Entity> extends MethodImplementation<ENTITY> {
     
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
     

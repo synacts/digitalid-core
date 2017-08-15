@@ -14,6 +14,7 @@ import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
+import net.digitalid.utility.validation.annotations.generation.Provide;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -95,6 +96,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
      */
     @Pure
     @GenerateSynchronizedProperty
+    @Provide("attribute -> (NonHostEntity) attribute.getEntity()")
     public abstract @Nonnull WritablePersistentValueProperty<Attribute, @Nullable PassiveExpression> visibility();
     
     /* -------------------------------------------------- Recovery -------------------------------------------------- */

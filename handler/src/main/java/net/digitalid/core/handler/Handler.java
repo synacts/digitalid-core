@@ -32,32 +32,6 @@ import net.digitalid.core.unit.annotations.CoreUnitBased;
 @Immutable
 public interface Handler<@Unspecifiable ENTITY extends Entity> extends CoreUnitBased, Packable {
     
-    /* -------------------------------------------------- Signature -------------------------------------------------- */
-    
-    /**
-     * Returns the signature of this handler.
-     */
-    @Pure
-    @Provided
-    @Default("null")
-    public @Nullable Signature<Compression<Pack>> getSignature();
-    
-    /**
-     * Returns whether this handler will be sent.
-     */
-    @Pure
-    public default boolean willBeSent() {
-        return getSignature() == null;
-    }
-    
-    /**
-     * Returns whether this handler has been received.
-     */
-    @Pure
-    public default boolean hasBeenReceived() {
-        return getSignature() != null;
-    }
-    
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
     /**
@@ -84,7 +58,7 @@ public interface Handler<@Unspecifiable ENTITY extends Entity> extends CoreUnitB
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     
     /**
-     * Returns the entity that was provided with the builder.
+     * Returns the subject that was provided with the builder.
      */
     @Pure
     @Default("null")
@@ -110,5 +84,31 @@ public interface Handler<@Unspecifiable ENTITY extends Entity> extends CoreUnitB
      */
     @Pure
     public @Nonnull Service getService();
+    
+    /* -------------------------------------------------- Signature -------------------------------------------------- */
+    
+    /**
+     * Returns the signature of this handler.
+     */
+    @Pure
+    @Provided
+    @Default("null")
+    public @Nullable Signature<Compression<Pack>> getSignature();
+    
+    /**
+     * Returns whether this handler will be sent.
+     */
+    @Pure
+    public default boolean willBeSent() {
+        return getSignature() == null;
+    }
+    
+    /**
+     * Returns whether this handler has been received.
+     */
+    @Pure
+    public default boolean hasBeenReceived() {
+        return getSignature() != null;
+    }
     
 }

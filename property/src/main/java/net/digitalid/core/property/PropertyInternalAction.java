@@ -7,6 +7,7 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.storage.Storage;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -46,6 +47,12 @@ public abstract class PropertyInternalAction<@Unspecifiable ENTITY extends Entit
     
     @Pure
     @Override
+    public @Nullable Entity getProvidedEntity() {
+        return null;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull NonHostEntity getEntity() {
         return (NonHostEntity) getProperty().getSubject().getEntity();
     }
@@ -55,12 +62,6 @@ public abstract class PropertyInternalAction<@Unspecifiable ENTITY extends Entit
     public @Nullable InternalIdentifier getProvidedSubject() {
         return getProperty().getSubject().getEntity().getIdentity().getAddress();
     }
-    
-//    @Pure
-//    @Override
-//    public @Nonnull SemanticType getType() {
-//        return getProperty().getTable().getActionType();
-//    }
     
     @Pure
     @Override
@@ -82,7 +83,7 @@ public abstract class PropertyInternalAction<@Unspecifiable ENTITY extends Entit
         try {
             return getService().getRecipient(getEntity());
         } catch (@Nonnull DatabaseException exception) {
-            throw new RuntimeException(exception); // TODO: How to handle this? Maybe use @Derive instead once exceptions can be indicated.
+            throw UncheckedExceptionBuilder.withCause(exception).build(); // TODO: How to handle this? Maybe use @Derive instead once exceptions can be indicated.
         }
     }
     

@@ -124,7 +124,7 @@ public abstract class AttributesQuery extends ExternalQuery<Entity> implements C
             }
         }
         
-        return AttributesReplyBuilder.withEntity(getEntity()).withAttributeValues(attributeValues/* TODO: .freeze() */).build();
+        return AttributesReplyBuilder.withEntity(entity).withAttributeValues(attributeValues/* TODO: .freeze() */).build();
     }
     
 }

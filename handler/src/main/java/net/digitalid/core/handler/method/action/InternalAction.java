@@ -5,6 +5,9 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -20,9 +23,6 @@ import net.digitalid.core.handler.annotations.MethodHasBeenReceived;
 import net.digitalid.core.handler.method.InternalMethod;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.ActionReply;
-import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
-import net.digitalid.core.restrictions.Restrictions;
-import net.digitalid.core.service.CoreService;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.credentials.CredentialsSignature;
 import net.digitalid.core.unit.annotations.OnClientRecipient;
@@ -91,32 +91,33 @@ public abstract class InternalAction extends Action implements InternalMethod {
     @OnHostRecipient
     @PureWithSideEffects
     @MethodHasBeenReceived
+    @TODO(task = "Implement the checks.", date = "2017-08-15", author = Author.KASPAR_ETTER, priority = Priority.HIGH)
     public @Nullable @Matching ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         final @Nullable Signature<?> signature = getSignature();
         if (signature instanceof CredentialsSignature<?> && !((CredentialsSignature<?>) signature).isLodged()) { throw RequestExceptionBuilder.withCode(RequestErrorCode.SIGNATURE).withMessage("The credentials signature of internal actions has to be lodged.").build(); }
         
-        final @Nonnull ReadOnlyAgentPermissions presentPermissions;
-        final @Nonnull Restrictions presentRestrictions;
-        
-        if (getService() == CoreService.INSTANCE) {
-            final @Nonnull Agent presentAgent = null; // TODO: = signature.getAgentCheckedAndRestricted(getEntity());
-            presentPermissions = presentAgent.permissions().get();
-            presentRestrictions = presentAgent.restrictions().get();
-            
-            final @Nullable Agent requiredAgent = getRequiredAgentToExecuteMethod();
-            if (requiredAgent != null) { presentAgent.checkCovers(requiredAgent); }
-        } else {
-            if (!(signature instanceof CredentialsSignature<?>)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.SIGNATURE).withMessage("Internal actions of a non-core service have to be signed with credentials.").build(); }
-            final @Nonnull CredentialsSignature<?> credentialsSignature = (CredentialsSignature<?>) signature;
-            presentPermissions = null; // TODO: Get the permissions from the credentials signature.
-            presentRestrictions = null; // TODO: Get the restrictions from the credentials signature.
-        }
-        
-        final @Nonnull ReadOnlyAgentPermissions requiredPermissions = getRequiredPermissionsToExecuteMethod();
-        if (!requiredPermissions.equals(ReadOnlyAgentPermissions.NONE)) { presentPermissions.checkCover(requiredPermissions); }
-        
-        final @Nonnull Restrictions requiredRestrictions = getRequiredRestrictionsToExecuteMethod();
-        if (!requiredRestrictions.equals(Restrictions.MIN)) { presentRestrictions.checkCover(requiredRestrictions); }
+//        final @Nonnull ReadOnlyAgentPermissions presentPermissions;
+//        final @Nonnull Restrictions presentRestrictions;
+//        
+//        if (getService() == CoreService.INSTANCE) {
+//            final @Nonnull Agent presentAgent = null; // TODO: = signature.getAgentCheckedAndRestricted(getEntity());
+//            presentPermissions = presentAgent.permissions().get();
+//            presentRestrictions = presentAgent.restrictions().get();
+//            
+//            final @Nullable Agent requiredAgent = getRequiredAgentToExecuteMethod();
+//            if (requiredAgent != null) { presentAgent.checkCovers(requiredAgent); }
+//        } else {
+//            if (!(signature instanceof CredentialsSignature<?>)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.SIGNATURE).withMessage("Internal actions of a non-core service have to be signed with credentials.").build(); }
+//            final @Nonnull CredentialsSignature<?> credentialsSignature = (CredentialsSignature<?>) signature;
+//            presentPermissions = null; // TODO: Get the permissions from the credentials signature.
+//            presentRestrictions = null; // TODO: Get the restrictions from the credentials signature.
+//        }
+//        
+//        final @Nonnull ReadOnlyAgentPermissions requiredPermissions = getRequiredPermissionsToExecuteMethod();
+//        if (!requiredPermissions.equals(ReadOnlyAgentPermissions.NONE)) { presentPermissions.checkCover(requiredPermissions); }
+//        
+//        final @Nonnull Restrictions requiredRestrictions = getRequiredRestrictionsToExecuteMethod();
+//        if (!requiredRestrictions.equals(Restrictions.MIN)) { presentRestrictions.checkCover(requiredRestrictions); }
         
         executeOnBoth();
         return null;

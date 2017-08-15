@@ -22,7 +22,7 @@ import net.digitalid.utility.processor.generator.JavaFileGenerator;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.subject.annotations.GenerateSubjectModule;
+import net.digitalid.database.property.annotations.GenerateSubjectModule;
 
 import net.digitalid.core.subject.CoreSubject;
 import net.digitalid.core.subject.CoreSubjectModule;

@@ -31,6 +31,7 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.action.InternalAction;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.property.PropertyInternalAction;
 import net.digitalid.core.restrictions.Restrictions;
@@ -43,7 +44,6 @@ import net.digitalid.core.unit.annotations.OnClientRecipient;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-//@GenerateConverter // TODO: Maybe the converter has to be written manually anyway (in order to recover the property). Otherwise, make sure the converter generator can handle generic types.
 public abstract class ValuePropertyInternalAction<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Specifiable VALUE> extends PropertyInternalAction<ENTITY, KEY, SUBJECT, WritableSynchronizedValueProperty<ENTITY, KEY, SUBJECT, VALUE>> implements Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
@@ -157,6 +157,14 @@ public abstract class ValuePropertyInternalAction<@Unspecifiable ENTITY extends 
     @Override
     public @Nullable Agent getRequiredAgentToSeeMethod() {
         return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToSeeMethod().evaluate(getProperty().getSubject(), getNewValue());
+    }
+    
+    /* -------------------------------------------------- Packable -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Pack pack() {
+        return Pack.pack(getProperty().getTable().getActionConverter(), this, getProperty().getTable().getActionType());
     }
     
 }

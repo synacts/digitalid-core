@@ -7,7 +7,6 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.initialization.annotations.Initialize;
-import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.generation.Recover;
@@ -15,7 +14,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.client.Client;
@@ -31,7 +30,7 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
  */
 @Immutable
 @GenerateTableConverter
-public abstract class Role extends RootClass implements NonHostEntity, Subject<Client> {
+public abstract class Role extends Subject<Client> implements NonHostEntity {
     
     /* -------------------------------------------------- Unit -------------------------------------------------- */
     

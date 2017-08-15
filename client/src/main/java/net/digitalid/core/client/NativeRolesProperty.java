@@ -1,7 +1,5 @@
 package net.digitalid.core.client;
 
-import net.digitalid.core.client.role.RoleModule;
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
@@ -23,18 +21,25 @@ import net.digitalid.utility.validation.annotations.lock.LockNotHeldByCurrentThr
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.property.set.PersistentSetObserver;
-import net.digitalid.database.property.set.ReadOnlyPersistentSetProperty;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 
 import net.digitalid.core.client.role.NativeRole;
+import net.digitalid.core.client.role.RoleModule;
 
 /**
  * This class implements the {@link WritablePersistentSimpleSetProperty} for the native roles of a {@link Client}.
  */
 @ThreadSafe
 @GenerateSubclass
-abstract class NativeRolesProperty extends WritableSetPropertyImplementation<NativeRole, ReadOnlySet<NativeRole>, DatabaseException, RecoveryException, PersistentSetObserver<Client, NativeRole, ReadOnlySet<NativeRole>>, ReadOnlyPersistentSetProperty<Client, NativeRole, ReadOnlySet<NativeRole>>> implements WritablePersistentSimpleSetProperty<Client, NativeRole> {
+public abstract class NativeRolesProperty extends WritableSetPropertyImplementation<NativeRole, ReadOnlySet<NativeRole>, DatabaseException, RecoveryException, NativeRolesObserver, NativeRolesProperty> {
+    
+    /* -------------------------------------------------- Client -------------------------------------------------- */
+    
+    /**
+     * Returns the client to which this property belongs.
+     */
+    @Pure
+    public abstract @Nonnull Client getClient();
     
     /* -------------------------------------------------- Roles -------------------------------------------------- */
     
@@ -55,7 +60,7 @@ abstract class NativeRolesProperty extends WritableSetPropertyImplementation<Nat
         if (locking) { lock.lock(); }
         try {
             roles.clear();
-            roles.addAll(RoleModule.getNativeRoles(getSubject()));
+            roles.addAll(RoleModule.getNativeRoles(getClient()));
             this.loaded = true;
         } finally {
             if (locking) { lock.unlock(); }
@@ -79,7 +84,7 @@ abstract class NativeRolesProperty extends WritableSetPropertyImplementation<Nat
     @Override
     @LockNotHeldByCurrentThread
     public boolean add(@Nonnull NativeRole role) throws DatabaseException, RecoveryException {
-        Require.that(role.getUnit() == getSubject()).orThrow("The role $ does not belong to the client $.", role, getSubject());
+        Require.that(role.getUnit() == getClient()).orThrow("The role $ does not belong to the client $.", role, getClient());
         
         lock.lock();
         try {
@@ -119,8 +124,12 @@ abstract class NativeRolesProperty extends WritableSetPropertyImplementation<Nat
     
     /* -------------------------------------------------- Reset -------------------------------------------------- */
     
+    /**
+     * Resets the values of this property so that they have to be reloaded from the database on the next retrieval.
+     * If the state of the database changed in the meantime, then this method is impure.
+     * However, read-only properties must be able to expose this method as well.
+     */
     @Pure
-    @Override
     @NonCommitting
     @LockNotHeldByCurrentThread
     public void reset() throws DatabaseException, RecoveryException {

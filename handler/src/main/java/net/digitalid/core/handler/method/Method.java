@@ -16,13 +16,12 @@ import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
-import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
+import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -33,8 +32,6 @@ import net.digitalid.core.compression.CompressionBuilder;
 import net.digitalid.core.encryption.RequestEncryption;
 import net.digitalid.core.encryption.RequestEncryptionBuilder;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.factories.AccountFactory;
-import net.digitalid.core.entity.factories.HostFactory;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.response.DeclarationExceptionBuilder;
 import net.digitalid.core.handler.Handler;
@@ -46,7 +43,6 @@ import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.handler.reply.instances.RequestExceptionReply;
 import net.digitalid.core.handler.reply.instances.RequestExceptionReplyConverter;
 import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.RequestBuilder;
@@ -66,7 +62,7 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
  * @see Query
  */
 @Immutable
-public interface Method<ENTITY extends Entity> extends Handler<ENTITY> {
+public interface Method<@Unspecifiable ENTITY extends Entity> extends Handler<ENTITY> {
     
     /* -------------------------------------------------- Recipient -------------------------------------------------- */
     
@@ -83,25 +79,22 @@ public interface Method<ENTITY extends Entity> extends Handler<ENTITY> {
      * Returns the entity that was provided with the builder.
      */
     @Pure
+    @Provided
     @Default("null")
-    @NonRepresentative
-    public @Nullable ENTITY getProvidedEntity();
+    public @Nullable Entity getProvidedEntity();
     
+    /**
+     * Casts the given entity to the generic type of this handler.
+     */
     @Pure
     @SuppressWarnings("unchecked")
-    @TODO(task = "Throw the external exception as soon as the derive annotation supports it.", date = "2017-02-07", author = Author.KASPAR_ETTER)
-    public default @Nonnull ENTITY deriveEntity(@Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) {
-        try {
-            return (ENTITY) AccountFactory.create(HostFactory.create(recipient), subject.resolve());
-        } catch (ExternalException exception) {
-            throw UncheckedExceptionBuilder.withCause(exception).build();
-        }
+    public default @Nullable ENTITY castEntity(@Nullable Entity entity) {
+        return (ENTITY) entity;
     }
     
     @Pure
     @Override
-    @OrderOfAssignment(3)
-    @Derive("signature != null ? deriveEntity(recipient, signature.getSubject()) : providedEntity")
+    @Derive("castEntity(providedEntity)")
     public @Nullable ENTITY getEntity();
     
     /* -------------------------------------------------- Lodged -------------------------------------------------- */
@@ -426,6 +419,7 @@ public interface Method<ENTITY extends Entity> extends Handler<ENTITY> {
     @CallSuper
     public default void validate() {
         Handler.super.validate();
+        
         Validate.that(!willBeSent() || !isOnHost() || canBeSentByHosts()).orThrow("Methods to be sent on hosts have to be sendable by hosts.");
         Validate.that(!willBeSent() || !isOnClient() || canBeSentByClients()).orThrow("Methods to be sent on clients have to be sendable by clients.");
         Validate.that(!hasBeenReceived() || isOnHost()).orThrow("Methods can only be received on hosts and the entity may not be null then.");

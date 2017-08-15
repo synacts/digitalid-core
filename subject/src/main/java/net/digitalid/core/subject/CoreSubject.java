@@ -8,7 +8,7 @@ import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
@@ -24,7 +24,7 @@ import net.digitalid.core.unit.CoreUnit;
  * @param <KEY> the type of the key which identifies an instance among all instances of a core subject at the same entity.
  */
 @Immutable
-public interface CoreSubject<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY> extends Subject<CoreUnit> {
+public abstract class CoreSubject<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY> extends Subject<CoreUnit> {
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
@@ -33,7 +33,7 @@ public interface CoreSubject<@Unspecifiable ENTITY extends Entity, @Unspecifiabl
      */
     @Pure
     @Provided
-    public @Nonnull ENTITY getEntity();
+    public abstract @Nonnull ENTITY getEntity();
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
@@ -41,13 +41,13 @@ public interface CoreSubject<@Unspecifiable ENTITY extends Entity, @Unspecifiabl
      * Returns the key which identifies this core subject.
      */
     @Pure
-    public @Nonnull KEY getKey();
+    public abstract @Nonnull KEY getKey();
     
     /* -------------------------------------------------- Unit -------------------------------------------------- */
     
     @Pure
     @Override
-    public default @Nonnull CoreUnit getUnit() {
+    public @Nonnull CoreUnit getUnit() {
         return getEntity().getUnit();
     }
     
@@ -59,65 +59,6 @@ public interface CoreSubject<@Unspecifiable ENTITY extends Entity, @Unspecifiabl
     @Pure
     @Override
     @GenerateCoreSubjectModule
-    public @Nonnull CoreSubjectModule<ENTITY, KEY, ?> module();
-    
-    /* -------------------------------------------------- Properties -------------------------------------------------- */
-    
-    // TODO
-    
-//    /**
-//     * Stores the properties of this core subject.
-//     */
-//    private final @Nonnull @NonNullableElements @NonFrozen FreezableList<ConceptProperty<?, C, E>> properties = FreezableLinkedList.get();
-//    
-//    /**
-//     * Registers the given property at this core subject.
-//     * 
-//     * @param property the property to be registered.
-//     * 
-//     * @require property.getConcept() == this : "The given property belongs to this core subject.";
-//     */
-//    public void register(@Nonnull ConceptProperty<?, C, E> property) {
-//        Require.that(property.getConcept() == this).orThrow("The given property belongs to this core subject.");
-//        
-//        properties.add(property);
-//    }
-//    
-//    /**
-//     * Returns the properties of this core subject.
-//     */
-//    @Pure
-//    public final @Nonnull @NonNullableElements ReadOnlyList<ConceptProperty<?, C, E>> getProperties() {
-//        return properties;
-//    }
-//    
-//    /**
-//     * Returns the property of this core subject with the given table.
-//     */
-//    @Pure
-//    public final @Nonnull ConceptProperty<?, C, E> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws DatabaseException { // TODO: Change the parameter to ConceptPropertySetup!
-//        for (final @Nonnull ConceptProperty<?, C, E> property : properties) {
-//            if (property.getConceptPropertySetup().getPropertyTable().equals(table)) { return property; }
-//        }
-//        throw DatabaseException.get("No property is registered for the given table.");
-//    }
-//    
-//    /**
-//     * Resets the property of this core subject with the given table.
-//     * 
-//     * @param table the table which initiated the reset of its properties.
-//     */
-//    @NonCommitting
-//    public void reset(@Nonnull ConceptPropertyTable<?, C, E> table) throws DatabaseException {
-//        getProperty(table).reset();
-//    }
-//    
-//    /**
-//     * Resets the properties of this core subject.
-//     */
-//    @NonCommitting
-//    public void resetAll() throws DatabaseException {
-//        for (final @Nonnull ConceptProperty<?, C, E> property : properties) { property.reset(); }
-//    }
+    public abstract @Nonnull CoreSubjectModule<ENTITY, KEY, ?> module();
     
 }

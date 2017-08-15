@@ -3,6 +3,7 @@ package net.digitalid.core.handler.reply;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.contracts.Validate;
@@ -31,7 +32,7 @@ import net.digitalid.core.signature.host.HostSignature;
  */
 @Immutable
 // TODO: Implement Subject instead! @Referenced
-public abstract class Reply<ENTITY extends Entity> extends RootClass implements Handler<ENTITY> {
+public abstract class Reply<@Unspecifiable ENTITY extends Entity> extends RootClass implements Handler<ENTITY> {
     
     /* -------------------------------------------------- Matching -------------------------------------------------- */
     

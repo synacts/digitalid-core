@@ -16,9 +16,11 @@ import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.threading.Threading;
 import net.digitalid.utility.threading.annotations.MainThread;
+import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.core.compression.Compression;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
@@ -41,27 +43,38 @@ public abstract class MethodIndex {
     /**
      * Maps method types to the converter that recovers the handler for that type.
      */
-    private static final @Nonnull Map<@Nonnull SemanticType, @Nonnull Converter<? extends Method<?>, Signature<Compression<Pack>>>> converters = new ConcurrentHashMap<>();
+    private static final @Nonnull Map<@Nonnull SemanticType, @Nonnull Converter<? extends Method<?>, @Nonnull Pair<@Nullable Signature<Compression<Pack>>, @Nonnull Entity>>> converters = new ConcurrentHashMap<>();
+    
+    /**
+     * Adds the given converter to recover the methods of the given type.
+     */
+    @Impure
+    @MainThread
+    public static void add(@Nonnull Converter<? extends Method<?>, @Nonnull Pair<@Nullable Signature<Compression<Pack>>, @Nonnull Entity>> converter, @Nonnull SemanticType type) {
+        Require.that(Threading.isMainThread()).orThrow("The method 'add' may only be called on the main thread.");
+        
+        Log.debugging("Registered a converter for the type $.", type);
+        converters.put(type, converter);
+    }
     
     /**
      * Adds the given converter to recover the methods of its type.
      */
     @Impure
     @MainThread
-    public static void add(@Nonnull Converter<? extends Method<?>, Signature<Compression<Pack>>> converter) {
-        Require.that(Threading.isMainThread()).orThrow("The method 'add' may only be called on the main thread.");
-        
-        final @Nonnull SemanticType type = SemanticType.map(converter);
-        Log.debugging("Registered a converter for the type $.", type);
-        converters.put(type, converter);
+    public static void add(@Nonnull Converter<? extends Method<?>, @Nonnull Pair<@Nullable Signature<Compression<Pack>>, @Nonnull Entity>> converter) {
+        add(converter, SemanticType.map(converter));
     }
     
+    /**
+     * Returns the method that handles the pack of the given signature for the given entity.
+     */
     @Pure
-    public static @Nonnull Method<?> get(@Nonnull Signature<Compression<Pack>> signature) throws RequestException, RecoveryException {
+    public static @Nonnull Method<?> get(@Nonnull Signature<Compression<Pack>> signature, @Nonnull Entity entity) throws RequestException, RecoveryException {
         final @Nonnull Pack pack = signature.getObject().getObject();
-        final @Nullable Converter<? extends Method<?>, Signature<Compression<Pack>>> converter = converters.get(pack.getType());
+        final @Nullable Converter<? extends Method<?>, @Nonnull Pair<@Nullable Signature<Compression<Pack>>, @Nonnull Entity>> converter = converters.get(pack.getType());
         if (converter == null) { throw RequestExceptionBuilder.withCode(RequestErrorCode.METHOD).withMessage(Strings.format("No method could be found for the type $.", pack.getType())).build(); }
-        return pack.unpack(converter, signature);
+        return pack.unpack(converter, Pair.of(signature, entity));
     }
     
 }

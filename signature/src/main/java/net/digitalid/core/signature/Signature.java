@@ -61,7 +61,7 @@ public abstract class Signature<@Unspecifiable OBJECT> extends RootClass {
     @Pure
     public boolean isVerified() {
         // TODO.
-        return false;
+        return true;
     }
     
 }

@@ -28,9 +28,10 @@ import net.digitalid.utility.processing.utility.StaticProcessingEnvironment;
 import net.digitalid.utility.processor.generator.JavaFileGenerator;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Default;
+import net.digitalid.utility.validation.annotations.generation.Provide;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
+import net.digitalid.database.property.annotations.GeneratePersistentProperty;
 
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.subject.CoreSubject;
@@ -102,7 +103,10 @@ public @interface GenerateSynchronizedProperty {
             
             final @Nonnull String valueConverter = (types.get(3).equals("String") ? javaFileGenerator.importIfPossible("net.digitalid.utility.conversion.converters.StringConverter") : javaFileGenerator.importIfPossible(ProcessingUtility.getQualifiedName(valueType) + "Converter")) + ".INSTANCE";
             
-            javaFileGenerator.addField("/* TODO: private */ static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".Synchronized" + propertyType + "Table") + types.join(Brackets.POINTY) + " " + upperCasePropertyName + "_TABLE = " + javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".Synchronized" + propertyType + "TableBuilder") + "." + types.join(Brackets.POINTY) + "withName" + Brackets.inRound(Quotes.inDouble(method.getName())) + ".withParentModule(MODULE).withRequiredAuthorization(" + upperCasePropertyName + ").withActionType(" + javaFileGenerator.importIfPossible(SemanticType.class) + ".map(\"" + method.getName() + "." + typeInformation.getName().toLowerCase() + "@core.digitalid.net\")).withValueConverter" + Brackets.inRound(valueConverter) + ".withDefaultValue" + Brackets.inRound(method.hasAnnotation(Default.class) ? method.getAnnotation(Default.class).value() : "null") + ".build()");
+            final @Nonnull String defaultValue = ".withDefaultValue" + Brackets.inRound(method.hasAnnotation(Default.class) ? method.getAnnotation(Default.class).value() : "null");
+            final @Nonnull String providedObject = method.hasAnnotation(Provide.class) ? ".withProvidedObjectExtractor" + Brackets.inRound(method.getAnnotation(Provide.class).value()) : "";
+            
+            javaFileGenerator.addField("/* TODO: private */ static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".Synchronized" + propertyType + "Table") + types.join(Brackets.POINTY) + " " + upperCasePropertyName + "_TABLE = " + javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".Synchronized" + propertyType + "TableBuilder") + "." + types.join(Brackets.POINTY) + "withName" + Brackets.inRound(Quotes.inDouble(method.getName())) + ".withParentModule(MODULE).withRequiredAuthorization(" + upperCasePropertyName + ").withActionType(" + javaFileGenerator.importIfPossible(SemanticType.class) + ".map(\"" + method.getName() + "." + typeInformation.getName().toLowerCase() + "@core.digitalid.net\")).withValueConverter" + Brackets.inRound(valueConverter) + defaultValue + providedObject + ".build()");
             
             javaFileGenerator.addField("private final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + ".WritablePersistent" + propertyType) + Brackets.inPointy(types.get(2) + ", " + types.get(3)) + " " + method.getName() + " = " + javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".WritableSynchronized" + propertyType + "Builder") + "." + types.limit(4).join(Brackets.POINTY) + "withSubject(this).withTable" + Brackets.inRound(upperCasePropertyName + "_TABLE") + ".build()");
         }

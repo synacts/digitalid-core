@@ -89,7 +89,7 @@ public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity, @Un
         } else {
             subject = getSubjectModule().getSubjectFactory().evaluate(entity, key);
         }
-        SQL.insertOrIgnore(getSubjectModule().getSubjectTable(), subject, entity.getUnit());
+        SQL.insertOrReplace(getSubjectModule().getSubjectTable(), subject, entity.getUnit()); // SQL.insertOrIgnore would be more suitable but is not supported by H2 and all columns are the primary key anyway.
         return subject;
     }
     

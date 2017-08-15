@@ -40,9 +40,6 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
-import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.SubjectModule;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
@@ -67,7 +64,7 @@ import net.digitalid.core.unit.CoreUnit;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class Client extends CoreUnit implements Subject<Client> {
+public abstract class Client extends CoreUnit {
     
     /* -------------------------------------------------- Clients -------------------------------------------------- */
     
@@ -214,20 +211,6 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
         protectedSecret.set(newSecret);
     }
     
-    /* -------------------------------------------------- Subject -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull Client getUnit() {
-        return this;
-    }
-    
-    @Pure
-    @Override
-    public @Nullable SubjectModule<Client, ?> module() {
-        return null;
-    }
-    
     /* -------------------------------------------------- Roles -------------------------------------------------- */
     
     private final @Nonnull NativeRolesProperty roles = new NativeRolesPropertySubclass(this);
@@ -236,7 +219,7 @@ public abstract class Client extends CoreUnit implements Subject<Client> {
      * Returns the native roles of this client.
      */
     @Pure
-    public @Nonnull WritablePersistentSimpleSetProperty<Client, NativeRole> roles() {
+    public @Nonnull NativeRolesProperty roles() {
         return roles;
     }
     

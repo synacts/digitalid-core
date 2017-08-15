@@ -6,8 +6,10 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
+import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.method.action.InternalAction;
 import net.digitalid.core.handler.method.query.InternalQuery;
@@ -28,8 +30,12 @@ public interface InternalMethod extends Method<NonHostEntity> {
     
     @Pure
     @Override
-    @OrderOfAssignment(3)
-    @Derive("signature != null ? deriveEntity(recipient, signature.getSubject()) : providedEntity")
+    @Provided
+    public @Nonnull Entity getProvidedEntity();
+    
+    @Pure
+    @Override
+    @Derive("castEntity(providedEntity)")
     public @Nonnull NonHostEntity getEntity();
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
