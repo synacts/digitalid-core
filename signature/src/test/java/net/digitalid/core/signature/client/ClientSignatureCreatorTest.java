@@ -5,10 +5,7 @@ import java.math.BigInteger;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.conversion.converters.StringConverter;
-import net.digitalid.utility.conversion.exceptions.RecoveryException;
-import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
 
@@ -21,9 +18,6 @@ import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
-import net.digitalid.core.signature.exceptions.InvalidSignatureException;
-import net.digitalid.core.signature.host.HostSignature;
-import net.digitalid.core.signature.host.HostSignatureCreator;
 import net.digitalid.core.testing.CoreTest;
 
 import org.junit.Test;

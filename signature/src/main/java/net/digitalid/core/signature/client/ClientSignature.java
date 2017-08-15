@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -20,7 +19,6 @@ import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.core.commitment.Commitment;
-import net.digitalid.core.commitment.CommitmentConverter;
 import net.digitalid.core.conversion.encoders.MemoryEncoder;
 import net.digitalid.core.conversion.exceptions.MemoryException;
 import net.digitalid.core.group.Element;

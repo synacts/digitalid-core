@@ -21,7 +21,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 
-import net.digitalid.core.account.AccountOpen;
+import net.digitalid.core.account.OpenAccount;
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionBuilder;
 import net.digitalid.core.compression.CompressionConverterBuilder;
@@ -96,7 +96,7 @@ public abstract class Worker implements Runnable {
                     
                     signedMethod = encryptedMethod.getObject();
                     final @Nonnull InternalIdentifier subject;
-                    if (signedMethod.getObject().getObject().getType().equals(AccountOpen.TYPE)) { subject = recipient; } else { subject = signedMethod.getSubject(); }
+                    if (signedMethod.getObject().getObject().getType().equals(OpenAccount.TYPE)) { subject = recipient; } else { subject = signedMethod.getSubject(); }
                     final @Nonnull Account account = Account.with(host, subject.resolve());
                     
                     method = MethodIndex.get(signedMethod, account);

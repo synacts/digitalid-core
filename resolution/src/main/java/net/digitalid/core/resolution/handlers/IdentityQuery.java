@@ -16,7 +16,6 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.compression.Compression;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -27,8 +26,6 @@ import net.digitalid.core.handler.method.CoreMethod;
 import net.digitalid.core.handler.method.query.ExternalQuery;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.Identity;
-import net.digitalid.core.pack.Pack;
-import net.digitalid.core.signature.Signature;
 import net.digitalid.core.typeset.authentications.FreezableAuthentications;
 import net.digitalid.core.typeset.authentications.ReadOnlyAuthentications;
 import net.digitalid.core.unit.annotations.OnHostRecipient;

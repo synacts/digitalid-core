@@ -1,8 +1,6 @@
 package net.digitalid.core.signature.host;
 
-import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
-import java.security.MessageDigest;
 
 import javax.annotation.Nonnull;
 
@@ -12,17 +10,12 @@ import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
-import net.digitalid.utility.time.TimeConverter;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.core.asymmetrickey.PrivateKey;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
-import net.digitalid.core.conversion.encoders.MemoryEncoder;
-import net.digitalid.core.conversion.exceptions.MemoryException;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.identification.identifier.InternalIdentifierConverter;
-import net.digitalid.core.parameters.Parameters;
 
 /**
  * Creates a host signature by signing an object of generic type OBJECT.

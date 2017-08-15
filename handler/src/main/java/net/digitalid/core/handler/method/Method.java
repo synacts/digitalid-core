@@ -1,6 +1,5 @@
 package net.digitalid.core.handler.method;
 
-import java.math.BigInteger;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -10,8 +9,6 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;

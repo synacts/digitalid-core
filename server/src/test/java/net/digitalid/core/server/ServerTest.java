@@ -30,7 +30,6 @@ import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
-import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
@@ -132,7 +131,6 @@ public class ServerTest extends CoreTest {
         
         final @Nonnull Client client = ClientBuilder.withIdentifier("test.client.digitalid.net").withDisplayName("Test Client").withPreferredPermissions(ReadOnlyAgentPermissions.GENERAL_WRITE).build();
         final @Nonnull InternalNonHostIdentifier identifier = InternalNonHostIdentifier.with("person@test.digitalid.net");
-        // AccountOpen should probably create a native role, but it does not yet do it, which is why we create the role below explicitly.
         final @Nonnull NativeRole role = OpenAccount.of(Category.NATURAL_PERSON, identifier, client);
         
         final @Nonnull Attribute nameAttribute = Attribute.of(role, Name.TYPE);
@@ -143,10 +141,8 @@ public class ServerTest extends CoreTest {
         
         nameAttribute.value().set(UncertifiedAttributeValue.with(signature));
         nameAttribute.visibility().set(PassiveExpressionBuilder.withEntity(role).withString("everybody").build());
-    
-        final @Nonnull InternalNonHostIdentity identity = identifier.resolve();
         
-        final @Nonnull Name cachedName = CacheQueryBuilder.withConverter(NameConverter.INSTANCE).withRequestee(identity).withType(Name.TYPE).build().execute();
+        final @Nonnull Name cachedName = CacheQueryBuilder.withConverter(NameConverter.INSTANCE).withRequestee(role.getIdentity()).withType(Name.TYPE).build().execute();
         assertThat(cachedName).isEqualTo(name);
     }
     

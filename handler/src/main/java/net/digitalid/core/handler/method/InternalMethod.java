@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
-import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.functional.failable.FailableBinaryFunction;
 import net.digitalid.utility.validation.annotations.generation.Derive;
@@ -13,8 +12,8 @@ import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.core.entity.Entity;
 import net.digitalid.core.compression.Compression;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.method.action.InternalAction;
 import net.digitalid.core.handler.method.query.InternalQuery;
@@ -44,7 +43,6 @@ public interface InternalMethod extends Method<NonHostEntity> {
     @Pure
     @Override
     public default @Nonnull Signature<Compression<Pack>> getSignature(@Nonnull Compression<Pack> compression) throws ExternalException {
-        Require.that(getEntity() != null).orThrow("The entity must not be null in case of internal methods");
         return configuration.get().evaluate(this, compression);
     }
     

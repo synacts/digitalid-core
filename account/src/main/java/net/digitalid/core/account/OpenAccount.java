@@ -19,6 +19,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.storage.Storage;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
+import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -56,6 +57,7 @@ import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
@@ -63,7 +65,6 @@ import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.client.ClientSignature;
-import net.digitalid.core.signature.client.ClientSignatureBuilder;
 import net.digitalid.core.signature.client.ClientSignatureCreator;
 import net.digitalid.core.unit.annotations.OnClientRecipient;
 import net.digitalid.core.unit.annotations.OnHost;
@@ -78,14 +79,20 @@ import net.digitalid.core.unit.annotations.OnHostRecipient;
 @GenerateConverter
 public abstract class OpenAccount extends InternalAction implements CoreMethod<NonHostEntity> {
     
+    /* -------------------------------------------------- Type -------------------------------------------------- */
+    
+    /**
+     * Stores the semantic type of this action.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.map(OpenAccountConverter.INSTANCE);
+    
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nullable NonHostEntity getProvidedEntity() {
-        return null;
-    }
-
+    @Provided
+    public abstract @Nullable Entity getProvidedEntity();
+    
     /**
      * Returns null, which is a violation of the postcondition of {@link Method#getEntity()}.
      */
