@@ -9,8 +9,6 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.ReadOnlyList;
-import net.digitalid.utility.collections.map.FreezableMap;
-import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
@@ -27,6 +25,7 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.action.InternalAction;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.property.PropertyInternalAction;
 import net.digitalid.core.restrictions.Restrictions;
@@ -39,8 +38,7 @@ import net.digitalid.core.unit.annotations.OnClientRecipient;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-//@GenerateConverter // TODO: Maybe the converter has to be written manually anyway (in order to recover the property). Otherwise, make sure the converter generator can handle generic types.
-public abstract class MapPropertyInternalAction<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable MAP_KEY, @Unspecifiable MAP_VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>, @Unspecifiable FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") MAP_KEY, @Nonnull @Valid MAP_VALUE>> extends PropertyInternalAction<ENTITY, KEY, SUBJECT, WritableSynchronizedMapProperty<ENTITY, KEY, SUBJECT, MAP_KEY, MAP_VALUE, READONLY_MAP, FREEZABLE_MAP>> implements Valid.Key<MAP_KEY>, Valid.Value<MAP_VALUE> {
+public abstract class MapPropertyInternalAction<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable MAP_KEY, @Unspecifiable MAP_VALUE> extends PropertyInternalAction<ENTITY, KEY, SUBJECT, WritableSynchronizedMapProperty<ENTITY, KEY, SUBJECT, MAP_KEY, MAP_VALUE, ?, ?>> implements Valid.Key<MAP_KEY>, Valid.Value<MAP_VALUE> {
     
     /* -------------------------------------------------- Validators -------------------------------------------------- */
     
@@ -97,13 +95,13 @@ public abstract class MapPropertyInternalAction<@Unspecifiable ENTITY extends En
     @Pure
     @Override
     public boolean interferesWith(@Nonnull Action action) {
-        return action instanceof MapPropertyInternalAction<?, ?, ?, ?, ?, ?, ?> && ((MapPropertyInternalAction<?, ?, ?, ?, ?, ?, ?>) action).getProperty().equals(getProperty());
+        return action instanceof MapPropertyInternalAction<?, ?, ?, ?, ?> && ((MapPropertyInternalAction<?, ?, ?, ?, ?>) action).getProperty().equals(getProperty());
     }
     
     @Pure
     @Override
     @OnClientRecipient
-    public @Nonnull MapPropertyInternalAction<ENTITY, KEY, SUBJECT, MAP_KEY, MAP_VALUE, READONLY_MAP, FREEZABLE_MAP> getReverse() {
+    public @Nonnull MapPropertyInternalAction<ENTITY, KEY, SUBJECT, MAP_KEY, MAP_VALUE> getReverse() {
         return MapPropertyInternalActionBuilder.withProperty(getProperty()).withKey(getKey()).withValue(getValue()).withAdded(isAdded()).build();
     }
     
@@ -143,6 +141,14 @@ public abstract class MapPropertyInternalAction<@Unspecifiable ENTITY extends En
     @Override
     public @Nullable Agent getRequiredAgentToSeeMethod() {
         return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToSeeMethod().evaluate(getProperty().getSubject(), getKey());
+    }
+    
+    /* -------------------------------------------------- Packable -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Pack pack() {
+        return Pack.pack(getProperty().getTable().getActionConverter(), this, getProperty().getTable().getActionType());
     }
     
 }

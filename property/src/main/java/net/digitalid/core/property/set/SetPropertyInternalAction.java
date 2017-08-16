@@ -9,8 +9,6 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.ReadOnlyList;
-import net.digitalid.utility.collections.set.FreezableSet;
-import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
@@ -27,6 +25,7 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.method.action.Action;
 import net.digitalid.core.handler.method.action.InternalAction;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.property.PropertyInternalAction;
 import net.digitalid.core.restrictions.Restrictions;
@@ -39,8 +38,7 @@ import net.digitalid.core.unit.annotations.OnClientRecipient;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-//@GenerateConverter // TODO: Maybe the converter has to be written manually anyway (in order to recover the property). Otherwise, make sure the converter generator can handle generic types.
-public abstract class SetPropertyInternalAction<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends PropertyInternalAction<ENTITY, KEY, SUBJECT, WritableSynchronizedSetProperty<ENTITY, KEY, SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET>> implements Valid.Value<VALUE> {
+public abstract class SetPropertyInternalAction<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Unspecifiable VALUE> extends PropertyInternalAction<ENTITY, KEY, SUBJECT, WritableSynchronizedSetProperty<ENTITY, KEY, SUBJECT, VALUE, ?, ?>> implements Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
@@ -85,13 +83,13 @@ public abstract class SetPropertyInternalAction<@Unspecifiable ENTITY extends En
     @Pure
     @Override
     public boolean interferesWith(@Nonnull Action action) {
-        return action instanceof SetPropertyInternalAction<?, ?, ?, ?, ?, ?> && ((SetPropertyInternalAction<?, ?, ?, ?, ?, ?>) action).getProperty().equals(getProperty());
+        return action instanceof SetPropertyInternalAction<?, ?, ?, ?> && ((SetPropertyInternalAction<?, ?, ?, ?>) action).getProperty().equals(getProperty());
     }
     
     @Pure
     @Override
     @OnClientRecipient
-    public @Nonnull SetPropertyInternalAction<ENTITY, KEY, SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET> getReverse() {
+    public @Nonnull SetPropertyInternalAction<ENTITY, KEY, SUBJECT, VALUE> getReverse() {
         return SetPropertyInternalActionBuilder.withProperty(getProperty()).withValue(getValue()).withAdded(isAdded()).build();
     }
     
@@ -131,6 +129,14 @@ public abstract class SetPropertyInternalAction<@Unspecifiable ENTITY extends En
     @Override
     public @Nullable Agent getRequiredAgentToSeeMethod() {
         return getProperty().getTable().getRequiredAuthorization().getRequiredAgentToSeeMethod().evaluate(getProperty().getSubject(), getValue());
+    }
+    
+    /* -------------------------------------------------- Packable -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Pack pack() {
+        return Pack.pack(getProperty().getTable().getActionConverter(), this, getProperty().getTable().getActionType());
     }
     
 }

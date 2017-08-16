@@ -5,8 +5,6 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.storage.Storage;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -18,7 +16,6 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.handler.method.action.InternalAction;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.pack.Pack;
 import net.digitalid.core.property.map.MapPropertyInternalAction;
 import net.digitalid.core.property.set.SetPropertyInternalAction;
 import net.digitalid.core.property.value.ValuePropertyInternalAction;
@@ -93,15 +90,6 @@ public abstract class PropertyInternalAction<@Unspecifiable ENTITY extends Entit
     @Override
     public @Nonnull Storage getStorage() {
         return getProperty().getTable();
-    }
-    
-    /* -------------------------------------------------- Packable -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    @TODO(task = "Remove this method as soon as the property actions have converters.", date = "2016-12-20", author = Author.KASPAR_ETTER)
-    public @Nonnull Pack pack() {
-        return null;
     }
     
 }

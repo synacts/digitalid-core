@@ -87,6 +87,7 @@ public abstract class ValuePropertyInternalAction<@Unspecifiable ENTITY extends 
     @CallSuper
     public void validate() {
         super.validate();
+        
         Validate.that(!Objects.equals(getNewValue(), getOldValue())).orThrow("The new value $ may not be the same as the old value $.", getNewValue(), getOldValue());
     }
     

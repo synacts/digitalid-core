@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
@@ -52,6 +54,7 @@ interface TestNonHostEntity extends NonHostEntity {
     
 }
 
+@TODO(task = "This test case does not make much sense: If the password value is not empty, then the synchronizer tries to send an internal action, which cannot succeed at this point.", date = "2017-08-16", author = Author.KASPAR_ETTER)
 public class SettingsTest extends CoreTest {
     
     private static final @Nonnull String PASSWORD_VALUE = ""; // TODO: Choose a non-default password like "Pa$$word" once properties can be loaded from the database.
