@@ -1,5 +1,6 @@
 package net.digitalid.core.signature.credentials;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -42,5 +43,7 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
     
     @Pure
     public abstract @Nonnull List<@Nonnull CertifiedAttributeValue> getCertificates();
+    
+    
     
 }

@@ -77,26 +77,12 @@ public abstract class ClientSignature<@Unspecifiable OBJECT> extends Signature<O
     
     /* -------------------------------------------------- Hashing -------------------------------------------------- */
     
-    @Pure
-    public static <OBJECT> @Nonnull BigInteger getContentHash(@Nonnull Time time, @Nonnull InternalIdentifier subject, OBJECT object, @Nonnull Converter<OBJECT, Void> objectConverter) {
-        final @Nonnull MessageDigest messageDigest = Parameters.HASH_FUNCTION.get().produce();
-        final @Nonnull ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (@Nonnull MemoryEncoder encoder = MemoryEncoder.of(outputStream)) {
-            encoder.startHashing(messageDigest);
-            encoder.encodeObject(TimeConverter.INSTANCE, time);
-            encoder.encodeObject(InternalIdentifierConverter.INSTANCE, subject);
-            encoder.encodeObject(objectConverter, object);
-            return new BigInteger(1, encoder.stopHashing());
-        } catch (@Nonnull MemoryException exception) {
-            throw UncheckedExceptionBuilder.withCause(exception).build();
-        }
-    }
     /**
      * Calculates the hash of the client signature content.
      */
     @Pure
     protected @Nullable BigInteger deriveClientSignatureContentHash() {
-        return getContentHash(getTime(), getSubject(), getObject(), objectConverter);
+        return Signature.getContentHash(getTime(), getSubject(), objectConverter, getObject());
     }
     
     /**

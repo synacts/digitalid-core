@@ -60,18 +60,12 @@ public abstract class HostSignatureCreator {
         
         private @Nonnull InternalIdentifier subject;
     
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public @Nonnull HostSignatureCreator.InnerHostSignatureCreator to(@Nonnull InternalIdentifier subject) {
             this.subject = subject;
             return this;
         }
     
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public @Nonnull HostSignature<OBJECT> as(@Nonnull InternalIdentifier signer) {
             final @Nonnull Time time = TimeBuilder.build();
@@ -82,7 +76,7 @@ public abstract class HostSignatureCreator {
                 throw UncheckedExceptionBuilder.withCause(exception).build();
             }
     
-            final @Nonnull BigInteger hash = HostSignature.getContentHash(time, subject, signer, objectConverter, object);
+            final @Nonnull BigInteger hash = HostSignature.getContentHash(time, subject, objectConverter, object);
             final @Nonnull BigInteger value = privateKey.powD(hash).getValue();
     
             Log.debugging("$ signed the hash $ about $.", signer, hash, subject);
