@@ -4,11 +4,14 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.string.Strings;
+import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -34,26 +37,16 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
  */
 @Immutable
 @GenerateTableConverter
+@TODO(task = "How can we observe when a new agent is added? Do we need an extensible property besides the index?", date = "2017-08-17", author = Author.KASPAR_ETTER)
 public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> {
     
-    /* -------------------------------------------------- Aspects -------------------------------------------------- */
-    
-    // TODO: How can we observe when a new agend is added? Do we need an extensible property besides the index?
-    
-//    /**
-//     * Stores the aspect of the observed agent being created in the database.
-//     * This aspect is also used to notify that an agent gets unremoved again.
-//     */
-//    public static final @Nonnull Aspect CREATED = new Aspect(Agent.class, "created");
-    
     /* -------------------------------------------------- Removed -------------------------------------------------- */
-    
-    // TODO: Declare the required authorization object.
     
     /**
      * Returns whether this agent is removed.
      */
     @Pure
+    @Default("true")
     @GenerateSynchronizedProperty
     public abstract @Nonnull WritablePersistentValueProperty<Agent, @Nonnull Boolean> removed();
     

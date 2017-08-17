@@ -11,6 +11,8 @@ import net.digitalid.utility.annotations.ownership.Captured;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.annotations.type.ThreadSafe;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
@@ -88,6 +90,41 @@ public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY exte
         }
     }
     
+    /**
+     * Adds the given value indexed by the given key to this property without synchronization.
+     * This method is intended to be called only by other actions.
+     * 
+     * @return {@code true} if the key-value pair was successfully added and {@code false} if the key was already in use.
+     */
+    @Impure
+    @Committing
+    public boolean addWithoutSynchronization(@Captured @Nonnull @Valid("key") MAP_KEY key, @Captured @Nonnull @Valid MAP_VALUE value) throws DatabaseException, RecoveryException {
+        if (get().containsKey(key)) {
+            return false;
+        } else {
+            modify(key, value, true);
+            return true;
+        }
+    }
+    
+    /**
+     * Removes the value indexed by the given key from this property without synchronization.
+     * This method is intended to be called only by other actions.
+     * 
+     * @return the value that was previously associated with the given key or null if the key was not in use.
+     */
+    @Impure
+    @Committing
+    public @Capturable @Nullable @Valid MAP_VALUE removeWithoutSynchronization(@NonCaptured @Unmodified @Nonnull @Valid("key") MAP_KEY key) throws DatabaseException, RecoveryException {
+        if (get().containsKey(key)) {
+            final @Nullable @Valid MAP_VALUE value = getMap().get(key);
+            modify(key, value, false);
+            return value;
+        } else {
+            return null;
+        }
+    }
+    
     /* -------------------------------------------------- Action -------------------------------------------------- */
     
     /**
@@ -96,8 +133,9 @@ public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY exte
     @Impure
     @NonCommitting
     @LockNotHeldByCurrentThread
+    @TODO(task = "Throw a database exception if no value was deleted (because it did not exist).", date = "2017-08-17", author = Author.KASPAR_ETTER)
     protected void modify(@Nonnull @Valid("key") MAP_KEY key, @Nonnull @Valid MAP_VALUE value, boolean added) throws DatabaseException, RecoveryException {
-        lock.getReentrantLock().lock();
+        lock.lock();
         try {
             final @Nonnull PersistentMapPropertyEntry<SUBJECT, MAP_KEY, MAP_VALUE> entry = PersistentMapPropertyEntryBuilder.<SUBJECT, MAP_KEY, MAP_VALUE>withSubject(getSubject()).withKey(key).withValue(value).build();
             if (added) {

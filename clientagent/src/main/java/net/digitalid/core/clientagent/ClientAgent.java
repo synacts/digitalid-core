@@ -22,9 +22,16 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
  * This class models a client agent that acts on behalf of an {@link Identity identity}.
  */
 @Immutable
-// @GenerateSubclass
+//@GenerateSubclass
 @GenerateTableConverter
 public abstract class ClientAgent extends Agent {
+    
+    /* -------------------------------------------------- Removed -------------------------------------------------- */
+    
+    /**
+     * Stores the required authorization to change the published value.
+     */
+    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Agent, @Nonnull Boolean> REMOVED = RequiredAuthorizationBuilder.<NonHostEntity, Long, Agent, Boolean>withRequiredAgentToExecuteMethod((agent, removed) -> agent).withRequiredAgentToSeeMethod((agent, removed) -> agent).build();
     
     /* -------------------------------------------------- Commitment -------------------------------------------------- */
     

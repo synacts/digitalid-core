@@ -49,8 +49,9 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
     @Override
     @CallSuper
     public void validate() {
-        Validate.that(getKey().isAttributeFor(getEntity().getIdentity().getCategory())).orThrow("The type has to be an attribute for the entity of this attribute.");
         super.validate();
+        
+        Validate.that(getKey().isAttributeFor(getEntity().getIdentity().getCategory())).orThrow("The type has to be an attribute for the entity of this attribute.");
     }
     
     /* -------------------------------------------------- Published Value -------------------------------------------------- */
@@ -58,7 +59,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
     /**
      * Stores the required authorization to change the published value.
      */
-    static final @Nonnull RequiredAuthorization<Entity, SemanticType, Attribute, AttributeValue> VALUE = RequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull RequiredAuthorization<Entity, SemanticType, Attribute, @Nullable AttributeValue> VALUE = RequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, AttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the published value property of this attribute.
@@ -74,7 +75,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
     /**
      * Stores the required authorization to change the unpublished value.
      */
-    static final @Nonnull RequiredAuthorization<Entity, SemanticType, Attribute, UncertifiedAttributeValue> UNPUBLISHED = RequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, UncertifiedAttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull RequiredAuthorization<Entity, SemanticType, Attribute, @Nullable UncertifiedAttributeValue> UNPUBLISHED = RequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, UncertifiedAttributeValue>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the unpublished value property of this attribute.
@@ -90,7 +91,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
     /**
      * Stores the required authorization to change the visibility.
      */
-    static final @Nonnull RequiredAuthorization<Entity, SemanticType, Attribute, PassiveExpression> VISIBILITY = RequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, PassiveExpression>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
+    static final @Nonnull RequiredAuthorization<Entity, SemanticType, Attribute, @Nullable PassiveExpression> VISIBILITY = RequiredAuthorizationBuilder.<Entity, SemanticType, Attribute, PassiveExpression>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), true)).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(concept.getKey(), false)).build();
     
     /**
      * Returns the visibility property of this attribute.

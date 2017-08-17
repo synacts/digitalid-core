@@ -11,7 +11,6 @@ import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
@@ -88,6 +87,40 @@ public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY exte
         }
     }
     
+    /**
+     * Adds the given value to the values of this property without synchronization.
+     * This method is intended to be called only by other actions.
+     * 
+     * @return whether the given value was not already stored.
+     */
+    @Impure
+    @Committing
+    public boolean addWithoutSynchronization(@Captured @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
+        if (get().contains(value)) {
+            return false;
+        } else {
+            modify(value, true);
+            return true;
+        }
+    }
+    
+    /**
+     * Adds the given value to the values of this property without synchronization.
+     * This method is intended to be called only by other actions.
+     * 
+     * @return whether the given value was not already stored.
+     */
+    @Impure
+    @Committing
+    public boolean removeWithoutSynchronization(@NonCaptured @Unmodified @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
+        if (get().contains(value)) {
+            modify(value, false);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     /* -------------------------------------------------- Action -------------------------------------------------- */
     
     /**
@@ -96,9 +129,9 @@ public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY exte
     @Impure
     @NonCommitting
     @LockNotHeldByCurrentThread
-    @TODO(task = "Implement and use SQL.delete().", date = "2016-11-12", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
+    @TODO(task = "Throw a database exception if no value was deleted (because it did not exist).", date = "2017-08-17", author = Author.KASPAR_ETTER)
     protected void modify(@Nonnull @Valid VALUE value, boolean added) throws DatabaseException, RecoveryException {
-        lock.getReentrantLock().lock();
+        lock.lock();
         try {
             final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = PersistentSetPropertyEntryBuilder.<SUBJECT, VALUE>withSubject(getSubject()).withValue(value).build();
             if (added) {

@@ -3,6 +3,7 @@ package net.digitalid.core.property;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
@@ -32,7 +33,7 @@ import net.digitalid.core.subject.CoreSubject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface RequiredAuthorization<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, VALUE> {
+public interface RequiredAuthorization<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Specifiable VALUE> {
     
     /**
      * Returns a function that determines the required permissions to set or add the given value to the property of the given concept.
