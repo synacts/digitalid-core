@@ -1,7 +1,5 @@
 package net.digitalid.core.account;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -9,7 +7,6 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.contracts.Ensure;
 import net.digitalid.utility.contracts.exceptions.PreconditionExceptionBuilder;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
@@ -28,12 +25,14 @@ import net.digitalid.utility.validation.annotations.value.Invariant;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
+import net.digitalid.core.agent.Agent;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.client.role.Role;
 import net.digitalid.core.client.role.RoleArguments;
 import net.digitalid.core.client.role.RoleArgumentsBuilder;
 import net.digitalid.core.client.role.RoleModule;
+import net.digitalid.core.clientagent.ClientAgent;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionConverterBuilder;
@@ -60,8 +59,12 @@ import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.pack.PackConverter;
+import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
+import net.digitalid.core.property.map.WritableSynchronizedMapProperty;
+import net.digitalid.core.property.value.WritableSynchronizedValueProperty;
 import net.digitalid.core.restrictions.Restrictions;
+import net.digitalid.core.restrictions.RestrictionsBuilder;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.client.ClientSignature;
@@ -183,16 +186,16 @@ public abstract class OpenAccount extends InternalAction implements CoreMethod<N
     @Pure
     @NonCommitting
     public static @Nonnull NativeRole of(@Nonnull Category category, @Nonnull InternalNonHostIdentifier subject, @Nonnull Client client) throws ExternalException {
-        final @Nonnull OpenAccount openAccount = OpenAccountBuilder.withSubject(subject).withCategory(category).withClientAgentKey(ThreadLocalRandom.current().nextLong()).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
+        final @Nonnull OpenAccount openAccount = OpenAccountBuilder.withSubject(subject).withCategory(category).withClientAgentKey(0).withName(client.getName()).withProvidedCommitment(client.getCommitment(subject)).withSecret(client.secret.get()).build();
         openAccount.send();
 
         final @Nonnull InternalNonHostIdentity identity = subject.resolve();
         // The following tests whether the client can be assigned a native role.
         final @Nonnull RoleArguments arguments = RoleArgumentsBuilder.withClient(client).withIssuer(identity).withAgentKey(0).build();
         final @Nonnull Role role = RoleModule.map(arguments);
+        openAccount.initialize(role);
         
-        Ensure.that(role instanceof NativeRole).orThrow("The role is supposed to be a native role.");
-        return (NativeRole) role;
+        return NativeRole.with(client, role.getKey()); // The role has to be reloaded because the client agent did not exist before the initialization.
     }
     
     /* -------------------------------------------------- Execution -------------------------------------------------- */
@@ -209,14 +212,18 @@ public abstract class OpenAccount extends InternalAction implements CoreMethod<N
      */
     @NonCommitting
     @PureWithSideEffects
-    public void initialize(@Nonnull NonHostEntity entity) throws DatabaseException {
+    @SuppressWarnings("unchecked")
+    public void initialize(@Nonnull NonHostEntity entity) throws DatabaseException, RecoveryException {
 //        final @Nonnull Context context = Context.of(entity);
 //        context.createForActions(); // TODO: This should probably become part of the Context.of(entity) method.
 //        context.name().set("Root Context"); // TODO: The name should be stored in the database without synchronization.
         
-//        final @Nonnull ClientAgent clientAgent = ClientAgent.of(entity, getClientAgentKey());
-//        final @Nonnull Restrictions restrictions = RestrictionsBuilder.withOnlyForClients(true).withAssumeRoles(true).withWriteToNode(true).withNode(context).build();
-//        clientAgent.createForActions(FreezableAgentPermissions.GENERAL_WRITE, restrictions, getCommitment(), getName()); // TODO: Do this differently.
+        final @Nonnull ClientAgent clientAgent = ClientAgent.of(entity, getClientAgentKey());
+        final @Nonnull Restrictions restrictions = RestrictionsBuilder.withOnlyForClients(true).withAssumeRoles(true).withWriteToNode(true)/*.withNode(context)*/.build();
+        ((WritableSynchronizedMapProperty<NonHostEntity, Long, Agent, SemanticType, Boolean, ReadOnlyAgentPermissions, FreezableAgentPermissions>) clientAgent.permissions()).addWithoutSynchronization(FreezableAgentPermissions.GENERAL, Boolean.TRUE);
+        ((WritableSynchronizedValueProperty<NonHostEntity, Long, Agent, Restrictions>) clientAgent.restrictions()).setWithoutSynchronization(restrictions);
+        ((WritableSynchronizedValueProperty<NonHostEntity, Long, ClientAgent, Commitment>) clientAgent.commitment()).setWithoutSynchronization(getCommitment());
+        ((WritableSynchronizedValueProperty<NonHostEntity, Long, ClientAgent, String>) clientAgent.name()).setWithoutSynchronization(getName());
     }
     
     @Override

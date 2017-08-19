@@ -10,11 +10,19 @@
     <artifactId>core-clientagent</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-settings</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-outgoingrole</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
     </dependencies>
     
 </project>

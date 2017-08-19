@@ -1,4 +1,4 @@
-package net.digitalid.core.attribute;
+package net.digitalid.core.clientagent;
 
 import javax.annotation.Nonnull;
 
@@ -12,11 +12,11 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 
 /**
- * The following code cannot be in the attribute class because instantiating the initializer would trigger the attribute class to get loaded which in turn would trigger an IdentifierResolver not initialized error because the CoreService maps a SemanticType.
+ * The following code cannot be in the client agent class because instantiating the initializer would trigger the client agent class to get loaded which in turn would trigger an IdentifierResolver not initialized error because the CoreService maps a SemanticType.
  */
 @Utility
 @TODO(task = "Find a better solution for this problem!", date = "2017-07-19", author = Author.KASPAR_ETTER)
-public abstract class AttributePropertiesLoader {
+public abstract class ClientAgentPropertiesLoader {
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
@@ -29,9 +29,9 @@ public abstract class AttributePropertiesLoader {
      * Loads the attribute subclass.
      */
     @PureWithSideEffects
-    @Initialize(target = AttributePropertiesLoader.class, dependencies = IdentifierResolver.class)
+    @Initialize(target = ClientAgentPropertiesLoader.class, dependencies = IdentifierResolver.class)
     public static void initializeSubclass() {
-        AttributeSubclass.MODULE.getName();
+        ClientAgentSubclass.MODULE.getName();
     }
     
 }

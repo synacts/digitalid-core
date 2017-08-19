@@ -10,14 +10,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.lang.model.type.DeclaredType;
 
-import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.generator.annotations.meta.Interceptor;
 import net.digitalid.utility.generator.information.method.MethodInformation;
 import net.digitalid.utility.generator.information.type.TypeInformation;
 import net.digitalid.utility.processing.logging.ProcessingLog;
 import net.digitalid.utility.processing.utility.ProcessingUtility;
+import net.digitalid.utility.processing.utility.StaticProcessingEnvironment;
 import net.digitalid.utility.processor.generator.JavaFileGenerator;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -45,14 +47,39 @@ public @interface GenerateCoreSubjectModule {
     @Stateless
     public static class Interceptor extends GenerateSubjectModule.Interceptor {
         
-        @Pure
-        @Override
-        public void generateFieldsRequiredByMethod(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull MethodInformation method, @Nonnull TypeInformation typeInformation) {
-            final @Nullable DeclaredType subjectType = ProcessingUtility.getSupertype(typeInformation.getType(), CoreSubject.class);
-            if (subjectType == null) { ProcessingLog.error("The type $ is not a subtype of CoreSubject.", ProcessingUtility.getQualifiedName(typeInformation.getType())); }
-            final @Nonnull FiniteIterable<@Nonnull String> types = FiniteIterable.of(subjectType.getTypeArguments()).combine(FiniteIterable.of(typeInformation.getType())).map(javaFileGenerator::importIfPossible).evaluate();
+        @PureWithSideEffects
+        private void generateModuleField(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull TypeInformation typeInformation, @Nonnull DeclaredType coreSubjectType, @Nonnull DeclaredType subjectType, boolean supperClass) {
+            final @Nonnull FiniteIterable<@Nonnull String> types = FiniteIterable.of(coreSubjectType.getTypeArguments()).combine(FiniteIterable.of(subjectType)).map(javaFileGenerator::importIfPossible);
             
-            javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(CoreSubjectModule.class) + types.join(Brackets.POINTY) + " MODULE = " + javaFileGenerator.importIfPossible(CoreSubjectModuleBuilder.class) + "." + types.join(Brackets.POINTY) + "withService(SERVICE).withSubjectFactory" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedSubclass() + "::new") + ".withEntityTable" + Brackets.inRound(javaFileGenerator.importIfPossible("net.digitalid.core.entity." + Strings.substringUntilFirst(types.get(0), '<') + "Converter") + ".INSTANCE") + ".withCoreSubjectTable" + Brackets.inRound(typeInformation.getSimpleNameOfGeneratedConverter() + ".INSTANCE") + ".build()");
+            final @Nonnull StringBuilder field = new StringBuilder("static final @");
+            field.append(javaFileGenerator.importIfPossible(Nonnull.class));
+            field.append(" ");
+            field.append(javaFileGenerator.importIfPossible(CoreSubjectModule.class));
+            field.append(types.join(Brackets.POINTY));
+            if (supperClass) { field.append(" SUPER_MODULE = "); } else { field.append(" MODULE = "); }
+            field.append(javaFileGenerator.importIfPossible(CoreSubjectModuleBuilder.class));
+            field.append(".");
+            field.append(types.join(Brackets.POINTY));
+            field.append("withService(SERVICE).withSubjectFactory(");
+            field.append(typeInformation.getSimpleNameOfGeneratedSubclass()).append("::new"); // TODO: Maybe rather make the subject factory optional because the supertype does not need it? SuperType::of fails because it throws a DatabaseException.
+            field.append(").withEntityTable(");
+            field.append(javaFileGenerator.importIfPossible("net.digitalid.core.entity." + Strings.substringUntilFirst(types.get(0), '<') + "Converter")).append(".INSTANCE");
+            field.append(").withCoreSubjectTable(");
+            field.append(javaFileGenerator.importIfPossible(ProcessingUtility.getQualifiedName(subjectType) + "Converter"));
+            field.append(".INSTANCE).build()");
+            javaFileGenerator.addField(field.toString());
+        }
+        
+        @Override
+        @PureWithSideEffects
+        public void generateFieldsRequiredByMethod(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull MethodInformation method, @Nonnull TypeInformation typeInformation) {
+            final @Nonnull DeclaredType subjectType = typeInformation.getType();
+            final @Nullable DeclaredType coreSubjectType = ProcessingUtility.getSupertype(subjectType, CoreSubject.class);
+            if (coreSubjectType == null) { ProcessingLog.error("The type $ is not a subtype of CoreSubject.", ProcessingUtility.getQualifiedName(subjectType)); return; }
+            
+            final @Nonnull DeclaredType superType = (DeclaredType) StaticProcessingEnvironment.getTypeUtils().directSupertypes(subjectType).get(0);
+            if (ProcessingUtility.hasAnnotation(superType.asElement(), GenerateTableConverter.class)) { generateModuleField(javaFileGenerator, typeInformation, coreSubjectType, superType, true); }
+            generateModuleField(javaFileGenerator, typeInformation, coreSubjectType, subjectType, false);
         }
         
     }

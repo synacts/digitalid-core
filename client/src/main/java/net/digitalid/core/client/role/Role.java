@@ -76,7 +76,7 @@ public abstract class Role extends Subject<Client> implements NonHostEntity {
     @Recover
     @NonCommitting
     public static @Nonnull Role with(@Nonnull Client unit, long key) throws DatabaseException, RecoveryException {
-        return RoleModule.load(/* unit, */ key);
+        return RoleModule.load(key);
     }
     
     /* -------------------------------------------------- Initializer -------------------------------------------------- */

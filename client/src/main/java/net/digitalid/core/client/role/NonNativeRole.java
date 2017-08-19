@@ -3,6 +3,8 @@ package net.digitalid.core.client.role;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -51,6 +53,12 @@ public abstract class NonNativeRole extends Role {
     public abstract @Nonnull OutgoingRole getAgent();
     
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
+    
+    /**
+     * This constructor triggers that the {@link DatabaseException} is thrown in the constructor of the generated subclass.
+     */
+    @TODO(task = "Remove once you can declare exceptions in @Derive.", date = "2017-08-19", author = Author.KASPAR_ETTER)
+    protected NonNativeRole() throws DatabaseException {}
     
     @Pure
     @Recover

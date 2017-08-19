@@ -1,6 +1,7 @@
 package net.digitalid.core.agent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
@@ -12,6 +13,7 @@ import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Default;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -28,6 +30,7 @@ import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
+import net.digitalid.core.restrictions.Node;
 import net.digitalid.core.restrictions.Restrictions;
 import net.digitalid.core.subject.CoreServiceCoreSubject;
 import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
@@ -36,7 +39,7 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
  * This class models an agent that acts on behalf of an {@link Identity identity}.
  */
 @Immutable
-@GenerateTableConverter
+@GenerateTableConverter(table = "unit_core_Agent_Agent") // TODO: How can we get the table name without adding the generated attribute table converter to the attribute core subject module?
 @TODO(task = "How can we observe when a new agent is added? Do we need an extensible property besides the index?", date = "2017-08-17", author = Author.KASPAR_ETTER)
 public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> {
     
@@ -58,32 +61,6 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> 
         if (removed().get()) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage("The agent has been removed.").build(); }
     }
     
-    // TODO: How do we issue and revoke outgoing roles? I guess the outgoing role has to observe its own property.
-    
-//    /**
-//     * Removes this agent from the database by marking it as being removed.
-//     */
-//    @NonCommitting
-//    @OnlyForActions
-//    final void removeForActions() throws DatabaseException {
-//        AgentModule.removeAgent(this);
-//        if (isOnHost() && this instanceof OutgoingRole) { ((OutgoingRole) this).revoke(); }
-//        removed = true;
-//        notify(DELETED);
-//    }
-//    
-//    /**
-//     * Unremoves this agent from the database by marking it as no longer being removed.
-//     */
-//    @NonCommitting
-//    @OnlyForActions
-//    final void unremoveForActions() throws DatabaseException {
-//        AgentModule.unremoveAgent(this);
-//        if (isOnHost() && this instanceof OutgoingRole) { ((OutgoingRole) this).issue(); }
-//        removed = false;
-//        notify(CREATED);
-//    }
-    
     /* -------------------------------------------------- Permissions -------------------------------------------------- */
     
     /**
@@ -94,35 +71,25 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> 
      */
     @Pure
     @GenerateSynchronizedProperty
+    @Default("FreezableAgentPermissions.withNoPermissions()")
     public abstract @Nonnull WritablePersistentMapProperty<Agent, SemanticType, Boolean, ReadOnlyAgentPermissions, FreezableAgentPermissions> permissions();
     
-    /* -------------------------------------------------- Restrictions -------------------------------------------------- */
-    
-    /**
-     * Returns the restrictions of this agent.
-     * 
-     * TODO: How to check that the restrictions match?
-     * @ensure return.match(this) : "The restrictions match this agent.";
-     */
-    @Pure
-    @GenerateSynchronizedProperty
-    public abstract @Nonnull WritablePersistentValueProperty<Agent, @Nonnull Restrictions> restrictions();
-    
-    /* -------------------------------------------------- Abstract -------------------------------------------------- */
-    
-    // TODO: Do we need the following methods at all? At least one of them could be implemented. The other one if the key (e.g. even vs. uneven) determines the subclass.
+    /* -------------------------------------------------- Subtypes -------------------------------------------------- */
     
     /**
      * Returns whether this agent is a client agent.
      */
     @Pure
+    @NonRepresentative
     public abstract boolean isClientAgent();
     
     /**
      * Returns whether this agent is an outgoing role.
      */
     @Pure
-    public abstract boolean isOutgoingRole();
+    public final boolean isOutgoingRole() {
+        return !isClientAgent();
+    }
     
     /* -------------------------------------------------- Matching -------------------------------------------------- */
     
@@ -131,8 +98,20 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> 
      */
     @Pure
     public boolean matches(@Nonnull Restrictions restrictions) {
-        return isClientAgent() == restrictions.isOnlyForClients() && (restrictions.getNode() == null || getEntity().equals(restrictions.getNode().getEntity()));
+        final @Nullable Node node = restrictions.getNode();
+        return isClientAgent() == restrictions.isOnlyForClients() && (node == null || getEntity().equals(node.getEntity()));
     }
+    
+    /* -------------------------------------------------- Restrictions -------------------------------------------------- */
+    
+    /**
+     * Returns the restrictions of this agent.
+     */
+    @Pure
+    @GenerateSynchronizedProperty
+    @Default("net.digitalid.core.restrictions.Restrictions.MIN")
+    @TODO(task = "Check that the entity of the restrictions match the entity of this subject by providing a value validator.", date = "2017-08-18", author = Author.KASPAR_ETTER)
+    public abstract @Nonnull WritablePersistentValueProperty<Agent, @Nonnull Restrictions> restrictions();
     
     /* -------------------------------------------------- Weaker Agents -------------------------------------------------- */
     
@@ -161,7 +140,7 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> 
      */
     @Pure
     @NonCommitting
-    public abstract boolean covers(@Nonnull /* @Matching */ Agent agent) throws DatabaseException; /* {
+    public abstract boolean covers(@Nonnull /* @Matching */ Agent agent) throws DatabaseException, RecoveryException; /* {
         return !removed().get() && AgentModule.isStronger(this, agent);
     } */
     
@@ -170,7 +149,7 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> 
      */
     @Pure
     @NonCommitting
-    public void checkCovers(@Nonnull Agent agent) throws RequestException, DatabaseException {
+    public void checkCovers(@Nonnull Agent agent) throws RequestException, DatabaseException, RecoveryException {
         if (!covers(agent)) { throw RequestExceptionBuilder.withCode(RequestErrorCode.AUTHORIZATION).withMessage(Strings.format("The agent $ does not cover the agent $.", this, agent)).build(); }
     }
     
@@ -181,20 +160,8 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> 
      */
     @Pure
     @Recover
-    public static @Nonnull Agent of(@Nonnull NonHostEntity entity, long key) {
-        // TODO: Make this injectable?
-        return null;
-//        return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed, false);
+    public static @Nonnull Agent of(@Nonnull NonHostEntity entity, long key) throws DatabaseException {
+        return AgentFactory.configuration.get().getAgent(entity, key);
     }
-    
-    /* -------------------------------------------------- SQLizable -------------------------------------------------- */
-    
-    // TODO: Remove the following code once we can handle foreign key constraints automatically.
-    
-//    @NonCommitting
-//    public static @Nonnull String getReference(@Nonnull Site site) throws DatabaseException {
-//        AgentModule.createReferenceTable(site);
-//        return "REFERENCES " + site + "agent (entity, agent) ON DELETE CASCADE";
-//    }
     
 }

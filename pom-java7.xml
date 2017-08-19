@@ -62,15 +62,15 @@
         <module>synchronizer-java7</module>
         <module>property-java7</module>
         
-        <module>settings-java7</module>
-        <module>clientagent-java7</module>
-        <module>outgoingrole-java7</module>
-        <module>node-java7</module>
         <module>error-java7</module>
         <module>pusher-java7</module>
+        <module>outgoingrole-java7</module>
+        <module>node-java7</module>
         <module>expression-java7</module>
-        <module>attribute-java7</module>
         <module>certificate-java7</module>
+        <module>attribute-java7</module>
+        <module>settings-java7</module>
+        <module>clientagent-java7</module>
         
         <module>client-java7</module>
         <module>host-java7</module>

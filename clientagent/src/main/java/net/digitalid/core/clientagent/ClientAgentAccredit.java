@@ -1,7 +1,7 @@
+package net.digitalid.core.clientagent;
+
 // TODO: Do we still have to write an action like this manually?
 
-//package net.digitalid.core.clientagent;
-//
 //import java.sql.SQLException;
 //
 //import javax.annotation.Nonnull;
@@ -46,8 +46,8 @@
 // * Accredits a {@link ClientAgent client agent}.
 // */
 //@Immutable
-//public final class ClientAgentAccredit extends CoreServiceInternalAction {
-//    
+public final class ClientAgentAccredit {// extends CoreServiceInternalAction {
+    
 //    /**
 //     * Stores the semantic type {@code accredit.client.agent@core.digitalid.net}.
 //     */
@@ -254,5 +254,5 @@
 //        }
 //        
 //    }
-//    
-//}
+    
+}

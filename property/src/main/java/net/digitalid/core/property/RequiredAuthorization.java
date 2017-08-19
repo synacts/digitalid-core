@@ -33,6 +33,7 @@ import net.digitalid.core.subject.CoreSubject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
+@TODO(task = "The authorization to change the permissions of a (client) agent should also be able to access the map value.", date = "2017-08-18", author = Author.KASPAR_ETTER)
 public interface RequiredAuthorization<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>, @Specifiable VALUE> {
     
     /**

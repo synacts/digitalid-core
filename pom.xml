@@ -62,15 +62,15 @@
         <module>synchronizer</module>
         <module>property</module>
         
-        <module>settings</module>
-        <module>clientagent</module>
-        <module>outgoingrole</module>
-        <module>node</module>
         <module>error</module>
         <module>pusher</module>
+        <module>outgoingrole</module>
+        <module>node</module>
         <module>expression</module>
-        <module>attribute</module>
         <module>certificate</module>
+        <module>attribute</module>
+        <module>settings</module>
+        <module>clientagent</module>
         
         <module>client</module>
         <module>host</module>

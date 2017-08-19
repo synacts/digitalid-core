@@ -114,7 +114,7 @@ public abstract class FreezableAgentPermissions extends FreezableLinkedHashMap<@
      * Returns new agent permissions with no permissions.
      */
     @Pure
-    public static @Nonnull @NonFrozen @Empty FreezableAgentPermissions withNoPermissions() {
+    public static @Capturable @Nonnull @NonFrozen @Empty FreezableAgentPermissions withNoPermissions() {
         return new FreezableAgentPermissionsSubclass();
     }
     
@@ -122,7 +122,7 @@ public abstract class FreezableAgentPermissions extends FreezableLinkedHashMap<@
      * Returns new agent permissions with the given access to the given type.
      */
     @Pure
-    public static @Nonnull @NonFrozen @Single FreezableAgentPermissions withPermission(@Nonnull @AttributeType SemanticType type, @Nonnull Boolean writing) {
+    public static @Capturable @Nonnull @NonFrozen @Single FreezableAgentPermissions withPermission(@Nonnull @AttributeType SemanticType type, @Nonnull Boolean writing) {
         final @Nonnull FreezableAgentPermissions result = new FreezableAgentPermissionsSubclass();
         result.put(type, writing);
         return result;
@@ -132,7 +132,7 @@ public abstract class FreezableAgentPermissions extends FreezableLinkedHashMap<@
      * Returns new agent permissions with the given agent permissions.
      */
     @Pure
-    public static @Nonnull @NonFrozen FreezableAgentPermissions withPermissionsOf(@Nonnull ReadOnlyAgentPermissions permissions) {
+    public static @Capturable @Nonnull @NonFrozen FreezableAgentPermissions withPermissionsOf(@Nonnull ReadOnlyAgentPermissions permissions) {
         final @Nonnull FreezableAgentPermissions result = new FreezableAgentPermissionsSubclass();
         result.putAll(permissions);
         return result;

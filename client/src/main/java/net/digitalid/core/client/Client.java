@@ -143,6 +143,7 @@ public abstract class Client extends CoreUnit {
     protected void initialize() throws ConversionException {
         super.initialize();
         
+        clients.put(getIdentifier(), this);
         protectedSecret.set(ClientSecretLoader.load(getIdentifier()));
     }
     

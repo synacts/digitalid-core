@@ -10,6 +10,7 @@ import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Recover;
+import net.digitalid.utility.validation.annotations.math.modulo.Uneven;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -39,6 +40,12 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
 // TODO: @GenerateSubclass
 @GenerateTableConverter
 public abstract class OutgoingRole extends Agent {
+    
+    /* -------------------------------------------------- Key -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public abstract @Nonnull @Uneven Long getKey();
     
     // TODO: Enable the issuance and revocation of outgoing roles here or somewhere else? If here, then make sure to pass the internal persons directly.
     
@@ -73,6 +80,30 @@ public abstract class OutgoingRole extends Agent {
 //    }
 //    
 //    /* -------------------------------------------------- Revocation -------------------------------------------------- */
+//    
+//    TODO: How do we issue and revoke outgoing roles? I guess the outgoing role has to observe its own property.
+//    
+//    /**
+//     * Removes this agent from the database by marking it as being removed.
+//     */
+//    @NonCommitting
+//    @OnlyForActions
+//    final void removeForActions() throws DatabaseException {
+//        AgentModule.removeAgent(this);
+//        if (isOnHost() && this instanceof OutgoingRole) { ((OutgoingRole) this).revoke(); }
+//        removed = true;
+//    }
+//    
+//    /**
+//     * Unremoves this agent from the database by marking it as no longer being removed.
+//     */
+//    @NonCommitting
+//    @OnlyForActions
+//    final void unremoveForActions() throws DatabaseException {
+//        AgentModule.unremoveAgent(this);
+//        if (isOnHost() && this instanceof OutgoingRole) { ((OutgoingRole) this).issue(); }
+//        removed = false;
+//    }
 //    
 //    /**
 //     * Revokes this outgoing role from the given contacts.
@@ -264,9 +295,17 @@ public abstract class OutgoingRole extends Agent {
      */
     @Pure
     @Recover
-    public static @Nonnull OutgoingRole of(@Nonnull NonHostEntity entity, long key) {
+    public static @Nonnull OutgoingRole of(@Nonnull NonHostEntity entity, @Uneven long key) throws DatabaseException {
         return null;
 //        return OutgoingRoleSubclass.MODULE.getConceptIndex().get(entity, key); // TODO
+    }
+    
+    /* -------------------------------------------------- Subtypes -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public boolean isClientAgent() {
+        return false;
     }
     
 }

@@ -57,7 +57,8 @@ public abstract class RoleArguments extends RootClass {
     @CallSuper
     public void validate() {
         super.validate();
-        Validate.that((getRelation() == null) == (getRecipient() == null)).orThrow("The relation and the recipient have to be either both null or non-null.");
+        
+        Validate.that((getRelation() == null) == (getRecipient() == null)).orThrow("The relation and the recipient have to be either both null or non-null but were $ and $.", getRelation(), getRecipient());
     }
     
 }
