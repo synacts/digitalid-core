@@ -39,7 +39,7 @@ public abstract class FreezableNodePermissions extends FreezableAttributeTypeSet
      * Returns new node permissions with no attribute types.
      */
     @Pure
-    public static @Nonnull @NonFrozen @Single FreezableNodePermissions withNoTypes() {
+    public static @Capturable @Nonnull @NonFrozen @Single FreezableNodePermissions withNoTypes() {
         return new FreezableNodePermissionsSubclass();
     }
     
@@ -47,7 +47,7 @@ public abstract class FreezableNodePermissions extends FreezableAttributeTypeSet
      * Returns new node permissions with the given attribute type.
      */
     @Pure
-    public static @Nonnull @NonFrozen @Single FreezableNodePermissions withType(@Nonnull @AttributeType SemanticType type) {
+    public static @Capturable @Nonnull @NonFrozen @Single FreezableNodePermissions withType(@Nonnull @AttributeType SemanticType type) {
         final @Nonnull FreezableNodePermissions result = new FreezableNodePermissionsSubclass();
         result.add(type);
         return result;
@@ -57,7 +57,7 @@ public abstract class FreezableNodePermissions extends FreezableAttributeTypeSet
      * Returns new node permissions with the attribute types of the given node permissions.
      */
     @Pure
-    public static @Nonnull @NonFrozen FreezableNodePermissions withTypesOf(@Nonnull ReadOnlyNodePermissions permissions) {
+    public static @Capturable @Nonnull @NonFrozen FreezableNodePermissions withTypesOf(@Nonnull ReadOnlyNodePermissions permissions) {
         final @Nonnull FreezableNodePermissions result = new FreezableNodePermissionsSubclass();
         result.addAll(permissions);
         return result;

@@ -29,7 +29,7 @@ public abstract class AttributePropertiesLoader {
      * Loads the attribute subclass.
      */
     @PureWithSideEffects
-    @Initialize(target = AttributePropertiesLoader.class, dependencies = IdentifierResolver.class)
+    @Initialize(target = AttributePropertiesLoader.class)
     public static void initializeSubclass() {
         AttributeSubclass.MODULE.getName();
     }

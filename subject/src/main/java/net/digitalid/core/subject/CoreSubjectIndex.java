@@ -30,7 +30,7 @@ import net.digitalid.core.entity.Entity;
  */
 @Immutable
 @GenerateSubclass
-@TODO(task = "Don't we need a SubjectIndex in the database layer?", date = "2017-01-22", author = Author.KASPAR_ETTER)
+@TODO(task = "Make the subjects somehow observable and expose a read-only view through the subject class? Problem: The index only knows the loaded subjects, not all that exist.", date = "2017-08-20", author = Author.KASPAR_ETTER)
 public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity, @Unspecifiable KEY, @Unspecifiable SUBJECT extends CoreSubject<ENTITY, KEY>> {
     
     /* -------------------------------------------------- Removal -------------------------------------------------- */

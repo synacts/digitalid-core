@@ -3,7 +3,8 @@ package net.digitalid.core.restrictions;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
+import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -24,7 +25,7 @@ import net.digitalid.core.typeset.permissions.ReadOnlyNodePermissions;
  * This class models a node, which is the superclass of contact and context.
  */
 @Immutable
-@GenerateConverter
+@GenerateTableConverter(table = "unit_core_Node_Node") // TODO: How can we get the table name without adding the generated attribute table converter to the attribute core subject module?
 public abstract class Node extends CoreServiceCoreSubject<NonHostEntity, Long> {
     
     /* -------------------------------------------------- Permissions -------------------------------------------------- */
@@ -34,6 +35,7 @@ public abstract class Node extends CoreServiceCoreSubject<NonHostEntity, Long> {
      */
     @Pure
     @GenerateSynchronizedProperty
+    @Default("FreezableNodePermissions.withNoTypes()")
     public abstract @Nonnull WritablePersistentSetProperty<Node, SemanticType, ReadOnlyNodePermissions, FreezableNodePermissions> permissions();
     
     /* -------------------------------------------------- Authentications -------------------------------------------------- */
@@ -43,6 +45,7 @@ public abstract class Node extends CoreServiceCoreSubject<NonHostEntity, Long> {
      */
     @Pure
     @GenerateSynchronizedProperty
+    @Default("FreezableAuthentications.withNoTypes()")
     public abstract @Nonnull WritablePersistentSetProperty<Node, SemanticType, ReadOnlyAuthentications, FreezableAuthentications> authentications();
     
     /* -------------------------------------------------- Supernode -------------------------------------------------- */
@@ -60,13 +63,12 @@ public abstract class Node extends CoreServiceCoreSubject<NonHostEntity, Long> {
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     /**
-     * Returns the node with the given key.
+     * Returns the node with the given key at the given entity.
      */
     @Pure
     @Recover
-    static @Nonnull Node of(@Nonnull NonHostEntity entity, long key) {
-        // TODO: Make it injectable? (Use the key to determine whether it is a context or a contact (either with ranges or even vs. uneven)?)
-        return null;
+    public static @Nonnull Node of(@Nonnull NonHostEntity entity, long key) throws DatabaseException {
+        return NodeFactory.configuration.get().getAgent(entity, key);
     }
     
 }

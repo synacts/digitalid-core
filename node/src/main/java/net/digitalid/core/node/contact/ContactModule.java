@@ -38,7 +38,7 @@ package net.digitalid.core.node.contact;
 // * This class provides database access to the {@link Contact contacts} of the core service.
 // */
 //@Stateless
-//public final class ContactModule implements StateModule {
+public final class ContactModule {// implements StateModule {
 //    
 //    /* -------------------------------------------------- Module Initialization -------------------------------------------------- */
 //    
@@ -305,5 +305,5 @@ package net.digitalid.core.node.contact;
 ////    }
 //    
 //    static { CoreService.SERVICE.add(MODULE); }
-//    
-//}
+    
+}

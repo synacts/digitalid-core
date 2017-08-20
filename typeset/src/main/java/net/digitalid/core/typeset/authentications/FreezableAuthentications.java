@@ -54,7 +54,7 @@ public abstract class FreezableAuthentications extends FreezableAttributeTypeSet
      * Returns new authentications with no attribute types.
      */
     @Pure
-    public static @Nonnull @NonFrozen @Single FreezableAuthentications withNoTypes() {
+    public static @Capturable @Nonnull @NonFrozen @Single FreezableAuthentications withNoTypes() {
         return new FreezableAuthenticationsSubclass();
     }
     
@@ -62,7 +62,7 @@ public abstract class FreezableAuthentications extends FreezableAttributeTypeSet
      * Returns new authentications with the given attribute type.
      */
     @Pure
-    public static @Nonnull @NonFrozen @Single FreezableAuthentications withType(@Nonnull @AttributeType SemanticType type) {
+    public static @Capturable @Nonnull @NonFrozen @Single FreezableAuthentications withType(@Nonnull @AttributeType SemanticType type) {
         final @Nonnull FreezableAuthentications result = new FreezableAuthenticationsSubclass();
         result.add(type);
         return result;
@@ -72,7 +72,7 @@ public abstract class FreezableAuthentications extends FreezableAttributeTypeSet
      * Returns new authentications with the attribute types of the given authentications.
      */
     @Pure
-    public static @Nonnull @NonFrozen FreezableAuthentications withTypesOf(@Nonnull ReadOnlyAuthentications authentications) {
+    public static @Capturable @Nonnull @NonFrozen FreezableAuthentications withTypesOf(@Nonnull ReadOnlyAuthentications authentications) {
         final @Nonnull FreezableAuthentications result = new FreezableAuthenticationsSubclass();
         result.addAll(authentications);
         return result;

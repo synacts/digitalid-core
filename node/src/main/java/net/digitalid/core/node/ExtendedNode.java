@@ -3,12 +3,12 @@ package net.digitalid.core.node;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collections.set.ReadOnlySet;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
-import net.digitalid.utility.validation.annotations.generation.Recover;
+import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -22,6 +22,7 @@ import net.digitalid.core.permissions.FreezableAgentPermissions;
 import net.digitalid.core.property.RequiredAuthorization;
 import net.digitalid.core.property.RequiredAuthorizationBuilder;
 import net.digitalid.core.restrictions.Node;
+import net.digitalid.core.restrictions.NodeFactory;
 import net.digitalid.core.restrictions.RestrictionsBuilder;
 
 /**
@@ -31,23 +32,21 @@ import net.digitalid.core.restrictions.RestrictionsBuilder;
  * @see Context
  */
 @Immutable
-@GenerateConverter
-public abstract class ExtendedNode extends Node {
+public interface ExtendedNode {
     
     /* -------------------------------------------------- Permissions -------------------------------------------------- */
     
     /**
      * Stores the required authorization to change the permissions.
      */
-    @TODO(task = "Move this with the RequiredAuthorization type to the node class respectively the restrictions artifact.", date = "2017-04-02", author = Author.KASPAR_ETTER)
-    public static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Node, SemanticType> PERMISSIONS = RequiredAuthorizationBuilder.<NonHostEntity, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    public static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Node, SemanticType> PERMISSIONS = RequiredAuthorizationBuilder.<NonHostEntity, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((node, type) -> FreezableAgentPermissions.withPermission(type, false).freeze()).withRequiredRestrictionsToExecuteMethod((node, type) -> RestrictionsBuilder.withWriteToNode(true).withNode(node).build()).withRequiredPermissionsToSeeMethod((node, type) -> FreezableAgentPermissions.withPermission(type, false).freeze()).withRequiredRestrictionsToSeeMethod((node, type) -> RestrictionsBuilder.buildWithNode(node)).build();
     
     /* -------------------------------------------------- Authentications -------------------------------------------------- */
     
     /**
      * Stores the required authorization to change the authentications.
      */
-    public static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Node, SemanticType> AUTHENTICATIONS = RequiredAuthorizationBuilder.<NonHostEntity, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredPermissionsToSeeMethod((concept, value) -> FreezableAgentPermissions.withPermission(value, false).freeze()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    public static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Node, SemanticType> AUTHENTICATIONS = RequiredAuthorizationBuilder.<NonHostEntity, Long, Node, SemanticType>withRequiredPermissionsToExecuteMethod((node, type) -> FreezableAgentPermissions.withPermission(type, false).freeze()).withRequiredRestrictionsToExecuteMethod((node, type) -> RestrictionsBuilder.withWriteToNode(true).withNode(node).build()).withRequiredPermissionsToSeeMethod((node, type) -> FreezableAgentPermissions.withPermission(type, false).freeze()).withRequiredRestrictionsToSeeMethod((node, type) -> RestrictionsBuilder.buildWithNode(node)).build();
     
     /* -------------------------------------------------- Supercontexts -------------------------------------------------- */
     
@@ -56,20 +55,17 @@ public abstract class ExtendedNode extends Node {
      */
     @Pure
     @NonCommitting
-    public @Nonnull @NonFrozen ReadOnlySet<Context> getSupercontexts() throws DatabaseException {
-        throw new RuntimeException("TODO");
-    }
+    public abstract @Nonnull @NonFrozen @NonNullableElements ReadOnlySet<Context> getSupercontexts() throws DatabaseException, RecoveryException;
     
-    /* -------------------------------------------------- Recovery -------------------------------------------------- */
+    /* -------------------------------------------------- Injection -------------------------------------------------- */
     
     /**
-     * Returns the node with the given key.
+     * Initializes the node factory.
      */
-    @Pure
-    @Recover
-    static @Nonnull ExtendedNode of(@Nonnull NonHostEntity entity, long key) {
-        // TODO: Make it injectable? (Use the key to determine whether it is a context or a contact (either with ranges or even vs. uneven)?)
-        return null;
+    @PureWithSideEffects
+    @Initialize(target = NodeFactory.class)
+    public static void initializeNodeFactory() {
+        NodeFactory.configuration.set((entity, key) -> key % 2 == 0 ? Context.of(entity, key) : Contact.of(entity, key));
     }
     
 }

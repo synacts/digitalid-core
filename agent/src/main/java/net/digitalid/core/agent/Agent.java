@@ -156,7 +156,7 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> 
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
-     * Returns the agent with the given number at the given entity.
+     * Returns the agent with the given key at the given entity.
      */
     @Pure
     @Recover

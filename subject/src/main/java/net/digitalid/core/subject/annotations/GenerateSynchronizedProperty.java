@@ -19,6 +19,8 @@ import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
+import net.digitalid.utility.collections.set.FreezableLinkedHashSetBuilder;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.generator.annotations.meta.Interceptor;
@@ -92,6 +94,7 @@ public @interface GenerateSynchronizedProperty {
             
             final @Nonnull String propertyPackage = ProcessingUtility.getQualifiedPackageName(returnType.asElement());
             final @Nonnull String propertyType = Strings.substringFromLast(ProcessingUtility.getSimpleName(returnType), "Persistent");
+            final @Nonnull String nonSimplePropertyType = propertyType.replace("Simple", "");
             
             final @Nullable DeclaredType coreSubjectType = ProcessingUtility.getSupertype(typeInformation.getType(), CoreSubject.class);
             if (coreSubjectType == null) { ProcessingLog.error("The type $ is not a subtype of CoreSubject.", ProcessingUtility.getQualifiedName(typeInformation.getType())); return; }
@@ -103,24 +106,7 @@ public @interface GenerateSynchronizedProperty {
             final @Nonnull FiniteIterable<@Nonnull TypeMirror> valueTypes;
             final @Nonnull FiniteIterable<@Nonnull String> externallyProvidedTypes;
             
-            if (!propertyType.startsWith("Map")) {
-                qualifiedKeyConverterName = null;
-                final @Nonnull TypeMirror valueType = returnTypeArguments.get(1);
-                final @Nonnull String simpleValueTypeName = ProcessingUtility.getSimpleName(valueType);
-                final @Nonnull String qualifiedValueTypeName = ProcessingUtility.getQualifiedName(valueType);
-                if (qualifiedValueTypeName.startsWith("java.lang.")) {
-                    qualifiedValueConverterName = "net.digitalid.utility.conversion.converters." + simpleValueTypeName + "Converter";
-                } else {
-                    qualifiedValueConverterName = qualifiedValueTypeName + "Converter";
-                }
-                valueTypes = FiniteIterable.of(valueType);
-                
-                // TODO: The following code does not yet work for value converters that do not yet exist (i.e. will be generated in the same round).
-                final @Nullable TypeElement valueConverterElement = StaticProcessingEnvironment.getElementUtils().getTypeElement(qualifiedValueConverterName);
-                if (valueConverterElement == null) { ProcessingLog.warning("No type element was found for $, which might be because that type will only be generated in this round.", valueConverterElement); }
-                final @Nullable DeclaredType valueConverterType = valueConverterElement == null ? null : ProcessingUtility.getSupertype((DeclaredType) valueConverterElement.asType(), Converter.class);
-                externallyProvidedTypes = FiniteIterable.of(getExternallyProvidedType(javaFileGenerator, simpleValueTypeName, valueConverterType));
-            } else {
+            if (propertyType.startsWith("Map")) {
                 final @Nonnull TypeMirror keyType = returnTypeArguments.get(1);
                 final @Nonnull String simpleKeyTypeName = ProcessingUtility.getSimpleName(keyType);
                 final @Nonnull String qualifiedKeyTypeName = ProcessingUtility.getQualifiedName(keyType);
@@ -149,6 +135,23 @@ public @interface GenerateSynchronizedProperty {
                 if (valueConverterElement == null) { ProcessingLog.warning("No type element was found for $, which might be because that type will only be generated in this round.", valueConverterElement); }
                 final @Nullable DeclaredType valueConverterType = valueConverterElement == null ? null : ProcessingUtility.getSupertype((DeclaredType) valueConverterElement.asType(), Converter.class);
                 externallyProvidedTypes = FiniteIterable.of(getExternallyProvidedType(javaFileGenerator, simpleKeyTypeName, keyConverterType), getExternallyProvidedType(javaFileGenerator, simpleValueTypeName, valueConverterType));
+            } else {
+                qualifiedKeyConverterName = null;
+                final @Nonnull TypeMirror valueType = returnTypeArguments.get(1);
+                final @Nonnull String simpleValueTypeName = ProcessingUtility.getSimpleName(valueType);
+                final @Nonnull String qualifiedValueTypeName = ProcessingUtility.getQualifiedName(valueType);
+                if (qualifiedValueTypeName.startsWith("java.lang.")) {
+                    qualifiedValueConverterName = "net.digitalid.utility.conversion.converters." + simpleValueTypeName + "Converter";
+                } else {
+                    qualifiedValueConverterName = qualifiedValueTypeName + "Converter";
+                }
+                valueTypes = FiniteIterable.of(valueType);
+                
+                // TODO: The following code does not yet work for value converters that do not yet exist (i.e. will be generated in the same round).
+                final @Nullable TypeElement valueConverterElement = StaticProcessingEnvironment.getElementUtils().getTypeElement(qualifiedValueConverterName);
+                if (valueConverterElement == null) { ProcessingLog.warning("No type element was found for $, which might be because that type will only be generated in this round.", valueConverterElement); }
+                final @Nullable DeclaredType valueConverterType = valueConverterElement == null ? null : ProcessingUtility.getSupertype((DeclaredType) valueConverterElement.asType(), Converter.class);
+                externallyProvidedTypes = FiniteIterable.of(getExternallyProvidedType(javaFileGenerator, simpleValueTypeName, valueConverterType));
             }
             
             final @Nonnull FiniteIterable<@Nonnull String> tableGenericTypes = FiniteIterable.of(coreSubjectType.getTypeArguments()).combine(FiniteIterable.of(subjectType)).combine(valueTypes).map(javaFileGenerator::importIfPossible).combine(externallyProvidedTypes).evaluate();
@@ -159,13 +162,13 @@ public @interface GenerateSynchronizedProperty {
             
             tableField.append(javaFileGenerator.importIfPossible(Nonnull.class));
             tableField.append(" ");
-            tableField.append(javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".Synchronized" + propertyType + "Table"));
+            tableField.append(javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".Synchronized" + nonSimplePropertyType + "Table"));
             tableField.append(tableGenericTypes.join(Brackets.POINTY));
             tableField.append(" ");
             tableField.append(upperCasePropertyName);
             tableField.append("_TABLE = ");
             
-            tableField.append(javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".Synchronized" + propertyType + "TableBuilder"));
+            tableField.append(javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".Synchronized" + nonSimplePropertyType + "TableBuilder"));
             tableField.append(".");
             tableField.append(tableGenericTypes.join(Brackets.POINTY));
             tableField.append("withName(");
@@ -209,12 +212,29 @@ public @interface GenerateSynchronizedProperty {
             propertyField.append(method.getName());
             propertyField.append(" = ");
             
-            propertyField.append(javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".WritableSynchronized" + propertyType + "Builder"));
+            propertyField.append(javaFileGenerator.importIfPossible(propertyPackage.replace("database", "core") + ".WritableSynchronized" + nonSimplePropertyType + "Builder"));
             propertyField.append(".<");
             propertyField.append(tableGenericTypes.limit(4).join());
-            if (propertyType.startsWith("Map")) { propertyField.append(propertyGenericTypes.skip(2).join(", ", "")); }
+            if (!propertyType.startsWith("Value")) {
+                if (propertyType.startsWith("Simple")) {
+                    if (nonSimplePropertyType.startsWith("Set")) {
+                        final @Nonnull String valueType = propertyGenericTypes.get(1);
+                        propertyField.append(", ReadOnlySet<").append(valueType).append(">, FreezableSet<").append(valueType).append(">");
+                    } else {
+                        final @Nonnull String keyType = propertyGenericTypes.get(1);
+                        final @Nonnull String valueType = propertyGenericTypes.get(2);
+                        propertyField.append(", ReadOnlyMap<").append(keyType).append(", ").append(valueType).append(">, FreezableMap<").append(keyType).append(", ").append(valueType).append(">");
+                    }
+                } else {
+                    propertyField.append(propertyGenericTypes.skip(2).join(", ", ""));
+                }
+            }
             propertyField.append(">withSubject(this)");
-            if (!propertyType.startsWith("Value") && method.hasAnnotation(Default.class)) { propertyField.append(".with").append(propertyType.substring(0, 3)).append(Brackets.inRound(method.getAnnotation(Default.class).value())); }
+            if (!propertyType.startsWith("Value")) {
+                if (method.hasAnnotation(Default.class)) { propertyField.append(".with").append(propertyType.substring(0, 3)).append(Brackets.inRound(method.getAnnotation(Default.class).value())); }
+                else if (nonSimplePropertyType.startsWith("Set")) { propertyField.append(".withSet(").append(javaFileGenerator.importIfPossible(FreezableLinkedHashSetBuilder.class)).append(".build())"); }
+                else if (nonSimplePropertyType.startsWith("Map")) { propertyField.append(".withMap(").append(javaFileGenerator.importIfPossible(FreezableLinkedHashMapBuilder.class)).append(".build())"); }
+            }
             propertyField.append(".withTable(");
             propertyField.append(upperCasePropertyName).append("_TABLE");
             propertyField.append(").build()");

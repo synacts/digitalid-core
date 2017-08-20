@@ -57,6 +57,7 @@ import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.node.context.Context;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.permissions.FreezableAgentPermissions;
@@ -214,12 +215,11 @@ public abstract class OpenAccount extends InternalAction implements CoreMethod<N
     @PureWithSideEffects
     @SuppressWarnings("unchecked")
     public void initialize(@Nonnull NonHostEntity entity) throws DatabaseException, RecoveryException {
-//        final @Nonnull Context context = Context.of(entity);
-//        context.createForActions(); // TODO: This should probably become part of the Context.of(entity) method.
-//        context.name().set("Root Context"); // TODO: The name should be stored in the database without synchronization.
+        final @Nonnull Context context = Context.of(entity);
+        ((WritableSynchronizedValueProperty<NonHostEntity, Long, Context, String>) context.name()).setWithoutSynchronization("Root Context");
         
         final @Nonnull ClientAgent clientAgent = ClientAgent.of(entity, getClientAgentKey());
-        final @Nonnull Restrictions restrictions = RestrictionsBuilder.withOnlyForClients(true).withAssumeRoles(true).withWriteToNode(true)/*.withNode(context)*/.build();
+        final @Nonnull Restrictions restrictions = RestrictionsBuilder.withOnlyForClients(true).withAssumeRoles(true).withWriteToNode(true).withNode(context).build();
         ((WritableSynchronizedMapProperty<NonHostEntity, Long, Agent, SemanticType, Boolean, ReadOnlyAgentPermissions, FreezableAgentPermissions>) clientAgent.permissions()).addWithoutSynchronization(FreezableAgentPermissions.GENERAL, Boolean.TRUE);
         ((WritableSynchronizedValueProperty<NonHostEntity, Long, Agent, Restrictions>) clientAgent.restrictions()).setWithoutSynchronization(restrictions);
         ((WritableSynchronizedValueProperty<NonHostEntity, Long, ClientAgent, Commitment>) clientAgent.commitment()).setWithoutSynchronization(getCommitment());

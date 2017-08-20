@@ -38,7 +38,7 @@ package net.digitalid.core.node;
 // * This class provides database access to the {@link AccessRequest access requests} of the core service.
 // */
 //@Stateless
-//final class AccessModule implements StateModule {
+final class AccessModule {// implements StateModule {
 //    
 //    /**
 //     * Stores an instance of this module.
@@ -154,5 +154,5 @@ package net.digitalid.core.node;
 //    }
 //    
 //    static { CoreService.SERVICE.add(MODULE); }
-//    
-//}
+    
+}

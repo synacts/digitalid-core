@@ -15,7 +15,6 @@ import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.initialization.annotations.Initialize;
-import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.math.modulo.Even;
@@ -25,7 +24,6 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.agent.Agent;
@@ -116,10 +114,8 @@ public abstract class ClientAgent extends Agent {
     @Recover
     @TODO(task = "The entry in the agent table should rather be created in the core subejct index.", date = "2017-08-19", author = Author.KASPAR_ETTER)
     public static @Nonnull ClientAgent of(@Nonnull NonHostEntity entity, @Even long key) throws DatabaseException {
-        Log.information("ClientAgent with key $", key);
         final @Nonnull ClientAgent clientAgent = ClientAgentSubclass.MODULE.getSubjectIndex().get(entity, key);
         SQL.insertOrReplace(ClientAgentSubclass.SUPER_MODULE.getSubjectTable(), clientAgent, clientAgent.getUnit());
-        Database.instance.get().commit(); // TODO: Remove again!
         return clientAgent;
     }
     

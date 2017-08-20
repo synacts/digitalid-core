@@ -62,7 +62,7 @@ package net.digitalid.core.node.context;
 // * What happens when a context is removed and an outgoing role or a client depends on one of its subcontexts (including itself)?
 // */
 //@Stateless
-//public final class ContextModule implements StateModule {
+public final class ContextModule {// implements StateModule {
 //    
 //    /* -------------------------------------------------- Module Initialization -------------------------------------------------- */
 //    
@@ -820,5 +820,5 @@ package net.digitalid.core.node.context;
 ////    }
 //    
 //    static { CoreService.SERVICE.add(MODULE); }
-//    
-//}
+    
+}

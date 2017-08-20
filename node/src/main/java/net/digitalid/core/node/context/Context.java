@@ -4,17 +4,25 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collections.set.FreezableLinkedHashSetBuilder;
 import net.digitalid.utility.collections.set.FreezableSet;
+import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Recover;
+import net.digitalid.utility.validation.annotations.math.modulo.Even;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.entity.NonHostEntity;
@@ -30,9 +38,15 @@ import net.digitalid.core.subject.annotations.GenerateSynchronizedProperty;
  * This class models the contexts for {@link Contact contacts}.
  */
 @Immutable
-// TODO: @GenerateSubclass
-@GenerateConverter
-public abstract class Context extends ExtendedNode {
+@GenerateSubclass
+@GenerateTableConverter(table = "unit_core_Context_Context") // TODO: How can we get the table name without adding the generated attribute table converter to the attribute core subject module?
+public abstract class Context extends Node implements ExtendedNode {
+    
+    /* -------------------------------------------------- Key -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public abstract @Nonnull @Even Long getKey();
     
     /* -------------------------------------------------- Root -------------------------------------------------- */
     
@@ -54,12 +68,13 @@ public abstract class Context extends ExtendedNode {
     /**
      * Stores the required authorization to change the password.
      */
-    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Context, String> NAME_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity, Long, Context, String>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Context, String> NAME = RequiredAuthorizationBuilder.<NonHostEntity, Long, Context, String>withRequiredRestrictionsToExecuteMethod((context, name) -> RestrictionsBuilder.withWriteToNode(true).withNode(context).build()).withRequiredRestrictionsToSeeMethod((context, name) -> RestrictionsBuilder.buildWithNode(context)).build();
     
     /**
      * Returns the name of this context.
      */
     @Pure
+    @Default("\"New Context\"")
     @GenerateSynchronizedProperty
     public abstract @Nonnull WritablePersistentValueProperty<Context, @Nonnull @MaxSize(50) String> name();
     
@@ -72,54 +87,60 @@ public abstract class Context extends ExtendedNode {
     /**
      * Stores the required authorization to change the subcontexts.
      */
-    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Context, Context> SUBCONTEXTS_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity, Long, Context, Context>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Context, Context> SUBCONTEXTS = RequiredAuthorizationBuilder.<NonHostEntity, Long, Context, Context>withRequiredRestrictionsToExecuteMethod((context, subcontext) -> RestrictionsBuilder.withWriteToNode(true).withNode(context).build()).withRequiredRestrictionsToSeeMethod((context, subcontext) -> RestrictionsBuilder.buildWithNode(context)).build();
     
     /**
      * Returns the direct subcontexts of this context.
      */
-    @Pure
-    @GenerateSynchronizedProperty
-    public abstract @Nonnull WritablePersistentSimpleSetProperty<Context, /* TODO: @Matching */ Context> subcontexts();
+    // TODO: The generated foreign key reference is still wrong because it does not include the provided entity and gets the column name wrong.
+//    @Pure
+//    @GenerateSynchronizedProperty
+//    @TODO(task = "Support simple synchronized set properties?", date = "2017-08-20", author = Author.KASPAR_ETTER)
+//    public abstract @Nonnull WritablePersistentSetProperty<Context, /* TODO: @Matching */ Context, ReadOnlySet<Context>, FreezableSet<Context>> subcontexts();
     
     /**
      * Returns all subcontexts of this context (including this context).
      */
     @Pure
     @NonCommitting
-    public @Nonnull @Capturable @NonFrozen FreezableSet<Context> getAllSubcontexts() throws DatabaseException {
-        // TODO: Either retrieve all subcontexts by traversing the direct subcontexts or querying the database.
-        throw new RuntimeException("TODO");
+    @TODO(task = "Either retrieve all subcontexts by traversing the direct subcontexts or querying the database.", date = "2017-08-20", author = Author.KASPAR_ETTER)
+    public @Capturable @Nonnull @NonFrozen FreezableSet<Context> getAllSubcontexts() throws DatabaseException {
+        throw new UnsupportedOperationException();
     }
     
     @Pure
     @Override
     @NonCommitting
+    @TODO(task = "Probably replace with a simple database query.", date = "2017-08-20", author = Author.KASPAR_ETTER)
     public boolean isSupernodeOf(@Nonnull Node node) throws DatabaseException {
-        // TODO: Probably replace with a simple database query.
         return getAllSubcontexts().contains(node);
     }
     
     /* -------------------------------------------------- Contacts -------------------------------------------------- */
     
     /**
-     * Stores the required authorization to change the subcontexts.
+     * Stores the required authorization to change the contacts.
      */
-    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Context, Contact> CONTACTS_AUTHORIZATION = RequiredAuthorizationBuilder.<NonHostEntity, Long, Context, Contact>withRequiredRestrictionsToExecuteMethod((concept, value) -> RestrictionsBuilder.withWriteToNode(true).withNode(concept).build()).withRequiredRestrictionsToSeeMethod((concept, value) -> RestrictionsBuilder.withNode(concept).build()).build();
+    static final @Nonnull RequiredAuthorization<NonHostEntity, Long, Context, Contact> CONTACTS = RequiredAuthorizationBuilder.<NonHostEntity, Long, Context, Contact>withRequiredRestrictionsToExecuteMethod((context, contact) -> RestrictionsBuilder.withWriteToNode(true).withNode(context).build()).withRequiredRestrictionsToSeeMethod((context, contact) -> RestrictionsBuilder.buildWithNode(context)).build();
     
     /**
      * Returns the direct contacts of this context.
      */
-    @Pure
-    @GenerateSynchronizedProperty
-    public abstract @Nonnull WritablePersistentSimpleSetProperty<Context, /* TODO: @Matching */ Contact> contacts();
+    // TODO: The generated foreign key reference is still wrong because it does not include the provided entity and gets the column name wrong.
+//    @Pure
+//    @GenerateSynchronizedProperty
+//    @TODO(task = "Support simple synchronized set properties?", date = "2017-08-20", author = Author.KASPAR_ETTER)
+//    public abstract @Nonnull WritablePersistentSetProperty<Context, /* TODO: @Matching */ Contact, ReadOnlySet<Contact>, FreezableSet<Contact>> contacts();
     
     /**
-     * Returns all the contacts of this context (i.e. including the contacts from subcontexts).
+     * Returns all the contacts of this context (including the contacts from subcontexts).
      */
     @Pure
     @NonCommitting
+    @TODO(task = "Make a real aggregation.", date = "2017-08-20", author = Author.KASPAR_ETTER)
     public @Capturable @Nonnull @NonFrozen FreezableSet<Contact> getAllContacts() throws DatabaseException, RecoveryException {
-        return contacts().get().clone(); // TODO: Make a real aggregation.
+        return FreezableLinkedHashSetBuilder.build();
+//        return contacts().get().clone();
     }
     
     /**
@@ -131,30 +152,15 @@ public abstract class Context extends ExtendedNode {
         return getAllContacts().contains(contact);
     }
     
-    /* -------------------------------------------------- Creation -------------------------------------------------- */
+    /* -------------------------------------------------- Supercontexts -------------------------------------------------- */
     
-    // TODO: Think about how to synchronize the creation of contexts.
-    
-//    /**
-//     * Creates a new context at the given role.
-//     * 
-//     * @param role the role to which the context belongs.
-//     */
-//    public static @Nonnull Context create(@Nonnull Role role) {
-//        final @Nonnull Context context = get(role, new Random().nextLong());
-////        Synchronizer.execute(new ContextCreate(context));
-//        return context;
-//    }
-//    
-//    /**
-//     * Creates this context in the database.
-//     */
-//    @NonCommitting
-//    @OnlyForActions
-//    public void createForActions() throws DatabaseException {
-//        ContextModule.create(this);
-//        notify(CREATED);
-//    }
+    @Pure
+    @Override
+    @NonCommitting
+    @TODO(task = "Implement.", date = "2017-08-20", author = Author.KASPAR_ETTER)
+    public @Nonnull @NonFrozen @NonNullableElements ReadOnlySet<Context> getSupercontexts() throws DatabaseException, RecoveryException {
+        return FreezableLinkedHashSetBuilder.build();
+    }
     
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
@@ -163,15 +169,18 @@ public abstract class Context extends ExtendedNode {
      */
     @Pure
     @Recover
-    public static @Nonnull Context of(@Nonnull NonHostEntity entity, long key) {
-        return null; // TODO
+    @TODO(task = "The entry in the node table should rather be created in the core subejct index.", date = "2017-08-20", author = Author.KASPAR_ETTER)
+    public static @Nonnull Context of(@Nonnull NonHostEntity entity, @Even long key) throws DatabaseException {
+        final @Nonnull Context context = ContextSubclass.MODULE.getSubjectIndex().get(entity, key);
+        SQL.insertOrReplace(ContextSubclass.SUPER_MODULE.getSubjectTable(), context, context.getUnit());
+        return context;
     }
     
     /**
      * Returns the potentially cached root context of the given entity that might not yet exist in the database.
      */
     @Pure
-    public static @Nonnull Context of(@Nonnull NonHostEntity entity) {
+    public static @Nonnull Context of(@Nonnull NonHostEntity entity) throws DatabaseException {
         return of(entity, ROOT);
     }
     

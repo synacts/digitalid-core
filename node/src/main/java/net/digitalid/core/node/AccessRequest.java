@@ -41,7 +41,7 @@ package net.digitalid.core.node;
 // * Requests the given permissions of the given subject.
 // */
 //@Immutable
-//public final class AccessRequest extends CoreServiceExternalAction {
+public final class AccessRequest {// extends CoreServiceExternalAction {
 //    
 //    /**
 //     * Stores the semantic type {@code request.access@core.digitalid.net}.
@@ -231,5 +231,5 @@ package net.digitalid.core.node;
 //        }
 //        
 //    }
-//    
-//}
+    
+}
