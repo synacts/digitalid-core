@@ -96,21 +96,8 @@
         </dependency>
         
         <dependency>
-            <groupId>net.digitalid.utility</groupId>
-            <artifactId>utility-all</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        
-        <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-testing</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.digitalid.utility</groupId>
-            <artifactId>utility-testing</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
