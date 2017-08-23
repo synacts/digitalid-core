@@ -43,7 +43,7 @@ public abstract class RequestExceptionReply extends QueryReply<Entity> implement
     @PureWithSideEffects
     @Initialize(target = Request.class, dependencies = {IdentifierResolver.class, TypeLoader.class})
     public static void initializeType() throws ExternalException {
-        TYPE.ensureLoaded();
+//        TYPE.ensureLoaded(); // TODO: Is it necessary that the type is loaded?
     }
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
