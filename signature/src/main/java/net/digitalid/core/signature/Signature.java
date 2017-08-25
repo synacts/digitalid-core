@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -25,6 +26,9 @@ import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifierConverter;
 import net.digitalid.core.parameters.Parameters;
 import net.digitalid.core.signature.client.ClientSignature;
+import net.digitalid.core.signature.exceptions.ExpiredSignatureException;
+import net.digitalid.core.signature.exceptions.ExpiredSignatureExceptionBuilder;
+import net.digitalid.core.signature.exceptions.InvalidSignatureException;
 import net.digitalid.core.signature.host.HostSignature;
 
 /**
@@ -38,6 +42,13 @@ import net.digitalid.core.signature.host.HostSignature;
 @GenerateBuilder
 @GenerateSubclass
 public abstract class Signature<@Unspecifiable OBJECT> extends RootClass {
+    
+    /* -------------------------------------------------- Object Converter -------------------------------------------------- */
+    
+    /**
+     * Returns the object converter that is used to calculate the client signature content hash.
+     */
+    protected abstract @Nonnull Converter<OBJECT, Void> getObjectConverter();
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
     
@@ -94,5 +105,17 @@ public abstract class Signature<@Unspecifiable OBJECT> extends RootClass {
                 throw UncheckedExceptionBuilder.withCause(exception).build();
             }
     }
+    
+    /* -------------------------------------------------- Expiration -------------------------------------------------- */
+    
+    protected void checkExpiration() throws ExpiredSignatureException {
+        if (getTime().isLessThan(Time.TROPICAL_YEAR.ago())) {
+            throw ExpiredSignatureExceptionBuilder.withSignature(this).build();
+        }
+    }
+    
+    /* -------------------------------------------------- Verification -------------------------------------------------- */
+    
+    public abstract void verifySignature() throws InvalidSignatureException, ExpiredSignatureException, RecoveryException;
     
 }

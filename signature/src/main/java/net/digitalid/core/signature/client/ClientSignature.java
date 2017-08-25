@@ -1,6 +1,5 @@
 package net.digitalid.core.signature.client;
 
-import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
@@ -9,26 +8,17 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.conversion.interfaces.Converter;
-import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.time.Time;
-import net.digitalid.utility.time.TimeConverter;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.core.commitment.Commitment;
-import net.digitalid.core.conversion.encoders.MemoryEncoder;
-import net.digitalid.core.conversion.exceptions.MemoryException;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
-import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.identification.identifier.InternalIdentifierConverter;
 import net.digitalid.core.parameters.Parameters;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.exceptions.ExpiredSignatureException;
-import net.digitalid.core.signature.exceptions.ExpiredSignatureExceptionBuilder;
 import net.digitalid.core.signature.exceptions.InvalidSignatureException;
 import net.digitalid.core.signature.exceptions.InvalidSignatureExceptionBuilder;
 
@@ -39,21 +29,6 @@ import net.digitalid.core.signature.exceptions.InvalidSignatureExceptionBuilder;
 @GenerateBuilder
 @GenerateSubclass
 public abstract class ClientSignature<@Unspecifiable OBJECT> extends Signature<OBJECT> {
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * The object converter is used to calculate the client signature content hash.
-     */
-    private final @Nonnull Converter<OBJECT, Void> objectConverter;
-    
-    /**
-     * Constructs a host signature instance with the given object converter. The object converter
-     * is used to calculate the client signature content hash.
-     */
-    protected ClientSignature(@Nonnull Converter<OBJECT, Void> objectConverter) {
-        this.objectConverter = objectConverter;
-    }
     
     /* -------------------------------------------------- Commitment -------------------------------------------------- */
     
@@ -82,7 +57,7 @@ public abstract class ClientSignature<@Unspecifiable OBJECT> extends Signature<O
      */
     @Pure
     protected @Nullable BigInteger deriveClientSignatureContentHash() {
-        return Signature.getContentHash(getTime(), getSubject(), objectConverter, getObject());
+        return Signature.getContentHash(getTime(), getSubject(), getObjectConverter(), getObject());
     }
     
     /**
@@ -108,10 +83,9 @@ public abstract class ClientSignature<@Unspecifiable OBJECT> extends Signature<O
      * Verifies the client signature by checking whether the received t = h(au^s * f^(t xor h(content))).
      */
     @Pure
+    @Override
     public void verifySignature() throws InvalidSignatureException, ExpiredSignatureException {
-        if (getTime().isLessThan(Time.TROPICAL_YEAR.ago())) {
-            throw ExpiredSignatureExceptionBuilder.withSignature(this).build();
-        }
+        checkExpiration();
         
         final @Nonnull BigInteger h = getT().xor(getClientSignatureContentHash());
         final @Nonnull Element value = getCommitment().getPublicKey().getAu().pow(getS()).multiply(getCommitment().getElement().pow(h));

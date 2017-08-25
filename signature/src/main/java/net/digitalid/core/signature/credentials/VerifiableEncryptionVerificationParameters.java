@@ -19,15 +19,15 @@ import net.digitalid.core.group.Exponent;
 @GenerateBuilder
 @GenerateSubclass
 @TODO(task = "This was named 'array' in the old code, which is a terrible name that describes a data structure and not the object. Please rename.", assignee = Author.KASPAR_ETTER, author = Author.STEPHANIE_STROKA, date = "2017-08-16")
-public abstract class VerifiableEncryptionParameters {
+public abstract class VerifiableEncryptionVerificationParameters {
     
     @Pure
-    public abstract @Nonnull Element getAo();
+    public abstract @Nonnull Element verificationElement();
     
     @Pure
-    public abstract @Nullable Pair<Exponent, Exponent> getTwi();
+    public abstract @Nullable Pair<Element, Element> verificationForSerial();
 
     @Pure
-    public abstract @Nullable Pair<Exponent, Exponent> getTwb();
+    public abstract @Nullable Pair<Exponent, Exponent> verificationForBlindingValue();
     
 }

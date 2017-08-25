@@ -76,4 +76,9 @@ public abstract class Parameters {
         });
     }
     
+    /**
+     * The size of the computed hash. Must fit the hash function defined above.
+     */
+    public static final @Nonnull Configuration<Integer> HASH_SIZE = Configuration.with(256);
+    
 }

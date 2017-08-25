@@ -8,6 +8,9 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 
+import net.digitalid.core.credential.utility.ExposedExponent;
+import net.digitalid.core.credential.utility.SaltedAgentPermissions;
+import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
 
 /**
@@ -18,11 +21,11 @@ import net.digitalid.core.group.Exponent;
 @GenerateConverter
 public abstract class PublicClientCredential {
     
-    /**
-     * Returns the hash of the exposed exponent.
-     */
     @Pure
-    public abstract @Nonnull Exponent getO();
+    public abstract @Nonnull ExposedExponent getExposedExponent();
+    
+    @Pure
+    public abstract @Nonnull Element getC();
     
     @Pure
     public abstract @Nonnull Exponent getSe();
@@ -31,11 +34,15 @@ public abstract class PublicClientCredential {
     public abstract @Nonnull Exponent getSb();
     
     @Pure
+    public abstract @Nullable SaltedAgentPermissions getSaltedAgentPermissions();
+    
+    @Pure
     public abstract @Nullable Exponent getI();
     
     @Pure
     public abstract @Nullable Exponent getSi();
     
     @Pure
-    public abstract @Nullable VerifiableEncryptionParameters getVerifiableEncryptionParameters();
+    public abstract @Nullable VerifiableEncryption getVerifiableEncryption();
+    
 }
