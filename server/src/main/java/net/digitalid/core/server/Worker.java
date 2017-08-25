@@ -102,14 +102,14 @@ public abstract class Worker implements Runnable {
                     method = MethodIndex.get(signedMethod, account);
                     reply = method.executeOnHost();
                     
-                    Database.instance.get().commit();
+                    Database.commit();
                 } catch (@Nonnull InternalException exception) {
                     throw RequestExceptionBuilder.withCode(RequestErrorCode.INTERNAL).withMessage("An internal problem occurred.").withCause(exception).build();
                 } catch (@Nonnull ExternalException exception) {
                     throw RequestExceptionBuilder.withCode(RequestErrorCode.EXTERNAL).withMessage("An external problem occurred.").withCause(exception).build();
                 }
             } catch (@Nonnull RequestException exception) {
-                Database.instance.get().rollback();
+                Database.rollback();
                 Log.warning("A request error occurred:", exception);
                 reply = RequestExceptionReplyBuilder.withRequestException(exception.isDecoded() ? RequestExceptionBuilder.withCode(RequestErrorCode.REQUEST).withMessage("Another server responded with a request error.").withCause(exception).build() : exception).build();
             }
@@ -118,7 +118,7 @@ public abstract class Worker implements Runnable {
             final @Nonnull Compression<Pack> compressedReply = CompressionBuilder.withObject(reply.pack()).build();
             
             // The reply.pack() statement maps the semantic type of the reply converter, which results in a concurrent update if the client unpacks the response with the same database. The following commit prevents this. However, it is a suboptimal fix for this problem.
-            try { Database.instance.get().commit(); } catch (@Nonnull DatabaseException exception) { Database.instance.get().rollback(); }
+            try { Database.commit(); } catch (@Nonnull DatabaseException exception) { Database.rollback(); }
             
             final @Nonnull Signature<Compression<Pack>> signedReply;
             if (encryptedMethod != null && signedMethod != null) {

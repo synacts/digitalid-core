@@ -51,7 +51,7 @@ public abstract class Synchronizer extends Thread {
             throw UncheckedExceptionBuilder.withCause(exception).build();
         }
         
-        Database.instance.get().commit();
+        Database.commit();
         Thread.yield();
     }
     

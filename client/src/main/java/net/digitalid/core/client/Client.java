@@ -195,7 +195,7 @@ public abstract class Client extends CoreUnit {
     public void rotateSecret() throws InterruptedException, ExternalException {
         final @Nonnull Exponent newSecret = ExponentBuilder.withValue(new BigInteger(Parameters.EXPONENT.get(), new SecureRandom())).build();
         final @Nonnull ReadOnlySet<NativeRole> roles = roles().get();
-        Database.instance.get().commit();
+        Database.commit();
         
         for (@Nonnull NativeRole role : roles) {
 //            final @Nonnull Commitment newCommitment = getCommitment(role.getIssuer().getAddress(), newSecret);

@@ -56,7 +56,7 @@ public abstract class CoreUnit extends RootClassWithException<ConversionExceptio
         
         Database.instance.get().execute(SQLCreateSchemaStatementBuilder.build(), this); // TODO: Make the Unit a class with a builder once it can be above the generator again and move this line to the initialize method there.
         MODULE.accept(table -> SQL.createTable(table, this));
-        Database.instance.get().commit();
+        Database.commit();
     }
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */

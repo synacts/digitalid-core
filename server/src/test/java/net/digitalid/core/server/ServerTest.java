@@ -134,7 +134,7 @@ public class ServerTest extends CoreTest {
         final @Nonnull NativeRole role = OpenAccount.of(Category.NATURAL_PERSON, identifier, client);
         
         final @Nonnull Attribute nameAttribute = Attribute.of(role, Name.TYPE);
-        Database.instance.get().commit(); // This is necessary because otherwise the type is mapped a second time.
+        Database.commit(); // This is necessary because otherwise the type is mapped a second time.
         
         final @Nonnull Name name = NameBuilder.withValue("Test Person").build();
         final @Nonnull Signature<Pack> signature = SignatureBuilder.withObject(name.pack()).withSubject(identifier).build();

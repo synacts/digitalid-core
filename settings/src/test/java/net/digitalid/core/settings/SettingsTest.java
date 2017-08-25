@@ -80,7 +80,7 @@ public class SettingsTest extends CoreTest {
         SQL.createTable(SettingsSubclass.MODULE.getSubjectTable(), UNIT);
         SettingsSubclass.MODULE.accept(table -> SQL.createTable(table, UNIT));
         SQL.insertOrAbort(NonHostEntityConverter.INSTANCE, ENTITY, UNIT);
-        Database.instance.get().commit();
+        Database.commit();
     }
     
     @Test
@@ -90,9 +90,9 @@ public class SettingsTest extends CoreTest {
             settings.password().set(PASSWORD_VALUE);
             settings.password().reset(); // Not necessary but I want to test the database state.
             assertThat(settings.password().get()).isEqualTo(PASSWORD_VALUE);
-            Database.instance.get().commit();
+            Database.commit();
         } catch (@Nonnull DatabaseException | RecoveryException exception) {
-            Database.instance.get().rollback();
+            Database.rollback();
             throw exception;
         }
     }

@@ -94,8 +94,6 @@ public abstract class Server {
     
     /* -------------------------------------------------- Main Method -------------------------------------------------- */
     
-    
-    
     /**
      * The main method starts the server with the configured hosts and shows the console.
      * 
