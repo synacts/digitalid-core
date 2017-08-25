@@ -108,6 +108,7 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
      */
     @Pure
     @Recover
+    @NonCommitting
     public static @Nonnull Attribute of(@Nonnull Entity entity, @Nonnull SemanticType key) throws DatabaseException {
         return AttributeSubclass.MODULE.getSubjectIndex().get(entity, key);
     }

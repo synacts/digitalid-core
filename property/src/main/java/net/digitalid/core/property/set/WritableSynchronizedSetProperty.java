@@ -25,6 +25,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.set.PersistentSetObserver;
 import net.digitalid.database.property.set.PersistentSetPropertyEntry;
 import net.digitalid.database.property.set.PersistentSetPropertyEntryBuilder;
@@ -66,8 +67,10 @@ public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY exte
     @Impure
     @Override
     @Committing
+    @LockNotHeldByCurrentThread
     public boolean add(@Captured @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
         if (get().contains(value)) {
+            Database.commit();
             return false;
         } else {
             Synchronizer.execute(SetPropertyInternalActionBuilder.withProperty(this).withValue(value).withAdded(true).build());
@@ -78,11 +81,13 @@ public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY exte
     @Impure
     @Override
     @Committing
+    @LockNotHeldByCurrentThread
     public boolean remove(@NonCaptured @Unmodified @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
         if (get().contains(value)) {
             Synchronizer.execute(SetPropertyInternalActionBuilder.withProperty(this).withValue(value).withAdded(false).build());
             return true;
         } else {
+            Database.commit();
             return false;
         }
     }
@@ -94,7 +99,8 @@ public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY exte
      * @return whether the given value was not already stored.
      */
     @Impure
-    @Committing
+    @NonCommitting
+    @LockNotHeldByCurrentThread
     public boolean addWithoutSynchronization(@Captured @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
         if (get().contains(value)) {
             return false;
@@ -111,7 +117,8 @@ public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY exte
      * @return whether the given value was not already stored.
      */
     @Impure
-    @Committing
+    @NonCommitting
+    @LockNotHeldByCurrentThread
     public boolean removeWithoutSynchronization(@NonCaptured @Unmodified @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
         if (get().contains(value)) {
             modify(value, false);

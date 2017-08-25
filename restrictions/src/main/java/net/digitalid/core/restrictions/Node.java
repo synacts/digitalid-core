@@ -67,6 +67,7 @@ public abstract class Node extends CoreServiceCoreSubject<NonHostEntity, Long> {
      */
     @Pure
     @Recover
+    @NonCommitting
     public static @Nonnull Node of(@Nonnull NonHostEntity entity, long key) throws DatabaseException {
         return NodeFactory.configuration.get().getAgent(entity, key);
     }

@@ -40,6 +40,8 @@ import net.digitalid.core.typeset.FreezableAttributeTypeSet;
 
 /**
  * This class caches the {@link AttributeValue attribute values} of {@link Identity identities} for the attribute-specific {@link SemanticType#getCachingPeriod() caching period}.
+ * 
+ * @see CacheQuery
  */
 @Utility
 public abstract class Cache {

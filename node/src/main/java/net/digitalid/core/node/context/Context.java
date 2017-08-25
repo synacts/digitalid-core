@@ -169,6 +169,7 @@ public abstract class Context extends Node implements ExtendedNode {
      */
     @Pure
     @Recover
+    @NonCommitting
     @TODO(task = "The entry in the node table should rather be created in the core subejct index.", date = "2017-08-20", author = Author.KASPAR_ETTER)
     public static @Nonnull Context of(@Nonnull NonHostEntity entity, @Even long key) throws DatabaseException {
         final @Nonnull Context context = ContextSubclass.MODULE.getSubjectIndex().get(entity, key);
@@ -180,6 +181,7 @@ public abstract class Context extends Node implements ExtendedNode {
      * Returns the potentially cached root context of the given entity that might not yet exist in the database.
      */
     @Pure
+    @NonCommitting
     public static @Nonnull Context of(@Nonnull NonHostEntity entity) throws DatabaseException {
         return of(entity, ROOT);
     }

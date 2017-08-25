@@ -30,6 +30,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.value.PersistentValueObserver;
 import net.digitalid.database.property.value.PersistentValuePropertyEntry;
 import net.digitalid.database.property.value.PersistentValuePropertyEntryBuilder;
@@ -61,7 +62,8 @@ public abstract class WritableSynchronizedValueProperty<@Unspecifiable ENTITY ex
     
     @Impure
     @Committing
-    protected @Capturable @Valid VALUE set(@Captured @Valid VALUE newValue, boolean synchronization) throws DatabaseException, RecoveryException {
+    @LockNotHeldByCurrentThread
+    protected @Capturable @Valid VALUE set(@Captured @Valid VALUE newValue, final boolean synchronization) throws DatabaseException, RecoveryException {
         final @Nonnull Pair<@Valid VALUE, @Nullable Time> valueWithTimeOfLastModification = getValueWithTimeOfLastModification();
         final @Valid VALUE oldValue = valueWithTimeOfLastModification.get0();
         if (!Objects.equals(newValue, oldValue)) {
@@ -69,13 +71,14 @@ public abstract class WritableSynchronizedValueProperty<@Unspecifiable ENTITY ex
             final @Nullable Time oldTime = valueWithTimeOfLastModification.get1();
             if (synchronization) { Synchronizer.execute(ValuePropertyInternalActionBuilder.withProperty(this).withOldValue(oldValue).withNewValue(newValue).withOldTime(oldTime).withNewTime(newTime).build()); }
             else { replace(oldTime, newTime, oldValue, newValue); }
-        }
+        } else if (synchronization) { Database.commit(); }
         return oldValue;
     }
     
     @Impure
     @Override
     @Committing
+    @LockNotHeldByCurrentThread
     public @Capturable @Valid VALUE set(@Captured @Valid VALUE newValue) throws DatabaseException, RecoveryException {
         return set(newValue, true);
     }
@@ -87,7 +90,8 @@ public abstract class WritableSynchronizedValueProperty<@Unspecifiable ENTITY ex
      * @return the old value of this property that got replaced by the given value.
      */
     @Impure
-    @Committing
+    @NonCommitting
+    @LockNotHeldByCurrentThread
     public @Capturable @Valid VALUE setWithoutSynchronization(@Captured @Valid VALUE newValue) throws DatabaseException, RecoveryException {
         return set(newValue, false);
     }

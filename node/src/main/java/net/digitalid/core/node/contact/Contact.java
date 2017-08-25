@@ -100,6 +100,7 @@ public abstract class Contact extends Node implements ExtendedNode {
      */
     @Pure
     @Recover
+    @NonCommitting
     public static @Nonnull Contact of(@Nonnull NonHostEntity entity, @Uneven long key) throws DatabaseException {
         final @Nonnull Contact contact = ContactSubclass.MODULE.getSubjectIndex().get(entity, key);
         SQL.insertOrReplace(ContactSubclass.SUPER_MODULE.getSubjectTable(), contact, contact.getUnit());
@@ -110,6 +111,7 @@ public abstract class Contact extends Node implements ExtendedNode {
      * Returns the potentially cached contact of the given entity for the given person that might not yet exist in the database.
      */
     @Pure
+    @NonCommitting
     @TODO(task = "Maybe we should still make person the key (and use e.g. negative values to denote contexts).", date = "2017-08-20", author = Author.KASPAR_ETTER)
     public static @Nonnull Contact of(@Nonnull NonHostEntity entity, @Nonnull Person person) throws DatabaseException {
         throw new UnsupportedOperationException();

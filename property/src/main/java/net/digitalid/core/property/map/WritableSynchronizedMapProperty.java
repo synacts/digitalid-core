@@ -27,6 +27,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.map.PersistentMapObserver;
 import net.digitalid.database.property.map.PersistentMapPropertyEntry;
 import net.digitalid.database.property.map.PersistentMapPropertyEntryBuilder;
@@ -68,8 +69,10 @@ public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY exte
     @Impure
     @Override
     @Committing
+    @LockNotHeldByCurrentThread
     public boolean add(@Captured @Nonnull @Valid("key") MAP_KEY key, @Captured @Nonnull @Valid MAP_VALUE value) throws DatabaseException, RecoveryException {
         if (get().containsKey(key)) {
+            Database.commit();
             return false;
         } else {
             Synchronizer.execute(MapPropertyInternalActionBuilder.withProperty(this).withKey(key).withValue(value).withAdded(true).build());
@@ -80,12 +83,14 @@ public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY exte
     @Impure
     @Override
     @Committing
+    @LockNotHeldByCurrentThread
     public @Capturable @Nullable @Valid MAP_VALUE remove(@NonCaptured @Unmodified @Nonnull @Valid("key") MAP_KEY key) throws DatabaseException, RecoveryException {
         if (get().containsKey(key)) {
             final @Nullable @Valid MAP_VALUE value = getMap().get(key);
             Synchronizer.execute(MapPropertyInternalActionBuilder.withProperty(this).withKey(key).withValue(value).withAdded(false).build());
             return value;
         } else {
+            Database.commit();
             return null;
         }
     }
@@ -97,7 +102,8 @@ public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY exte
      * @return {@code true} if the key-value pair was successfully added and {@code false} if the key was already in use.
      */
     @Impure
-    @Committing
+    @NonCommitting
+    @LockNotHeldByCurrentThread
     public boolean addWithoutSynchronization(@Captured @Nonnull @Valid("key") MAP_KEY key, @Captured @Nonnull @Valid MAP_VALUE value) throws DatabaseException, RecoveryException {
         if (get().containsKey(key)) {
             return false;
@@ -114,7 +120,8 @@ public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY exte
      * @return the value that was previously associated with the given key or null if the key was not in use.
      */
     @Impure
-    @Committing
+    @NonCommitting
+    @LockNotHeldByCurrentThread
     public @Capturable @Nullable @Valid MAP_VALUE removeWithoutSynchronization(@NonCaptured @Unmodified @Nonnull @Valid("key") MAP_KEY key) throws DatabaseException, RecoveryException {
         if (get().containsKey(key)) {
             final @Nullable @Valid MAP_VALUE value = getMap().get(key);

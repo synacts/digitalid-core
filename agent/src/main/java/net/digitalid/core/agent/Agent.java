@@ -160,6 +160,7 @@ public abstract class Agent extends CoreServiceCoreSubject<NonHostEntity, Long> 
      */
     @Pure
     @Recover
+    @NonCommitting
     public static @Nonnull Agent of(@Nonnull NonHostEntity entity, long key) throws DatabaseException {
         return AgentFactory.configuration.get().getAgent(entity, key);
     }

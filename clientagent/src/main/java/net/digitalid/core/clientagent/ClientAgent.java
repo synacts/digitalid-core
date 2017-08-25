@@ -112,6 +112,7 @@ public abstract class ClientAgent extends Agent {
      */
     @Pure
     @Recover
+    @NonCommitting
     @TODO(task = "The entry in the agent table should rather be created in the core subejct index.", date = "2017-08-19", author = Author.KASPAR_ETTER)
     public static @Nonnull ClientAgent of(@Nonnull NonHostEntity entity, @Even long key) throws DatabaseException {
         final @Nonnull ClientAgent clientAgent = ClientAgentSubclass.MODULE.getSubjectIndex().get(entity, key);

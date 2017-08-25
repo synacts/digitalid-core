@@ -20,6 +20,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.access.Access;
 import net.digitalid.database.access.Mode;
 import net.digitalid.database.access.annotations.SingleAccess;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 
@@ -79,6 +80,7 @@ public abstract class CoreSubjectIndex<@Unspecifiable ENTITY extends Entity, @Un
      * Returns the potentially cached core subject with the given entity and key after having inserted it into its database table.
      */
     @Pure
+    @NonCommitting
     public @Nonnull SUBJECT get(@Nonnull ENTITY entity, @Nonnull KEY key) throws DatabaseException {
         @Nullable SUBJECT subject;
         if (Access.mode.get() == Mode.SINGLE) {
