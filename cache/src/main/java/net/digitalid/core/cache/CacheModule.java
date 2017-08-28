@@ -195,7 +195,7 @@ public abstract class CacheModule {
         
         boolean found = false;
         @Nullable AttributeValue value = null;
-        if (decoder.moveToFirstRow()) {
+        if (decoder.moveToNextRow()) {
             found = true;
             do {
                 if (decoder.decodeBoolean()) {
