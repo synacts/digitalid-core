@@ -155,7 +155,7 @@ public abstract class CredentialsSignatureConverter<@Unspecifiable OBJECT> imple
         final @Nullable Element fPrime = decoder.decodeNullableObject(ElementConverter.INSTANCE, publicKey.getCompositeGroup());
         final @Nullable Exponent sbPrime = decoder.decodeNullableObject(ExponentConverter.INSTANCE, null);
         
-        final @Nonnull CredentialsSignature<OBJECT> clientSignature = CredentialsSignatureBuilder.withObject(object).withSubject(subject).withT(t).withSU(su).withCredentials(credentials).withCertificates(certificates).withSV(sv).withFPrime(fPrime).withSBPrime(sbPrime).withTime(time).build();
+        final @Nonnull CredentialsSignature<OBJECT> clientSignature = CredentialsSignatureBuilder.withObjectConverter(getObjectConverter()).withObject(object).withSubject(subject).withT(t).withSU(su).withCredentials(credentials).withCertificates(certificates).withSV(sv).withFPrime(fPrime).withSBPrime(sbPrime).withTime(time).build();
         return clientSignature;
     }
     

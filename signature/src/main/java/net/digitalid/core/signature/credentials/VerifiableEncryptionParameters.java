@@ -25,9 +25,9 @@ public abstract class VerifiableEncryptionParameters {
     public abstract @Nonnull Element getAo();
     
     @Pure
-    public abstract @Nullable Pair<Exponent, Exponent> getTwi();
+    public abstract @Nullable VerifiableEncryptionExponentPair getTwi();
 
     @Pure
-    public abstract @Nullable Pair<Exponent, Exponent> getTwb();
+    public abstract @Nullable VerifiableEncryptionExponentPair getTwb();
     
 }

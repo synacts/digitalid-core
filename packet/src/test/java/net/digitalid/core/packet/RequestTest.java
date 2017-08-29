@@ -50,7 +50,7 @@ public class RequestTest extends CoreTest {
         final @Nonnull String string = "Hello World!";
         final @Nonnull Pack content = Pack.pack(StringConverter.INSTANCE, string);
         final @Nonnull Compression<Pack> compression = CompressionBuilder.withObject(content).build();
-        final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObject(compression).withSubject(subject).build();
+        final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObjectConverter(CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).withObject(compression).withSubject(subject).build();
         final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = EncryptionBuilder.withObject(signature).withRecipient(HostIdentifier.DIGITALID).build();
         final @Nonnull Request request = RequestBuilder.withEncryption(encryption).build();
         final @Nonnull Pack pack = request.pack();
@@ -73,7 +73,7 @@ public class RequestTest extends CoreTest {
         final @Nonnull String string = "Hello World!";
         final @Nonnull Pack content = Pack.pack(StringConverter.INSTANCE, string);
         final @Nonnull Compression<Pack> compression = CompressionBuilder.withObject(content).build();
-        final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObject(compression).withSubject(subject).build();
+        final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObjectConverter(CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).withObject(compression).withSubject(subject).build();
         final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = EncryptionBuilder.withObject(signature).withRecipient(HostIdentifier.DIGITALID).build();
         final @Nonnull byte[] bytes = XDF.convert(encryptionConverter, encryption);
         
@@ -92,7 +92,7 @@ public class RequestTest extends CoreTest {
         final @Nonnull String string = "Hello World!";
         final @Nonnull Pack content = Pack.pack(StringConverter.INSTANCE, string);
         final @Nonnull Compression<Pack> compression = CompressionBuilder.withObject(content).build();
-        final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObject(compression).withSubject(subject).build();
+        final @Nonnull Signature<Compression<Pack>> signature = SignatureBuilder.withObjectConverter(CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).withObject(compression).withSubject(subject).build();
         final @Nonnull byte[] bytes = XDF.convert(signatureConverter, signature);
         
         final @Nonnull Signature<Compression<Pack>> recoveredSignature = XDF.recover(signatureConverter, null, bytes);

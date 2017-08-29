@@ -24,6 +24,7 @@ import net.digitalid.database.interfaces.Database;
 import net.digitalid.core.account.OpenAccount;
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionBuilder;
+import net.digitalid.core.compression.CompressionConverter;
 import net.digitalid.core.compression.CompressionConverterBuilder;
 import net.digitalid.core.conversion.exceptions.NetworkException;
 import net.digitalid.core.encryption.Encryption;
@@ -124,7 +125,7 @@ public abstract class Worker implements Runnable {
             if (encryptedMethod != null && signedMethod != null) {
                 signedReply = HostSignatureCreator.sign(compressedReply, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(signedMethod.getSubject()).as(encryptedMethod.getRecipient());
             } else {
-                signedReply = SignatureBuilder.withObject(compressedReply).withSubject(HostIdentifier.DIGITALID).build();
+                signedReply = SignatureBuilder.withObjectConverter(CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).withObject(compressedReply).withSubject(HostIdentifier.DIGITALID).build();
             }
             
             final @Nonnull Encryption<Signature<Compression<Pack>>> encryptedReply;

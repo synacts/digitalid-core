@@ -119,4 +119,16 @@ public abstract class HashedOrSaltedAgentPermissions extends RootClass {
         }
     }
     
+    /**
+     * Creates new hashed or salted permissions with the given permissions.
+     */
+    @Pure
+    public static @Nonnull HashedOrSaltedAgentPermissions with(@Nonnull SaltedAgentPermissions permissions, boolean exposed) {
+        if (exposed) {
+            return new HashedOrSaltedAgentPermissionsSubclass(permissions, null);
+        } else {
+            return new HashedOrSaltedAgentPermissionsSubclass(null, new BigInteger(1, XDF.hash(SaltedAgentPermissionsConverter.INSTANCE, permissions)));
+        }
+    }
+    
 }

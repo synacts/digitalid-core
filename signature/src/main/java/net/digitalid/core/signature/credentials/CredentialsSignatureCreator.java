@@ -15,7 +15,6 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
-import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
@@ -193,7 +192,7 @@ public abstract class CredentialsSignatureCreator {
                     rrwis[i] = ExponentBuilder.withValue(new BigInteger(Parameters.RANDOM_BLINDING_EXPONENT.get(), random)).build();
                     rrwbs[i] = ExponentBuilder.withValue(new BigInteger(Parameters.RANDOM_BLINDING_EXPONENT.get(), random)).build();
 
-                    verifiableEncryptionParametersBuilder.withRwi(Pair.of(ris[i], rrwis[i])).withRwb(Pair.of(rbs[i], rrwbs[i]));
+                    verifiableEncryptionParametersBuilder.withTwi(VerifiableEncryptionExponentPairBuilder.withElement0(ris[i]).withElement1(rrwis[i]).build()).withTwb(VerifiableEncryptionExponentPairBuilder.withElement0(rbs[i]).withElement1(rrwbs[i]).build());
                 }
 
                 ts.add(i, verifiableEncryptionParametersBuilder.build());
@@ -256,7 +255,7 @@ public abstract class CredentialsSignatureCreator {
                 sb_prime = null;
             }
             
-            return CredentialsSignatureBuilder.withObject(object).withSubject(subject).withT(t).withSU(su).withCredentials(publicClientCredentials.freeze()).withCertificates(certificates).withSV(sv).withSBPrime(sb_prime).withFPrime(f_prime).withRestrictions(restrictionsInCredentialSignature).withTime(time).build();
+            return CredentialsSignatureBuilder.withObjectConverter(objectConverter).withObject(object).withSubject(subject).withT(t).withSU(su).withCredentials(publicClientCredentials.freeze()).withCertificates(certificates).withSV(sv).withSBPrime(sb_prime).withFPrime(f_prime).withRestrictions(restrictionsInCredentialSignature).withTime(time).build();
         }
 
     }

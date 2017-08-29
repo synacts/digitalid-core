@@ -94,7 +94,9 @@ public abstract class InternalAction extends Action implements InternalMethod {
     @TODO(task = "Implement the checks.", date = "2017-08-15", author = Author.KASPAR_ETTER, priority = Priority.HIGH)
     public @Nullable @Matching ActionReply executeOnHost() throws RequestException, DatabaseException, RecoveryException {
         final @Nullable Signature<?> signature = getSignature();
-        if (signature instanceof CredentialsSignature<?> && !((CredentialsSignature<?>) signature).isLodged()) { throw RequestExceptionBuilder.withCode(RequestErrorCode.SIGNATURE).withMessage("The credentials signature of internal actions has to be lodged.").build(); }
+//        if (signature instanceof CredentialsSignature<?> && !((CredentialsSignature<?>) signature).isLodged()) {
+//            throw RequestExceptionBuilder.withCode(RequestErrorCode.SIGNATURE).withMessage("The credentials signature of internal actions has to be lodged.").build();
+//        }
         
 //        final @Nonnull ReadOnlyAgentPermissions presentPermissions;
 //        final @Nonnull Restrictions presentRestrictions;

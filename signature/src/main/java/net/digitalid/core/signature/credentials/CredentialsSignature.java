@@ -9,17 +9,26 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.collections.list.ReadOnlyListConverter;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
+import net.digitalid.utility.tuples.Pair;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
+import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.credential.HostCredential;
 import net.digitalid.core.credential.HostCredentialBuilder;
 import net.digitalid.core.group.Element;
+import net.digitalid.core.group.ElementConverter;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.parameters.Parameters;
@@ -69,7 +78,7 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
      */
     @Pure
     @Override
-    public void verifySignature() throws InvalidSignatureException, ExpiredSignatureException {
+    public void verifySignature() throws InvalidSignatureException, ExpiredSignatureException, RecoveryException {
 //        assert !isVerified() : "This signature is not verified.";
     
         
@@ -101,7 +110,7 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
             final @Nonnull HostCredential hostCredential = HostCredentialBuilder.withExposedExponent(publicClientCredential.getExposedExponent()).withI(publicClientCredential.getI()).build();
             hostCredentials.add(hostCredential);
         }
-        final @Nonnull FreezableList<VerifiableEncryptionParameters> ts = FreezableArrayList.withInitialCapacity(publicClientCredentials.size());
+        final @Nonnull FreezableList<VerifiableEncryptionVerificationParameters> verifiableEncryptionVerificationParametersList = FreezableArrayList.withInitialCapacity(publicClientCredentials.size());
         for (int i = 0; i < publicClientCredentials.size(); i++) {
             final @Nonnull PublicKey publicKey = hostCredentials.get(i).getExposedExponent().getPublicKey();
             final @Nonnull Exponent o = hostCredentials.get(i).getO();
@@ -146,7 +155,7 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
             
             shownElement = shownElement.inverse().multiply(publicKey.getAo().pow(o));
             
-            final @Nonnull VerifiableEncryptionParametersBuilder.InnerVerifiableEncryptionParametersBuilder verifiableEncryptionParametersBuilder = VerifiableEncryptionParametersBuilder.withAo(hiddenElement.multiply(shownElement.pow(getT())));
+            final @Nonnull VerifiableEncryptionVerificationParametersBuilder.InnerVerifiableEncryptionVerificationParametersBuilder verifiableEncryptionParametersBuilder = VerifiableEncryptionVerificationParametersBuilder.withVerificationElement(hiddenElement.multiply(shownElement.pow(getT())));
             
             if (publicClientCredential.getVerifiableEncryption() != null && si != null) {
                 final @Nonnull VerifiableEncryption verifiableEncryption = publicClientCredential.getVerifiableEncryption();
@@ -169,33 +178,49 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
                 final @Nonnull Element wbs1 = publicKey.getY().pow(swb).multiply(publicKey.getZPlus1().pow(sb)).multiply(publicKey.getSquareGroup().getElement(wbs.getElement0().getValue()).pow(getT()));
                 final @Nonnull Element wbs2 = publicKey.getG().pow(swb).multiply(publicKey.getSquareGroup().getElement(wbs.getElement1().getValue())).pow(getT());
                 
-//                verifiableEncryptionParametersBuilder.withTwb(Pair.of(wbs1, wbs2)).withTwi(Pair.of(wis1, wis2));
+                verifiableEncryptionParametersBuilder.withVerificationForBlindingValue(VerifiableEncryptionElementPairBuilder.withElement0(wbs1).withElement1(wbs2).build()).withVerificationForSerial(VerifiableEncryptionElementPairBuilder.withElement0(wis1).withElement1(wis2).build());
             }
             
-//            ts.add(i, verifiableEncryptionParametersBuilder.build());
+            verifiableEncryptionVerificationParametersList.add(verifiableEncryptionParametersBuilder.build());
         }
         
-//        @Nonnull BigInteger tf = BigInteger.ZERO;
-//        if (value != null) {
-//            assert publicKey != null : "If credentials are to be shortened, the public key of the receiving host is retrieved in the constructor.";
-//            final @Nonnull Exponent sb = new Exponent(signature.getElementNotNull(7));
-//            
-//            @Nonnull Element element = publicKey.getAu().pow(su).multiply(publicKey.getAb().pow(sb));
-//            if (sv != null) element = element.multiply(publicKey.getAv().pow(sv));
-//            tf = publicKey.getCompositeGroup().getElement(value).pow(t).multiply(element).toBlock().getHash();
-//        }
-//        
-//        if (!t.getValue().equals(hash.xor(new ListWrapper(ARRAYS, ts.freeze()).toBlock().getHash()).xor(tf))) throw new InvalidSignatureException("The credentials signature is invalid: The value t is not correct.");
-//        
-//        if (certificates != null) {
-//            for (final @Nonnull CertifiedAttributeValue certificate : certificates) {
-//                certificate.verify();
-//                certificate.checkIsValid(getTimeNotNull());
-//            }
-//        }
-//        
-//        Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
-//        
+        @Nonnull BigInteger tf = BigInteger.ZERO;
+        if (getFPrime() != null) {
+            final @Nonnull PublicKey publicKey;
+            try {
+                publicKey = PublicKeyRetriever.retrieve(getSubject().getHostIdentifier(), getTime());
+    
+            } catch (@Nonnull ExternalException exception) {
+                throw RecoveryExceptionBuilder.withMessage(Strings.format("Could not retrieve the public key of $.", getSubject().getHostIdentifier())).withCause(exception).build();
+            }
+            assert publicKey != null : "If credentials are to be shortened, the public key of the receiving host is retrieved in the constructor.";
+            final @Nonnull Exponent sb = getSBPrime();
+
+            @Nonnull Element element = publicKey.getAu().pow(getSU()).multiply(publicKey.getAb().pow(sb));
+            if (sv != null) element = element.multiply(publicKey.getAv().pow(sv));
+            final @Nonnull Element tfBeforeHash = publicKey.getCompositeGroup().getElement(getFPrime().getValue()).pow(getT()).multiply(element);
+            tf = new BigInteger(XDF.hash(ElementConverter.INSTANCE, tfBeforeHash));
+        }
+        final @Nonnull BigInteger hashOfVerificationParameters = new BigInteger(1, XDF.hash(ReadOnlyListConverter.INSTANCE, verifiableEncryptionVerificationParametersList.freeze()));
+
+        if (!getT().getValue().equals(hash.xor(hashOfVerificationParameters).xor(tf))) {
+            // The credentials signature is invalid: The value t is not correct.
+            throw InvalidSignatureExceptionBuilder.withSignature(this).build();
+        }
+//
+        if (getCertificates() != null) {
+            for (final @Nonnull CertifiedAttributeValue certificate : getCertificates()) {
+                try {
+                    certificate.verify();
+                    certificate.checkIsValid(getTime());
+                } catch (ExternalException e) {
+                    throw InvalidSignatureExceptionBuilder.withSignature(this).build();
+                }
+            }
+        }
+
+        Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
+
 //        setVerified();
     }
     

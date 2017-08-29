@@ -36,20 +36,6 @@ import net.digitalid.core.signature.exceptions.InvalidSignatureExceptionBuilder;
 @TODO(task = "I think the signing should not be part of the conversion. Otherwise, a signature (like a certificate) cannot be stored. Another solution might be to wrap signatures in packs so that their byte encoding can be accessed (or implement this here directly).", date = "2017-01-30", author = Author.KASPAR_ETTER)
 public abstract class HostSignature<@Unspecifiable OBJECT> extends Signature<OBJECT> {
     
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * The converter for the generic object.
-     */
-    private final @Nonnull Converter<OBJECT, Void> objectConverter;
-    
-    /**
-     * Constructs a host signature instance with the given object converter.
-     */
-    protected HostSignature(@Nonnull Converter<OBJECT, Void> objectConverter) {
-        this.objectConverter = objectConverter;
-    }
-    
     /* -------------------------------------------------- Signer -------------------------------------------------- */
     
     /**
@@ -74,7 +60,7 @@ public abstract class HostSignature<@Unspecifiable OBJECT> extends Signature<OBJ
      */
     @Pure
     public @Nonnull BigInteger deriveHostSignatureContentHash() {
-        return getContentHash(getTime(), getSubject(), objectConverter, getObject());
+        return getContentHash(getTime(), getSubject(), getObjectConverter(), getObject());
     }
     
     /**

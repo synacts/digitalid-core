@@ -15,11 +15,13 @@ import net.digitalid.utility.functional.failable.FailableUnaryFunction;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.compression.Compression;
+import net.digitalid.core.compression.CompressionConverterBuilder;
 import net.digitalid.core.credential.ClientCredential;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.pack.Pack;
+import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.SignatureBuilder;
@@ -54,7 +56,7 @@ public abstract class ExternalQuery<ENTITY extends Entity> extends Query<ENTITY>
     public @Nonnull Signature<@Nonnull Compression<@Nonnull Pack>> getSignature(@Nonnull Compression<@Nonnull Pack> compression) throws ExternalException {
         
             if (getAuthentications().isEmpty()) {
-                return SignatureBuilder.withObject(compression).withSubject(getSubject()).build();
+                return SignatureBuilder.withObjectConverter(CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).withObject(compression).withSubject(getSubject()).build();
             } else {
                 Require.that(getEntity() != null).orThrow("Entity must not be null");
                 final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissionsToExecuteMethod();

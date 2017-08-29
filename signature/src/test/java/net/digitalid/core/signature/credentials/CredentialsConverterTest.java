@@ -42,7 +42,7 @@ public class CredentialsConverterTest {
         final @Nonnull Exponent sv = ExponentBuilder.withValue(BigInteger.valueOf(3)).build();
         final @Nonnull Element fPrime = ElementBuilder.withGroup(GroupWithUnknownOrderBuilder.withModulus(BigInteger.valueOf(1)).build()).withValue(BigInteger.ONE).build();
         final @Nonnull Exponent sbPrime = ExponentBuilder.withValue(BigInteger.valueOf(5)).build();
-        final @Nonnull CredentialsSignature<String> signedMessage = CredentialsSignatureBuilder.withObject(message).withSubject(subject).withT(t).withSU(su).withCredentials(credentials).withCertificates(certificates).withSV(sv).withFPrime(fPrime).withSBPrime(sbPrime).withTime(time).build();
+        final @Nonnull CredentialsSignature<String> signedMessage = CredentialsSignatureBuilder.withObjectConverter(StringConverter.INSTANCE).withObject(message).withSubject(subject).withT(t).withSU(su).withCredentials(credentials).withCertificates(certificates).withSV(sv).withFPrime(fPrime).withSBPrime(sbPrime).withTime(time).build();
 
         final @Nonnull byte[] bytes = XDF.convert(CredentialsSignatureConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build(), signedMessage);
         assertThat(bytes.length).isPositive();

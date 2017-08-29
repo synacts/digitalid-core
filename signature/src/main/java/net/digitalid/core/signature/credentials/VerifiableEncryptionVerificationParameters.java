@@ -22,12 +22,12 @@ import net.digitalid.core.group.Exponent;
 public abstract class VerifiableEncryptionVerificationParameters {
     
     @Pure
-    public abstract @Nonnull Element verificationElement();
+    public abstract @Nonnull Element getVerificationElement();
     
     @Pure
-    public abstract @Nullable Pair<Element, Element> verificationForSerial();
+    public abstract @Nullable VerifiableEncryptionElementPair getVerificationForSerial();
 
     @Pure
-    public abstract @Nullable Pair<Exponent, Exponent> verificationForBlindingValue();
+    public abstract @Nullable VerifiableEncryptionElementPair getVerificationForBlindingValue();
     
 }

@@ -8,6 +8,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
@@ -48,7 +50,9 @@ public abstract class Signature<@Unspecifiable OBJECT> extends RootClass {
     /**
      * Returns the object converter that is used to calculate the client signature content hash.
      */
-    protected abstract @Nonnull Converter<OBJECT, Void> getObjectConverter();
+    @Pure
+    @TODO(task = "Make protected as soon as the subclass generator does not take protected fields into consideration in the equals and hashCode methods.", assignee = Author.STEPHANIE_STROKA, author = Author.STEPHANIE_STROKA, date = "2017-08-25")
+    public abstract @Nonnull Converter<OBJECT, Void> getObjectConverter();
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
     
@@ -108,6 +112,7 @@ public abstract class Signature<@Unspecifiable OBJECT> extends RootClass {
     
     /* -------------------------------------------------- Expiration -------------------------------------------------- */
     
+    @Pure
     protected void checkExpiration() throws ExpiredSignatureException {
         if (getTime().isLessThan(Time.TROPICAL_YEAR.ago())) {
             throw ExpiredSignatureExceptionBuilder.withSignature(this).build();
@@ -116,6 +121,9 @@ public abstract class Signature<@Unspecifiable OBJECT> extends RootClass {
     
     /* -------------------------------------------------- Verification -------------------------------------------------- */
     
-    public abstract void verifySignature() throws InvalidSignatureException, ExpiredSignatureException, RecoveryException;
+    @Pure
+    public void verifySignature() throws InvalidSignatureException, ExpiredSignatureException, RecoveryException {
+        checkExpiration();
+    }
     
 }

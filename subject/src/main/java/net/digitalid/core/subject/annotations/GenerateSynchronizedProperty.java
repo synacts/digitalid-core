@@ -158,7 +158,7 @@ public @interface GenerateSynchronizedProperty {
             final @Nonnull FiniteIterable<@Nonnull String> propertyGenericTypes = FiniteIterable.of(returnTypeArguments).map(javaFileGenerator::importIfPossible).evaluate();
             
             
-            final @Nonnull StringBuilder tableField = new StringBuilder("private static final @");
+            final @Nonnull StringBuilder tableField = new StringBuilder("static final @");
             
             tableField.append(javaFileGenerator.importIfPossible(Nonnull.class));
             tableField.append(" ");

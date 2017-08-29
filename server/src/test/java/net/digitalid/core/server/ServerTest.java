@@ -31,6 +31,7 @@ import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.pack.Pack;
+import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.server.handlers.TestQuery;
@@ -137,7 +138,7 @@ public class ServerTest extends CoreTest {
         Database.commit(); // This is necessary because otherwise the type is mapped a second time.
         
         final @Nonnull Name name = NameBuilder.withValue("Test Person").build();
-        final @Nonnull Signature<Pack> signature = SignatureBuilder.withObject(name.pack()).withSubject(identifier).build();
+        final @Nonnull Signature<Pack> signature = SignatureBuilder.withObjectConverter(PackConverter.INSTANCE).withObject(name.pack()).withSubject(identifier).build();
         
         nameAttribute.value().set(UncertifiedAttributeValue.with(signature));
         nameAttribute.visibility().set(PassiveExpressionBuilder.withEntity(role).withString("everybody").build());
