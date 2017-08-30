@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
@@ -18,6 +20,8 @@ import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.identification.identity.TypeLoader;
 import net.digitalid.core.packet.Request;
 
@@ -35,7 +39,8 @@ public abstract class RequestExceptionReply extends QueryReply<Entity> implement
     /**
      * Stores the semantic type of the {@link RequestExceptionReplyConverter}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map(RequestExceptionReplyConverter.INSTANCE);
+    @TODO(task = "Declare the type correctly.", date = "2017-08-30", author = Author.KASPAR_ETTER)
+    public static final @Nonnull SemanticType TYPE = SemanticType.map(RequestExceptionReplyConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build());
     
     /**
      * Makes sure that this class is loaded in the main thread.

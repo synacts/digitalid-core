@@ -31,6 +31,8 @@ import net.digitalid.core.encryption.RequestEncryption;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.symmetrickey.SymmetricKey;
@@ -346,9 +348,10 @@ public abstract class Request extends Packet {
      */
     @PureWithSideEffects
     @Initialize(target = Request.class, dependencies = IdentifierResolver.class)
-    public static void mapConverter() {
-        SemanticType.map(RequestConverter.INSTANCE);
-        SemanticType.map(ResponseConverter.INSTANCE);
+    @TODO(task = "Provide the correct parameters for the loading of the types.", date = "2017-08-30", author = Author.KASPAR_ETTER)
+    public static void mapConverters() {
+        SemanticType.map(RequestConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build());
+        SemanticType.map(ResponseConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build());
     }
     
     /* -------------------------------------------------- Sending -------------------------------------------------- */

@@ -6,14 +6,14 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.file.Files;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
-import net.digitalid.utility.validation.annotations.type.Mutable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.conversion.exceptions.FileException;
@@ -26,8 +26,9 @@ import net.digitalid.core.pack.Pack;
 /**
  * The public key chain loader loads and stores the public key chain of a host.
  */
-@Mutable
-public class PublicKeyChainLoader {
+@Immutable
+@GenerateSubclass
+public abstract class PublicKeyChainLoader {
     
     /* -------------------------------------------------- Interface -------------------------------------------------- */
     
@@ -54,8 +55,7 @@ public class PublicKeyChainLoader {
     /**
      * Sets the public key chain of the host with the given identifier.
      */
-    @Impure
-    @TODO(task = "Throw a net.digitalid.core.conversion.FileException instead.", date = "2016-12-14", author = Author.KASPAR_ETTER)
+    @PureWithSideEffects
     public void setPublicKeyChain(@Nonnull HostIdentifier identifier, @Nonnull PublicKeyChain publicKeyChain) throws FileException {
         final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier.getString() + ".public.xdf");
         Pack.pack(PublicKeyChainConverter.INSTANCE, publicKeyChain).storeTo(file);
@@ -66,7 +66,7 @@ public class PublicKeyChainLoader {
     /**
      * Stores the configured public key chain loader.
      */
-    public static final @Nonnull Configuration<PublicKeyChainLoader> configuration = Configuration.with(new PublicKeyChainLoader()).addDependency(Files.directory);
+    public static final @Nonnull Configuration<PublicKeyChainLoader> configuration = Configuration.<PublicKeyChainLoader>with(new PublicKeyChainLoaderSubclass()).addDependency(Files.directory);
     
     /* -------------------------------------------------- Static Access -------------------------------------------------- */
     

@@ -12,12 +12,16 @@ import net.digitalid.utility.console.Console;
 import net.digitalid.utility.console.Option;
 import net.digitalid.utility.console.exceptions.EscapeException;
 import net.digitalid.utility.console.exceptions.EscapeExceptionBuilder;
+import net.digitalid.utility.conversion.exceptions.ConversionException;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.logging.Version;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.host.Host;
+import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.service.Service;
 
@@ -155,13 +159,13 @@ abstract class Options {
                     string = Console.readString("Bad input! Please enter a valid host identifier: ", null);
                 }
                 final @Nonnull HostIdentifier identifier = HostIdentifier.with(string);
-                // TODO
-//                try {
-//                    new Host(identifier);
-//                } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-//                    Console.writeLine("Could not create the host " + identifier + " (" + exception + ").");
-//                    Database.rollback();
-//                }
+                try {
+                    HostBuilder.withIdentifier(identifier).build();
+                } catch (@Nonnull ConversionException exception) {
+                    Log.error("Could not create the host $.", exception, identifier);
+                    Console.writeLine("Could not create the host $ ($).", identifier, exception);
+                    Database.rollback();
+                }
             }
         }
         

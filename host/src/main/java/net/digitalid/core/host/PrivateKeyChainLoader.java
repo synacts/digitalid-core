@@ -6,16 +6,25 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.file.Files;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
-import net.digitalid.utility.validation.annotations.type.Mutable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.conversion.exceptions.FileException;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.IdentifierResolver;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.keychain.PrivateKeyChain;
 import net.digitalid.core.keychain.PrivateKeyChainConverter;
 import net.digitalid.core.keychain.PublicKeyChain;
@@ -24,8 +33,9 @@ import net.digitalid.core.pack.Pack;
 /**
  * The private key chain loader loads and stores the private key chain of a host.
  */
-@Mutable
-public class PrivateKeyChainLoader {
+@Immutable
+@GenerateSubclass
+public abstract class PrivateKeyChainLoader {
     
     /* -------------------------------------------------- Interface -------------------------------------------------- */
     
@@ -52,7 +62,7 @@ public class PrivateKeyChainLoader {
     /**
      * Sets the private key chain of the host with the given identifier.
      */
-    @Impure
+    @PureWithSideEffects
     public void setPrivateKeyChain(@Nonnull HostIdentifier identifier, @Nonnull PrivateKeyChain privateKeyChain) throws FileException {
         final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier.getString() + ".private.xdf");
         Pack.pack(PrivateKeyChainConverter.INSTANCE, privateKeyChain).storeTo(file);
@@ -63,7 +73,19 @@ public class PrivateKeyChainLoader {
     /**
      * Stores the configured private key chain loader.
      */
-    public static final @Nonnull Configuration<PrivateKeyChainLoader> configuration = Configuration.with(new PrivateKeyChainLoader()).addDependency(Files.directory);
+    public static final @Nonnull Configuration<PrivateKeyChainLoader> configuration = Configuration.<PrivateKeyChainLoader>with(new PrivateKeyChainLoaderSubclass()).addDependency(Files.directory);
+    
+    /* -------------------------------------------------- Type Mapping -------------------------------------------------- */
+    
+    /**
+     * Maps the converter with which a private key chain is unpacked.
+     */
+    @PureWithSideEffects
+    @Initialize(target = PrivateKeyChainLoader.class, dependencies = IdentifierResolver.class)
+    @TODO(task = "Provide the correct parameters for the loading of the type.", date = "2017-08-30", author = Author.KASPAR_ETTER)
+    public static void mapConverter() {
+        SemanticType.map(PrivateKeyChainConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build());
+    }
     
     /* -------------------------------------------------- Static Access -------------------------------------------------- */
     

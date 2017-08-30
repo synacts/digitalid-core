@@ -62,6 +62,7 @@ public abstract class IdentifierResolver {
     
     /**
      * Resolves the given identifier into an identity.
+     * Please note that the parameters of types are loaded during the resolution.
      */
     @Pure
     @NonCommitting

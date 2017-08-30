@@ -8,6 +8,8 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
@@ -26,6 +28,8 @@ import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.signature.Signature;
 
@@ -50,9 +54,11 @@ public abstract class MethodIndex {
      */
     @Impure
     @MainThread
+    @TODO(task = "Require that the type is already loaded instead of doing this pseudo-loading.", date = "2017-08-30", author = Author.KASPAR_ETTER)
     public static void add(@Nonnull Converter<? extends Method<?>, @Nonnull Pair<@Nullable Signature<Compression<Pack>>, @Nonnull Entity>> converter, @Nonnull SemanticType type) {
         Require.that(Threading.isMainThread()).orThrow("The method 'add' may only be called on the main thread.");
         
+        if (!type.isLoaded()) { type.load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build()); }
         Log.debugging("Registered a converter for the type $.", type);
         converters.put(type, converter);
     }

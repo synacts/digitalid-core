@@ -26,6 +26,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
+import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.role.NativeRole;
 import net.digitalid.core.client.role.Role;
@@ -88,7 +89,7 @@ public abstract class OpenAccount extends InternalAction implements CoreMethod<N
     /**
      * Stores the semantic type of this action.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map(OpenAccountConverter.INSTANCE);
+    public static final @Nonnull @Loaded SemanticType TYPE = SemanticType.map(OpenAccountConverter.INSTANCE);
     
     /* -------------------------------------------------- Entity -------------------------------------------------- */
     
