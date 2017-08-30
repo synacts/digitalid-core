@@ -8,9 +8,13 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.file.Files;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Mutable;
@@ -19,6 +23,10 @@ import net.digitalid.core.conversion.exceptions.FileException;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.group.ExponentConverter;
+import net.digitalid.core.identification.identity.IdentifierResolver;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.parameters.Parameters;
 
@@ -61,6 +69,18 @@ public class ClientSecretLoader {
      * Stores the configured client secret loader.
      */
     public static final @Nonnull Configuration<ClientSecretLoader> configuration = Configuration.with(new ClientSecretLoader()).addDependency(Files.directory);
+    
+    /* -------------------------------------------------- Type Mapping -------------------------------------------------- */
+    
+    /**
+     * Maps the converter with which a client secret is unpacked.
+     */
+    @PureWithSideEffects
+    @Initialize(target = ClientSecretLoader.class, dependencies = IdentifierResolver.class)
+    @TODO(task = "Provide the correct parameters for the loading of the type.", date = "2017-08-30", author = Author.KASPAR_ETTER)
+    public static void mapConverter() {
+        SemanticType.map(ExponentConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build());
+    }
     
     /* -------------------------------------------------- Static Access -------------------------------------------------- */
     
