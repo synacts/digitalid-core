@@ -1,6 +1,5 @@
 package net.digitalid.core.host;
 
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -39,6 +38,8 @@ import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.host.account.HostAccount;
+import net.digitalid.core.host.key.PrivateKeyChainLoader;
+import net.digitalid.core.host.key.PublicKeyChainLoader;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.HostIdentity;

@@ -1,4 +1,4 @@
 /**
- * Provides classes for handling hosts and their access.
+ * Provides the type that models a host.
  */
 package net.digitalid.core.host;

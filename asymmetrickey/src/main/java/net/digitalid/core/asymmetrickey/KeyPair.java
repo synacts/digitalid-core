@@ -12,6 +12,7 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.contracts.Validate;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -80,10 +81,15 @@ public class KeyPair extends RootClass {
     protected KeyPair() {
         final @Nonnull Random random = new SecureRandom();
         
-        // Determine a new RSA group with two inverse exponents and a random generator.
+        Log.debugging("Generating a new key pair of length " + Parameters.FACTOR.get() * Parameters.FACTOR.get());
+        
+        Log.verbose("Generating the safe prime 'p' of length " + Parameters.FACTOR.get());
         final @Nonnull BigInteger p = getSafePrime(Parameters.FACTOR.get(), random);
+        
+        Log.verbose("Generating the safe prime 'q' of length " + Parameters.FACTOR.get());
         final @Nonnull BigInteger q = getSafePrime(Parameters.FACTOR.get(), random);
         
+        Log.verbose("Calculating the modulus and order of the composite group.");
         final @Nonnull BigInteger pMinus1 = p.subtract(BigInteger.ONE);
         final @Nonnull BigInteger qMinus1 = q.subtract(BigInteger.ONE);
         
@@ -91,13 +97,14 @@ public class KeyPair extends RootClass {
         final @Nonnull BigInteger order = pMinus1.multiply(qMinus1);
         final @Nonnull GroupWithKnownOrder compositeGroup = GroupWithKnownOrderBuilder.withModulus(modulus).withOrder(order).build();
         
+        Log.verbose("Generating the encryption and decryption exponents.");
         final @Nonnull Exponent e = ExponentBuilder.withValue(BigInteger.valueOf(65_537)).build().getNextRelativePrime(compositeGroup);
         final @Nonnull Exponent d = e.inverse(compositeGroup);
         
+        Log.verbose("Generating the bases of the composite group.");
         @Nonnull Element ab = compositeGroup.getRandomElement();
         while (ab.pow(pMinus1).isOne() || ab.pow(qMinus1).isOne() || ab.pow(order.shiftRight(2)).isOne()) { ab = compositeGroup.getRandomElement(); }
         
-        // Determine the four other bases.
         final @Nonnull Exponent eu = compositeGroup.getRandomExponent();
         final @Nonnull Element au = ab.pow(eu);
         
@@ -110,7 +117,6 @@ public class KeyPair extends RootClass {
         final @Nonnull Exponent eo = compositeGroup.getRandomExponent();
         final @Nonnull Element ao = ab.pow(eo);
         
-        // Make a non-interactive proof of their correctness.
         final @Nonnull Exponent ru = compositeGroup.getRandomExponent();
         final @Nonnull Element tu = ab.pow(ru);
         
@@ -130,16 +136,21 @@ public class KeyPair extends RootClass {
         final @Nonnull Exponent sv = rv.subtract(t.multiply(ev));
         final @Nonnull Exponent so = ro.subtract(t.multiply(eo));
         
+        Log.verbose("Validating the proof that all bases are in the same subgroup.");
         Validate.that(tu.equals(ab.pow(su).multiply(au.pow(t))) && ti.equals(ab.pow(si).multiply(ai.pow(t))) && tv.equals(ab.pow(sv).multiply(av.pow(t))) && to.equals(ab.pow(so).multiply(ao.pow(t)))).orThrow("The non-interactive proof of the bases' correctness has to be valid.");
         
-        // Determine the values for the verifiable encryption.
+        Log.verbose("Generating the probable prime 'z' of length " + Parameters.VERIFIABLE_ENCRYPTION.get());
         final @Nonnull BigInteger z = BigInteger.probablePrime(Parameters.VERIFIABLE_ENCRYPTION.get(), random);
         final @Nonnull BigInteger zMinus1 = z.subtract(BigInteger.ONE);
         
+        Log.verbose("Calculating the modulus and order of the square group.");
         final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrderBuilder.withModulus(z.pow(2)).withOrder(z.multiply(zMinus1)).build();
+        
+        Log.verbose("Choosing the random element 'g' in the square group.");
         @Nonnull Element g = squareGroup.getRandomElement();
         while (g.pow(z).isOne() || g.pow(zMinus1).isOne()) { g = squareGroup.getRandomElement(); }
         
+        Log.verbose("Choosing the random exponent 'x' in the square group.");
         final @Nonnull Exponent x = squareGroup.getRandomExponent();
         final @Nonnull Element y = g.pow(x);
         final @Nonnull Element zPlus1 = squareGroup.getElement(z.add(BigInteger.ONE));
