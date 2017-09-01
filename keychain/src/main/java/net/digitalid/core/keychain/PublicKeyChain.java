@@ -18,7 +18,12 @@ import net.digitalid.utility.validation.annotations.order.StrictlyDescending;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.asymmetrickey.PublicKey;
+import net.digitalid.core.identification.identity.Category;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 
 /**
  * This class models a {@link KeyChain key chain} of {@link PublicKey public keys}.
@@ -27,6 +32,12 @@ import net.digitalid.core.asymmetrickey.PublicKey;
 @GenerateSubclass
 @GenerateConverter
 public abstract class PublicKeyChain extends KeyChain<PublicKey> {
+    
+    /**
+     * Stores the semantic type of the public key chain.
+     */
+    @TODO(task = "Declare the type correctly.", date = "2017-08-30", author = Author.KASPAR_ETTER)
+    public static final @Nonnull @Loaded SemanticType TYPE = SemanticType.map(PublicKeyChainConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).withCategories(Category.ONLY_HOST).withCachingPeriod(Time.TROPICAL_YEAR).build());
     
     /**
      * Returns a new key chain with the given time and key.

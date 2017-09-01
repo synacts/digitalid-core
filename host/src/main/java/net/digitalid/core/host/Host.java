@@ -1,5 +1,6 @@
 package net.digitalid.core.host;
 
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -13,13 +14,14 @@ import net.digitalid.utility.collections.collection.ReadOnlyCollection;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.conversion.exceptions.ConversionException;
-import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.property.value.ReadOnlyVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -29,18 +31,34 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.Committing;
 
 import net.digitalid.core.asymmetrickey.KeyPair;
+import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.client.Client;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.factories.HostFactory;
 import net.digitalid.core.exceptions.request.RequestErrorCode;
 import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
 import net.digitalid.core.host.account.HostAccount;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.HostIdentity;
+import net.digitalid.core.identification.identity.IdentifierResolver;
+import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.keychain.PrivateKeyChain;
 import net.digitalid.core.keychain.PublicKeyChain;
+import net.digitalid.core.pack.Pack;
+import net.digitalid.core.pack.PackConverter;
+import net.digitalid.core.property.value.WritableSynchronizedValueProperty;
 import net.digitalid.core.service.Service;
+import net.digitalid.core.signature.Signature;
+import net.digitalid.core.signature.SignatureBuilder;
+import net.digitalid.core.signature.attribute.AttributeValue;
+import net.digitalid.core.signature.attribute.CertifiedAttributeValue;
+import net.digitalid.core.signature.attribute.UncertifiedAttributeValue;
+import net.digitalid.core.signature.host.HostSignature;
+import net.digitalid.core.signature.host.HostSignatureCreator;
 import net.digitalid.core.unit.CoreUnit;
 
 /**
@@ -64,12 +82,14 @@ public abstract class Host extends CoreUnit {
     /* -------------------------------------------------- Identity -------------------------------------------------- */
     
     @Pure
-    @TODO(task = "Remove this method once derivation statements can throw exceptions", date = "2016-12-14", author = Author.KASPAR_ETTER)
-    @Nonnull HostIdentity deriveIdentity(@Nonnull HostIdentifier identifier) {
-        try {
-            return identifier.resolve();
-        } catch (@Nonnull ExternalException exception) {
-            throw new RuntimeException(exception);
+    @Nonnull HostIdentity deriveIdentity(@Nonnull HostIdentifier identifier) throws ConversionException {
+        final @Nonnull IdentifierResolver identifierResolver = IdentifierResolver.configuration.get();
+        final @Nullable Identity identity = identifierResolver.load(identifier);
+        if (identity != null) {
+            if (identity instanceof HostIdentity) { return (HostIdentity) identity; }
+            else { throw RecoveryExceptionBuilder.withMessage(Strings.format("The host identifier $ is not mapped to a host identity!", identifier)).build(); }
+        } else {
+            return (HostIdentity) identifierResolver.map(Category.HOST, identifier);
         }
     }
     
@@ -77,7 +97,7 @@ public abstract class Host extends CoreUnit {
      * Returns the identity of this host.
      */
     @Pure
-    @Derive("deriveIdentity(identifier)") // TODO: The identity has to be mapped and not resolved (Mapper.mapHostIdentity(identifier)).
+    @Derive("deriveIdentity(identifier)")
     public abstract @Nonnull HostIdentity getIdentity();
     
     /* -------------------------------------------------- Account -------------------------------------------------- */
@@ -98,7 +118,7 @@ public abstract class Host extends CoreUnit {
     
     /* -------------------------------------------------- Private Key -------------------------------------------------- */
     
-    protected final @Nonnull WritableVolatileValueProperty<@Nonnull PrivateKeyChain> protectedPrivateKeyChain = WritableVolatileValuePropertyBuilder.withValue((PrivateKeyChain) null /* TODO: PrivateKeyChainLoader.load(getIdentifier()) */).build();
+    protected final @Nonnull WritableVolatileValueProperty<@Nonnull PrivateKeyChain> protectedPrivateKeyChain = WritableVolatileValuePropertyBuilder.<PrivateKeyChain>withValue(null).build();
     
     /**
      * Stores the private key chain of this host.
@@ -107,7 +127,7 @@ public abstract class Host extends CoreUnit {
     
     /* -------------------------------------------------- Public Key -------------------------------------------------- */
     
-    protected final @Nonnull WritableVolatileValueProperty<@Nonnull PublicKeyChain> protectedPublicKeyChain = WritableVolatileValuePropertyBuilder.withValue((PublicKeyChain) null /* TODO: PublicKeyChainLoader.load(getIdentifier()) */).build();
+    protected final @Nonnull WritableVolatileValueProperty<@Nonnull PublicKeyChain> protectedPublicKeyChain = WritableVolatileValuePropertyBuilder.<PublicKeyChain>withValue(null).build();
     
     /**
      * Stores the public key chain of this host.
@@ -176,6 +196,7 @@ public abstract class Host extends CoreUnit {
     @Pure
     @Override
     @CallSuper
+    @SuppressWarnings("unchecked")
     protected void initialize() throws ConversionException {
         super.initialize();
         
@@ -184,22 +205,19 @@ public abstract class Host extends CoreUnit {
         
         hosts.put(getIdentifier(), this);
         
-        // TODO:
-//        try {
-//            final @Nonnull Attribute attribute = Attribute.of(getAccount(), PublicKeyChain.TYPE);
-//            if (attribute.value().get() == null) {
-//                final @Nonnull AttributeValue value;
-//                if (Server.hasHost(HostIdentifier.DIGITALID) || identifier.equals(HostIdentifier.DIGITALID)) {
-//                    // If the new host is running on the same server as 'core.digitalid.net', certify its public key immediately.
-//                    value = new CertifiedAttributeValue(publicKeyChain, identity, PublicKeyChain.TYPE);
-//                } else {
-//                    value = new UncertifiedAttributeValue(publicKeyChain);
-//                }
-//                attribute.value().set(value);
-//            }
-//        } catch (@Nonnull DatabaseException exception) {
-//            throw new RuntimeException(exception); // TODO
-//        }
+        final @Nonnull Attribute attribute = Attribute.of(getAccount(), PublicKeyChain.TYPE);
+        if (attribute.value().get() == null) {
+            final @Nonnull AttributeValue value;
+            if (exists(HostIdentifier.DIGITALID) || getIdentifier().equals(HostIdentifier.DIGITALID)) {
+                // If the new host is running on the same server as 'core.digitalid.net', certify its public key immediately.
+                final @Nonnull HostSignature<Pack> hostSignature = HostSignatureCreator.sign(publicKeyChain.get().pack(), PackConverter.INSTANCE).to(getIdentifier()).as(PublicKeyChain.TYPE.getAddress());
+                value = CertifiedAttributeValue.with(hostSignature);
+            } else {
+                final @Nonnull Signature<Pack> signature = SignatureBuilder.withObject(publicKeyChain.get().pack()).withSubject(getIdentifier()).build();
+                value = UncertifiedAttributeValue.with(signature);
+            }
+            ((WritableSynchronizedValueProperty<Entity, SemanticType, Attribute, AttributeValue>) attribute.value()).setWithoutSynchronization(value);
+        }
     }
     
     /* -------------------------------------------------- CoreUnit -------------------------------------------------- */

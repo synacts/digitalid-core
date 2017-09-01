@@ -1,6 +1,7 @@
 package net.digitalid.core.pack;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.Socket;
 
 import javax.annotation.Nonnull;
@@ -11,6 +12,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.ownership.Shared;
+import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.conversion.converters.StringConverter;
@@ -23,6 +25,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.conversion.exceptions.FileException;
+import net.digitalid.core.conversion.exceptions.MemoryException;
 import net.digitalid.core.conversion.exceptions.NetworkException;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.identification.identity.SyntacticType;
@@ -78,6 +81,17 @@ public abstract class Pack {
     /* -------------------------------------------------- Load -------------------------------------------------- */
     
     /**
+     * Loads a pack from the given input stream.
+     * <p>
+     * If the input stream comes from a file, use {@link #loadFrom(java.io.File)} instead.
+     * If the input stream comes from a socket, use {@link #loadFrom(java.net.Socket)} instead.
+     */
+    @Pure
+    public static @Nonnull Pack loadFrom(@NonCaptured @Modified @Nonnull InputStream inputStream) throws RecoveryException, MemoryException {
+        return XDF.recover(PackConverter.INSTANCE, null, inputStream);
+    }
+    
+    /**
      * Loads a pack from the given bytes.
      */
     @Pure
@@ -89,7 +103,7 @@ public abstract class Pack {
      * Loads a pack from the given file.
      */
     @Pure
-    public static @Nonnull Pack loadFrom(@Nonnull @Existent File file) throws FileException, RecoveryException {
+    public static @Nonnull Pack loadFrom(@Nonnull @Existent File file) throws RecoveryException, FileException {
         return XDF.recover(PackConverter.INSTANCE, null, file);
     }
     
@@ -97,7 +111,7 @@ public abstract class Pack {
      * Loads a pack from the given socket.
      */
     @Pure
-    public static @Nonnull Pack loadFrom(@Nonnull Socket socket) throws NetworkException, RecoveryException {
+    public static @Nonnull Pack loadFrom(@Nonnull Socket socket) throws RecoveryException, NetworkException {
         return XDF.recover(PackConverter.INSTANCE, null, socket);
     }
     

@@ -10,11 +10,19 @@
     <artifactId>core-keychain</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.core</groupId>
             <artifactId>core-asymmetrickey</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-pack</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
     </dependencies>
     
 </project>

@@ -1,5 +1,7 @@
 package net.digitalid.core.cache;
 
+import java.io.InputStream;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -8,10 +10,13 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.exceptions.ConversionException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
+import net.digitalid.utility.file.Files;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
@@ -48,17 +53,27 @@ import net.digitalid.database.interfaces.SQLDecoder;
 import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
 
+import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
+import net.digitalid.core.attribute.AttributePropertiesLoader;
 import net.digitalid.core.client.role.Role;
 import net.digitalid.core.client.role.RoleModule;
 import net.digitalid.core.handler.reply.Reply;
+import net.digitalid.core.host.Host;
+import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.annotations.AttributeType;
+import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.signature.attribute.AttributeValue;
 import net.digitalid.core.signature.attribute.AttributeValueConverter;
+import net.digitalid.core.signature.attribute.CertifiedAttributeValue;
+import net.digitalid.core.signature.host.HostSignature;
+import net.digitalid.core.signature.host.HostSignatureCreator;
 import net.digitalid.core.unit.GeneralUnit;
 
 /**
@@ -86,41 +101,34 @@ public abstract class CacheModule {
         SQL.createTable(CacheEntryConverter.INSTANCE, GeneralUnit.INSTANCE);
     }
     
-    /* -------------------------------------------------- Initialization -------------------------------------------------- */
+    /* -------------------------------------------------- Root Key -------------------------------------------------- */
     
     /**
      * Initializes the cache with the public key of {@code core.digitalid.net}.
      */
     @Committing
     @PureWithSideEffects
-    public static void initialize() {
-        // TODO: Think about how and where to load the public key of digitalid.net.
-        
-//        try {
-//            Database.lock();
-//            if (!getCachedAttributeValue(HostIdentity.DIGITALID, null, Time.MIN, PublicKeyChain.TYPE).getElement0()) {
-//                // Unless it is the root server, the program should have been delivered with the public key chain certificate of 'core.digitalid.net'.
-//                final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/net/digitalid/core/resources/core.digitalid.net.certificate.xdf");
-//                final @Nonnull AttributeValue value;
-//                if (inputStream != null) {
-//                    value = AttributeValue.get(SelfcontainedWrapper.decodeBlockFrom(inputStream, true).checkType(AttributeValue.TYPE), true);
-//                    Log.information("The public key chain of the root host was loaded from the provided resources.");
-//                } else {
-//                    // Since the public key chain of 'core.digitalid.net' is not available, the host 'core.digitalid.net' is created on this server.
-//                    final @Nonnull Host host = new Host(HostIdentifier.DIGITALID);
-//                    value = new CertifiedAttributeValue(host.getPublicKeyChain(), HostIdentity.DIGITALID, PublicKeyChain.TYPE);
-//                    final @Nonnull File certificateFile = new File(Directory.getHostsDirectory().getPath() + "/core.digitalid.net.certificate.xdf");
-//                    SelfcontainedWrapper.encodeNonNullable(SelfcontainedWrapper.DEFAULT, value).writeTo(new FileOutputStream(certificateFile), true);
-//                    Log.warning("The public key chain of the root host was not found and thus 'core.digitalid.net' was created on this machine.");
-//                }
-//                setCachedAttributeValue(HostIdentity.DIGITALID, null, Time.MIN, PublicKeyChain.TYPE, value, null);
-//            }
-//            Database.commit();
-//        } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-//            throw InitializationError.get("Could not initialize the cache.", exception);
-//        } finally {
-//            Database.unlock();
-//        }
+    @Initialize(target = CacheModule.class, dependencies = {AttributePropertiesLoader.class, PrivateKeyRetriever.class})
+    public static void initializeRootKey() throws ConversionException {
+        if (!getCachedAttributeValue(null, HostIdentity.DIGITALID, Time.MIN, PublicKeyChain.TYPE).get0()) {
+            // Unless it is the root server, the program should have been delivered with the public key chain of 'core.digitalid.net'.
+            final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/net/digitalid/core/cache/core.digitalid.net.certificate.xdf");
+            final @Nonnull AttributeValue value;
+            if (inputStream != null) {
+                value = Pack.loadFrom(inputStream).unpack(AttributeValueConverter.INSTANCE, null);
+                Log.debugging("The public key chain of the root host $ was loaded from the provided resources.", HostIdentifier.DIGITALID);
+            } else {
+                // Since the public key chain of 'core.digitalid.net' is not available, the host 'core.digitalid.net' is created on this server.
+                Log.warning("The public key chain of the root host $ was not found in the provided resources.", HostIdentifier.DIGITALID);
+                Log.information("Creating the host $, which can take several minutes.", HostIdentifier.DIGITALID);
+                final @Nonnull Host host = HostBuilder.withIdentifier(HostIdentifier.DIGITALID).build();
+                final @Nonnull HostSignature<Pack> hostSignature = HostSignatureCreator.sign(host.publicKeyChain.get().pack(), PackConverter.INSTANCE).to(HostIdentifier.DIGITALID).as(PublicKeyChain.TYPE.getAddress());
+                value = CertifiedAttributeValue.with(hostSignature);
+                value.pack().storeTo(Files.relativeToConfigurationDirectory("core.digitalid.net.certificate.xdf"));
+            }
+            setCachedAttributeValue(null, HostIdentity.DIGITALID, Time.MIN, PublicKeyChain.TYPE, value, null);
+        }
+        Database.commit();
     }
     
     /* -------------------------------------------------- Dialect Constants -------------------------------------------------- */

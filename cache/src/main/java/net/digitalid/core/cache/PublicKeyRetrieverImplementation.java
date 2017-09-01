@@ -13,15 +13,10 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
-import net.digitalid.core.annotations.type.Loaded;
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
-import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.IdentifierResolver;
-import net.digitalid.core.identification.identity.SemanticType;
-import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
-import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.keychain.PublicKeyChainConverter;
 
@@ -33,9 +28,6 @@ import net.digitalid.core.keychain.PublicKeyChainConverter;
 public class PublicKeyRetrieverImplementation implements PublicKeyRetriever {
     
     /* -------------------------------------------------- Retrieval -------------------------------------------------- */
-    
-    @TODO(task = "Declare the type correctly.", date = "2017-08-30", author = Author.KASPAR_ETTER)
-    public static final @Nonnull @Loaded SemanticType PUBLIC_KEY_CHAIN = SemanticType.map(PublicKeyChainConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).withCategories(Category.ONLY_HOST).withCachingPeriod(Time.TROPICAL_YEAR).build());
     
     /**
      * Returns the public key chain of the given identity.

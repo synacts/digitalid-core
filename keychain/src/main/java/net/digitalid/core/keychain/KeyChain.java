@@ -17,6 +17,7 @@ import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.asymmetrickey.AsymmetricKey;
+import net.digitalid.core.pack.Packable;
 
 /**
  * A key chain contains several items to support the rotation of host keys.
@@ -25,7 +26,7 @@ import net.digitalid.core.asymmetrickey.AsymmetricKey;
  * @see PrivateKeyChain
  */
 @Immutable
-public abstract class KeyChain<K extends AsymmetricKey> {
+public abstract class KeyChain<K extends AsymmetricKey> implements Packable {
     
     /* -------------------------------------------------- Items -------------------------------------------------- */
     

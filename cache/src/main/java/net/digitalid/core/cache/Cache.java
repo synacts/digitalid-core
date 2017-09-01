@@ -34,6 +34,7 @@ import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.signature.attribute.AttributeValue;
 import net.digitalid.core.signature.attribute.CertifiedAttributeValue;
 import net.digitalid.core.typeset.FreezableAttributeTypeSet;
@@ -74,7 +75,7 @@ public abstract class Cache {
      * @param expiration the time at which the cached attribute values have to be fresh.
      * @param types the types of the attribute values which are to be returned.
      * 
-     * @require !Arrays.asList(types).contains(PublicKeyRetrieverImplementation.PUBLIC_KEY_CHAIN) || types.length == 1 : "If the public key chain of a host is queried, it is the only type.";
+     * @require !Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1 : "If the public key chain of a host is queried, it is the only type.";
      * @require for (SemanticType type : types) type != null && type.isAttributeFor(requestee.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given requestee.";
      * 
      * @ensure return.length == types.length : "The returned attribute values are as many as the given types.";
@@ -85,7 +86,7 @@ public abstract class Cache {
     public static @Capturable @Nonnull @NullableElements @NonEmpty AttributeValue[] getAttributeValues(@Nullable Role requester, @Nonnull InternalIdentity requestee, @Nonnull @NonNegative Time expiration, @Nonnull @NonNullableElements @NonEmpty SemanticType... types) throws ExternalException {
         Require.that(expiration.isNonNegative()).orThrow("The given time has to be non-negative but was $.", expiration);
         Require.that(types.length > 0).orThrow("At least one type has to be given.");
-        Require.that(!Arrays.asList(types).contains(PublicKeyRetrieverImplementation.PUBLIC_KEY_CHAIN) || types.length == 1).orThrow("If the public key chain of a host is queried, it has to be the only type.");
+        Require.that(!Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1).orThrow("If the public key chain of a host is queried, it has to be the only type.");
         for (final @Nullable SemanticType type : types) { Require.that(type != null && type.isAttributeFor(requestee.getCategory())).orThrow("Each type has to be non-null and can be used as an attribute for the category of the given requestee."); }
         
         final @Nonnull AttributeValue[] result = new AttributeValue[types.length];
@@ -103,7 +104,7 @@ public abstract class Cache {
         }
         
         if (typesToRetrieve.size() > 0) {
-            if (typesToRetrieve.contains(PublicKeyRetrieverImplementation.PUBLIC_KEY_CHAIN)) {
+            if (typesToRetrieve.contains(PublicKeyChain.TYPE)) {
                 // TODO: Implement a mechanism where the signature can be verified after the public key chain has been stored.
 //                final @Nonnull AttributesReply reply = new Request(requestee.getAddress().getHostIdentifier()).send(false).getReplyNotNull(0);
 //                final @Nullable AttributeValue value = reply.getAttributeValues().getNullable(0);
@@ -166,7 +167,7 @@ public abstract class Cache {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull /* @NonMapped */HostIdentifier identifier) throws ExternalException {
+    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull HostIdentifier identifier) throws ExternalException {
         // TODO: Is this still necessary and at the right place?
         
         throw new UnsupportedOperationException();

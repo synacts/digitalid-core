@@ -13,12 +13,6 @@
         
         <dependency>
             <groupId>net.digitalid.core</groupId>
-            <artifactId>core-host</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.digitalid.core</groupId>
             <artifactId>core-cache</artifactId>
             <version>${project.version}</version>
         </dependency>

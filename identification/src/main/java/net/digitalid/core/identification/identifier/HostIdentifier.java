@@ -29,7 +29,7 @@ import net.digitalid.core.identification.identity.IdentifierResolver;
 @GenerateConverter
 public abstract class HostIdentifier extends InternalIdentifier {
     
-    /* -------------------------------------------------- Digital ID Host Identifier -------------------------------------------------- */
+    /* -------------------------------------------------- Digital ID Core Identifier -------------------------------------------------- */
     
     /**
      * Stores the host identifier {@code core.digitalid.net}.

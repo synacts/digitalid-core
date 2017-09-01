@@ -15,7 +15,6 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Log;
-import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -79,7 +78,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     public @Nonnull Identity load(long key) throws DatabaseException, RecoveryException {
         @Nullable Identity identity = mapper.getIdentity(key);
         if (identity == null) {
-            final @Nonnull IdentityEntry entry = SQL.selectOne(IdentityEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key", Unit.DEFAULT);
+            final @Nonnull IdentityEntry entry = SQL.selectOne(IdentityEntryConverter.INSTANCE, null, Integer64Converter.INSTANCE, key, "key", GeneralUnit.INSTANCE);
             identity = createIdentity(entry.getCategory(), entry.getKey(), entry.getAddress());
             mapper.mapAfterCommit(identity);
         }
@@ -94,7 +93,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     public @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException {
         @Nullable Identity identity = mapper.getIdentity(identifier);
         if (identity == null) {
-            final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, IdentifierConverter.INSTANCE, identifier, "identifier", Unit.DEFAULT);
+            final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, IdentifierConverter.INSTANCE, identifier, "identifier", GeneralUnit.INSTANCE);
             if (entry != null) { identity = load(entry.getKey()); }
             if (identity != null) { Log.verbose("Found the identifier $ in the database.", identifier.getString()); }
         } else { Log.verbose("Found the identifier $ in the hash map.", identifier.getString()); }
@@ -112,8 +111,8 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
         
         final @Nonnull IdentityEntry identityEntry = IdentityEntryBuilder.withKey(key).withCategory(category).withAddress(address).build();
         final @Nonnull IdentifierEntry identifierEntry = IdentifierEntryBuilder.withIdentifier(address).withKey(key).build();
-        SQL.insertOrAbort(IdentityEntryConverter.INSTANCE, identityEntry, Unit.DEFAULT);
-        SQL.insertOrAbort(IdentifierEntryConverter.INSTANCE, identifierEntry, Unit.DEFAULT);
+        SQL.insertOrAbort(IdentityEntryConverter.INSTANCE, identityEntry, GeneralUnit.INSTANCE);
+        SQL.insertOrAbort(IdentifierEntryConverter.INSTANCE, identifierEntry, GeneralUnit.INSTANCE);
         
         final @Nonnull Identity identity = createIdentity(category, key, address);
         mapper.mapAfterCommit(identity);
