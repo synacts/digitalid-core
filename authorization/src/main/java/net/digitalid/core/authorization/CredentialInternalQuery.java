@@ -22,6 +22,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.AgentFactory;
+import net.digitalid.core.agent.AgentRetriever;
 import net.digitalid.core.asymmetrickey.PrivateKey;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.asymmetrickey.PublicKey;
@@ -187,7 +188,12 @@ abstract class CredentialInternalQuery extends InternalQuery implements CoreMeth
         }
         final @Nonnull Agent agent;
         if (getSignature() instanceof ClientSignature) {
-            agent = AgentFactory.retrieve(getEntity(), ((ClientSignature<?>) getSignature()).getCommitment());
+            try {
+                agent = AgentRetriever.retrieve(getEntity(), ((ClientSignature<?>) getSignature()).getCommitment());
+            } catch (RecoveryException e) {
+                // TODO: not sure what to do in this case
+                throw new RuntimeException(e);
+            }
         } else {
             throw new UnsupportedOperationException("Retrieving credentials with a credentialsSignature is not yet implemented.");
         }
