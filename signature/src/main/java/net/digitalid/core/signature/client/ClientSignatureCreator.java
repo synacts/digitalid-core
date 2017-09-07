@@ -29,7 +29,7 @@ public abstract class ClientSignatureCreator {
          * Addresses the signature to a certain subject.
          */
         @Impure
-        public @Nonnull ClientSignatureCreator.SignerClientSignatureCreator<OBJECT> to(@Nonnull InternalIdentifier subject);
+        public @Nonnull ClientSignatureCreator.SignerClientSignatureCreator<OBJECT> about(@Nonnull InternalIdentifier subject);
         
     }
     
@@ -67,7 +67,7 @@ public abstract class ClientSignatureCreator {
          */
         @Impure
         @Override
-        public @Nonnull ClientSignatureCreator.InnerClientSignatureCreator to(@Nonnull InternalIdentifier subject) {
+        public @Nonnull ClientSignatureCreator.InnerClientSignatureCreator about(@Nonnull InternalIdentifier subject) {
             this.subject = subject;
             return this;
         }

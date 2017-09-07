@@ -61,7 +61,7 @@ public abstract class ExternalAction extends Action {
 //            throw new UnsupportedOperationException("Client credentials are not yet implemented");
 //            return CredentialsSignatureBuilder.withObject(compression).withSubject(getSubject()).withT(t).withSU(su).withSV(sv).withLodged(isLodged()).withCredentials(FreezableArrayList.withElement(credential)).withCertificates(FreezableArrayList.withElement(certificate)).build();
 //        } else {
-            return HostSignatureCreator.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(getSubject()).as(getEntity().getIdentity().getAddress());
+            return HostSignatureCreator.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).about(getSubject()).as(getEntity().getIdentity().getAddress());
 //        }
     }
     

@@ -256,7 +256,7 @@ public abstract class OpenAccount extends InternalAction implements CoreMethod<N
     @Pure
     @Override
     public @Nonnull Signature<Compression<Pack>> getSignature(@Nonnull Compression<Pack> compression) throws ExternalException {
-        return ClientSignatureCreator.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(getSubject()).with(getCommitment().addSecret(getSecret()));
+        return ClientSignatureCreator.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).about(getSubject()).with(getCommitment().addSecret(getSecret()));
     }
     
     /* -------------------------------------------------- Auditable -------------------------------------------------- */

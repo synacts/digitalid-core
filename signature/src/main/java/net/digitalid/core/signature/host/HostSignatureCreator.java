@@ -28,7 +28,7 @@ public abstract class HostSignatureCreator {
         /**
          * Addresses the signature to a certain subject.
          */
-        public @Nonnull HostSignatureCreator.SignerHostSignatureCreator<OBJECT> to(@Nonnull InternalIdentifier subject);
+        public @Nonnull HostSignatureCreator.SignerHostSignatureCreator<OBJECT> about(@Nonnull InternalIdentifier subject);
         
     }
     
@@ -61,7 +61,7 @@ public abstract class HostSignatureCreator {
         private @Nonnull InternalIdentifier subject;
     
         @Override
-        public @Nonnull HostSignatureCreator.InnerHostSignatureCreator to(@Nonnull InternalIdentifier subject) {
+        public @Nonnull HostSignatureCreator.InnerHostSignatureCreator about(@Nonnull InternalIdentifier subject) {
             this.subject = subject;
             return this;
         }

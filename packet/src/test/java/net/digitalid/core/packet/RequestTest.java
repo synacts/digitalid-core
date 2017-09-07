@@ -145,7 +145,7 @@ public class RequestTest extends CoreTest {
         
         final @Nonnull String string = "Hello World!";
         final @Nonnull Compression<String> compression = CompressionBuilder.withObject(string).build();
-        final @Nonnull Signature<Compression<String>> signature = HostSignatureCreator.sign(compression, compressionConverter).to(subject).as(subject);
+        final @Nonnull Signature<Compression<String>> signature = HostSignatureCreator.sign(compression, compressionConverter).about(subject).as(subject);
         final @Nonnull byte[] bytes = XDF.convert(signatureConverter, signature);
         
         final @Nonnull Signature<Compression<String>> recoveredSignature = XDF.recover(signatureConverter, null, bytes);

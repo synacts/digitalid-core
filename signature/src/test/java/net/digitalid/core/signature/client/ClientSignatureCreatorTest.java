@@ -43,7 +43,7 @@ public class ClientSignatureCreatorTest extends CoreTest {
         
         final @Nonnull SecretCommitment secretCommitment = SecretCommitmentBuilder.withHost(hostIdentity).withTime(time).withPublicKey(publicKey).withSecret(secret).build();
         
-        final @Nonnull ClientSignature<String> signedMessage = ClientSignatureCreator.sign(message, StringConverter.INSTANCE).to(subject).with(secretCommitment);
+        final @Nonnull ClientSignature<String> signedMessage = ClientSignatureCreator.sign(message, StringConverter.INSTANCE).about(subject).with(secretCommitment);
         signedMessage.verifySignature();
         
 //        final @Nonnull byte[] bytes = XDF.convert(ClientSignatureConverterBuilder.withObjectConverter(StringConverter.INSTANCE).build(), signedMessage);
