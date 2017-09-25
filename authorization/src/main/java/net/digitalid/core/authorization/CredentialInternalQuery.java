@@ -14,6 +14,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.time.Time;
+import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -80,10 +81,24 @@ abstract class CredentialInternalQuery extends InternalQuery implements CoreMeth
     @Pure
     abstract @Nullable @RoleType SemanticType getRelation();
     
+    @Pure
+    protected @Nullable BigInteger getValueFromSignature() {
+        if (isOnHost()) {
+            if (getSignature() instanceof ClientSignature) {
+                return ((ClientSignature) getSignature()).getCommitment().getValue();
+            } else {
+                throw new UnsupportedOperationException("Shortened credentials are currently not supported");
+            }
+        } else {
+            return null;
+        }
+    }
+    
     /**
      * Returns either the value b' for clients or the value f' for hosts or null if no credential is shortened.
      */
     @Pure
+    @Derive("getValueFromSignature()")
     abstract @Nullable BigInteger getValue();
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
