@@ -30,6 +30,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.transaction.Committing;
 
 import net.digitalid.core.asymmetrickey.KeyPair;
+import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.entity.Entity;
@@ -181,7 +182,7 @@ public abstract class Host extends CoreUnit {
         return host;
     }
     
-    /* -------------------------------------------------- Initializer -------------------------------------------------- */
+    /* -------------------------------------------------- Initializers -------------------------------------------------- */
     
     /**
      * Initializes the host factory.
@@ -190,6 +191,15 @@ public abstract class Host extends CoreUnit {
     @Initialize(target = HostFactory.class)
     public static void initializeHostFactory() {
         HostFactory.configuration.set(Host::of);
+    }
+    
+    /**
+     * Initializes the private key retriever.
+     */
+    @Impure
+    @Initialize(target = PrivateKeyRetriever.class)
+    public static void initializePrivateKeyRetriever() {
+        PrivateKeyRetriever.configuration.set((identifier, time) -> Host.of(identifier).privateKeyChain.get().getKey(time));
     }
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */

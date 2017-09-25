@@ -7,12 +7,14 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.tuples.Pair;
@@ -24,6 +26,11 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 
+import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
+import net.digitalid.core.cache.attributes.AttributesQuery;
+import net.digitalid.core.cache.attributes.AttributesQueryBuilder;
+import net.digitalid.core.cache.attributes.AttributesReply;
+import net.digitalid.core.cache.attributes.AttributesReplyConverter;
 import net.digitalid.core.cache.exceptions.AttributeNotFoundException;
 import net.digitalid.core.cache.exceptions.AttributeNotFoundExceptionBuilder;
 import net.digitalid.core.client.role.Role;
@@ -35,6 +42,7 @@ import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.keychain.PublicKeyChain;
+import net.digitalid.core.keychain.PublicKeyChainConverter;
 import net.digitalid.core.signature.attribute.AttributeValue;
 import net.digitalid.core.signature.attribute.CertifiedAttributeValue;
 import net.digitalid.core.typeset.FreezableAttributeTypeSet;
@@ -188,6 +196,17 @@ public abstract class Cache {
 //        setCachedAttributeValue(identity, null, getExpiration(PublicKeyChain.TYPE, value, reply), PublicKeyChain.TYPE, value, reply);
 //        reply.getSignatureNotNull().verify();
 //        return identity;
+    }
+    
+    /* -------------------------------------------------- Injection -------------------------------------------------- */
+    
+    /**
+     * Initializes the public key retriever.
+     */
+    @Impure
+    @Initialize(target = PublicKeyRetriever.class)
+    public static void initializePublicKeyRetriever() {
+        PublicKeyRetriever.configuration.set((identity, time) -> CacheQueryBuilder.withConverter(PublicKeyChainConverter.INSTANCE).withRequestee(identity).withCertified(true).build().execute().getKey(time));
     }
     
 }

@@ -1,4 +1,4 @@
-package net.digitalid.core.cache;
+package net.digitalid.core.cache.attributes;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -38,7 +38,7 @@ public abstract class PrivateKeyChain extends KeyChain<PrivateKey> {
      */
     @Pure
     public static @Nonnull PrivateKeyChain with(@Nonnull Time time, @Nonnull PrivateKey key) {
-        Require.that(time.isInPast()).orThrow("The time lies in the past.");
+        Require.that(time.isInPast()).orThrow("The time has to lie in the past but was $.", time);
         
         return new PrivateKeyChainSubclass(FreezableLinkedList.<Pair<Time, PrivateKey>>withElement(Pair.of(time, key)).freeze());
     }
