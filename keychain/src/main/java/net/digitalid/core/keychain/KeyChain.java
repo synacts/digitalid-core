@@ -2,7 +2,10 @@ package net.digitalid.core.keychain;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
@@ -10,8 +13,6 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.time.Time;
-import net.digitalid.utility.tuples.Pair;
-import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.order.StrictlyDescending;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -26,7 +27,7 @@ import net.digitalid.core.pack.Packable;
  * @see PrivateKeyChain
  */
 @Immutable
-public abstract class KeyChain<K extends AsymmetricKey> implements Packable {
+public abstract class KeyChain<@Unspecifiable KEY extends AsymmetricKey, @Unspecifiable ITEM extends KeyChainItem<KEY>> implements Packable {
     
     /* -------------------------------------------------- Items -------------------------------------------------- */
     
@@ -34,8 +35,8 @@ public abstract class KeyChain<K extends AsymmetricKey> implements Packable {
      * Returns the items of this key chain in chronological order with the newest one first.
      */
     @Pure
-    @NonRepresentative // TODO: Remove this, as soon as lists can be properly converted.
-    public abstract @Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull Pair<@Nonnull Time, @Nonnull K>> getItems();
+    @TODO(task="Implement mechanism to freeze collections when they are recovered in the converter", date="2017-09-25", author = Author.STEPHANIE_STROKA)
+    public abstract @Nonnull /*@Frozen*/ @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull ITEM> getItems();
     
     /* -------------------------------------------------- Times -------------------------------------------------- */
     
@@ -44,7 +45,7 @@ public abstract class KeyChain<K extends AsymmetricKey> implements Packable {
      */
     @Pure
     public @Nonnull Time getNewestTime() {
-        return getItems().getFirst().get0();
+        return getItems().getFirst().getTime();
     }
     
     /**
@@ -52,7 +53,7 @@ public abstract class KeyChain<K extends AsymmetricKey> implements Packable {
      */
     @Pure
     public @Nonnull Time getOldestTime() {
-        return getItems().getLast().get0();
+        return getItems().getLast().getTime();
     }
     
     /* -------------------------------------------------- Retrieval -------------------------------------------------- */
@@ -63,16 +64,19 @@ public abstract class KeyChain<K extends AsymmetricKey> implements Packable {
      * @require time.isGreaterThanOrEqualTo(getOldestTime()) : "There is no key for the given time in this key chain.";
      */
     @Pure
-    public @Nonnull K getKey(@Nonnull Time time) {
+    public @Nonnull KEY getKey(@Nonnull Time time) {
         Require.that(time.isGreaterThanOrEqualTo(getOldestTime())).orThrow("There is no key for the time $ in the key chain $.", time, this);
         
-        for (@Nonnull Pair<@Nonnull Time, @Nonnull K> item : getItems()) {
-            if (time.isGreaterThanOrEqualTo(item.get0())) { return item.get1(); }
+        for (@Nonnull ITEM item : getItems()) {
+            if (time.isGreaterThanOrEqualTo(item.getTime())) { return item.getKey(); }
         }
         throw CaseExceptionBuilder.withVariable("time").withValue(time).build();
     }
     
     /* -------------------------------------------------- Modification -------------------------------------------------- */
+    
+    @Pure
+    abstract @Nonnull ITEM buildItem(@Nonnull Time time, @Nonnull KEY key);
     
     /**
      * Adds a new key to this key chain by returning a new instance.
@@ -86,23 +90,23 @@ public abstract class KeyChain<K extends AsymmetricKey> implements Packable {
      * @require time.isGreaterThan(Time.TROPICAL_YEAR.ahead()) : "The time lies at least one year in the future.";
      */
     @Pure
-    public @Nonnull KeyChain<K> add(@Nonnull Time time, @Nonnull K key) {
+    public @Nonnull KeyChain<KEY, ITEM> add(@Nonnull Time time, @Nonnull KEY key) {
         Require.that(time.isGreaterThan(getNewestTime())).orThrow("The time is greater than the newest time of this key chain.");
         Require.that(time.isGreaterThan(Time.TROPICAL_YEAR.ahead())).orThrow("The time lies at least one year in the future.");
         
-        final @Nonnull FreezableList<@Nonnull Pair<@Nonnull Time, @Nonnull K>> items = FreezableLinkedList.withNoElements();
-        items.add(0, Pair.of(time, key));
+        final @Nonnull FreezableList<@Nonnull ITEM> items = FreezableLinkedList.withNoElements();
+        items.add(0, buildItem(time, key));
         
         final @Nonnull Time cutoff = Time.TWO_YEARS.ago();
-        for (@Nonnull Pair<@Nonnull Time, @Nonnull K> item : getItems()) {
+        for (@Nonnull ITEM item : getItems()) {
             items.add(item);
-            if (item.get0().isLessThan(cutoff)) { break; }
+            if (item.getTime().isLessThan(cutoff)) { break; }
         }
         
         return createKeyChain(items.freeze());
     }
     
     @Pure
-    protected abstract @Nonnull KeyChain<K> createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull Pair<@Nonnull Time, @Nonnull K>> items);
+    protected abstract @Nonnull KeyChain<KEY, ITEM> createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull ITEM> items);
     
 }

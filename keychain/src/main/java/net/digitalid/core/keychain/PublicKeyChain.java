@@ -31,7 +31,7 @@ import net.digitalid.core.identification.identity.SyntacticType;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class PublicKeyChain extends KeyChain<PublicKey> {
+public abstract class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChainItem> {
     
     /**
      * Stores the semantic type of the public key chain.
@@ -51,20 +51,24 @@ public abstract class PublicKeyChain extends KeyChain<PublicKey> {
     public static @Nonnull PublicKeyChain with(@Nonnull Time time, @Nonnull PublicKey key) {
         Require.that(time.isInPast()).orThrow("The time lies in the past.");
         
-        return new PublicKeyChainSubclass(FreezableLinkedList.<Pair<Time, PublicKey>>withElement(Pair.of(time, key)).freeze());
+        return new PublicKeyChainSubclass(FreezableLinkedList.<PublicKeyChainItem>withElement(buildPublicKeyChainItem(time, key)).freeze());
+    }
+    
+    @Pure
+    private static @Nonnull PublicKeyChainItem buildPublicKeyChainItem(@Nonnull Time time, @Nonnull PublicKey publicKey) {
+        return PublicKeyChainItemBuilder.withTime(time).withKey(publicKey).build();
     }
     
     @Pure
     @Override
-    protected @Nonnull PublicKeyChain createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull Pair<@Nonnull Time, @Nonnull PublicKey>> items) {
-        return new PublicKeyChainSubclass(items);
+    @Nonnull PublicKeyChainItem buildItem(@Nonnull Time time, @Nonnull PublicKey publicKey) {
+        return buildPublicKeyChainItem(time, publicKey);
     }
     
     @Pure
-    @Recover
-    @TODO(task = "Remove this method once the read-only list can be properly converted.", date = "2016-12-14", author = Author.KASPAR_ETTER)
-    public static @Nonnull PublicKeyChain recover() {
-        return new PublicKeyChainSubclass(FreezableLinkedList.<@Nonnull Pair<@Nonnull Time, @Nonnull PublicKey>>withNoElements().freeze());
+    @Override
+    protected @Nonnull PublicKeyChain createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull PublicKeyChainItem> items) {
+        return new PublicKeyChainSubclass(items);
     }
     
 }

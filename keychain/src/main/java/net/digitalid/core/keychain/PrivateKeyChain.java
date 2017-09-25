@@ -26,7 +26,7 @@ import net.digitalid.core.asymmetrickey.PrivateKey;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class PrivateKeyChain extends KeyChain<PrivateKey> {
+public abstract class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChainItem> {
     
     /**
      * Returns a new key chain with the given time and key.
@@ -40,20 +40,24 @@ public abstract class PrivateKeyChain extends KeyChain<PrivateKey> {
     public static @Nonnull PrivateKeyChain with(@Nonnull Time time, @Nonnull PrivateKey key) {
         Require.that(time.isInPast()).orThrow("The time has to lie in the past but was $.", time);
         
-        return new PrivateKeyChainSubclass(FreezableLinkedList.<Pair<Time, PrivateKey>>withElement(Pair.of(time, key)).freeze());
+        return new PrivateKeyChainSubclass(FreezableLinkedList.<PrivateKeyChainItem>withElement(buildPrivateKeyChainItem(time, key)).freeze());
+    }
+    
+    @Pure
+    private static PrivateKeyChainItem buildPrivateKeyChainItem(@Nonnull Time time, @Nonnull PrivateKey privateKey) {
+        return PrivateKeyChainItemBuilder.withTime(time).withKey(privateKey).build();
     }
     
     @Pure
     @Override
-    protected @Nonnull PrivateKeyChain createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull Pair<@Nonnull Time, @Nonnull PrivateKey>> items) {
-        return new PrivateKeyChainSubclass(items);
+    @Nonnull PrivateKeyChainItem buildItem(@Nonnull Time time, @Nonnull PrivateKey privateKey) {
+        return buildPrivateKeyChainItem(time, privateKey);
     }
     
     @Pure
-    @Recover
-    @TODO(task = "Remove this method once the read-only list can be properly converted.", date = "2016-12-14", author = Author.KASPAR_ETTER)
-    public static @Nonnull PrivateKeyChain recover() {
-        return new PrivateKeyChainSubclass(FreezableLinkedList.<@Nonnull Pair<@Nonnull Time, @Nonnull PrivateKey>>withNoElements().freeze());
+    @Override
+    protected @Nonnull PrivateKeyChain createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull PrivateKeyChainItem> items) {
+        return new PrivateKeyChainSubclass(items);
     }
     
 }

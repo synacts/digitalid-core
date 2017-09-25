@@ -10,7 +10,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.account.OpenAccountConverter;
 import net.digitalid.core.authorization.CredentialInternalQueryConverter;
-import net.digitalid.core.cache.AttributesQueryConverter;
+import net.digitalid.core.cache.attributes.AttributesQueryConverter;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.resolution.handlers.IdentityQueryConverter;
 
