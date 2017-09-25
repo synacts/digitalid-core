@@ -1,8 +1,6 @@
 package net.digitalid.core.signature.host;
 
-import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
-import java.security.MessageDigest;
 
 import javax.annotation.Nonnull;
 
@@ -10,22 +8,22 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.conversion.interfaces.Converter;
-import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.time.Time;
-import net.digitalid.utility.time.TimeConverter;
+import net.digitalid.utility.string.Strings;
+import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
-import net.digitalid.core.conversion.encoders.MemoryEncoder;
-import net.digitalid.core.conversion.exceptions.MemoryException;
+import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.identification.identifier.InternalIdentifierConverter;
-import net.digitalid.core.parameters.Parameters;
 import net.digitalid.core.signature.Signature;
+import net.digitalid.core.signature.exceptions.ExpiredSignatureException;
 import net.digitalid.core.signature.exceptions.InvalidSignatureException;
 import net.digitalid.core.signature.exceptions.InvalidSignatureExceptionBuilder;
 
@@ -37,20 +35,6 @@ import net.digitalid.core.signature.exceptions.InvalidSignatureExceptionBuilder;
 @GenerateSubclass
 @TODO(task = "I think the signing should not be part of the conversion. Otherwise, a signature (like a certificate) cannot be stored. Another solution might be to wrap signatures in packs so that their byte encoding can be accessed (or implement this here directly).", date = "2017-01-30", author = Author.KASPAR_ETTER)
 public abstract class HostSignature<@Unspecifiable OBJECT> extends Signature<OBJECT> {
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * The converter for the generic object.
-     */
-    private final @Nonnull Converter<OBJECT, Void> objectConverter;
-    
-    /**
-     * Constructs a host signature instance with the given object converter.
-     */
-    protected HostSignature(@Nonnull Converter<OBJECT, Void> objectConverter) {
-        this.objectConverter = objectConverter;
-    }
     
     /* -------------------------------------------------- Signer -------------------------------------------------- */
     
@@ -72,30 +56,11 @@ public abstract class HostSignature<@Unspecifiable OBJECT> extends Signature<OBJ
     /* -------------------------------------------------- Hash -------------------------------------------------- */
     
     /**
-     * Creates a content hash with a given time, subject, signer, object converter and object.
-     */
-    @Pure
-    public static <OBJECT> @Nonnull BigInteger getContentHash(@Nonnull Time time, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer, @Nonnull Converter<OBJECT, Void> objectConverter, @Nonnull OBJECT object) {
-        final @Nonnull MessageDigest messageDigest = Parameters.HASH_FUNCTION.get().produce();
-            final @Nonnull ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            try (@Nonnull MemoryEncoder encoder = MemoryEncoder.of(outputStream)) {
-                encoder.startHashing(messageDigest);
-                encoder.encodeObject(TimeConverter.INSTANCE, time);
-                encoder.encodeObject(InternalIdentifierConverter.INSTANCE, subject);
-                encoder.encodeObject(InternalIdentifierConverter.INSTANCE, signer);
-                encoder.encodeObject(objectConverter, object);
-                return new BigInteger(1, encoder.stopHashing());
-            } catch (@Nonnull MemoryException exception) {
-                throw UncheckedExceptionBuilder.withCause(exception).build();
-            }
-    }
-    
-    /**
      * Calculates the hash of the client signature content.
      */
     @Pure
     public @Nonnull BigInteger deriveHostSignatureContentHash() {
-        return getContentHash(getTime(), getSubject(), getSigner(), objectConverter, getObject());
+        return getContentHash(getTime(), getSubject(), getObjectConverter(), getObject());
     }
     
     /**
@@ -107,12 +72,26 @@ public abstract class HostSignature<@Unspecifiable OBJECT> extends Signature<OBJ
     
     /* -------------------------------------------------- Verification -------------------------------------------------- */
     
+    @Pure
+    @Override
+    public void verifySignature() throws InvalidSignatureException, ExpiredSignatureException, RecoveryException {
+        final @Nonnull PublicKey publicKey;
+        try {
+            publicKey = PublicKeyRetriever.retrieve(getSigner().getHostIdentifier(), TimeBuilder.build());
+        } catch (@Nonnull ExternalException exception) {
+            throw RecoveryExceptionBuilder.withMessage(Strings.format("Could not retrieve the public key of $.", getSigner().getHostIdentifier())).withCause(exception).build();
+        }
+        
+        verifySignature(publicKey);
+    }
+    
     /**
      * Verifies the correctness of the host signature by using the given public key.
      * @throws InvalidSignatureException if the signature is not valid.
      */
     @Pure
     public void verifySignature(@Nonnull PublicKey publicKey) throws InvalidSignatureException {
+        // TODO: do we not have to check whether the signature expired?
         final @Nonnull BigInteger computedHash = publicKey.getCompositeGroup().getElement(getSignatureValue()).pow(publicKey.getE()).getValue();
         if (!computedHash.equals(getHostSignatureContentHash())) {
             throw InvalidSignatureExceptionBuilder.withSignature(this).build();

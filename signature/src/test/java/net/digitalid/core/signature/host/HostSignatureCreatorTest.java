@@ -28,7 +28,7 @@ public class HostSignatureCreatorTest extends CoreTest {
         final @Nonnull InternalIdentifier subject = InternalIdentifier.with("bob@digitalid.net");
         final @Nonnull InternalIdentifier signer = InternalIdentifier.with("alice@digitalid.net");
         
-        final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureCreator.sign(message, StringConverter.INSTANCE).to(subject).as(signer);
+        final @Nonnull HostSignature<@Nonnull String> signedIdentifier = HostSignatureCreator.sign(message, StringConverter.INSTANCE).about(subject).as(signer);
         
         final @Nonnull PublicKey publicKey;
         try {

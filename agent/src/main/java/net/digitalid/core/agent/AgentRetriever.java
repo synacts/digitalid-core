@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Functional;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -20,7 +19,7 @@ import net.digitalid.core.entity.NonHostEntity;
  */
 @Stateless
 @Functional
-public interface AgentFactory {
+public interface AgentRetriever {
     
     /* -------------------------------------------------- Interface -------------------------------------------------- */
     
@@ -28,14 +27,24 @@ public interface AgentFactory {
      * Returns the agent for the given entity with the given key.
      */
     @Pure
-    @NonCommitting
-    public @Nonnull Agent getAgent(@Nonnull NonHostEntity entity, long key) throws DatabaseException;
+    public @Nonnull Agent getAgent(@Nonnull NonHostEntity entity, @Nonnull Commitment commitment) throws DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
     /**
      * Stores the agent factory, which has to be provided by the client agent package.
      */
-    public static final @Nonnull Configuration<AgentFactory> configuration = Configuration.withUnknownProvider();
+    public static final @Nonnull Configuration<AgentRetriever> configuration = Configuration.withUnknownProvider();
+    
+    /* -------------------------------------------------- Static Access -------------------------------------------------- */
+    
+    /**
+     * Retrieves the public key of the given host at the given time.
+     */
+    @Pure
+    @NonCommitting
+    public static @Nonnull Agent retrieve(@Nonnull NonHostEntity entity, @Nonnull Commitment commitment) throws DatabaseException, RecoveryException {
+        return configuration.get().getAgent(entity, commitment);
+    }
     
 }

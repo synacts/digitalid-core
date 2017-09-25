@@ -48,7 +48,7 @@ public abstract class InternalMethodSignatureInjector {
         if (internalMethod.getService().equals(CoreService.INSTANCE)) {
             if (role instanceof NativeRole) {
                 final @Nonnull NativeRole nativeRole = (NativeRole) role;
-                return ClientSignatureCreator.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(internalMethod.getSubject()).with(nativeRole.getAgent().commitment().get().addSecret(role.getUnit().secret.get()));
+                return ClientSignatureCreator.sign(compression, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).about(internalMethod.getSubject()).with(nativeRole.getAgent().commitment().get().addSecret(role.getUnit().secret.get()));
             } else {
                 // see Method for implementation hints
                 throw new UnsupportedOperationException("Non-native roles are not yet implemented");

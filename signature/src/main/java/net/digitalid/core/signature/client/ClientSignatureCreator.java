@@ -4,6 +4,7 @@ import java.math.BigInteger;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.time.Time;
@@ -27,7 +28,8 @@ public abstract class ClientSignatureCreator {
         /**
          * Addresses the signature to a certain subject.
          */
-        public @Nonnull ClientSignatureCreator.SignerClientSignatureCreator<OBJECT> to(@Nonnull InternalIdentifier subject);
+        @Impure
+        public @Nonnull ClientSignatureCreator.SignerClientSignatureCreator<OBJECT> about(@Nonnull InternalIdentifier subject);
         
     }
     
@@ -36,6 +38,7 @@ public abstract class ClientSignatureCreator {
         /**
          * Signs the object with a specific secret commitment.
          */
+        @Pure
         public @Nonnull ClientSignature<OBJECT> with(@Nonnull SecretCommitment commitment);
         
     }
@@ -62,8 +65,9 @@ public abstract class ClientSignatureCreator {
         /**
          * {@inheritDoc}
          */
+        @Impure
         @Override
-        public @Nonnull ClientSignatureCreator.InnerClientSignatureCreator to(@Nonnull InternalIdentifier subject) {
+        public @Nonnull ClientSignatureCreator.InnerClientSignatureCreator about(@Nonnull InternalIdentifier subject) {
             this.subject = subject;
             return this;
         }
@@ -71,10 +75,11 @@ public abstract class ClientSignatureCreator {
         /**
          * {@inheritDoc}
          */
+        @Pure
         @Override
         public @Nonnull ClientSignature<OBJECT> with(@Nonnull SecretCommitment commitment) {
             final @Nonnull Time time = TimeBuilder.build();
-            final @Nonnull BigInteger hash = ClientSignature.getContentHash(time, subject, object, objectConverter);
+            final @Nonnull BigInteger hash = ClientSignature.getContentHash(time, subject, objectConverter, object);
 
             final @Nonnull Exponent r = commitment.getPublicKey().getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT.get());
             final @Nonnull BigInteger t = ClientSignature.getHash(commitment.getPublicKey().getAu().pow(r));

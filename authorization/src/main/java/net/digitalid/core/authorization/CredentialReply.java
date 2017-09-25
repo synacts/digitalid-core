@@ -1,14 +1,16 @@
 package net.digitalid.core.authorization;
 
-import java.security.PublicKey;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.Exponent;
@@ -24,8 +26,9 @@ import net.digitalid.core.restrictions.Restrictions;
  * @see CredentialExternalQuery
  */
 @Immutable
-// TODO: @GenerateSubclass
-// TODO: @GenerateConverter
+@GenerateBuilder
+@GenerateSubclass
+@GenerateConverter
 abstract class CredentialReply extends QueryReply<NonHostEntity> implements CoreHandler<NonHostEntity> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */

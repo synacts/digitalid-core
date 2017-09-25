@@ -122,9 +122,9 @@ public abstract class Worker implements Runnable {
             
             final @Nonnull Signature<Compression<Pack>> signedReply;
             if (encryptedMethod != null && signedMethod != null) {
-                signedReply = HostSignatureCreator.sign(compressedReply, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).to(signedMethod.getSubject()).as(encryptedMethod.getRecipient());
+                signedReply = HostSignatureCreator.sign(compressedReply, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).about(signedMethod.getSubject()).as(encryptedMethod.getRecipient());
             } else {
-                signedReply = SignatureBuilder.withObject(compressedReply).withSubject(HostIdentifier.DIGITALID).build();
+                signedReply = SignatureBuilder.withObjectConverter(CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).withObject(compressedReply).withSubject(HostIdentifier.DIGITALID).build();
             }
             
             final @Nonnull Encryption<Signature<Compression<Pack>>> encryptedReply;

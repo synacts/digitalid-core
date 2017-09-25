@@ -105,7 +105,7 @@ public abstract class SignatureConverter<@Unspecifiable OBJECT> implements Gener
         final @Nonnull Time time = decoder.decodeObject(TimeConverter.INSTANCE, null);
         final @Nonnull InternalIdentifier subject = decoder.decodeObject(InternalIdentifierConverter.INSTANCE, null);
         final @Nonnull OBJECT object = decoder.decodeObject(getObjectConverter(), null);
-        return SignatureBuilder.withObject(object).withSubject(subject).withTime(time).build();
+        return SignatureBuilder.withObjectConverter(getObjectConverter()).withObject(object).withSubject(subject).withTime(time).build();
     }
     
 }

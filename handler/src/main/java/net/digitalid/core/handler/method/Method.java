@@ -26,6 +26,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionBuilder;
+import net.digitalid.core.compression.CompressionConverterBuilder;
 import net.digitalid.core.encryption.RequestEncryption;
 import net.digitalid.core.encryption.RequestEncryptionBuilder;
 import net.digitalid.core.entity.Entity;
@@ -41,6 +42,7 @@ import net.digitalid.core.handler.reply.instances.RequestExceptionReply;
 import net.digitalid.core.handler.reply.instances.RequestExceptionReplyConverter;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.pack.Pack;
+import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.RequestBuilder;
 import net.digitalid.core.packet.Response;
@@ -147,7 +149,7 @@ public interface Method<@Unspecifiable ENTITY extends Entity> extends Handler<EN
      */
     @Pure
     public default @Nonnull Signature<Compression<Pack>> getSignature(@Nonnull Compression<Pack> compression) throws ExternalException {
-        return SignatureBuilder.withObject(compression).withSubject(getSubject()).build();
+        return SignatureBuilder.withObjectConverter(CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).withObject(compression).withSubject(getSubject()).build();
     }
     
     /**
