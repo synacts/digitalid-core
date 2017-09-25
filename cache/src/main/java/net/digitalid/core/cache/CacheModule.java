@@ -122,7 +122,7 @@ public abstract class CacheModule {
                 Log.warning("The public key chain of the root host $ was not found in the provided resources.", HostIdentifier.DIGITALID);
                 Log.information("Creating the host $, which can take several minutes.", HostIdentifier.DIGITALID);
                 final @Nonnull Host host = HostBuilder.withIdentifier(HostIdentifier.DIGITALID).build();
-                final @Nonnull HostSignature<Pack> hostSignature = HostSignatureCreator.sign(host.publicKeyChain.get().pack(), PackConverter.INSTANCE).to(HostIdentifier.DIGITALID).as(PublicKeyChain.TYPE.getAddress());
+                final @Nonnull HostSignature<Pack> hostSignature = HostSignatureCreator.sign(host.publicKeyChain.get().pack(), PackConverter.INSTANCE).about(HostIdentifier.DIGITALID).as(PublicKeyChain.TYPE.getAddress());
                 value = CertifiedAttributeValue.with(hostSignature);
                 value.pack().storeTo(Files.relativeToConfigurationDirectory("core.digitalid.net.certificate.xdf"));
             }

@@ -211,10 +211,10 @@ public abstract class Host extends CoreUnit {
             final @Nonnull AttributeValue value;
             if (exists(HostIdentifier.DIGITALID) || getIdentifier().equals(HostIdentifier.DIGITALID)) {
                 // If the new host is running on the same server as 'core.digitalid.net', certify its public key immediately.
-                final @Nonnull HostSignature<Pack> hostSignature = HostSignatureCreator.sign(publicKeyChain.get().pack(), PackConverter.INSTANCE).to(getIdentifier()).as(PublicKeyChain.TYPE.getAddress());
+                final @Nonnull HostSignature<Pack> hostSignature = HostSignatureCreator.sign(publicKeyChain.get().pack(), PackConverter.INSTANCE).about(getIdentifier()).as(PublicKeyChain.TYPE.getAddress());
                 value = CertifiedAttributeValue.with(hostSignature);
             } else {
-                final @Nonnull Signature<Pack> signature = SignatureBuilder.withObject(publicKeyChain.get().pack()).withSubject(getIdentifier()).build();
+                final @Nonnull Signature<Pack> signature = SignatureBuilder.withObjectConverter(PackConverter.INSTANCE).withObject(publicKeyChain.get().pack()).withSubject(getIdentifier()).build();
                 value = UncertifiedAttributeValue.with(signature);
             }
             ((WritableSynchronizedValueProperty<Entity, SemanticType, Attribute, AttributeValue>) attribute.value()).setWithoutSynchronization(value);
