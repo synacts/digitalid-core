@@ -1,11 +1,15 @@
 package net.digitalid.core.identification.identity;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -28,8 +32,15 @@ public interface HostIdentity extends InternalIdentity {
     @PureWithSideEffects
     public static @Nonnull HostIdentity mapDigitalIDCoreHostIdentity() {
         try {
-            return (HostIdentity) IdentifierResolver.configuration.get().map(Category.HOST, HostIdentifier.DIGITALID);
-        } catch (@Nonnull DatabaseException exception) {
+            final @Nonnull IdentifierResolver identifierResolver = IdentifierResolver.configuration.get();
+            final @Nullable Identity identity = identifierResolver.load(HostIdentifier.DIGITALID);
+            if (identity != null) {
+                if (identity instanceof HostIdentity) { return (HostIdentity) identity; }
+                else { throw RecoveryExceptionBuilder.withMessage(Strings.format("The host identifier $ is not mapped to a host identity!", HostIdentifier.DIGITALID)).build(); }
+            } else {
+                return (HostIdentity) identifierResolver.map(Category.HOST, HostIdentifier.DIGITALID);
+            }
+        } catch (@Nonnull DatabaseException | RecoveryException exception) {
             throw UncheckedExceptionBuilder.withCause(exception).build();
         }
     }
