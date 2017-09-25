@@ -28,7 +28,6 @@ import net.digitalid.database.property.value.WritablePersistentValueProperty;
 
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.AgentFactory;
-import net.digitalid.core.agent.AgentRetriever;
 import net.digitalid.core.commitment.Commitment;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identification.identity.Identity;
