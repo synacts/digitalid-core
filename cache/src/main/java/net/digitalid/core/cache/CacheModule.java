@@ -55,6 +55,7 @@ import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
 
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.attribute.AttributePropertiesLoader;
+import net.digitalid.core.client.ClientSecretLoader;
 import net.digitalid.core.client.role.Role;
 import net.digitalid.core.client.role.RoleModule;
 import net.digitalid.core.handler.reply.Reply;
@@ -109,7 +110,7 @@ public abstract class CacheModule {
      */
     @Committing
     @PureWithSideEffects
-    @Initialize(target = CacheModule.class, dependencies = {AttributePropertiesLoader.class, PrivateKeyRetriever.class, PrivateKeyChainLoader.class})
+    @Initialize(target = CacheModule.class, dependencies = {AttributePropertiesLoader.class, PrivateKeyRetriever.class, PrivateKeyChainLoader.class, ClientSecretLoader.class})
     public static void initializeRootKey() throws ConversionException {
         if (!getCachedAttributeValue(null, HostIdentity.DIGITALID, Time.MIN, PublicKeyChain.TYPE).get0()) {
             // Unless it is the root server, the program should have been delivered with the public key chain of 'core.digitalid.net'.

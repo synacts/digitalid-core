@@ -6,16 +6,21 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.circumfixes.Quotes;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.configuration.errors.ConfigurationError;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.conversion.recovery.Check;
+import net.digitalid.utility.errors.SupportErrorBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.threading.Threading;
 import net.digitalid.utility.threading.annotations.MainThread;
 import net.digitalid.utility.time.Time;
@@ -185,8 +190,13 @@ public abstract class SemanticType extends Type {
     @Chainable
     @NonCommitting
     @NonLoadedRecipient
+    @TODO(task = "Remove the configuration error catch once type loading is supported.", date = "2017-10-04", author = Author.KASPAR_ETTER)
     @Nonnull SemanticType load() throws ExternalException {
-        this.attributes = TypeLoader.configuration.get().load(this);
+        try {
+            this.attributes = TypeLoader.configuration.get().load(this);
+        } catch (@Nonnull ConfigurationError error) {
+            throw SupportErrorBuilder.withMessage(Strings.format("The attributes of the type $ cannot be loaded (because type loading is not yet supported).", getAddress())).withCause(error).build();
+        }
         return this;
     }
     

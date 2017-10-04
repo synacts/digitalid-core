@@ -81,7 +81,7 @@ public class KeyPair extends RootClass {
     protected KeyPair() {
         final @Nonnull Random random = new SecureRandom();
         
-        Log.debugging("Generating a new key pair of length " + Parameters.FACTOR.get() * Parameters.FACTOR.get());
+        Log.debugging("Generating a new key pair of length " + (Parameters.FACTOR.get() + Parameters.FACTOR.get()));
         
         Log.verbose("Generating the safe prime 'p' of length " + Parameters.FACTOR.get());
         final @Nonnull BigInteger p = getSafePrime(Parameters.FACTOR.get(), random);

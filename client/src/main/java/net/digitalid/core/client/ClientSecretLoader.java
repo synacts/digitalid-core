@@ -15,6 +15,8 @@ import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.file.Files;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.validation.annotations.file.existence.ExistentParent;
+import net.digitalid.utility.validation.annotations.file.path.Absolute;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Mutable;
@@ -36,6 +38,16 @@ import net.digitalid.core.parameters.Parameters;
 @Mutable
 public class ClientSecretLoader {
     
+    /* -------------------------------------------------- File -------------------------------------------------- */
+    
+    /**
+     * Returns the file in which the secret of the client with the given identifier is stored.
+     */
+    @PureWithSideEffects
+    public static @Nonnull @Absolute @ExistentParent File getFile(@Nonnull @DomainName @MaxSize(63) String identifier) {
+        return Files.relativeToConfigurationDirectory(identifier + ".client.xdf");
+    }
+    
     /* -------------------------------------------------- Interface -------------------------------------------------- */
     
     /**
@@ -43,7 +55,7 @@ public class ClientSecretLoader {
      */
     @Pure
     public @Nonnull Exponent getClientSecret(@Nonnull @DomainName @MaxSize(63) String identifier) throws FileException, RecoveryException {
-        final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier + ".client.xdf");
+        final @Nonnull File file = getFile(identifier);
         if (file.exists()) {
             // TODO: Check the type of the loaded pack?
             return Pack.loadFrom(file).unpack(ExponentConverter.INSTANCE, null);
@@ -59,7 +71,7 @@ public class ClientSecretLoader {
      */
     @Impure
     public void setClientSecret(@Nonnull @DomainName @MaxSize(63) String identifier, @Nonnull Exponent secret) throws FileException {
-        final @Nonnull File file = Files.relativeToConfigurationDirectory(identifier + ".client.xdf");
+        final @Nonnull File file = getFile(identifier);
         Pack.pack(ExponentConverter.INSTANCE, secret).storeTo(file);
     }
     

@@ -76,7 +76,10 @@ public abstract class KeyChain<@Unspecifiable KEY extends AsymmetricKey, @Unspec
     /* -------------------------------------------------- Modification -------------------------------------------------- */
     
     @Pure
-    abstract @Nonnull ITEM buildItem(@Nonnull Time time, @Nonnull KEY key);
+    protected abstract @Nonnull ITEM buildItem(@Nonnull Time time, @Nonnull KEY key);
+    
+    @Pure
+    protected abstract @Nonnull KeyChain<KEY, ITEM> createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull ITEM> items);
     
     /**
      * Adds a new key to this key chain by returning a new instance.
@@ -105,8 +108,5 @@ public abstract class KeyChain<@Unspecifiable KEY extends AsymmetricKey, @Unspec
         
         return createKeyChain(items.freeze());
     }
-    
-    @Pure
-    protected abstract @Nonnull KeyChain<KEY, ITEM> createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull ITEM> items);
     
 }

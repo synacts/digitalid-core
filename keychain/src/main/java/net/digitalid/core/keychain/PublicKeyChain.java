@@ -12,8 +12,6 @@ import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.time.Time;
-import net.digitalid.utility.tuples.Pair;
-import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.order.StrictlyDescending;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -33,11 +31,34 @@ import net.digitalid.core.identification.identity.SyntacticType;
 @GenerateConverter
 public abstract class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChainItem> {
     
+    /* -------------------------------------------------- Type -------------------------------------------------- */
+    
     /**
      * Stores the semantic type of the public key chain.
      */
     @TODO(task = "Declare the type correctly.", date = "2017-08-30", author = Author.KASPAR_ETTER)
     public static final @Nonnull @Loaded SemanticType TYPE = SemanticType.map(PublicKeyChainConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).withCategories(Category.ONLY_HOST).withCachingPeriod(Time.TROPICAL_YEAR).build());
+    
+    /* -------------------------------------------------- Builders -------------------------------------------------- */
+    
+    @Pure
+    private static @Nonnull PublicKeyChainItem buildPublicKeyChainItem(@Nonnull Time time, @Nonnull PublicKey publicKey) {
+        return PublicKeyChainItemBuilder.withTime(time).withKey(publicKey).build();
+    }
+    
+    @Pure
+    @Override
+    protected @Nonnull PublicKeyChainItem buildItem(@Nonnull Time time, @Nonnull PublicKey publicKey) {
+        return buildPublicKeyChainItem(time, publicKey);
+    }
+    
+    @Pure
+    @Override
+    protected @Nonnull PublicKeyChain createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull PublicKeyChainItem> items) {
+        return new PublicKeyChainSubclass(items);
+    }
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Returns a new key chain with the given time and key.
@@ -52,23 +73,6 @@ public abstract class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChainI
         Require.that(time.isInPast()).orThrow("The time lies in the past.");
         
         return new PublicKeyChainSubclass(FreezableLinkedList.<PublicKeyChainItem>withElement(buildPublicKeyChainItem(time, key)).freeze());
-    }
-    
-    @Pure
-    private static @Nonnull PublicKeyChainItem buildPublicKeyChainItem(@Nonnull Time time, @Nonnull PublicKey publicKey) {
-        return PublicKeyChainItemBuilder.withTime(time).withKey(publicKey).build();
-    }
-    
-    @Pure
-    @Override
-    @Nonnull PublicKeyChainItem buildItem(@Nonnull Time time, @Nonnull PublicKey publicKey) {
-        return buildPublicKeyChainItem(time, publicKey);
-    }
-    
-    @Pure
-    @Override
-    protected @Nonnull PublicKeyChain createKeyChain(@Nonnull @Frozen @NonEmpty @StrictlyDescending ReadOnlyList<@Nonnull PublicKeyChainItem> items) {
-        return new PublicKeyChainSubclass(items);
     }
     
 }
