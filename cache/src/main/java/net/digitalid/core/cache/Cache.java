@@ -15,6 +15,7 @@ import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.tuples.Pair;
@@ -111,8 +112,11 @@ public abstract class Cache {
             }
         }
         
+        Log.debugging("Retrieving " + typesToRetrieve + (requester != null ? " as " + requester.getIdentity().getAddress() : "") + " from " + requestee.getAddress());
+        
         if (typesToRetrieve.size() > 0) {
             if (typesToRetrieve.contains(PublicKeyChain.TYPE)) {
+                Log.warning("TODO: Public Key Chain Retrieval");
                 // TODO: Implement a mechanism where the signature can be verified after the public key chain has been stored.
 //                final @Nonnull AttributesReply reply = new Request(requestee.getAddress().getHostIdentifier()).send(false).getReplyNotNull(0);
 //                final @Nullable AttributeValue value = reply.getAttributeValues().getNullable(0);

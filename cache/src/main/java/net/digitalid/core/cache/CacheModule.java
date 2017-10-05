@@ -8,6 +8,8 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.ConversionException;
@@ -58,6 +60,7 @@ import net.digitalid.core.attribute.AttributePropertiesLoader;
 import net.digitalid.core.client.ClientSecretLoader;
 import net.digitalid.core.client.role.Role;
 import net.digitalid.core.client.role.RoleModule;
+import net.digitalid.core.entity.factories.AccountFactory;
 import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.host.HostBuilder;
@@ -68,12 +71,15 @@ import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.InternalIdentity;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.signature.attribute.AttributeValue;
 import net.digitalid.core.signature.attribute.AttributeValueConverter;
 import net.digitalid.core.signature.attribute.CertifiedAttributeValue;
+import net.digitalid.core.signature.attribute.CertifiedAttributeValueConverter;
 import net.digitalid.core.signature.host.HostSignature;
 import net.digitalid.core.signature.host.HostSignatureCreator;
 import net.digitalid.core.unit.GeneralUnit;
@@ -110,14 +116,18 @@ public abstract class CacheModule {
      */
     @Committing
     @PureWithSideEffects
-    @Initialize(target = CacheModule.class, dependencies = {AttributePropertiesLoader.class, PrivateKeyRetriever.class, PrivateKeyChainLoader.class, ClientSecretLoader.class})
+    @TODO(task = "Provide the correct parameters for the loading of the type.", date = "2017-10-05", author = Author.KASPAR_ETTER)
+    @Initialize(target = CacheModule.class, dependencies = {AccountFactory.class, AttributePropertiesLoader.class, PrivateKeyRetriever.class, PrivateKeyChainLoader.class, ClientSecretLoader.class})
     public static void initializeRootKey() throws ConversionException {
         if (!getCachedAttributeValue(null, HostIdentity.DIGITALID, Time.MIN, PublicKeyChain.TYPE).get0()) {
             // Unless it is the root server, the program should have been delivered with the public key chain of 'core.digitalid.net'.
             final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/net/digitalid/core/cache/core.digitalid.net.certificate.xdf");
             final @Nonnull AttributeValue value;
             if (inputStream != null) {
-                value = Pack.loadFrom(inputStream).unpack(AttributeValueConverter.INSTANCE, null);
+                final @Nonnull SemanticType semanticType = SemanticType.map(CertifiedAttributeValueConverter.INSTANCE);
+                semanticType.load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build());
+                Database.commit(); // The type mapping has to be committed because the local map is not updated otherwise.
+                value = Pack.loadFrom(inputStream).unpack(CertifiedAttributeValueConverter.INSTANCE, null);
                 Log.debugging("The public key chain of the root host $ was loaded from the provided resources.", HostIdentifier.DIGITALID);
             } else {
                 // Since the public key chain of 'core.digitalid.net' is not available, the host 'core.digitalid.net' is created on this server.
