@@ -76,6 +76,8 @@ public abstract class Worker implements Runnable {
     @PureWithSideEffects
     public void run() {
         try {
+            Log.debugging("Received a request from $.", getSocket().getInetAddress());
+            
             final @Nonnull Time start = TimeBuilder.build();
             
             @Nullable Encryption<Signature<Compression<Pack>>> encryptedMethod = null;

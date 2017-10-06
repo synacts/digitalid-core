@@ -12,18 +12,15 @@ import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
-import net.digitalid.core.signature.exceptions.InvalidSignatureException;
+import net.digitalid.core.signature.exceptions.SignatureException;
 import net.digitalid.core.testing.CoreTest;
 
 import org.junit.Test;
 
-/**
- *
- */
 public class HostSignatureCreatorTest extends CoreTest {
     
     @Test
-    public void shouldSignAndCreateHostSignature() throws RecoveryException, InvalidSignatureException {
+    public void shouldSignAndCreateHostSignature() throws RecoveryException, SignatureException {
         final @Nonnull String message = "This is an authentic message.";
         final @Nonnull InternalIdentifier subject = InternalIdentifier.with("bob@digitalid.net");
         final @Nonnull InternalIdentifier signer = InternalIdentifier.with("alice@digitalid.net");

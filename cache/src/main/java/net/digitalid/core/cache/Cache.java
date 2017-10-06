@@ -115,27 +115,19 @@ public abstract class Cache {
         Log.debugging("Retrieving " + typesToRetrieve + (requester != null ? " as " + requester.getIdentity().getAddress() : "") + " from " + requestee.getAddress());
         
         if (typesToRetrieve.size() > 0) {
-            if (typesToRetrieve.contains(PublicKeyChain.TYPE)) {
-                Log.warning("TODO: Public Key Chain Retrieval");
-                // TODO: Implement a mechanism where the signature can be verified after the public key chain has been stored.
-//                final @Nonnull AttributesReply reply = new Request(requestee.getAddress().getHostIdentifier()).send(false).getReplyNotNull(0);
-//                final @Nullable AttributeValue value = reply.getAttributeValues().getNullable(0);
-//                setCachedAttributeValue(identity, null, getExpiration(PublicKeyChain.TYPE, value, reply), PublicKeyChain.TYPE, value, reply);
-//                reply.getSignatureNotNull().verify();
-//                result[0] = value;
-            } else {
-                final @Nonnull AttributesQuery query = AttributesQueryBuilder.withAttributeTypes(typesToRetrieve/* TODO: .freeze() */).withPublished(true).withProvidedEntity(requester).withProvidedSubject(requestee.getAddress()).build();
-                final @Nonnull AttributesReply reply = query.send(AttributesReplyConverter.INSTANCE);
-                final @Nonnull ReadOnlyList<AttributeValue> values = reply.getAttributeValues();
-                if (values.size() != typesToRetrieve.size()) { throw DeclarationExceptionBuilder.withMessage(Strings.format("number of attributes", typesToRetrieve.size(), values.size())).withIdentity(requestee).build(); }
-                for (int i = 0; i < values.size(); i++) {
-                    final @Nullable AttributeValue value = values.get(i);
-                    final @Nonnull SemanticType type = typesToRetrieve.get(i);
-                    if (value != null && !value.getContent().getType().equals(type)) { throw DeclarationExceptionBuilder.withMessage(Strings.format("The queried type $ and the replied type $ should be the same.", type.getAddress(), value.getContent().getType().getAddress())).withIdentity(requestee).build(); }
-                    CacheModule.setCachedAttributeValue(requester, requestee, getExpiration(type, value, reply), type, value, reply);
-                    result[indexesToStore.get(i)] = value;
-                }
+            final boolean publicKeyChainQuery = typesToRetrieve.contains(PublicKeyChain.TYPE);
+            final @Nonnull AttributesQuery query = AttributesQueryBuilder.withAttributeTypes(typesToRetrieve/* TODO: .freeze() */).withProvidedEntity(requester).withProvidedSubject(requestee.getAddress()).build();
+            final @Nonnull AttributesReply reply = query.send(AttributesReplyConverter.INSTANCE);  // TODO: Pass a flag here (once added/supported) to deactive the verification of the response signature if it is a public key chain query.
+            final @Nonnull ReadOnlyList<AttributeValue> values = reply.getAttributeValues();
+            if (values.size() != typesToRetrieve.size()) { throw DeclarationExceptionBuilder.withMessage(Strings.format("number of attributes", typesToRetrieve.size(), values.size())).withIdentity(requestee).build(); }
+            for (int i = 0; i < values.size(); i++) {
+                final @Nullable AttributeValue value = values.get(i);
+                final @Nonnull SemanticType type = typesToRetrieve.get(i);
+                if (value != null && !value.getContent().getType().equals(type)) { throw DeclarationExceptionBuilder.withMessage(Strings.format("The queried type $ and the replied type $ should be the same.", type.getAddress(), value.getContent().getType().getAddress())).withIdentity(requestee).build(); }
+                CacheModule.setCachedAttributeValue(requester, requestee, getExpiration(type, value, reply), type, value, reply);
+                result[indexesToStore.get(i)] = value;
             }
+            if (publicKeyChainQuery) { reply.getSignature().verifySignature(); }
         }
         
         return result;

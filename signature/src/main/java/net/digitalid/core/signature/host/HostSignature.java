@@ -10,7 +10,6 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
-import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -72,6 +71,18 @@ public abstract class HostSignature<@Unspecifiable OBJECT> extends Signature<OBJ
     
     /* -------------------------------------------------- Verification -------------------------------------------------- */
     
+    /**
+     * Verifies the correctness of the host signature by using the given public key.
+     */
+    @Pure
+    public void verifySignature(@Nonnull PublicKey publicKey) throws InvalidSignatureException, ExpiredSignatureException {
+        // TODO: do we not have to check whether the signature expired?
+        final @Nonnull BigInteger computedHash = publicKey.getCompositeGroup().getElement(getSignatureValue()).pow(publicKey.getE()).getValue();
+        if (!computedHash.equals(getHostSignatureContentHash())) {
+            throw InvalidSignatureExceptionBuilder.withSignature(this).build();
+        }
+    }
+    
     @Pure
     @Override
     public void verifySignature() throws InvalidSignatureException, ExpiredSignatureException, RecoveryException {
@@ -83,19 +94,6 @@ public abstract class HostSignature<@Unspecifiable OBJECT> extends Signature<OBJ
         }
         
         verifySignature(publicKey);
-    }
-    
-    /**
-     * Verifies the correctness of the host signature by using the given public key.
-     * @throws InvalidSignatureException if the signature is not valid.
-     */
-    @Pure
-    public void verifySignature(@Nonnull PublicKey publicKey) throws InvalidSignatureException {
-        // TODO: do we not have to check whether the signature expired?
-        final @Nonnull BigInteger computedHash = publicKey.getCompositeGroup().getElement(getSignatureValue()).pow(publicKey.getE()).getValue();
-        if (!computedHash.equals(getHostSignatureContentHash())) {
-            throw InvalidSignatureExceptionBuilder.withSignature(this).build();
-        }
     }
     
 }

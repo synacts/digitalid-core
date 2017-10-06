@@ -9,6 +9,9 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
@@ -27,7 +30,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.core.compression.Compression;
 import net.digitalid.core.compression.CompressionBuilder;
 import net.digitalid.core.compression.CompressionConverterBuilder;
-import net.digitalid.core.encryption.RequestEncryption;
+import net.digitalid.core.encryption.Encryption;
 import net.digitalid.core.encryption.RequestEncryptionBuilder;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -153,14 +156,23 @@ public interface Method<@Unspecifiable ENTITY extends Entity> extends Handler<EN
     }
     
     /**
+     * Encrypts the compressed content. The encryption has to be deactivated for public key chain queries.
+     */
+    @Pure
+    public default @Nonnull Encryption<Signature<Compression<Pack>>> getEncryption(@Nonnull Compression<Pack> compression) throws ExternalException {
+        return RequestEncryptionBuilder.withObject(getSignature(compression)).withRecipient(getRecipient()).build();
+    }
+    
+    /**
      * Sends this method and returns the response.
      */
     @NonCommitting
     @PureWithSideEffects
+    @TODO(task = "Verify the signature of the response (and add a flag to disable this for public key retrieval)!", date = "2017-10-06", author = Author.KASPAR_ETTER, priority = Priority.HIGH)
     public default @Nonnull Response send() throws ExternalException {
         final @Nonnull Compression<Pack> compression = CompressionBuilder.withObject(pack()).build();
-    
-        final @Nonnull RequestEncryption<Signature<Compression<Pack>>> encryption = RequestEncryptionBuilder.withObject(getSignature(compression)).withRecipient(getRecipient()).build();
+        
+        final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = getEncryption(compression);
         final @Nonnull Request request = RequestBuilder.withEncryption(encryption).build();
         final @Nonnull Response response = request.send();
         

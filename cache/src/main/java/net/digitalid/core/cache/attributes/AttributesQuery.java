@@ -9,10 +9,12 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.set.FreezableLinkedHashSet;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -20,6 +22,9 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.attribute.Attribute;
+import net.digitalid.core.compression.Compression;
+import net.digitalid.core.encryption.Encryption;
+import net.digitalid.core.encryption.EncryptionBuilder;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.request.RequestException;
@@ -31,7 +36,9 @@ import net.digitalid.core.handler.method.query.ExternalQuery;
 import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identity.InternalPerson;
 import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.node.contact.Contact;
+import net.digitalid.core.pack.Pack;
 import net.digitalid.core.permissions.ReadOnlyAgentPermissions;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.attribute.AttributeValue;
@@ -62,7 +69,17 @@ public abstract class AttributesQuery extends ExternalQuery<Entity> implements C
      * Returns whether the published values are queried.
      */
     @Pure
+    @Default("true")
     public abstract boolean isPublished();
+    
+    /* -------------------------------------------------- Send -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Encryption<Signature<Compression<Pack>>> getEncryption(@Nonnull Compression<Pack> compression) throws ExternalException {
+        if (getAttributeTypes().contains(PublicKeyChain.TYPE)) { return EncryptionBuilder.withObject(getSignature(compression)).withRecipient(getRecipient()).build(); }
+        else { return super.getEncryption(compression); }
+    }
     
     /* -------------------------------------------------- Required Authorization -------------------------------------------------- */
     

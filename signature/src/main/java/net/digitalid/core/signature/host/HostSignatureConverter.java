@@ -44,33 +44,33 @@ import net.digitalid.core.signature.SignatureConverterBuilder;
 @GenerateBuilder
 @GenerateSubclass
 public abstract class HostSignatureConverter<@Unspecifiable OBJECT> implements GenericTypeConverter<OBJECT, HostSignature<OBJECT>, Void> {
-
+    
     /* -------------------------------------------------- Type -------------------------------------------------- */
-
+    
     @Pure
     @Override
     public @Nonnull Class<? super HostSignature<OBJECT>> getType() {
         return HostSignature.class;
     }
-
+    
     /* -------------------------------------------------- Name -------------------------------------------------- */
-
+    
     @Pure
     @Override
     public @Nonnull @CodeIdentifier @MaxSize(63) String getTypeName() {
         return "HostSignature";
     }
-
+    
     /* -------------------------------------------------- Package -------------------------------------------------- */
-
+    
     @Pure
     @Override
     public @Nonnull @DomainName String getTypePackage() {
         return "net.digitalid.core.signature.host";
     }
-
+    
     /* -------------------------------------------------- Fields -------------------------------------------------- */
-
+    
     @Pure
     @Override
     public @Nonnull @NonNullableElements ImmutableList<CustomField> getFields(@Nonnull Representation representation) {
@@ -82,17 +82,17 @@ public abstract class HostSignatureConverter<@Unspecifiable OBJECT> implements G
                 CustomField.with(CustomType.TUPLE.of(getObjectConverter()), "object", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class)))
         );
     }
-
+    
     /* -------------------------------------------------- Inheritance -------------------------------------------------- */
-
+    
     @Pure
     @Override
     public @Nonnull Converter<? super HostSignature<OBJECT>, Void> getSupertypeConverter() {
         return SignatureConverterBuilder.withObjectConverter(getObjectConverter()).build();
     }
-
+    
     /* -------------------------------------------------- Convert -------------------------------------------------- */
-
+    
     @Pure
     @Override
     public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@NonCaptured @Unmodified @Nonnull HostSignature<OBJECT> hostSignature, @NonCaptured @Modified @Nonnull Encoder<EXCEPTION> encoder) throws EXCEPTION {
@@ -102,9 +102,9 @@ public abstract class HostSignatureConverter<@Unspecifiable OBJECT> implements G
         encoder.encodeObject(getObjectConverter(), hostSignature.getObject());
         encoder.encodeInteger(hostSignature.getSignatureValue());
     }
-
+    
     /* -------------------------------------------------- Recover -------------------------------------------------- */
-
+    
     @Pure
     @Override
     public <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull HostSignature<OBJECT> recover(@NonCaptured @Modified @Nonnull Decoder<EXCEPTION> decoder, Void provided) throws EXCEPTION, RecoveryException {
@@ -113,9 +113,9 @@ public abstract class HostSignatureConverter<@Unspecifiable OBJECT> implements G
         final @Nonnull InternalIdentifier signer = decoder.decodeObject(InternalIdentifierConverter.INSTANCE, null);
         final @Nonnull OBJECT object = decoder.decodeObject(getObjectConverter(), null);
         final @Nonnull BigInteger signatureValue = decoder.decodeInteger();
-
+        
         final @Nonnull HostSignature<OBJECT> hostSignature = HostSignatureBuilder.withObjectConverter(getObjectConverter()).withObject(object).withSubject(subject).withSigner(signer).withSignatureValue(signatureValue).withTime(time).build();
         return hostSignature;
     }
-
+    
 }
