@@ -1,5 +1,7 @@
 package net.digitalid.core.host;
 
+import java.io.File;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -7,13 +9,14 @@ import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.collection.ReadOnlyCollection;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
+import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.ConversionException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
+import net.digitalid.utility.file.Files;
+import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
@@ -22,6 +25,7 @@ import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
+import net.digitalid.utility.validation.annotations.file.existence.Existent;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
@@ -266,34 +270,20 @@ public abstract class Host extends CoreUnit {
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
     /**
-     * Loads all hosts with cryptographic keys but without a tables file in the hosts directory.
+     * Stores a dummy configuration in order to have an initialization target for the host loading.
+     */
+    public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE);
+    
+    /**
+     * Loads all hosts with cryptographic keys but without an exported tables file in the hosts directory.
      */
     @Impure
     @Committing
-    @TODO(task = "Implement this as an initializer?", date = "2017-03-21", author = Author.KASPAR_ETTER)
-    public static void loadHosts() {
-//        // TODO: Remove this special case when the certification mechanism is implemented.
-//        final @Nonnull File digitalid = new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".private.xdf");
-//        if (digitalid.exists() && digitalid.isFile()) {
-//            try {
-//                if (!new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".tables.xdf").exists()) { new Host(HostIdentifier.DIGITALID); }
-//            } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-//                throw InitializationError.get("Could not load the host configured in the file '" + digitalid.getName() + "'.", exception);
-//            }
-//        }
-//        
-//        final @Nonnull File[] files = Directory.getHostsDirectory().listFiles();
-//        for (final @Nonnull File file : files) {
-//            final @Nonnull String name = file.getName();
-//            if (file.isFile() && name.endsWith(".private.xdf") && !name.equals(HostIdentifier.DIGITALID.getString() + ".private.xdf")) { // TODO: Remove the special case eventually.
-//                try {
-//                    final @Nonnull HostIdentifier identifier = new HostIdentifier(name.substring(0, name.length() - 12));
-//                    if (!new File(Directory.getHostsDirectory().getPath() + File.separator + identifier.getString() + ".tables.xdf").exists()) { new Host(identifier); }
-//                } catch (@Nonnull DatabaseException | NetworkException | InternalException | ExternalException | RequestException exception) {
-//                    throw InitializationError.get("Could not load the host configured in the file '" + name + "'.", exception);
-//                }
-//            }
-//        }
+    @Initialize(target = Host.class)
+    public static void loadHosts() throws ConversionException {
+        final @Nonnull FiniteIterable<@Nonnull @Existent File> configurationDirectoryFiles = Files.listNonHiddenFiles(Files.relativeToConfigurationDirectory("")).filter(File::isFile);
+        final @Nonnull FiniteIterable<@Nonnull String> privateKeyFiles = configurationDirectoryFiles.map(File::getName).filter(name -> name.endsWith(".private.xdf"));
+        privateKeyFiles.map(name -> name.substring(0, name.length() - 12)).filterNot(name -> Files.relativeToConfigurationDirectory(name + ".tables.xdf").exists()).map(HostIdentifier::with).doForEach(identifier -> HostBuilder.withIdentifier(identifier).build());
     }
     
 }

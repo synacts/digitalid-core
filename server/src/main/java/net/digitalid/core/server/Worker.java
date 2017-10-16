@@ -42,6 +42,7 @@ import net.digitalid.core.host.Host;
 import net.digitalid.core.host.account.Account;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
+import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.pack.Pack;
 import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.packet.Request;
@@ -74,6 +75,7 @@ public abstract class Worker implements Runnable {
     @Override
     @Committing
     @PureWithSideEffects
+    @SuppressWarnings("UseSpecificCatch")
     public void run() {
         try {
             Log.debugging("Received a request from $.", getSocket().getInetAddress());
@@ -97,8 +99,11 @@ public abstract class Worker implements Runnable {
                     final @Nonnull Host host = Host.of(recipient);
                     
                     signedMethod = encryptedMethod.getObject();
+                    final @Nonnull SemanticType type = signedMethod.getObject().getObject().getType();
+                    Log.debugging("Executing the method $ on host $.", type.getAddress(), recipient);
+                    
                     final @Nonnull InternalIdentifier subject;
-                    if (signedMethod.getObject().getObject().getType().equals(OpenAccount.TYPE)) { subject = recipient; } else { subject = signedMethod.getSubject(); }
+                    if (type.equals(OpenAccount.TYPE)) { subject = recipient; } else { subject = signedMethod.getSubject(); }
                     final @Nonnull Account account = Account.with(host, subject.resolve());
                     
                     method = MethodIndex.get(signedMethod, account);
@@ -142,6 +147,8 @@ public abstract class Worker implements Runnable {
             Log.information(method + " handled in " + start.ago().getValue() + " ms.");
         } catch (@Nonnull NetworkException exception) {
             Log.warning("Could not send a response.", exception);
+        } catch (@Nonnull Throwable throwable) {
+            Log.warning("Something went wrong.", throwable);
         } finally {
             try {
                 if (!getSocket().isClosed()) { getSocket().close(); }

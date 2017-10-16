@@ -14,6 +14,7 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.string.Strings;
@@ -38,6 +39,7 @@ import net.digitalid.core.client.role.Role;
 import net.digitalid.core.exceptions.response.DeclarationExceptionBuilder;
 import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
 import net.digitalid.core.identification.identity.Identity;
 import net.digitalid.core.identification.identity.InternalIdentity;
@@ -98,6 +100,11 @@ public abstract class Cache {
         Require.that(!Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1).orThrow("If the public key chain of a host is queried, it has to be the only type.");
         for (final @Nullable SemanticType type : types) { Require.that(type != null && type.isAttributeFor(requestee.getCategory())).orThrow("Each type has to be non-null and can be used as an attribute for the category of the given requestee."); }
         
+        final @Nonnull InternalIdentifier requesteeAddress = requestee.getAddress();
+        final @Nullable InternalIdentifier requesterAddress = requester != null ? requester.getIdentity().getAddress() : null;
+        final @Nonnull String typesToLoad = FiniteIterable.of(types).map(SemanticType::getAddress).join();
+        Log.debugging("Loading $ from $ as $.", typesToLoad, requesteeAddress, requesterAddress);
+        
         final @Nonnull AttributeValue[] result = new AttributeValue[types.length];
         
         final @Nonnull FreezableAttributeTypeSet typesToRetrieve = FreezableAttributeTypeSet.withNoTypes();
@@ -112,9 +119,9 @@ public abstract class Cache {
             }
         }
         
-        Log.debugging("Retrieving " + typesToRetrieve + (requester != null ? " as " + requester.getIdentity().getAddress() : "") + " from " + requestee.getAddress());
-        
         if (typesToRetrieve.size() > 0) {
+            Log.debugging("Retrieving $ from $ as $.", typesToRetrieve, requesteeAddress, requesterAddress);
+            
             final boolean publicKeyChainQuery = typesToRetrieve.contains(PublicKeyChain.TYPE);
             final @Nonnull AttributesQuery query = AttributesQueryBuilder.withAttributeTypes(typesToRetrieve/* TODO: .freeze() */).withProvidedEntity(requester).withProvidedSubject(requestee.getAddress()).build();
             final @Nonnull AttributesReply reply = query.send(AttributesReplyConverter.INSTANCE);  // TODO: Pass a flag here (once added/supported) to deactive the verification of the response signature if it is a public key chain query.
@@ -128,6 +135,8 @@ public abstract class Cache {
                 result[indexesToStore.get(i)] = value;
             }
             if (publicKeyChainQuery) { reply.getSignature().verifySignature(); }
+        } else {
+            Log.debugging("Nothing to retrieve from $, loaded $ from the cache.", requesteeAddress, typesToLoad);
         }
         
         return result;
