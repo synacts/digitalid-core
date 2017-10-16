@@ -8,10 +8,15 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 
+import net.digitalid.core.account.OpenAccount;
 import net.digitalid.core.account.OpenAccountConverter;
 import net.digitalid.core.authorization.CredentialInternalQueryConverter;
 import net.digitalid.core.cache.attributes.AttributesQueryConverter;
+import net.digitalid.core.cache.attributes.AttributesReplyConverter;
 import net.digitalid.core.handler.method.MethodIndex;
+import net.digitalid.core.identification.identity.SemanticType;
+import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
+import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.resolution.handlers.IdentityQueryConverter;
 
 /**
@@ -30,6 +35,9 @@ public abstract class CoreInitializer {
         MethodIndex.add(OpenAccountConverter.INSTANCE);
         MethodIndex.add(AttributesQueryConverter.INSTANCE);
         MethodIndex.add(CredentialInternalQueryConverter.INSTANCE);
+        
+        SemanticType.map(AttributesReplyConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build()); // TODO: Load the right attributes.
+        OpenAccount.TYPE.isLoaded(); // Maps the type in the main thread.
     }
     
     /**

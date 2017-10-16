@@ -78,7 +78,8 @@ public abstract class Worker implements Runnable {
     @SuppressWarnings("UseSpecificCatch")
     public void run() {
         try {
-            Log.debugging("Received a request from $.", getSocket().getInetAddress());
+            final @Nonnull String address = getSocket().getInetAddress().getHostAddress();
+            Log.debugging("Received a request from $.", address);
             
             final @Nonnull Time start = TimeBuilder.build();
             
@@ -144,7 +145,7 @@ public abstract class Worker implements Runnable {
             final @Nonnull Response response = ResponseBuilder.withEncryption(encryptedReply).build();
             response.pack().storeTo(getSocket());
             
-            Log.information(method + " handled in " + start.ago().getValue() + " ms.");
+            Log.information(method + " from " + address + " handled in " + start.ago().getValue() + " ms.");
         } catch (@Nonnull NetworkException exception) {
             Log.warning("Could not send a response.", exception);
         } catch (@Nonnull Throwable throwable) {

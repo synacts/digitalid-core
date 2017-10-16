@@ -30,7 +30,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
-import net.digitalid.database.dialect.expression.number.SQLNumberLiteralBuilder;
+import net.digitalid.database.dialect.expression.number.SQLLongLiteralBuilder;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
 import net.digitalid.database.dialect.identifier.column.SQLColumnNameBuilder;
 import net.digitalid.database.dialect.identifier.schema.SQLSchemaName;
@@ -160,9 +160,9 @@ public abstract class CacheModule {
     @PureWithSideEffects
     public static void invalidateCachedAttributeValues(@Nonnull InternalNonHostIdentity identity) throws DatabaseException {
         final @Nonnull Time currentTime = TimeBuilder.build();
-        final @Nonnull SQLAssignment assignment = SQLAssignmentBuilder.withColumn(SQLColumnNameBuilder.withString("expirationtime_value").build()).withExpression(SQLNumberLiteralBuilder.withValue(currentTime.getValue()).build()).build();
-        @Nonnull SQLBooleanExpression whereClause = SQLColumnNameBuilder.withString("requestee_key").build().equal(SQLNumberLiteralBuilder.withValue(identity.getKey()).build()); // TODO: Implement it in such a way that the representation of the internal identity can change.
-        whereClause = whereClause.and(SQLColumnNameBuilder.withString("expirationtime_value").build().greater(SQLNumberLiteralBuilder.withValue(currentTime.getValue()).build())); // TODO: Implement it in such a way that the representation of the time can change?
+        final @Nonnull SQLAssignment assignment = SQLAssignmentBuilder.withColumn(SQLColumnNameBuilder.withString("expirationtime_value").build()).withExpression(SQLLongLiteralBuilder.withValue(currentTime.getValue()).build()).build();
+        @Nonnull SQLBooleanExpression whereClause = SQLColumnNameBuilder.withString("requestee_key").build().equal(SQLLongLiteralBuilder.withValue(identity.getKey()).build()); // TODO: Implement it in such a way that the representation of the internal identity can change.
+        whereClause = whereClause.and(SQLColumnNameBuilder.withString("expirationtime_value").build().greater(SQLLongLiteralBuilder.withValue(currentTime.getValue()).build())); // TODO: Implement it in such a way that the representation of the time can change?
         
         final @Nonnull SQLUpdateStatement updateStatement = SQLUpdateStatementBuilder.withTable(qualifiedTable).withAssignments(ImmutableList.withElements(assignment)).withWhereClause(whereClause).build();
         final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(updateStatement, GeneralUnit.INSTANCE);
@@ -201,12 +201,12 @@ public abstract class CacheModule {
         final @Nonnull ImmutableList<@Nonnull SQLTableSource> sources = ImmutableList.withElements(SQLTableSourceBuilder.withSource(qualifiedTable).build());
         
         final @Nonnull SQLColumnName requesterColumnName = SQLColumnNameBuilder.withString("requester").build();
-        @Nonnull SQLBooleanExpression whereClause = requesterColumnName.equal(SQLNumberLiteralBuilder.withValue(0).build());
-        if (requester != null) { whereClause = whereClause.or(requesterColumnName.equal(SQLNumberLiteralBuilder.withValue(requester.getKey()).build())); }
+        @Nonnull SQLBooleanExpression whereClause = requesterColumnName.equal(SQLLongLiteralBuilder.withValue(0).build());
+        if (requester != null) { whereClause = whereClause.or(requesterColumnName.equal(SQLLongLiteralBuilder.withValue(requester.getKey()).build())); }
         
-        whereClause = whereClause.and(SQLColumnNameBuilder.withString("requestee_key").build().equal(SQLNumberLiteralBuilder.withValue(requestee.getKey()).build())); // TODO: Implement it in such a way that the representation of the internal identity can change.
-        whereClause = whereClause.and(SQLColumnNameBuilder.withString("attributetype_key").build().equal(SQLNumberLiteralBuilder.withValue(type.getKey()).build())); // TODO: Implement it in such a way that the representation of the semantic type can change.
-        whereClause = whereClause.and(SQLColumnNameBuilder.withString("expirationtime_value").build().greaterOrEqual(SQLNumberLiteralBuilder.withValue(expiration.getValue()).build())); // TODO: Implement it in such a way that the representation of the time can change?
+        whereClause = whereClause.and(SQLColumnNameBuilder.withString("requestee_key").build().equal(SQLLongLiteralBuilder.withValue(requestee.getKey()).build())); // TODO: Implement it in such a way that the representation of the internal identity can change.
+        whereClause = whereClause.and(SQLColumnNameBuilder.withString("attributetype_key").build().equal(SQLLongLiteralBuilder.withValue(type.getKey()).build())); // TODO: Implement it in such a way that the representation of the semantic type can change.
+        whereClause = whereClause.and(SQLColumnNameBuilder.withString("expirationtime_value").build().greaterOrEqual(SQLLongLiteralBuilder.withValue(expiration.getValue()).build())); // TODO: Implement it in such a way that the representation of the time can change?
         
         final @Nonnull SQLSimpleSelectStatement selectStatement = SQLSimpleSelectStatementBuilder.withColumns(resultColumns).withSources(sources).withWhereClause(whereClause).build();
         

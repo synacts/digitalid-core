@@ -15,7 +15,6 @@ import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Log;
-import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -112,7 +111,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     @PureWithSideEffects
     @TODO(task = "Instead of a random key, we could/should use an auto-incrementing column in the database.", date = "2017-02-26", author = Author.KASPAR_ETTER)
     public @Nonnull Identity map(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException {
-        final long key = ThreadLocalRandom.current().nextLong();
+        final long key = Math.abs(ThreadLocalRandom.current().nextLong());
         
         final @Nonnull IdentityEntry identityEntry = IdentityEntryBuilder.withKey(key).withCategory(category).withAddress(address).build();
         final @Nonnull IdentifierEntry identifierEntry = IdentifierEntryBuilder.withIdentifier(address).withKey(key).build();

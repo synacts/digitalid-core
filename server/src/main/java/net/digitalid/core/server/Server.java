@@ -13,6 +13,7 @@ import net.digitalid.utility.logging.Level;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
@@ -104,6 +105,7 @@ public abstract class Server {
     public static void main(@Nonnull String[] arguments) {
         try {
             Configuration.initializeAllConfigurations();
+            Database.commit();
             
             Console.writeLine();
             Console.writeLine("The library has been initialized successfully.");
