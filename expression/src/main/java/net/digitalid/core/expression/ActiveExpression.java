@@ -34,8 +34,9 @@ public abstract class ActiveExpression extends AbstractExpression {
     @Override
     @CallSuper
     public void validate() {
-        Validate.that(getExpression().isActive()).orThrow("This expression has to be active but was $.", getString());
         super.validate();
+        
+        Validate.that(getExpression().isActive()).orThrow("This expression has to be active but was $.", getString());
     }
     
     /* -------------------------------------------------- Aggregation -------------------------------------------------- */

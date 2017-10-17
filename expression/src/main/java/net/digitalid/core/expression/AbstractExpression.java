@@ -33,6 +33,14 @@ abstract class AbstractExpression extends RootClass {
     @Provided
     public abstract @Nonnull NonHostEntity getEntity();
     
+    /* -------------------------------------------------- String -------------------------------------------------- */
+    
+    /**
+     * Returns the string which is to be parsed.
+     */
+    @Pure
+    public abstract @Nonnull String getString();
+    
     /* -------------------------------------------------- Expression -------------------------------------------------- */
     
     @Pure
@@ -53,13 +61,12 @@ abstract class AbstractExpression extends RootClass {
 //    @Derive("ExpressionParser.parse(entity, string)")
     abstract @Nonnull Expression getExpression();
     
-    /* -------------------------------------------------- String -------------------------------------------------- */
+    /* -------------------------------------------------- Object -------------------------------------------------- */
     
-    /**
-     * Returns the string which is to be parsed.
-     */
     @Pure
-    // TODO: @Normalize("expression.toString()")
-    public abstract @Nonnull String getString();
+    @Override
+    public @Nonnull String toString() {
+        return getExpression().toString();
+    }
     
 }

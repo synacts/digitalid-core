@@ -152,7 +152,7 @@ abstract class ExpressionParser {
             throw RecoveryExceptionBuilder.withMessage("The identity has to be either a person or a semantic type: " + identifier).build();
         }
         
-        throw RecoveryExceptionBuilder.withMessage("The following string could not be parsed: " + string).build();
+        throw RecoveryExceptionBuilder.withMessage("The following string could not be parsed as an expression: " + string).build();
     }
     
 }
