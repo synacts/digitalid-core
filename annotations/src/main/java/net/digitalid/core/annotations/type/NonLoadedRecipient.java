@@ -48,7 +48,7 @@ public @interface NonLoadedRecipient {
         @Pure
         @Override
         public @Nonnull Contract generateContract(@Nonnull Element element, @Nonnull AnnotationMirror annotationMirror, @NonCaptured @Modified @Nonnull TypeImporter typeImporter) {
-            return Contract.with("!isLoaded()", "The method " + Quotes.inSingle(element.getSimpleName().toString()) + " may only be called on non-loaded types.");
+            return Contract.with("!isLoaded()", "The method " + Quotes.inSingle(element.getSimpleName().toString()) + " may only be called on non-loaded types but $ is already loaded.", "getAddress()");
         }
         
     }

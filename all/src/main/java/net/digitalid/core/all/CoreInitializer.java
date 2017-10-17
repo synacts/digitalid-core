@@ -10,6 +10,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.account.OpenAccount;
 import net.digitalid.core.account.OpenAccountConverter;
+import net.digitalid.core.attribute.AttributeTypes;
 import net.digitalid.core.authorization.CredentialInternalQueryConverter;
 import net.digitalid.core.cache.attributes.AttributesQueryConverter;
 import net.digitalid.core.cache.attributes.AttributesReplyConverter;
@@ -41,6 +42,7 @@ public abstract class CoreInitializer {
         SemanticType.map(AttributesReplyConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build()); // TODO: Load the right attributes.
         SemanticType.map(IdentityReplyConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build()); // TODO: Load the right attributes.
         SemanticType.map(EmptyReplyConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build()); // TODO: Load the right attributes.
+        AttributeTypes.NAME.isLoaded(); // Maps the type in the main thread.
         OpenAccount.TYPE.isLoaded(); // Maps the type in the main thread.
     }
     
