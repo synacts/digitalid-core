@@ -65,6 +65,7 @@ import net.digitalid.core.handler.reply.Reply;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.host.key.PrivateKeyChainLoader;
+import net.digitalid.core.host.key.PublicKeyChainLoader;
 import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
@@ -117,7 +118,7 @@ public abstract class CacheModule {
     @Committing
     @PureWithSideEffects
     @TODO(task = "Provide the correct parameters for the loading of the type.", date = "2017-10-05", author = Author.KASPAR_ETTER)
-    @Initialize(target = CacheModule.class, dependencies = {AccountFactory.class, AttributePropertiesLoader.class, PrivateKeyRetriever.class, PrivateKeyChainLoader.class, ClientSecretLoader.class})
+    @Initialize(target = CacheModule.class, dependencies = {AccountFactory.class, AttributePropertiesLoader.class, PrivateKeyRetriever.class, PrivateKeyChainLoader.class, PublicKeyChainLoader.class, ClientSecretLoader.class})
     public static void initializeRootKey() throws ConversionException {
         if (!getCachedAttributeValue(null, HostIdentity.DIGITALID, Time.MIN, PublicKeyChain.TYPE).get0()) {
             // Unless it is the root server, the program should have been delivered with the public key chain of 'core.digitalid.net'.
@@ -254,7 +255,7 @@ public abstract class CacheModule {
         Require.that(value == null || value.isVerified()).orThrow("The attribute value has to be null or its signature has to be verified.");
         Require.that(value == null || value.getContent().getType().equals(type)).orThrow("The content of the given attribute value has to be null or match the given type.");
         
-        final @Nonnull CacheEntry entry = CacheEntryBuilder.withRequester(requester != null ? requester.getKey() : 0).withRequestee(requestee).withAttributeType(type).withFound(value != null).withExpirationTime(expiration).withAttributeValue(value != null ? value.pack() : null).build();
+        final @Nonnull CacheEntry entry = CacheEntryBuilder.withRequester(requester != null ? requester.getKey() : 0).withRequestee(requestee).withAttributeType(type).withFound(value != null).withExpirationTime(expiration).withAttributeValue(value != null ? Pack.pack(AttributeValueConverter.INSTANCE, value) : null).build();
         SQL.insertOrReplace(CacheEntryConverter.INSTANCE, entry, GeneralUnit.INSTANCE);
     }
     

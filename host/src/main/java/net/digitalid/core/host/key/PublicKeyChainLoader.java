@@ -9,12 +9,14 @@ import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.file.Files;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.file.existence.ExistentParent;
 import net.digitalid.utility.validation.annotations.file.path.Absolute;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.conversion.exceptions.FileException;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.identification.identity.IdentifierResolver;
 import net.digitalid.core.keychain.PublicKeyChain;
 import net.digitalid.core.keychain.PublicKeyChainConverter;
 import net.digitalid.core.pack.Pack;
@@ -62,6 +64,17 @@ public abstract class PublicKeyChainLoader {
      * Stores the configured public key chain loader.
      */
     public static final @Nonnull Configuration<PublicKeyChainLoader> configuration = Configuration.<PublicKeyChainLoader>with(new PublicKeyChainLoaderSubclass()).addDependency(Files.directory);
+    
+    /* -------------------------------------------------- Type Mapping -------------------------------------------------- */
+    
+    /**
+     * Maps the converter with which a public key chain is unpacked.
+     */
+    @PureWithSideEffects
+    @Initialize(target = PublicKeyChainLoader.class, dependencies = IdentifierResolver.class)
+    public static void mapConverter() {
+        PublicKeyChain.TYPE.isLoaded();
+    }
     
     /* -------------------------------------------------- Static Access -------------------------------------------------- */
     
