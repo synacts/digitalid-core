@@ -71,7 +71,7 @@ public abstract class RoleModule {
         @Nullable RoleEntry roleEntry = SQL.selectFirst(RoleEntryConverter.INSTANCE, null, GeneralUnit.INSTANCE, roleArgumentsWhereCondition);
         if (roleEntry == null) {
             long key = 0; // The cache uses zero to encode a null requester.
-            while (key == 0) { key = ThreadLocalRandom.current().nextLong(); }
+            while (key == 0) { key = Math.abs(ThreadLocalRandom.current().nextLong()); }
             roleEntry = RoleEntryBuilder.withKey(key).withArguments(roleArguments).build();
             SQL.insertOrAbort(RoleEntryConverter.INSTANCE, roleEntry, GeneralUnit.INSTANCE);
         }

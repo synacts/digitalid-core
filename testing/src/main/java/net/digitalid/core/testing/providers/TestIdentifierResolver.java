@@ -62,7 +62,7 @@ public class TestIdentifierResolver extends IdentifierResolver {
     @NonCommitting
     @PureWithSideEffects
     public @Nonnull Identity map(@Nonnull Category category, @Nonnull Identifier address) throws DatabaseException {
-        final long key = ThreadLocalRandom.current().nextLong();
+        final long key = Math.abs(ThreadLocalRandom.current().nextLong());
         final @Nonnull Identity identity = createIdentity(category, key, address);
         identifiers.put(address, identity);
         keys.put(key, identity);
