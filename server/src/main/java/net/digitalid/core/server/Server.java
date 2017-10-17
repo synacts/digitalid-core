@@ -1,5 +1,6 @@
 package net.digitalid.core.server;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
@@ -8,13 +9,19 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.console.Console;
+import net.digitalid.utility.conversion.exceptions.ConversionException;
 import net.digitalid.utility.exceptions.ExternalException;
+import net.digitalid.utility.file.Files;
+import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Level;
+import net.digitalid.utility.validation.annotations.file.existence.Existent;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.interfaces.Database;
 
+import net.digitalid.core.cache.CacheModule;
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.packet.Request;
@@ -24,6 +31,20 @@ import net.digitalid.core.packet.Request;
  */
 @Utility
 public abstract class Server {
+    
+    /* -------------------------------------------------- Hosts -------------------------------------------------- */
+    
+    /**
+     * Loads all hosts with cryptographic keys but without an exported tables file in the hosts directory.
+     */
+    @Impure
+    @Committing
+    @Initialize(target = CacheModule.class)
+    public static void loadHosts() throws ConversionException {
+        final @Nonnull FiniteIterable<@Nonnull @Existent File> configurationDirectoryFiles = Files.listNonHiddenFiles(Files.relativeToConfigurationDirectory("")).filter(File::isFile);
+        final @Nonnull FiniteIterable<@Nonnull String> privateKeyFiles = configurationDirectoryFiles.map(File::getName).filter(name -> name.endsWith(".private.xdf"));
+        privateKeyFiles.map(name -> name.substring(0, name.length() - 12)).filterNot(name -> Files.relativeToConfigurationDirectory(name + ".tables.xdf").exists()).map(HostIdentifier::with).doForEach(identifier -> HostBuilder.withIdentifier(identifier).build());
+    }
     
     /* -------------------------------------------------- Services -------------------------------------------------- */
     
@@ -49,6 +70,8 @@ public abstract class Server {
     
     /* -------------------------------------------------- Listener -------------------------------------------------- */
     
+    // TODO: Move this section to the listener class?
+    
     /**
      * References the thread that listens on the socket.
      */
@@ -60,8 +83,6 @@ public abstract class Server {
     @Impure
     @Committing
     public static void start() throws IOException {
-        loadServices();
-        
         listener = ListenerBuilder.build();
         listener.start();
         
@@ -135,6 +156,7 @@ public abstract class Server {
 //            throw InitializationError.get("Could not load the database configuration.", exception);
 //        }
             
+            loadServices();
             Server.start();
             Console.writeLine("The server has been started and is now listening on port $.", Request.PORT.get());
             

@@ -1,4 +1,4 @@
-package net.digitalid.core.identification. identifier;
+package net.digitalid.core.identification.identifier;
 
 import java.util.regex.Pattern;
 
@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.Recover;
@@ -82,6 +83,7 @@ public abstract class InternalIdentifier extends RootClass implements Identifier
             IdentifierResolver.configuration.get().resolve(this);
             return true;
         } catch (@Nonnull ExternalException exception) {
+            Log.debugging("Checking whether an identity with the identifier $ exists resulted in the following problem:", exception, this);
             return false;
         }
     }

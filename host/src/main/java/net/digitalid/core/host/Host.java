@@ -1,7 +1,5 @@
 package net.digitalid.core.host;
 
-import java.io.File;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -12,11 +10,8 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.collections.collection.ReadOnlyCollection;
 import net.digitalid.utility.collections.map.FreezableLinkedHashMapBuilder;
 import net.digitalid.utility.collections.map.FreezableMap;
-import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.ConversionException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
-import net.digitalid.utility.file.Files;
-import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
@@ -25,13 +20,10 @@ import net.digitalid.utility.property.value.WritableVolatileValueProperty;
 import net.digitalid.utility.property.value.WritableVolatileValuePropertyBuilder;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
-import net.digitalid.utility.validation.annotations.file.existence.Existent;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-
-import net.digitalid.database.annotations.transaction.Committing;
 
 import net.digitalid.core.asymmetrickey.KeyPair;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
@@ -265,25 +257,6 @@ public abstract class Host extends CoreUnit {
     @Pure
     public boolean supports(@Nonnull Service service) {
         return true; // TODO!
-    }
-    
-    /* -------------------------------------------------- Loading -------------------------------------------------- */
-    
-    /**
-     * Stores a dummy configuration in order to have an initialization target for the host loading.
-     */
-    public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE);
-    
-    /**
-     * Loads all hosts with cryptographic keys but without an exported tables file in the hosts directory.
-     */
-    @Impure
-    @Committing
-    @Initialize(target = Host.class)
-    public static void loadHosts() throws ConversionException {
-        final @Nonnull FiniteIterable<@Nonnull @Existent File> configurationDirectoryFiles = Files.listNonHiddenFiles(Files.relativeToConfigurationDirectory("")).filter(File::isFile);
-        final @Nonnull FiniteIterable<@Nonnull String> privateKeyFiles = configurationDirectoryFiles.map(File::getName).filter(name -> name.endsWith(".private.xdf"));
-        privateKeyFiles.map(name -> name.substring(0, name.length() - 12)).filterNot(name -> Files.relativeToConfigurationDirectory(name + ".tables.xdf").exists()).map(HostIdentifier::with).doForEach(identifier -> HostBuilder.withIdentifier(identifier).build());
     }
     
 }

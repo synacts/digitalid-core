@@ -19,6 +19,7 @@ import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
 import net.digitalid.core.identification.identity.SyntacticType;
 import net.digitalid.core.resolution.handlers.IdentityQueryConverter;
+import net.digitalid.core.resolution.handlers.IdentityReplyConverter;
 
 /**
  * This class initializes the core classes.
@@ -38,6 +39,7 @@ public abstract class CoreInitializer {
         MethodIndex.add(CredentialInternalQueryConverter.INSTANCE);
         
         SemanticType.map(AttributesReplyConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build()); // TODO: Load the right attributes.
+        SemanticType.map(IdentityReplyConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build()); // TODO: Load the right attributes.
         SemanticType.map(EmptyReplyConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build()); // TODO: Load the right attributes.
         OpenAccount.TYPE.isLoaded(); // Maps the type in the main thread.
     }

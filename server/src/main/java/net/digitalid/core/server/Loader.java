@@ -1,7 +1,7 @@
 // TODO: This class is no longer necessary but might still be a useful reference for a plugin mechanism.
 
-//package net.digitalid.core.server;
-//
+package net.digitalid.core.server;
+
 //import java.io.File;
 //import java.io.IOException;
 //import java.net.MalformedURLException;
@@ -27,7 +27,7 @@
 // * This class loads other classes in other domains.
 // */
 //@Stateless
-//public abstract class Loader {
+public abstract class Loader {
 //    
 //    /**
 //     * Loads all classes in the given directory.
@@ -129,4 +129,4 @@
 //        }
 //    }
 //    
-//}
+}
