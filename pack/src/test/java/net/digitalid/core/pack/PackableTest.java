@@ -22,8 +22,8 @@ abstract class PackableClass extends RootClass implements Packable {
 }
 
 public class PackableTest extends UtilityTest {
-
+    
     @Test
     public void testSomeMethod() {}
-
+    
 }

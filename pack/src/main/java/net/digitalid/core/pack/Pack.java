@@ -20,6 +20,8 @@ import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.file.existence.Existent;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -36,7 +38,7 @@ import net.digitalid.core.identification.identity.SyntacticType;
 @Immutable
 @GenerateSubclass
 @GenerateConverter
-public abstract class Pack {
+public abstract class Pack extends RootClass {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -148,7 +150,8 @@ public abstract class Pack {
     public @Nonnull String toString() {
         final @Nonnull StringBuilder string = new StringBuilder("Pack(type: ").append(getType().getAddress());
         if (getType().isBasedOn(SyntacticType.STRING) || getType().isBasedOn(SyntacticType.STRING64)) {
-            try { string.append(", bytes: ").append(Quotes.inDouble(unpack(StringConverter.INSTANCE, null))); } catch (RecoveryException exception) {}
+            try { string.append(", bytes: ").append(Quotes.inDouble(unpack(StringConverter.INSTANCE, null))); }
+            catch (@Nonnull RecoveryException exception) { Log.warning("Could not recover a string.", exception); }
         }
         return string.append(")").toString();
     }

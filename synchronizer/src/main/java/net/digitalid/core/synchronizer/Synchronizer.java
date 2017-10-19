@@ -1,13 +1,11 @@
 package net.digitalid.core.synchronizer;
 
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.exceptions.ExternalException;
-import net.digitalid.utility.exceptions.UncheckedExceptionBuilder;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
@@ -48,7 +46,8 @@ public abstract class Synchronizer extends Thread {
         try {
             action.send();
         } catch (@Nonnull ExternalException exception) {
-            throw UncheckedExceptionBuilder.withCause(exception).build();
+            Log.error("Failed to send the action $ due to the following problem:", exception, action);
+            // throw UncheckedExceptionBuilder.withCause(exception).build();
         }
         
         Database.commit();
