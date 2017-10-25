@@ -19,7 +19,7 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 import net.digitalid.utility.validation.contract.Contract;
 
 /**
- * This annotation indicates that the annotated object is {@link UnitBased#isOnHost() on a host}.
+ * This annotation indicates that the annotated object is {@link CoreUnitBased#isOnHost() on a host}.
  * 
  * @see OnClient
  * @see OnHostRecipient

@@ -64,6 +64,8 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
     /**
      * Returns the published value property of this attribute.
      * 
+     * Debug with {@code SELECT b.`address_string` AS Identity, c.`address_string` AS Attribute FROM `digitalid_net`.`unit_core_Attribute_value` AS a, `general`.`IdentityEntry` AS b, `general`.`IdentityEntry` AS c WHERE a.`attribute_entity_key` = b.`key` AND a.`attribute_key_key_key` = c.`key` ORDER BY Identity ASC}.
+     * 
      * TODO: @invariant value == null || value.isVerified() && value.matches(this) : "The value is null or verified and matches this attribute.";
      */
     @Pure
@@ -95,6 +97,8 @@ public abstract class Attribute extends CoreServiceCoreSubject<Entity, SemanticT
     
     /**
      * Returns the visibility property of this attribute.
+     * 
+     * Debug with {@code SELECT b.`address_string` AS Identity, c.`address_string` AS Attribute, a.`value_string` AS Visibility FROM `digitalid_net`.`unit_core_Attribute_visibility` AS a, `general`.`IdentityEntry` AS b, `general`.`IdentityEntry` AS c WHERE a.`attribute_entity_key` = b.`key` AND a.`attribute_key_key_key` = c.`key` ORDER BY Identity ASC}.
      */
     @Pure
     @GenerateSynchronizedProperty

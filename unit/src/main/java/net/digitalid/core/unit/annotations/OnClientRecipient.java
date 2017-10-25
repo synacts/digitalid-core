@@ -21,7 +21,7 @@ import net.digitalid.utility.validation.contract.Contract;
 import net.digitalid.utility.validation.validator.MethodAnnotationValidator;
 
 /**
- * This annotation indicates that a method may only be called {@link UnitBased#isOnClient() on a client}.
+ * This annotation indicates that a method may only be called {@link CoreUnitBased#isOnClient() on a client}.
  * 
  * @see OnHost
  * @see OnClient

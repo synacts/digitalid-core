@@ -36,7 +36,7 @@ public interface InternalMethod extends Method<NonHostEntity> {
     
     /**
      * The configuration object that holds the method for signing internal method requests.
-     * See {@link net.digitalid.core.client.method.InternalMethodSignatureInjector}
+     * See {@code net.digitalid.core.client.method.InternalMethodSignatureInjector}.
      */
     public static final @Nonnull Configuration<FailableBinaryFunction<@Nonnull InternalMethod, @Nonnull Compression<Pack>, @Nonnull Signature<Compression<Pack>>, @Nonnull ExternalException>> configuration = Configuration.withUnknownProvider();
     
