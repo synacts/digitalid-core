@@ -26,6 +26,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
+import net.digitalid.database.conversion.WhereConditionBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.map.PersistentMapObserver;
@@ -149,7 +150,7 @@ public abstract class WritableSynchronizedMapProperty<@Unspecifiable ENTITY exte
                 SQL.insertOrAbort(getTable(), entry, getSubject().getUnit());
                 getMap().put(key, value);
             } else {
-                SQL.delete(getTable(), getTable(), entry, getSubject().getUnit());
+                SQL.delete(getTable(), getSubject().getUnit(), WhereConditionBuilder.withConverter(getTable()).withObject(entry).build());
                 getMap().remove(key);
             }
             notifyObservers(key, value, added);

@@ -19,8 +19,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.conversion.utility.WhereCondition;
-import net.digitalid.database.conversion.utility.WhereConditionBuilder;
+import net.digitalid.database.conversion.WhereCondition;
+import net.digitalid.database.conversion.WhereConditionBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.exceptions.request.RequestErrorCode;
@@ -80,7 +80,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     public @Nonnull Identity load(long key) throws DatabaseException, RecoveryException {
         @Nullable Identity identity = mapper.getIdentity(key);
         if (identity == null) {
-            final @Nonnull WhereCondition<Long> whereCondition =WhereConditionBuilder.withWhereConverter(Integer64Converter.INSTANCE).withWhereObject(key).withWherePrefix("key").build();
+            final @Nonnull WhereCondition<Long> whereCondition =WhereConditionBuilder.withConverter(Integer64Converter.INSTANCE).withObject(key).withPrefix("key").build();
             final @Nonnull IdentityEntry entry = SQL.selectOne(IdentityEntryConverter.INSTANCE, null, GeneralUnit.INSTANCE, whereCondition);
             identity = createIdentity(entry.getCategory(), entry.getKey(), entry.getAddress());
             mapper.mapAfterCommit(identity);
@@ -96,7 +96,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
     public @Nullable Identity load(@Nonnull Identifier identifier) throws DatabaseException, RecoveryException {
         @Nullable Identity identity = mapper.getIdentity(identifier);
         if (identity == null) {
-            final @Nonnull WhereCondition<Identifier> whereCondition = WhereConditionBuilder.withWhereConverter(IdentifierConverter.INSTANCE).withWhereObject(identifier).withWherePrefix("identifier").build();
+            final @Nonnull WhereCondition<Identifier> whereCondition = WhereConditionBuilder.withConverter(IdentifierConverter.INSTANCE).withObject(identifier).withPrefix("identifier").build();
             final @Nullable IdentifierEntry entry = SQL.selectFirst(IdentifierEntryConverter.INSTANCE, null, GeneralUnit.INSTANCE, whereCondition);
             if (entry != null) { identity = load(entry.getKey()); }
             if (identity != null) { Log.verbose("Found the identifier $ in the database.", identifier.getString()); }

@@ -24,6 +24,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
+import net.digitalid.database.conversion.WhereConditionBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.set.PersistentSetObserver;
@@ -145,7 +146,7 @@ public abstract class WritableSynchronizedSetProperty<@Unspecifiable ENTITY exte
                 SQL.insertOrAbort(getTable(), entry, getSubject().getUnit());
                 getSet().add(value);
             } else {
-                SQL.delete(getTable(), getTable(), entry, getSubject().getUnit());
+                SQL.delete(getTable(), getSubject().getUnit(), WhereConditionBuilder.withConverter(getTable()).withObject(entry).build());
                 getSet().remove(value);
             }
             notifyObservers(value, added);

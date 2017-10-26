@@ -10,8 +10,8 @@ import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.conversion.utility.WhereCondition;
-import net.digitalid.database.conversion.utility.WhereConditionBuilder;
+import net.digitalid.database.conversion.WhereCondition;
+import net.digitalid.database.conversion.WhereConditionBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.value.PersistentValuePropertyEntry;
 
@@ -31,8 +31,8 @@ public class ClientAgentRetriever implements AgentRetriever {
     @Pure
     @Override
     public @Nullable ClientAgent getAgent(@Nonnull NonHostEntity entity, @Nonnull Commitment commitment) throws DatabaseException, RecoveryException {
-        final @Nonnull WhereCondition<NonHostEntity> entityWhereCondition = WhereConditionBuilder.withWhereConverter(NonHostEntityConverter.INSTANCE).withWhereObject(entity).build();
-        final WhereCondition<Commitment> commitmentWhereCondition = WhereConditionBuilder.withWhereConverter(CommitmentConverter.INSTANCE).withWhereObject(commitment).build();
+        final @Nonnull WhereCondition<NonHostEntity> entityWhereCondition = WhereConditionBuilder.withConverter(NonHostEntityConverter.INSTANCE).withObject(entity).build();
+        final WhereCondition<Commitment> commitmentWhereCondition = WhereConditionBuilder.withConverter(CommitmentConverter.INSTANCE).withObject(commitment).build();
         final @Nullable PersistentValuePropertyEntry<ClientAgent, Commitment> clientAgentCommitment = SQL.selectFirst(ClientAgentSubclass.COMMITMENT_TABLE, null, GeneralUnit.INSTANCE, entityWhereCondition, commitmentWhereCondition);
         if (clientAgentCommitment != null) {
             return clientAgentCommitment.getSubject();
