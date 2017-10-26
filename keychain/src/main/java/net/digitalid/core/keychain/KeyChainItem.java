@@ -15,6 +15,8 @@ import net.digitalid.core.asymmetrickey.AsymmetricKey;
 @Immutable
 public abstract class KeyChainItem<KEY extends AsymmetricKey> implements CustomComparable<KeyChainItem<KEY>> {
     
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
+    
     /**
      * Returns the time from when on the key is valid.
      */

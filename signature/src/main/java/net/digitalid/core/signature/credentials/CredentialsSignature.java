@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
@@ -20,7 +21,7 @@ import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
-import net.digitalid.utility.tuples.Pair;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
@@ -41,11 +42,14 @@ import net.digitalid.core.signature.exceptions.InvalidSignatureException;
 import net.digitalid.core.signature.exceptions.InvalidSignatureExceptionBuilder;
 
 /**
- *
+ * 
  */
+@Mutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class CredentialsSignature<T> extends Signature<T> {
+public abstract class CredentialsSignature<@Unspecifiable OBJECT> extends Signature<OBJECT> {
+    
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     @Pure
     public abstract @Nonnull Exponent getT();
@@ -55,22 +59,22 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
     
     @Pure
     public abstract @Nonnull ReadOnlyList<@Nonnull PublicClientCredential> getCredentials();
-
+    
     @Pure
     public abstract @Nullable ReadOnlyList<@Nonnull CertifiedAttributeValue> getCertificates();
     
     @Pure
     public abstract @Nullable Restrictions getRestrictions();
-
+    
     @Pure
     public abstract @Nullable Exponent getSV();
-
+    
     @Pure
     public abstract @Nullable Element getFPrime();
     
     @Pure
     public abstract @Nullable Exponent getSBPrime();
-
+    
     /* -------------------------------------------------- Verification -------------------------------------------------- */
     
     // TODO: time is required for credential signature validation
@@ -80,10 +84,9 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
     @Override
     public void verifySignature() throws InvalidSignatureException, ExpiredSignatureException, RecoveryException {
 //        assert !isVerified() : "This signature is not verified.";
-    
         
         final @Nonnull Time start = TimeBuilder.build();
-    
+        
         checkExpiration();
         
         final @Nonnull BigInteger hash = getContentHash(getTime(), getSubject(), getObjectConverter(), getObject());
@@ -174,7 +177,7 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
                 
                 final @Nonnull Element wis1 = publicKey.getY().pow(swi).multiply(publicKey.getZPlus1().pow(si)).multiply(publicKey.getSquareGroup().getElement(wis.getElement0().getValue()).pow(getT()));
                 final @Nonnull Element wis2 = publicKey.getG().pow(swi).multiply(publicKey.getSquareGroup().getElement(wis.getElement1().getValue()).pow(getT()));
-    
+                
                 final @Nonnull Element wbs1 = publicKey.getY().pow(swb).multiply(publicKey.getZPlus1().pow(sb)).multiply(publicKey.getSquareGroup().getElement(wbs.getElement0().getValue()).pow(getT()));
                 final @Nonnull Element wbs2 = publicKey.getG().pow(swb).multiply(publicKey.getSquareGroup().getElement(wbs.getElement1().getValue())).pow(getT());
                 
@@ -189,25 +192,25 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
             final @Nonnull PublicKey publicKey;
             try {
                 publicKey = PublicKeyRetriever.retrieve(getSubject().getHostIdentifier(), getTime());
-    
+                
             } catch (@Nonnull ExternalException exception) {
                 throw RecoveryExceptionBuilder.withMessage(Strings.format("Could not retrieve the public key of $.", getSubject().getHostIdentifier())).withCause(exception).build();
             }
             assert publicKey != null : "If credentials are to be shortened, the public key of the receiving host is retrieved in the constructor.";
             final @Nonnull Exponent sb = getSBPrime();
-
+            
             @Nonnull Element element = publicKey.getAu().pow(getSU()).multiply(publicKey.getAb().pow(sb));
             if (sv != null) element = element.multiply(publicKey.getAv().pow(sv));
             final @Nonnull Element tfBeforeHash = publicKey.getCompositeGroup().getElement(getFPrime().getValue()).pow(getT()).multiply(element);
             tf = new BigInteger(XDF.hash(ElementConverter.INSTANCE, tfBeforeHash));
         }
         final @Nonnull BigInteger hashOfVerificationParameters = new BigInteger(1, XDF.hash(ReadOnlyListConverter.INSTANCE, verifiableEncryptionVerificationParametersList.freeze()));
-
+        
         if (!getT().getValue().equals(hash.xor(hashOfVerificationParameters).xor(tf))) {
             // The credentials signature is invalid: The value t is not correct.
             throw InvalidSignatureExceptionBuilder.withSignature(this).build();
         }
-//
+        
         if (getCertificates() != null) {
             for (final @Nonnull CertifiedAttributeValue certificate : getCertificates()) {
                 try {
@@ -218,9 +221,9 @@ public abstract class CredentialsSignature<T> extends Signature<T> {
                 }
             }
         }
-
+        
         Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
-
+        
 //        setVerified();
     }
     

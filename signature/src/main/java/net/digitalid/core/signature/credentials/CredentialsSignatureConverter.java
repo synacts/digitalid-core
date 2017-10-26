@@ -38,12 +38,10 @@ import net.digitalid.database.annotations.constraints.PrimaryKey;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
-import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.group.Element;
 import net.digitalid.core.group.ElementConverter;
 import net.digitalid.core.group.Exponent;
 import net.digitalid.core.group.ExponentConverter;
-import net.digitalid.core.group.Group;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifierConverter;
 import net.digitalid.core.restrictions.Restrictions;

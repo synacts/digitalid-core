@@ -22,15 +22,12 @@ import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.AgentFactory;
 import net.digitalid.core.agent.AgentRetriever;
 import net.digitalid.core.asymmetrickey.PrivateKey;
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
 import net.digitalid.core.conversion.XDF;
-import net.digitalid.core.credential.ClientCredential;
-import net.digitalid.core.credential.ClientCredentialBuilder;
 import net.digitalid.core.credential.HostCredential;
 import net.digitalid.core.credential.HostCredentialBuilder;
 import net.digitalid.core.credential.HostCredentialConverter;

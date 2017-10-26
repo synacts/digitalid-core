@@ -1,33 +1,20 @@
 package net.digitalid.core.signature.credentials;
 
-import java.math.BigInteger;
-
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.conversion.converters.StringConverter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
-import net.digitalid.core.commitment.SecretCommitment;
-import net.digitalid.core.commitment.SecretCommitmentBuilder;
-import net.digitalid.core.credential.ClientCredentialBuilder;
-import net.digitalid.core.group.Exponent;
-import net.digitalid.core.group.ExponentBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.InternalIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
-import net.digitalid.core.signature.client.ClientSignature;
-import net.digitalid.core.signature.client.ClientSignatureCreator;
 import net.digitalid.core.testing.CoreTest;
 
 import org.junit.Test;
 
-/**
- *
- */
 public class CredentialsSignatureCreatorTest extends CoreTest {
     
     @Test
