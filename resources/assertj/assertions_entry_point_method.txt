@@ -1,0 +1,12 @@
+    /**
+     * Creates a new instance of <code>{@link ${custom_assertion_class}}</code>.
+     *
+     * @param actual the actual value.
+     * @return the created assertion object.
+     */
+    @org.assertj.core.util.CheckReturnValue
+    @net.digitalid.utility.annotations.method.Pure
+    public default ${custom_assertion_class} assertThat(${class_to_assert} actual) {
+        return new ${custom_assertion_class}(actual);
+    }
+    

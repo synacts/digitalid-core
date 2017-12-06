@@ -9,25 +9,18 @@
     
     <groupId>net.digitalid.core</groupId>
     <artifactId>core</artifactId>
-    <version>1.0.0</version>
+    <version>0.6.0</version>
     <packaging>pom</packaging>
     
     <name>Digital ID Core</name>
-    <description>This project contains the Digital ID core protocol: www.digitalid.net.</description>
-    <url>https://code.digitalid.net/digitalid/core</url>
-    
-    <repositories>
-        <repository>
-            <id>digitalid-releases</id>
-            <name>Digital ID Releases</name>
-            <url>https://repo.digitalid.net/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>digitalid-snapshots</id>
-            <name>Digital ID Snapshots</name>
-            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
+    <description>This project contains the core of the Digital ID Protocol.</description>
+    <url>http://www.digitalid.net/library/#core</url>
+
+    <scm>
+        <connection>scm:git:git@github.com:synacts/digitalid-core.git</connection>
+        <developerConnection>scm:git:git@github.com:synacts/digitalid-core.git</developerConnection>
+        <url>https://github.com/synacts/digitalid-core</url>
+    </scm>
     
     <modules>
         <module>annotations</module>
@@ -92,13 +85,13 @@
         <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-property</artifactId>
-            <version>1.0.0</version>
+            <version>0.8.0</version>
         </dependency>
         
         <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-testing</artifactId>
-            <version>${project.version}</version>
+            <version>0.8.0</version>
             <scope>test</scope>
         </dependency>
         

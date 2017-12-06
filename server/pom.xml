@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.digitalid.core</groupId>
         <artifactId>core</artifactId>
-        <version>1.0.0</version>
+        <version>0.6.0</version>
     </parent>
     
     <artifactId>core-server</artifactId>
@@ -44,14 +44,14 @@
                     <dependency>
                         <groupId>net.digitalid.database</groupId>
                         <artifactId>database-server</artifactId>
-                        <version>${project.version}</version>
+                        <version>0.8.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
         </plugins>
     </build>
     
-    <!-- Get the server with 'mvn org.apache.maven.plugins:maven-dependency-plugin:2.10:get -DrepoUrl=https://repo.digitalid.net/content/repositories/releases/ -Dartifact=net.digitalid.core:core-server:1.0.0'. -->
-    <!-- Run the server with 'mvn -f ~/.m2/repository/net/digitalid/core/core-server/1.0.0/core-server-1.0.0.pom exec:java -q'. -->
+    <!-- Get the server with 'mvn org.apache.maven.plugins:maven-dependency-plugin:2.10:get -Dartifact=net.digitalid.core:core-server:0.6.0'. -->
+    <!-- Run the server with 'mvn -f ~/.m2/repository/net/digitalid/core/core-server/0.6.0/core-server-0.6.0.pom exec:java -q'. -->
     
 </project>
