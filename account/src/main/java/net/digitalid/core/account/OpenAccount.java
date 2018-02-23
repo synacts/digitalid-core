@@ -191,6 +191,7 @@ public abstract class OpenAccount extends InternalAction implements CoreMethod<N
     /**
      * Returns the secret of the client agent on the client or null on the host.
      */
+    // TODO: unit test that secret is never included when OpenAccount is converted.
     @Pure
     @NonRepresentative
     public abstract @Nullable Exponent getSecret();
@@ -198,7 +199,7 @@ public abstract class OpenAccount extends InternalAction implements CoreMethod<N
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Returns a new action to open an account for the given 
+     * Returns a new action to open an account for the given subject on the given client.
      */
     @Pure
     @NonCommitting
