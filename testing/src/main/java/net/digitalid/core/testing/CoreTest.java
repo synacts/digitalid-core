@@ -15,10 +15,14 @@
  */
 package net.digitalid.core.testing;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.configuration.Configuration;
+import net.digitalid.utility.errors.SupportErrorBuilder;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -49,14 +53,28 @@ public abstract class CoreTest extends DatabaseTest {
     @PureWithSideEffects
     @Initialize(target = Parameters.class)
     public static void initializeParameters() {
-        Parameters.FACTOR.set(130);
-        Parameters.RANDOM_EXPONENT.set(64);
-        Parameters.CREDENTIAL_EXPONENT.set(64);
-        Parameters.RANDOM_CREDENTIAL_EXPONENT.set(96);
-        Parameters.BLINDING_EXPONENT.set(96);
-        Parameters.RANDOM_BLINDING_EXPONENT.set(128);
-        Parameters.VERIFIABLE_ENCRYPTION.set(128);
+        Parameters.FACTOR.set(520);
+    
+        Parameters.EXPONENT.set(128);
+        
+        Parameters.RANDOM_EXPONENT.set(256);
+        Parameters.CREDENTIAL_EXPONENT.set(256);
+    
+        Parameters.RANDOM_CREDENTIAL_EXPONENT.set(384);
+        Parameters.BLINDING_EXPONENT.set(384);
+        
+        Parameters.RANDOM_BLINDING_EXPONENT.set(512);
+        Parameters.VERIFIABLE_ENCRYPTION.set(512);
         Parameters.SYMMETRIC_KEY.set(128);
+        
+        Parameters.HASH_SIZE.set(128);
+        Parameters.HASH_FUNCTION.set(() -> {
+            try {
+                return MessageDigest.getInstance("MD5");
+            } catch (@Nonnull NoSuchAlgorithmException exception) {
+                throw SupportErrorBuilder.withMessage("The hashing algorithm 'MD5' is not supported on this platform.").withCause(exception).build();
+            }
+        });
     }
     
     /* -------------------------------------------------- Identification -------------------------------------------------- */

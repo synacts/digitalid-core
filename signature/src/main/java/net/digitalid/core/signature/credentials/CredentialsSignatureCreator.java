@@ -53,23 +53,14 @@ public abstract class CredentialsSignatureCreator {
     public interface SubjectCredentialsSignatureCreator<OBJECT> {
 
         /**
-         * Addresses the signature to a certain subject.
+         * Addresses the signature as a subject.
          */
         @Pure
-        public @Nonnull LodgedCredentialsSignatureCreator<OBJECT> to(@Nonnull InternalIdentifier subject);
+        public @Nonnull CommitmentCredentialsSignatureCreator<OBJECT> about(@Nonnull InternalIdentifier subject);
 
     }
 
-    public interface LodgedCredentialsSignatureCreator<OBJECT> {
-
-        /**
-         */
-        @Pure
-        public @Nonnull CommitmentCredentialsSignatureCreator<OBJECT> lodged(boolean lodged);
-
-    }
-
-    public interface CommitmentCredentialsSignatureCreator<OBJECT> {
+   public interface CommitmentCredentialsSignatureCreator<OBJECT> {
 
         /**
          * Addresses the signature to a certain subject.
@@ -82,7 +73,7 @@ public abstract class CredentialsSignatureCreator {
     /**
      * Inner class for the credentials signature creator which structures the parameters required for signing.
      */
-    public static class InnerCredentialsSignatureCreator<OBJECT> implements SubjectCredentialsSignatureCreator<OBJECT>, LodgedCredentialsSignatureCreator<OBJECT>, CommitmentCredentialsSignatureCreator<OBJECT> {
+    public static class InnerCredentialsSignatureCreator<OBJECT> implements SubjectCredentialsSignatureCreator<OBJECT>, CommitmentCredentialsSignatureCreator<OBJECT> {
 
         private final @Nonnull OBJECT object;
 
@@ -100,16 +91,16 @@ public abstract class CredentialsSignatureCreator {
 
         @Pure
         @Override
-        public @Nonnull LodgedCredentialsSignatureCreator<OBJECT> to(@Nonnull InternalIdentifier subject) {
+        public @Nonnull CommitmentCredentialsSignatureCreator<OBJECT> about(@Nonnull InternalIdentifier subject) {
             this.subject = subject;
             return this;
         }
         
-        private boolean lodged;
+        // TODO: this field is currently ignored. Integrate it in the creator.
+        private boolean lodged = false;
         
         @Pure
-        @Override
-        public @Nonnull CommitmentCredentialsSignatureCreator<OBJECT> lodged(boolean lodged) {
+        public @Nonnull InnerCredentialsSignatureCreator<OBJECT> lodged(boolean lodged) {
             this.lodged = lodged;
             return this;
         }

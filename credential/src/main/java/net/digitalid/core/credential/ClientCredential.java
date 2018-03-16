@@ -63,6 +63,7 @@ public abstract class ClientCredential extends Credential {
      * Returns the blinding exponent of this credential.
      */
     @Pure
+    @Default("net.digitalid.core.group.ExponentBuilder.withValue(java.math.BigInteger.ZERO).build()")
     public abstract @Nonnull Exponent getB();
     
     /**
@@ -99,7 +100,7 @@ public abstract class ClientCredential extends Credential {
     @Pure
     public @Nonnull ClientCredential getRandomizedCredential() {
         final @Nonnull Exponent r = ExponentBuilder.withValue(new BigInteger(Parameters.BLINDING_EXPONENT.get() - Parameters.CREDENTIAL_EXPONENT.get(), new SecureRandom())).build();
-        return ClientCredentialBuilder.withExposedExponent(getExposedExponent()).withC(getC().multiply(getExposedExponent().getPublicKey().getAb().pow(r))).withE(getE()).withB(getB().subtract(getE().multiply(r))).withU(getU()).withV(getV()).withI(getI()).withRestrictions(getRestrictions()).withOneTime(isOneTime()).build();
+        return ClientCredentialBuilder.withExposedExponent(getExposedExponent()).withC(getC().multiply(getExposedExponent().getPublicKey().getAb().pow(r))).withE(getE()).withU(getU()).withV(getV()).withI(getI()).withRestrictions(getRestrictions()).withOneTime(isOneTime()).withB(getB().subtract(getE().multiply(r))).build();
     }
     
     /* -------------------------------------------------- Validation -------------------------------------------------- */
