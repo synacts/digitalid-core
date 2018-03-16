@@ -30,7 +30,6 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.ConversionException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
-import net.digitalid.utility.file.Files;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.logging.Log;
@@ -72,15 +71,12 @@ import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
 
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
 import net.digitalid.core.attribute.AttributePropertiesLoader;
+import net.digitalid.core.cache.errors.MissingTrustAnchorErrorBuilder;
 import net.digitalid.core.client.ClientSecretLoader;
 import net.digitalid.core.client.role.Role;
 import net.digitalid.core.client.role.RoleModule;
 import net.digitalid.core.entity.factories.AccountFactory;
 import net.digitalid.core.handler.reply.Reply;
-import net.digitalid.core.host.Host;
-import net.digitalid.core.host.HostBuilder;
-import net.digitalid.core.host.key.PrivateKeyChainLoader;
-import net.digitalid.core.host.key.PublicKeyChainLoader;
 import net.digitalid.core.identification.annotations.AttributeType;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identity.HostIdentity;
@@ -94,10 +90,7 @@ import net.digitalid.core.pack.Pack;
 import net.digitalid.core.pack.PackConverter;
 import net.digitalid.core.signature.attribute.AttributeValue;
 import net.digitalid.core.signature.attribute.AttributeValueConverter;
-import net.digitalid.core.signature.attribute.CertifiedAttributeValue;
 import net.digitalid.core.signature.attribute.CertifiedAttributeValueConverter;
-import net.digitalid.core.signature.host.HostSignature;
-import net.digitalid.core.signature.host.HostSignatureCreator;
 import net.digitalid.core.unit.GeneralUnit;
 
 /**
@@ -133,7 +126,7 @@ public abstract class CacheModule {
     @Committing
     @PureWithSideEffects
     @TODO(task = "Provide the correct parameters for the loading of the type.", date = "2017-10-05", author = Author.KASPAR_ETTER)
-    @Initialize(target = CacheModule.class, dependencies = {AccountFactory.class, AttributePropertiesLoader.class, PrivateKeyRetriever.class, PrivateKeyChainLoader.class, PublicKeyChainLoader.class, ClientSecretLoader.class})
+    @Initialize(target = CacheModule.class, dependencies = {AccountFactory.class, AttributePropertiesLoader.class, PrivateKeyRetriever.class, ClientSecretLoader.class})
     public static void initializeRootKey() throws ConversionException {
         if (!getCachedAttributeValue(null, HostIdentity.DIGITALID, Time.MIN, PublicKeyChain.TYPE).get0()) {
             // Unless it is the root server, the program should have been delivered with the public key chain of 'core.digitalid.net'.
@@ -146,13 +139,7 @@ public abstract class CacheModule {
                 value = Pack.loadFrom(inputStream).unpack(CertifiedAttributeValueConverter.INSTANCE, null);
                 Log.debugging("The public key chain of the root host $ was loaded from the provided resources.", HostIdentifier.DIGITALID);
             } else {
-                // Since the public key chain of 'core.digitalid.net' is not available, the host 'core.digitalid.net' is created on this server.
-                Log.warning("The public key chain of the root host $ was not found in the provided resources.", HostIdentifier.DIGITALID);
-                Log.information("Creating the host $, which can take several minutes.", HostIdentifier.DIGITALID);
-                final @Nonnull Host host = HostBuilder.withIdentifier(HostIdentifier.DIGITALID).build();
-                final @Nonnull HostSignature<Pack> hostSignature = HostSignatureCreator.sign(host.publicKeyChain.get().pack(), PackConverter.INSTANCE).about(HostIdentifier.DIGITALID).as(PublicKeyChain.TYPE.getAddress());
-                value = CertifiedAttributeValue.with(hostSignature);
-                value.pack().storeTo(Files.relativeToConfigurationDirectory("core.digitalid.net.certificate.xdf"));
+                throw MissingTrustAnchorErrorBuilder.withMessage("The library cannot be used without a trust anchor.").build();
             }
             setCachedAttributeValue(null, HostIdentity.DIGITALID, Time.MIN, PublicKeyChain.TYPE, value, null);
         }

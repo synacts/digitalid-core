@@ -36,13 +36,11 @@ import net.digitalid.core.cache.CacheQueryBuilder;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.ClientBuilder;
 import net.digitalid.core.client.role.NativeRole;
-import net.digitalid.core.exceptions.request.RequestException;
 import net.digitalid.core.expression.PassiveExpressionBuilder;
 import net.digitalid.core.handler.method.MethodIndex;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.identification.identifier.HostIdentifier;
-import net.digitalid.core.identification.identifier.Identifier;
 import net.digitalid.core.identification.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identification.identity.Category;
 import net.digitalid.core.pack.Pack;
@@ -132,13 +130,6 @@ public class ServerTest extends CoreTest {
         final @Nonnull TestQuery query = TestQueryBuilder.withMessage("Hello from the other side!").withProvidedSubject(hostIdentifier).build();
         final @Nonnull TestReply reply = query.send(TestReplyConverter.INSTANCE);
         assertThat(reply.getMessage()).isEqualTo("Hi there!");
-    }
-    
-    @Test
-    public void testIdentifierResolution() throws ExternalException {
-        Log.information("Started the identifier resolution test.");
-        final @Nonnull Identifier identifier = Identifier.with("person@test.digitalid.net");
-        assertThatThrownBy(identifier::resolve).isInstanceOf(RequestException.class);
     }
     
     @Test

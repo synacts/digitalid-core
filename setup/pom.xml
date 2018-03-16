@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>net.digitalid.core</groupId>
+        <artifactId>core</artifactId>
+        <version>0.6.0</version>
+    </parent>
+    
+    <artifactId>core-setup</artifactId>
+    
+    <dependencies>
+        
+        <dependency>
+            <groupId>net.digitalid.core</groupId>
+            <artifactId>core-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-jdbc</artifactId>
+            <version>0.8.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-h2</artifactId>
+            <version>0.8.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.193</version>
+        </dependency>
+        
+    </dependencies>
+    
+    <!-- Start the setup with 'mvn exec:java -q'. -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <includeProjectDependencies>true</includeProjectDependencies>
+                    <includePluginDependencies>true</includePluginDependencies>
+                    <mainClass>net.digitalid.core.setup.Setup</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+</project>

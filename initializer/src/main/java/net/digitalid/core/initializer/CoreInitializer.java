@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.digitalid.core.all;
+package net.digitalid.core.initializer;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.initialization.annotations.Initialize;

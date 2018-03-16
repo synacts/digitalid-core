@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Provides initializers for the core classes.
+ * Provides errors for the cache module.
  */
-package net.digitalid.core.all;
+package net.digitalid.core.cache.errors;

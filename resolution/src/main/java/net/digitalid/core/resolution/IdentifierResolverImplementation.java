@@ -38,9 +38,6 @@ import net.digitalid.database.conversion.WhereCondition;
 import net.digitalid.database.conversion.WhereConditionBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 
-import net.digitalid.core.exceptions.request.RequestErrorCode;
-import net.digitalid.core.exceptions.request.RequestExceptionBuilder;
-import net.digitalid.core.host.Host;
 import net.digitalid.core.identification.identifier.EmailIdentifier;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.identification.identifier.Identifier;
@@ -153,10 +150,7 @@ public abstract class IdentifierResolverImplementation extends IdentifierResolve
             } else if (identifier instanceof InternalNonHostIdentifier) {
                 final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) identifier;
                 final @Nonnull HostIdentifier hostIdentifier = internalNonHostIdentifier.getHostIdentifier();
-                if (Host.exists(hostIdentifier)) {
-                    Log.verbose("The identifier $ is hosted on this server and is therefore not queried.", identifier.getString());
-                    throw RequestExceptionBuilder.withCode(RequestErrorCode.IDENTITY).withMessage("The identifier '" + identifier.getString() + "' is hosted on this server and is therefore not queried.").build();
-                } else if (hostIdentifier.equals(HostIdentifier.DIGITALID)) {
+                if (hostIdentifier.equals(HostIdentifier.DIGITALID)) {
                     Log.verbose("The identifier $ is mapped as a semantic type without querying.", identifier.getString());
                     identity = map(Category.SEMANTIC_TYPE, identifier);
                 } else {
