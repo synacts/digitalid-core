@@ -15,6 +15,8 @@
  */
 package net.digitalid.core.credential.utility;
 
+import java.math.BigInteger;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -34,6 +36,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.core.asymmetrickey.PublicKey;
 import net.digitalid.core.asymmetrickey.PublicKeyRetriever;
+import net.digitalid.core.conversion.XDF;
 import net.digitalid.core.credential.Credential;
 import net.digitalid.core.identification.annotations.RoleType;
 import net.digitalid.core.identification.identity.InternalNonHostIdentity;
@@ -107,5 +110,16 @@ public abstract class ExposedExponent extends RootClass {
     
     @TODO(task = "Remove as soon as derive statements can indicate exceptions.", date = "2017-01-29", author = Author.KASPAR_ETTER)
     protected ExposedExponent() throws ExternalException {}
+    
+    /* -------------------------------------------------- Hash -------------------------------------------------- */
+    
+    /**
+     * Returns the hash of this exposed exponent.
+     * h(issuer, time, salted permissions, role, attribubte).
+     */
+    @Pure
+    public @Nonnull BigInteger getHash() {
+        return new BigInteger(1, XDF.hash(ExposedExponentConverter.INSTANCE, this));
+    }
     
 }

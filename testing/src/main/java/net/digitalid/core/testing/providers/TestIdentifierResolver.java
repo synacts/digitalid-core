@@ -94,7 +94,11 @@ public class TestIdentifierResolver extends IdentifierResolver {
             if (identifier instanceof HostIdentifier) {
                 identity = map(Category.HOST, identifier);
             } else if (identifier instanceof InternalNonHostIdentifier) {
-                identity = map(Category.SEMANTIC_TYPE, identifier);
+                if (((InternalNonHostIdentifier) identifier).getHostIdentifier().toString().startsWith("core.")) {
+                    identity = map(Category.SEMANTIC_TYPE, identifier);
+                } else {
+                    identity = map(Category.NATURAL_PERSON, identifier);
+                }
             } else {
                 throw new UnsupportedOperationException("The test identifier resolver does not support '" + identifier.getClass() + "' yet.");
             }

@@ -116,7 +116,7 @@ public abstract class CredentialsSignature<@Unspecifiable OBJECT> extends Signat
             // TODO: The value sv is too big.
             throw InvalidSignatureExceptionBuilder.withSignature(this).build();
         } else {
-            Require.that(getRestrictions() != null).orThrow("If SV is null, restrictions must be null");
+            Require.that(getRestrictions() != null).orThrow("If SV is null, restrictions must not be null");
             // TODO: check if BigInteger generation is correct
             v = ExponentBuilder.withValue(new BigInteger(XDF.hash(RestrictionsConverter.INSTANCE, getRestrictions()))).build();
         }

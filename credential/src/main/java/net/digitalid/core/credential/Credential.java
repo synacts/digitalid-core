@@ -69,11 +69,13 @@ public abstract class Credential extends RootClass {
     
     /* -------------------------------------------------- Hash of Exponent -------------------------------------------------- */
     
+    // TODO: can be potentially removed
     @Pure
     protected @Nonnull Exponent deriveO() {
-        return ExponentBuilder.withValue(new BigInteger(1, XDF.hash(ExposedExponentConverter.INSTANCE, getExposedExponent()))).build();
+        return ExponentBuilder.withValue(getExposedExponent().getHash()).build();
     }
     
+    // TODO: can be potentially removed
     /**
      * Returns the hash of the exposed exponent.
      */
@@ -225,7 +227,8 @@ public abstract class Credential extends RootClass {
         Validate.that(!isAttributeBased() || getRestrictions() == null).orThrow("If this credential is attribute-based, then the restrictions have to be null.");
         Validate.that(!isRoleBased() || getPermissions() != null && getRestrictions() != null).orThrow("If this credential is role-based, both the permissions and the restrictions may not be null.");
         Validate.that(!isIdentityBased()|| getExposedExponent().getIssuer() instanceof InternalPerson).orThrow("If this credential is identity-based, then the issuer has to be an internal person.");
-        Validate.that(!isIdentityBased()|| getI() == null).orThrow("If this credential is identity-based, then the value i has to be null.");
+        // TODO: this should likely be moved to the host credential
+        //Validate.that(!isIdentityBased()|| getI() == null).orThrow("If this credential is identity-based, then the value i has to be null.");
         super.validate();
     }
     
