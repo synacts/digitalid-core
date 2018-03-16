@@ -38,6 +38,8 @@ import net.digitalid.database.interfaces.Database;
 
 import net.digitalid.core.cache.CacheModule;
 import net.digitalid.core.host.HostBuilder;
+import net.digitalid.core.host.key.PrivateKeyChainLoader;
+import net.digitalid.core.host.key.PublicKeyChainLoader;
 import net.digitalid.core.identification.identifier.HostIdentifier;
 import net.digitalid.core.packet.Request;
 
@@ -54,7 +56,7 @@ public abstract class Server {
      */
     @Impure
     @Committing
-    @Initialize(target = CacheModule.class)
+    @Initialize(target = CacheModule.class, dependencies = {PrivateKeyChainLoader.class, PublicKeyChainLoader.class})
     public static void loadHosts() throws ConversionException {
         final @Nonnull FiniteIterable<@Nonnull @Existent File> configurationDirectoryFiles = Files.listNonHiddenFiles(Files.relativeToConfigurationDirectory("")).filter(File::isFile);
         final @Nonnull FiniteIterable<@Nonnull String> privateKeyFiles = configurationDirectoryFiles.map(File::getName).filter(name -> name.endsWith(".private.xdf"));

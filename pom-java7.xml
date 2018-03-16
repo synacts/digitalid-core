@@ -72,8 +72,9 @@
         <module>resolution-java7</module>
         <module>account-java7</module>
         <module>authorization-java7</module>
-        <module>all-java7</module>
+        <module>initializer-java7</module>
         <module>server-java7</module>
+        <module>setup-java7</module>
     </modules>
     
     <properties>

@@ -72,8 +72,9 @@
         <module>resolution</module>
         <module>account</module>
         <module>authorization</module>
-        <module>all</module>
+        <module>initializer</module>
         <module>server</module>
+        <module>setup</module>
     </modules>
     
     <properties>
