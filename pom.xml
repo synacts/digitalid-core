@@ -75,6 +75,9 @@
         <module>initializer</module>
         <module>server</module>
         <module>setup</module>
+        
+        <module>desktop</module>
+        <module>android</module>
     </modules>
     
     <properties>

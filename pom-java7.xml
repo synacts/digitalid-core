@@ -75,6 +75,9 @@
         <module>initializer-java7</module>
         <module>server-java7</module>
         <module>setup-java7</module>
+        
+        <module>desktop-java7</module>
+        <module>android-java7</module>
     </modules>
     
     <properties>
