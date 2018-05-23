@@ -32,6 +32,7 @@ import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
@@ -185,6 +186,8 @@ public interface Method<@Unspecifiable ENTITY extends Entity> extends Handler<EN
     @PureWithSideEffects
     @TODO(task = "Verify the signature of the response (and add a flag to disable this for public key retrieval)!", date = "2017-10-06", author = Author.KASPAR_ETTER, priority = Priority.HIGH)
     public default @Nonnull Response send() throws ExternalException {
+        Log.debugging("Sending $ to $.", getClass().getSimpleName(), getSubject());
+        
         final @Nonnull Compression<Pack> compression = CompressionBuilder.withObject(pack()).build();
         
         final @Nonnull Encryption<Signature<Compression<Pack>>> encryption = getEncryption(compression);

@@ -128,6 +128,9 @@ public abstract class CacheModule {
     @TODO(task = "Provide the correct parameters for the loading of the type.", date = "2017-10-05", author = Author.KASPAR_ETTER)
     @Initialize(target = CacheModule.class, dependencies = {AccountFactory.class, AttributePropertiesLoader.class, PrivateKeyRetriever.class, ClientSecretLoader.class})
     public static void initializeRootKey() throws ConversionException {
+        Log.debugging("Initializing the cache module.");
+        PublicKeyChain.TYPE.isLoaded();
+        Database.commit();
         if (!getCachedAttributeValue(null, HostIdentity.DIGITALID, Time.MIN, PublicKeyChain.TYPE).get0()) {
             // Unless it is the root server, the program should have been delivered with the public key chain of 'core.digitalid.net'.
             final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/net/digitalid/core/cache/core.digitalid.net.certificate.xdf");
