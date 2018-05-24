@@ -31,7 +31,7 @@ import net.digitalid.core.identification.identity.IdentifierResolver;
  */
 @Utility
 @TODO(task = "Find a better solution for this problem!", date = "2017-08-20", author = Author.KASPAR_ETTER)
-public abstract class ContactPropertiesLoader {
+public abstract class ContactModuleInitializer {
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
@@ -44,7 +44,7 @@ public abstract class ContactPropertiesLoader {
      * Loads the contact subclass.
      */
     @PureWithSideEffects
-    @Initialize(target = ContactPropertiesLoader.class)
+    @Initialize(target = ContactModuleInitializer.class)
     public static void initializeSubclass() {
         ContactSubclass.MODULE.getName();
     }

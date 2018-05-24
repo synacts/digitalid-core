@@ -36,11 +36,15 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.interfaces.Database;
 
+import net.digitalid.core.attribute.AttributeModuleInitializer;
 import net.digitalid.core.cache.CacheModule;
+import net.digitalid.core.clientagent.ClientAgentModuleInitializer;
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.host.key.PrivateKeyChainLoader;
 import net.digitalid.core.host.key.PublicKeyChainLoader;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.node.contact.ContactModuleInitializer;
+import net.digitalid.core.node.context.ContextModuleInitializer;
 import net.digitalid.core.packet.Request;
 
 /**
@@ -49,6 +53,13 @@ import net.digitalid.core.packet.Request;
 @Utility
 public abstract class Server {
     
+    /* -------------------------------------------------- Configuration -------------------------------------------------- */
+    
+    /**
+     * Stores a dummy configuration in order to have an initialization target.
+     */
+    public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE);
+    
     /* -------------------------------------------------- Hosts -------------------------------------------------- */
     
     /**
@@ -56,7 +67,7 @@ public abstract class Server {
      */
     @Impure
     @Committing
-    @Initialize(target = CacheModule.class, dependencies = {PrivateKeyChainLoader.class, PublicKeyChainLoader.class})
+    @Initialize(target = Server.class, dependencies = {PrivateKeyChainLoader.class, PublicKeyChainLoader.class, CacheModule.class, AttributeModuleInitializer.class, ContextModuleInitializer.class, ContactModuleInitializer.class, ClientAgentModuleInitializer.class})
     public static void loadHosts() throws ConversionException {
         final @Nonnull FiniteIterable<@Nonnull @Existent File> configurationDirectoryFiles = Files.listNonHiddenFiles(Files.relativeToConfigurationDirectory("")).filter(File::isFile);
         final @Nonnull FiniteIterable<@Nonnull String> privateKeyFiles = configurationDirectoryFiles.map(File::getName).filter(name -> name.endsWith(".private.xdf"));

@@ -31,7 +31,7 @@ import net.digitalid.core.identification.identity.IdentifierResolver;
  */
 @Utility
 @TODO(task = "Find a better solution for this problem!", date = "2017-07-19", author = Author.KASPAR_ETTER)
-public abstract class AttributePropertiesLoader {
+public abstract class AttributeModuleInitializer {
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
@@ -41,10 +41,10 @@ public abstract class AttributePropertiesLoader {
     public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE).addDependency(IdentifierResolver.configuration);
     
     /**
-     * Loads the attribute subclass.
+     * Loads the attribute subclass after having initialized the identifier resolver.
      */
     @PureWithSideEffects
-    @Initialize(target = AttributePropertiesLoader.class)
+    @Initialize(target = AttributeModuleInitializer.class)
     public static void initializeSubclass() {
         AttributeSubclass.MODULE.getName();
     }
