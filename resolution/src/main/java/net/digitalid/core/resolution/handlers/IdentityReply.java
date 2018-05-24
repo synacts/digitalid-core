@@ -18,13 +18,15 @@ package net.digitalid.core.resolution.handlers;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Invariant;
 
-import net.digitalid.core.entity.NonHostEntity;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.handler.CoreHandler;
 import net.digitalid.core.handler.method.Method;
 import net.digitalid.core.handler.reply.QueryReply;
@@ -39,7 +41,8 @@ import net.digitalid.core.identification.identity.Category;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class IdentityReply extends QueryReply<NonHostEntity> implements CoreHandler<NonHostEntity> {
+@TODO(task = "Support predecessors and successor.", date = "2018-05-24", author = Author.KASPAR_ETTER)
+public abstract class IdentityReply extends QueryReply<Entity> implements CoreHandler<Entity> {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -49,8 +52,6 @@ public abstract class IdentityReply extends QueryReply<NonHostEntity> implements
     @Pure
     @Invariant(condition = "#.isInternalNonHostIdentity()", message = "The category denotes an internal non-host identity.")
     public abstract @Nonnull Category getCategory();
-    
-    // TODO: Support predecessors and successor.
     
 //    /**
 //     * Returns the predecessors of the subject.
@@ -65,8 +66,6 @@ public abstract class IdentityReply extends QueryReply<NonHostEntity> implements
 //    public abstract @Nullable InternalNonHostIdentifier getSuccessor();
     
     /* -------------------------------------------------- Constructors -------------------------------------------------- */
-    
-    // TODO
     
 //    /**
 //     * Creates a query reply for the identity of given subject.
@@ -110,7 +109,7 @@ public abstract class IdentityReply extends QueryReply<NonHostEntity> implements
     
     @Pure
     @Override
-    public boolean matches(@Nonnull Method<NonHostEntity> method) {
+    public boolean matches(@Nonnull Method<Entity> method) {
         return method instanceof IdentityQuery;
     }
     

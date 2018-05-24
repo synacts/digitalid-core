@@ -30,6 +30,7 @@ import net.digitalid.core.handler.reply.instances.EmptyReplyConverter;
 import net.digitalid.core.identification.identity.SemanticType;
 import net.digitalid.core.identification.identity.SemanticTypeAttributesBuilder;
 import net.digitalid.core.identification.identity.SyntacticType;
+import net.digitalid.core.resolution.handlers.IdentityQuery;
 import net.digitalid.core.resolution.handlers.IdentityQueryConverter;
 import net.digitalid.core.resolution.handlers.IdentityReplyConverter;
 
@@ -55,6 +56,7 @@ public abstract class CoreInitializer {
         SemanticType.map(EmptyReplyConverter.INSTANCE).load(SemanticTypeAttributesBuilder.withSyntacticBase(SyntacticType.BOOLEAN).build()); // TODO: Load the right attributes.
         
         AttributeTypes.NAME.isLoaded(); // Maps the type in the main thread.
+        IdentityQuery.TYPE.isLoaded(); // Maps the type in the main thread.
         OpenAccount.TYPE.isLoaded(); // Maps the type in the main thread.
     }
     

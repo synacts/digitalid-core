@@ -148,31 +148,6 @@ public abstract class Server {
             Console.writeLine();
             Console.writeLine("The library has been initialized successfully.");
             
-//        try {
-//            if (MySQLConfiguration.exists()) { configuration = new MySQLConfiguration(false); }
-//            else if (PostgreSQLConfiguration.exists()) { configuration = new PostgreSQLConfiguration(false); }
-//            else if (SQLiteConfiguration.exists()) { configuration = new SQLiteConfiguration(false); }
-//            else {
-//                Console.writeLine();
-//                Console.writeLine("Please select one of the following databases:");
-//                Console.writeLine("- 1: MySQL (default)");
-//                Console.writeLine("- 2: PostgreSQL");
-//                Console.writeLine("- 3: SQLite");
-//                Console.writeLine();
-//                final int input = Console.readNumber("Choice: ", 1);
-//                if (input == 1) { configuration = new MySQLConfiguration(false); }
-//                else if (input == 2) { configuration = new PostgreSQLConfiguration(false); }
-//                else if (input == 3) { configuration = new SQLiteConfiguration(false); }
-//                else {
-//                    Console.writeLine(Integer.toString(input) + " was not a valid option.");
-//                    Console.writeLine();
-//                    return;
-//                }
-//            }
-//        } catch (@Nonnull Exception exception) {
-//            throw InitializationError.get("Could not load the database configuration.", exception);
-//        }
-            
             loadServices();
             Server.start();
             Console.writeLine("The server has been started and is now listening on port $.", Request.PORT.get());

@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -64,6 +65,8 @@ import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.RequestConverter;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.packet.ResponseBuilder;
+import net.digitalid.core.resolution.handlers.IdentityQuery;
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.signature.Signature;
 import net.digitalid.core.signature.SignatureBuilder;
 import net.digitalid.core.signature.host.HostSignatureCreator;
@@ -119,10 +122,19 @@ public abstract class Worker implements Runnable {
                     Log.debugging("Executing the method $ on host $.", type.getAddress(), recipient);
                     
                     final @Nonnull InternalIdentifier subject;
-                    if (type.equals(OpenAccount.TYPE)) { subject = recipient; } else { subject = signedMethod.getSubject(); }
-                    final @Nonnull Account account = Account.with(host, subject.resolve());
+                    if (type.equals(OpenAccount.TYPE) || type.equals(IdentityQuery.TYPE)) {
+                        subject = recipient;
+                    } else {
+                        subject = signedMethod.getSubject();
+                    }
                     
+                    final @Nonnull Account account = Account.with(host, subject.resolve());
                     method = MethodIndex.get(signedMethod, account);
+                    
+                    if (method.getService() == CoreService.INSTANCE && !method.getRecipient().equals(recipient)) {
+                        throw RequestExceptionBuilder.withCode(RequestErrorCode.RECIPIENT).withMessage("The method was sent to the wrong recipient.").build();
+                    }
+                    
                     reply = method.executeOnHost();
                     
                     Database.commit();
@@ -145,7 +157,9 @@ public abstract class Worker implements Runnable {
             
             final @Nonnull Signature<Compression<Pack>> signedReply;
             if (encryptedMethod != null && signedMethod != null) {
-                signedReply = HostSignatureCreator.sign(compressedReply, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).about(signedMethod.getSubject()).as(encryptedMethod.getRecipient());
+                final @Nullable HostIdentifier recipient = encryptedMethod.getRecipient();
+                if (recipient == null) { throw CaseExceptionBuilder.withVariable("recipient").withValue(recipient).build(); } // If the recipient is null, then the signedMethod variable is also null and thus this case exception should never occur.
+                signedReply = HostSignatureCreator.sign(compressedReply, CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).about(signedMethod.getSubject()).as(recipient);
             } else {
                 signedReply = SignatureBuilder.withObjectConverter(CompressionConverterBuilder.withObjectConverter(PackConverter.INSTANCE).build()).withObject(compressedReply).withSubject(HostIdentifier.DIGITALID).build();
             }
