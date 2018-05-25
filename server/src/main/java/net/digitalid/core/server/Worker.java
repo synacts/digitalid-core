@@ -119,7 +119,7 @@ public abstract class Worker implements Runnable {
                     
                     signedMethod = encryptedMethod.getObject();
                     final @Nonnull SemanticType type = signedMethod.getObject().getObject().getType();
-                    Log.debugging("Executing the method $ on host $.", type.getAddress(), recipient);
+                    Log.debugging("Executing the method $ for $ on host $.", type.getAddress(), signedMethod.getSubject(), recipient);
                     
                     final @Nonnull InternalIdentifier subject;
                     if (type.equals(OpenAccount.TYPE) || type.equals(IdentityQuery.TYPE)) {

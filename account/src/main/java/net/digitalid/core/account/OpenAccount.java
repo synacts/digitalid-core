@@ -111,6 +111,7 @@ public abstract class OpenAccount extends InternalAction implements CoreMethod<N
     @Pure
     @Override
     @Provided
+    @NonRepresentative
     public abstract @Nullable Entity getProvidedEntity();
     
     /**

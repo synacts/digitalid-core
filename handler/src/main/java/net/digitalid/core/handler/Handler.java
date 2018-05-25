@@ -108,6 +108,7 @@ public interface Handler<@Unspecifiable ENTITY extends Entity> extends CoreUnitB
     @Pure
     @Provided
     @Default("null")
+    @NonRepresentative
     public @Nullable Signature<Compression<Pack>> getSignature();
     
     /**

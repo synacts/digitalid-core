@@ -23,6 +23,7 @@ import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.functional.failable.FailableBinaryFunction;
 import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -66,6 +67,7 @@ public interface InternalMethod extends Method<NonHostEntity> {
     @Pure
     @Override
     @Provided
+    @NonRepresentative
     public @Nonnull Entity getProvidedEntity();
     
     @Pure

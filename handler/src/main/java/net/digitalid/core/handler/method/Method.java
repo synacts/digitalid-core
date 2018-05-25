@@ -36,6 +36,7 @@ import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.generation.NonRepresentative;
 import net.digitalid.utility.validation.annotations.generation.OrderOfAssignment;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -99,6 +100,7 @@ public interface Method<@Unspecifiable ENTITY extends Entity> extends Handler<EN
     @Pure
     @Provided
     @Default("null")
+    @NonRepresentative
     public @Nullable Entity getProvidedEntity();
     
     /**
