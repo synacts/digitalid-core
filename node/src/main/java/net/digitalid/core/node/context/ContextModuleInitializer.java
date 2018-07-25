@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.digitalid.core.clientagent;
+package net.digitalid.core.node.context;
 
 import javax.annotation.Nonnull;
 
@@ -25,13 +25,14 @@ import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.core.identification.identity.IdentifierResolver;
+import net.digitalid.core.typeset.authentications.FreezableAuthentications;
 
 /**
- * The following code cannot be in the client agent class because instantiating the initializer would trigger the client agent class to get loaded which in turn would trigger an IdentifierResolver not initialized error because the CoreService maps a SemanticType.
+ * The following code cannot be in the context class because instantiating the initializer would trigger the context class to get loaded which in turn would trigger an IdentifierResolver not initialized error because the CoreService maps a SemanticType.
  */
 @Utility
-@TODO(task = "Find a better solution for this problem!", date = "2017-08-19", author = Author.KASPAR_ETTER)
-public abstract class ClientAgentPropertiesLoader {
+@TODO(task = "Find a better solution for this problem!", date = "2017-08-20", author = Author.KASPAR_ETTER)
+public abstract class ContextModuleInitializer {
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
@@ -41,12 +42,13 @@ public abstract class ClientAgentPropertiesLoader {
     public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE).addDependency(IdentifierResolver.configuration);
     
     /**
-     * Loads the client agent subclass.
+     * Loads the context subclass after having initialized the identifier resolver.
      */
     @PureWithSideEffects
-    @Initialize(target = ClientAgentPropertiesLoader.class)
+    @Initialize(target = ContextModuleInitializer.class)
     public static void initializeSubclass() {
-        ClientAgentSubclass.MODULE.getName();
+        FreezableAuthentications.IDENTITY_BASED_TYPE.getKey();
+        ContextSubclass.MODULE.getName();
     }
     
 }

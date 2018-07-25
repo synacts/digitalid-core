@@ -70,7 +70,7 @@ import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
 
 import net.digitalid.core.asymmetrickey.PrivateKeyRetriever;
-import net.digitalid.core.attribute.AttributePropertiesLoader;
+import net.digitalid.core.attribute.AttributeModuleInitializer;
 import net.digitalid.core.cache.errors.MissingTrustAnchorErrorBuilder;
 import net.digitalid.core.client.ClientSecretLoader;
 import net.digitalid.core.client.role.Role;
@@ -126,8 +126,11 @@ public abstract class CacheModule {
     @Committing
     @PureWithSideEffects
     @TODO(task = "Provide the correct parameters for the loading of the type.", date = "2017-10-05", author = Author.KASPAR_ETTER)
-    @Initialize(target = CacheModule.class, dependencies = {AccountFactory.class, AttributePropertiesLoader.class, PrivateKeyRetriever.class, ClientSecretLoader.class})
+    @Initialize(target = CacheModule.class, dependencies = {AccountFactory.class, AttributeModuleInitializer.class, PrivateKeyRetriever.class, ClientSecretLoader.class})
     public static void initializeRootKey() throws ConversionException {
+        Log.debugging("Initializing the cache module.");
+        PublicKeyChain.TYPE.isLoaded();
+        Database.commit();
         if (!getCachedAttributeValue(null, HostIdentity.DIGITALID, Time.MIN, PublicKeyChain.TYPE).get0()) {
             // Unless it is the root server, the program should have been delivered with the public key chain of 'core.digitalid.net'.
             final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/net/digitalid/core/cache/core.digitalid.net.certificate.xdf");

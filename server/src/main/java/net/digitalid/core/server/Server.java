@@ -36,11 +36,15 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.interfaces.Database;
 
+import net.digitalid.core.attribute.AttributeModuleInitializer;
 import net.digitalid.core.cache.CacheModule;
+import net.digitalid.core.clientagent.ClientAgentModuleInitializer;
 import net.digitalid.core.host.HostBuilder;
 import net.digitalid.core.host.key.PrivateKeyChainLoader;
 import net.digitalid.core.host.key.PublicKeyChainLoader;
 import net.digitalid.core.identification.identifier.HostIdentifier;
+import net.digitalid.core.node.contact.ContactModuleInitializer;
+import net.digitalid.core.node.context.ContextModuleInitializer;
 import net.digitalid.core.packet.Request;
 
 /**
@@ -49,6 +53,13 @@ import net.digitalid.core.packet.Request;
 @Utility
 public abstract class Server {
     
+    /* -------------------------------------------------- Configuration -------------------------------------------------- */
+    
+    /**
+     * Stores a dummy configuration in order to have an initialization target.
+     */
+    public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE);
+    
     /* -------------------------------------------------- Hosts -------------------------------------------------- */
     
     /**
@@ -56,7 +67,7 @@ public abstract class Server {
      */
     @Impure
     @Committing
-    @Initialize(target = CacheModule.class, dependencies = {PrivateKeyChainLoader.class, PublicKeyChainLoader.class})
+    @Initialize(target = Server.class, dependencies = {PrivateKeyChainLoader.class, PublicKeyChainLoader.class, CacheModule.class, AttributeModuleInitializer.class, ContextModuleInitializer.class, ContactModuleInitializer.class, ClientAgentModuleInitializer.class})
     public static void loadHosts() throws ConversionException {
         final @Nonnull FiniteIterable<@Nonnull @Existent File> configurationDirectoryFiles = Files.listNonHiddenFiles(Files.relativeToConfigurationDirectory("")).filter(File::isFile);
         final @Nonnull FiniteIterable<@Nonnull String> privateKeyFiles = configurationDirectoryFiles.map(File::getName).filter(name -> name.endsWith(".private.xdf"));
@@ -147,31 +158,6 @@ public abstract class Server {
             
             Console.writeLine();
             Console.writeLine("The library has been initialized successfully.");
-            
-//        try {
-//            if (MySQLConfiguration.exists()) { configuration = new MySQLConfiguration(false); }
-//            else if (PostgreSQLConfiguration.exists()) { configuration = new PostgreSQLConfiguration(false); }
-//            else if (SQLiteConfiguration.exists()) { configuration = new SQLiteConfiguration(false); }
-//            else {
-//                Console.writeLine();
-//                Console.writeLine("Please select one of the following databases:");
-//                Console.writeLine("- 1: MySQL (default)");
-//                Console.writeLine("- 2: PostgreSQL");
-//                Console.writeLine("- 3: SQLite");
-//                Console.writeLine();
-//                final int input = Console.readNumber("Choice: ", 1);
-//                if (input == 1) { configuration = new MySQLConfiguration(false); }
-//                else if (input == 2) { configuration = new PostgreSQLConfiguration(false); }
-//                else if (input == 3) { configuration = new SQLiteConfiguration(false); }
-//                else {
-//                    Console.writeLine(Integer.toString(input) + " was not a valid option.");
-//                    Console.writeLine();
-//                    return;
-//                }
-//            }
-//        } catch (@Nonnull Exception exception) {
-//            throw InitializationError.get("Could not load the database configuration.", exception);
-//        }
             
             loadServices();
             Server.start();
