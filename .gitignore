@@ -4,3 +4,5 @@
 .idea/
 *.iml
 *-java7/
+.project
+.settings/
